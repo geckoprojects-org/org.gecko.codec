@@ -45,6 +45,8 @@ header:
     - 'LICENSE'
     - 'Jenkinsfile'
     - 'NOTICE'
+    - 'cnf/**'
+    - '**/generated/**'
     - '.gitattributes'
     - '.github/**'
     - '.gitignore'
