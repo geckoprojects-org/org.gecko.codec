@@ -1,2 +1,5 @@
 Bundle-Name: Gecko Codec 
 Bundle-Description: Gecko Project Codec Framework
+
+-buildpath: \
+	org.osgi.util.promise

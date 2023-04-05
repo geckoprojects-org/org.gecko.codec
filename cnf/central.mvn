@@ -10,6 +10,9 @@ jakarta.ws.rs:jakarta.ws.rs-api:3.1.0
 jakarta.xml.bind:jakarta.xml.bind-api:4.0.0
 javax.json:javax.json-api:1.1.4
 
+commons-beanutils:commons-beanutils:1.9.4
+commons-logging:commons-logging:1.2
+commons-collections:commons-collections:3.2.2
 org.apache.aries.spifly:org.apache.aries.spifly.dynamic.framework.extension:1.3.6
 org.apache.felix:org.apache.felix.cm.json:2.0.0
 org.apache.felix:org.apache.felix.configadmin:1.9.26
@@ -83,6 +86,7 @@ org.osgi:org.osgi.service.async:1.0.0
 org.osgi:org.osgi.service.blueprint:1.0.2
 org.osgi:org.osgi.service.clusterinfo:1.0.0
 org.osgi:org.osgi.service.condpermadmin:1.1.2
+org.osgi:org.osgi.service.condition:1.0.0
 org.osgi:org.osgi.service.coordinator:1.0.2
 org.osgi:org.osgi.service.http:1.2.2
 org.osgi:org.osgi.service.http.whiteboard:1.1.0
@@ -136,6 +140,11 @@ org.slf4j:slf4j-simple:1.7.36
 org.slf4j:slf4j-api:1.7.36
 org.freemarker:freemarker:2.3.32
 
-org.geckoprojects.bnd:org.gecko.bnd.dimc.library:1.3.0-SNAPSHOT
-org.geckoprojects.bnd:org.gecko.bnd.jacoco.library:1.3.0-SNAPSHOT
-org.geckoprojects.bnd:org.gecko.bnd.osgitest.library:1.3.0-SNAPSHOT
+org.geckoprojects.bnd:org.gecko.bnd.dimc.library:1.3.0
+org.geckoprojects.bnd:org.gecko.bnd.jacoco.library:1.3.0
+org.geckoprojects.bnd:org.gecko.bnd.osgitest.library:1.3.0
+org.geckoprojects.emf:org.gecko.emf.osgi.bnd.library.workspace:4.5.0
+
+org.usb4java:usb4java:1.3.0
+org.apache.commons:commons-lang3:3.12.0
+com.fazecast:jSerialComm:2.9.3
