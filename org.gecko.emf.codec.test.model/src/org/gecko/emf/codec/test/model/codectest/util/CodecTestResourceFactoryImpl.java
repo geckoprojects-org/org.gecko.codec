@@ -2,6 +2,9 @@
  */
 package org.gecko.emf.codec.test.model.codectest.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.emf.common.util.URI;
 
 import org.eclipse.emf.ecore.resource.Resource;
@@ -10,12 +13,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 
 import org.gecko.emf.codec.test.model.codectest.CodecTestPackage;
 
-import org.gecko.emf.osgi.annotation.provide.ProvideEMFResourceConfigurator;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ServiceScope;
+import org.gecko.emf.osgi.constants.EMFNamespaces;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,16 +22,6 @@ import org.osgi.service.component.annotations.ServiceScope;
  * @see org.gecko.emf.codec.test.model.codectest.util.CodecTestResourceImpl
  * @generated
  */
- @Component( name = CodecTestPackage.eNAME + "Factory", service = Resource.Factory.class, scope = ServiceScope.SINGLETON,
- 	reference = @Reference( name = CodecTestPackage.eNAME + "Package", service = CodecTestPackage.class, cardinality = ReferenceCardinality.MANDATORY)
- )
- @ProvideEMFResourceConfigurator( name = CodecTestPackage.eNAME,
-	contentType = { "" }, 
-	fileExtension = {
-	"codectest"
- 	},  
-	version = "1.0"
-)
 public class CodecTestResourceFactoryImpl extends ResourceFactoryImpl {
 	/**
 	 * Creates an instance of the resource factory.
@@ -55,6 +43,18 @@ public class CodecTestResourceFactoryImpl extends ResourceFactoryImpl {
 	public Resource createResource(URI uri) {
 		Resource result = new CodecTestResourceImpl(uri);
 		return result;
+	}
+
+	/**
+	 * A method providing the Properties the services around this ResourceFactory should be registered with.
+	 * @generated
+	 */
+	public Map<String, Object> getServiceProperties() {
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put(EMFNamespaces.EMF_CONFIGURATOR_NAME, CodecTestPackage.eNAME);
+		properties.put(EMFNamespaces.EMF_MODEL_FILE_EXT, "codectest");
+		properties.put(EMFNamespaces.EMF_MODEL_VERSION, "1.0");
+		return properties;
 	}
 
 } //CodecTestResourceFactoryImpl

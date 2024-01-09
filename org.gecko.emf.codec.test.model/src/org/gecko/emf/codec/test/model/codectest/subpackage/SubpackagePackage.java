@@ -2,10 +2,12 @@
  */
 package org.gecko.emf.codec.test.model.codectest.subpackage;
 
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+
+import org.gecko.emf.osgi.annotation.provide.EPackage;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -26,7 +28,8 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface SubpackagePackage extends EPackage {
+@EPackage(uri = SubpackagePackage.eNS_URI, genModel = "/model/codec-test.genmodel", genModelSourceLocations = {"model/codec-test.genmodel","org.gecko.emf.codec.test.model/model/codec-test.genmodel"}, ecore="/model/codec-test.ecore", ecoreSourceLocations="/model/codec-test.ecore")
+public interface SubpackagePackage extends org.eclipse.emf.ecore.EPackage {
 	/**
 	 * The package name.
 	 * <!-- begin-user-doc -->

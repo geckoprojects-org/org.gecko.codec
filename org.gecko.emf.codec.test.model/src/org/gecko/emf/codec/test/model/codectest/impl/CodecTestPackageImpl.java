@@ -101,7 +101,6 @@ public class CodecTestPackageImpl extends EPackageImpl implements CodecTestPacka
 	private CodecTestPackageImpl() {
 		super(eNS_URI, CodecTestFactory.eINSTANCE);
 	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

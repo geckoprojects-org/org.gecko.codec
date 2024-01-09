@@ -2,12 +2,14 @@
  */
 package org.gecko.emf.codec.test.model.codectest;
 
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+
+import org.gecko.emf.osgi.annotation.provide.EPackage;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -31,7 +33,8 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface CodecTestPackage extends EPackage {
+@EPackage(uri = CodecTestPackage.eNS_URI, genModel = "/model/codec-test.genmodel", genModelSourceLocations = {"model/codec-test.genmodel","org.gecko.emf.codec.test.model/model/codec-test.genmodel"}, ecore="/model/codec-test.ecore", ecoreSourceLocations="/model/codec-test.ecore")
+public interface CodecTestPackage extends org.eclipse.emf.ecore.EPackage {
 	/**
 	 * The package name.
 	 * <!-- begin-user-doc -->

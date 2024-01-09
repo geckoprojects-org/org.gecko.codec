@@ -52,7 +52,6 @@ public class FoobarPackageImpl extends EPackageImpl implements FoobarPackage {
 	private FoobarPackageImpl() {
 		super(eNS_URI, FoobarFactory.eINSTANCE);
 	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

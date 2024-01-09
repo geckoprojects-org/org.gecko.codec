@@ -53,7 +53,6 @@ public class SubpackagePackageImpl extends EPackageImpl implements SubpackagePac
 	private SubpackagePackageImpl() {
 		super(eNS_URI, SubpackageFactory.eINSTANCE);
 	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

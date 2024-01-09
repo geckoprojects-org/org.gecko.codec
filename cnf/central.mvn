@@ -124,9 +124,9 @@ org.osgi:osgi.cmpn:7.0.0
 
 org.apiguardian:apiguardian-api:1.1.2
 
-com.fasterxml.jackson.core:jackson-core:2.13.2
-com.fasterxml.jackson.core:jackson-databind:2.13.2
-com.fasterxml.jackson.core:jackson-annotations:2.13.2
+com.fasterxml.jackson.core:jackson-core:2.16.1
+com.fasterxml.jackson.core:jackson-databind:2.16.1
+com.fasterxml.jackson.core:jackson-annotations:2.16.1
 com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.13.2
 com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2
 de.undercouch:bson4jackson:2.13.1
@@ -139,11 +139,12 @@ org.bouncycastle:bcutil-jdk15on:1.70
 org.slf4j:slf4j-simple:1.7.36
 org.slf4j:slf4j-api:1.7.36
 org.freemarker:freemarker:2.3.32
+com.google.guava:guava:33.0.0-jre
 
-org.geckoprojects.bnd:org.gecko.bnd.dimc.library:1.3.0
-org.geckoprojects.bnd:org.gecko.bnd.jacoco.library:1.3.0
-org.geckoprojects.bnd:org.gecko.bnd.osgitest.library:1.3.0
-org.geckoprojects.emf:org.gecko.emf.osgi.bnd.library.workspace:4.5.0
+org.geckoprojects.bnd:org.gecko.bnd.dimc.library:1.4.1
+org.geckoprojects.bnd:org.gecko.bnd.jacoco.library:1.4.1
+org.geckoprojects.bnd:org.gecko.bnd.osgitest.library:1.4.1
+org.geckoprojects.emf:org.gecko.emf.osgi.bnd.library.workspace:6.0.0
 
 org.usb4java:usb4java:1.3.0
 org.apache.commons:commons-lang3:3.12.0
