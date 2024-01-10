@@ -15,6 +15,9 @@ package org.gecko.codec;
 
 import java.util.Map;
 
+import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.gecko.codec.jackson.module.CodecFeature;
+
 /**
  * Constant interface
  * @author Mark Hoffmann
@@ -56,6 +59,7 @@ public interface CodecConstants {
 	 * attribute will be used as the MongoDB _id if it exists.
 	 * 
 	 * Value type: Boolean, default is <code>true</code>
+	 * @deprecated Use {@link CodecFeature#OPTION_ID_FEATURE_AS_PRIMARY_KEY} instead
 	 */
 	String OPTION_ID_FEATURE_AS_PRIMARY_KEY = "OPTION_ID_FEATURE_AS_PRIMARY_KEY";
 
@@ -66,6 +70,7 @@ public interface CodecConstants {
 	 * The {@link DBObjectBuilderImpl} and {@link EObjectBuilderImpl} are using this option
 	 * 
 	 * value type: Boolean, default is <code>false</code>
+	 * @deprecated Use {@link CodecFeature#OPTION_ENCODE_ENUM_LITERAL} instead
 	 */
 	static final String ENCODE_ENUM_LITERAL = "ENCODE_ENUM_LITERAL";
 	
@@ -90,6 +95,7 @@ public interface CodecConstants {
 	 * MongoDB.
 	 * 
 	 * Value type: Boolean, default is <code>false</code>
+	 * @deprecated Use {@link EMFModule.Feature#OPTION_SERIALIZE_DEFAULT_VALUE} instead
 	 */
 	static final String ENCODE_DEFAULT_VALUES = "ENCODE_DEFAULT_VALUES";
 
@@ -99,6 +105,7 @@ public interface CodecConstants {
 	 * default value. By setting this option to Boolean.TRUE, all eClass URIs will be written regardless. 
 	 * 
 	 * Value type: Boolean. default is <code>false</code>
+	 * @deprecated Use {@link CodecFeature#OPTION_ENCODE_INHERITANCE_CLASSIFIERS} instead
 	 */
 	static final String ENCODE_INHERITANCE_CLASSIFIERS = "ENCODE_INHERITANCE_CLASSIFIERS";
 	
@@ -113,6 +120,7 @@ public interface CodecConstants {
 	 * can display the child names in the tree without resolving the proxy.
 	 * 
 	 * Value type: Boolean
+	 * @deprecated Use {@link CodecFeature#OPTION_DECODE_PROXY_ATTRIBUTES} instead
 	 */
 	static final String DECODE_PROXY_ATTRIBUTES = "DECODE_PROXY_ATTRIBUTES";
 	
