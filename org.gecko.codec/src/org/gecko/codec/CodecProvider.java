@@ -18,6 +18,7 @@ package org.gecko.codec;
  * @author mark
  * @since 21.03.2023
  */
+@Deprecated
 public interface CodecProvider {
 
 }

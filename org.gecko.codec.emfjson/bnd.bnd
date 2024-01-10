@@ -1,5 +1,3 @@
-testsrc: ${^testsrc},test-gen
-
 -library: enable-emf
 
 -buildpath: \
@@ -8,26 +6,8 @@ testsrc: ${^testsrc},test-gen
 	com.fasterxml.jackson.core.jackson-core;version=latest
 	
 -testpath.guava: \
+	org.gecko.codec.test.models;version=project,\
 	com.google.guava;version=latest
 	
--generate:\
-	test-data/model/annotations.genmodel;\
-		generate=geckoEMF;\
-		genmodel=test-data/model/annotations.genmodel;\
-		output=test-gen,\
-	test-data/model/generics.genmodel;\
-		generate=geckoEMF;\
-		genmodel=test-data/model/generics.genmodel;\
-		output=test-gen,\
-	test-data/model/model.genmodel;\
-		generate=geckoEMF;\
-		genmodel=test-data/model/model.genmodel;\
-		output=test-gen,\
-	test-data/model/array.genmodel;\
-		generate=geckoEMF;\
-		genmodel=test-data/model/array.genmodel;\
-		output=test-gen,\
-	test-data/model/packageAnnotations.genmodel;\
-		generate=geckoEMF;\
-		genmodel=test-data/model/packageAnnotations.genmodel;\
-		output=test-gen
+Bundle-Name: Gecko Codec EMFJson Jackson
+Bundle-Description: Fork of EMFJson Jackson

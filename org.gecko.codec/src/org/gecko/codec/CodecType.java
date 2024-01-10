@@ -23,6 +23,8 @@ import org.osgi.annotation.versioning.ProviderType;
  * @author mark
  * @since 21.03.2023
  */
+
+@Deprecated
 @ProviderType
 public interface CodecType {
 	

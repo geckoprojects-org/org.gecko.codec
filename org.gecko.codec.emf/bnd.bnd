@@ -2,4 +2,4 @@
 
 -buildpath: org.gecko.codec;version=project
 
--testpath: org.gecko.emf.codec.test.model
+-testpath: org.gecko.codec.test.models;version=project

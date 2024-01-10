@@ -1,0 +1,10 @@
+-library: enable-emf
+
+-buildpath: \
+	com.fasterxml.jackson.core.jackson-core;version=latest,\
+	com.fasterxml.jackson.core.jackson-databind;version=latest,\
+	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
+	org.gecko.codec.emfjson;version=project
+	
+-testpath.model: \
+	org.gecko.codec.test.models;version=project
