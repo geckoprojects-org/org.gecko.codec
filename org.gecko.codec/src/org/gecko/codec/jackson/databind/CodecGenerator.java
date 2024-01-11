@@ -183,4 +183,40 @@ public class CodecGenerator extends CodecGeneratorBase {
 		
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.ser.CodecGeneratorBase#doStartWriteEObject(int, java.lang.String, org.eclipse.emf.ecore.EObject)
+	 */
+	@Override
+	protected void doStartWriteEObject(int index, String fieldName, EObject object) throws IOException {
+		System.out.println("[Start] Write EObject [" + index + "]: " + fieldName + ": " + object);
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.ser.CodecGeneratorBase#doStartWriteRootEObject(org.eclipse.emf.ecore.EObject)
+	 */
+	@Override
+	protected void doStartWriteRootEObject(EObject object) throws IOException {
+		System.out.println("[Start] Write Root: " + object);
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.ser.CodecGeneratorBase#doEndWriteEObject(int, java.lang.String, org.eclipse.emf.ecore.EObject)
+	 */
+	@Override
+	protected void doEndWriteEObject(int index, String fieldName, EObject object) throws IOException {
+		System.out.println("[End] Write EObject [" + index + "]: " + fieldName + ": " + object);
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.ser.CodecGeneratorBase#doEndWriteRootEObject(org.eclipse.emf.ecore.EObject)
+	 */
+	@Override
+	protected void doEndWriteRootEObject(EObject object) throws IOException {
+		System.out.println("[End] Write Root: " + object);
+	}
+
 }

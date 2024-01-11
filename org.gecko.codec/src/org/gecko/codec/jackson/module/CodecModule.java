@@ -17,8 +17,10 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.eclipse.emfcloud.jackson.databind.ser.EcoreReferenceSerializer;
 import org.eclipse.emfcloud.jackson.databind.ser.NullKeySerializer;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.gecko.codec.jackson.databind.ser.CodecEcoreReferenceSerializer;
 import org.gecko.codec.jackson.databind.ser.CodecSerializers;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -119,6 +121,9 @@ public class CodecModule extends EMFModule {
 	@Override
 	public void setupModule(final SetupContext context) {
 		super.setupModule(context);
+		if (getReferenceSerializer() == null || getReferenceSerializer() instanceof EcoreReferenceSerializer) {
+			setReferenceSerializer(new CodecEcoreReferenceSerializer(getReferenceInfo(), getTypeInfo()));
+		}
 		CodecSerializers serializers = new CodecSerializers(this);
 		context.addSerializers(serializers);
 	}
