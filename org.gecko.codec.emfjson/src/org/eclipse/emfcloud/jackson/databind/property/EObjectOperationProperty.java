@@ -28,7 +28,7 @@ public class EObjectOperationProperty extends EObjectProperty {
 
    private final EOperation operation;
 
-   protected EObjectOperationProperty(final String fieldName, final EOperation operation) {
+   public EObjectOperationProperty(final String fieldName, final EOperation operation) {
       super(fieldName);
 
       this.operation = operation;

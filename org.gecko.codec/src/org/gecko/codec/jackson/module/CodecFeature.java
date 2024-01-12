@@ -1,5 +1,7 @@
 package org.gecko.codec.jackson.module;
 
+import org.eclipse.emf.ecore.resource.Resource;
+
 /**
  * Enumeration that defines all possible options that can be used
  * to customize the behavior of the EMF Module.
@@ -15,6 +17,26 @@ public enum CodecFeature {
      * none are provided. The ID serializer used by default is IdSerializer.
      */
     OPTION_USE_ID(false),
+    
+    /**
+     * Option used to indicate the module to use the ID field of the EObject.
+     */
+    OPTION_USE_IDFIELD(true),
+    
+    /**
+     * Option used to indicate the module to use the default ID serializer if
+     * none are provided. The ID serializer used by default is IdSerializer.
+     */
+    OPTION_ID_TOP(true),
+    
+    /**
+     * Option used to indicate the module to additionally serialize the if field of an EObject as it is.
+     * This is usually not needed, because the _id key always holds the ID at the first position. 
+     * This id-field itself can be found at a later index. So finding it may cost a lot of effort.
+     * It can be useful to OPTION_USE_ID(true) and OPTIONS_USE_ID_FIELD(false) and additionally store this 
+     * id field, while using the URI fragment or {@link Resource} ID as primary key
+     */
+    OPTION_SERIALIZE_ID_FIELD(false),
 
     /**
      * Option used to indicate the module to use the default type serializer if
@@ -22,11 +44,34 @@ public enum CodecFeature {
      */
     OPTION_SERIALIZE_TYPE(true),
 
+	/**
+	 * To avoid writing unnecessary URIs in the result format, we write eClassUris only for the root 
+	 * class and for EReferences, where the actual value does not equal but inherit from the 
+	 * stated reference type. 
+	 * By setting this option to Boolean.TRUE, all eClass URIs will be written regardless. 
+	 * 
+	 */
+	OPTION_SERIALIZE_SUPERTYPE(true),
+	
+	/**
+	 * To avoid writing unnecessary URIs in the result format, we write eClassUris only for the root 
+	 * class and for EReferences, where the actual value does not equal but inherit from the 
+	 * stated reference type. 
+	 * By setting this option to Boolean.TRUE, all eClass URIs will be written regardless. 
+	 * 
+	 */
+	OPTION_SERIALIZE_SUPERTYPE_AS_ARRAY(true),
+
     /**
      * Option used to indicate the module to serialize default attributes values.
      * Default values are not serialized by default.
      */
     OPTION_SERIALIZE_DEFAULT_VALUE(false),
+    
+    /** Setting this option to <code>true</code>, will send lists and arrays using the writeArray callbacks.
+     * Per default the serialization happens with startArray, then calling writeValue for each element. 
+     */
+    OPTION_SERIALIZE_ARRAY_BATCHED(false),
 
     /**
      * Option used to indicate whether feature names specified in
@@ -46,15 +91,6 @@ public enum CodecFeature {
 	 * Value type: Boolean
 	 */
 	OPTION_DECODE_PROXY_ATTRIBUTES(false),
-
-	/**
-	 * To avoid writing unnecessary URIs in the result format, we write eClassUris only for the root 
-	 * class and for EReferences, where the actual value does not equal but inherit from the 
-	 * stated reference type. 
-	 * By setting this option to Boolean.TRUE, all eClass URIs will be written regardless. 
-	 * 
-	 */
-	OPTION_ENCODE_INHERITANCE_CLASSIFIERS(false),
 	
 	/**
 	 * If it is set to Boolean.TRUE and the ID was not specified in the URI, the value of the ID

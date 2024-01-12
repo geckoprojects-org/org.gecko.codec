@@ -11,7 +11,7 @@
 package org.eclipse.emfcloud.jackson.annotations;
 
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.findEClass;
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.getURI;
+import static org.eclipse.emfcloud.jackson.databind.EMFContext.getURI; 
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;

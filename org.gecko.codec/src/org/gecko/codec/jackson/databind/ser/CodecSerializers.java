@@ -15,6 +15,7 @@ package org.gecko.codec.jackson.databind.ser;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emfcloud.jackson.databind.ser.EMFSerializers;
+import org.gecko.codec.jackson.databind.property.CodecEObjectPropertyMap;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.databind.BeanDescription;
@@ -29,12 +30,15 @@ import com.fasterxml.jackson.databind.SerializationConfig;
  */
 public class CodecSerializers extends EMFSerializers {
 
+	private final CodecEObjectPropertyMap.Builder propertiesBuilder;
+	
 	/**
 	 * Creates a new instance.
 	 * @param module
 	 */
 	public CodecSerializers(CodecModule module) {
 		super(module);
+		propertiesBuilder = CodecEObjectPropertyMap.Builder.from(module, module.getFeatures());
 	}
 
 	/* 
@@ -43,8 +47,9 @@ public class CodecSerializers extends EMFSerializers {
 	 */
 	@Override
 	public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc) {
+		
 		if (type.isTypeOrSubTypeOf(EObject.class)) {
-			return new CodecEObjectSerializer(getPropertyBuilder(), getReferenceSerializer());
+			return new CodecEObjectSerializer(propertiesBuilder.with(config), getReferenceSerializer());
 		}
 		return super.findSerializer(config, type, beanDesc);
 	}

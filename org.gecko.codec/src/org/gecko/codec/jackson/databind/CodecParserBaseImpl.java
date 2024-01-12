@@ -25,14 +25,14 @@ import com.fasterxml.jackson.core.io.IOContext;
  * @author mark
  * @since 09.01.2024
  */
-public class CodecParserBase extends ParserBase {
+public class CodecParserBaseImpl extends ParserBase {
 
 	/**
 	 * Creates a new instance.
 	 * @param ctxt
 	 * @param features
 	 */
-	protected CodecParserBase(IOContext ctxt, int features) {
+	protected CodecParserBaseImpl(IOContext ctxt, int features) {
 		super(ctxt, features);
 	}
 

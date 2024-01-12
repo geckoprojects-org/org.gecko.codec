@@ -19,6 +19,8 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.emf.ecore.EObject;
+import org.gecko.codec.jackson.CodecGeneratorBase;
+import org.gecko.codec.jackson.CodecGenerator;
 
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -31,7 +33,7 @@ import com.fasterxml.jackson.core.json.JsonWriteContext;
  * @author mark
  * @since 09.01.2024
  */
-public abstract class CodecGeneratorBase extends GeneratorBase {
+public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements CodecGenerator, CodecGeneratorBase {
 	
 	
 	/**
@@ -40,7 +42,7 @@ public abstract class CodecGeneratorBase extends GeneratorBase {
 	 * @param codec
 	 * @param ctxt
 	 */
-	protected CodecGeneratorBase(int features, ObjectCodec codec, IOContext ctxt) {
+	protected CodecGeneratorBaseImpl(int features, ObjectCodec codec, IOContext ctxt) {
 		super(features, codec, ctxt);
 	}
 	
@@ -50,7 +52,7 @@ public abstract class CodecGeneratorBase extends GeneratorBase {
 	 * @param codec
 	 * @param ctxt
 	 */
-	protected CodecGeneratorBase(int features, ObjectCodec codec, IOContext ctxt, JsonWriteContext writeContext) {
+	protected CodecGeneratorBaseImpl(int features, ObjectCodec codec, IOContext ctxt, JsonWriteContext writeContext) {
 		super(features, codec, ctxt, writeContext);
 	}
 	
@@ -58,7 +60,7 @@ public abstract class CodecGeneratorBase extends GeneratorBase {
 		if ( _writeContext.inRoot()) {
 			return (EObject) _writeContext.getCurrentValue();
 		}
-		if ( _writeContext.inObject()) {
+		if ( _writeContext.inObject() || _writeContext.inArray()) {
 			return (EObject) _writeContext.getParent().getCurrentValue();
 		}
 		return null;
@@ -101,10 +103,29 @@ public abstract class CodecGeneratorBase extends GeneratorBase {
 	 */
 	@Override
 	public void writeStartArray() throws IOException {
-		System.out.println("start write array");
-		
-		// TODO Auto-generated method stub
-
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonGenerator#writeStartArray(java.lang.Object, int)
+	 */
+	@Override
+	public void writeStartArray(Object forValue, int size) throws IOException {
+		writeStartArray(forValue);
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonGenerator#writeStartArray(java.lang.Object)
+	 */
+	@Override
+	public void writeStartArray(Object forValue) throws IOException {
+		setCurrentValue(forValue);
+		int index = _writeContext.getCurrentIndex();
+		String name = _writeContext.getCurrentName();
+		_writeContext = _writeContext.createChildArrayContext(forValue);
+		writeStartArray();
+		doStartWriteArray(index + 1, name, forValue);
 	}
 
 	/* 
@@ -113,9 +134,18 @@ public abstract class CodecGeneratorBase extends GeneratorBase {
 	 */
 	@Override
 	public void writeEndArray() throws IOException {
-		System.out.println("end write array");
-		// TODO Auto-generated method stub
-
+		if (_writeContext.inRoot()) {
+			return;
+		}
+		if (!_writeContext.inArray()) {
+            _reportError("Current context is not array but " + _writeContext.typeDesc());
+        }
+		_writeContext = _writeContext.clearAndGetParent();
+		Object result = _writeContext.getCurrentValue();
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+			_reportError("Expect a value to write, but a field name is expected");
+		}
+		doEndWriteArray(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), result);
 	}
 
 	/* 
@@ -167,7 +197,7 @@ public abstract class CodecGeneratorBase extends GeneratorBase {
 	@Override
 	public void writeEndObject() throws IOException {
 		if (!_writeContext.inObject()) {
-            _reportError("Current context not Object but " + _writeContext.typeDesc());
+            _reportError("Current context is not Object but " + _writeContext.typeDesc());
         }
 		EObject result = getCurrentEObject();
 		_writeContext = _writeContext.clearAndGetParent();
@@ -210,28 +240,20 @@ public abstract class CodecGeneratorBase extends GeneratorBase {
 		doWriteString(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), text);
 	}
 	
-	protected abstract void doWriteString(int index, String fieldName, String value) throws IOException;
-	protected abstract void doWriteShort(int index, String fieldName, short value) throws IOException;
-	protected abstract void doWriteLong(int index, String fieldName, long value) throws IOException;
-	protected abstract void doWriteInt(int index, String fieldName, int value) throws IOException;
-	protected abstract void doWriteBigInt(int index, String fieldName, BigInteger value) throws IOException;
-	protected abstract void doWriteBigDecimal(int index, String fieldName, BigDecimal value) throws IOException;
-	protected abstract void doWriteFloat(int index, String fieldName, float value) throws IOException;
-	protected abstract void doWriteDouble(int index, String fieldName, double value) throws IOException;
-	protected abstract void doWriteChar(int index, String fieldName, char value) throws IOException;
-	protected abstract void doWriteChars(int index, String fieldName, char[] values) throws IOException;
-	protected abstract void doWriteBoolean(int index, String fieldName, boolean value) throws IOException;
-	protected abstract void doWriteStringNumber(int index, String fieldName, String value) throws IOException;
-	protected abstract void doWriteBinary(int index, String fieldName, Base64Variant b64variant,
-            byte[] values, int offset, int len) throws IOException;
-	protected abstract void doWriteNull(int index, String fieldName) throws IOException;
-	protected abstract void doStartWriteEObject(int index, String fieldName, EObject object) throws IOException;
-	protected abstract void doStartWriteRootEObject(EObject object) throws IOException;
-	protected abstract void doEndWriteEObject(int index, String fieldName, EObject object) throws IOException;
-	protected abstract void doEndWriteRootEObject(EObject object) throws IOException;
-//	protected abstract void doWriteByte(int index, String fieldName, byte value) throws IOException;
-//	protected abstract void doWriteStringBytes(int index, String fieldName, byte[] values) throws IOException;
-
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonGenerator#writeArray(java.lang.String[], int, int)
+	 */
+	@Override
+	public void writeArray(String[] array, int offset, int length) throws IOException {
+		// TODO Auto-generated method stub
+		super.writeArray(array, offset, length);
+	}
+	
+	public void writeOneShotArray(Object[] array, int offset, int length) throws IOException {
+		
+	}
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeString(char[], int, int)
@@ -436,6 +458,94 @@ public abstract class CodecGeneratorBase extends GeneratorBase {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteNull(_writeContext.getCurrentIndex(), _writeContext.getCurrentName());
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonGenerator#canWriteObjectId()
+	 */
+	@Override
+	public boolean canWriteObjectId() {
+		return true;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonGenerator#writeObjectId(java.lang.Object)
+	 */
+	@Override
+	public void writeObjectId(Object id) throws IOException {
+		setCurrentValue(id);
+		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+			_reportError("Error writing object id while expecting a value");
+		}
+		doWriteObjectId(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), id);
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonGenerator#canWriteTypeId()
+	 */
+	@Override
+	public boolean canWriteTypeId() {
+		return true;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonGenerator#writeTypeId(java.lang.Object)
+	 */
+	@Override
+	public void writeTypeId(Object id) throws IOException {
+		setCurrentValue(id);
+		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+			_reportError("Error writing type information while expecting a value");
+		}
+		doWriteType(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), id);
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.CodeGeneratorBase#canWriteOneShotArray()
+	 */
+	@Override
+	public boolean canWriteOneShotArray() {
+		return true;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.CodeGeneratorBase#writeArray(java.lang.Object[], int, int, java.lang.Class)
+	 */
+	@Override
+	public <T> void writeArray(T[] array, int offset, int length, Class<T> clazz) throws IOException {
+		setCurrentValue(array);
+		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+			_reportError("Error writing array expecting a value, but need a name");
+		}
+		doWriteArray(array, offset, length, clazz);
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.CodeGeneratorBase#canWriteSuperTypes()
+	 */
+	@Override
+	public boolean canWriteSuperTypes() {
+		return true;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.CodeGeneratorBase#writeSuperTypes(java.lang.String[])
+	 */
+	@Override
+	public void writeSuperTypes(String[] supertypes) throws IOException {
+		setCurrentValue(supertypes);
+		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+			_reportError("Error writing supertype information while expecting a value");
+		}
+		doWriteSuperTypes(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), supertypes);
 	}
 
 }

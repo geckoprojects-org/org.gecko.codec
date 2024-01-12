@@ -13,13 +13,22 @@
  */
 package org.gecko.codec.jackson.module;
 
+import static org.gecko.codec.jackson.module.CodecProperties.ID_KEY;
+import static org.gecko.codec.jackson.module.CodecProperties.TYPE_KEY;
+
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
 
+import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.databind.ser.EcoreReferenceSerializer;
 import org.eclipse.emfcloud.jackson.databind.ser.NullKeySerializer;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.gecko.codec.jackson.databind.CodecFactory;
+import org.gecko.codec.jackson.databind.annotations.CodecIdentityInfo;
 import org.gecko.codec.jackson.databind.ser.CodecEcoreReferenceSerializer;
 import org.gecko.codec.jackson.databind.ser.CodecSerializers;
 
@@ -40,6 +49,27 @@ public class CodecModule extends EMFModule {
 	private static final String MODULE_NAME = "gecko-codec-emfjson";
 	protected static final int DEFAULT_FEATURES = CodecFeature.collectDefaults();
 	protected int moduleFeatures = DEFAULT_FEATURES;
+	private final Map<String, Object> properties;
+	
+	public CodecModule() {
+		this(null);
+	}
+
+	/**
+	 * Creates a new instance.
+	 * @param properties
+	 */
+	public CodecModule(Map<String, Object> properties) {
+		this.properties = Objects.isNull(properties) ? new HashMap<>() : properties;
+	}
+	
+	/**
+	 * Returns the properties.
+	 * @return the properties
+	 */
+	public Map<String, Object> getProperties() {
+		return properties;
+	}
 
 	/* 
 	 * (non-Javadoc)
@@ -65,7 +95,16 @@ public class CodecModule extends EMFModule {
 	 * @return mapper
 	 */
 	public static ObjectMapper setupDefaultMapper() {
-		return setupDefaultMapper(null);
+		return setupDefaultMapper(new CodecFactory());
+	}
+	
+	/**
+	 * Returns a pre configured mapper with the EMF module.
+	 *
+	 * @return mapper
+	 */
+	public static ObjectMapper setupDefaultMapper(Map<String, Object> properties) {
+		return setupDefaultMapper(new CodecFactory(), properties);
 	}
 
 	/**
@@ -75,7 +114,7 @@ public class CodecModule extends EMFModule {
 	 * @param factory Jackson factory
 	 * @return mapper
 	 */
-	public static ObjectMapper setupDefaultMapper(final JsonFactory factory) {
+	public static ObjectMapper setupDefaultMapper(final JsonFactory factory, final Map<String, Object> properties) {
 		final ObjectMapper mapper = new ObjectMapper(factory);
 		// same as emf
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
@@ -84,7 +123,8 @@ public class CodecModule extends EMFModule {
 		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 		mapper.setDateFormat(dateFormat);
 		mapper.setTimeZone(TimeZone.getDefault());
-		mapper.registerModule(new CodecModule());
+		CodecModule module = new CodecModule(properties);
+		mapper.registerModule(module);
 		// add default serializer for null EMap key
 		mapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
 
@@ -121,6 +161,10 @@ public class CodecModule extends EMFModule {
 	@Override
 	public void setupModule(final SetupContext context) {
 		super.setupModule(context);
+		String typeKey = (String) properties.getOrDefault(TYPE_KEY.name(), TYPE_KEY.getKeyValue());
+		setTypeInfo(new EcoreTypeInfo(typeKey));
+		String idKey = (String) properties.getOrDefault(ID_KEY.name(), ID_KEY.getKeyValue());
+		setIdentityInfo(new CodecIdentityInfo(idKey));
 		if (getReferenceSerializer() == null || getReferenceSerializer() instanceof EcoreReferenceSerializer) {
 			setReferenceSerializer(new CodecEcoreReferenceSerializer(getReferenceInfo(), getTypeInfo()));
 		}

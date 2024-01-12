@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 
-import org.gecko.codec.jackson.databind.ser.CodecGeneratorBase;
+import org.gecko.codec.jackson.databind.ser.CodecGeneratorBaseImpl;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -41,8 +41,8 @@ public class CodecFactory extends JsonFactory {
 	 * @see com.fasterxml.jackson.core.JsonFactory#createGenerator(java.io.DataOutput)
 	 */
 	@Override
-	public CodecGeneratorBase createGenerator(DataOutput out) throws IOException {
-		return new CodecGenerator(-1, null, null);
+	public CodecGeneratorBaseImpl createGenerator(DataOutput out) throws IOException {
+		return new CodecGeneratorImpl(-1, null, null);
 	}
 	
 	/* 
@@ -50,8 +50,8 @@ public class CodecFactory extends JsonFactory {
 	 * @see com.fasterxml.jackson.core.JsonFactory#createGenerator(java.io.OutputStream)
 	 */
 	@Override
-	public CodecGeneratorBase createGenerator(OutputStream out) throws IOException {
-		return new CodecGenerator(-1, null, null);
+	public CodecGeneratorBaseImpl createGenerator(OutputStream out) throws IOException {
+		return new CodecGeneratorImpl(-1, null, null);
 	}
 	
 	/* 
@@ -60,7 +60,7 @@ public class CodecFactory extends JsonFactory {
 	 */
 	@Override
 	protected JsonGenerator _createUTF8Generator(OutputStream out, IOContext ctxt) throws IOException {
-		return new CodecGenerator(-1, null, null);
+		return new CodecGeneratorImpl(-1, null, null);
 	}
 	
 	/* 
@@ -68,8 +68,8 @@ public class CodecFactory extends JsonFactory {
 	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.DataInput)
 	 */
 	@Override
-	public CodecParserBase createParser(DataInput in) throws IOException {
-		return new CodecParserBase(null, -1);
+	public CodecParserBaseImpl createParser(DataInput in) throws IOException {
+		return new CodecParserBaseImpl(null, -1);
 	}
 	
 	/* 
@@ -77,9 +77,9 @@ public class CodecFactory extends JsonFactory {
 	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.net.URL)
 	 */
 	@Override
-	public CodecParserBase createParser(URL url) throws IOException, JsonParseException {
+	public CodecParserBaseImpl createParser(URL url) throws IOException, JsonParseException {
 		System.out.println("create lucene parser for " + url);
-		return new CodecParserBase(null, -1);
+		return new CodecParserBaseImpl(null, -1);
 	}
 	
 	

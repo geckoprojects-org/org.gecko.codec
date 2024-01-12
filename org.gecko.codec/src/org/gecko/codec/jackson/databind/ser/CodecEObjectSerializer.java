@@ -16,34 +16,50 @@ import java.io.IOException;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectProperty;
-import org.eclipse.emfcloud.jackson.databind.property.EObjectPropertyMap;
-import org.eclipse.emfcloud.jackson.databind.ser.EObjectSerializer;
 import org.eclipse.emfcloud.jackson.utils.EObjects;
+import org.gecko.codec.jackson.databind.property.CodecEObjectPropertyMap;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
-public class CodecEObjectSerializer extends EObjectSerializer {
+/**
+ * Serializes an {@link EObject}. This is where it all begins 
+ * @author Mark Hoffmann
+ * @since 12.01.2024
+ */
+public class CodecEObjectSerializer extends JsonSerializer<EObject> {
 
 	private final JsonSerializer<EObject> refSerializer;
-	private final EObjectPropertyMap.Builder builder;
+	private final CodecEObjectPropertyMap.Builder builder;
 
-	public CodecEObjectSerializer(final EObjectPropertyMap.Builder builder, final JsonSerializer<EObject> serializer) {
-		super(builder, serializer);
+	public CodecEObjectSerializer(final CodecEObjectPropertyMap.Builder builder, final JsonSerializer<EObject> serializer) {
 		this.builder = builder;
 		this.refSerializer = serializer;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.databind.JsonSerializer#handledType()
+	 */
 	@Override
 	public Class<EObject> handledType() {
 		return EObject.class;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
+	 */
 	@Override
 	public void serialize(final EObject object, final JsonGenerator jg, final SerializerProvider provider)
 			throws IOException {
-		EObjectPropertyMap properties = builder.construct(provider, object.eClass());
+		/*
+		 * Construct all needed properties, to be serialized. The properties hold the information about
+		 * each element to be serialized. This also includes _type, _id. So, it can be more than just the 
+		 * EStrucutralFeatures.
+		 */
+		CodecEObjectPropertyMap properties = builder.construct(provider, object.eClass());
 
 		final EObject parent = getParent(provider);
 		

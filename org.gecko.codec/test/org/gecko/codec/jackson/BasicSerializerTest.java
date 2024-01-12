@@ -39,60 +39,12 @@ import org.junit.jupiter.api.Test;
  * @author mark
  * @since 09.01.2024
  */
-public class BasicTest {
+public class BasicSerializerTest {
 
 	private ResourceSet resourceSet;
 
 	@BeforeEach
 	public void setUp() {
-		resourceSet = new ResourceSetImpl();
-		resourceSet.getPackageRegistry().put(ModelPackage.eNS_URI, ModelPackage.eINSTANCE);
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new CodecResourceFactory());
-		resourceSet.getURIConverter().getURIHandlers().add(0, new URIHandler() {
-			
-			@Override
-			public void setAttributes(URI uri, Map<String, ?> attributes, Map<?, ?> options) throws IOException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public Map<String, ?> getAttributes(URI uri, Map<?, ?> options) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public boolean exists(URI uri, Map<?, ?> options) {
-				return canHandle(uri);
-			}
-			
-			@Override
-			public void delete(URI uri, Map<?, ?> options) throws IOException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public OutputStream createOutputStream(URI uri, Map<?, ?> options) throws IOException {
-				return new CodecOutputStream();
-			}
-			
-			@Override
-			public InputStream createInputStream(URI uri, Map<?, ?> options) throws IOException {
-				return null;
-			}
-			
-			@Override
-			public Map<String, ?> contentDescription(URI uri, Map<?, ?> options) throws IOException {
-				return null;
-			}
-			
-			@Override
-			public boolean canHandle(URI uri) {
-				return uri.scheme().equals("mongo");
-			}
-		});
 	}
 
 	@Test
