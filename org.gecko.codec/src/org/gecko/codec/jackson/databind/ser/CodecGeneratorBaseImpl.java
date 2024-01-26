@@ -19,13 +19,16 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.emf.ecore.EObject;
-import org.gecko.codec.jackson.CodecGeneratorBase;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.gecko.codec.jackson.CodecGenerator;
+import org.gecko.codec.jackson.CodecGeneratorBase;
+import org.gecko.codec.jackson.databind.CodecWriteContext;
 
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.base.GeneratorBase;
 import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
 
 /**
@@ -44,6 +47,9 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	protected CodecGeneratorBaseImpl(int features, ObjectCodec codec, IOContext ctxt) {
 		super(features, codec, ctxt);
+		DupDetector dups = Feature.STRICT_DUPLICATE_DETECTION.enabledIn(features)
+                ? DupDetector.rootDetector(this) : null;
+		_writeContext = CodecWriteContext.createRootCodecContext(dups);
 	}
 	
 	/**
@@ -52,8 +58,17 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @param codec
 	 * @param ctxt
 	 */
-	protected CodecGeneratorBaseImpl(int features, ObjectCodec codec, IOContext ctxt, JsonWriteContext writeContext) {
+	protected CodecGeneratorBaseImpl(int features, ObjectCodec codec, IOContext ctxt, CodecWriteContext writeContext) {
 		super(features, codec, ctxt, writeContext);
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.base.GeneratorBase#getOutputContext()
+	 */
+	@Override
+	public CodecWriteContext getOutputContext() {
+		return (CodecWriteContext)super.getOutputContext();
 	}
 	
 	protected EObject getCurrentEObject() {
@@ -123,7 +138,12 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 		setCurrentValue(forValue);
 		int index = _writeContext.getCurrentIndex();
 		String name = _writeContext.getCurrentName();
-		_writeContext = _writeContext.createChildArrayContext(forValue);
+		
+		EStructuralFeature feature = getOutputContext().getFeature();
+		CodecWriteContext ctx = getOutputContext().createChildArrayContext(forValue);
+		ctx.setFeature(feature);
+		_writeContext = ctx;
+		
 		writeStartArray();
 		doStartWriteArray(index + 1, name, forValue);
 	}
@@ -146,6 +166,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doEndWriteArray(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), result);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -181,7 +202,10 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 		/*
 		 * We create the sub / child context for the fields of the EObject
 		 */
-		_writeContext = _writeContext.createChildObjectContext(forValue);
+		EStructuralFeature feature = getOutputContext().getFeature();
+		CodecWriteContext ctx = getOutputContext().createChildObjectContext(forValue);
+		ctx.setFeature(feature);
+		_writeContext = ctx;
 		writeStartObject();
 		if (inRoot) {
 			doStartWriteRootEObject(getCurrentEObject());
@@ -212,7 +236,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			}
 			doEndWriteEObject(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), result);
 		}
-		
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -238,6 +262,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteString(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), text);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 	
 	/* 
@@ -248,10 +273,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	public void writeArray(String[] array, int offset, int length) throws IOException {
 		// TODO Auto-generated method stub
 		super.writeArray(array, offset, length);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 	
 	public void writeOneShotArray(Object[] array, int offset, int length) throws IOException {
-		
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 	
 	/* 
@@ -314,6 +340,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteChars(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), text);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -327,7 +354,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteChar(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), c);
-
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -341,6 +368,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteBinary(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), bv, data, offset, len);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -354,6 +382,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteInt(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -367,6 +396,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteLong(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -380,6 +410,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteBigInt(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -393,6 +424,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteDouble(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -406,6 +438,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteFloat(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -419,6 +452,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteBigDecimal(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -432,6 +466,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteStringNumber(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), encodedValue);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -445,6 +480,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteBoolean(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), state);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 
 	/* 
@@ -458,6 +494,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Expect a value to write, but a field name is expected");
 		}
 		doWriteNull(_writeContext.getCurrentIndex(), _writeContext.getCurrentName());
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 	
 	/* 
@@ -480,6 +517,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Error writing object id while expecting a value");
 		}
 		doWriteObjectId(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), id);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 	
 	/* 
@@ -502,6 +540,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Error writing type information while expecting a value");
 		}
 		doWriteType(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), id);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 	
 	/* 
@@ -524,6 +563,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Error writing array expecting a value, but need a name");
 		}
 		doWriteArray(array, offset, length, clazz);
+		CodecWriteContext.resetFeature(_writeContext);
 	}
 	
 	/* 

@@ -153,9 +153,10 @@ public final class CodecEObjectPropertyMap {
 				propertiesMap.put(p.getFieldName(), p);
 			};
 
+			EAttribute idAttribute = type.getEIDAttribute();
 			// Handle property setup for ID's
 			if (OPTION_ID_TOP.enabledIn(features)) {
-				handleIdentity(add);
+				handleIdentity(add, idAttribute);
 			}
 
 			add.accept(new EObjectReferenceProperty(referenceInfo));
@@ -165,7 +166,7 @@ public final class CodecEObjectPropertyMap {
 
 			// Handle alternative ID index property setup
 			if (!OPTION_ID_TOP.enabledIn(features)) {
-				handleIdentity(add);
+				handleIdentity(add, idAttribute);
 			}
 
 			if (type != null) {
@@ -194,13 +195,13 @@ public final class CodecEObjectPropertyMap {
 		/**
 		 * @param add
 		 */
-		private void handleIdentity(Consumer<EObjectProperty> add) {
+		private void handleIdentity(Consumer<EObjectProperty> add, EStructuralFeature idFeature) {
 			if (OPTION_USE_ID.enabledIn(features)) {
-				add.accept(new CodecIdentityProperty(identityInfo));
+				add.accept(new CodecIdentityProperty(identityInfo, idFeature));
 				return;
 			}
 			if (CodecFeature.OPTION_USE_IDFIELD.enabledIn(features)) {
-				add.accept(new CodecIdentityProperty(new CodecIdentityInfo(CodecProperties.ID_KEY.getKeyValue(), true)));
+				add.accept(new CodecIdentityProperty(new CodecIdentityInfo(CodecProperties.ID_KEY.getKeyValue(), true), idFeature));
 			}
 		}
 
@@ -210,7 +211,7 @@ public final class CodecEObjectPropertyMap {
 			if (isCandidate(feature)) {
 				JavaType javaType = factory.typeOf(ctxt, type, feature);
 				if (javaType != null) {
-					return Optional.of(new EObjectFeatureProperty(feature, javaType, features));
+					return Optional.of(new CodecFeatureProperty(feature, javaType, features));
 				}
 			}
 

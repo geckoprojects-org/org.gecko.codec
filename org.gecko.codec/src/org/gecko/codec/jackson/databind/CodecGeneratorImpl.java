@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.gecko.codec.jackson.databind.ser.CodecGeneratorBaseImpl;
 
 import com.fasterxml.jackson.core.Base64Variant;
@@ -51,7 +52,9 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteString(int index, String fieldName, String value) throws IOException {
 		Object parent = getOutputContext().getParent().getCurrentValue();
-		System.out.println("[FIELD] Write '" + parent.getClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
+		System.out.println("[FIELD] Write '" + parent.getClass().getSimpleName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
 	/* 
@@ -61,6 +64,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteShort(int index, String fieldName, short value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -71,6 +76,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteLong(int index, String fieldName, long value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -81,6 +88,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteInt(int index, String fieldName, int value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -91,6 +100,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteBigInt(int index, String fieldName, BigInteger value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -101,6 +112,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteBigDecimal(int index, String fieldName, BigDecimal value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -111,6 +124,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteFloat(int index, String fieldName, float value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -121,6 +136,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteDouble(int index, String fieldName, double value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -131,6 +148,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteChar(int index, String fieldName, char value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -141,6 +160,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteChars(int index, String fieldName, char[] values) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + String.valueOf(values));
 	}
 
@@ -151,6 +172,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteBoolean(int index, String fieldName, boolean value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -161,6 +184,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteStringNumber(int index, String fieldName, String value) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":" + value);
 	}
 
@@ -171,6 +196,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	@Override
 	public void doWriteNull(int index, String fieldName) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":NULL");
 	}
 
@@ -182,6 +209,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	public void doWriteBinary(int index, String fieldName, Base64Variant b64variant, byte[] values, int offset,
 			int len) throws IOException {
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[FIELD] Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ":NULL");
 
 	}
@@ -192,6 +221,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	 */
 	@Override
 	public void doStartWriteEObject(int index, String fieldName, EObject object) throws IOException {
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[START] Write EObject [" + index + "]: " + fieldName + ": " + object);
 	}
 
@@ -210,6 +241,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	 */
 	@Override
 	public void doEndWriteEObject(int index, String fieldName, EObject object) throws IOException {
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[END]   Write EObject [" + index + "]: " + fieldName + ": " + object);
 	}
 
@@ -228,6 +261,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	 */
 	@Override
 	public void doWriteObjectId(int index, String fieldName, Object object) throws IOException {
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		EObject parent = (EObject) getOutputContext().getParent().getCurrentValue();
 		System.out.println("[ID]    Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ": " + object);
 	}
@@ -246,6 +281,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 					collect(Collectors.toList()).
 					toArray(new String[0]));
 		}
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		System.out.println("[TYPE]  Write '" + parent.eClass().getName() + "' - [" + index + "]: " + fieldName + ": " + superTypes);
 	}
 
@@ -255,7 +292,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	 */
 	@Override
 	public void doStartWriteArray(int index, String fieldName, Object object) throws IOException {
-		// TODO Auto-generated method stub
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		if (Objects.nonNull(object) && object.getClass().isArray()) {
 			String[] array = Arrays.asList((Object[])object).stream().filter(Objects::nonNull).map(Object::toString).collect(Collectors.toList()).toArray(new String[0]);
 			System.out.println("[START] Write array - [" + index + "]: " + fieldName + ": " + String.join(", ", array));
@@ -268,6 +306,8 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 	 */
 	@Override
 	public void doEndWriteArray(int index, String fieldName, Object object) throws IOException {
+		EStructuralFeature feature = getOutputContext().getFeature();
+		fieldName = "feature: " + (feature != null ? feature.getName() : "null") + " field: " + fieldName;
 		if (Objects.nonNull(object) && object.getClass().isArray()) {
 			String[] array = Arrays.asList((Object[])object).stream().filter(Objects::nonNull).map(Object::toString).collect(Collectors.toList()).toArray(new String[0]);
 			System.out.println("[END]   Write array [" + index + "]: " + fieldName + ": " + String.join(", ", array));

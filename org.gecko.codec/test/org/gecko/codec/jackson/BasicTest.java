@@ -121,7 +121,7 @@ public class BasicTest {
 	}
 	
 	@Test
-	public void testSerializeSoperType() {
+	public void testSerializeSuperType() {
 		
 		ConcreteTypeOne cto1 = ModelFactory.eINSTANCE.createConcreteTypeOne();
 		cto1.setName("test");
@@ -158,6 +158,36 @@ public class BasicTest {
 		
 		Resource resource = resourceSet.createResource(URI.createURI("mongo:test"));
 		resource.getContents().add(u2);
+		resource.getContents().add(u1);
+		try {
+			resource.save(null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	@Test
+	public void testSerializeList() {
+		
+		User u1 = ModelFactory.eINSTANCE.createUser();
+		u1.setUserId("u1");
+		u1.setName("Mark");
+		
+		User u3= ModelFactory.eINSTANCE.createUser();
+		u3.setUserId("u3");
+		u3.setName("Jürgen");
+		User u4= ModelFactory.eINSTANCE.createUser();
+		u4.setUserId("u3");
+		u4.setName("Ilenia");
+		u1.getFriends().add(u3);
+		u1.getFriends().add(u4);
+		
+		Resource resource = resourceSet.createResource(URI.createURI("mongo:test"));
+		resource.getContents().add(u3);
+		resource.getContents().add(u4);
 		resource.getContents().add(u1);
 		try {
 			resource.save(null);

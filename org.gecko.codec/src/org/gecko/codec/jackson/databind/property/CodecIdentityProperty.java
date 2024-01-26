@@ -14,12 +14,14 @@ package org.gecko.codec.jackson.databind.property;
 import java.io.IOException;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.annotations.EcoreIdentityInfo;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectProperty;
 import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.eclipse.emfcloud.jackson.utils.ValueReader;
 import org.eclipse.emfcloud.jackson.utils.ValueWriter;
+import org.gecko.codec.jackson.databind.CodecWriteContext;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -36,10 +38,11 @@ public class CodecIdentityProperty extends EObjectProperty {
 
 	private final ValueReader<Object, String> valueReader;
 	private final ValueWriter<EObject, Object> valueWriter;
+	private final EStructuralFeature idFeature;
 
-	public CodecIdentityProperty(final EcoreIdentityInfo info) {
+	public CodecIdentityProperty(final EcoreIdentityInfo info, EStructuralFeature idFeature) {
 		super(info.getProperty());
-
+		this.idFeature = idFeature;
 		this.valueReader = info.getValueReader();
 		this.valueWriter = info.getValueWriter();
 	}
@@ -48,7 +51,11 @@ public class CodecIdentityProperty extends EObjectProperty {
 	public void serialize(final EObject bean, final JsonGenerator jg, final SerializerProvider provider)
 			throws IOException {
 		if (jg.canWriteObjectId()) {
-			jg.writeFieldName(getFieldName());
+			if (CodecWriteContext.isCodecContext(jg.getOutputContext())) {
+				CodecWriteContext.writeFeatureAndFieldName(jg.getOutputContext(), idFeature, getFieldName());
+			} else {
+				jg.writeFieldName(getFieldName());
+			}
 			jg.writeObjectId(valueWriter.writeValue(bean, provider));
 		} else {
 			jg.writeObjectField(getFieldName(), valueWriter.writeValue(bean, provider));
