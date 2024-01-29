@@ -13,6 +13,8 @@
  */
 package org.gecko.codec.jackson.resource;
 
+import java.util.Collections;
+
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
 import org.gecko.codec.jackson.databind.CodecFactory;
 import org.gecko.codec.jackson.module.CodecModule;
@@ -28,7 +30,7 @@ public class CodecResourceFactory extends JsonResourceFactory {
 	 * Creates a new instance.
 	 */
 	public CodecResourceFactory() {
-		super(CodecModule.setupDefaultMapper(new CodecFactory()));
+		super(CodecModule.setupDefaultMapper(new CodecFactory(),Collections.emptyMap()));
 	}
 	
 }

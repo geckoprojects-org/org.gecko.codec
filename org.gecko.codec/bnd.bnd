@@ -10,4 +10,5 @@ Bundle-Description: Gecko Project Codec Framework
 	org.gecko.codec.emfjson;version=project
 	
 -testpath: \
-	org.gecko.codec.test.models;version=project
+	org.gecko.codec.test.models;version=project,\
+	org.apache.servicemix.bundles.junit

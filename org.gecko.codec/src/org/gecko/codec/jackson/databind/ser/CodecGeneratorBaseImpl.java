@@ -19,13 +19,15 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.emf.ecore.EObject;
-import org.gecko.codec.jackson.CodecGeneratorBase;
 import org.gecko.codec.jackson.CodecGenerator;
+import org.gecko.codec.jackson.CodecGeneratorBase;
+import org.gecko.codec.jackson.databind.FeatureWriteContext;
 
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.base.GeneratorBase;
 import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
 
 /**
@@ -44,6 +46,12 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	protected CodecGeneratorBaseImpl(int features, ObjectCodec codec, IOContext ctxt) {
 		super(features, codec, ctxt);
+		
+        DupDetector dups = Feature.STRICT_DUPLICATE_DETECTION.enabledIn(features)
+                ? DupDetector.rootDetector(this) : null;
+        
+        _writeContext = FeatureWriteContext.createRootContext(dups);
+
 	}
 	
 	/**
@@ -93,7 +101,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	protected void _verifyValueWrite(String typeMsg) throws IOException {
-//		System.out.println("Verify message: " + typeMsg);
+		System.out.println("Verify message: " + typeMsg);
 		// TODO add diagnostic here
 	}
 

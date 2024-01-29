@@ -19,24 +19,19 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIHandler;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.junit.model.Address;
 import org.eclipse.emfcloud.jackson.junit.model.ModelFactory;
 import org.eclipse.emfcloud.jackson.junit.model.ModelPackage;
 import org.eclipse.emfcloud.jackson.junit.model.Sex;
 import org.eclipse.emfcloud.jackson.junit.model.User;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
-import org.eclipse.emfcloud.jackson.utils.ValueWriter;
 import org.gecko.codec.mongo.resource.TestResourceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -136,7 +131,7 @@ public class BasicTest {
 		u1.setName("Mark");
 		User u2 = ModelFactory.eINSTANCE.createUser();
 		u2.setUserId("u2");
-		u2.setName("Guido");
+		u2.setName("Jürgen");
 		u1.setUniqueFriend(u2);
 		
 		Address a1 = ModelFactory.eINSTANCE.createAddress();
