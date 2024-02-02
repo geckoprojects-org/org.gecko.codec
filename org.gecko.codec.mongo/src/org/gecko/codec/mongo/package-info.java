@@ -18,4 +18,4 @@
  */
 @org.osgi.annotation.versioning.Version("1.0.0")
 @org.osgi.annotation.bundle.Export
-package org.gecko.codec.jackson.databind;
+package org.gecko.codec.mongo;

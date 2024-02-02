@@ -4,7 +4,12 @@
 	com.fasterxml.jackson.core.jackson-core;version=latest,\
 	com.fasterxml.jackson.core.jackson-databind;version=latest,\
 	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
-	org.gecko.codec.emfjson;version=project
+	org.gecko.codec.emfjson;version=project,\
+	org.gecko.codec,\
+	org.mongodb.mongo-java-driver,\
+	org.gecko.emf.mongo.api,\
+	org.gecko.emf.mongo.component,\
+	org.gecko.mongo.osgi.api
 	
 -testpath.model: \
 	org.gecko.codec.test.models;version=project

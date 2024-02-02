@@ -69,7 +69,7 @@ public class CodecWriteContext extends JsonWriteContext {
     }
     
     public static void resetFeature(JsonStreamContext ctx) {
-    	if (nonNull(ctx) && ctx instanceof CodecWriteContext) {
+    	if (isCodecContext(ctx)) {
     		((CodecWriteContext)ctx).setFeature(null);
     	}
     }
