@@ -16,11 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.bson.Document;
-import org.bson.json.JsonWriterSettings;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -30,6 +27,7 @@ import org.gecko.emf.mongo.OutputStreamFactory;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.emf.osgi.example.model.basic.BasicFactory;
+import org.gecko.emf.osgi.example.model.basic.BasicPackage;
 import org.gecko.emf.osgi.example.model.basic.Contact;
 import org.gecko.emf.osgi.example.model.basic.ContactContextType;
 import org.gecko.emf.osgi.example.model.basic.ContactType;
@@ -49,7 +47,6 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection; 
 
 @RequireEMF
@@ -63,7 +60,7 @@ import com.mongodb.client.MongoCollection;
 public class MongoTest {
 
 	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
-			+ EMFNamespaces.EMF_MODEL_NAME + "=collection))")
+			+ EMFNamespaces.EMF_MODEL_NAME + "=collection)("+ EMFNamespaces.EMF_MODEL_NAME + "=basic))")
 	ServiceAware<ResourceSet> rsAware;
 
 	@InjectService 
@@ -76,37 +73,6 @@ public class MongoTest {
 	OutputStreamFactory outputStreamFactory;
 
 	private void initResourceSet(ResourceSet resourceSet) {
-//		resourceSet.getPackageRegistry().put(ModelPackage.eNS_URI, ModelPackage.eINSTANCE);
-//		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new MongoResourceFactory());
-//		resourceSet.getURIConverter().getURIHandlers().add(0, new URIHandlerImpl() {
-//			
-//			@Override
-//			public void setAttributes(URI uri, Map<String, ?> attributes, Map<?, ?> options) throws IOException {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public OutputStream createOutputStream(URI uri, Map<?, ?> options) throws IOException {
-//				return outputStreamFactory.createOutputStream(uri, options, getCollection(uri), getResponse(options));
-//			}
-//			
-//			private MongoCollection<Document> getCollection(URI uri) {
-//				MongoDatabase database = databaseProvider.getDatabase();
-//				String collectionName = uri.segment(1);
-//				return database.getCollection(collectionName);
-//			}
-//
-//			@Override
-//			public InputStream createInputStream(URI uri, Map<?, ?> options) throws IOException {
-//				return inputStreamFactory.createInputStream(uri, options,  getCollection(uri), getResponse(options));
-//			}
-//			
-//			@Override
-//			public boolean canHandle(URI uri) {
-//				return uri.scheme().equals("mongodb");
-//			}
-//		});
 	}
 
 	@Test
@@ -114,6 +80,8 @@ public class MongoTest {
 			throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
 		ResourceSet resourceSet = (ResourceSet) rsAware.waitForService(2000l);
 		initResourceSet(resourceSet);
+		assertNotNull(resourceSet.getPackageRegistry().getEPackage(BasicPackage.eNS_URI));
+		
 		System.out.println("Dropping DB");
 		MongoCollection<Document> personCollection = clientProvider.getMongoClient().getDatabase("test").getCollection("Person");
 		personCollection.drop();
@@ -167,15 +135,62 @@ public class MongoTest {
 		personCollection.drop();
 	}
 	
-	@Test
-	void testPlain() throws Exception {
-		MongoClient client = clientProvider.getMongoClient();
-        Document pingCommand = new Document("ping", 1);
-        List<Document> databases = client.listDatabases().into(new ArrayList<>());
-        databases.forEach(db -> System.out.println(db.toJson()));
-        Document response = client.getDatabase("admin").runCommand(pingCommand);
-        System.out.println("=> Print result of the '{ping: 1}' command.");
-        System.out.println(response.toJson(JsonWriterSettings.builder().indent(true).build()));
-//        System.out.println); response.getDouble("ok").equals(1.0);
-	}
+	
+	public static final String PERSON_ID = "testUser";
+	
+//	@Test
+//	void testLoad() throws Exception {
+//		ObjectMapper mapper = CodecModule.setupDefaultMapper(new TestFactory(), Collections.emptyMap());
+//		
+//		MongoResource resource = new MongoResource(URI.createURI("mongodb://localhost:27017/test/Person/"), databaseProvider, mapper);
+//		MongoCodecProvider codecProvider = new MongoCodecProvider(mapper, resource, null);
+////		codecProvider.setConverterService(converterService);
+//		CodecRegistry eobjectRegistry = CodecRegistries.fromProviders(codecProvider);
+//		CodecRegistry defaultRegistry = MongoClient.getDefaultCodecRegistry();
+//		CodecRegistry codecRegistry = CodecRegistries.fromRegistries(eobjectRegistry, defaultRegistry);
+//		// get collections and clear it
+//		MongoDatabase database = databaseProvider.getDatabase();
+//		MongoCollection<Document> collection = database.getCollection(BasicPackage.Literals.PERSON.getName());
+//		MongoCollection<EObject> curCollection = collection.withCodecRegistry(codecRegistry).withDocumentClass(EObject.class);
+//
+//		FindIterable<EObject> find = curCollection.find(new Document("_id", PERSON_ID), EObject.class);
+//		find.first();
+//}
+//	@Test
+//	void testSave() throws Exception {
+//		ObjectMapper mapper = CodecModule.setupDefaultMapper(new TestFactory(), Collections.emptyMap());
+//		
+//		MongoResource resource = new MongoResource(URI.createURI("mongodb://localhost:27017/test/Person/"), databaseProvider, mapper);
+//		MongoCodecProvider codecProvider = new MongoCodecProvider(mapper, resource, null);
+////		codecProvider.setConverterService(converterService);
+//		CodecRegistry eobjectRegistry = CodecRegistries.fromProviders(codecProvider);
+//		CodecRegistry defaultRegistry = MongoClient.getDefaultCodecRegistry();
+//		CodecRegistry codecRegistry = CodecRegistries.fromRegistries(eobjectRegistry, defaultRegistry);
+//		// get collections and clear it
+//		MongoDatabase database = databaseProvider.getDatabase();
+//		MongoCollection<Document> collection = database.getCollection(BasicPackage.Literals.PERSON.getName());
+//		MongoCollection<EObject> curCollection = collection.withCodecRegistry(codecRegistry).withDocumentClass(EObject.class);
+//		
+//		Person person = BasicFactory.eINSTANCE.createPerson();
+//		person.setFirstName("Mark");
+//		person.setLastName("Hoffmann");
+//		person.setGender(GenderType.MALE);
+//		person.setId(PERSON_ID);
+////		person.getContact().add(EcoreUtil.copy(c1));
+////		person.getContact().add(EcoreUtil.copy(c2));
+//
+//		UpdateResult replaceOne = curCollection.replaceOne(Filters.eq("_id", person.getId()), person);
+//	}
+//	
+//	@Test
+//	void testPlain() throws Exception {
+//		MongoClient client = clientProvider.getMongoClient();
+//        Document pingCommand = new Document("ping", 1);
+//        List<Document> databases = client.listDatabases().into(new ArrayList<>());
+//        databases.forEach(db -> System.out.println(db.toJson()));
+//        Document response = client.getDatabase("admin").runCommand(pingCommand);
+//        System.out.println("=> Print result of the '{ping: 1}' command.");
+//        System.out.println(response.toJson(JsonWriterSettings.builder().indent(true).build()));
+////        System.out.println); response.getDouble("ok").equals(1.0);
+//	}
 }

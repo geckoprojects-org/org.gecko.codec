@@ -13,31 +13,26 @@
  */
 package org.gecko.codec.mongo;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIHandler;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.junit.model.Address;
 import org.eclipse.emfcloud.jackson.junit.model.ModelFactory;
 import org.eclipse.emfcloud.jackson.junit.model.ModelPackage;
 import org.eclipse.emfcloud.jackson.junit.model.Sex;
 import org.eclipse.emfcloud.jackson.junit.model.User;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
-import org.eclipse.emfcloud.jackson.utils.ValueWriter;
-import org.gecko.codec.mongo.resource.TestResourceFactory;
+import org.gecko.codec.jackson.resource.CodecResourceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
@@ -47,14 +42,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class BasicTest {
 
 	private ResourceSet resourceSet;
-	private ObjectMapper mapper;
 
 	@BeforeEach
 	public void setUp() {
-		mapper = new ObjectMapper(new TestFactory());
 		resourceSet = new ResourceSetImpl();
 		resourceSet.getPackageRegistry().put(ModelPackage.eNS_URI, ModelPackage.eINSTANCE);
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new TestResourceFactory());
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new CodecResourceFactory());
 		resourceSet.getURIConverter().getURIHandlers().add(0, new URIHandler() {
 			
 			@Override
@@ -82,12 +75,12 @@ public class BasicTest {
 			
 			@Override
 			public OutputStream createOutputStream(URI uri, Map<?, ?> options) throws IOException {
-				return new TestOutputStream();
+				return new ByteArrayOutputStream();
 			}
 			
 			@Override
 			public InputStream createInputStream(URI uri, Map<?, ?> options) throws IOException {
-				return new TestInputStream();
+				return new ByteArrayInputStream("".getBytes());
 			}
 			
 			@Override

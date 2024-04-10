@@ -19,7 +19,8 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.gecko.emf.osgi.example.model.basic;version=latest,\
 	org.mongodb.mongo-java-driver,\
 	org.gecko.emf.collections,\
-	org.gecko.codec.mongo;version=latest
+	org.gecko.codec.mongo;version=latest,\
+	org.gecko.emf.osgi.component
 	
 Private-Package: org.gecko.codec.mongo.test
 
@@ -27,3 +28,4 @@ Bundle-Version: 1.0.0.SNAPSHOT
 
 # Sometimes without DynamicImport Mockito will not find certain classes
 #DynamicImport-Package: *
+-privatepackage: org.gecko.codec.mongo

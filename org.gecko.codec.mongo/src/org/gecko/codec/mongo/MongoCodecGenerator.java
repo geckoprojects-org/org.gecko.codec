@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.gecko.codec.jackson.databind.ser.CodecGeneratorBaseImpl;
 
 import com.fasterxml.jackson.core.Base64Variant;
+import com.fasterxml.jackson.core.ObjectCodec;
 
 /**
  * 
@@ -35,17 +36,17 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 
 	/**
 	 * Creates a new instance.
+	 * @param objectCodec 
 	 * 
 	 * @param writer2
 	 */
-	public MongoCodecGenerator(BsonWriter writer) {
-		super(-1, null, null);
+	public MongoCodecGenerator(BsonWriter writer, ObjectCodec objectCodec) {
+		super(-1, objectCodec, null);
 		this.writer = writer;
 	}
 
 	@Override
 	public void doStartWriteRootEObject(EObject eObject) throws IOException {
-//		writer = new JsonWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
 		doStartWriteEObject(0, "", eObject);
 	}
 
@@ -100,7 +101,7 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 
 	@Override
 	public <T> void doWriteArray(T[] array, int offset, int length, Class<T> clazz) throws IOException {
-		System.out.println("doWriteArray" + array + " of " + clazz);
+		writer.writeEndArray();
 	}
 
 	@Override

@@ -21,9 +21,11 @@ import java.net.URL;
 
 import org.gecko.codec.jackson.databind.ser.CodecGeneratorBaseImpl;
 
+import com.fasterxml.jackson.core.ErrorReportConfiguration;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.io.ContentReference;
 import com.fasterxml.jackson.core.io.IOContext;
 
 /**
@@ -78,8 +80,10 @@ public class CodecFactory extends JsonFactory {
 	 */
 	@Override
 	public CodecParserBaseImpl createParser(URL url) throws IOException, JsonParseException {
-		System.out.println("create lucene parser for " + url);
-		return new CodecParserBaseImpl(null, -1);
+		IOContext context = _createContext(
+				ContentReference.construct(false, "Hallo Welt", ErrorReportConfiguration.defaults()), true);
+
+		return new CodecParserBaseImpl(context, -1);
 	}
 	
 	

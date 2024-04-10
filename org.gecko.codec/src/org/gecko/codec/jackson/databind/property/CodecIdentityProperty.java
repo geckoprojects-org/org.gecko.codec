@@ -12,6 +12,7 @@
 package org.gecko.codec.jackson.databind.property;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -50,6 +51,9 @@ public class CodecIdentityProperty extends EObjectProperty {
 	@Override
 	public void serialize(final EObject bean, final JsonGenerator jg, final SerializerProvider provider)
 			throws IOException {
+		if(Objects.nonNull(bean.eContainer()) ) {
+			return;
+		}
 		if (jg.canWriteObjectId()) {
 			if (CodecWriteContext.isCodecContext(jg.getOutputContext())) {
 				CodecWriteContext.writeFeatureAndFieldName(jg.getOutputContext(), idFeature, getFieldName());

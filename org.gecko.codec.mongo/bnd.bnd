@@ -9,7 +9,9 @@
 	org.mongodb.mongo-java-driver,\
 	org.gecko.emf.mongo.api,\
 	org.gecko.emf.mongo.component,\
-	org.gecko.mongo.osgi.api
+	org.gecko.mongo.osgi.api,\
+	org.gecko.emf.collections
 	
 -testpath.model: \
-	org.gecko.codec.test.models;version=project
+	org.gecko.codec.test.models;version=project,\
+	org.gecko.emf.osgi.example.model.basic;version=latest
