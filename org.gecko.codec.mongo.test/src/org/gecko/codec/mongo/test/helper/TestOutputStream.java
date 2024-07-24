@@ -11,12 +11,10 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.mongo;
+package org.gecko.codec.mongo.test.helper;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 
 /**
  * 

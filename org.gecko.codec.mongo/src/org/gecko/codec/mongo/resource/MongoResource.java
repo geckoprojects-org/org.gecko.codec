@@ -34,6 +34,10 @@ public final class MongoResource extends JsonResource {
 
 	private MongoDatabaseProvider provider;
 	private ObjectMapper mapper;
+	
+	public MongoResource(URI uri) {
+		super(uri);
+	}
 
 	/**
 	 * Creates a new instance.

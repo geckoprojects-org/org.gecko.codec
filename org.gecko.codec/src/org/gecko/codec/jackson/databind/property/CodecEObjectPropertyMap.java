@@ -93,7 +93,7 @@ public final class CodecEObjectPropertyMap {
 		private final EcoreReferenceInfo referenceInfo;
 		private final int features;
 
-		private MapperConfigBase config;
+		private MapperConfigBase<? extends ConfigFeature, ? extends MapperConfigBase<?,?>> config;
 
 		public Builder(final EcoreIdentityInfo identityInfo, final EcoreTypeInfo typeInfo,
 				final EcoreReferenceInfo referenceInfo, final int features) {
@@ -113,7 +113,7 @@ public final class CodecEObjectPropertyMap {
 			return this;
 		}
 
-		protected MapperConfigBase getConfig() {
+		protected MapperConfigBase<? extends ConfigFeature, ? extends MapperConfigBase<?,?>> getConfig() {
 			return this.config;
 		}
 
