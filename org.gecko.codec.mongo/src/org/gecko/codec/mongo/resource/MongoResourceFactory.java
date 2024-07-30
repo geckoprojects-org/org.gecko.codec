@@ -15,11 +15,17 @@ package org.gecko.codec.mongo.resource;
 
 import java.util.Collections;
 
+import org.bson.BsonReader;
+import org.bson.BsonWriter;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
+import org.gecko.codec.CodecFactory;
+import org.gecko.codec.CodecGeneratorFactory;
+import org.gecko.codec.CodecParserFactory;
 import org.gecko.codec.jackson.module.CodecModule;
-import org.gecko.codec.mongo.TestFactory;
+import org.gecko.codec.mongo.MongoCodecGenerator;
+import org.gecko.codec.mongo.MongoCodecParser;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.osgi.service.component.annotations.Component;
@@ -33,10 +39,14 @@ public class MongoResourceFactory extends ResourceFactoryImpl {
 	
 	@Reference
 	MongoDatabaseProvider provider;
+	@Reference
+	CodecGeneratorFactory<BsonWriter, MongoCodecGenerator> generatorFactory;
+	@Reference
+	CodecParserFactory<BsonReader, MongoCodecParser> parserFactory;
 	
 	@Override
 	public Resource createResource(URI uri) {
-		ObjectMapper mapper = CodecModule.setupDefaultMapper(new TestFactory(), Collections.emptyMap());
+		ObjectMapper mapper = CodecModule.setupDefaultMapper(new CodecFactory<>(generatorFactory, parserFactory), Collections.emptyMap());
 		return new MongoResource(uri, provider, mapper);
 	}
 	

@@ -29,6 +29,7 @@ import org.eclipse.emfcloud.jackson.databind.ser.NullKeySerializer;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.gecko.codec.jackson.databind.CodecFactory;
 import org.gecko.codec.jackson.databind.annotations.CodecIdentityInfo;
+import org.gecko.codec.jackson.databind.deser.CodecDeserializers;
 import org.gecko.codec.jackson.databind.ser.CodecEcoreReferenceSerializer;
 import org.gecko.codec.jackson.databind.ser.CodecSerializers;
 
@@ -168,8 +169,13 @@ public class CodecModule extends EMFModule {
 		if (getReferenceSerializer() == null || getReferenceSerializer() instanceof EcoreReferenceSerializer) {
 			setReferenceSerializer(new CodecEcoreReferenceSerializer(getReferenceInfo(), getTypeInfo()));
 		}
+//		if (getReferenceDeserializer() == null || getReferenceDeserializer() instanceof EcoreReferenceDeserializer) {
+//			setReferenceDeserializer(new CodecEcoreReferenceDeserializer(getReferenceInfo(), getTypeInfo()));
+//		}
 		CodecSerializers serializers = new CodecSerializers(this);
 		context.addSerializers(serializers);
+		CodecDeserializers deserializers = new CodecDeserializers(this);
+		context.addDeserializers(deserializers);
 	}
 
 }

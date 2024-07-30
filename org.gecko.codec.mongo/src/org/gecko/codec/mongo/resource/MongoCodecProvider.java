@@ -16,7 +16,7 @@ import java.util.Map;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.EObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,27 +25,32 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author grune
  * @since Feb 2, 2024
  */
-final class MongoCodecProvider implements CodecProvider {
+public final class MongoCodecProvider implements CodecProvider {
 	/** options */
 	private final Map<?, ?> options;
 	private ObjectMapper mapper;
-	private ResourceSet resourceSet;
+	private MongoResource resource;
 
 	/**
 	 * Creates a new instance.
-	 * @param mapper 
-	 * @param resourceSet 
+	 * 
+	 * @param mapper
+	 * @param resource
 	 * @param options
 	 */
-	MongoCodecProvider(ObjectMapper mapper, ResourceSet resourceSet, Map<?, ?> options) {
+	public MongoCodecProvider(ObjectMapper mapper, MongoResource resource, Map<?, ?> options) {
 		this.mapper = mapper;
-		this.resourceSet = resourceSet;
+		this.resource = resource;
 		this.options = options;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
-		return (Codec<T>) new MongoCodec(mapper, resourceSet, options);
+		if (EObject.class.isAssignableFrom(clazz)) {
+			return (Codec<T>) new MongoCodec(mapper, resource, options);
+		} else {
+			return null;
+		}
 	}
 }

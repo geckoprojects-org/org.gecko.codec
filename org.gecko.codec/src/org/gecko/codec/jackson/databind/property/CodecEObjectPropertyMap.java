@@ -21,7 +21,6 @@ import static java.util.stream.StreamSupport.stream;
 import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.getAliases;
 import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.getElementName;
 import static org.gecko.codec.jackson.module.CodecFeature.OPTION_ID_TOP;
-import static org.gecko.codec.jackson.module.CodecFeature.OPTION_USE_ID;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,11 +51,13 @@ import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.annotations.JsonAnnotations;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectFeatureProperty;
+import org.eclipse.emfcloud.jackson.databind.property.EObjectIdentityProperty;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectOperationProperty;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectProperty;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectReferenceProperty;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectTypeProperty;
 import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
+import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.gecko.codec.jackson.databind.annotations.CodecIdentityInfo;
 import org.gecko.codec.jackson.databind.annotations.CodecSuperTypeInfo;
 import org.gecko.codec.jackson.module.CodecFeature;
@@ -66,17 +67,18 @@ import org.gecko.codec.jackson.module.CodecProperties;
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.cfg.ConfigFeature;
+import com.fasterxml.jackson.databind.cfg.MapperConfigBase;
 
 /**
- * Map that hold all information for serializing and de-serializing EObjects. It uses the semantics of so called properties.
- * They describe a certain context of an EObject:
- * - ID config - IdentityProperty
- * - Type config - TypeProperty, SuperTypeProperty
- * - Reference handling - ReferenceProperty
- * - EStructuralFeature handling - FeatureProperty (a different context than the Jackson Features!)
- * - Operation handling - OperationProperty
- * If you need a new aspect to be described, create an own Property
+ * Map that hold all information for serializing and de-serializing EObjects. It
+ * uses the semantics of so called properties. They describe a certain context
+ * of an EObject: - ID config - IdentityProperty - Type config - TypeProperty,
+ * SuperTypeProperty - Reference handling - ReferenceProperty -
+ * EStructuralFeature handling - FeatureProperty (a different context than the
+ * Jackson Features!) - Operation handling - OperationProperty If you need a new
+ * aspect to be described, create an own Property
+ * 
  * @author Mark Hoffmann
  * @since 12.01.2024
  */
@@ -91,11 +93,10 @@ public final class CodecEObjectPropertyMap {
 		private final EcoreReferenceInfo referenceInfo;
 		private final int features;
 
-		private SerializationConfig config;
+		private MapperConfigBase config;
 
 		public Builder(final EcoreIdentityInfo identityInfo, final EcoreTypeInfo typeInfo,
-				final EcoreReferenceInfo referenceInfo,
-				final int features) {
+				final EcoreReferenceInfo referenceInfo, final int features) {
 			this.identityInfo = identityInfo;
 			this.typeInfo = typeInfo;
 			this.referenceInfo = referenceInfo;
@@ -105,19 +106,20 @@ public final class CodecEObjectPropertyMap {
 		public static Builder from(final CodecModule module, final int features) {
 			return new Builder(module.getIdentityInfo(), module.getTypeInfo(), module.getReferenceInfo(), features);
 		}
-		
-		public Builder with(final SerializationConfig config) {
+
+		public <CFG extends ConfigFeature, T extends MapperConfigBase<CFG, T>> Builder with(
+				final MapperConfigBase<CFG, T> config) {
 			this.config = config;
 			return this;
 		}
-		
-		protected SerializationConfig getConfig() {
+
+		protected MapperConfigBase getConfig() {
 			return this.config;
 		}
 
 		public CodecEObjectPropertyMap construct(final DatabindContext ctxt, final EClass type) {
 			if (type == null) {
-				buildCache(ctxt);
+ 				buildCache(ctxt);
 			}
 
 			CodecEObjectPropertyMap propertyMap = type == null ? null : cache.get(type);
@@ -136,9 +138,7 @@ public final class CodecEObjectPropertyMap {
 
 			Set<EClass> types = resourceSet.getPackageRegistry().values().stream()
 					.flatMap(model -> stream(spliteratorUnknownSize(((EPackage) model).eAllContents(), ORDERED), false))
-					.filter(e -> e instanceof EClass)
-					.map(e -> (EClass) e)
-					.collect(Collectors.toSet());
+					.filter(e -> e instanceof EClass).map(e -> (EClass) e).collect(Collectors.toSet());
 
 			types.forEach(type -> cache.put(type, construct(ctxt, type)));
 		}
@@ -152,21 +152,35 @@ public final class CodecEObjectPropertyMap {
 				properties.add(p);
 				propertiesMap.put(p.getFieldName(), p);
 			};
+			
+			if (type == null) {
+				add.accept(new EObjectReferenceProperty(referenceInfo));
+				add.accept(getTypeProperty(type, features));
 
-			EAttribute idAttribute = type.getEIDAttribute();
-			// Handle property setup for ID's
-			if (OPTION_ID_TOP.enabledIn(features)) {
-				handleIdentity(add, idAttribute);
-			}
+				if (EMFModule.Feature.OPTION_USE_ID.enabledIn(features)) {
+					if (CodecFeature.OPTION_USE_IDFIELD.enabledIn(features)) {
+						CodecIdentityInfo info = new CodecIdentityInfo(CodecProperties.ID_KEY.getKeyValue(), true);
+						add.accept(new EObjectIdentityProperty(info));
+					} else {
+						add.accept(new EObjectIdentityProperty(identityInfo));
+					}
+				}
+			} else {
+				EAttribute idAttribute = type.getEIDAttribute();
+				// Handle property setup for ID's
+				if (OPTION_ID_TOP.enabledIn(features)) {
+					handleIdentity(add, idAttribute);
+				}
 
-			add.accept(new EObjectReferenceProperty(referenceInfo));
-			// Handle property setup for EClass type information
-			add.accept(getTypeProperty(type, features));
-			add.accept(getSuperTypeProperty(type, features));
+				add.accept(new EObjectReferenceProperty(referenceInfo));
+				// Handle property setup for EClass type information
+				add.accept(getTypeProperty(type, features));
+				add.accept(getSuperTypeProperty(type, features));
 
-			// Handle alternative ID index property setup
-			if (!OPTION_ID_TOP.enabledIn(features)) {
-				handleIdentity(add, idAttribute);
+				// Handle alternative ID index property setup
+				if (!OPTION_ID_TOP.enabledIn(features)) {
+					handleIdentity(add, idAttribute);
+				}
 			}
 
 			if (type != null) {
@@ -192,22 +206,19 @@ public final class CodecEObjectPropertyMap {
 			return new CodecEObjectPropertyMap(type, propertiesMap, properties);
 		}
 
-		/**
-		 * @param add
-		 */
 		private void handleIdentity(Consumer<EObjectProperty> add, EStructuralFeature idFeature) {
-			if (OPTION_USE_ID.enabledIn(features)) {
+			if (EMFModule.Feature.OPTION_USE_ID.enabledIn(features)) {
 				add.accept(new CodecIdentityProperty(identityInfo, idFeature));
 				return;
 			}
 			if (CodecFeature.OPTION_USE_IDFIELD.enabledIn(features)) {
-				add.accept(new CodecIdentityProperty(new CodecIdentityInfo(CodecProperties.ID_KEY.getKeyValue(), true), idFeature));
+				add.accept(new CodecIdentityProperty(new CodecIdentityInfo(CodecProperties.ID_KEY.getKeyValue(), true),
+						idFeature));
 			}
 		}
 
 		private Optional<EObjectFeatureProperty> createFeatureProperty(final DatabindContext ctxt,
-				final EcoreTypeFactory factory,
-				final EClass type, final EStructuralFeature feature) {
+				final EcoreTypeFactory factory, final EClass type, final EStructuralFeature feature) {
 			if (isCandidate(feature)) {
 				JavaType javaType = factory.typeOf(ctxt, type, feature);
 				if (javaType != null) {
@@ -232,16 +243,16 @@ public final class CodecEObjectPropertyMap {
 		}
 
 		boolean isCandidate(final EAttribute attribute) {
-			return isFeatureMapEntry(attribute) || (!FeatureMapUtil.isFeatureMap(attribute) &&
-					!(attribute.isDerived() || attribute.isTransient()) &&
-					!JsonAnnotations.shouldIgnore(attribute));
+			return isFeatureMapEntry(attribute) || (!FeatureMapUtil.isFeatureMap(attribute)
+					&& !(attribute.isDerived() || attribute.isTransient()) && !JsonAnnotations.shouldIgnore(attribute));
 		}
 
 		boolean isCandidate(final EReference eReference) {
 			if (isFeatureMapEntry(eReference)) {
 				return true;
 			}
-			if (FeatureMapUtil.isFeatureMap(eReference) || eReference.isTransient() || JsonAnnotations.shouldIgnore(eReference)) {
+			if (FeatureMapUtil.isFeatureMap(eReference) || eReference.isTransient()
+					|| JsonAnnotations.shouldIgnore(eReference)) {
 				return false;
 			}
 
@@ -253,7 +264,8 @@ public final class CodecEObjectPropertyMap {
 			EcoreTypeInfo currentTypeInfo = null;
 
 			if (type != null && !JsonAnnotations.shouldIgnoreType(type)) {
-				currentTypeInfo = JsonAnnotations.getTypeProperty(type, typeInfo.getValueReader(), typeInfo.getValueWriter());
+				currentTypeInfo = JsonAnnotations.getTypeProperty(type, typeInfo.getValueReader(),
+						typeInfo.getValueWriter());
 			}
 
 			if (currentTypeInfo == null) {
@@ -262,7 +274,7 @@ public final class CodecEObjectPropertyMap {
 
 			return new CodecTypeProperty(currentTypeInfo, features);
 		}
-		
+
 		private CodecSuperTypeProperty getSuperTypeProperty(final EClass type, final int features) {
 			Object attribute = config.getAttributes().getAttribute(CodecProperties.SUPER_TYPE_KEY.name());
 			CodecSuperTypeInfo superTypeInfo = new CodecSuperTypeInfo();
@@ -315,7 +327,9 @@ public final class CodecEObjectPropertyMap {
 		return propertiesMap.get(field);
 	}
 
-	public Iterable<EObjectProperty> getProperties() { return properties; }
+	public Iterable<EObjectProperty> getProperties() {
+		return properties;
+	}
 
 	public EObjectTypeProperty getTypeProperty() {
 		if (typeProperty == null) {
@@ -337,8 +351,7 @@ public final class CodecEObjectPropertyMap {
 			return false;
 		}
 		CodecEObjectPropertyMap that = (CodecEObjectPropertyMap) o;
-		return Objects.equals(properties, that.properties) &&
-				Objects.equals(type, that.type);
+		return Objects.equals(properties, that.properties) && Objects.equals(type, that.type);
 	}
 
 	@Override

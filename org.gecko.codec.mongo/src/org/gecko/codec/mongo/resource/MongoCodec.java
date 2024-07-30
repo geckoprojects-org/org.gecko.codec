@@ -18,46 +18,47 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.bson.BsonReader;
+import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
+import org.bson.codecs.EncoderContext;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.gecko.codec.mongo.MongoCodecGenerator;
-import org.gecko.codec.mongo.MongoCodecParser;
+import org.gecko.codec.CodecDataInput;
+import org.gecko.codec.CodecDataOutput;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 
+
 final class MongoCodec implements Codec<EObject> {
-	/** options */
+	
 	private final Map<?, ?> options;
-	private ObjectMapper mapper;
-	private ResourceSet resourceSet;
+	private final ObjectMapper mapper;
+	private final MongoResource resource;
 	
 	/**
 	 * Creates a new instance.
 	 * @param mapper 
-	 * @param resourceSet 
+	 * @param resource 
 	 * @param options
 	 */
-	MongoCodec(ObjectMapper mapper, ResourceSet resourceSet, Map<?, ?> options) {
+	MongoCodec(ObjectMapper mapper, MongoResource resource, Map<?, ?> options) {
 		this.mapper = mapper;
-		this.resourceSet = resourceSet;
+		this.resource = resource;
 		this.options = options;
 	}
 	
-	public void encode(org.bson.BsonWriter writer, EObject value, org.bson.codecs.EncoderContext encoderContext) {
+	@Override
+	public void encode(BsonWriter writer, EObject value, EncoderContext encoderContext) {
 		try {
 			mapper.writer()
 			.with(EMFContext.from(options))
-			.writeValue(new MongoCodecGenerator(writer), value);
+			.writeValue(new CodecDataOutput<>(writer, mapper), value);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 	
 	@Override
@@ -70,15 +71,15 @@ final class MongoCodec implements Codec<EObject> {
 		ContextAttributes attributes;
 		attributes = EMFContext
 				.from(options)
-				.withPerCallAttribute(RESOURCE_SET, resourceSet)
-				.withPerCallAttribute(RESOURCE, this);
-		
+				.withPerCallAttribute(RESOURCE_SET, resource.getResourceSet())
+				.withPerCallAttribute(RESOURCE, resource);
 		try {
-			return mapper.reader()
+			Resource r = mapper.reader()
 					.with(attributes)
 					.forType(Resource.class)
-					.withValueToUpdate(this)
-					.readValue(new MongoCodecParser(reader));
+					.withValueToUpdate(resource)
+					.readValue(new CodecDataInput<>(reader, mapper));
+			return r.getContents().isEmpty() ? null : r.getContents().get(0);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new IllegalStateException(e);
