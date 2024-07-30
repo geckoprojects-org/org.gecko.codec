@@ -65,7 +65,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	@Override
 	public JsonToken nextToken() throws IOException {
 		BsonType currentType = reader.getCurrentBsonType();
-		System.out.println("currentType" + currentType);
+		System.out.println("currentType " + currentType);
 
 		if (currentType == BsonType.END_OF_DOCUMENT) {
 			if (_parsingContext.inArray()) {

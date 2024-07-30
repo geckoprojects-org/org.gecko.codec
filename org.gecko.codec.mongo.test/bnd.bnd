@@ -28,4 +28,4 @@ Bundle-Version: 1.0.0.SNAPSHOT
 
 # Sometimes without DynamicImport Mockito will not find certain classes
 #DynamicImport-Package: *
--privatepackage: org.gecko.codec.mongo
+-privatepackage: org.gecko.codec.mongo.test.helper

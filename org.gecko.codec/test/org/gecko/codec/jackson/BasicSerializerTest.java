@@ -14,23 +14,15 @@
 package org.gecko.codec.jackson;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.URIHandler;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emfcloud.jackson.junit.model.Address;
 import org.eclipse.emfcloud.jackson.junit.model.ConcreteTypeOne;
 import org.eclipse.emfcloud.jackson.junit.model.ModelFactory;
-import org.eclipse.emfcloud.jackson.junit.model.ModelPackage;
 import org.eclipse.emfcloud.jackson.junit.model.Sex;
 import org.eclipse.emfcloud.jackson.junit.model.User;
-import org.gecko.codec.jackson.databind.deser.CodecOutputStream;
-import org.gecko.codec.jackson.resource.CodecResourceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -65,7 +57,6 @@ public class BasicSerializerTest {
 		try {
 			resource.save(null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -84,11 +75,8 @@ public class BasicSerializerTest {
 		try {
 			resource.save(null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-		
+		}		
 	}
 	
 	@Test
@@ -114,11 +102,8 @@ public class BasicSerializerTest {
 		try {
 			resource.save(null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-		
+		}		
 	}
 
 }

@@ -47,4 +47,6 @@
 	org.eclipse.emf.common;version='[2.29.0,2.29.1)',\
 	org.eclipse.emf.ecore;version='[2.35.0,2.35.1)',\
 	org.eclipse.emf.ecore.xmi;version='[2.36.0,2.36.1)',\
-	org.gecko.emf.osgi.component;version='[6.2.0,6.2.1)'
+	org.apache.felix.metatype;version='[1.2.4,1.2.5)',\
+	org.gecko.emf.osgi.component;version='[6.0.0,6.0.1)',\
+	org.gecko.mongo.osgi.api;version='[6.1.0,6.1.1)'

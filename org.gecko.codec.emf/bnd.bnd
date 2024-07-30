@@ -1,5 +1,0 @@
--library: enable-emf
-
--buildpath: org.gecko.codec;version=project
-
--testpath: org.gecko.codec.test.models;version=project
