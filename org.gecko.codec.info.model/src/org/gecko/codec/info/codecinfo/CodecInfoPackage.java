@@ -842,6 +842,52 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int CODEC_INFO_HOLDER_OPERATION_COUNT = 2;
 
 	/**
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.SampleValueReader <em>Sample Value Reader</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.info.codecinfo.SampleValueReader
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSampleValueReader()
+	 * @generated
+	 */
+	int SAMPLE_VALUE_READER = 9;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAMPLE_VALUE_READER__NAME = 0;
+
+	/**
+	 * The number of structural features of the '<em>Sample Value Reader</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAMPLE_VALUE_READER_FEATURE_COUNT = 1;
+
+	/**
+	 * The operation id for the '<em>Read Value</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAMPLE_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT = 0;
+
+	/**
+	 * The number of operations of the '<em>Sample Value Reader</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAMPLE_VALUE_READER_OPERATION_COUNT = 1;
+
+	/**
 	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -849,7 +895,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getInfoType()
 	 * @generated
 	 */
-	int INFO_TYPE = 9;
+	int INFO_TYPE = 10;
 
 	/**
 	 * The meta object id for the '<em>Serializer Provider</em>' data type.
@@ -859,7 +905,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
 	 * @generated
 	 */
-	int SERIALIZER_PROVIDER = 10;
+	int SERIALIZER_PROVIDER = 11;
 
 	/**
 	 * The meta object id for the '<em>Value Reader</em>' data type.
@@ -869,7 +915,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueReader()
 	 * @generated
 	 */
-	int VALUE_READER = 11;
+	int VALUE_READER = 12;
 
 	/**
 	 * The meta object id for the '<em>Value Writer</em>' data type.
@@ -879,7 +925,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueWriter()
 	 * @generated
 	 */
-	int VALUE_WRITER = 12;
+	int VALUE_WRITER = 13;
+
+	/**
+	 * The meta object id for the '<em>De Serialization Context</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see com.fasterxml.jackson.databind.DeserializationContext
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeSerializationContext()
+	 * @generated
+	 */
+	int DE_SERIALIZATION_CONTEXT = 14;
 
 
 	/**
@@ -1378,6 +1434,37 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getCodecInfoHolder__GetWriterByName__String();
 
 	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.SampleValueReader <em>Sample Value Reader</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Sample Value Reader</em>'.
+	 * @see org.gecko.codec.info.codecinfo.SampleValueReader
+	 * @generated
+	 */
+	EClass getSampleValueReader();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.SampleValueReader#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.gecko.codec.info.codecinfo.SampleValueReader#getName()
+	 * @see #getSampleValueReader()
+	 * @generated
+	 */
+	EAttribute getSampleValueReader_Name();
+
+	/**
+	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.SampleValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext) <em>Read Value</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Read Value</em>' operation.
+	 * @see org.gecko.codec.info.codecinfo.SampleValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext)
+	 * @generated
+	 */
+	EOperation getSampleValueReader__ReadValue__Object_DeserializationContext();
+
+	/**
 	 * Returns the meta object for enum '{@link org.gecko.codec.info.codecinfo.InfoType <em>Info Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1419,6 +1506,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EDataType getValueWriter();
+
+	/**
+	 * Returns the meta object for data type '{@link com.fasterxml.jackson.databind.DeserializationContext <em>De Serialization Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>De Serialization Context</em>'.
+	 * @see com.fasterxml.jackson.databind.DeserializationContext
+	 * @model instanceClass="com.fasterxml.jackson.databind.DeserializationContext"
+	 * @generated
+	 */
+	EDataType getDeSerializationContext();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1830,6 +1928,32 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EOperation CODEC_INFO_HOLDER___GET_WRITER_BY_NAME__STRING = eINSTANCE.getCodecInfoHolder__GetWriterByName__String();
 
 		/**
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.SampleValueReader <em>Sample Value Reader</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.info.codecinfo.SampleValueReader
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSampleValueReader()
+		 * @generated
+		 */
+		EClass SAMPLE_VALUE_READER = eINSTANCE.getSampleValueReader();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SAMPLE_VALUE_READER__NAME = eINSTANCE.getSampleValueReader_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Read Value</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation SAMPLE_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT = eINSTANCE.getSampleValueReader__ReadValue__Object_DeserializationContext();
+
+		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1868,6 +1992,16 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EDataType VALUE_WRITER = eINSTANCE.getValueWriter();
+
+		/**
+		 * The meta object literal for the '<em>De Serialization Context</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see com.fasterxml.jackson.databind.DeserializationContext
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeSerializationContext()
+		 * @generated
+		 */
+		EDataType DE_SERIALIZATION_CONTEXT = eINSTANCE.getDeSerializationContext();
 
 	}
 

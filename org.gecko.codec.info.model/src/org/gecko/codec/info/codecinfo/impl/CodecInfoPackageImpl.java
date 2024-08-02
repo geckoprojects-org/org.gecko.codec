@@ -2,15 +2,18 @@
  */
 package org.gecko.codec.info.codecinfo.impl;
 
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -26,6 +29,7 @@ import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.info.codecinfo.ReferenceInfo;
+import org.gecko.codec.info.codecinfo.SampleValueReader;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 
 import org.gecko.codec.io.ValueReader;
@@ -106,6 +110,13 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass sampleValueReaderEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum infoTypeEEnum = null;
 
 	/**
@@ -128,6 +139,13 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	private EDataType valueWriterEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType deSerializationContextEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -658,6 +676,36 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
+	public EClass getSampleValueReader() {
+		return sampleValueReaderEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getSampleValueReader_Name() {
+		return (EAttribute)sampleValueReaderEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getSampleValueReader__ReadValue__Object_DeserializationContext() {
+		return sampleValueReaderEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getInfoType() {
 		return infoTypeEEnum;
 	}
@@ -690,6 +738,16 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	@Override
 	public EDataType getValueWriter() {
 		return valueWriterEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EDataType getDeSerializationContext() {
+		return deSerializationContextEDataType;
 	}
 
 	/**
@@ -776,6 +834,10 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		createEOperation(codecInfoHolderEClass, CODEC_INFO_HOLDER___GET_READER_BY_NAME__STRING);
 		createEOperation(codecInfoHolderEClass, CODEC_INFO_HOLDER___GET_WRITER_BY_NAME__STRING);
 
+		sampleValueReaderEClass = createEClass(SAMPLE_VALUE_READER);
+		createEAttribute(sampleValueReaderEClass, SAMPLE_VALUE_READER__NAME);
+		createEOperation(sampleValueReaderEClass, SAMPLE_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT);
+
 		// Create enums
 		infoTypeEEnum = createEEnum(INFO_TYPE);
 
@@ -783,6 +845,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		serializerProviderEDataType = createEDataType(SERIALIZER_PROVIDER);
 		valueReaderEDataType = createEDataType(VALUE_READER);
 		valueWriterEDataType = createEDataType(VALUE_WRITER);
+		deSerializationContextEDataType = createEDataType(DE_SERIALIZATION_CONTEXT);
 	}
 
 	/**
@@ -812,6 +875,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		EcorePackage theEcorePackage = (EcorePackage)EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
 
 		// Create type parameters
+		ETypeParameter sampleValueReaderEClass_T = addETypeParameter(sampleValueReaderEClass, "T");
+		ETypeParameter sampleValueReaderEClass_V = addETypeParameter(sampleValueReaderEClass, "V");
 		addETypeParameter(valueReaderEDataType, "V");
 		addETypeParameter(valueReaderEDataType, "T");
 		addETypeParameter(valueWriterEDataType, "T");
@@ -886,6 +951,16 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		op = initEOperation(getCodecInfoHolder__GetWriterByName__String(), this.getCodecValueWriter(), "getWriterByName", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theEcorePackage.getEString(), "writerName", 0, 1, IS_UNIQUE, IS_ORDERED);
 
+		initEClass(sampleValueReaderEClass, SampleValueReader.class, "SampleValueReader", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSampleValueReader_Name(), theEcorePackage.getEString(), "name", null, 1, 1, SampleValueReader.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getSampleValueReader__ReadValue__Object_DeserializationContext(), null, "readValue", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EGenericType g1 = createEGenericType(sampleValueReaderEClass_V);
+		addEParameter(op, g1, "value", 1, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getDeSerializationContext(), "context", 1, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(sampleValueReaderEClass_T);
+		initEOperation(op, g1);
+
 		// Initialize enums and add enum literals
 		initEEnum(infoTypeEEnum, InfoType.class, "InfoType");
 		addEEnumLiteral(infoTypeEEnum, InfoType.IDENTITY);
@@ -899,6 +974,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEDataType(serializerProviderEDataType, SerializerProvider.class, "SerializerProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(valueReaderEDataType, ValueReader.class, "ValueReader", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(valueWriterEDataType, ValueWriter.class, "ValueWriter", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(deSerializationContextEDataType, DeserializationContext.class, "DeSerializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

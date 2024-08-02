@@ -4,7 +4,6 @@ package org.gecko.codec.info.codecinfo;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -32,7 +31,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface FeatureCodecInfo extends EObject {
+public interface FeatureCodecInfo {
 	/**
 	 * Returns the value of the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->

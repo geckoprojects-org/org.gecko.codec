@@ -2,6 +2,7 @@
  */
 package org.gecko.codec.info.codecinfo.impl;
 
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.eclipse.emf.ecore.EClass;
@@ -62,15 +63,15 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case CodecInfoPackage.PACKAGE_CODEC_INFO: return createPackageCodecInfo();
-			case CodecInfoPackage.ECLASS_CODEC_INFO: return createEClassCodecInfo();
-			case CodecInfoPackage.FEATURE_CODEC_INFO: return createFeatureCodecInfo();
-			case CodecInfoPackage.TYPE_INFO: return createTypeInfo();
-			case CodecInfoPackage.IDENTITY_INFO: return createIdentityInfo();
-			case CodecInfoPackage.REFERENCE_INFO: return createReferenceInfo();
-			case CodecInfoPackage.CODEC_VALUE_READER: return createCodecValueReader();
-			case CodecInfoPackage.CODEC_VALUE_WRITER: return createCodecValueWriter();
-			case CodecInfoPackage.CODEC_INFO_HOLDER: return createCodecInfoHolder();
+			case CodecInfoPackage.PACKAGE_CODEC_INFO: return (EObject)createPackageCodecInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO: return (EObject)createEClassCodecInfo();
+			case CodecInfoPackage.FEATURE_CODEC_INFO: return (EObject)createFeatureCodecInfo();
+			case CodecInfoPackage.TYPE_INFO: return (EObject)createTypeInfo();
+			case CodecInfoPackage.IDENTITY_INFO: return (EObject)createIdentityInfo();
+			case CodecInfoPackage.REFERENCE_INFO: return (EObject)createReferenceInfo();
+			case CodecInfoPackage.CODEC_VALUE_READER: return (EObject)createCodecValueReader();
+			case CodecInfoPackage.CODEC_VALUE_WRITER: return (EObject)createCodecValueWriter();
+			case CodecInfoPackage.CODEC_INFO_HOLDER: return (EObject)createCodecInfoHolder();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -92,6 +93,8 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 				return createValueReaderFromString(eDataType, initialValue);
 			case CodecInfoPackage.VALUE_WRITER:
 				return createValueWriterFromString(eDataType, initialValue);
+			case CodecInfoPackage.DE_SERIALIZATION_CONTEXT:
+				return createDeSerializationContextFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -113,6 +116,8 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 				return convertValueReaderToString(eDataType, instanceValue);
 			case CodecInfoPackage.VALUE_WRITER:
 				return convertValueWriterToString(eDataType, instanceValue);
+			case CodecInfoPackage.DE_SERIALIZATION_CONTEXT:
+				return convertDeSerializationContextToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -289,6 +294,24 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 */
 	public String convertValueWriterToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public DeserializationContext createDeSerializationContextFromString(EDataType eDataType, String initialValue) {
+		return (DeserializationContext)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertDeSerializationContextToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**

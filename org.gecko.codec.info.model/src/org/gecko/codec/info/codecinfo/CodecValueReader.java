@@ -2,8 +2,6 @@
  */
 package org.gecko.codec.info.codecinfo;
 
-import org.eclipse.emf.ecore.EObject;
-
 import org.gecko.codec.io.ValueReader;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -26,7 +24,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface CodecValueReader extends EObject {
+public interface CodecValueReader {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->

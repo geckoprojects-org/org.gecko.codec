@@ -4,8 +4,6 @@ package org.gecko.codec.info.codecinfo;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.ecore.EObject;
-
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -27,7 +25,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface CodecInfoHolder extends EObject {
+public interface CodecInfoHolder {
 	/**
 	 * Returns the value of the '<em><b>Info Type</b></em>' attribute.
 	 * The literals are from the enumeration {@link org.gecko.codec.info.codecinfo.InfoType}.

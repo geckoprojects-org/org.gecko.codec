@@ -1,0 +1,28 @@
+{
+  ":configurator:resource-version": 1,
+  
+  "MongoRF": 
+  {
+    "database": "text",
+    "host": "localhost",
+    "jsonFactory.target":"(codecType=MONGO)",
+    "module.target":"(codecType=MONGO)"
+	},
+	"DemoModule~test1":
+	{
+		"option_use_id" : true,
+		"option_id_on_top" : false,
+		"default_type_field": "_typ",
+		"default_id_field": "_primaryKey"
+		},
+	"DemoModule~test2":
+	{
+		"name" : "PersonAndAddress",
+		"codecType" : "MONGO",
+		"modelInfo.target": "(&(emf.name=person)(emf.name=address))",
+		"option_use_id" : true,
+		"option_id_on_top" : false,
+		"default_type_field": "_typ",
+		"default_id_field": "_primaryKey"
+		}
+}

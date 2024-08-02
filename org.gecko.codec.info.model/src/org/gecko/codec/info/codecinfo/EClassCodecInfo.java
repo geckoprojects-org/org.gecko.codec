@@ -3,7 +3,6 @@
 package org.gecko.codec.info.codecinfo;
 
 import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EObject;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -32,7 +31,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface EClassCodecInfo extends EObject {
+public interface EClassCodecInfo {
 	/**
 	 * Returns the value of the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
