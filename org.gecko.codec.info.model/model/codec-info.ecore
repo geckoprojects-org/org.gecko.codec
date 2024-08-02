@@ -134,15 +134,31 @@
     <eLiterals name="OBJECT" value="4"/>
     <eLiterals name="OTHER" value="10"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="CodecValueReader">
+  <eClassifiers xsi:type="ecore:EClass" name="CodecValueReader" abstract="true" interface="true">
+    <eTypeParameters name="V"/>
+    <eTypeParameters name="T"/>
+    <eOperations name="readValue">
+      <eGenericType eTypeParameter="#//CodecValueReader/T"/>
+      <eParameters name="value" lowerBound="1">
+        <eGenericType eTypeParameter="#//CodecValueReader/V"/>
+      </eParameters>
+      <eParameters name="context" lowerBound="1" eType="#//DeserializationContext"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
-        iD="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="reader" eType="#//ValueReader"/>
+        changeable="false" iD="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="CodecValueWriter">
+  <eClassifiers xsi:type="ecore:EClass" name="CodecValueWriter" abstract="true" interface="true">
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="V"/>
+    <eOperations name="writeValue">
+      <eGenericType eTypeParameter="#//CodecValueWriter/V"/>
+      <eParameters name="value" lowerBound="1">
+        <eGenericType eTypeParameter="#//CodecValueWriter/T"/>
+      </eParameters>
+      <eParameters name="provider" lowerBound="1" eType="#//SerializerProvider"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
-        iD="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="writer" eType="#//ValueWriter"/>
+        changeable="false" iD="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="SerializerProvider" instanceClassName="com.fasterxml.jackson.databind.SerializerProvider"/>
   <eClassifiers xsi:type="ecore:EClass" name="CodecInfoHolder">
@@ -165,26 +181,18 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="writers" upperBound="-1"
         eType="#//CodecValueWriter" eKeys="#//CodecValueWriter/name"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="ValueReader" instanceClassName="org.gecko.codec.io.ValueReader">
-    <eTypeParameters name="V"/>
-    <eTypeParameters name="T"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="ValueWriter" instanceClassName="org.gecko.codec.io.ValueWriter">
-    <eTypeParameters name="T"/>
-    <eTypeParameters name="V"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SampleValueReader" abstract="true" interface="true">
-    <eTypeParameters name="T"/>
     <eTypeParameters name="V"/>
+    <eTypeParameters name="T"/>
     <eOperations name="readValue">
       <eGenericType eTypeParameter="#//SampleValueReader/T"/>
       <eParameters name="value" lowerBound="1">
         <eGenericType eTypeParameter="#//SampleValueReader/V"/>
       </eParameters>
-      <eParameters name="context" lowerBound="1" eType="#//DeSerializationContext"/>
+      <eParameters name="context" lowerBound="1" eType="#//DeserializationContext"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
         changeable="false" iD="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="DeSerializationContext" instanceClassName="com.fasterxml.jackson.databind.DeserializationContext"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="DeserializationContext" instanceClassName="com.fasterxml.jackson.databind.DeserializationContext"/>
 </ecore:EPackage>

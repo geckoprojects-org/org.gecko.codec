@@ -2,7 +2,7 @@
  */
 package org.gecko.codec.info.codecinfo;
 
-import org.gecko.codec.io.ValueWriter;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -16,57 +16,31 @@ import org.osgi.annotation.versioning.ProviderType;
  * </p>
  * <ul>
  *   <li>{@link org.gecko.codec.info.codecinfo.CodecValueWriter#getName <em>Name</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.CodecValueWriter#getWriter <em>Writer</em>}</li>
  * </ul>
  *
  * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getCodecValueWriter()
- * @model
+ * @model interface="true" abstract="true"
  * @generated
  */
 @ProviderType
-public interface CodecValueWriter {
+public interface CodecValueWriter<T, V> {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
 	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getCodecValueWriter_Name()
-	 * @model id="true" required="true"
+	 * @model id="true" required="true" changeable="false"
 	 * @generated
 	 */
 	String getName();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.CodecValueWriter#getName <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
+	 * @model valueRequired="true" providerDataType="org.gecko.codec.info.codecinfo.SerializerProvider" providerRequired="true"
 	 * @generated
 	 */
-	void setName(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Writer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Writer</em>' attribute.
-	 * @see #setWriter(ValueWriter)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getCodecValueWriter_Writer()
-	 * @model dataType="org.gecko.codec.info.codecinfo.ValueWriter"
-	 * @generated
-	 */
-	ValueWriter getWriter();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.CodecValueWriter#getWriter <em>Writer</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Writer</em>' attribute.
-	 * @see #getWriter()
-	 * @generated
-	 */
-	void setWriter(ValueWriter value);
+	V writeValue(T value, SerializerProvider provider);
 
 } // CodecValueWriter

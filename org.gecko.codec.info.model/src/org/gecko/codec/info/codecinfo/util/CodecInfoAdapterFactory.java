@@ -92,11 +92,11 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 				return createReferenceInfoAdapter();
 			}
 			@Override
-			public Adapter caseCodecValueReader(CodecValueReader object) {
+			public <V, T> Adapter caseCodecValueReader(CodecValueReader<V, T> object) {
 				return createCodecValueReaderAdapter();
 			}
 			@Override
-			public Adapter caseCodecValueWriter(CodecValueWriter object) {
+			public <T, V> Adapter caseCodecValueWriter(CodecValueWriter<T, V> object) {
 				return createCodecValueWriterAdapter();
 			}
 			@Override
@@ -104,7 +104,7 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 				return createCodecInfoHolderAdapter();
 			}
 			@Override
-			public <T, V> Adapter caseSampleValueReader(SampleValueReader<T, V> object) {
+			public <V, T> Adapter caseSampleValueReader(SampleValueReader<V, T> object) {
 				return createSampleValueReaderAdapter();
 			}
 			@Override

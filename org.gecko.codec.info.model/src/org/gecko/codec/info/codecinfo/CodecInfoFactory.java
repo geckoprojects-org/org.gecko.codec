@@ -79,24 +79,6 @@ public interface CodecInfoFactory extends EFactory {
 	ReferenceInfo createReferenceInfo();
 
 	/**
-	 * Returns a new object of class '<em>Codec Value Reader</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Codec Value Reader</em>'.
-	 * @generated
-	 */
-	CodecValueReader createCodecValueReader();
-
-	/**
-	 * Returns a new object of class '<em>Codec Value Writer</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Codec Value Writer</em>'.
-	 * @generated
-	 */
-	CodecValueWriter createCodecValueWriter();
-
-	/**
 	 * Returns a new object of class '<em>Holder</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -32,9 +32,6 @@ import org.gecko.codec.info.codecinfo.ReferenceInfo;
 import org.gecko.codec.info.codecinfo.SampleValueReader;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 
-import org.gecko.codec.io.ValueReader;
-import org.gecko.codec.io.ValueWriter;
-
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model <b>Package</b>.
@@ -131,21 +128,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType valueReaderEDataType = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType valueWriterEDataType = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EDataType deSerializationContextEDataType = null;
+	private EDataType deserializationContextEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -576,8 +559,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getCodecValueReader_Reader() {
-		return (EAttribute)codecValueReaderEClass.getEStructuralFeatures().get(1);
+	public EOperation getCodecValueReader__ReadValue__Object_DeserializationContext() {
+		return codecValueReaderEClass.getEOperations().get(0);
 	}
 
 	/**
@@ -606,8 +589,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getCodecValueWriter_Writer() {
-		return (EAttribute)codecValueWriterEClass.getEStructuralFeatures().get(1);
+	public EOperation getCodecValueWriter__WriteValue__Object_SerializerProvider() {
+		return codecValueWriterEClass.getEOperations().get(0);
 	}
 
 	/**
@@ -726,28 +709,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EDataType getValueReader() {
-		return valueReaderEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EDataType getValueWriter() {
-		return valueWriterEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EDataType getDeSerializationContext() {
-		return deSerializationContextEDataType;
+	public EDataType getDeserializationContext() {
+		return deserializationContextEDataType;
 	}
 
 	/**
@@ -821,11 +784,11 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 
 		codecValueReaderEClass = createEClass(CODEC_VALUE_READER);
 		createEAttribute(codecValueReaderEClass, CODEC_VALUE_READER__NAME);
-		createEAttribute(codecValueReaderEClass, CODEC_VALUE_READER__READER);
+		createEOperation(codecValueReaderEClass, CODEC_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT);
 
 		codecValueWriterEClass = createEClass(CODEC_VALUE_WRITER);
 		createEAttribute(codecValueWriterEClass, CODEC_VALUE_WRITER__NAME);
-		createEAttribute(codecValueWriterEClass, CODEC_VALUE_WRITER__WRITER);
+		createEOperation(codecValueWriterEClass, CODEC_VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZERPROVIDER);
 
 		codecInfoHolderEClass = createEClass(CODEC_INFO_HOLDER);
 		createEAttribute(codecInfoHolderEClass, CODEC_INFO_HOLDER__INFO_TYPE);
@@ -843,9 +806,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 
 		// Create data types
 		serializerProviderEDataType = createEDataType(SERIALIZER_PROVIDER);
-		valueReaderEDataType = createEDataType(VALUE_READER);
-		valueWriterEDataType = createEDataType(VALUE_WRITER);
-		deSerializationContextEDataType = createEDataType(DE_SERIALIZATION_CONTEXT);
+		deserializationContextEDataType = createEDataType(DESERIALIZATION_CONTEXT);
 	}
 
 	/**
@@ -875,12 +836,12 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		EcorePackage theEcorePackage = (EcorePackage)EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
 
 		// Create type parameters
-		ETypeParameter sampleValueReaderEClass_T = addETypeParameter(sampleValueReaderEClass, "T");
+		ETypeParameter codecValueReaderEClass_V = addETypeParameter(codecValueReaderEClass, "V");
+		ETypeParameter codecValueReaderEClass_T = addETypeParameter(codecValueReaderEClass, "T");
+		ETypeParameter codecValueWriterEClass_T = addETypeParameter(codecValueWriterEClass, "T");
+		ETypeParameter codecValueWriterEClass_V = addETypeParameter(codecValueWriterEClass, "V");
 		ETypeParameter sampleValueReaderEClass_V = addETypeParameter(sampleValueReaderEClass, "V");
-		addETypeParameter(valueReaderEDataType, "V");
-		addETypeParameter(valueReaderEDataType, "T");
-		addETypeParameter(valueWriterEDataType, "T");
-		addETypeParameter(valueWriterEDataType, "V");
+		ETypeParameter sampleValueReaderEClass_T = addETypeParameter(sampleValueReaderEClass, "T");
 
 		// Set bounds for type parameters
 
@@ -930,13 +891,25 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 
 		initEClass(referenceInfoEClass, ReferenceInfo.class, "ReferenceInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(codecValueReaderEClass, CodecValueReader.class, "CodecValueReader", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getCodecValueReader_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecValueReader.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCodecValueReader_Reader(), this.getValueReader(), "reader", null, 0, 1, CodecValueReader.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(codecValueReaderEClass, CodecValueReader.class, "CodecValueReader", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCodecValueReader_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecValueReader.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(codecValueWriterEClass, CodecValueWriter.class, "CodecValueWriter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getCodecValueWriter_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecValueWriter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCodecValueWriter_Writer(), this.getValueWriter(), "writer", null, 0, 1, CodecValueWriter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		EOperation op = initEOperation(getCodecValueReader__ReadValue__Object_DeserializationContext(), null, "readValue", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EGenericType g1 = createEGenericType(codecValueReaderEClass_V);
+		addEParameter(op, g1, "value", 1, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getDeserializationContext(), "context", 1, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(codecValueReaderEClass_T);
+		initEOperation(op, g1);
+
+		initEClass(codecValueWriterEClass, CodecValueWriter.class, "CodecValueWriter", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCodecValueWriter_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecValueWriter.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getCodecValueWriter__WriteValue__Object_SerializerProvider(), null, "writeValue", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(codecValueWriterEClass_T);
+		addEParameter(op, g1, "value", 1, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getSerializerProvider(), "provider", 1, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(codecValueWriterEClass_V);
+		initEOperation(op, g1);
 
 		initEClass(codecInfoHolderEClass, CodecInfoHolder.class, "CodecInfoHolder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCodecInfoHolder_InfoType(), this.getInfoType(), "infoType", null, 1, 1, CodecInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -945,7 +918,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEReference(getCodecInfoHolder_Writers(), this.getCodecValueWriter(), null, "writers", null, 0, -1, CodecInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		getCodecInfoHolder_Writers().getEKeys().add(this.getCodecValueWriter_Name());
 
-		EOperation op = initEOperation(getCodecInfoHolder__GetReaderByName__String(), this.getCodecValueReader(), "getReaderByName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getCodecInfoHolder__GetReaderByName__String(), this.getCodecValueReader(), "getReaderByName", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, theEcorePackage.getEString(), "readerName", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		op = initEOperation(getCodecInfoHolder__GetWriterByName__String(), this.getCodecValueWriter(), "getWriterByName", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -955,9 +928,9 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEAttribute(getSampleValueReader_Name(), theEcorePackage.getEString(), "name", null, 1, 1, SampleValueReader.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		op = initEOperation(getSampleValueReader__ReadValue__Object_DeserializationContext(), null, "readValue", 0, 1, IS_UNIQUE, IS_ORDERED);
-		EGenericType g1 = createEGenericType(sampleValueReaderEClass_V);
+		g1 = createEGenericType(sampleValueReaderEClass_V);
 		addEParameter(op, g1, "value", 1, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getDeSerializationContext(), "context", 1, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getDeserializationContext(), "context", 1, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(sampleValueReaderEClass_T);
 		initEOperation(op, g1);
 
@@ -972,9 +945,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 
 		// Initialize data types
 		initEDataType(serializerProviderEDataType, SerializerProvider.class, "SerializerProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(valueReaderEDataType, ValueReader.class, "ValueReader", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(valueWriterEDataType, ValueWriter.class, "ValueWriter", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(deSerializationContextEDataType, DeserializationContext.class, "DeSerializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(deserializationContextEDataType, DeserializationContext.class, "DeserializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -677,10 +677,10 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int REFERENCE_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.CodecValueReaderImpl <em>Codec Value Reader</em>}' class.
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecValueReaderImpl
+	 * @see org.gecko.codec.info.codecinfo.CodecValueReader
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueReader()
 	 * @generated
 	 */
@@ -696,22 +696,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int CODEC_VALUE_READER__NAME = 0;
 
 	/**
-	 * The feature id for the '<em><b>Reader</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CODEC_VALUE_READER__READER = 1;
-
-	/**
 	 * The number of structural features of the '<em>Codec Value Reader</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CODEC_VALUE_READER_FEATURE_COUNT = 2;
+	int CODEC_VALUE_READER_FEATURE_COUNT = 1;
+
+	/**
+	 * The operation id for the '<em>Read Value</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT = 0;
 
 	/**
 	 * The number of operations of the '<em>Codec Value Reader</em>' class.
@@ -720,13 +720,13 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CODEC_VALUE_READER_OPERATION_COUNT = 0;
+	int CODEC_VALUE_READER_OPERATION_COUNT = 1;
 
 	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.CodecValueWriterImpl <em>Codec Value Writer</em>}' class.
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.CodecValueWriter <em>Codec Value Writer</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecValueWriterImpl
+	 * @see org.gecko.codec.info.codecinfo.CodecValueWriter
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueWriter()
 	 * @generated
 	 */
@@ -742,22 +742,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int CODEC_VALUE_WRITER__NAME = 0;
 
 	/**
-	 * The feature id for the '<em><b>Writer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CODEC_VALUE_WRITER__WRITER = 1;
-
-	/**
 	 * The number of structural features of the '<em>Codec Value Writer</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CODEC_VALUE_WRITER_FEATURE_COUNT = 2;
+	int CODEC_VALUE_WRITER_FEATURE_COUNT = 1;
+
+	/**
+	 * The operation id for the '<em>Write Value</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZERPROVIDER = 0;
 
 	/**
 	 * The number of operations of the '<em>Codec Value Writer</em>' class.
@@ -766,7 +766,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CODEC_VALUE_WRITER_OPERATION_COUNT = 0;
+	int CODEC_VALUE_WRITER_OPERATION_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl <em>Holder</em>}' class.
@@ -908,34 +908,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int SERIALIZER_PROVIDER = 11;
 
 	/**
-	 * The meta object id for the '<em>Value Reader</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.io.ValueReader
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueReader()
-	 * @generated
-	 */
-	int VALUE_READER = 12;
-
-	/**
-	 * The meta object id for the '<em>Value Writer</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.io.ValueWriter
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueWriter()
-	 * @generated
-	 */
-	int VALUE_WRITER = 13;
-
-	/**
-	 * The meta object id for the '<em>De Serialization Context</em>' data type.
+	 * The meta object id for the '<em>Deserialization Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see com.fasterxml.jackson.databind.DeserializationContext
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeSerializationContext()
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 	 * @generated
 	 */
-	int DE_SERIALIZATION_CONTEXT = 14;
+	int DESERIALIZATION_CONTEXT = 12;
 
 
 	/**
@@ -1328,15 +1308,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getCodecValueReader_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.CodecValueReader#getReader <em>Reader</em>}'.
+	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.CodecValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext) <em>Read Value</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Reader</em>'.
-	 * @see org.gecko.codec.info.codecinfo.CodecValueReader#getReader()
-	 * @see #getCodecValueReader()
+	 * @return the meta object for the '<em>Read Value</em>' operation.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext)
 	 * @generated
 	 */
-	EAttribute getCodecValueReader_Reader();
+	EOperation getCodecValueReader__ReadValue__Object_DeserializationContext();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.CodecValueWriter <em>Codec Value Writer</em>}'.
@@ -1360,15 +1339,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getCodecValueWriter_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.CodecValueWriter#getWriter <em>Writer</em>}'.
+	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.CodecValueWriter#writeValue(java.lang.Object, com.fasterxml.jackson.databind.SerializerProvider) <em>Write Value</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Writer</em>'.
-	 * @see org.gecko.codec.info.codecinfo.CodecValueWriter#getWriter()
-	 * @see #getCodecValueWriter()
+	 * @return the meta object for the '<em>Write Value</em>' operation.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueWriter#writeValue(java.lang.Object, com.fasterxml.jackson.databind.SerializerProvider)
 	 * @generated
 	 */
-	EAttribute getCodecValueWriter_Writer();
+	EOperation getCodecValueWriter__WriteValue__Object_SerializerProvider();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder <em>Holder</em>}'.
@@ -1486,37 +1464,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EDataType getSerializerProvider();
 
 	/**
-	 * Returns the meta object for data type '{@link org.gecko.codec.io.ValueReader <em>Value Reader</em>}'.
+	 * Returns the meta object for data type '{@link com.fasterxml.jackson.databind.DeserializationContext <em>Deserialization Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Value Reader</em>'.
-	 * @see org.gecko.codec.io.ValueReader
-	 * @model instanceClass="org.gecko.codec.io.ValueReader" typeParameters="V T"
-	 * @generated
-	 */
-	EDataType getValueReader();
-
-	/**
-	 * Returns the meta object for data type '{@link org.gecko.codec.io.ValueWriter <em>Value Writer</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Value Writer</em>'.
-	 * @see org.gecko.codec.io.ValueWriter
-	 * @model instanceClass="org.gecko.codec.io.ValueWriter" typeParameters="T V"
-	 * @generated
-	 */
-	EDataType getValueWriter();
-
-	/**
-	 * Returns the meta object for data type '{@link com.fasterxml.jackson.databind.DeserializationContext <em>De Serialization Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>De Serialization Context</em>'.
+	 * @return the meta object for data type '<em>Deserialization Context</em>'.
 	 * @see com.fasterxml.jackson.databind.DeserializationContext
 	 * @model instanceClass="com.fasterxml.jackson.databind.DeserializationContext"
 	 * @generated
 	 */
-	EDataType getDeSerializationContext();
+	EDataType getDeserializationContext();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1826,10 +1782,10 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EClass REFERENCE_INFO = eINSTANCE.getReferenceInfo();
 
 		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.CodecValueReaderImpl <em>Codec Value Reader</em>}' class.
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecValueReaderImpl
+		 * @see org.gecko.codec.info.codecinfo.CodecValueReader
 		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueReader()
 		 * @generated
 		 */
@@ -1844,18 +1800,18 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute CODEC_VALUE_READER__NAME = eINSTANCE.getCodecValueReader_Name();
 
 		/**
-		 * The meta object literal for the '<em><b>Reader</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Read Value</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CODEC_VALUE_READER__READER = eINSTANCE.getCodecValueReader_Reader();
+		EOperation CODEC_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT = eINSTANCE.getCodecValueReader__ReadValue__Object_DeserializationContext();
 
 		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.CodecValueWriterImpl <em>Codec Value Writer</em>}' class.
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.CodecValueWriter <em>Codec Value Writer</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecValueWriterImpl
+		 * @see org.gecko.codec.info.codecinfo.CodecValueWriter
 		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueWriter()
 		 * @generated
 		 */
@@ -1870,12 +1826,12 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute CODEC_VALUE_WRITER__NAME = eINSTANCE.getCodecValueWriter_Name();
 
 		/**
-		 * The meta object literal for the '<em><b>Writer</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Write Value</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CODEC_VALUE_WRITER__WRITER = eINSTANCE.getCodecValueWriter_Writer();
+		EOperation CODEC_VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZERPROVIDER = eINSTANCE.getCodecValueWriter__WriteValue__Object_SerializerProvider();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl <em>Holder</em>}' class.
@@ -1974,34 +1930,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EDataType SERIALIZER_PROVIDER = eINSTANCE.getSerializerProvider();
 
 		/**
-		 * The meta object literal for the '<em>Value Reader</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.io.ValueReader
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueReader()
-		 * @generated
-		 */
-		EDataType VALUE_READER = eINSTANCE.getValueReader();
-
-		/**
-		 * The meta object literal for the '<em>Value Writer</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.io.ValueWriter
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueWriter()
-		 * @generated
-		 */
-		EDataType VALUE_WRITER = eINSTANCE.getValueWriter();
-
-		/**
-		 * The meta object literal for the '<em>De Serialization Context</em>' data type.
+		 * The meta object literal for the '<em>Deserialization Context</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see com.fasterxml.jackson.databind.DeserializationContext
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeSerializationContext()
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 		 * @generated
 		 */
-		EDataType DE_SERIALIZATION_CONTEXT = eINSTANCE.getDeSerializationContext();
+		EDataType DESERIALIZATION_CONTEXT = eINSTANCE.getDeserializationContext();
 
 	}
 

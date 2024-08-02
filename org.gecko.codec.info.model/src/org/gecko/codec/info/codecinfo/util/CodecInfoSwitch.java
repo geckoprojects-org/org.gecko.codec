@@ -106,13 +106,13 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case CodecInfoPackage.CODEC_VALUE_READER: {
-				CodecValueReader codecValueReader = (CodecValueReader)theEObject;
+				CodecValueReader<?, ?> codecValueReader = (CodecValueReader<?, ?>)theEObject;
 				T1 result = caseCodecValueReader(codecValueReader);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case CodecInfoPackage.CODEC_VALUE_WRITER: {
-				CodecValueWriter codecValueWriter = (CodecValueWriter)theEObject;
+				CodecValueWriter<?, ?> codecValueWriter = (CodecValueWriter<?, ?>)theEObject;
 				T1 result = caseCodecValueWriter(codecValueWriter);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -234,7 +234,7 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseCodecValueReader(CodecValueReader object) {
+	public <V, T> T1 caseCodecValueReader(CodecValueReader<V, T> object) {
 		return null;
 	}
 
@@ -249,7 +249,7 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseCodecValueWriter(CodecValueWriter object) {
+	public <T, V> T1 caseCodecValueWriter(CodecValueWriter<T, V> object) {
 		return null;
 	}
 
@@ -279,7 +279,7 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T, V> T1 caseSampleValueReader(SampleValueReader<T, V> object) {
+	public <V, T> T1 caseSampleValueReader(SampleValueReader<V, T> object) {
 		return null;
 	}
 

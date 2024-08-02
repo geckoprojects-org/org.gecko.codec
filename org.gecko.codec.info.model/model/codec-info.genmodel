@@ -18,15 +18,7 @@
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/OTHER"/>
     </genEnums>
     <genDataTypes ecoreDataType="codec-info.ecore#//SerializerProvider"/>
-    <genDataTypes ecoreDataType="codec-info.ecore#//ValueReader">
-      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//ValueReader/V"/>
-      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//ValueReader/T"/>
-    </genDataTypes>
-    <genDataTypes ecoreDataType="codec-info.ecore#//ValueWriter">
-      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//ValueWriter/T"/>
-      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//ValueWriter/V"/>
-    </genDataTypes>
-    <genDataTypes ecoreDataType="codec-info.ecore#//DeSerializationContext"/>
+    <genDataTypes ecoreDataType="codec-info.ecore#//DeserializationContext"/>
     <genClasses ecoreClass="codec-info.ecore#//PackageCodecInfo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//PackageCodecInfo/id"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codec-info.ecore#//PackageCodecInfo/ePackage"/>
@@ -67,12 +59,22 @@
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//ReferenceInfo"/>
     <genClasses ecoreClass="codec-info.ecore#//CodecValueReader">
+      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//CodecValueReader/V"/>
+      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//CodecValueReader/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//CodecValueReader/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//CodecValueReader/reader"/>
+      <genOperations ecoreOperation="codec-info.ecore#//CodecValueReader/readValue">
+        <genParameters ecoreParameter="codec-info.ecore#//CodecValueReader/readValue/value"/>
+        <genParameters ecoreParameter="codec-info.ecore#//CodecValueReader/readValue/context"/>
+      </genOperations>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//CodecValueWriter">
+      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//CodecValueWriter/T"/>
+      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//CodecValueWriter/V"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//CodecValueWriter/name"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute codec-info.ecore#//CodecValueWriter/writer"/>
+      <genOperations ecoreOperation="codec-info.ecore#//CodecValueWriter/writeValue">
+        <genParameters ecoreParameter="codec-info.ecore#//CodecValueWriter/writeValue/value"/>
+        <genParameters ecoreParameter="codec-info.ecore#//CodecValueWriter/writeValue/provider"/>
+      </genOperations>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//CodecInfoHolder">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//CodecInfoHolder/infoType"/>
@@ -88,8 +90,8 @@
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//SampleValueReader">
-      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//SampleValueReader/T"/>
       <genTypeParameters ecoreTypeParameter="codec-info.ecore#//SampleValueReader/V"/>
+      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//SampleValueReader/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//SampleValueReader/name"/>
       <genOperations ecoreOperation="codec-info.ecore#//SampleValueReader/readValue">
         <genParameters ecoreParameter="codec-info.ecore#//SampleValueReader/readValue/value"/>

@@ -23,7 +23,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface SampleValueReader<T, V> {
+public interface SampleValueReader<V, T> {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -38,7 +38,7 @@ public interface SampleValueReader<T, V> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model valueRequired="true" contextDataType="org.gecko.codec.info.codecinfo.DeSerializationContext" contextRequired="true"
+	 * @model valueRequired="true" contextDataType="org.gecko.codec.info.codecinfo.DeserializationContext" contextRequired="true"
 	 * @generated
 	 */
 	T readValue(V value, DeserializationContext context);
