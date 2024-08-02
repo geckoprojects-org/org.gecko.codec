@@ -19,6 +19,10 @@ import java.util.Optional;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
+import org.gecko.codec.info.codecinfo.CodecInfoHolder;
+import org.gecko.codec.info.codecinfo.EClassCodecInfo;
+import org.gecko.codec.info.codecinfo.InfoType;
+import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 
 /**
  * 
@@ -47,5 +51,27 @@ public interface CodecModelInfo extends EPackage.Registry {
 	 * @return The {@link List} of upper elements. 
 	 */
 	public List<EClass> getUpperTypeHierarchyForEClass(EClass eClass);	
+	
+	/**
+	 * Retrieves the {@link PackageCodecInfo} for the {@link EPackage} with the given namespace URI, if available
+	 * @param uri the namespace URI of the {@link EPackage}
+	 * @return an {@link Optional} for the {@link PackageCodecInfo} for the {@link EPackage} with the given namespace URI, if available
+	 */
+	public Optional<PackageCodecInfo> getCodecInfoForPackage(String uri);
+	
+	
+	/**
+	 * Retrieves the {@link EClassCodecInfo} for the given {@link EClass} 
+	 * @param eClass the EClass to look for
+	 * @return an {@link Optional} for the {@link EClassCodecInfo}
+	 */
+	public Optional<EClassCodecInfo> getCodecInfoForEClass(EClass eClass);
+	
+	/**
+	 * Retrieves the {@link CodecInfoHolder}, if available, for a given {@link InfoType}
+	 * @param infoType the {@link InfoType} for which we want to retrieve the {@link CodecInfoHolder}
+	 * @return an {@link Optional} for the {@link CodecInfoHolder}
+	 */
+	public Optional<CodecInfoHolder> getCodecInfoHolderByType(InfoType infoType);
 
 }

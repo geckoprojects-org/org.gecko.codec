@@ -68,14 +68,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	CodecInfoPackage eINSTANCE = org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.PackageInfoImpl <em>Package Info</em>}' class.
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.PackageCodecInfoImpl <em>Package Codec Info</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.impl.PackageInfoImpl
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getPackageInfo()
+	 * @see org.gecko.codec.info.codecinfo.impl.PackageCodecInfoImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getPackageCodecInfo()
 	 * @generated
 	 */
-	int PACKAGE_INFO = 0;
+	int PACKAGE_CODEC_INFO = 0;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -84,7 +84,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_INFO__ID = 0;
+	int PACKAGE_CODEC_INFO__ID = 0;
 
 	/**
 	 * The feature id for the '<em><b>EPackage</b></em>' reference.
@@ -93,53 +93,53 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_INFO__EPACKAGE = 1;
+	int PACKAGE_CODEC_INFO__EPACKAGE = 1;
 
 	/**
-	 * The feature id for the '<em><b>Sub Package Info</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Sub Package Codec Info</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_INFO__SUB_PACKAGE_INFO = 2;
+	int PACKAGE_CODEC_INFO__SUB_PACKAGE_CODEC_INFO = 2;
 
 	/**
-	 * The feature id for the '<em><b>EClass Info</b></em>' containment reference list.
+	 * The feature id for the '<em><b>EClass Codec Info</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_INFO__ECLASS_INFO = 3;
+	int PACKAGE_CODEC_INFO__ECLASS_CODEC_INFO = 3;
 
 	/**
-	 * The number of structural features of the '<em>Package Info</em>' class.
+	 * The number of structural features of the '<em>Package Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_INFO_FEATURE_COUNT = 4;
+	int PACKAGE_CODEC_INFO_FEATURE_COUNT = 4;
 
 	/**
-	 * The number of operations of the '<em>Package Info</em>' class.
+	 * The number of operations of the '<em>Package Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_INFO_OPERATION_COUNT = 0;
+	int PACKAGE_CODEC_INFO_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.EClassInfoImpl <em>EClass Info</em>}' class.
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl <em>EClass Codec Info</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.impl.EClassInfoImpl
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getEClassInfo()
+	 * @see org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getEClassCodecInfo()
 	 * @generated
 	 */
-	int ECLASS_INFO = 1;
+	int ECLASS_CODEC_INFO = 1;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -148,7 +148,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_INFO__ID = 0;
+	int ECLASS_CODEC_INFO__ID = 0;
 
 	/**
 	 * The feature id for the '<em><b>Classifier</b></em>' reference.
@@ -157,7 +157,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_INFO__CLASSIFIER = 1;
+	int ECLASS_CODEC_INFO__CLASSIFIER = 1;
 
 	/**
 	 * The feature id for the '<em><b>Identity Info</b></em>' containment reference.
@@ -166,7 +166,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_INFO__IDENTITY_INFO = 2;
+	int ECLASS_CODEC_INFO__IDENTITY_INFO = 2;
 
 	/**
 	 * The feature id for the '<em><b>Type Info</b></em>' containment reference.
@@ -175,7 +175,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_INFO__TYPE_INFO = 3;
+	int ECLASS_CODEC_INFO__TYPE_INFO = 3;
 
 	/**
 	 * The feature id for the '<em><b>Feature Info</b></em>' containment reference.
@@ -184,35 +184,71 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_INFO__FEATURE_INFO = 4;
+	int ECLASS_CODEC_INFO__FEATURE_INFO = 4;
 
 	/**
-	 * The number of structural features of the '<em>EClass Info</em>' class.
+	 * The feature id for the '<em><b>Reference Info</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_INFO_FEATURE_COUNT = 5;
+	int ECLASS_CODEC_INFO__REFERENCE_INFO = 5;
 
 	/**
-	 * The number of operations of the '<em>EClass Info</em>' class.
+	 * The feature id for the '<em><b>Serialize Default Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_INFO_OPERATION_COUNT = 0;
+	int ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE = 6;
 
 	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl <em>Feature Info</em>}' class.
+	 * The feature id for the '<em><b>Serialize Array Batched</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getFeatureInfo()
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED = 7;
+
+	/**
+	 * The feature id for the '<em><b>Use Names From Extended Meta Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA = 8;
+
+	/**
+	 * The number of structural features of the '<em>EClass Codec Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO_FEATURE_COUNT = 9;
+
+	/**
+	 * The number of operations of the '<em>EClass Codec Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl <em>Feature Codec Info</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getFeatureCodecInfo()
 	 * @generated
 	 */
-	int FEATURE_INFO = 2;
+	int FEATURE_CODEC_INFO = 2;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -221,7 +257,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_INFO__ID = 0;
+	int FEATURE_CODEC_INFO__ID = 0;
 
 	/**
 	 * The feature id for the '<em><b>Features</b></em>' reference list.
@@ -230,7 +266,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_INFO__FEATURES = 1;
+	int FEATURE_CODEC_INFO__FEATURES = 1;
 
 	/**
 	 * The feature id for the '<em><b>Default Key</b></em>' attribute.
@@ -239,7 +275,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_INFO__DEFAULT_KEY = 2;
+	int FEATURE_CODEC_INFO__DEFAULT_KEY = 2;
 
 	/**
 	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
@@ -248,7 +284,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_INFO__VALUE_READER_NAME = 3;
+	int FEATURE_CODEC_INFO__VALUE_READER_NAME = 3;
 
 	/**
 	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
@@ -257,7 +293,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_INFO__VALUE_WRITER_NAME = 4;
+	int FEATURE_CODEC_INFO__VALUE_WRITER_NAME = 4;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -266,7 +302,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_INFO__TYPE = 5;
+	int FEATURE_CODEC_INFO__TYPE = 5;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -275,190 +311,25 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_INFO__KEY = 6;
+	int FEATURE_CODEC_INFO__KEY = 6;
 
 	/**
-	 * The number of structural features of the '<em>Feature Info</em>' class.
+	 * The number of structural features of the '<em>Feature Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_INFO_FEATURE_COUNT = 7;
+	int FEATURE_CODEC_INFO_FEATURE_COUNT = 7;
 
 	/**
-	 * The number of operations of the '<em>Feature Info</em>' class.
+	 * The number of operations of the '<em>Feature Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_INFO_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.ValueReader <em>Value Reader</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.ValueReader
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueReader()
-	 * @generated
-	 */
-	int VALUE_READER = 3;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VALUE_READER__NAME = 0;
-
-	/**
-	 * The number of structural features of the '<em>Value Reader</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VALUE_READER_FEATURE_COUNT = 1;
-
-	/**
-	 * The operation id for the '<em>Read Value</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT = 0;
-
-	/**
-	 * The number of operations of the '<em>Value Reader</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VALUE_READER_OPERATION_COUNT = 1;
-
-	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.ValueWriter <em>Value Writer</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.ValueWriter
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueWriter()
-	 * @generated
-	 */
-	int VALUE_WRITER = 4;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VALUE_WRITER__NAME = 0;
-
-	/**
-	 * The number of structural features of the '<em>Value Writer</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VALUE_WRITER_FEATURE_COUNT = 1;
-
-	/**
-	 * The operation id for the '<em>Write Value</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZERPROVIDER = 0;
-
-	/**
-	 * The number of operations of the '<em>Value Writer</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VALUE_WRITER_OPERATION_COUNT = 1;
-
-	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.TypeInfoHolderImpl <em>Type Info Holder</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.impl.TypeInfoHolderImpl
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getTypeInfoHolder()
-	 * @generated
-	 */
-	int TYPE_INFO_HOLDER = 5;
-
-	/**
-	 * The feature id for the '<em><b>Info Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_INFO_HOLDER__INFO_TYPE = 0;
-
-	/**
-	 * The feature id for the '<em><b>Readers</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_INFO_HOLDER__READERS = 1;
-
-	/**
-	 * The feature id for the '<em><b>Writers</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_INFO_HOLDER__WRITERS = 2;
-
-	/**
-	 * The number of structural features of the '<em>Type Info Holder</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_INFO_HOLDER_FEATURE_COUNT = 3;
-
-	/**
-	 * The operation id for the '<em>Get Reader By Name</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_INFO_HOLDER___GET_READER_BY_NAME__STRING = 0;
-
-	/**
-	 * The operation id for the '<em>Get Writer By Name</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_INFO_HOLDER___GET_WRITER_BY_NAME__STRING = 1;
-
-	/**
-	 * The number of operations of the '<em>Type Info Holder</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_INFO_HOLDER_OPERATION_COUNT = 2;
+	int FEATURE_CODEC_INFO_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl <em>Type Info</em>}' class.
@@ -468,7 +339,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getTypeInfo()
 	 * @generated
 	 */
-	int TYPE_INFO = 6;
+	int TYPE_INFO = 3;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -477,7 +348,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__ID = FEATURE_INFO__ID;
+	int TYPE_INFO__ID = FEATURE_CODEC_INFO__ID;
 
 	/**
 	 * The feature id for the '<em><b>Features</b></em>' reference list.
@@ -486,7 +357,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__FEATURES = FEATURE_INFO__FEATURES;
+	int TYPE_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
 
 	/**
 	 * The feature id for the '<em><b>Default Key</b></em>' attribute.
@@ -495,7 +366,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__DEFAULT_KEY = FEATURE_INFO__DEFAULT_KEY;
+	int TYPE_INFO__DEFAULT_KEY = FEATURE_CODEC_INFO__DEFAULT_KEY;
 
 	/**
 	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
@@ -504,7 +375,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__VALUE_READER_NAME = FEATURE_INFO__VALUE_READER_NAME;
+	int TYPE_INFO__VALUE_READER_NAME = FEATURE_CODEC_INFO__VALUE_READER_NAME;
 
 	/**
 	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
@@ -513,7 +384,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__VALUE_WRITER_NAME = FEATURE_INFO__VALUE_WRITER_NAME;
+	int TYPE_INFO__VALUE_WRITER_NAME = FEATURE_CODEC_INFO__VALUE_WRITER_NAME;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -522,7 +393,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__TYPE = FEATURE_INFO__TYPE;
+	int TYPE_INFO__TYPE = FEATURE_CODEC_INFO__TYPE;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -531,16 +402,34 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__KEY = FEATURE_INFO__KEY;
+	int TYPE_INFO__KEY = FEATURE_CODEC_INFO__KEY;
 
 	/**
-	 * The feature id for the '<em><b>Write Super Types</b></em>' attribute.
+	 * The feature id for the '<em><b>Serialize Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__WRITE_SUPER_TYPES = FEATURE_INFO_FEATURE_COUNT + 0;
+	int TYPE_INFO__SERIALIZE_TYPE = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Serialize Super Types</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_INFO__SERIALIZE_SUPER_TYPES = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Serialize Super Type As Array</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY = FEATURE_CODEC_INFO_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Type Info</em>' class.
@@ -549,7 +438,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO_FEATURE_COUNT = FEATURE_INFO_FEATURE_COUNT + 1;
+	int TYPE_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of operations of the '<em>Type Info</em>' class.
@@ -558,7 +447,399 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO_OPERATION_COUNT = FEATURE_INFO_OPERATION_COUNT + 0;
+	int TYPE_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl <em>Identity Info</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getIdentityInfo()
+	 * @generated
+	 */
+	int IDENTITY_INFO = 4;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__ID = FEATURE_CODEC_INFO__ID;
+
+	/**
+	 * The feature id for the '<em><b>Features</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
+
+	/**
+	 * The feature id for the '<em><b>Default Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__DEFAULT_KEY = FEATURE_CODEC_INFO__DEFAULT_KEY;
+
+	/**
+	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__VALUE_READER_NAME = FEATURE_CODEC_INFO__VALUE_READER_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__VALUE_WRITER_NAME = FEATURE_CODEC_INFO__VALUE_WRITER_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__TYPE = FEATURE_CODEC_INFO__TYPE;
+
+	/**
+	 * The feature id for the '<em><b>Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__KEY = FEATURE_CODEC_INFO__KEY;
+
+	/**
+	 * The feature id for the '<em><b>Use Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__USE_ID = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Use Id Field</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__USE_ID_FIELD = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Id Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__ID_TOP = FEATURE_CODEC_INFO_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Serialize Id Field</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__SERIALIZE_ID_FIELD = FEATURE_CODEC_INFO_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Id Feature As Primary Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY = FEATURE_CODEC_INFO_FEATURE_COUNT + 4;
+
+	/**
+	 * The number of structural features of the '<em>Identity Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 5;
+
+	/**
+	 * The number of operations of the '<em>Identity Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.ReferenceInfoImpl <em>Reference Info</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.info.codecinfo.impl.ReferenceInfoImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getReferenceInfo()
+	 * @generated
+	 */
+	int REFERENCE_INFO = 5;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO__ID = FEATURE_CODEC_INFO__ID;
+
+	/**
+	 * The feature id for the '<em><b>Features</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
+
+	/**
+	 * The feature id for the '<em><b>Default Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO__DEFAULT_KEY = FEATURE_CODEC_INFO__DEFAULT_KEY;
+
+	/**
+	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO__VALUE_READER_NAME = FEATURE_CODEC_INFO__VALUE_READER_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO__VALUE_WRITER_NAME = FEATURE_CODEC_INFO__VALUE_WRITER_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO__TYPE = FEATURE_CODEC_INFO__TYPE;
+
+	/**
+	 * The feature id for the '<em><b>Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO__KEY = FEATURE_CODEC_INFO__KEY;
+
+	/**
+	 * The number of structural features of the '<em>Reference Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Reference Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.CodecValueReaderImpl <em>Codec Value Reader</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecValueReaderImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueReader()
+	 * @generated
+	 */
+	int CODEC_VALUE_READER = 6;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_READER__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Reader</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_READER__READER = 1;
+
+	/**
+	 * The number of structural features of the '<em>Codec Value Reader</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_READER_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Codec Value Reader</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_READER_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.CodecValueWriterImpl <em>Codec Value Writer</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecValueWriterImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueWriter()
+	 * @generated
+	 */
+	int CODEC_VALUE_WRITER = 7;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_WRITER__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Writer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_WRITER__WRITER = 1;
+
+	/**
+	 * The number of structural features of the '<em>Codec Value Writer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_WRITER_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Codec Value Writer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_VALUE_WRITER_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl <em>Holder</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecInfoHolder()
+	 * @generated
+	 */
+	int CODEC_INFO_HOLDER = 8;
+
+	/**
+	 * The feature id for the '<em><b>Info Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_INFO_HOLDER__INFO_TYPE = 0;
+
+	/**
+	 * The feature id for the '<em><b>Readers</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_INFO_HOLDER__READERS = 1;
+
+	/**
+	 * The feature id for the '<em><b>Writers</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_INFO_HOLDER__WRITERS = 2;
+
+	/**
+	 * The number of structural features of the '<em>Holder</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_INFO_HOLDER_FEATURE_COUNT = 3;
+
+	/**
+	 * The operation id for the '<em>Get Reader By Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_INFO_HOLDER___GET_READER_BY_NAME__STRING = 0;
+
+	/**
+	 * The operation id for the '<em>Get Writer By Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_INFO_HOLDER___GET_WRITER_BY_NAME__STRING = 1;
+
+	/**
+	 * The number of operations of the '<em>Holder</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_INFO_HOLDER_OPERATION_COUNT = 2;
 
 	/**
 	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.
@@ -568,17 +849,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getInfoType()
 	 * @generated
 	 */
-	int INFO_TYPE = 7;
-
-	/**
-	 * The meta object id for the '<em>Deserialization Context</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see com.fasterxml.jackson.databind.DeserializationContext
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
-	 * @generated
-	 */
-	int DESERIALIZATION_CONTEXT = 8;
+	int INFO_TYPE = 9;
 
 	/**
 	 * The meta object id for the '<em>Serializer Provider</em>' data type.
@@ -588,339 +859,278 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
 	 * @generated
 	 */
-	int SERIALIZER_PROVIDER = 9;
-
+	int SERIALIZER_PROVIDER = 10;
 
 	/**
-	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.PackageInfo <em>Package Info</em>}'.
+	 * The meta object id for the '<em>Value Reader</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Package Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.PackageInfo
+	 * @see org.gecko.codec.io.ValueReader
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueReader()
 	 * @generated
 	 */
-	EClass getPackageInfo();
+	int VALUE_READER = 11;
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.PackageInfo#getId <em>Id</em>}'.
+	 * The meta object id for the '<em>Value Writer</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.io.ValueWriter
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueWriter()
+	 * @generated
+	 */
+	int VALUE_WRITER = 12;
+
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.PackageCodecInfo <em>Package Codec Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Package Codec Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.PackageCodecInfo
+	 * @generated
+	 */
+	EClass getPackageCodecInfo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.PackageCodecInfo#getId <em>Id</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Id</em>'.
-	 * @see org.gecko.codec.info.codecinfo.PackageInfo#getId()
-	 * @see #getPackageInfo()
+	 * @see org.gecko.codec.info.codecinfo.PackageCodecInfo#getId()
+	 * @see #getPackageCodecInfo()
 	 * @generated
 	 */
-	EAttribute getPackageInfo_Id();
+	EAttribute getPackageCodecInfo_Id();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.gecko.codec.info.codecinfo.PackageInfo#getEPackage <em>EPackage</em>}'.
+	 * Returns the meta object for the reference '{@link org.gecko.codec.info.codecinfo.PackageCodecInfo#getEPackage <em>EPackage</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the reference '<em>EPackage</em>'.
-	 * @see org.gecko.codec.info.codecinfo.PackageInfo#getEPackage()
-	 * @see #getPackageInfo()
+	 * @see org.gecko.codec.info.codecinfo.PackageCodecInfo#getEPackage()
+	 * @see #getPackageCodecInfo()
 	 * @generated
 	 */
-	EReference getPackageInfo_EPackage();
+	EReference getPackageCodecInfo_EPackage();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.info.codecinfo.PackageInfo#getSubPackageInfo <em>Sub Package Info</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.info.codecinfo.PackageCodecInfo#getSubPackageCodecInfo <em>Sub Package Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Sub Package Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.PackageInfo#getSubPackageInfo()
-	 * @see #getPackageInfo()
+	 * @return the meta object for the containment reference list '<em>Sub Package Codec Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.PackageCodecInfo#getSubPackageCodecInfo()
+	 * @see #getPackageCodecInfo()
 	 * @generated
 	 */
-	EReference getPackageInfo_SubPackageInfo();
+	EReference getPackageCodecInfo_SubPackageCodecInfo();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.info.codecinfo.PackageInfo#getEClassInfo <em>EClass Info</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.info.codecinfo.PackageCodecInfo#getEClassCodecInfo <em>EClass Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>EClass Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.PackageInfo#getEClassInfo()
-	 * @see #getPackageInfo()
+	 * @return the meta object for the containment reference list '<em>EClass Codec Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.PackageCodecInfo#getEClassCodecInfo()
+	 * @see #getPackageCodecInfo()
 	 * @generated
 	 */
-	EReference getPackageInfo_EClassInfo();
+	EReference getPackageCodecInfo_EClassCodecInfo();
 
 	/**
-	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.EClassInfo <em>EClass Info</em>}'.
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo <em>EClass Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>EClass Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassInfo
+	 * @return the meta object for class '<em>EClass Codec Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo
 	 * @generated
 	 */
-	EClass getEClassInfo();
+	EClass getEClassCodecInfo();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.EClassInfo#getId <em>Id</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getId <em>Id</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Id</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassInfo#getId()
-	 * @see #getEClassInfo()
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getId()
+	 * @see #getEClassCodecInfo()
 	 * @generated
 	 */
-	EAttribute getEClassInfo_Id();
+	EAttribute getEClassCodecInfo_Id();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.gecko.codec.info.codecinfo.EClassInfo#getClassifier <em>Classifier</em>}'.
+	 * Returns the meta object for the reference '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getClassifier <em>Classifier</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the reference '<em>Classifier</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassInfo#getClassifier()
-	 * @see #getEClassInfo()
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getClassifier()
+	 * @see #getEClassCodecInfo()
 	 * @generated
 	 */
-	EReference getEClassInfo_Classifier();
+	EReference getEClassCodecInfo_Classifier();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassInfo#getIdentityInfo <em>Identity Info</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getIdentityInfo <em>Identity Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Identity Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassInfo#getIdentityInfo()
-	 * @see #getEClassInfo()
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getIdentityInfo()
+	 * @see #getEClassCodecInfo()
 	 * @generated
 	 */
-	EReference getEClassInfo_IdentityInfo();
+	EReference getEClassCodecInfo_IdentityInfo();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassInfo#getTypeInfo <em>Type Info</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getTypeInfo <em>Type Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Type Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassInfo#getTypeInfo()
-	 * @see #getEClassInfo()
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getTypeInfo()
+	 * @see #getEClassCodecInfo()
 	 * @generated
 	 */
-	EReference getEClassInfo_TypeInfo();
+	EReference getEClassCodecInfo_TypeInfo();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassInfo#getFeatureInfo <em>Feature Info</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo <em>Feature Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Feature Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassInfo#getFeatureInfo()
-	 * @see #getEClassInfo()
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo()
+	 * @see #getEClassCodecInfo()
 	 * @generated
 	 */
-	EReference getEClassInfo_FeatureInfo();
+	EReference getEClassCodecInfo_FeatureInfo();
 
 	/**
-	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.FeatureInfo <em>Feature Info</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo <em>Reference Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Feature Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.FeatureInfo
+	 * @return the meta object for the containment reference '<em>Reference Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo()
+	 * @see #getEClassCodecInfo()
 	 * @generated
 	 */
-	EClass getFeatureInfo();
+	EReference getEClassCodecInfo_ReferenceInfo();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getId <em>Id</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeDefaultValue <em>Serialize Default Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Serialize Default Value</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeDefaultValue()
+	 * @see #getEClassCodecInfo()
+	 * @generated
+	 */
+	EAttribute getEClassCodecInfo_SerializeDefaultValue();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeArrayBatched <em>Serialize Array Batched</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Serialize Array Batched</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeArrayBatched()
+	 * @see #getEClassCodecInfo()
+	 * @generated
+	 */
+	EAttribute getEClassCodecInfo_SerializeArrayBatched();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isUseNamesFromExtendedMetaData <em>Use Names From Extended Meta Data</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Use Names From Extended Meta Data</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#isUseNamesFromExtendedMetaData()
+	 * @see #getEClassCodecInfo()
+	 * @generated
+	 */
+	EAttribute getEClassCodecInfo_UseNamesFromExtendedMetaData();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo <em>Feature Codec Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Feature Codec Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo
+	 * @generated
+	 */
+	EClass getFeatureCodecInfo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getId <em>Id</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Id</em>'.
-	 * @see org.gecko.codec.info.codecinfo.FeatureInfo#getId()
-	 * @see #getFeatureInfo()
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo#getId()
+	 * @see #getFeatureCodecInfo()
 	 * @generated
 	 */
-	EAttribute getFeatureInfo_Id();
+	EAttribute getFeatureCodecInfo_Id();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getFeatures <em>Features</em>}'.
+	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getFeatures <em>Features</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the reference list '<em>Features</em>'.
-	 * @see org.gecko.codec.info.codecinfo.FeatureInfo#getFeatures()
-	 * @see #getFeatureInfo()
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo#getFeatures()
+	 * @see #getFeatureCodecInfo()
 	 * @generated
 	 */
-	EReference getFeatureInfo_Features();
+	EReference getFeatureCodecInfo_Features();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getDefaultKey <em>Default Key</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getDefaultKey <em>Default Key</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Default Key</em>'.
-	 * @see org.gecko.codec.info.codecinfo.FeatureInfo#getDefaultKey()
-	 * @see #getFeatureInfo()
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo#getDefaultKey()
+	 * @see #getFeatureCodecInfo()
 	 * @generated
 	 */
-	EAttribute getFeatureInfo_DefaultKey();
+	EAttribute getFeatureCodecInfo_DefaultKey();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getValueReaderName <em>Value Reader Name</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueReaderName <em>Value Reader Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Value Reader Name</em>'.
-	 * @see org.gecko.codec.info.codecinfo.FeatureInfo#getValueReaderName()
-	 * @see #getFeatureInfo()
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueReaderName()
+	 * @see #getFeatureCodecInfo()
 	 * @generated
 	 */
-	EAttribute getFeatureInfo_ValueReaderName();
+	EAttribute getFeatureCodecInfo_ValueReaderName();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getValueWriterName <em>Value Writer Name</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueWriterName <em>Value Writer Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Value Writer Name</em>'.
-	 * @see org.gecko.codec.info.codecinfo.FeatureInfo#getValueWriterName()
-	 * @see #getFeatureInfo()
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueWriterName()
+	 * @see #getFeatureCodecInfo()
 	 * @generated
 	 */
-	EAttribute getFeatureInfo_ValueWriterName();
+	EAttribute getFeatureCodecInfo_ValueWriterName();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getType <em>Type</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getType <em>Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Type</em>'.
-	 * @see org.gecko.codec.info.codecinfo.FeatureInfo#getType()
-	 * @see #getFeatureInfo()
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo#getType()
+	 * @see #getFeatureCodecInfo()
 	 * @generated
 	 */
-	EAttribute getFeatureInfo_Type();
+	EAttribute getFeatureCodecInfo_Type();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getKey <em>Key</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getKey <em>Key</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Key</em>'.
-	 * @see org.gecko.codec.info.codecinfo.FeatureInfo#getKey()
-	 * @see #getFeatureInfo()
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo#getKey()
+	 * @see #getFeatureCodecInfo()
 	 * @generated
 	 */
-	EAttribute getFeatureInfo_Key();
-
-	/**
-	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.ValueReader <em>Value Reader</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Value Reader</em>'.
-	 * @see org.gecko.codec.info.codecinfo.ValueReader
-	 * @generated
-	 */
-	EClass getValueReader();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.ValueReader#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.gecko.codec.info.codecinfo.ValueReader#getName()
-	 * @see #getValueReader()
-	 * @generated
-	 */
-	EAttribute getValueReader_Name();
-
-	/**
-	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.ValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext) <em>Read Value</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Read Value</em>' operation.
-	 * @see org.gecko.codec.info.codecinfo.ValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext)
-	 * @generated
-	 */
-	EOperation getValueReader__ReadValue__Object_DeserializationContext();
-
-	/**
-	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.ValueWriter <em>Value Writer</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Value Writer</em>'.
-	 * @see org.gecko.codec.info.codecinfo.ValueWriter
-	 * @generated
-	 */
-	EClass getValueWriter();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.ValueWriter#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.gecko.codec.info.codecinfo.ValueWriter#getName()
-	 * @see #getValueWriter()
-	 * @generated
-	 */
-	EAttribute getValueWriter_Name();
-
-	/**
-	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.ValueWriter#writeValue(java.lang.Object, com.fasterxml.jackson.databind.SerializerProvider) <em>Write Value</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Write Value</em>' operation.
-	 * @see org.gecko.codec.info.codecinfo.ValueWriter#writeValue(java.lang.Object, com.fasterxml.jackson.databind.SerializerProvider)
-	 * @generated
-	 */
-	EOperation getValueWriter__WriteValue__Object_SerializerProvider();
-
-	/**
-	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.TypeInfoHolder <em>Type Info Holder</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Type Info Holder</em>'.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfoHolder
-	 * @generated
-	 */
-	EClass getTypeInfoHolder();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfoHolder#getInfoType <em>Info Type</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Info Type</em>'.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfoHolder#getInfoType()
-	 * @see #getTypeInfoHolder()
-	 * @generated
-	 */
-	EAttribute getTypeInfoHolder_InfoType();
-
-	/**
-	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.TypeInfoHolder#getReaders <em>Readers</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Readers</em>'.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfoHolder#getReaders()
-	 * @see #getTypeInfoHolder()
-	 * @generated
-	 */
-	EReference getTypeInfoHolder_Readers();
-
-	/**
-	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.TypeInfoHolder#getWriters <em>Writers</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Writers</em>'.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfoHolder#getWriters()
-	 * @see #getTypeInfoHolder()
-	 * @generated
-	 */
-	EReference getTypeInfoHolder_Writers();
-
-	/**
-	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.TypeInfoHolder#getReaderByName(java.lang.String) <em>Get Reader By Name</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Reader By Name</em>' operation.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfoHolder#getReaderByName(java.lang.String)
-	 * @generated
-	 */
-	EOperation getTypeInfoHolder__GetReaderByName__String();
-
-	/**
-	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.TypeInfoHolder#getWriterByName(java.lang.String) <em>Get Writer By Name</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Writer By Name</em>' operation.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfoHolder#getWriterByName(java.lang.String)
-	 * @generated
-	 */
-	EOperation getTypeInfoHolder__GetWriterByName__String();
+	EAttribute getFeatureCodecInfo_Key();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.TypeInfo <em>Type Info</em>}'.
@@ -933,15 +1143,239 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EClass getTypeInfo();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#isWriteSuperTypes <em>Write Super Types</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeType <em>Serialize Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Write Super Types</em>'.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfo#isWriteSuperTypes()
+	 * @return the meta object for the attribute '<em>Serialize Type</em>'.
+	 * @see org.gecko.codec.info.codecinfo.TypeInfo#isSerializeType()
 	 * @see #getTypeInfo()
 	 * @generated
 	 */
-	EAttribute getTypeInfo_WriteSuperTypes();
+	EAttribute getTypeInfo_SerializeType();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypes <em>Serialize Super Types</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Serialize Super Types</em>'.
+	 * @see org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypes()
+	 * @see #getTypeInfo()
+	 * @generated
+	 */
+	EAttribute getTypeInfo_SerializeSuperTypes();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypeAsArray <em>Serialize Super Type As Array</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Serialize Super Type As Array</em>'.
+	 * @see org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypeAsArray()
+	 * @see #getTypeInfo()
+	 * @generated
+	 */
+	EAttribute getTypeInfo_SerializeSuperTypeAsArray();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.IdentityInfo <em>Identity Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Identity Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo
+	 * @generated
+	 */
+	EClass getIdentityInfo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isUseId <em>Use Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Use Id</em>'.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isUseId()
+	 * @see #getIdentityInfo()
+	 * @generated
+	 */
+	EAttribute getIdentityInfo_UseId();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isUseIdField <em>Use Id Field</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Use Id Field</em>'.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isUseIdField()
+	 * @see #getIdentityInfo()
+	 * @generated
+	 */
+	EAttribute getIdentityInfo_UseIdField();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isIdTop <em>Id Top</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id Top</em>'.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isIdTop()
+	 * @see #getIdentityInfo()
+	 * @generated
+	 */
+	EAttribute getIdentityInfo_IdTop();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isSerializeIdField <em>Serialize Id Field</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Serialize Id Field</em>'.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isSerializeIdField()
+	 * @see #getIdentityInfo()
+	 * @generated
+	 */
+	EAttribute getIdentityInfo_SerializeIdField();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isIdFeatureAsPrimaryKey <em>Id Feature As Primary Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id Feature As Primary Key</em>'.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isIdFeatureAsPrimaryKey()
+	 * @see #getIdentityInfo()
+	 * @generated
+	 */
+	EAttribute getIdentityInfo_IdFeatureAsPrimaryKey();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.ReferenceInfo <em>Reference Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Reference Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.ReferenceInfo
+	 * @generated
+	 */
+	EClass getReferenceInfo();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Codec Value Reader</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueReader
+	 * @generated
+	 */
+	EClass getCodecValueReader();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.CodecValueReader#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueReader#getName()
+	 * @see #getCodecValueReader()
+	 * @generated
+	 */
+	EAttribute getCodecValueReader_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.CodecValueReader#getReader <em>Reader</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Reader</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueReader#getReader()
+	 * @see #getCodecValueReader()
+	 * @generated
+	 */
+	EAttribute getCodecValueReader_Reader();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.CodecValueWriter <em>Codec Value Writer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Codec Value Writer</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueWriter
+	 * @generated
+	 */
+	EClass getCodecValueWriter();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.CodecValueWriter#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueWriter#getName()
+	 * @see #getCodecValueWriter()
+	 * @generated
+	 */
+	EAttribute getCodecValueWriter_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.CodecValueWriter#getWriter <em>Writer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Writer</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueWriter#getWriter()
+	 * @see #getCodecValueWriter()
+	 * @generated
+	 */
+	EAttribute getCodecValueWriter_Writer();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder <em>Holder</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Holder</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoHolder
+	 * @generated
+	 */
+	EClass getCodecInfoHolder();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder#getInfoType <em>Info Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Info Type</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoHolder#getInfoType()
+	 * @see #getCodecInfoHolder()
+	 * @generated
+	 */
+	EAttribute getCodecInfoHolder_InfoType();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder#getReaders <em>Readers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Readers</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoHolder#getReaders()
+	 * @see #getCodecInfoHolder()
+	 * @generated
+	 */
+	EReference getCodecInfoHolder_Readers();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder#getWriters <em>Writers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Writers</em>'.
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoHolder#getWriters()
+	 * @see #getCodecInfoHolder()
+	 * @generated
+	 */
+	EReference getCodecInfoHolder_Writers();
+
+	/**
+	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder#getReaderByName(java.lang.String) <em>Get Reader By Name</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Reader By Name</em>' operation.
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoHolder#getReaderByName(java.lang.String)
+	 * @generated
+	 */
+	EOperation getCodecInfoHolder__GetReaderByName__String();
+
+	/**
+	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder#getWriterByName(java.lang.String) <em>Get Writer By Name</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Writer By Name</em>' operation.
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoHolder#getWriterByName(java.lang.String)
+	 * @generated
+	 */
+	EOperation getCodecInfoHolder__GetWriterByName__String();
 
 	/**
 	 * Returns the meta object for enum '{@link org.gecko.codec.info.codecinfo.InfoType <em>Info Type</em>}'.
@@ -954,17 +1388,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EEnum getInfoType();
 
 	/**
-	 * Returns the meta object for data type '{@link com.fasterxml.jackson.databind.DeserializationContext <em>Deserialization Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Deserialization Context</em>'.
-	 * @see com.fasterxml.jackson.databind.DeserializationContext
-	 * @model instanceClass="com.fasterxml.jackson.databind.DeserializationContext"
-	 * @generated
-	 */
-	EDataType getDeserializationContext();
-
-	/**
 	 * Returns the meta object for data type '{@link com.fasterxml.jackson.databind.SerializerProvider <em>Serializer Provider</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -974,6 +1397,28 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EDataType getSerializerProvider();
+
+	/**
+	 * Returns the meta object for data type '{@link org.gecko.codec.io.ValueReader <em>Value Reader</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Value Reader</em>'.
+	 * @see org.gecko.codec.io.ValueReader
+	 * @model instanceClass="org.gecko.codec.io.ValueReader" typeParameters="V T"
+	 * @generated
+	 */
+	EDataType getValueReader();
+
+	/**
+	 * Returns the meta object for data type '{@link org.gecko.codec.io.ValueWriter <em>Value Writer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Value Writer</em>'.
+	 * @see org.gecko.codec.io.ValueWriter
+	 * @model instanceClass="org.gecko.codec.io.ValueWriter" typeParameters="T V"
+	 * @generated
+	 */
+	EDataType getValueWriter();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -999,14 +1444,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 */
 	interface Literals {
 		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.PackageInfoImpl <em>Package Info</em>}' class.
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.PackageCodecInfoImpl <em>Package Codec Info</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.impl.PackageInfoImpl
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getPackageInfo()
+		 * @see org.gecko.codec.info.codecinfo.impl.PackageCodecInfoImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getPackageCodecInfo()
 		 * @generated
 		 */
-		EClass PACKAGE_INFO = eINSTANCE.getPackageInfo();
+		EClass PACKAGE_CODEC_INFO = eINSTANCE.getPackageCodecInfo();
 
 		/**
 		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
@@ -1014,7 +1459,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute PACKAGE_INFO__ID = eINSTANCE.getPackageInfo_Id();
+		EAttribute PACKAGE_CODEC_INFO__ID = eINSTANCE.getPackageCodecInfo_Id();
 
 		/**
 		 * The meta object literal for the '<em><b>EPackage</b></em>' reference feature.
@@ -1022,33 +1467,33 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PACKAGE_INFO__EPACKAGE = eINSTANCE.getPackageInfo_EPackage();
+		EReference PACKAGE_CODEC_INFO__EPACKAGE = eINSTANCE.getPackageCodecInfo_EPackage();
 
 		/**
-		 * The meta object literal for the '<em><b>Sub Package Info</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Sub Package Codec Info</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PACKAGE_INFO__SUB_PACKAGE_INFO = eINSTANCE.getPackageInfo_SubPackageInfo();
+		EReference PACKAGE_CODEC_INFO__SUB_PACKAGE_CODEC_INFO = eINSTANCE.getPackageCodecInfo_SubPackageCodecInfo();
 
 		/**
-		 * The meta object literal for the '<em><b>EClass Info</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>EClass Codec Info</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference PACKAGE_INFO__ECLASS_INFO = eINSTANCE.getPackageInfo_EClassInfo();
+		EReference PACKAGE_CODEC_INFO__ECLASS_CODEC_INFO = eINSTANCE.getPackageCodecInfo_EClassCodecInfo();
 
 		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.EClassInfoImpl <em>EClass Info</em>}' class.
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl <em>EClass Codec Info</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.impl.EClassInfoImpl
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getEClassInfo()
+		 * @see org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getEClassCodecInfo()
 		 * @generated
 		 */
-		EClass ECLASS_INFO = eINSTANCE.getEClassInfo();
+		EClass ECLASS_CODEC_INFO = eINSTANCE.getEClassCodecInfo();
 
 		/**
 		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
@@ -1056,7 +1501,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ECLASS_INFO__ID = eINSTANCE.getEClassInfo_Id();
+		EAttribute ECLASS_CODEC_INFO__ID = eINSTANCE.getEClassCodecInfo_Id();
 
 		/**
 		 * The meta object literal for the '<em><b>Classifier</b></em>' reference feature.
@@ -1064,7 +1509,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ECLASS_INFO__CLASSIFIER = eINSTANCE.getEClassInfo_Classifier();
+		EReference ECLASS_CODEC_INFO__CLASSIFIER = eINSTANCE.getEClassCodecInfo_Classifier();
 
 		/**
 		 * The meta object literal for the '<em><b>Identity Info</b></em>' containment reference feature.
@@ -1072,7 +1517,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ECLASS_INFO__IDENTITY_INFO = eINSTANCE.getEClassInfo_IdentityInfo();
+		EReference ECLASS_CODEC_INFO__IDENTITY_INFO = eINSTANCE.getEClassCodecInfo_IdentityInfo();
 
 		/**
 		 * The meta object literal for the '<em><b>Type Info</b></em>' containment reference feature.
@@ -1080,7 +1525,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ECLASS_INFO__TYPE_INFO = eINSTANCE.getEClassInfo_TypeInfo();
+		EReference ECLASS_CODEC_INFO__TYPE_INFO = eINSTANCE.getEClassCodecInfo_TypeInfo();
 
 		/**
 		 * The meta object literal for the '<em><b>Feature Info</b></em>' containment reference feature.
@@ -1088,17 +1533,49 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ECLASS_INFO__FEATURE_INFO = eINSTANCE.getEClassInfo_FeatureInfo();
+		EReference ECLASS_CODEC_INFO__FEATURE_INFO = eINSTANCE.getEClassCodecInfo_FeatureInfo();
 
 		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl <em>Feature Info</em>}' class.
+		 * The meta object literal for the '<em><b>Reference Info</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getFeatureInfo()
 		 * @generated
 		 */
-		EClass FEATURE_INFO = eINSTANCE.getFeatureInfo();
+		EReference ECLASS_CODEC_INFO__REFERENCE_INFO = eINSTANCE.getEClassCodecInfo_ReferenceInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Serialize Default Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE = eINSTANCE.getEClassCodecInfo_SerializeDefaultValue();
+
+		/**
+		 * The meta object literal for the '<em><b>Serialize Array Batched</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED = eINSTANCE.getEClassCodecInfo_SerializeArrayBatched();
+
+		/**
+		 * The meta object literal for the '<em><b>Use Names From Extended Meta Data</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA = eINSTANCE.getEClassCodecInfo_UseNamesFromExtendedMetaData();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl <em>Feature Codec Info</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getFeatureCodecInfo()
+		 * @generated
+		 */
+		EClass FEATURE_CODEC_INFO = eINSTANCE.getFeatureCodecInfo();
 
 		/**
 		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
@@ -1106,7 +1583,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute FEATURE_INFO__ID = eINSTANCE.getFeatureInfo_Id();
+		EAttribute FEATURE_CODEC_INFO__ID = eINSTANCE.getFeatureCodecInfo_Id();
 
 		/**
 		 * The meta object literal for the '<em><b>Features</b></em>' reference list feature.
@@ -1114,7 +1591,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference FEATURE_INFO__FEATURES = eINSTANCE.getFeatureInfo_Features();
+		EReference FEATURE_CODEC_INFO__FEATURES = eINSTANCE.getFeatureCodecInfo_Features();
 
 		/**
 		 * The meta object literal for the '<em><b>Default Key</b></em>' attribute feature.
@@ -1122,7 +1599,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute FEATURE_INFO__DEFAULT_KEY = eINSTANCE.getFeatureInfo_DefaultKey();
+		EAttribute FEATURE_CODEC_INFO__DEFAULT_KEY = eINSTANCE.getFeatureCodecInfo_DefaultKey();
 
 		/**
 		 * The meta object literal for the '<em><b>Value Reader Name</b></em>' attribute feature.
@@ -1130,7 +1607,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute FEATURE_INFO__VALUE_READER_NAME = eINSTANCE.getFeatureInfo_ValueReaderName();
+		EAttribute FEATURE_CODEC_INFO__VALUE_READER_NAME = eINSTANCE.getFeatureCodecInfo_ValueReaderName();
 
 		/**
 		 * The meta object literal for the '<em><b>Value Writer Name</b></em>' attribute feature.
@@ -1138,7 +1615,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute FEATURE_INFO__VALUE_WRITER_NAME = eINSTANCE.getFeatureInfo_ValueWriterName();
+		EAttribute FEATURE_CODEC_INFO__VALUE_WRITER_NAME = eINSTANCE.getFeatureCodecInfo_ValueWriterName();
 
 		/**
 		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
@@ -1146,7 +1623,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute FEATURE_INFO__TYPE = eINSTANCE.getFeatureInfo_Type();
+		EAttribute FEATURE_CODEC_INFO__TYPE = eINSTANCE.getFeatureCodecInfo_Type();
 
 		/**
 		 * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
@@ -1154,109 +1631,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute FEATURE_INFO__KEY = eINSTANCE.getFeatureInfo_Key();
-
-		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.ValueReader <em>Value Reader</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.ValueReader
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueReader()
-		 * @generated
-		 */
-		EClass VALUE_READER = eINSTANCE.getValueReader();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute VALUE_READER__NAME = eINSTANCE.getValueReader_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Read Value</b></em>' operation.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EOperation VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT = eINSTANCE.getValueReader__ReadValue__Object_DeserializationContext();
-
-		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.ValueWriter <em>Value Writer</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.ValueWriter
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueWriter()
-		 * @generated
-		 */
-		EClass VALUE_WRITER = eINSTANCE.getValueWriter();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute VALUE_WRITER__NAME = eINSTANCE.getValueWriter_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Write Value</b></em>' operation.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EOperation VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZERPROVIDER = eINSTANCE.getValueWriter__WriteValue__Object_SerializerProvider();
-
-		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.TypeInfoHolderImpl <em>Type Info Holder</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.impl.TypeInfoHolderImpl
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getTypeInfoHolder()
-		 * @generated
-		 */
-		EClass TYPE_INFO_HOLDER = eINSTANCE.getTypeInfoHolder();
-
-		/**
-		 * The meta object literal for the '<em><b>Info Type</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TYPE_INFO_HOLDER__INFO_TYPE = eINSTANCE.getTypeInfoHolder_InfoType();
-
-		/**
-		 * The meta object literal for the '<em><b>Readers</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference TYPE_INFO_HOLDER__READERS = eINSTANCE.getTypeInfoHolder_Readers();
-
-		/**
-		 * The meta object literal for the '<em><b>Writers</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference TYPE_INFO_HOLDER__WRITERS = eINSTANCE.getTypeInfoHolder_Writers();
-
-		/**
-		 * The meta object literal for the '<em><b>Get Reader By Name</b></em>' operation.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EOperation TYPE_INFO_HOLDER___GET_READER_BY_NAME__STRING = eINSTANCE.getTypeInfoHolder__GetReaderByName__String();
-
-		/**
-		 * The meta object literal for the '<em><b>Get Writer By Name</b></em>' operation.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EOperation TYPE_INFO_HOLDER___GET_WRITER_BY_NAME__STRING = eINSTANCE.getTypeInfoHolder__GetWriterByName__String();
+		EAttribute FEATURE_CODEC_INFO__KEY = eINSTANCE.getFeatureCodecInfo_Key();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl <em>Type Info</em>}' class.
@@ -1269,12 +1644,190 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EClass TYPE_INFO = eINSTANCE.getTypeInfo();
 
 		/**
-		 * The meta object literal for the '<em><b>Write Super Types</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Serialize Type</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute TYPE_INFO__WRITE_SUPER_TYPES = eINSTANCE.getTypeInfo_WriteSuperTypes();
+		EAttribute TYPE_INFO__SERIALIZE_TYPE = eINSTANCE.getTypeInfo_SerializeType();
+
+		/**
+		 * The meta object literal for the '<em><b>Serialize Super Types</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute TYPE_INFO__SERIALIZE_SUPER_TYPES = eINSTANCE.getTypeInfo_SerializeSuperTypes();
+
+		/**
+		 * The meta object literal for the '<em><b>Serialize Super Type As Array</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY = eINSTANCE.getTypeInfo_SerializeSuperTypeAsArray();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl <em>Identity Info</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getIdentityInfo()
+		 * @generated
+		 */
+		EClass IDENTITY_INFO = eINSTANCE.getIdentityInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Use Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IDENTITY_INFO__USE_ID = eINSTANCE.getIdentityInfo_UseId();
+
+		/**
+		 * The meta object literal for the '<em><b>Use Id Field</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IDENTITY_INFO__USE_ID_FIELD = eINSTANCE.getIdentityInfo_UseIdField();
+
+		/**
+		 * The meta object literal for the '<em><b>Id Top</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IDENTITY_INFO__ID_TOP = eINSTANCE.getIdentityInfo_IdTop();
+
+		/**
+		 * The meta object literal for the '<em><b>Serialize Id Field</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IDENTITY_INFO__SERIALIZE_ID_FIELD = eINSTANCE.getIdentityInfo_SerializeIdField();
+
+		/**
+		 * The meta object literal for the '<em><b>Id Feature As Primary Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY = eINSTANCE.getIdentityInfo_IdFeatureAsPrimaryKey();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.ReferenceInfoImpl <em>Reference Info</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.info.codecinfo.impl.ReferenceInfoImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getReferenceInfo()
+		 * @generated
+		 */
+		EClass REFERENCE_INFO = eINSTANCE.getReferenceInfo();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.CodecValueReaderImpl <em>Codec Value Reader</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecValueReaderImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueReader()
+		 * @generated
+		 */
+		EClass CODEC_VALUE_READER = eINSTANCE.getCodecValueReader();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_VALUE_READER__NAME = eINSTANCE.getCodecValueReader_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Reader</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_VALUE_READER__READER = eINSTANCE.getCodecValueReader_Reader();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.CodecValueWriterImpl <em>Codec Value Writer</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecValueWriterImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueWriter()
+		 * @generated
+		 */
+		EClass CODEC_VALUE_WRITER = eINSTANCE.getCodecValueWriter();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_VALUE_WRITER__NAME = eINSTANCE.getCodecValueWriter_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Writer</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_VALUE_WRITER__WRITER = eINSTANCE.getCodecValueWriter_Writer();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl <em>Holder</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecInfoHolder()
+		 * @generated
+		 */
+		EClass CODEC_INFO_HOLDER = eINSTANCE.getCodecInfoHolder();
+
+		/**
+		 * The meta object literal for the '<em><b>Info Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_INFO_HOLDER__INFO_TYPE = eINSTANCE.getCodecInfoHolder_InfoType();
+
+		/**
+		 * The meta object literal for the '<em><b>Readers</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CODEC_INFO_HOLDER__READERS = eINSTANCE.getCodecInfoHolder_Readers();
+
+		/**
+		 * The meta object literal for the '<em><b>Writers</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CODEC_INFO_HOLDER__WRITERS = eINSTANCE.getCodecInfoHolder_Writers();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Reader By Name</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation CODEC_INFO_HOLDER___GET_READER_BY_NAME__STRING = eINSTANCE.getCodecInfoHolder__GetReaderByName__String();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Writer By Name</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation CODEC_INFO_HOLDER___GET_WRITER_BY_NAME__STRING = eINSTANCE.getCodecInfoHolder__GetWriterByName__String();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.
@@ -1287,16 +1840,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EEnum INFO_TYPE = eINSTANCE.getInfoType();
 
 		/**
-		 * The meta object literal for the '<em>Deserialization Context</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see com.fasterxml.jackson.databind.DeserializationContext
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
-		 * @generated
-		 */
-		EDataType DESERIALIZATION_CONTEXT = eINSTANCE.getDeserializationContext();
-
-		/**
 		 * The meta object literal for the '<em>Serializer Provider</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1305,6 +1848,26 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EDataType SERIALIZER_PROVIDER = eINSTANCE.getSerializerProvider();
+
+		/**
+		 * The meta object literal for the '<em>Value Reader</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.io.ValueReader
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueReader()
+		 * @generated
+		 */
+		EDataType VALUE_READER = eINSTANCE.getValueReader();
+
+		/**
+		 * The meta object literal for the '<em>Value Writer</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.io.ValueWriter
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getValueWriter()
+		 * @generated
+		 */
+		EDataType VALUE_WRITER = eINSTANCE.getValueWriter();
 
 	}
 

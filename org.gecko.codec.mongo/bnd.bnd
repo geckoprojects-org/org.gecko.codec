@@ -10,7 +10,9 @@
 	org.gecko.emf.mongo.api,\
 	org.gecko.emf.mongo.component,\
 	org.gecko.mongo.osgi.api,\
-	org.gecko.emf.collections
+	org.gecko.emf.collections,\
+	org.gecko.codec.info;version=latest,\
+	org.gecko.codec.info.model;version=latest
 	
 -testpath.model: \
 	org.gecko.codec.test.models;version=project,\

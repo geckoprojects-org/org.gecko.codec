@@ -25,40 +25,31 @@ public interface CodecInfoFactory extends EFactory {
 	CodecInfoFactory eINSTANCE = org.gecko.codec.info.codecinfo.impl.CodecInfoFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Package Info</em>'.
+	 * Returns a new object of class '<em>Package Codec Info</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Package Info</em>'.
+	 * @return a new object of class '<em>Package Codec Info</em>'.
 	 * @generated
 	 */
-	PackageInfo createPackageInfo();
+	PackageCodecInfo createPackageCodecInfo();
 
 	/**
-	 * Returns a new object of class '<em>EClass Info</em>'.
+	 * Returns a new object of class '<em>EClass Codec Info</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>EClass Info</em>'.
+	 * @return a new object of class '<em>EClass Codec Info</em>'.
 	 * @generated
 	 */
-	EClassInfo createEClassInfo();
+	EClassCodecInfo createEClassCodecInfo();
 
 	/**
-	 * Returns a new object of class '<em>Feature Info</em>'.
+	 * Returns a new object of class '<em>Feature Codec Info</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Feature Info</em>'.
+	 * @return a new object of class '<em>Feature Codec Info</em>'.
 	 * @generated
 	 */
-	FeatureInfo createFeatureInfo();
-
-	/**
-	 * Returns a new object of class '<em>Type Info Holder</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Type Info Holder</em>'.
-	 * @generated
-	 */
-	TypeInfoHolder createTypeInfoHolder();
+	FeatureCodecInfo createFeatureCodecInfo();
 
 	/**
 	 * Returns a new object of class '<em>Type Info</em>'.
@@ -68,6 +59,51 @@ public interface CodecInfoFactory extends EFactory {
 	 * @generated
 	 */
 	TypeInfo createTypeInfo();
+
+	/**
+	 * Returns a new object of class '<em>Identity Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Identity Info</em>'.
+	 * @generated
+	 */
+	IdentityInfo createIdentityInfo();
+
+	/**
+	 * Returns a new object of class '<em>Reference Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Reference Info</em>'.
+	 * @generated
+	 */
+	ReferenceInfo createReferenceInfo();
+
+	/**
+	 * Returns a new object of class '<em>Codec Value Reader</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Codec Value Reader</em>'.
+	 * @generated
+	 */
+	CodecValueReader createCodecValueReader();
+
+	/**
+	 * Returns a new object of class '<em>Codec Value Writer</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Codec Value Writer</em>'.
+	 * @generated
+	 */
+	CodecValueWriter createCodecValueWriter();
+
+	/**
+	 * Returns a new object of class '<em>Holder</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Holder</em>'.
+	 * @generated
+	 */
+	CodecInfoHolder createCodecInfoHolder();
 
 	/**
 	 * Returns the package supported by this factory.

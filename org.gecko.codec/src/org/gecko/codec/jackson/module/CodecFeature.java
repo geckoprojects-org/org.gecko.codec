@@ -51,7 +51,7 @@ public enum CodecFeature {
 	 * By setting this option to Boolean.TRUE, all eClass URIs will be written regardless. 
 	 * 
 	 */
-	OPTION_SERIALIZE_SUPERTYPE(true),
+	OPTION_SERIALIZE_SUPERTYPE(false),
 	
 	/**
 	 * To avoid writing unnecessary URIs in the result format, we write eClassUris only for the root 

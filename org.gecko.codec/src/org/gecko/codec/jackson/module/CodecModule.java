@@ -27,6 +27,8 @@ import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.databind.ser.EcoreReferenceSerializer;
 import org.eclipse.emfcloud.jackson.databind.ser.NullKeySerializer;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.gecko.codec.info.codecinfo.EClassCodecInfo;
+import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.jackson.databind.CodecFactory;
 import org.gecko.codec.jackson.databind.annotations.CodecIdentityInfo;
 import org.gecko.codec.jackson.databind.deser.CodecDeserializers;
@@ -50,10 +52,12 @@ public class CodecModule extends EMFModule {
 	private static final String MODULE_NAME = "gecko-codec-emfjson";
 	protected static final int DEFAULT_FEATURES = CodecFeature.collectDefaults();
 	protected int moduleFeatures = DEFAULT_FEATURES;
-	private final Map<String, Object> properties;
+	
+	private Map<String, Object> properties;
+	private EClassCodecInfo eClassCodecInfo;
 	
 	public CodecModule() {
-		this(null);
+		this((Map<String, Object>) null);
 	}
 
 	/**
@@ -62,6 +66,10 @@ public class CodecModule extends EMFModule {
 	 */
 	public CodecModule(Map<String, Object> properties) {
 		this.properties = Objects.isNull(properties) ? new HashMap<>() : properties;
+	}
+	
+	public CodecModule(EClassCodecInfo eClassCodecInfo) {
+		this.eClassCodecInfo = eClassCodecInfo;
 	}
 	
 	/**
@@ -131,6 +139,15 @@ public class CodecModule extends EMFModule {
 
 		return mapper;
 	}
+	
+	public static ObjectMapper setupDefaultMapper(final JsonFactory factory, EClassCodecInfo eClassCodecInfo) {
+		final ObjectMapper mapper = new ObjectMapper(factory);
+		CodecModule module = new CodecModule(eClassCodecInfo);
+		mapper.registerModule(module);
+		
+		
+		return mapper;
+	}
 
 	private CodecModule enable(final CodecFeature f) {
 		moduleFeatures |= f.getMask();
@@ -159,11 +176,25 @@ public class CodecModule extends EMFModule {
 		return this;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.emfcloud.jackson.module.EMFModule#setupModule(com.fasterxml.jackson.databind.Module.SetupContext)
+	 */
 	@Override
 	public void setupModule(final SetupContext context) {
 		super.setupModule(context);
+
+//		This is called when registering the module with mapper.register(module)
+		
+//		We should create the EcoreTypeInfo and so on starting from our CodecTypeInfo and so on...?
+		IdentityInfo idInfo = eClassCodecInfo.getIdentityInfo();
+//		setIdentityInfo()
+		
 		String typeKey = (String) properties.getOrDefault(TYPE_KEY.name(), TYPE_KEY.getKeyValue());
 		setTypeInfo(new EcoreTypeInfo(typeKey));
+		
+
+		
 		String idKey = (String) properties.getOrDefault(ID_KEY.name(), ID_KEY.getKeyValue());
 		setIdentityInfo(new CodecIdentityInfo(idKey));
 		if (getReferenceSerializer() == null || getReferenceSerializer() instanceof EcoreReferenceSerializer) {

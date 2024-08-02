@@ -49,12 +49,24 @@ public final class MongoResource extends JsonResource {
 	public MongoResource(URI uri, MongoDatabaseProvider provider, ObjectMapper mapper) {
 		super(uri, mapper);
 		this.provider = provider;
+//		TODO: the mapper should not be available here but should be created when we actually want to save the resource
 		this.mapper = mapper;
 
 	}
 
 	@Override
 	protected void doSave(OutputStream outputStream, Map<?, ?> options) throws IOException {
+		
+/*		TODO: the mapper should be created here 
+		TODO: 	1. Retrieve the CodecModelInfo for this resource -> this.getContents() should not be empty and should contain an EObject
+				2. Modified the CodecModelInfo according to the options passed here
+				3. Create the CodecModule based on the CodecModelInfo
+				4. Create the ObjectMapper	
+*/		
+//		if(this.getContents().isEmpty()) return;
+//		EObject eObj = this.getContents().get(0);
+		
+		
 		MongoCollection<EObject> collection = getCollection(options);
 
 		CodecRegistry eobjectRegistry = CodecRegistries

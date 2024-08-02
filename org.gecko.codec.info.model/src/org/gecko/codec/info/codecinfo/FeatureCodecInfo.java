@@ -11,42 +11,42 @@ import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Feature Info</b></em>'.
+ * A representation of the model object '<em><b>Feature Codec Info</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.gecko.codec.info.codecinfo.FeatureInfo#getId <em>Id</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.FeatureInfo#getFeatures <em>Features</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.FeatureInfo#getDefaultKey <em>Default Key</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.FeatureInfo#getValueReaderName <em>Value Reader Name</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.FeatureInfo#getValueWriterName <em>Value Writer Name</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.FeatureInfo#getType <em>Type</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.FeatureInfo#getKey <em>Key</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getId <em>Id</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getFeatures <em>Features</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getDefaultKey <em>Default Key</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueReaderName <em>Value Reader Name</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueWriterName <em>Value Writer Name</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getType <em>Type</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getKey <em>Key</em>}</li>
  * </ul>
  *
- * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureInfo()
+ * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo()
  * @model
  * @generated
  */
 @ProviderType
-public interface FeatureInfo extends EObject {
+public interface FeatureCodecInfo extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Id</em>' attribute.
 	 * @see #setId(String)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureInfo_Id()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_Id()
 	 * @model id="true"
 	 * @generated
 	 */
 	String getId();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getId <em>Id</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getId <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Id</em>' attribute.
@@ -61,7 +61,7 @@ public interface FeatureInfo extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Features</em>' reference list.
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureInfo_Features()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_Features()
 	 * @model
 	 * @generated
 	 */
@@ -74,14 +74,14 @@ public interface FeatureInfo extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Default Key</em>' attribute.
 	 * @see #setDefaultKey(String)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureInfo_DefaultKey()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_DefaultKey()
 	 * @model default="_id"
 	 * @generated
 	 */
 	String getDefaultKey();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getDefaultKey <em>Default Key</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getDefaultKey <em>Default Key</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Default Key</em>' attribute.
@@ -97,14 +97,14 @@ public interface FeatureInfo extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Value Reader Name</em>' attribute.
 	 * @see #setValueReaderName(String)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureInfo_ValueReaderName()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_ValueReaderName()
 	 * @model default="DEFAULT"
 	 * @generated
 	 */
 	String getValueReaderName();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getValueReaderName <em>Value Reader Name</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueReaderName <em>Value Reader Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Value Reader Name</em>' attribute.
@@ -120,14 +120,14 @@ public interface FeatureInfo extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Value Writer Name</em>' attribute.
 	 * @see #setValueWriterName(String)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureInfo_ValueWriterName()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_ValueWriterName()
 	 * @model default="DEFAULT"
 	 * @generated
 	 */
 	String getValueWriterName();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getValueWriterName <em>Value Writer Name</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueWriterName <em>Value Writer Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Value Writer Name</em>' attribute.
@@ -144,14 +144,14 @@ public interface FeatureInfo extends EObject {
 	 * @return the value of the '<em>Type</em>' attribute.
 	 * @see org.gecko.codec.info.codecinfo.InfoType
 	 * @see #setType(InfoType)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureInfo_Type()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_Type()
 	 * @model
 	 * @generated
 	 */
 	InfoType getType();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getType <em>Type</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getType <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Type</em>' attribute.
@@ -167,14 +167,14 @@ public interface FeatureInfo extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Key</em>' attribute.
 	 * @see #setKey(String)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureInfo_Key()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_Key()
 	 * @model required="true"
 	 * @generated
 	 */
 	String getKey();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureInfo#getKey <em>Key</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getKey <em>Key</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Key</em>' attribute.
@@ -183,4 +183,4 @@ public interface FeatureInfo extends EObject {
 	 */
 	void setKey(String value);
 
-} // FeatureInfo
+} // FeatureCodecInfo

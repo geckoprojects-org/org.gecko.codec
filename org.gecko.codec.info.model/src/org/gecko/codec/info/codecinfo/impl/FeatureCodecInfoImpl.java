@@ -17,29 +17,29 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 import org.gecko.codec.info.codecinfo.CodecInfoPackage;
-import org.gecko.codec.info.codecinfo.FeatureInfo;
+import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Feature Info</b></em>'.
+ * An implementation of the model object '<em><b>Feature Codec Info</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl#getFeatures <em>Features</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl#getDefaultKey <em>Default Key</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl#getValueReaderName <em>Value Reader Name</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl#getValueWriterName <em>Value Writer Name</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl#getType <em>Type</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureInfoImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getFeatures <em>Features</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getDefaultKey <em>Default Key</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getValueReaderName <em>Value Reader Name</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getValueWriterName <em>Value Writer Name</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getType <em>Type</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getKey <em>Key</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements FeatureInfo {
+public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implements FeatureCodecInfo {
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -175,7 +175,7 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected FeatureInfoImpl() {
+	protected FeatureCodecInfoImpl() {
 		super();
 	}
 
@@ -186,7 +186,7 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return CodecInfoPackage.Literals.FEATURE_INFO;
+		return CodecInfoPackage.Literals.FEATURE_CODEC_INFO;
 	}
 
 	/**
@@ -209,7 +209,7 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 		String oldId = id;
 		id = newId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_INFO__ID, oldId, id));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_CODEC_INFO__ID, oldId, id));
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 	@Override
 	public EList<EStructuralFeature> getFeatures() {
 		if (features == null) {
-			features = new EObjectResolvingEList<EStructuralFeature>(EStructuralFeature.class, this, CodecInfoPackage.FEATURE_INFO__FEATURES);
+			features = new EObjectResolvingEList<EStructuralFeature>(EStructuralFeature.class, this, CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES);
 		}
 		return features;
 	}
@@ -245,7 +245,7 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 		String oldDefaultKey = defaultKey;
 		defaultKey = newDefaultKey;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_INFO__DEFAULT_KEY, oldDefaultKey, defaultKey));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY, oldDefaultKey, defaultKey));
 	}
 
 	/**
@@ -268,7 +268,7 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 		String oldValueReaderName = valueReaderName;
 		valueReaderName = newValueReaderName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_INFO__VALUE_READER_NAME, oldValueReaderName, valueReaderName));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME, oldValueReaderName, valueReaderName));
 	}
 
 	/**
@@ -291,7 +291,7 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 		String oldValueWriterName = valueWriterName;
 		valueWriterName = newValueWriterName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_INFO__VALUE_WRITER_NAME, oldValueWriterName, valueWriterName));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_WRITER_NAME, oldValueWriterName, valueWriterName));
 	}
 
 	/**
@@ -314,7 +314,7 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 		InfoType oldType = type;
 		type = newType == null ? TYPE_EDEFAULT : newType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_INFO__TYPE, oldType, type));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_CODEC_INFO__TYPE, oldType, type));
 	}
 
 	/**
@@ -337,7 +337,7 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 		String oldKey = key;
 		key = newKey;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_INFO__KEY, oldKey, key));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_CODEC_INFO__KEY, oldKey, key));
 	}
 
 	/**
@@ -348,19 +348,19 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case CodecInfoPackage.FEATURE_INFO__ID:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
 				return getId();
-			case CodecInfoPackage.FEATURE_INFO__FEATURES:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
 				return getFeatures();
-			case CodecInfoPackage.FEATURE_INFO__DEFAULT_KEY:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY:
 				return getDefaultKey();
-			case CodecInfoPackage.FEATURE_INFO__VALUE_READER_NAME:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				return getValueReaderName();
-			case CodecInfoPackage.FEATURE_INFO__VALUE_WRITER_NAME:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_WRITER_NAME:
 				return getValueWriterName();
-			case CodecInfoPackage.FEATURE_INFO__TYPE:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__TYPE:
 				return getType();
-			case CodecInfoPackage.FEATURE_INFO__KEY:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__KEY:
 				return getKey();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -375,26 +375,26 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case CodecInfoPackage.FEATURE_INFO__ID:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
 				setId((String)newValue);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__FEATURES:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
 				getFeatures().clear();
 				getFeatures().addAll((Collection<? extends EStructuralFeature>)newValue);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__DEFAULT_KEY:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY:
 				setDefaultKey((String)newValue);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__VALUE_READER_NAME:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				setValueReaderName((String)newValue);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__VALUE_WRITER_NAME:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_WRITER_NAME:
 				setValueWriterName((String)newValue);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__TYPE:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__TYPE:
 				setType((InfoType)newValue);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__KEY:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__KEY:
 				setKey((String)newValue);
 				return;
 		}
@@ -409,25 +409,25 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case CodecInfoPackage.FEATURE_INFO__ID:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__FEATURES:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
 				getFeatures().clear();
 				return;
-			case CodecInfoPackage.FEATURE_INFO__DEFAULT_KEY:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY:
 				setDefaultKey(DEFAULT_KEY_EDEFAULT);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__VALUE_READER_NAME:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				setValueReaderName(VALUE_READER_NAME_EDEFAULT);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__VALUE_WRITER_NAME:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_WRITER_NAME:
 				setValueWriterName(VALUE_WRITER_NAME_EDEFAULT);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__TYPE:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__TYPE:
 				setType(TYPE_EDEFAULT);
 				return;
-			case CodecInfoPackage.FEATURE_INFO__KEY:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__KEY:
 				setKey(KEY_EDEFAULT);
 				return;
 		}
@@ -442,19 +442,19 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case CodecInfoPackage.FEATURE_INFO__ID:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case CodecInfoPackage.FEATURE_INFO__FEATURES:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
 				return features != null && !features.isEmpty();
-			case CodecInfoPackage.FEATURE_INFO__DEFAULT_KEY:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY:
 				return DEFAULT_KEY_EDEFAULT == null ? defaultKey != null : !DEFAULT_KEY_EDEFAULT.equals(defaultKey);
-			case CodecInfoPackage.FEATURE_INFO__VALUE_READER_NAME:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				return VALUE_READER_NAME_EDEFAULT == null ? valueReaderName != null : !VALUE_READER_NAME_EDEFAULT.equals(valueReaderName);
-			case CodecInfoPackage.FEATURE_INFO__VALUE_WRITER_NAME:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_WRITER_NAME:
 				return VALUE_WRITER_NAME_EDEFAULT == null ? valueWriterName != null : !VALUE_WRITER_NAME_EDEFAULT.equals(valueWriterName);
-			case CodecInfoPackage.FEATURE_INFO__TYPE:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__TYPE:
 				return type != TYPE_EDEFAULT;
-			case CodecInfoPackage.FEATURE_INFO__KEY:
+			case CodecInfoPackage.FEATURE_CODEC_INFO__KEY:
 				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
 		}
 		return super.eIsSet(featureID);
@@ -486,4 +486,4 @@ public class FeatureInfoImpl extends MinimalEObjectImpl.Container implements Fea
 		return result.toString();
 	}
 
-} //FeatureInfoImpl
+} //FeatureCodecInfoImpl

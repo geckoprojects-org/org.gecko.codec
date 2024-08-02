@@ -2,32 +2,34 @@
  */
 package org.gecko.codec.info.codecinfo.impl;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.gecko.codec.info.codecinfo.CodecInfoFactory;
+import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecInfoPackage;
-import org.gecko.codec.info.codecinfo.EClassInfo;
-import org.gecko.codec.info.codecinfo.FeatureInfo;
+import org.gecko.codec.info.codecinfo.CodecValueReader;
+import org.gecko.codec.info.codecinfo.CodecValueWriter;
+import org.gecko.codec.info.codecinfo.EClassCodecInfo;
+import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
+import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
-import org.gecko.codec.info.codecinfo.PackageInfo;
+import org.gecko.codec.info.codecinfo.PackageCodecInfo;
+import org.gecko.codec.info.codecinfo.ReferenceInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
-import org.gecko.codec.info.codecinfo.TypeInfoHolder;
-import org.gecko.codec.info.codecinfo.ValueReader;
-import org.gecko.codec.info.codecinfo.ValueWriter;
+
+import org.gecko.codec.io.ValueReader;
+import org.gecko.codec.io.ValueWriter;
 
 /**
  * <!-- begin-user-doc -->
@@ -41,42 +43,21 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass packageInfoEClass = null;
+	private EClass packageCodecInfoEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass eClassInfoEClass = null;
+	private EClass eClassCodecInfoEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass featureInfoEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass valueReaderEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass valueWriterEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass typeInfoHolderEClass = null;
+	private EClass featureCodecInfoEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -90,6 +71,41 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass identityInfoEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass referenceInfoEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass codecValueReaderEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass codecValueWriterEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass codecInfoHolderEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum infoTypeEEnum = null;
 
 	/**
@@ -97,14 +113,21 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType deserializationContextEDataType = null;
+	private EDataType serializerProviderEDataType = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType serializerProviderEDataType = null;
+	private EDataType valueReaderEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType valueWriterEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -175,8 +198,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EClass getPackageInfo() {
-		return packageInfoEClass;
+	public EClass getPackageCodecInfo() {
+		return packageCodecInfoEClass;
 	}
 
 	/**
@@ -185,8 +208,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getPackageInfo_Id() {
-		return (EAttribute)packageInfoEClass.getEStructuralFeatures().get(0);
+	public EAttribute getPackageCodecInfo_Id() {
+		return (EAttribute)packageCodecInfoEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -195,8 +218,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getPackageInfo_EPackage() {
-		return (EReference)packageInfoEClass.getEStructuralFeatures().get(1);
+	public EReference getPackageCodecInfo_EPackage() {
+		return (EReference)packageCodecInfoEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -205,8 +228,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getPackageInfo_SubPackageInfo() {
-		return (EReference)packageInfoEClass.getEStructuralFeatures().get(2);
+	public EReference getPackageCodecInfo_SubPackageCodecInfo() {
+		return (EReference)packageCodecInfoEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -215,8 +238,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getPackageInfo_EClassInfo() {
-		return (EReference)packageInfoEClass.getEStructuralFeatures().get(3);
+	public EReference getPackageCodecInfo_EClassCodecInfo() {
+		return (EReference)packageCodecInfoEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -225,8 +248,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EClass getEClassInfo() {
-		return eClassInfoEClass;
+	public EClass getEClassCodecInfo() {
+		return eClassCodecInfoEClass;
 	}
 
 	/**
@@ -235,8 +258,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getEClassInfo_Id() {
-		return (EAttribute)eClassInfoEClass.getEStructuralFeatures().get(0);
+	public EAttribute getEClassCodecInfo_Id() {
+		return (EAttribute)eClassCodecInfoEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -245,8 +268,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getEClassInfo_Classifier() {
-		return (EReference)eClassInfoEClass.getEStructuralFeatures().get(1);
+	public EReference getEClassCodecInfo_Classifier() {
+		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -255,8 +278,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getEClassInfo_IdentityInfo() {
-		return (EReference)eClassInfoEClass.getEStructuralFeatures().get(2);
+	public EReference getEClassCodecInfo_IdentityInfo() {
+		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -265,8 +288,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getEClassInfo_TypeInfo() {
-		return (EReference)eClassInfoEClass.getEStructuralFeatures().get(3);
+	public EReference getEClassCodecInfo_TypeInfo() {
+		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -275,8 +298,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getEClassInfo_FeatureInfo() {
-		return (EReference)eClassInfoEClass.getEStructuralFeatures().get(4);
+	public EReference getEClassCodecInfo_FeatureInfo() {
+		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -285,8 +308,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EClass getFeatureInfo() {
-		return featureInfoEClass;
+	public EReference getEClassCodecInfo_ReferenceInfo() {
+		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -295,8 +318,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureInfo_Id() {
-		return (EAttribute)featureInfoEClass.getEStructuralFeatures().get(0);
+	public EAttribute getEClassCodecInfo_SerializeDefaultValue() {
+		return (EAttribute)eClassCodecInfoEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -305,8 +328,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getFeatureInfo_Features() {
-		return (EReference)featureInfoEClass.getEStructuralFeatures().get(1);
+	public EAttribute getEClassCodecInfo_SerializeArrayBatched() {
+		return (EAttribute)eClassCodecInfoEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -315,8 +338,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureInfo_DefaultKey() {
-		return (EAttribute)featureInfoEClass.getEStructuralFeatures().get(2);
+	public EAttribute getEClassCodecInfo_UseNamesFromExtendedMetaData() {
+		return (EAttribute)eClassCodecInfoEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -325,8 +348,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureInfo_ValueReaderName() {
-		return (EAttribute)featureInfoEClass.getEStructuralFeatures().get(3);
+	public EClass getFeatureCodecInfo() {
+		return featureCodecInfoEClass;
 	}
 
 	/**
@@ -335,8 +358,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureInfo_ValueWriterName() {
-		return (EAttribute)featureInfoEClass.getEStructuralFeatures().get(4);
+	public EAttribute getFeatureCodecInfo_Id() {
+		return (EAttribute)featureCodecInfoEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -345,8 +368,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureInfo_Type() {
-		return (EAttribute)featureInfoEClass.getEStructuralFeatures().get(5);
+	public EReference getFeatureCodecInfo_Features() {
+		return (EReference)featureCodecInfoEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -355,8 +378,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureInfo_Key() {
-		return (EAttribute)featureInfoEClass.getEStructuralFeatures().get(6);
+	public EAttribute getFeatureCodecInfo_DefaultKey() {
+		return (EAttribute)featureCodecInfoEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -365,8 +388,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EClass getValueReader() {
-		return valueReaderEClass;
+	public EAttribute getFeatureCodecInfo_ValueReaderName() {
+		return (EAttribute)featureCodecInfoEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -375,8 +398,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getValueReader_Name() {
-		return (EAttribute)valueReaderEClass.getEStructuralFeatures().get(0);
+	public EAttribute getFeatureCodecInfo_ValueWriterName() {
+		return (EAttribute)featureCodecInfoEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -385,8 +408,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EOperation getValueReader__ReadValue__Object_DeserializationContext() {
-		return valueReaderEClass.getEOperations().get(0);
+	public EAttribute getFeatureCodecInfo_Type() {
+		return (EAttribute)featureCodecInfoEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -395,88 +418,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EClass getValueWriter() {
-		return valueWriterEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EAttribute getValueWriter_Name() {
-		return (EAttribute)valueWriterEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EOperation getValueWriter__WriteValue__Object_SerializerProvider() {
-		return valueWriterEClass.getEOperations().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EClass getTypeInfoHolder() {
-		return typeInfoHolderEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EAttribute getTypeInfoHolder_InfoType() {
-		return (EAttribute)typeInfoHolderEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EReference getTypeInfoHolder_Readers() {
-		return (EReference)typeInfoHolderEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EReference getTypeInfoHolder_Writers() {
-		return (EReference)typeInfoHolderEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EOperation getTypeInfoHolder__GetReaderByName__String() {
-		return typeInfoHolderEClass.getEOperations().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EOperation getTypeInfoHolder__GetWriterByName__String() {
-		return typeInfoHolderEClass.getEOperations().get(1);
+	public EAttribute getFeatureCodecInfo_Key() {
+		return (EAttribute)featureCodecInfoEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -495,8 +438,218 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getTypeInfo_WriteSuperTypes() {
+	public EAttribute getTypeInfo_SerializeType() {
 		return (EAttribute)typeInfoEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getTypeInfo_SerializeSuperTypes() {
+		return (EAttribute)typeInfoEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getTypeInfo_SerializeSuperTypeAsArray() {
+		return (EAttribute)typeInfoEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getIdentityInfo() {
+		return identityInfoEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIdentityInfo_UseId() {
+		return (EAttribute)identityInfoEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIdentityInfo_UseIdField() {
+		return (EAttribute)identityInfoEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIdentityInfo_IdTop() {
+		return (EAttribute)identityInfoEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIdentityInfo_SerializeIdField() {
+		return (EAttribute)identityInfoEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIdentityInfo_IdFeatureAsPrimaryKey() {
+		return (EAttribute)identityInfoEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getReferenceInfo() {
+		return referenceInfoEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getCodecValueReader() {
+		return codecValueReaderEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecValueReader_Name() {
+		return (EAttribute)codecValueReaderEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecValueReader_Reader() {
+		return (EAttribute)codecValueReaderEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getCodecValueWriter() {
+		return codecValueWriterEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecValueWriter_Name() {
+		return (EAttribute)codecValueWriterEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecValueWriter_Writer() {
+		return (EAttribute)codecValueWriterEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getCodecInfoHolder() {
+		return codecInfoHolderEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecInfoHolder_InfoType() {
+		return (EAttribute)codecInfoHolderEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getCodecInfoHolder_Readers() {
+		return (EReference)codecInfoHolderEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getCodecInfoHolder_Writers() {
+		return (EReference)codecInfoHolderEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getCodecInfoHolder__GetReaderByName__String() {
+		return codecInfoHolderEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getCodecInfoHolder__GetWriterByName__String() {
+		return codecInfoHolderEClass.getEOperations().get(1);
 	}
 
 	/**
@@ -515,8 +668,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EDataType getDeserializationContext() {
-		return deserializationContextEDataType;
+	public EDataType getSerializerProvider() {
+		return serializerProviderEDataType;
 	}
 
 	/**
@@ -525,8 +678,18 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EDataType getSerializerProvider() {
-		return serializerProviderEDataType;
+	public EDataType getValueReader() {
+		return valueReaderEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EDataType getValueWriter() {
+		return valueWriterEDataType;
 	}
 
 	/**
@@ -558,52 +721,68 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		isCreated = true;
 
 		// Create classes and their features
-		packageInfoEClass = createEClass(PACKAGE_INFO);
-		createEAttribute(packageInfoEClass, PACKAGE_INFO__ID);
-		createEReference(packageInfoEClass, PACKAGE_INFO__EPACKAGE);
-		createEReference(packageInfoEClass, PACKAGE_INFO__SUB_PACKAGE_INFO);
-		createEReference(packageInfoEClass, PACKAGE_INFO__ECLASS_INFO);
+		packageCodecInfoEClass = createEClass(PACKAGE_CODEC_INFO);
+		createEAttribute(packageCodecInfoEClass, PACKAGE_CODEC_INFO__ID);
+		createEReference(packageCodecInfoEClass, PACKAGE_CODEC_INFO__EPACKAGE);
+		createEReference(packageCodecInfoEClass, PACKAGE_CODEC_INFO__SUB_PACKAGE_CODEC_INFO);
+		createEReference(packageCodecInfoEClass, PACKAGE_CODEC_INFO__ECLASS_CODEC_INFO);
 
-		eClassInfoEClass = createEClass(ECLASS_INFO);
-		createEAttribute(eClassInfoEClass, ECLASS_INFO__ID);
-		createEReference(eClassInfoEClass, ECLASS_INFO__CLASSIFIER);
-		createEReference(eClassInfoEClass, ECLASS_INFO__IDENTITY_INFO);
-		createEReference(eClassInfoEClass, ECLASS_INFO__TYPE_INFO);
-		createEReference(eClassInfoEClass, ECLASS_INFO__FEATURE_INFO);
+		eClassCodecInfoEClass = createEClass(ECLASS_CODEC_INFO);
+		createEAttribute(eClassCodecInfoEClass, ECLASS_CODEC_INFO__ID);
+		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__CLASSIFIER);
+		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__IDENTITY_INFO);
+		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__TYPE_INFO);
+		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__FEATURE_INFO);
+		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__REFERENCE_INFO);
+		createEAttribute(eClassCodecInfoEClass, ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE);
+		createEAttribute(eClassCodecInfoEClass, ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED);
+		createEAttribute(eClassCodecInfoEClass, ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA);
 
-		featureInfoEClass = createEClass(FEATURE_INFO);
-		createEAttribute(featureInfoEClass, FEATURE_INFO__ID);
-		createEReference(featureInfoEClass, FEATURE_INFO__FEATURES);
-		createEAttribute(featureInfoEClass, FEATURE_INFO__DEFAULT_KEY);
-		createEAttribute(featureInfoEClass, FEATURE_INFO__VALUE_READER_NAME);
-		createEAttribute(featureInfoEClass, FEATURE_INFO__VALUE_WRITER_NAME);
-		createEAttribute(featureInfoEClass, FEATURE_INFO__TYPE);
-		createEAttribute(featureInfoEClass, FEATURE_INFO__KEY);
-
-		valueReaderEClass = createEClass(VALUE_READER);
-		createEAttribute(valueReaderEClass, VALUE_READER__NAME);
-		createEOperation(valueReaderEClass, VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT);
-
-		valueWriterEClass = createEClass(VALUE_WRITER);
-		createEAttribute(valueWriterEClass, VALUE_WRITER__NAME);
-		createEOperation(valueWriterEClass, VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZERPROVIDER);
-
-		typeInfoHolderEClass = createEClass(TYPE_INFO_HOLDER);
-		createEAttribute(typeInfoHolderEClass, TYPE_INFO_HOLDER__INFO_TYPE);
-		createEReference(typeInfoHolderEClass, TYPE_INFO_HOLDER__READERS);
-		createEReference(typeInfoHolderEClass, TYPE_INFO_HOLDER__WRITERS);
-		createEOperation(typeInfoHolderEClass, TYPE_INFO_HOLDER___GET_READER_BY_NAME__STRING);
-		createEOperation(typeInfoHolderEClass, TYPE_INFO_HOLDER___GET_WRITER_BY_NAME__STRING);
+		featureCodecInfoEClass = createEClass(FEATURE_CODEC_INFO);
+		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__ID);
+		createEReference(featureCodecInfoEClass, FEATURE_CODEC_INFO__FEATURES);
+		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__DEFAULT_KEY);
+		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__VALUE_READER_NAME);
+		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__VALUE_WRITER_NAME);
+		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__TYPE);
+		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__KEY);
 
 		typeInfoEClass = createEClass(TYPE_INFO);
-		createEAttribute(typeInfoEClass, TYPE_INFO__WRITE_SUPER_TYPES);
+		createEAttribute(typeInfoEClass, TYPE_INFO__SERIALIZE_TYPE);
+		createEAttribute(typeInfoEClass, TYPE_INFO__SERIALIZE_SUPER_TYPES);
+		createEAttribute(typeInfoEClass, TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY);
+
+		identityInfoEClass = createEClass(IDENTITY_INFO);
+		createEAttribute(identityInfoEClass, IDENTITY_INFO__USE_ID);
+		createEAttribute(identityInfoEClass, IDENTITY_INFO__USE_ID_FIELD);
+		createEAttribute(identityInfoEClass, IDENTITY_INFO__ID_TOP);
+		createEAttribute(identityInfoEClass, IDENTITY_INFO__SERIALIZE_ID_FIELD);
+		createEAttribute(identityInfoEClass, IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY);
+
+		referenceInfoEClass = createEClass(REFERENCE_INFO);
+
+		codecValueReaderEClass = createEClass(CODEC_VALUE_READER);
+		createEAttribute(codecValueReaderEClass, CODEC_VALUE_READER__NAME);
+		createEAttribute(codecValueReaderEClass, CODEC_VALUE_READER__READER);
+
+		codecValueWriterEClass = createEClass(CODEC_VALUE_WRITER);
+		createEAttribute(codecValueWriterEClass, CODEC_VALUE_WRITER__NAME);
+		createEAttribute(codecValueWriterEClass, CODEC_VALUE_WRITER__WRITER);
+
+		codecInfoHolderEClass = createEClass(CODEC_INFO_HOLDER);
+		createEAttribute(codecInfoHolderEClass, CODEC_INFO_HOLDER__INFO_TYPE);
+		createEReference(codecInfoHolderEClass, CODEC_INFO_HOLDER__READERS);
+		createEReference(codecInfoHolderEClass, CODEC_INFO_HOLDER__WRITERS);
+		createEOperation(codecInfoHolderEClass, CODEC_INFO_HOLDER___GET_READER_BY_NAME__STRING);
+		createEOperation(codecInfoHolderEClass, CODEC_INFO_HOLDER___GET_WRITER_BY_NAME__STRING);
 
 		// Create enums
 		infoTypeEEnum = createEEnum(INFO_TYPE);
 
 		// Create data types
-		deserializationContextEDataType = createEDataType(DESERIALIZATION_CONTEXT);
 		serializerProviderEDataType = createEDataType(SERIALIZER_PROVIDER);
+		valueReaderEDataType = createEDataType(VALUE_READER);
+		valueWriterEDataType = createEDataType(VALUE_WRITER);
 	}
 
 	/**
@@ -633,96 +812,79 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		EcorePackage theEcorePackage = (EcorePackage)EPackage.Registry.INSTANCE.getEPackage(EcorePackage.eNS_URI);
 
 		// Create type parameters
-		ETypeParameter valueReaderEClass_V = addETypeParameter(valueReaderEClass, "V");
-		ETypeParameter valueReaderEClass_T = addETypeParameter(valueReaderEClass, "T");
-		ETypeParameter valueWriterEClass_T = addETypeParameter(valueWriterEClass, "T");
-		ETypeParameter valueWriterEClass_V = addETypeParameter(valueWriterEClass, "V");
+		addETypeParameter(valueReaderEDataType, "V");
+		addETypeParameter(valueReaderEDataType, "T");
+		addETypeParameter(valueWriterEDataType, "T");
+		addETypeParameter(valueWriterEDataType, "V");
 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		typeInfoEClass.getESuperTypes().add(this.getFeatureInfo());
+		typeInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
+		identityInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
+		referenceInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(packageInfoEClass, PackageInfo.class, "PackageInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getPackageInfo_Id(), theEcorePackage.getEString(), "id", null, 0, 1, PackageInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPackageInfo_EPackage(), theEcorePackage.getEPackage(), null, "ePackage", null, 0, 1, PackageInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPackageInfo_SubPackageInfo(), this.getPackageInfo(), null, "subPackageInfo", null, 0, -1, PackageInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPackageInfo_EClassInfo(), this.getEClassInfo(), null, "eClassInfo", null, 0, -1, PackageInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(packageCodecInfoEClass, PackageCodecInfo.class, "PackageCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPackageCodecInfo_Id(), theEcorePackage.getEString(), "id", null, 0, 1, PackageCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPackageCodecInfo_EPackage(), theEcorePackage.getEPackage(), null, "ePackage", null, 0, 1, PackageCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPackageCodecInfo_SubPackageCodecInfo(), this.getPackageCodecInfo(), null, "subPackageCodecInfo", null, 0, -1, PackageCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPackageCodecInfo_EClassCodecInfo(), this.getEClassCodecInfo(), null, "eClassCodecInfo", null, 0, -1, PackageCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(eClassInfoEClass, EClassInfo.class, "EClassInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getEClassInfo_Id(), theEcorePackage.getEString(), "id", null, 0, 1, EClassInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEClassInfo_Classifier(), theEcorePackage.getEClassifier(), null, "classifier", null, 0, 1, EClassInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEClassInfo_IdentityInfo(), this.getFeatureInfo(), null, "identityInfo", null, 0, 1, EClassInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEClassInfo_TypeInfo(), this.getFeatureInfo(), null, "typeInfo", null, 0, 1, EClassInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEClassInfo_FeatureInfo(), this.getFeatureInfo(), null, "featureInfo", null, 0, 1, EClassInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(eClassCodecInfoEClass, EClassCodecInfo.class, "EClassCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getEClassCodecInfo_Id(), theEcorePackage.getEString(), "id", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEClassCodecInfo_Classifier(), theEcorePackage.getEClassifier(), null, "classifier", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEClassCodecInfo_IdentityInfo(), this.getIdentityInfo(), null, "identityInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEClassCodecInfo_TypeInfo(), this.getTypeInfo(), null, "typeInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEClassCodecInfo_FeatureInfo(), this.getFeatureCodecInfo(), null, "featureInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEClassCodecInfo_ReferenceInfo(), this.getReferenceInfo(), null, "referenceInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEClassCodecInfo_SerializeDefaultValue(), theEcorePackage.getEBoolean(), "serializeDefaultValue", "false", 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEClassCodecInfo_SerializeArrayBatched(), theEcorePackage.getEBoolean(), "serializeArrayBatched", "false", 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEClassCodecInfo_UseNamesFromExtendedMetaData(), theEcorePackage.getEBoolean(), "useNamesFromExtendedMetaData", "true", 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(featureInfoEClass, FeatureInfo.class, "FeatureInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getFeatureInfo_Id(), ecorePackage.getEString(), "id", null, 0, 1, FeatureInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getFeatureInfo_Features(), theEcorePackage.getEStructuralFeature(), null, "features", null, 0, -1, FeatureInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getFeatureInfo_DefaultKey(), theEcorePackage.getEString(), "defaultKey", "_id", 0, 1, FeatureInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getFeatureInfo_ValueReaderName(), theEcorePackage.getEString(), "valueReaderName", "DEFAULT", 0, 1, FeatureInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getFeatureInfo_ValueWriterName(), theEcorePackage.getEString(), "valueWriterName", "DEFAULT", 0, 1, FeatureInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getFeatureInfo_Type(), this.getInfoType(), "type", null, 0, 1, FeatureInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getFeatureInfo_Key(), theEcorePackage.getEString(), "key", null, 1, 1, FeatureInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(valueReaderEClass, ValueReader.class, "ValueReader", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getValueReader_Name(), theEcorePackage.getEString(), "name", null, 1, 1, ValueReader.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		EOperation op = initEOperation(getValueReader__ReadValue__Object_DeserializationContext(), null, "readValue", 0, 1, IS_UNIQUE, IS_ORDERED);
-		EGenericType g1 = createEGenericType(valueReaderEClass_V);
-		addEParameter(op, g1, "value", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getDeserializationContext(), "ctx", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(valueReaderEClass_T);
-		initEOperation(op, g1);
-
-		initEClass(valueWriterEClass, ValueWriter.class, "ValueWriter", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getValueWriter_Name(), theEcorePackage.getEString(), "name", null, 1, 1, ValueWriter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		op = initEOperation(getValueWriter__WriteValue__Object_SerializerProvider(), null, "writeValue", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(valueWriterEClass_T);
-		addEParameter(op, g1, "value", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getSerializerProvider(), "provider", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(valueWriterEClass_V);
-		initEOperation(op, g1);
-
-		initEClass(typeInfoHolderEClass, TypeInfoHolder.class, "TypeInfoHolder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getTypeInfoHolder_InfoType(), this.getInfoType(), "infoType", null, 1, 1, TypeInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		g1 = createEGenericType(this.getValueReader());
-		EGenericType g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		initEReference(getTypeInfoHolder_Readers(), g1, null, "readers", null, 0, -1, TypeInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		getTypeInfoHolder_Readers().getEKeys().add(this.getValueReader_Name());
-		g1 = createEGenericType(this.getValueWriter());
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		initEReference(getTypeInfoHolder_Writers(), g1, null, "writers", null, 0, -1, TypeInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		getTypeInfoHolder_Writers().getEKeys().add(this.getValueWriter_Name());
-
-		op = initEOperation(getTypeInfoHolder__GetReaderByName__String(), null, "getReaderByName", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "readerName", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getValueReader());
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		initEOperation(op, g1);
-
-		op = initEOperation(getTypeInfoHolder__GetWriterByName__String(), null, "getWriterByName", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, theEcorePackage.getEString(), "readerName", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getValueWriter());
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		initEOperation(op, g1);
+		initEClass(featureCodecInfoEClass, FeatureCodecInfo.class, "FeatureCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getFeatureCodecInfo_Id(), ecorePackage.getEString(), "id", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getFeatureCodecInfo_Features(), theEcorePackage.getEStructuralFeature(), null, "features", null, 0, -1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecInfo_DefaultKey(), theEcorePackage.getEString(), "defaultKey", "_id", 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecInfo_ValueReaderName(), theEcorePackage.getEString(), "valueReaderName", "DEFAULT", 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecInfo_ValueWriterName(), theEcorePackage.getEString(), "valueWriterName", "DEFAULT", 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecInfo_Type(), this.getInfoType(), "type", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecInfo_Key(), theEcorePackage.getEString(), "key", null, 1, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(typeInfoEClass, TypeInfo.class, "TypeInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getTypeInfo_WriteSuperTypes(), theEcorePackage.getEBoolean(), "writeSuperTypes", "false", 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeInfo_SerializeType(), theEcorePackage.getEBoolean(), "serializeType", "true", 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeInfo_SerializeSuperTypes(), theEcorePackage.getEBoolean(), "serializeSuperTypes", "false", 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeInfo_SerializeSuperTypeAsArray(), theEcorePackage.getEBoolean(), "serializeSuperTypeAsArray", "true", 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(identityInfoEClass, IdentityInfo.class, "IdentityInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getIdentityInfo_UseId(), theEcorePackage.getEBoolean(), "useId", "true", 0, 1, IdentityInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIdentityInfo_UseIdField(), theEcorePackage.getEBoolean(), "useIdField", "true", 0, 1, IdentityInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIdentityInfo_IdTop(), theEcorePackage.getEBoolean(), "idTop", "true", 0, 1, IdentityInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIdentityInfo_SerializeIdField(), theEcorePackage.getEBoolean(), "serializeIdField", "false", 0, 1, IdentityInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIdentityInfo_IdFeatureAsPrimaryKey(), theEcorePackage.getEBoolean(), "idFeatureAsPrimaryKey", "true", 0, 1, IdentityInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(referenceInfoEClass, ReferenceInfo.class, "ReferenceInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(codecValueReaderEClass, CodecValueReader.class, "CodecValueReader", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCodecValueReader_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecValueReader.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCodecValueReader_Reader(), this.getValueReader(), "reader", null, 0, 1, CodecValueReader.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(codecValueWriterEClass, CodecValueWriter.class, "CodecValueWriter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCodecValueWriter_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecValueWriter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCodecValueWriter_Writer(), this.getValueWriter(), "writer", null, 0, 1, CodecValueWriter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(codecInfoHolderEClass, CodecInfoHolder.class, "CodecInfoHolder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCodecInfoHolder_InfoType(), this.getInfoType(), "infoType", null, 1, 1, CodecInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCodecInfoHolder_Readers(), this.getCodecValueReader(), null, "readers", null, 0, -1, CodecInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		getCodecInfoHolder_Readers().getEKeys().add(this.getCodecValueReader_Name());
+		initEReference(getCodecInfoHolder_Writers(), this.getCodecValueWriter(), null, "writers", null, 0, -1, CodecInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		getCodecInfoHolder_Writers().getEKeys().add(this.getCodecValueWriter_Name());
+
+		EOperation op = initEOperation(getCodecInfoHolder__GetReaderByName__String(), this.getCodecValueReader(), "getReaderByName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theEcorePackage.getEString(), "readerName", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getCodecInfoHolder__GetWriterByName__String(), this.getCodecValueWriter(), "getWriterByName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theEcorePackage.getEString(), "writerName", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(infoTypeEEnum, InfoType.class, "InfoType");
@@ -734,8 +896,9 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		addEEnumLiteral(infoTypeEEnum, InfoType.OTHER);
 
 		// Initialize data types
-		initEDataType(deserializationContextEDataType, DeserializationContext.class, "DeserializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(serializerProviderEDataType, SerializerProvider.class, "SerializerProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(valueReaderEDataType, ValueReader.class, "ValueReader", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(valueWriterEDataType, ValueWriter.class, "ValueWriter", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -780,6 +943,89 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 			   "fileExtensions", "codecinfo",
 			   "oSGiCompatible", "true",
 			   "resource", "XMI"
+		   });
+		addAnnotation
+		  (packageCodecInfoEClass,
+		   source,
+		   new String[] {
+		   });
+		addAnnotation
+		  (getEClassCodecInfo_SerializeDefaultValue(),
+		   source,
+		   new String[] {
+			   "documentation", "Option used to indicate the module to serialize default attributes values.  Default values are not serialized by default."
+		   });
+		addAnnotation
+		  (getEClassCodecInfo_SerializeArrayBatched(),
+		   source,
+		   new String[] {
+			   "documentation", "Setting this option to Boolean.TRUE  will send lists and arrays using the writeArray callbacks.\\n Per default the serialization happens with startArray, then calling writeValue for each element. "
+		   });
+		addAnnotation
+		  (getEClassCodecInfo_UseNamesFromExtendedMetaData(),
+		   source,
+		   new String[] {
+			   "documentation", "Option used to indicate whether feature names specified in {@link org.eclipse.emf.ecore.util.ExtendedMetaData} annotations should be respected."
+		   });
+		addAnnotation
+		  (getTypeInfo_SerializeType(),
+		   source,
+		   new String[] {
+			   "documentation", "Option used to indicate the module to use the default type serializer if none are provided. The type serializer used by default is ETypeSerializer."
+		   });
+		addAnnotation
+		  (getTypeInfo_SerializeSuperTypes(),
+		   source,
+		   new String[] {
+			   "documentation", "To avoid writing unnecessary URIs in the result format, we write eClassUris only for the root  class and for EReferences,\\n where the actual value does not equal but inherit from the stated reference type.\\n  By setting this option to Boolean.TRUE, all eClass URIs will be written regardless. "
+		   });
+		addAnnotation
+		  (getTypeInfo_SerializeSuperTypeAsArray(),
+		   source,
+		   new String[] {
+			   "documentation", "By setting this to Boolean.TRUE the supertypes are written as an array of URIs."
+		   });
+		addAnnotation
+		  (getIdentityInfo_UseId(),
+		   source,
+		   new String[] {
+			   "documentation", "Option used to indicate the module to use the default ID serializer if none are provided. The ID serializer used by default is IdSerializer."
+		   });
+		addAnnotation
+		  (getIdentityInfo_UseIdField(),
+		   source,
+		   new String[] {
+			   "documentation", "Option used to indicate the module to use the ID field of the EObject."
+		   });
+		addAnnotation
+		  (getIdentityInfo_IdTop(),
+		   source,
+		   new String[] {
+			   "documentation", "Option used to indicate the module to serialize the id field on top of the document."
+		   });
+		addAnnotation
+		  (getIdentityInfo_SerializeIdField(),
+		   source,
+		   new String[] {
+			   "documentation", "Option used to indicate the module to additionally serialize the id field of an EObject as it is.\n  This is usually not needed, because the id key always holds the ID at the first position.  \n This id-field itself can be found at a later index. So finding it may cost a lot of effort.\n  It can be useful with useId TRUE and useIdField FALSE  and additionally store this \n  id field, while using the URI fragment or Resource ID as primary key"
+		   });
+		addAnnotation
+		  (getIdentityInfo_IdFeatureAsPrimaryKey(),
+		   source,
+		   new String[] {
+			   "documentation", "If it is set to Boolean.TRUE and the ID was not specified in the URI, the value of the ID attribute will be used as the primary key if it exists."
+		   });
+		addAnnotation
+		  (getCodecInfoHolder__GetReaderByName__String(),
+		   source,
+		   new String[] {
+			   "body", "return getReaders().stream().filter(r -> r.getName() == readerName).findFirst().orElse(null);"
+		   });
+		addAnnotation
+		  (getCodecInfoHolder__GetWriterByName__String(),
+		   source,
+		   new String[] {
+			   "body", "return getWriters().stream().filter(w -> w.getName() == writerName).findFirst().orElse(null);"
 		   });
 	}
 

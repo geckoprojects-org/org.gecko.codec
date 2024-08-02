@@ -7,18 +7,29 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.codec.info.codecinfo.CodecInfoFactory;
+import org.gecko.codec.info.codecinfo.CodecInfoHolder;
+import org.gecko.codec.info.codecinfo.EClassCodecInfo;
+import org.gecko.codec.info.codecinfo.IdentityInfo;
+import org.gecko.codec.info.codecinfo.InfoType;
+import org.gecko.codec.info.codecinfo.PackageCodecInfo;
+import org.gecko.codec.info.codecinfo.ReferenceInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
+import org.gecko.codec.info.helper.CodecInfoHolderHelper;
 import org.gecko.emf.osgi.configurator.EPackageConfigurator;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,7 +48,11 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	private transient Map<EClass, List<EClass>> needsRevisiting = new ConcurrentHashMap<>();
 	private transient List<EPackageConfigurator> list = new ArrayList<>();
 	
+	private Map<String, PackageCodecInfo> ePackageCodecInfoMap = new HashMap<>();
+	private Map<InfoType, CodecInfoHolder> codecInfoHolderMap = new HashMap<>();
+	
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
 
 	/*
 	 * (non-Javadoc)
@@ -114,30 +129,111 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		return null;
 	}
 
+//	private synchronized void addEClassesOfEPackage(EPackage ePackage) {
+//		ePackage.getEClassifiers().stream().filter(ec -> ec.getInstanceClass() != null).forEach(ec -> {
+//			analyseHierarchy(ec);
+//			Class<?> instanceClass = ec.getInstanceClass();
+//			if (instanceClass != DynamicEObjectImpl.class) {
+//				classes.put(instanceClass, ec);
+//			}
+//		});
+//	}
+	
 	private synchronized void addEClassesOfEPackage(EPackage ePackage) {
+		
+		PackageCodecInfo packageInfo = createCodecInfo(ePackage);
+		ePackageCodecInfoMap.put(ePackage.getNsURI(), packageInfo);
+
+		createCodecInfoHolderMap();
+		
 		ePackage.getEClassifiers().stream().filter(ec -> ec.getInstanceClass() != null).forEach(ec -> {
-			analyseHirachy(ec);
+			analyseHierarchy(ec);
 			Class<?> instanceClass = ec.getInstanceClass();
 			if (instanceClass != DynamicEObjectImpl.class) {
 				classes.put(instanceClass, ec);
 			}
 		});
 	}
+	
+	private PackageCodecInfo createCodecInfo(EPackage ePackage) {
+		PackageCodecInfo ePackageCodecInfo = CodecInfoFactory.eINSTANCE.createPackageCodecInfo();
+		ePackageCodecInfo.setId(ePackage.getNsURI());
+		ePackageCodecInfo.setEPackage(ePackage);
+		for(EPackage subPackage : ePackage.getESubpackages()) {
+			ePackageCodecInfo.getSubPackageCodecInfo().add(createCodecInfo(subPackage));
+		}
+		ePackage.getEClassifiers().stream().filter(ec -> ec.getInstanceClass() != null).forEach(ec -> {
+			ePackageCodecInfo.getEClassCodecInfo().add(createCodecEClassInfo(ec));
+		});
+		return ePackageCodecInfo;
+	}
 
+	private EClassCodecInfo createCodecEClassInfo(EClassifier ec) {
+		EClassCodecInfo eClassCodecInfo = CodecInfoFactory.eINSTANCE.createEClassCodecInfo();
+		eClassCodecInfo.setId(ec.getInstanceClassName());
+		eClassCodecInfo.setClassifier(ec);
+		
+		IdentityInfo identityInfo = CodecInfoFactory.eINSTANCE.createIdentityInfo();
+		identityInfo.setType(InfoType.IDENTITY);
+		identityInfo.setId(UUID.randomUUID().toString());
+		identityInfo.setKey(identityInfo.getDefaultKey());
+		identityInfo.setValueReaderName("DEFAULT_ID_READER");
+		identityInfo.setValueWriterName("DEFAULT_ID_WRITER");
+		
+		EAttribute idAttribute = ec instanceof EClass ? ((EClass) ec).getEIDAttribute() : null;
+		
+		if(idAttribute != null) {
+			identityInfo.getFeatures().add(idAttribute);
+		}
+		
+		eClassCodecInfo.setIdentityInfo(identityInfo);
+		
+		TypeInfo typeInfo = CodecInfoFactory.eINSTANCE.createTypeInfo();
+		typeInfo.setId(UUID.randomUUID().toString());
+		typeInfo.setType(InfoType.TYPE);
+		typeInfo.setDefaultKey("_type");
+		typeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
+		typeInfo.setValueWriterName("URI_WRITER");
+//		TODO: what should I put in the features list...?
+		eClassCodecInfo.setTypeInfo(typeInfo);
+		
+		
+		ReferenceInfo refInfo = CodecInfoFactory.eINSTANCE.createReferenceInfo();
+		refInfo.setDefaultKey("$ref");
+		refInfo.setId(UUID.randomUUID().toString());
+		refInfo.setType(InfoType.REFERENCE);
+		refInfo.setValueReaderName("DEFAULT_ECLASS_READER");
+		refInfo.setValueWriterName("URIS_WRITER");
+		if(ec instanceof EClass eClass) {
+			eClass.getEAllReferences().forEach(ref -> refInfo.getFeatures().add(ref));
+		}
+		eClassCodecInfo.setReferenceInfo(refInfo);
+		
+		return eClassCodecInfo;
+	}
+	
+	private void createCodecInfoHolderMap() {
+		for(InfoType type : InfoType.values()) {
+			if(!codecInfoHolderMap.containsKey(type)) {
+				codecInfoHolderMap.put(type, CodecInfoHolderHelper.createCodecInfoHolderForType(type));
+			}
+		}
+	}
+	
 	/**
 	 * Here we create the {@link TypeInfo} instance ... 
 	 * @param ec EClass to analyze the Hierarchy for
 	 */
-	private void analyseHirachy(EClassifier ec) {
+	private void analyseHierarchy(EClassifier ec) {
 		if (!(ec instanceof EClass) || ec.getEPackage().equals(EcorePackage.eINSTANCE)) {
 			return;
 		}
 		EClass eClass = (EClass) ec;
-		List<EClass> thisHirachy = needsRevisiting.remove(eClass);
-		if (thisHirachy == null) {
-			thisHirachy = Collections.synchronizedList(new LinkedList<EClass>());
+		List<EClass> thisHierarchy = needsRevisiting.remove(eClass);
+		if (thisHierarchy == null) {
+			thisHierarchy = Collections.synchronizedList(new LinkedList<EClass>());
 		}
-		upperHierarchy.put(eClass, thisHirachy);
+		upperHierarchy.put(eClass, thisHierarchy);
 		eClass.getEAllSuperTypes().forEach(superEClass -> {
 			if (superEClass.equals(EcorePackage.Literals.ECLASS)) {
 				return;
@@ -197,5 +293,36 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		} finally {
 			lock.readLock().unlock();
 		}
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.info.CodecModelInfo#getCodecInfoForPackage(java.lang.String)
+	 */
+	@Override
+	public Optional<PackageCodecInfo> getCodecInfoForPackage(String uri) {
+		return Optional.ofNullable(ePackageCodecInfoMap.getOrDefault(uri, null));
+	}
+
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.info.CodecModelInfo#getCodecInfoForEClass(org.eclipse.emf.ecore.EClass)
+	 */
+	@Override
+	public Optional<EClassCodecInfo> getCodecInfoForEClass(EClass eClass) {		
+		PackageCodecInfo ePackageCodecInfo = ePackageCodecInfoMap.getOrDefault(eClass.getEPackage().getNsURI(), null);
+		if(ePackageCodecInfo == null) return Optional.empty();
+		return ePackageCodecInfo.getEClassCodecInfo().stream().filter(ecci -> ecci.getId() == eClass.getInstanceClassName()).findFirst();		
+	}
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.info.CodecModelInfo#getCodecInfoHolderByType(org.gecko.codec.info.codecinfo.InfoType)
+	 */
+	@Override
+	public Optional<CodecInfoHolder> getCodecInfoHolderByType(InfoType infoType) {
+		return Optional.ofNullable(codecInfoHolderMap.getOrDefault(infoType, null));
 	}
 }

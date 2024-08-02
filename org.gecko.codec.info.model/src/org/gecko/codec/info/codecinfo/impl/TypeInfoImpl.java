@@ -19,31 +19,73 @@ import org.gecko.codec.info.codecinfo.TypeInfo;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl#isWriteSuperTypes <em>Write Super Types</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl#isSerializeType <em>Serialize Type</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl#isSerializeSuperTypes <em>Serialize Super Types</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl#isSerializeSuperTypeAsArray <em>Serialize Super Type As Array</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class TypeInfoImpl extends FeatureInfoImpl implements TypeInfo {
+public class TypeInfoImpl extends FeatureCodecInfoImpl implements TypeInfo {
 	/**
-	 * The default value of the '{@link #isWriteSuperTypes() <em>Write Super Types</em>}' attribute.
+	 * The default value of the '{@link #isSerializeType() <em>Serialize Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isWriteSuperTypes()
+	 * @see #isSerializeType()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean WRITE_SUPER_TYPES_EDEFAULT = false;
+	protected static final boolean SERIALIZE_TYPE_EDEFAULT = true;
 
 	/**
-	 * The cached value of the '{@link #isWriteSuperTypes() <em>Write Super Types</em>}' attribute.
+	 * The cached value of the '{@link #isSerializeType() <em>Serialize Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isWriteSuperTypes()
+	 * @see #isSerializeType()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean writeSuperTypes = WRITE_SUPER_TYPES_EDEFAULT;
+	protected boolean serializeType = SERIALIZE_TYPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isSerializeSuperTypes() <em>Serialize Super Types</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isSerializeSuperTypes()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean SERIALIZE_SUPER_TYPES_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isSerializeSuperTypes() <em>Serialize Super Types</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isSerializeSuperTypes()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean serializeSuperTypes = SERIALIZE_SUPER_TYPES_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isSerializeSuperTypeAsArray() <em>Serialize Super Type As Array</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isSerializeSuperTypeAsArray()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean SERIALIZE_SUPER_TYPE_AS_ARRAY_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isSerializeSuperTypeAsArray() <em>Serialize Super Type As Array</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isSerializeSuperTypeAsArray()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean serializeSuperTypeAsArray = SERIALIZE_SUPER_TYPE_AS_ARRAY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -70,8 +112,8 @@ public class TypeInfoImpl extends FeatureInfoImpl implements TypeInfo {
 	 * @generated
 	 */
 	@Override
-	public boolean isWriteSuperTypes() {
-		return writeSuperTypes;
+	public boolean isSerializeType() {
+		return serializeType;
 	}
 
 	/**
@@ -80,11 +122,57 @@ public class TypeInfoImpl extends FeatureInfoImpl implements TypeInfo {
 	 * @generated
 	 */
 	@Override
-	public void setWriteSuperTypes(boolean newWriteSuperTypes) {
-		boolean oldWriteSuperTypes = writeSuperTypes;
-		writeSuperTypes = newWriteSuperTypes;
+	public void setSerializeType(boolean newSerializeType) {
+		boolean oldSerializeType = serializeType;
+		serializeType = newSerializeType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.TYPE_INFO__WRITE_SUPER_TYPES, oldWriteSuperTypes, writeSuperTypes));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.TYPE_INFO__SERIALIZE_TYPE, oldSerializeType, serializeType));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isSerializeSuperTypes() {
+		return serializeSuperTypes;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setSerializeSuperTypes(boolean newSerializeSuperTypes) {
+		boolean oldSerializeSuperTypes = serializeSuperTypes;
+		serializeSuperTypes = newSerializeSuperTypes;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPES, oldSerializeSuperTypes, serializeSuperTypes));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isSerializeSuperTypeAsArray() {
+		return serializeSuperTypeAsArray;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setSerializeSuperTypeAsArray(boolean newSerializeSuperTypeAsArray) {
+		boolean oldSerializeSuperTypeAsArray = serializeSuperTypeAsArray;
+		serializeSuperTypeAsArray = newSerializeSuperTypeAsArray;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY, oldSerializeSuperTypeAsArray, serializeSuperTypeAsArray));
 	}
 
 	/**
@@ -95,8 +183,12 @@ public class TypeInfoImpl extends FeatureInfoImpl implements TypeInfo {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case CodecInfoPackage.TYPE_INFO__WRITE_SUPER_TYPES:
-				return isWriteSuperTypes();
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_TYPE:
+				return isSerializeType();
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPES:
+				return isSerializeSuperTypes();
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY:
+				return isSerializeSuperTypeAsArray();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -109,8 +201,14 @@ public class TypeInfoImpl extends FeatureInfoImpl implements TypeInfo {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case CodecInfoPackage.TYPE_INFO__WRITE_SUPER_TYPES:
-				setWriteSuperTypes((Boolean)newValue);
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_TYPE:
+				setSerializeType((Boolean)newValue);
+				return;
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPES:
+				setSerializeSuperTypes((Boolean)newValue);
+				return;
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY:
+				setSerializeSuperTypeAsArray((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -124,8 +222,14 @@ public class TypeInfoImpl extends FeatureInfoImpl implements TypeInfo {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case CodecInfoPackage.TYPE_INFO__WRITE_SUPER_TYPES:
-				setWriteSuperTypes(WRITE_SUPER_TYPES_EDEFAULT);
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_TYPE:
+				setSerializeType(SERIALIZE_TYPE_EDEFAULT);
+				return;
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPES:
+				setSerializeSuperTypes(SERIALIZE_SUPER_TYPES_EDEFAULT);
+				return;
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY:
+				setSerializeSuperTypeAsArray(SERIALIZE_SUPER_TYPE_AS_ARRAY_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -139,8 +243,12 @@ public class TypeInfoImpl extends FeatureInfoImpl implements TypeInfo {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case CodecInfoPackage.TYPE_INFO__WRITE_SUPER_TYPES:
-				return writeSuperTypes != WRITE_SUPER_TYPES_EDEFAULT;
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_TYPE:
+				return serializeType != SERIALIZE_TYPE_EDEFAULT;
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPES:
+				return serializeSuperTypes != SERIALIZE_SUPER_TYPES_EDEFAULT;
+			case CodecInfoPackage.TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY:
+				return serializeSuperTypeAsArray != SERIALIZE_SUPER_TYPE_AS_ARRAY_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -155,8 +263,12 @@ public class TypeInfoImpl extends FeatureInfoImpl implements TypeInfo {
 		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (writeSuperTypes: ");
-		result.append(writeSuperTypes);
+		result.append(" (serializeType: ");
+		result.append(serializeType);
+		result.append(", serializeSuperTypes: ");
+		result.append(serializeSuperTypes);
+		result.append(", serializeSuperTypeAsArray: ");
+		result.append(serializeSuperTypeAsArray);
 		result.append(')');
 		return result.toString();
 	}

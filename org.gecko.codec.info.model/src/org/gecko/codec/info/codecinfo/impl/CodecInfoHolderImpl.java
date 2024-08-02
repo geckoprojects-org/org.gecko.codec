@@ -17,28 +17,28 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
+import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecInfoPackage;
+import org.gecko.codec.info.codecinfo.CodecValueReader;
+import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.InfoType;
-import org.gecko.codec.info.codecinfo.TypeInfoHolder;
-import org.gecko.codec.info.codecinfo.ValueReader;
-import org.gecko.codec.info.codecinfo.ValueWriter;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Type Info Holder</b></em>'.
+ * An implementation of the model object '<em><b>Holder</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoHolderImpl#getInfoType <em>Info Type</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoHolderImpl#getReaders <em>Readers</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoHolderImpl#getWriters <em>Writers</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl#getInfoType <em>Info Type</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl#getReaders <em>Readers</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl#getWriters <em>Writers</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements TypeInfoHolder {
+public class CodecInfoHolderImpl extends MinimalEObjectImpl.Container implements CodecInfoHolder {
 	/**
 	 * The default value of the '{@link #getInfoType() <em>Info Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -67,7 +67,7 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ValueReader<?, ?>> readers;
+	protected EList<CodecValueReader> readers;
 
 	/**
 	 * The cached value of the '{@link #getWriters() <em>Writers</em>}' reference list.
@@ -77,14 +77,14 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ValueWriter<?, ?>> writers;
+	protected EList<CodecValueWriter> writers;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected TypeInfoHolderImpl() {
+	protected CodecInfoHolderImpl() {
 		super();
 	}
 
@@ -95,7 +95,7 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return CodecInfoPackage.Literals.TYPE_INFO_HOLDER;
+		return CodecInfoPackage.Literals.CODEC_INFO_HOLDER;
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 		InfoType oldInfoType = infoType;
 		infoType = newInfoType == null ? INFO_TYPE_EDEFAULT : newInfoType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.TYPE_INFO_HOLDER__INFO_TYPE, oldInfoType, infoType));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.CODEC_INFO_HOLDER__INFO_TYPE, oldInfoType, infoType));
 	}
 
 	/**
@@ -127,9 +127,9 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	 * @generated
 	 */
 	@Override
-	public EList<ValueReader<?, ?>> getReaders() {
+	public EList<CodecValueReader> getReaders() {
 		if (readers == null) {
-			readers = new EObjectResolvingEList<ValueReader<?, ?>>(ValueReader.class, this, CodecInfoPackage.TYPE_INFO_HOLDER__READERS);
+			readers = new EObjectResolvingEList<CodecValueReader>(CodecValueReader.class, this, CodecInfoPackage.CODEC_INFO_HOLDER__READERS);
 		}
 		return readers;
 	}
@@ -140,9 +140,9 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	 * @generated
 	 */
 	@Override
-	public EList<ValueWriter<?, ?>> getWriters() {
+	public EList<CodecValueWriter> getWriters() {
 		if (writers == null) {
-			writers = new EObjectResolvingEList<ValueWriter<?, ?>>(ValueWriter.class, this, CodecInfoPackage.TYPE_INFO_HOLDER__WRITERS);
+			writers = new EObjectResolvingEList<CodecValueWriter>(CodecValueWriter.class, this, CodecInfoPackage.CODEC_INFO_HOLDER__WRITERS);
 		}
 		return writers;
 	}
@@ -153,10 +153,8 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	 * @generated
 	 */
 	@Override
-	public ValueReader<?, ?> getReaderByName(String readerName) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	public CodecValueReader getReaderByName(final String readerName) {
+		return getReaders().stream().filter(r -> r.getName() == readerName).findFirst().orElse(null);
 	}
 
 	/**
@@ -165,10 +163,8 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	 * @generated
 	 */
 	@Override
-	public ValueWriter<?, ?> getWriterByName(String readerName) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	public CodecValueWriter getWriterByName(final String writerName) {
+		return getWriters().stream().filter(w -> w.getName() == writerName).findFirst().orElse(null);
 	}
 
 	/**
@@ -179,11 +175,11 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case CodecInfoPackage.TYPE_INFO_HOLDER__INFO_TYPE:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__INFO_TYPE:
 				return getInfoType();
-			case CodecInfoPackage.TYPE_INFO_HOLDER__READERS:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__READERS:
 				return getReaders();
-			case CodecInfoPackage.TYPE_INFO_HOLDER__WRITERS:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__WRITERS:
 				return getWriters();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -198,16 +194,16 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case CodecInfoPackage.TYPE_INFO_HOLDER__INFO_TYPE:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__INFO_TYPE:
 				setInfoType((InfoType)newValue);
 				return;
-			case CodecInfoPackage.TYPE_INFO_HOLDER__READERS:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__READERS:
 				getReaders().clear();
-				getReaders().addAll((Collection<? extends ValueReader<?, ?>>)newValue);
+				getReaders().addAll((Collection<? extends CodecValueReader>)newValue);
 				return;
-			case CodecInfoPackage.TYPE_INFO_HOLDER__WRITERS:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__WRITERS:
 				getWriters().clear();
-				getWriters().addAll((Collection<? extends ValueWriter<?, ?>>)newValue);
+				getWriters().addAll((Collection<? extends CodecValueWriter>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -221,13 +217,13 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case CodecInfoPackage.TYPE_INFO_HOLDER__INFO_TYPE:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__INFO_TYPE:
 				setInfoType(INFO_TYPE_EDEFAULT);
 				return;
-			case CodecInfoPackage.TYPE_INFO_HOLDER__READERS:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__READERS:
 				getReaders().clear();
 				return;
-			case CodecInfoPackage.TYPE_INFO_HOLDER__WRITERS:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__WRITERS:
 				getWriters().clear();
 				return;
 		}
@@ -242,11 +238,11 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case CodecInfoPackage.TYPE_INFO_HOLDER__INFO_TYPE:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__INFO_TYPE:
 				return infoType != INFO_TYPE_EDEFAULT;
-			case CodecInfoPackage.TYPE_INFO_HOLDER__READERS:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__READERS:
 				return readers != null && !readers.isEmpty();
-			case CodecInfoPackage.TYPE_INFO_HOLDER__WRITERS:
+			case CodecInfoPackage.CODEC_INFO_HOLDER__WRITERS:
 				return writers != null && !writers.isEmpty();
 		}
 		return super.eIsSet(featureID);
@@ -260,9 +256,9 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case CodecInfoPackage.TYPE_INFO_HOLDER___GET_READER_BY_NAME__STRING:
+			case CodecInfoPackage.CODEC_INFO_HOLDER___GET_READER_BY_NAME__STRING:
 				return getReaderByName((String)arguments.get(0));
-			case CodecInfoPackage.TYPE_INFO_HOLDER___GET_WRITER_BY_NAME__STRING:
+			case CodecInfoPackage.CODEC_INFO_HOLDER___GET_WRITER_BY_NAME__STRING:
 				return getWriterByName((String)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
@@ -284,4 +280,4 @@ public class TypeInfoHolderImpl extends MinimalEObjectImpl.Container implements 
 		return result.toString();
 	}
 
-} //TypeInfoHolderImpl
+} //CodecInfoHolderImpl

@@ -22,7 +22,7 @@ import org.gecko.codec.info.codecinfo.*;
  * @see org.gecko.codec.info.codecinfo.CodecInfoPackage
  * @generated
  */
-public class CodecInfoSwitch<T1> extends Switch<T1> {
+public class CodecInfoSwitch<T> extends Switch<T> {
 	/**
 	 * The cached model package
 	 * <!-- begin-user-doc -->
@@ -64,48 +64,62 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	@Override
-	protected T1 doSwitch(int classifierID, EObject theEObject) {
+	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case CodecInfoPackage.PACKAGE_INFO: {
-				PackageInfo packageInfo = (PackageInfo)theEObject;
-				T1 result = casePackageInfo(packageInfo);
+			case CodecInfoPackage.PACKAGE_CODEC_INFO: {
+				PackageCodecInfo packageCodecInfo = (PackageCodecInfo)theEObject;
+				T result = casePackageCodecInfo(packageCodecInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CodecInfoPackage.ECLASS_INFO: {
-				EClassInfo eClassInfo = (EClassInfo)theEObject;
-				T1 result = caseEClassInfo(eClassInfo);
+			case CodecInfoPackage.ECLASS_CODEC_INFO: {
+				EClassCodecInfo eClassCodecInfo = (EClassCodecInfo)theEObject;
+				T result = caseEClassCodecInfo(eClassCodecInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CodecInfoPackage.FEATURE_INFO: {
-				FeatureInfo featureInfo = (FeatureInfo)theEObject;
-				T1 result = caseFeatureInfo(featureInfo);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case CodecInfoPackage.VALUE_READER: {
-				ValueReader<?, ?> valueReader = (ValueReader<?, ?>)theEObject;
-				T1 result = caseValueReader(valueReader);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case CodecInfoPackage.VALUE_WRITER: {
-				ValueWriter<?, ?> valueWriter = (ValueWriter<?, ?>)theEObject;
-				T1 result = caseValueWriter(valueWriter);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case CodecInfoPackage.TYPE_INFO_HOLDER: {
-				TypeInfoHolder typeInfoHolder = (TypeInfoHolder)theEObject;
-				T1 result = caseTypeInfoHolder(typeInfoHolder);
+			case CodecInfoPackage.FEATURE_CODEC_INFO: {
+				FeatureCodecInfo featureCodecInfo = (FeatureCodecInfo)theEObject;
+				T result = caseFeatureCodecInfo(featureCodecInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case CodecInfoPackage.TYPE_INFO: {
 				TypeInfo typeInfo = (TypeInfo)theEObject;
-				T1 result = caseTypeInfo(typeInfo);
-				if (result == null) result = caseFeatureInfo(typeInfo);
+				T result = caseTypeInfo(typeInfo);
+				if (result == null) result = caseFeatureCodecInfo(typeInfo);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecInfoPackage.IDENTITY_INFO: {
+				IdentityInfo identityInfo = (IdentityInfo)theEObject;
+				T result = caseIdentityInfo(identityInfo);
+				if (result == null) result = caseFeatureCodecInfo(identityInfo);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecInfoPackage.REFERENCE_INFO: {
+				ReferenceInfo referenceInfo = (ReferenceInfo)theEObject;
+				T result = caseReferenceInfo(referenceInfo);
+				if (result == null) result = caseFeatureCodecInfo(referenceInfo);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecInfoPackage.CODEC_VALUE_READER: {
+				CodecValueReader codecValueReader = (CodecValueReader)theEObject;
+				T result = caseCodecValueReader(codecValueReader);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecInfoPackage.CODEC_VALUE_WRITER: {
+				CodecValueWriter codecValueWriter = (CodecValueWriter)theEObject;
+				T result = caseCodecValueWriter(codecValueWriter);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecInfoPackage.CODEC_INFO_HOLDER: {
+				CodecInfoHolder codecInfoHolder = (CodecInfoHolder)theEObject;
+				T result = caseCodecInfoHolder(codecInfoHolder);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -114,92 +128,47 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Package Info</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Package Codec Info</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Package Info</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Package Codec Info</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 casePackageInfo(PackageInfo object) {
+	public T casePackageCodecInfo(PackageCodecInfo object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>EClass Info</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>EClass Codec Info</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>EClass Info</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>EClass Codec Info</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseEClassInfo(EClassInfo object) {
+	public T caseEClassCodecInfo(EClassCodecInfo object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Feature Info</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Feature Codec Info</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Feature Info</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Feature Codec Info</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseFeatureInfo(FeatureInfo object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Value Reader</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Value Reader</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public <V, T> T1 caseValueReader(ValueReader<V, T> object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Value Writer</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Value Writer</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public <T, V> T1 caseValueWriter(ValueWriter<T, V> object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Type Info Holder</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Type Info Holder</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseTypeInfoHolder(TypeInfoHolder object) {
+	public T caseFeatureCodecInfo(FeatureCodecInfo object) {
 		return null;
 	}
 
@@ -214,7 +183,82 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseTypeInfo(TypeInfo object) {
+	public T caseTypeInfo(TypeInfo object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Identity Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Identity Info</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseIdentityInfo(IdentityInfo object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Reference Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Reference Info</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseReferenceInfo(ReferenceInfo object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Codec Value Reader</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Codec Value Reader</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCodecValueReader(CodecValueReader object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Codec Value Writer</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Codec Value Writer</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCodecValueWriter(CodecValueWriter object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Holder</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Holder</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCodecInfoHolder(CodecInfoHolder object) {
 		return null;
 	}
 
@@ -230,7 +274,7 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	@Override
-	public T1 defaultCase(EObject object) {
+	public T defaultCase(EObject object) {
 		return null;
 	}
 

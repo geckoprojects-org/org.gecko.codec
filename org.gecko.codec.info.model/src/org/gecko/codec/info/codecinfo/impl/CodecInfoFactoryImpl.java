@@ -2,7 +2,6 @@
  */
 package org.gecko.codec.info.codecinfo.impl;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.eclipse.emf.ecore.EClass;
@@ -15,6 +14,9 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 import org.gecko.codec.info.codecinfo.*;
+
+import org.gecko.codec.io.ValueReader;
+import org.gecko.codec.io.ValueWriter;
 
 /**
  * <!-- begin-user-doc -->
@@ -60,11 +62,15 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case CodecInfoPackage.PACKAGE_INFO: return createPackageInfo();
-			case CodecInfoPackage.ECLASS_INFO: return createEClassInfo();
-			case CodecInfoPackage.FEATURE_INFO: return createFeatureInfo();
-			case CodecInfoPackage.TYPE_INFO_HOLDER: return createTypeInfoHolder();
+			case CodecInfoPackage.PACKAGE_CODEC_INFO: return createPackageCodecInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO: return createEClassCodecInfo();
+			case CodecInfoPackage.FEATURE_CODEC_INFO: return createFeatureCodecInfo();
 			case CodecInfoPackage.TYPE_INFO: return createTypeInfo();
+			case CodecInfoPackage.IDENTITY_INFO: return createIdentityInfo();
+			case CodecInfoPackage.REFERENCE_INFO: return createReferenceInfo();
+			case CodecInfoPackage.CODEC_VALUE_READER: return createCodecValueReader();
+			case CodecInfoPackage.CODEC_VALUE_WRITER: return createCodecValueWriter();
+			case CodecInfoPackage.CODEC_INFO_HOLDER: return createCodecInfoHolder();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -80,10 +86,12 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 		switch (eDataType.getClassifierID()) {
 			case CodecInfoPackage.INFO_TYPE:
 				return createInfoTypeFromString(eDataType, initialValue);
-			case CodecInfoPackage.DESERIALIZATION_CONTEXT:
-				return createDeserializationContextFromString(eDataType, initialValue);
 			case CodecInfoPackage.SERIALIZER_PROVIDER:
 				return createSerializerProviderFromString(eDataType, initialValue);
+			case CodecInfoPackage.VALUE_READER:
+				return createValueReaderFromString(eDataType, initialValue);
+			case CodecInfoPackage.VALUE_WRITER:
+				return createValueWriterFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -99,10 +107,12 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 		switch (eDataType.getClassifierID()) {
 			case CodecInfoPackage.INFO_TYPE:
 				return convertInfoTypeToString(eDataType, instanceValue);
-			case CodecInfoPackage.DESERIALIZATION_CONTEXT:
-				return convertDeserializationContextToString(eDataType, instanceValue);
 			case CodecInfoPackage.SERIALIZER_PROVIDER:
 				return convertSerializerProviderToString(eDataType, instanceValue);
+			case CodecInfoPackage.VALUE_READER:
+				return convertValueReaderToString(eDataType, instanceValue);
+			case CodecInfoPackage.VALUE_WRITER:
+				return convertValueWriterToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -114,9 +124,9 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * @generated
 	 */
 	@Override
-	public PackageInfo createPackageInfo() {
-		PackageInfoImpl packageInfo = new PackageInfoImpl();
-		return packageInfo;
+	public PackageCodecInfo createPackageCodecInfo() {
+		PackageCodecInfoImpl packageCodecInfo = new PackageCodecInfoImpl();
+		return packageCodecInfo;
 	}
 
 	/**
@@ -125,9 +135,9 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * @generated
 	 */
 	@Override
-	public EClassInfo createEClassInfo() {
-		EClassInfoImpl eClassInfo = new EClassInfoImpl();
-		return eClassInfo;
+	public EClassCodecInfo createEClassCodecInfo() {
+		EClassCodecInfoImpl eClassCodecInfo = new EClassCodecInfoImpl();
+		return eClassCodecInfo;
 	}
 
 	/**
@@ -136,20 +146,9 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * @generated
 	 */
 	@Override
-	public FeatureInfo createFeatureInfo() {
-		FeatureInfoImpl featureInfo = new FeatureInfoImpl();
-		return featureInfo;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public TypeInfoHolder createTypeInfoHolder() {
-		TypeInfoHolderImpl typeInfoHolder = new TypeInfoHolderImpl();
-		return typeInfoHolder;
+	public FeatureCodecInfo createFeatureCodecInfo() {
+		FeatureCodecInfoImpl featureCodecInfo = new FeatureCodecInfoImpl();
+		return featureCodecInfo;
 	}
 
 	/**
@@ -161,6 +160,61 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	public TypeInfo createTypeInfo() {
 		TypeInfoImpl typeInfo = new TypeInfoImpl();
 		return typeInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public IdentityInfo createIdentityInfo() {
+		IdentityInfoImpl identityInfo = new IdentityInfoImpl();
+		return identityInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public ReferenceInfo createReferenceInfo() {
+		ReferenceInfoImpl referenceInfo = new ReferenceInfoImpl();
+		return referenceInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public CodecValueReader createCodecValueReader() {
+		CodecValueReaderImpl codecValueReader = new CodecValueReaderImpl();
+		return codecValueReader;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public CodecValueWriter createCodecValueWriter() {
+		CodecValueWriterImpl codecValueWriter = new CodecValueWriterImpl();
+		return codecValueWriter;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public CodecInfoHolder createCodecInfoHolder() {
+		CodecInfoHolderImpl codecInfoHolder = new CodecInfoHolderImpl();
+		return codecInfoHolder;
 	}
 
 	/**
@@ -188,24 +242,6 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public DeserializationContext createDeserializationContextFromString(EDataType eDataType, String initialValue) {
-		return (DeserializationContext)super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertDeserializationContextToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public SerializerProvider createSerializerProviderFromString(EDataType eDataType, String initialValue) {
 		return (SerializerProvider)super.createFromString(eDataType, initialValue);
 	}
@@ -217,6 +253,42 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 */
 	public String convertSerializerProviderToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ValueReader<?, ?> createValueReaderFromString(EDataType eDataType, String initialValue) {
+		return (ValueReader<?, ?>)super.createFromString(initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertValueReaderToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ValueWriter<?, ?> createValueWriterFromString(EDataType eDataType, String initialValue) {
+		return (ValueWriter<?, ?>)super.createFromString(initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertValueWriterToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(instanceValue);
 	}
 
 	/**

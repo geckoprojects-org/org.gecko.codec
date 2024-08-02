@@ -68,32 +68,40 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 	protected CodecInfoSwitch<Adapter> modelSwitch =
 		new CodecInfoSwitch<Adapter>() {
 			@Override
-			public Adapter casePackageInfo(PackageInfo object) {
-				return createPackageInfoAdapter();
+			public Adapter casePackageCodecInfo(PackageCodecInfo object) {
+				return createPackageCodecInfoAdapter();
 			}
 			@Override
-			public Adapter caseEClassInfo(EClassInfo object) {
-				return createEClassInfoAdapter();
+			public Adapter caseEClassCodecInfo(EClassCodecInfo object) {
+				return createEClassCodecInfoAdapter();
 			}
 			@Override
-			public Adapter caseFeatureInfo(FeatureInfo object) {
-				return createFeatureInfoAdapter();
-			}
-			@Override
-			public <V, T> Adapter caseValueReader(ValueReader<V, T> object) {
-				return createValueReaderAdapter();
-			}
-			@Override
-			public <T, V> Adapter caseValueWriter(ValueWriter<T, V> object) {
-				return createValueWriterAdapter();
-			}
-			@Override
-			public Adapter caseTypeInfoHolder(TypeInfoHolder object) {
-				return createTypeInfoHolderAdapter();
+			public Adapter caseFeatureCodecInfo(FeatureCodecInfo object) {
+				return createFeatureCodecInfoAdapter();
 			}
 			@Override
 			public Adapter caseTypeInfo(TypeInfo object) {
 				return createTypeInfoAdapter();
+			}
+			@Override
+			public Adapter caseIdentityInfo(IdentityInfo object) {
+				return createIdentityInfoAdapter();
+			}
+			@Override
+			public Adapter caseReferenceInfo(ReferenceInfo object) {
+				return createReferenceInfoAdapter();
+			}
+			@Override
+			public Adapter caseCodecValueReader(CodecValueReader object) {
+				return createCodecValueReaderAdapter();
+			}
+			@Override
+			public Adapter caseCodecValueWriter(CodecValueWriter object) {
+				return createCodecValueWriterAdapter();
+			}
+			@Override
+			public Adapter caseCodecInfoHolder(CodecInfoHolder object) {
+				return createCodecInfoHolderAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -116,86 +124,44 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.PackageInfo <em>Package Info</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.PackageCodecInfo <em>Package Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.gecko.codec.info.codecinfo.PackageInfo
+	 * @see org.gecko.codec.info.codecinfo.PackageCodecInfo
 	 * @generated
 	 */
-	public Adapter createPackageInfoAdapter() {
+	public Adapter createPackageCodecInfoAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.EClassInfo <em>EClass Info</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo <em>EClass Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.gecko.codec.info.codecinfo.EClassInfo
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo
 	 * @generated
 	 */
-	public Adapter createEClassInfoAdapter() {
+	public Adapter createEClassCodecInfoAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.FeatureInfo <em>Feature Info</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo <em>Feature Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.gecko.codec.info.codecinfo.FeatureInfo
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo
 	 * @generated
 	 */
-	public Adapter createFeatureInfoAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.ValueReader <em>Value Reader</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.gecko.codec.info.codecinfo.ValueReader
-	 * @generated
-	 */
-	public Adapter createValueReaderAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.ValueWriter <em>Value Writer</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.gecko.codec.info.codecinfo.ValueWriter
-	 * @generated
-	 */
-	public Adapter createValueWriterAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.TypeInfoHolder <em>Type Info Holder</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfoHolder
-	 * @generated
-	 */
-	public Adapter createTypeInfoHolderAdapter() {
+	public Adapter createFeatureCodecInfoAdapter() {
 		return null;
 	}
 
@@ -210,6 +176,76 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createTypeInfoAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.IdentityInfo <em>Identity Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo
+	 * @generated
+	 */
+	public Adapter createIdentityInfoAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.ReferenceInfo <em>Reference Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.info.codecinfo.ReferenceInfo
+	 * @generated
+	 */
+	public Adapter createReferenceInfoAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueReader
+	 * @generated
+	 */
+	public Adapter createCodecValueReaderAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.CodecValueWriter <em>Codec Value Writer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.info.codecinfo.CodecValueWriter
+	 * @generated
+	 */
+	public Adapter createCodecValueWriterAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder <em>Holder</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoHolder
+	 * @generated
+	 */
+	public Adapter createCodecInfoHolderAdapter() {
 		return null;
 	}
 

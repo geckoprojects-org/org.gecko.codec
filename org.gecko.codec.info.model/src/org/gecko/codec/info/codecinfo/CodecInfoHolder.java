@@ -10,24 +10,24 @@ import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Type Info Holder</b></em>'.
+ * A representation of the model object '<em><b>Holder</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfoHolder#getInfoType <em>Info Type</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfoHolder#getReaders <em>Readers</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfoHolder#getWriters <em>Writers</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.CodecInfoHolder#getInfoType <em>Info Type</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.CodecInfoHolder#getReaders <em>Readers</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.CodecInfoHolder#getWriters <em>Writers</em>}</li>
  * </ul>
  *
- * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfoHolder()
+ * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getCodecInfoHolder()
  * @model
  * @generated
  */
 @ProviderType
-public interface TypeInfoHolder extends EObject {
+public interface CodecInfoHolder extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Info Type</b></em>' attribute.
 	 * The literals are from the enumeration {@link org.gecko.codec.info.codecinfo.InfoType}.
@@ -36,14 +36,14 @@ public interface TypeInfoHolder extends EObject {
 	 * @return the value of the '<em>Info Type</em>' attribute.
 	 * @see org.gecko.codec.info.codecinfo.InfoType
 	 * @see #setInfoType(InfoType)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfoHolder_InfoType()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getCodecInfoHolder_InfoType()
 	 * @model required="true"
 	 * @generated
 	 */
 	InfoType getInfoType();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.TypeInfoHolder#getInfoType <em>Info Type</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder#getInfoType <em>Info Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Info Type</em>' attribute.
@@ -55,42 +55,42 @@ public interface TypeInfoHolder extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Readers</b></em>' reference list.
-	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.ValueReader}<code>&lt;?, ?&gt;</code>.
+	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.CodecValueReader}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Readers</em>' reference list.
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfoHolder_Readers()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getCodecInfoHolder_Readers()
 	 * @model keys="name"
 	 * @generated
 	 */
-	EList<ValueReader<?, ?>> getReaders();
+	EList<CodecValueReader> getReaders();
 
 	/**
 	 * Returns the value of the '<em><b>Writers</b></em>' reference list.
-	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.ValueWriter}<code>&lt;?, ?&gt;</code>.
+	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.CodecValueWriter}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Writers</em>' reference list.
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfoHolder_Writers()
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getCodecInfoHolder_Writers()
 	 * @model keys="name"
 	 * @generated
 	 */
-	EList<ValueWriter<?, ?>> getWriters();
+	EList<CodecValueWriter> getWriters();
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model
+	 * @model annotation="http://www.eclipse.org/emf/2002/GenModel body='return getReaders().stream().filter(r -&gt; r.getName() == readerName).findFirst().orElse(null);'"
 	 * @generated
 	 */
-	ValueReader<?, ?> getReaderByName(String readerName);
+	CodecValueReader getReaderByName(String readerName);
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model
+	 * @model annotation="http://www.eclipse.org/emf/2002/GenModel body='return getWriters().stream().filter(w -&gt; w.getName() == writerName).findFirst().orElse(null);'"
 	 * @generated
 	 */
-	ValueWriter<?, ?> getWriterByName(String readerName);
+	CodecValueWriter getWriterByName(String writerName);
 
-} // TypeInfoHolder
+} // CodecInfoHolder
