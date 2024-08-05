@@ -23,6 +23,10 @@
 		"option_use_id" : true,
 		"option_id_on_top" : false,
 		"default_type_field": "_typ",
-		"default_id_field": "_primaryKey"
+		"default_id_field": "_primaryKey",
+		"dateFormat": "yyyy-MM-dd'T'HH:mm:ss",
+		"timeZone" : "Europe/Berlin",
+		"locale" : "en-US",
+		"indentOutput": true
 		}
 }

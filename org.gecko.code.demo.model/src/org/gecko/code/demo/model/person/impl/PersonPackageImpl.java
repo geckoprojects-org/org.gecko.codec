@@ -10,6 +10,9 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.gecko.code.demo.model.person.Address;
+import org.gecko.code.demo.model.person.BusinessAddress;
+import org.gecko.code.demo.model.person.BusinessPerson;
+import org.gecko.code.demo.model.person.Contact;
 import org.gecko.code.demo.model.person.Person;
 import org.gecko.code.demo.model.person.PersonFactory;
 import org.gecko.code.demo.model.person.PersonPackage;
@@ -34,6 +37,27 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	private EClass addressEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass businessPersonEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass contactEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass businessAddressEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -121,8 +145,18 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getPerson_LastName() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EReference getPerson_Address() {
-		return (EReference)personEClass.getEStructuralFeatures().get(1);
+		return (EReference)personEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -143,6 +177,56 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	@Override
 	public EAttribute getAddress_Street() {
 		return (EAttribute)addressEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getBusinessPerson() {
+		return businessPersonEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getContact() {
+		return contactEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getContact_Value() {
+		return (EAttribute)contactEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getBusinessAddress() {
+		return businessAddressEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBusinessAddress_CompanyName() {
+		return (EAttribute)businessAddressEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -176,10 +260,19 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		// Create classes and their features
 		personEClass = createEClass(PERSON);
 		createEAttribute(personEClass, PERSON__NAME);
+		createEAttribute(personEClass, PERSON__LAST_NAME);
 		createEReference(personEClass, PERSON__ADDRESS);
 
 		addressEClass = createEClass(ADDRESS);
 		createEAttribute(addressEClass, ADDRESS__STREET);
+
+		businessPersonEClass = createEClass(BUSINESS_PERSON);
+
+		contactEClass = createEClass(CONTACT);
+		createEAttribute(contactEClass, CONTACT__VALUE);
+
+		businessAddressEClass = createEClass(BUSINESS_ADDRESS);
+		createEAttribute(businessAddressEClass, BUSINESS_ADDRESS__COMPANY_NAME);
 	}
 
 	/**
@@ -210,14 +303,25 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		businessPersonEClass.getESuperTypes().add(this.getPerson());
+		businessAddressEClass.getESuperTypes().add(this.getAddress());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(personEClass, Person.class, "Person", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPerson_Name(), ecorePackage.getEString(), "name", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPerson_LastName(), ecorePackage.getEString(), "lastName", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPerson_Address(), this.getAddress(), null, "address", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addressEClass, Address.class, "Address", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddress_Street(), ecorePackage.getEString(), "street", null, 0, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(businessPersonEClass, BusinessPerson.class, "BusinessPerson", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(contactEClass, Contact.class, "Contact", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getContact_Value(), ecorePackage.getEString(), "value", null, 0, 1, Contact.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(businessAddressEClass, BusinessAddress.class, "BusinessAddress", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getBusinessAddress_CompanyName(), ecorePackage.getEString(), "companyName", null, 0, 1, BusinessAddress.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -225,6 +329,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		// Create annotations
 		// Version
 		createVersionAnnotations();
+		// codec
+		createCodecAnnotations();
 	}
 
 	/**
@@ -240,6 +346,52 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		   source,
 		   new String[] {
 			   "value", "1.0"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>codec</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createCodecAnnotations() {
+		String source = "codec";
+		addAnnotation
+		  (personEClass,
+		   source,
+		   new String[] {
+			   "codec.id.strategy", "COMBINED"
+		   });
+		addAnnotation
+		  (personEClass,
+		   source,
+		   new String[] {
+			   "codec.id.separator", "-"
+		   });
+		addAnnotation
+		  (getPerson_Name(),
+		   source,
+		   new String[] {
+			   "codec.id.field", "true"
+		   });
+		addAnnotation
+		  (getPerson_Name(),
+		   source,
+		   new String[] {
+			   "codec.id.order", "1"
+		   });
+		addAnnotation
+		  (getPerson_LastName(),
+		   source,
+		   new String[] {
+			   "codec.id.field", "true"
+		   });
+		addAnnotation
+		  (getPerson_LastName(),
+		   source,
+		   new String[] {
+			   "codec.id.order", "2"
 		   });
 	}
 

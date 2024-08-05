@@ -16,11 +16,13 @@ import org.osgi.annotation.versioning.ProviderType;
  * </p>
  * <ul>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getName <em>Name</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getLastName <em>Last Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getAddress <em>Address</em>}</li>
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getPerson()
- * @model
+ * @model annotation="codec codec.id.strategy='COMBINED'"
+ *        annotation="codec codec.id.separator='-'"
  * @generated
  */
 @ProviderType
@@ -32,7 +34,8 @@ public interface Person extends EObject {
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Name()
-	 * @model
+	 * @model annotation="codec codec.id.field='true'"
+	 *        annotation="codec codec.id.order='1'"
 	 * @generated
 	 */
 	String getName();
@@ -46,6 +49,29 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Last Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Last Name</em>' attribute.
+	 * @see #setLastName(String)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_LastName()
+	 * @model annotation="codec codec.id.field='true'"
+	 *        annotation="codec codec.id.order='2'"
+	 * @generated
+	 */
+	String getLastName();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getLastName <em>Last Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Last Name</em>' attribute.
+	 * @see #getLastName()
+	 * @generated
+	 */
+	void setLastName(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Address</b></em>' containment reference.

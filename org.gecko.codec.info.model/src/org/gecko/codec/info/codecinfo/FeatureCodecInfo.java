@@ -19,7 +19,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * <ul>
  *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getId <em>Id</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getFeatures <em>Features</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getDefaultKey <em>Default Key</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueReaderName <em>Value Reader Name</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueWriterName <em>Value Writer Name</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getType <em>Type</em>}</li>
@@ -65,29 +64,6 @@ public interface FeatureCodecInfo {
 	 * @generated
 	 */
 	EList<EStructuralFeature> getFeatures();
-
-	/**
-	 * Returns the value of the '<em><b>Default Key</b></em>' attribute.
-	 * The default value is <code>"_id"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Default Key</em>' attribute.
-	 * @see #setDefaultKey(String)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_DefaultKey()
-	 * @model default="_id"
-	 * @generated
-	 */
-	String getDefaultKey();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getDefaultKey <em>Default Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Default Key</em>' attribute.
-	 * @see #getDefaultKey()
-	 * @generated
-	 */
-	void setDefaultKey(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Value Reader Name</b></em>' attribute.

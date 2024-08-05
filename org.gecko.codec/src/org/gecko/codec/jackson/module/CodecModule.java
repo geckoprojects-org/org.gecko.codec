@@ -125,7 +125,7 @@ public class CodecModule extends EMFModule {
 	 */
 	public static ObjectMapper setupDefaultMapper(final JsonFactory factory, final Map<String, Object> properties) {
 		final ObjectMapper mapper = new ObjectMapper(factory);
-		// same as emf
+		// new Locale.Builder().setLanguageTag(key).build()
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
 		dateFormat.setTimeZone(TimeZone.getDefault());
 
@@ -134,6 +134,7 @@ public class CodecModule extends EMFModule {
 		mapper.setTimeZone(TimeZone.getDefault());
 		CodecModule module = new CodecModule(properties);
 		mapper.registerModule(module);
+		
 		// add default serializer for null EMap key
 		mapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
 

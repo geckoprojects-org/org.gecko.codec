@@ -43,6 +43,33 @@ public interface PersonFactory extends EFactory {
 	Address createAddress();
 
 	/**
+	 * Returns a new object of class '<em>Business Person</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Business Person</em>'.
+	 * @generated
+	 */
+	BusinessPerson createBusinessPerson();
+
+	/**
+	 * Returns a new object of class '<em>Contact</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Contact</em>'.
+	 * @generated
+	 */
+	Contact createContact();
+
+	/**
+	 * Returns a new object of class '<em>Business Address</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Business Address</em>'.
+	 * @generated
+	 */
+	BusinessAddress createBusinessAddress();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

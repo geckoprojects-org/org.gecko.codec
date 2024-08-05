@@ -83,13 +83,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__NAME = 0;
 
 	/**
+	 * The feature id for the '<em><b>Last Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__LAST_NAME = 1;
+
+	/**
 	 * The feature id for the '<em><b>Address</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__ADDRESS = 1;
+	int PERSON__ADDRESS = 2;
 
 	/**
 	 * The number of structural features of the '<em>Person</em>' class.
@@ -98,7 +107,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 2;
+	int PERSON_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Person</em>' class.
@@ -146,6 +155,144 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 */
 	int ADDRESS_OPERATION_COUNT = 0;
 
+	/**
+	 * The meta object id for the '{@link org.gecko.code.demo.model.person.impl.BusinessPersonImpl <em>Business Person</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.code.demo.model.person.impl.BusinessPersonImpl
+	 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getBusinessPerson()
+	 * @generated
+	 */
+	int BUSINESS_PERSON = 2;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__NAME = PERSON__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Last Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__LAST_NAME = PERSON__LAST_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Address</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__ADDRESS = PERSON__ADDRESS;
+
+	/**
+	 * The number of structural features of the '<em>Business Person</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON_FEATURE_COUNT = PERSON_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Business Person</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON_OPERATION_COUNT = PERSON_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.code.demo.model.person.impl.ContactImpl <em>Contact</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.code.demo.model.person.impl.ContactImpl
+	 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getContact()
+	 * @generated
+	 */
+	int CONTACT = 3;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTACT__VALUE = 0;
+
+	/**
+	 * The number of structural features of the '<em>Contact</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTACT_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Contact</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CONTACT_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.code.demo.model.person.impl.BusinessAddressImpl <em>Business Address</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.code.demo.model.person.impl.BusinessAddressImpl
+	 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getBusinessAddress()
+	 * @generated
+	 */
+	int BUSINESS_ADDRESS = 4;
+
+	/**
+	 * The feature id for the '<em><b>Street</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_ADDRESS__STREET = ADDRESS__STREET;
+
+	/**
+	 * The feature id for the '<em><b>Company Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_ADDRESS__COMPANY_NAME = ADDRESS_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Business Address</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_ADDRESS_FEATURE_COUNT = ADDRESS_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Business Address</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_ADDRESS_OPERATION_COUNT = ADDRESS_OPERATION_COUNT + 0;
+
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.Person <em>Person</em>}'.
@@ -167,6 +314,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getPerson_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getLastName <em>Last Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Last Name</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getLastName()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_LastName();
 
 	/**
 	 * Returns the meta object for the containment reference '{@link org.gecko.code.demo.model.person.Person#getAddress <em>Address</em>}'.
@@ -199,6 +357,58 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getAddress_Street();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.BusinessPerson <em>Business Person</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Business Person</em>'.
+	 * @see org.gecko.code.demo.model.person.BusinessPerson
+	 * @generated
+	 */
+	EClass getBusinessPerson();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.Contact <em>Contact</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Contact</em>'.
+	 * @see org.gecko.code.demo.model.person.Contact
+	 * @generated
+	 */
+	EClass getContact();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Contact#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see org.gecko.code.demo.model.person.Contact#getValue()
+	 * @see #getContact()
+	 * @generated
+	 */
+	EAttribute getContact_Value();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.BusinessAddress <em>Business Address</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Business Address</em>'.
+	 * @see org.gecko.code.demo.model.person.BusinessAddress
+	 * @generated
+	 */
+	EClass getBusinessAddress();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.BusinessAddress#getCompanyName <em>Company Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Company Name</em>'.
+	 * @see org.gecko.code.demo.model.person.BusinessAddress#getCompanyName()
+	 * @see #getBusinessAddress()
+	 * @generated
+	 */
+	EAttribute getBusinessAddress_CompanyName();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -242,6 +452,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute PERSON__NAME = eINSTANCE.getPerson_Name();
 
 		/**
+		 * The meta object literal for the '<em><b>Last Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__LAST_NAME = eINSTANCE.getPerson_LastName();
+
+		/**
 		 * The meta object literal for the '<em><b>Address</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -266,6 +484,52 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute ADDRESS__STREET = eINSTANCE.getAddress_Street();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.BusinessPersonImpl <em>Business Person</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.code.demo.model.person.impl.BusinessPersonImpl
+		 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getBusinessPerson()
+		 * @generated
+		 */
+		EClass BUSINESS_PERSON = eINSTANCE.getBusinessPerson();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.ContactImpl <em>Contact</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.code.demo.model.person.impl.ContactImpl
+		 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getContact()
+		 * @generated
+		 */
+		EClass CONTACT = eINSTANCE.getContact();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CONTACT__VALUE = eINSTANCE.getContact_Value();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.BusinessAddressImpl <em>Business Address</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.code.demo.model.person.impl.BusinessAddressImpl
+		 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getBusinessAddress()
+		 * @generated
+		 */
+		EClass BUSINESS_ADDRESS = eINSTANCE.getBusinessAddress();
+
+		/**
+		 * The meta object literal for the '<em><b>Company Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BUSINESS_ADDRESS__COMPANY_NAME = eINSTANCE.getBusinessAddress_CompanyName();
 
 	}
 

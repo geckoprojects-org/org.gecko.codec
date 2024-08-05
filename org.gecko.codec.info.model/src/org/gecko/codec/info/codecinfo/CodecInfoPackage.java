@@ -178,7 +178,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int ECLASS_CODEC_INFO__TYPE_INFO = 3;
 
 	/**
-	 * The feature id for the '<em><b>Feature Info</b></em>' containment reference.
+	 * The feature id for the '<em><b>Feature Info</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -196,40 +196,13 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int ECLASS_CODEC_INFO__REFERENCE_INFO = 5;
 
 	/**
-	 * The feature id for the '<em><b>Serialize Default Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE = 6;
-
-	/**
-	 * The feature id for the '<em><b>Serialize Array Batched</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED = 7;
-
-	/**
-	 * The feature id for the '<em><b>Use Names From Extended Meta Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA = 8;
-
-	/**
 	 * The number of structural features of the '<em>EClass Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO_FEATURE_COUNT = 9;
+	int ECLASS_CODEC_INFO_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>EClass Codec Info</em>' class.
@@ -269,22 +242,13 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_CODEC_INFO__FEATURES = 1;
 
 	/**
-	 * The feature id for the '<em><b>Default Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int FEATURE_CODEC_INFO__DEFAULT_KEY = 2;
-
-	/**
 	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_INFO__VALUE_READER_NAME = 3;
+	int FEATURE_CODEC_INFO__VALUE_READER_NAME = 2;
 
 	/**
 	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
@@ -293,7 +257,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_INFO__VALUE_WRITER_NAME = 4;
+	int FEATURE_CODEC_INFO__VALUE_WRITER_NAME = 3;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -302,7 +266,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_INFO__TYPE = 5;
+	int FEATURE_CODEC_INFO__TYPE = 4;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -311,7 +275,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_INFO__KEY = 6;
+	int FEATURE_CODEC_INFO__KEY = 5;
 
 	/**
 	 * The number of structural features of the '<em>Feature Codec Info</em>' class.
@@ -320,7 +284,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_INFO_FEATURE_COUNT = 7;
+	int FEATURE_CODEC_INFO_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Feature Codec Info</em>' class.
@@ -360,15 +324,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int TYPE_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
 
 	/**
-	 * The feature id for the '<em><b>Default Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_INFO__DEFAULT_KEY = FEATURE_CODEC_INFO__DEFAULT_KEY;
-
-	/**
 	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -405,31 +360,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int TYPE_INFO__KEY = FEATURE_CODEC_INFO__KEY;
 
 	/**
-	 * The feature id for the '<em><b>Serialize Type</b></em>' attribute.
+	 * The feature id for the '<em><b>Type Strategy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__SERIALIZE_TYPE = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
+	int TYPE_INFO__TYPE_STRATEGY = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Serialize Super Types</b></em>' attribute.
+	 * The feature id for the '<em><b>Type Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__SERIALIZE_SUPER_TYPES = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Serialize Super Type As Array</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY = FEATURE_CODEC_INFO_FEATURE_COUNT + 2;
+	int TYPE_INFO__TYPE_VALUE = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Type Info</em>' class.
@@ -438,7 +384,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 3;
+	int TYPE_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of operations of the '<em>Type Info</em>' class.
@@ -478,15 +424,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int IDENTITY_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
 
 	/**
-	 * The feature id for the '<em><b>Default Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__DEFAULT_KEY = FEATURE_CODEC_INFO__DEFAULT_KEY;
-
-	/**
 	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -523,49 +460,31 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int IDENTITY_INFO__KEY = FEATURE_CODEC_INFO__KEY;
 
 	/**
-	 * The feature id for the '<em><b>Use Id</b></em>' attribute.
+	 * The feature id for the '<em><b>Id Strategy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO__USE_ID = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
+	int IDENTITY_INFO__ID_STRATEGY = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Use Id Field</b></em>' attribute.
+	 * The feature id for the '<em><b>Id Separator</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO__USE_ID_FIELD = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
+	int IDENTITY_INFO__ID_SEPARATOR = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Id Top</b></em>' attribute.
+	 * The feature id for the '<em><b>Id Order</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO__ID_TOP = FEATURE_CODEC_INFO_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Serialize Id Field</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__SERIALIZE_ID_FIELD = FEATURE_CODEC_INFO_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Id Feature As Primary Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY = FEATURE_CODEC_INFO_FEATURE_COUNT + 4;
+	int IDENTITY_INFO__ID_ORDER = FEATURE_CODEC_INFO_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Identity Info</em>' class.
@@ -574,7 +493,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 5;
+	int IDENTITY_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of operations of the '<em>Identity Info</em>' class.
@@ -612,15 +531,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int REFERENCE_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
-
-	/**
-	 * The feature id for the '<em><b>Default Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_INFO__DEFAULT_KEY = FEATURE_CODEC_INFO__DEFAULT_KEY;
 
 	/**
 	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
@@ -1027,10 +937,10 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getEClassCodecInfo_TypeInfo();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo <em>Feature Info</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo <em>Feature Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Feature Info</em>'.
+	 * @return the meta object for the containment reference list '<em>Feature Info</em>'.
 	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo()
 	 * @see #getEClassCodecInfo()
 	 * @generated
@@ -1047,39 +957,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EReference getEClassCodecInfo_ReferenceInfo();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeDefaultValue <em>Serialize Default Value</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Serialize Default Value</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeDefaultValue()
-	 * @see #getEClassCodecInfo()
-	 * @generated
-	 */
-	EAttribute getEClassCodecInfo_SerializeDefaultValue();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeArrayBatched <em>Serialize Array Batched</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Serialize Array Batched</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeArrayBatched()
-	 * @see #getEClassCodecInfo()
-	 * @generated
-	 */
-	EAttribute getEClassCodecInfo_SerializeArrayBatched();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isUseNamesFromExtendedMetaData <em>Use Names From Extended Meta Data</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Use Names From Extended Meta Data</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#isUseNamesFromExtendedMetaData()
-	 * @see #getEClassCodecInfo()
-	 * @generated
-	 */
-	EAttribute getEClassCodecInfo_UseNamesFromExtendedMetaData();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo <em>Feature Codec Info</em>}'.
@@ -1112,17 +989,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EReference getFeatureCodecInfo_Features();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getDefaultKey <em>Default Key</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Default Key</em>'.
-	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo#getDefaultKey()
-	 * @see #getFeatureCodecInfo()
-	 * @generated
-	 */
-	EAttribute getFeatureCodecInfo_DefaultKey();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueReaderName <em>Value Reader Name</em>}'.
@@ -1179,37 +1045,26 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EClass getTypeInfo();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeType <em>Serialize Type</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeStrategy <em>Type Strategy</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Serialize Type</em>'.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfo#isSerializeType()
+	 * @return the meta object for the attribute '<em>Type Strategy</em>'.
+	 * @see org.gecko.codec.info.codecinfo.TypeInfo#getTypeStrategy()
 	 * @see #getTypeInfo()
 	 * @generated
 	 */
-	EAttribute getTypeInfo_SerializeType();
+	EAttribute getTypeInfo_TypeStrategy();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypes <em>Serialize Super Types</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeValue <em>Type Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Serialize Super Types</em>'.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypes()
+	 * @return the meta object for the attribute '<em>Type Value</em>'.
+	 * @see org.gecko.codec.info.codecinfo.TypeInfo#getTypeValue()
 	 * @see #getTypeInfo()
 	 * @generated
 	 */
-	EAttribute getTypeInfo_SerializeSuperTypes();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypeAsArray <em>Serialize Super Type As Array</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Serialize Super Type As Array</em>'.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypeAsArray()
-	 * @see #getTypeInfo()
-	 * @generated
-	 */
-	EAttribute getTypeInfo_SerializeSuperTypeAsArray();
+	EAttribute getTypeInfo_TypeValue();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.IdentityInfo <em>Identity Info</em>}'.
@@ -1222,59 +1077,37 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EClass getIdentityInfo();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isUseId <em>Use Id</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#getIdStrategy <em>Id Strategy</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Use Id</em>'.
-	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isUseId()
+	 * @return the meta object for the attribute '<em>Id Strategy</em>'.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#getIdStrategy()
 	 * @see #getIdentityInfo()
 	 * @generated
 	 */
-	EAttribute getIdentityInfo_UseId();
+	EAttribute getIdentityInfo_IdStrategy();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isUseIdField <em>Use Id Field</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#getIdSeparator <em>Id Separator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Use Id Field</em>'.
-	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isUseIdField()
+	 * @return the meta object for the attribute '<em>Id Separator</em>'.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#getIdSeparator()
 	 * @see #getIdentityInfo()
 	 * @generated
 	 */
-	EAttribute getIdentityInfo_UseIdField();
+	EAttribute getIdentityInfo_IdSeparator();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isIdTop <em>Id Top</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#getIdOrder <em>Id Order</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Id Top</em>'.
-	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isIdTop()
+	 * @return the meta object for the attribute '<em>Id Order</em>'.
+	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#getIdOrder()
 	 * @see #getIdentityInfo()
 	 * @generated
 	 */
-	EAttribute getIdentityInfo_IdTop();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isSerializeIdField <em>Serialize Id Field</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Serialize Id Field</em>'.
-	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isSerializeIdField()
-	 * @see #getIdentityInfo()
-	 * @generated
-	 */
-	EAttribute getIdentityInfo_SerializeIdField();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isIdFeatureAsPrimaryKey <em>Id Feature As Primary Key</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Id Feature As Primary Key</em>'.
-	 * @see org.gecko.codec.info.codecinfo.IdentityInfo#isIdFeatureAsPrimaryKey()
-	 * @see #getIdentityInfo()
-	 * @generated
-	 */
-	EAttribute getIdentityInfo_IdFeatureAsPrimaryKey();
+	EAttribute getIdentityInfo_IdOrder();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.ReferenceInfo <em>Reference Info</em>}'.
@@ -1582,7 +1415,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EReference ECLASS_CODEC_INFO__TYPE_INFO = eINSTANCE.getEClassCodecInfo_TypeInfo();
 
 		/**
-		 * The meta object literal for the '<em><b>Feature Info</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Feature Info</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -1596,30 +1429,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference ECLASS_CODEC_INFO__REFERENCE_INFO = eINSTANCE.getEClassCodecInfo_ReferenceInfo();
-
-		/**
-		 * The meta object literal for the '<em><b>Serialize Default Value</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE = eINSTANCE.getEClassCodecInfo_SerializeDefaultValue();
-
-		/**
-		 * The meta object literal for the '<em><b>Serialize Array Batched</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED = eINSTANCE.getEClassCodecInfo_SerializeArrayBatched();
-
-		/**
-		 * The meta object literal for the '<em><b>Use Names From Extended Meta Data</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA = eINSTANCE.getEClassCodecInfo_UseNamesFromExtendedMetaData();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl <em>Feature Codec Info</em>}' class.
@@ -1646,14 +1455,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference FEATURE_CODEC_INFO__FEATURES = eINSTANCE.getFeatureCodecInfo_Features();
-
-		/**
-		 * The meta object literal for the '<em><b>Default Key</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute FEATURE_CODEC_INFO__DEFAULT_KEY = eINSTANCE.getFeatureCodecInfo_DefaultKey();
 
 		/**
 		 * The meta object literal for the '<em><b>Value Reader Name</b></em>' attribute feature.
@@ -1698,28 +1499,20 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EClass TYPE_INFO = eINSTANCE.getTypeInfo();
 
 		/**
-		 * The meta object literal for the '<em><b>Serialize Type</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Type Strategy</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute TYPE_INFO__SERIALIZE_TYPE = eINSTANCE.getTypeInfo_SerializeType();
+		EAttribute TYPE_INFO__TYPE_STRATEGY = eINSTANCE.getTypeInfo_TypeStrategy();
 
 		/**
-		 * The meta object literal for the '<em><b>Serialize Super Types</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Type Value</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute TYPE_INFO__SERIALIZE_SUPER_TYPES = eINSTANCE.getTypeInfo_SerializeSuperTypes();
-
-		/**
-		 * The meta object literal for the '<em><b>Serialize Super Type As Array</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TYPE_INFO__SERIALIZE_SUPER_TYPE_AS_ARRAY = eINSTANCE.getTypeInfo_SerializeSuperTypeAsArray();
+		EAttribute TYPE_INFO__TYPE_VALUE = eINSTANCE.getTypeInfo_TypeValue();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl <em>Identity Info</em>}' class.
@@ -1732,44 +1525,28 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EClass IDENTITY_INFO = eINSTANCE.getIdentityInfo();
 
 		/**
-		 * The meta object literal for the '<em><b>Use Id</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Id Strategy</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute IDENTITY_INFO__USE_ID = eINSTANCE.getIdentityInfo_UseId();
+		EAttribute IDENTITY_INFO__ID_STRATEGY = eINSTANCE.getIdentityInfo_IdStrategy();
 
 		/**
-		 * The meta object literal for the '<em><b>Use Id Field</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Id Separator</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute IDENTITY_INFO__USE_ID_FIELD = eINSTANCE.getIdentityInfo_UseIdField();
+		EAttribute IDENTITY_INFO__ID_SEPARATOR = eINSTANCE.getIdentityInfo_IdSeparator();
 
 		/**
-		 * The meta object literal for the '<em><b>Id Top</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Id Order</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute IDENTITY_INFO__ID_TOP = eINSTANCE.getIdentityInfo_IdTop();
-
-		/**
-		 * The meta object literal for the '<em><b>Serialize Id Field</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute IDENTITY_INFO__SERIALIZE_ID_FIELD = eINSTANCE.getIdentityInfo_SerializeIdField();
-
-		/**
-		 * The meta object literal for the '<em><b>Id Feature As Primary Key</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY = eINSTANCE.getIdentityInfo_IdFeatureAsPrimaryKey();
+		EAttribute IDENTITY_INFO__ID_ORDER = eINSTANCE.getIdentityInfo_IdOrder();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.ReferenceInfoImpl <em>Reference Info</em>}' class.

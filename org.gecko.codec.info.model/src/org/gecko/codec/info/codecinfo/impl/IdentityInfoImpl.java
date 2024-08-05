@@ -19,115 +19,73 @@ import org.gecko.codec.info.codecinfo.IdentityInfo;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl#isUseId <em>Use Id</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl#isUseIdField <em>Use Id Field</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl#isIdTop <em>Id Top</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl#isSerializeIdField <em>Serialize Id Field</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl#isIdFeatureAsPrimaryKey <em>Id Feature As Primary Key</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl#getIdStrategy <em>Id Strategy</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl#getIdSeparator <em>Id Separator</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl#getIdOrder <em>Id Order</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityInfo {
 	/**
-	 * The default value of the '{@link #isUseId() <em>Use Id</em>}' attribute.
+	 * The default value of the '{@link #getIdStrategy() <em>Id Strategy</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isUseId()
+	 * @see #getIdStrategy()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean USE_ID_EDEFAULT = true;
+	protected static final String ID_STRATEGY_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #isUseId() <em>Use Id</em>}' attribute.
+	 * The cached value of the '{@link #getIdStrategy() <em>Id Strategy</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isUseId()
+	 * @see #getIdStrategy()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean useId = USE_ID_EDEFAULT;
+	protected String idStrategy = ID_STRATEGY_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isUseIdField() <em>Use Id Field</em>}' attribute.
+	 * The default value of the '{@link #getIdSeparator() <em>Id Separator</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isUseIdField()
+	 * @see #getIdSeparator()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean USE_ID_FIELD_EDEFAULT = true;
+	protected static final String ID_SEPARATOR_EDEFAULT = ".";
 
 	/**
-	 * The cached value of the '{@link #isUseIdField() <em>Use Id Field</em>}' attribute.
+	 * The cached value of the '{@link #getIdSeparator() <em>Id Separator</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isUseIdField()
+	 * @see #getIdSeparator()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean useIdField = USE_ID_FIELD_EDEFAULT;
+	protected String idSeparator = ID_SEPARATOR_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isIdTop() <em>Id Top</em>}' attribute.
+	 * The default value of the '{@link #getIdOrder() <em>Id Order</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isIdTop()
+	 * @see #getIdOrder()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean ID_TOP_EDEFAULT = true;
+	protected static final int ID_ORDER_EDEFAULT = 0;
 
 	/**
-	 * The cached value of the '{@link #isIdTop() <em>Id Top</em>}' attribute.
+	 * The cached value of the '{@link #getIdOrder() <em>Id Order</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isIdTop()
+	 * @see #getIdOrder()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean idTop = ID_TOP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isSerializeIdField() <em>Serialize Id Field</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSerializeIdField()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean SERIALIZE_ID_FIELD_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isSerializeIdField() <em>Serialize Id Field</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSerializeIdField()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean serializeIdField = SERIALIZE_ID_FIELD_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isIdFeatureAsPrimaryKey() <em>Id Feature As Primary Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isIdFeatureAsPrimaryKey()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean ID_FEATURE_AS_PRIMARY_KEY_EDEFAULT = true;
-
-	/**
-	 * The cached value of the '{@link #isIdFeatureAsPrimaryKey() <em>Id Feature As Primary Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isIdFeatureAsPrimaryKey()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean idFeatureAsPrimaryKey = ID_FEATURE_AS_PRIMARY_KEY_EDEFAULT;
+	protected int idOrder = ID_ORDER_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -154,8 +112,8 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	 * @generated
 	 */
 	@Override
-	public boolean isUseId() {
-		return useId;
+	public String getIdStrategy() {
+		return idStrategy;
 	}
 
 	/**
@@ -164,11 +122,11 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	 * @generated
 	 */
 	@Override
-	public void setUseId(boolean newUseId) {
-		boolean oldUseId = useId;
-		useId = newUseId;
+	public void setIdStrategy(String newIdStrategy) {
+		String oldIdStrategy = idStrategy;
+		idStrategy = newIdStrategy;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.IDENTITY_INFO__USE_ID, oldUseId, useId));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.IDENTITY_INFO__ID_STRATEGY, oldIdStrategy, idStrategy));
 	}
 
 	/**
@@ -177,8 +135,8 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	 * @generated
 	 */
 	@Override
-	public boolean isUseIdField() {
-		return useIdField;
+	public String getIdSeparator() {
+		return idSeparator;
 	}
 
 	/**
@@ -187,11 +145,11 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	 * @generated
 	 */
 	@Override
-	public void setUseIdField(boolean newUseIdField) {
-		boolean oldUseIdField = useIdField;
-		useIdField = newUseIdField;
+	public void setIdSeparator(String newIdSeparator) {
+		String oldIdSeparator = idSeparator;
+		idSeparator = newIdSeparator;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.IDENTITY_INFO__USE_ID_FIELD, oldUseIdField, useIdField));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.IDENTITY_INFO__ID_SEPARATOR, oldIdSeparator, idSeparator));
 	}
 
 	/**
@@ -200,8 +158,8 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	 * @generated
 	 */
 	@Override
-	public boolean isIdTop() {
-		return idTop;
+	public int getIdOrder() {
+		return idOrder;
 	}
 
 	/**
@@ -210,57 +168,11 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	 * @generated
 	 */
 	@Override
-	public void setIdTop(boolean newIdTop) {
-		boolean oldIdTop = idTop;
-		idTop = newIdTop;
+	public void setIdOrder(int newIdOrder) {
+		int oldIdOrder = idOrder;
+		idOrder = newIdOrder;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.IDENTITY_INFO__ID_TOP, oldIdTop, idTop));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public boolean isSerializeIdField() {
-		return serializeIdField;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setSerializeIdField(boolean newSerializeIdField) {
-		boolean oldSerializeIdField = serializeIdField;
-		serializeIdField = newSerializeIdField;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.IDENTITY_INFO__SERIALIZE_ID_FIELD, oldSerializeIdField, serializeIdField));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public boolean isIdFeatureAsPrimaryKey() {
-		return idFeatureAsPrimaryKey;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setIdFeatureAsPrimaryKey(boolean newIdFeatureAsPrimaryKey) {
-		boolean oldIdFeatureAsPrimaryKey = idFeatureAsPrimaryKey;
-		idFeatureAsPrimaryKey = newIdFeatureAsPrimaryKey;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY, oldIdFeatureAsPrimaryKey, idFeatureAsPrimaryKey));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.IDENTITY_INFO__ID_ORDER, oldIdOrder, idOrder));
 	}
 
 	/**
@@ -271,16 +183,12 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case CodecInfoPackage.IDENTITY_INFO__USE_ID:
-				return isUseId();
-			case CodecInfoPackage.IDENTITY_INFO__USE_ID_FIELD:
-				return isUseIdField();
-			case CodecInfoPackage.IDENTITY_INFO__ID_TOP:
-				return isIdTop();
-			case CodecInfoPackage.IDENTITY_INFO__SERIALIZE_ID_FIELD:
-				return isSerializeIdField();
-			case CodecInfoPackage.IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY:
-				return isIdFeatureAsPrimaryKey();
+			case CodecInfoPackage.IDENTITY_INFO__ID_STRATEGY:
+				return getIdStrategy();
+			case CodecInfoPackage.IDENTITY_INFO__ID_SEPARATOR:
+				return getIdSeparator();
+			case CodecInfoPackage.IDENTITY_INFO__ID_ORDER:
+				return getIdOrder();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -293,20 +201,14 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case CodecInfoPackage.IDENTITY_INFO__USE_ID:
-				setUseId((Boolean)newValue);
+			case CodecInfoPackage.IDENTITY_INFO__ID_STRATEGY:
+				setIdStrategy((String)newValue);
 				return;
-			case CodecInfoPackage.IDENTITY_INFO__USE_ID_FIELD:
-				setUseIdField((Boolean)newValue);
+			case CodecInfoPackage.IDENTITY_INFO__ID_SEPARATOR:
+				setIdSeparator((String)newValue);
 				return;
-			case CodecInfoPackage.IDENTITY_INFO__ID_TOP:
-				setIdTop((Boolean)newValue);
-				return;
-			case CodecInfoPackage.IDENTITY_INFO__SERIALIZE_ID_FIELD:
-				setSerializeIdField((Boolean)newValue);
-				return;
-			case CodecInfoPackage.IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY:
-				setIdFeatureAsPrimaryKey((Boolean)newValue);
+			case CodecInfoPackage.IDENTITY_INFO__ID_ORDER:
+				setIdOrder((Integer)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -320,20 +222,14 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case CodecInfoPackage.IDENTITY_INFO__USE_ID:
-				setUseId(USE_ID_EDEFAULT);
+			case CodecInfoPackage.IDENTITY_INFO__ID_STRATEGY:
+				setIdStrategy(ID_STRATEGY_EDEFAULT);
 				return;
-			case CodecInfoPackage.IDENTITY_INFO__USE_ID_FIELD:
-				setUseIdField(USE_ID_FIELD_EDEFAULT);
+			case CodecInfoPackage.IDENTITY_INFO__ID_SEPARATOR:
+				setIdSeparator(ID_SEPARATOR_EDEFAULT);
 				return;
-			case CodecInfoPackage.IDENTITY_INFO__ID_TOP:
-				setIdTop(ID_TOP_EDEFAULT);
-				return;
-			case CodecInfoPackage.IDENTITY_INFO__SERIALIZE_ID_FIELD:
-				setSerializeIdField(SERIALIZE_ID_FIELD_EDEFAULT);
-				return;
-			case CodecInfoPackage.IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY:
-				setIdFeatureAsPrimaryKey(ID_FEATURE_AS_PRIMARY_KEY_EDEFAULT);
+			case CodecInfoPackage.IDENTITY_INFO__ID_ORDER:
+				setIdOrder(ID_ORDER_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -347,16 +243,12 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case CodecInfoPackage.IDENTITY_INFO__USE_ID:
-				return useId != USE_ID_EDEFAULT;
-			case CodecInfoPackage.IDENTITY_INFO__USE_ID_FIELD:
-				return useIdField != USE_ID_FIELD_EDEFAULT;
-			case CodecInfoPackage.IDENTITY_INFO__ID_TOP:
-				return idTop != ID_TOP_EDEFAULT;
-			case CodecInfoPackage.IDENTITY_INFO__SERIALIZE_ID_FIELD:
-				return serializeIdField != SERIALIZE_ID_FIELD_EDEFAULT;
-			case CodecInfoPackage.IDENTITY_INFO__ID_FEATURE_AS_PRIMARY_KEY:
-				return idFeatureAsPrimaryKey != ID_FEATURE_AS_PRIMARY_KEY_EDEFAULT;
+			case CodecInfoPackage.IDENTITY_INFO__ID_STRATEGY:
+				return ID_STRATEGY_EDEFAULT == null ? idStrategy != null : !ID_STRATEGY_EDEFAULT.equals(idStrategy);
+			case CodecInfoPackage.IDENTITY_INFO__ID_SEPARATOR:
+				return ID_SEPARATOR_EDEFAULT == null ? idSeparator != null : !ID_SEPARATOR_EDEFAULT.equals(idSeparator);
+			case CodecInfoPackage.IDENTITY_INFO__ID_ORDER:
+				return idOrder != ID_ORDER_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -371,16 +263,12 @@ public class IdentityInfoImpl extends FeatureCodecInfoImpl implements IdentityIn
 		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (useId: ");
-		result.append(useId);
-		result.append(", useIdField: ");
-		result.append(useIdField);
-		result.append(", idTop: ");
-		result.append(idTop);
-		result.append(", serializeIdField: ");
-		result.append(serializeIdField);
-		result.append(", idFeatureAsPrimaryKey: ");
-		result.append(idFeatureAsPrimaryKey);
+		result.append(" (idStrategy: ");
+		result.append(idStrategy);
+		result.append(", idSeparator: ");
+		result.append(idSeparator);
+		result.append(", idOrder: ");
+		result.append(idOrder);
 		result.append(')');
 		return result.toString();
 	}

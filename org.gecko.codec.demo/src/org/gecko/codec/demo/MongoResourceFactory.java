@@ -16,13 +16,14 @@ package org.gecko.codec.demo;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
+import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -38,7 +39,9 @@ public class MongoResourceFactory extends ResourceFactoryImpl {
 	@Reference(name="jsonFactory")
 	private JsonFactory jsonFactory;
 	@Reference(name  ="module")
-	private Module module;
+	private CodecModule module;
+	@Reference
+	MongoDatabaseProvider provider;
 	
 	/* 
 	 * (non-Javadoc)
@@ -48,7 +51,7 @@ public class MongoResourceFactory extends ResourceFactoryImpl {
 	public Resource createResource(URI uri) {
 		ObjectMapper mapper = new ObjectMapper(jsonFactory);
 		mapper.registerModule(module);
-		return new MongoResource(modelInfo, mapper);
+		return new MongoResource(modelInfo, module, mapper, provider);
 	}
 
 }

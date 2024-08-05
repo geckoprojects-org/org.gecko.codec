@@ -1,7 +1,11 @@
 -library: enable-emf
 
--buildpath: ,\
+-buildpath: \
 	com.fasterxml.jackson.core.jackson-core;version=latest,\
 	com.fasterxml.jackson.core.jackson-databind;version=latest,\
 	org.gecko.code.demo.model;version=snapshot,\
-	org.gecko.codec.info;version=snapshot
+	org.gecko.codec.info;version=snapshot,\
+	org.mongodb.mongo-java-driver,\
+	org.gecko.mongo.osgi.api,\
+	org.gecko.codec.emfjson,\
+	org.gecko.codec.info.model

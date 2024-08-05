@@ -2,6 +2,8 @@
  */
 package org.gecko.codec.info.codecinfo;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EClassifier;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -21,9 +23,6 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getTypeInfo <em>Type Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo <em>Feature Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo <em>Reference Info</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeDefaultValue <em>Serialize Default Value</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeArrayBatched <em>Serialize Array Batched</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isUseNamesFromExtendedMetaData <em>Use Names From Extended Meta Data</em>}</li>
  * </ul>
  *
  * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo()
@@ -121,26 +120,16 @@ public interface EClassCodecInfo {
 	void setTypeInfo(TypeInfo value);
 
 	/**
-	 * Returns the value of the '<em><b>Feature Info</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Feature Info</b></em>' containment reference list.
+	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.FeatureCodecInfo}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Feature Info</em>' containment reference.
-	 * @see #setFeatureInfo(FeatureCodecInfo)
+	 * @return the value of the '<em>Feature Info</em>' containment reference list.
 	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_FeatureInfo()
 	 * @model containment="true"
 	 * @generated
 	 */
-	FeatureCodecInfo getFeatureInfo();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo <em>Feature Info</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Feature Info</em>' containment reference.
-	 * @see #getFeatureInfo()
-	 * @generated
-	 */
-	void setFeatureInfo(FeatureCodecInfo value);
+	EList<FeatureCodecInfo> getFeatureInfo();
 
 	/**
 	 * Returns the value of the '<em><b>Reference Info</b></em>' containment reference.
@@ -163,83 +152,5 @@ public interface EClassCodecInfo {
 	 * @generated
 	 */
 	void setReferenceInfo(ReferenceInfo value);
-
-	/**
-	 * Returns the value of the '<em><b>Serialize Default Value</b></em>' attribute.
-	 * The default value is <code>"false"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Option used to indicate the module to serialize default attributes values.  Default values are not serialized by default.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Serialize Default Value</em>' attribute.
-	 * @see #setSerializeDefaultValue(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_SerializeDefaultValue()
-	 * @model default="false"
-	 * @generated
-	 */
-	boolean isSerializeDefaultValue();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeDefaultValue <em>Serialize Default Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Serialize Default Value</em>' attribute.
-	 * @see #isSerializeDefaultValue()
-	 * @generated
-	 */
-	void setSerializeDefaultValue(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Serialize Array Batched</b></em>' attribute.
-	 * The default value is <code>"false"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Setting this option to Boolean.TRUE  will send lists and arrays using the writeArray callbacks.\n Per default the serialization happens with startArray, then calling writeValue for each element. 
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Serialize Array Batched</em>' attribute.
-	 * @see #setSerializeArrayBatched(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_SerializeArrayBatched()
-	 * @model default="false"
-	 * @generated
-	 */
-	boolean isSerializeArrayBatched();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isSerializeArrayBatched <em>Serialize Array Batched</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Serialize Array Batched</em>' attribute.
-	 * @see #isSerializeArrayBatched()
-	 * @generated
-	 */
-	void setSerializeArrayBatched(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Use Names From Extended Meta Data</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Option used to indicate whether feature names specified in {@link org.eclipse.emf.ecore.util.ExtendedMetaData} annotations should be respected.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Use Names From Extended Meta Data</em>' attribute.
-	 * @see #setUseNamesFromExtendedMetaData(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_UseNamesFromExtendedMetaData()
-	 * @model default="true"
-	 * @generated
-	 */
-	boolean isUseNamesFromExtendedMetaData();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#isUseNamesFromExtendedMetaData <em>Use Names From Extended Meta Data</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Use Names From Extended Meta Data</em>' attribute.
-	 * @see #isUseNamesFromExtendedMetaData()
-	 * @generated
-	 */
-	void setUseNamesFromExtendedMetaData(boolean value);
 
 } // EClassCodecInfo

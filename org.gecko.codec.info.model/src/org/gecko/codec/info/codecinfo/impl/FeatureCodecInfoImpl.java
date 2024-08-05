@@ -30,7 +30,6 @@ import org.gecko.codec.info.codecinfo.InfoType;
  * <ul>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getFeatures <em>Features</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getDefaultKey <em>Default Key</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getValueReaderName <em>Value Reader Name</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getValueWriterName <em>Value Writer Name</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getType <em>Type</em>}</li>
@@ -69,26 +68,6 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 	 * @ordered
 	 */
 	protected EList<EStructuralFeature> features;
-
-	/**
-	 * The default value of the '{@link #getDefaultKey() <em>Default Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDefaultKey()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String DEFAULT_KEY_EDEFAULT = "_id";
-
-	/**
-	 * The cached value of the '{@link #getDefaultKey() <em>Default Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDefaultKey()
-	 * @generated
-	 * @ordered
-	 */
-	protected String defaultKey = DEFAULT_KEY_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getValueReaderName() <em>Value Reader Name</em>}' attribute.
@@ -231,29 +210,6 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 */
 	@Override
-	public String getDefaultKey() {
-		return defaultKey;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setDefaultKey(String newDefaultKey) {
-		String oldDefaultKey = defaultKey;
-		defaultKey = newDefaultKey;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY, oldDefaultKey, defaultKey));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public String getValueReaderName() {
 		return valueReaderName;
 	}
@@ -352,8 +308,6 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 				return getId();
 			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
 				return getFeatures();
-			case CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY:
-				return getDefaultKey();
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				return getValueReaderName();
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_WRITER_NAME:
@@ -381,9 +335,6 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
 				getFeatures().clear();
 				getFeatures().addAll((Collection<? extends EStructuralFeature>)newValue);
-				return;
-			case CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY:
-				setDefaultKey((String)newValue);
 				return;
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				setValueReaderName((String)newValue);
@@ -415,9 +366,6 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
 				getFeatures().clear();
 				return;
-			case CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY:
-				setDefaultKey(DEFAULT_KEY_EDEFAULT);
-				return;
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				setValueReaderName(VALUE_READER_NAME_EDEFAULT);
 				return;
@@ -446,8 +394,6 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
 				return features != null && !features.isEmpty();
-			case CodecInfoPackage.FEATURE_CODEC_INFO__DEFAULT_KEY:
-				return DEFAULT_KEY_EDEFAULT == null ? defaultKey != null : !DEFAULT_KEY_EDEFAULT.equals(defaultKey);
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				return VALUE_READER_NAME_EDEFAULT == null ? valueReaderName != null : !VALUE_READER_NAME_EDEFAULT.equals(valueReaderName);
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_WRITER_NAME:
@@ -472,8 +418,6 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (id: ");
 		result.append(id);
-		result.append(", defaultKey: ");
-		result.append(defaultKey);
 		result.append(", valueReaderName: ");
 		result.append(valueReaderName);
 		result.append(", valueWriterName: ");

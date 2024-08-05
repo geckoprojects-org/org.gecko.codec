@@ -13,11 +13,9 @@ import org.osgi.annotation.versioning.ProviderType;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.gecko.codec.info.codecinfo.IdentityInfo#isUseId <em>Use Id</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.IdentityInfo#isUseIdField <em>Use Id Field</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.IdentityInfo#isIdTop <em>Id Top</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.IdentityInfo#isSerializeIdField <em>Serialize Id Field</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.IdentityInfo#isIdFeatureAsPrimaryKey <em>Id Feature As Primary Key</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.IdentityInfo#getIdStrategy <em>Id Strategy</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.IdentityInfo#getIdSeparator <em>Id Separator</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.IdentityInfo#getIdOrder <em>Id Order</em>}</li>
  * </ul>
  *
  * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo()
@@ -27,137 +25,79 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface IdentityInfo extends FeatureCodecInfo {
 	/**
-	 * Returns the value of the '<em><b>Use Id</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
+	 * Returns the value of the '<em><b>Id Strategy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Option used to indicate the module to use the default ID serializer if none are provided. The ID serializer used by default is IdSerializer.
+	 * This supports the possibility of setting a strategy for id field determination, based on model annotations. For instance, an id field could be the combination of two model fields, and this should be marked in the model.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Use Id</em>' attribute.
-	 * @see #setUseId(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_UseId()
-	 * @model default="true"
+	 * @return the value of the '<em>Id Strategy</em>' attribute.
+	 * @see #setIdStrategy(String)
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdStrategy()
+	 * @model
 	 * @generated
 	 */
-	boolean isUseId();
+	String getIdStrategy();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isUseId <em>Use Id</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.IdentityInfo#getIdStrategy <em>Id Strategy</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Use Id</em>' attribute.
-	 * @see #isUseId()
+	 * @param value the new value of the '<em>Id Strategy</em>' attribute.
+	 * @see #getIdStrategy()
 	 * @generated
 	 */
-	void setUseId(boolean value);
+	void setIdStrategy(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Use Id Field</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
+	 * Returns the value of the '<em><b>Id Separator</b></em>' attribute.
+	 * The default value is <code>"."</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Option used to indicate the module to use the ID field of the EObject.
+	 * This supports the possibility of setting an id as a combination of multiple fields. The idSeparator property indicates the separator to be used when building the id field.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Use Id Field</em>' attribute.
-	 * @see #setUseIdField(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_UseIdField()
-	 * @model default="true"
+	 * @return the value of the '<em>Id Separator</em>' attribute.
+	 * @see #setIdSeparator(String)
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdSeparator()
+	 * @model default="."
 	 * @generated
 	 */
-	boolean isUseIdField();
+	String getIdSeparator();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isUseIdField <em>Use Id Field</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.IdentityInfo#getIdSeparator <em>Id Separator</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Use Id Field</em>' attribute.
-	 * @see #isUseIdField()
+	 * @param value the new value of the '<em>Id Separator</em>' attribute.
+	 * @see #getIdSeparator()
 	 * @generated
 	 */
-	void setUseIdField(boolean value);
+	void setIdSeparator(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Id Top</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
+	 * Returns the value of the '<em><b>Id Order</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Option used to indicate the module to serialize the id field on top of the document.
+	 * This supports the possibility of setting an id as a combination of multiple fields. The idOrder defines the position of the fields to be used when building the id.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Id Top</em>' attribute.
-	 * @see #setIdTop(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdTop()
-	 * @model default="true"
+	 * @return the value of the '<em>Id Order</em>' attribute.
+	 * @see #setIdOrder(int)
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdOrder()
+	 * @model
 	 * @generated
 	 */
-	boolean isIdTop();
+	int getIdOrder();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isIdTop <em>Id Top</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.IdentityInfo#getIdOrder <em>Id Order</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Id Top</em>' attribute.
-	 * @see #isIdTop()
+	 * @param value the new value of the '<em>Id Order</em>' attribute.
+	 * @see #getIdOrder()
 	 * @generated
 	 */
-	void setIdTop(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Serialize Id Field</b></em>' attribute.
-	 * The default value is <code>"false"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Option used to indicate the module to additionally serialize the id field of an EObject as it is.
-	 *   This is usually not needed, because the id key always holds the ID at the first position.  
-	 *  This id-field itself can be found at a later index. So finding it may cost a lot of effort.
-	 *   It can be useful with useId TRUE and useIdField FALSE  and additionally store this 
-	 *   id field, while using the URI fragment or Resource ID as primary key
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Serialize Id Field</em>' attribute.
-	 * @see #setSerializeIdField(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_SerializeIdField()
-	 * @model default="false"
-	 * @generated
-	 */
-	boolean isSerializeIdField();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isSerializeIdField <em>Serialize Id Field</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Serialize Id Field</em>' attribute.
-	 * @see #isSerializeIdField()
-	 * @generated
-	 */
-	void setSerializeIdField(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Id Feature As Primary Key</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * If it is set to Boolean.TRUE and the ID was not specified in the URI, the value of the ID attribute will be used as the primary key if it exists.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Id Feature As Primary Key</em>' attribute.
-	 * @see #setIdFeatureAsPrimaryKey(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdFeatureAsPrimaryKey()
-	 * @model default="true"
-	 * @generated
-	 */
-	boolean isIdFeatureAsPrimaryKey();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.IdentityInfo#isIdFeatureAsPrimaryKey <em>Id Feature As Primary Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Id Feature As Primary Key</em>' attribute.
-	 * @see #isIdFeatureAsPrimaryKey()
-	 * @generated
-	 */
-	void setIdFeatureAsPrimaryKey(boolean value);
+	void setIdOrder(int value);
 
 } // IdentityInfo

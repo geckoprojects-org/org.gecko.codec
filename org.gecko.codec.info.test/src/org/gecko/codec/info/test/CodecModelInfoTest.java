@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
@@ -131,21 +130,15 @@ public class CodecModelInfoTest {
 				assertEquals(eClassCodecInfo.getId(), eClass.getInstanceClassName());
 				assertEquals(eClassCodecInfo.getClassifier(), eClass);
 				
-				assertFalse(eClassCodecInfo.isSerializeArrayBatched());
-				assertFalse(eClassCodecInfo.isSerializeDefaultValue());
-				assertTrue(eClassCodecInfo.isUseNamesFromExtendedMetaData());
-
+				
 				assertNotNull(eClassCodecInfo.getIdentityInfo());
 				assertEquals(eClassCodecInfo.getIdentityInfo().getType(), InfoType.IDENTITY);
-				assertEquals(eClassCodecInfo.getIdentityInfo().getDefaultKey(), "_id");
 				
 				assertNotNull(eClassCodecInfo.getTypeInfo());
 				assertEquals(eClassCodecInfo.getTypeInfo().getType(), InfoType.TYPE);
-				assertEquals(eClassCodecInfo.getTypeInfo().getDefaultKey(), "_type");
 				
 				assertNotNull(eClassCodecInfo.getReferenceInfo());
 				assertEquals(eClassCodecInfo.getReferenceInfo().getType(), InfoType.REFERENCE);
-				assertEquals(eClassCodecInfo.getReferenceInfo().getDefaultKey(), "$ref");				
 			}
 		});
 	}
@@ -161,11 +154,6 @@ public class CodecModelInfoTest {
 		assertNotNull(eClassCodecInfo);
 		
 		IdentityInfo identityInfo = eClassCodecInfo.getIdentityInfo();
-		assertTrue(identityInfo.isUseId());
-		assertTrue(identityInfo.isUseIdField());
-		assertTrue(identityInfo.isIdTop());
-		assertFalse(identityInfo.isSerializeIdField());
-		assertTrue(identityInfo.isIdFeatureAsPrimaryKey());
 		assertThat(identityInfo.getFeatures()).hasSize(1);
 		assertEquals(identityInfo.getFeatures().get(0), basicPackage.getPerson_Id());
 		assertEquals("DEFAULT_ID_READER", identityInfo.getValueReaderName());
@@ -174,11 +162,6 @@ public class CodecModelInfoTest {
 		eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(basicPackage.getAddress()).get();
 		assertNotNull(eClassCodecInfo);
 		identityInfo = eClassCodecInfo.getIdentityInfo();
-		assertTrue(identityInfo.isUseId());
-		assertTrue(identityInfo.isUseIdField());
-		assertTrue(identityInfo.isIdTop());
-		assertFalse(identityInfo.isSerializeIdField());
-		assertTrue(identityInfo.isIdFeatureAsPrimaryKey());
 		assertThat(identityInfo.getFeatures()).hasSize(1);
 		assertEquals(identityInfo.getFeatures().get(0), basicPackage.getAddress_Id());
 		assertEquals(identityInfo.getValueReaderName(), "DEFAULT_ID_READER");
@@ -187,11 +170,6 @@ public class CodecModelInfoTest {
 		eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(basicPackage.getContact()).get();
 		assertNotNull(eClassCodecInfo);
 		identityInfo = eClassCodecInfo.getIdentityInfo();
-		assertTrue(identityInfo.isUseId());
-		assertTrue(identityInfo.isUseIdField());
-		assertTrue(identityInfo.isIdTop());
-		assertFalse(identityInfo.isSerializeIdField());
-		assertTrue(identityInfo.isIdFeatureAsPrimaryKey());
 		assertThat(identityInfo.getFeatures()).hasSize(0);		
 		assertEquals(identityInfo.getValueReaderName(), "DEFAULT_ID_READER");
 		assertEquals(identityInfo.getValueWriterName(), "DEFAULT_ID_WRITER");
@@ -209,10 +187,6 @@ public class CodecModelInfoTest {
 		
 		TypeInfo typeInfo = eClassCodecInfo.getTypeInfo();
 		assertNotNull(typeInfo);
-		assertTrue(typeInfo.isSerializeSuperTypeAsArray());
-		assertFalse(typeInfo.isSerializeSuperTypes());
-		assertTrue(typeInfo.isSerializeType());
-		assertEquals(typeInfo.getDefaultKey(), "_type");
 		assertEquals(typeInfo.getValueReaderName(), "DEFAULT_ECLASS_READER");
 		assertEquals(typeInfo.getValueWriterName(), "URI_WRITER");
 	}
@@ -229,7 +203,6 @@ public class CodecModelInfoTest {
 		
 		ReferenceInfo refInfo = eClassCodecInfo.getReferenceInfo();
 		assertNotNull(refInfo);
-		assertEquals(refInfo.getDefaultKey(), "$ref");
 		assertEquals(refInfo.getValueReaderName(), "DEFAULT_ECLASS_READER");
 		assertEquals(refInfo.getValueWriterName(), "URIS_WRITER");
 		assertThat(refInfo.getFeatures()).isNotEmpty();

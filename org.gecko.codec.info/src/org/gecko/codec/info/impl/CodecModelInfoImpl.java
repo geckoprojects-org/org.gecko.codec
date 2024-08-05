@@ -12,18 +12,21 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EFactory;
+import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.gecko.codec.info.CodecAnnotations;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoFactory;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
+import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
@@ -42,6 +45,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 7749336016374647599L;
+	
+	private static final String CODEC_MODEL_ANNOTATION = "codec";
 
 	private transient Map<Class<?>, EClassifier> classes = new ConcurrentHashMap<>();
 	private transient Map<EClass, List<EClass>> upperHierarchy = new ConcurrentHashMap<>();
@@ -176,30 +181,53 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		IdentityInfo identityInfo = CodecInfoFactory.eINSTANCE.createIdentityInfo();
 		identityInfo.setType(InfoType.IDENTITY);
 		identityInfo.setId(UUID.randomUUID().toString());
-		identityInfo.setKey(identityInfo.getDefaultKey());
-		identityInfo.setValueReaderName("DEFAULT_ID_READER");
-		identityInfo.setValueWriterName("DEFAULT_ID_WRITER");
 		
-		EAttribute idAttribute = ec instanceof EClass ? ((EClass) ec).getEIDAttribute() : null;
+		Object valueReaderName = getAnnotationDetails(ec, CodecAnnotations.CODEC_VALUE_READER_NAME);
+		if(valueReaderName != null && valueReaderName instanceof String name) {
+			identityInfo.setValueReaderName(name);
+		}
+		else identityInfo.setValueReaderName("DEFAULT_ID_READER");
 		
-		if(idAttribute != null) {
-			identityInfo.getFeatures().add(idAttribute);
+		Object valueWriterName = getAnnotationDetails(ec, CodecAnnotations.CODEC_VALUE_WRITER_NAME);
+		if(valueWriterName != null && valueWriterName instanceof String name) {
+			identityInfo.setValueWriterName(name);
+		}
+		else identityInfo.setValueWriterName("DEFAULT_ID_WRITER");		
+		
+		Object identityStrategy = getAnnotationDetails(ec, CodecAnnotations.CODEC_ID_STRATEGY);
+		if(identityInfo != null && identityStrategy instanceof String strategy) {
+			identityInfo.setIdStrategy(strategy);
+		}
+		Object identitySeparator = getAnnotationDetails(ec, CodecAnnotations.CODEC_ID_SEPARATOR);
+		if(identitySeparator != null && identitySeparator instanceof String separator) {
+			identityInfo.setIdSeparator(separator);
 		}
 		
+		if(ec instanceof EClass eClass) {
+			eClass.getEAllAttributes().forEach(att -> 
+				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(att, eClassCodecInfo)));
+		}
+	
 		eClassCodecInfo.setIdentityInfo(identityInfo);
 		
 		TypeInfo typeInfo = CodecInfoFactory.eINSTANCE.createTypeInfo();
 		typeInfo.setId(UUID.randomUUID().toString());
 		typeInfo.setType(InfoType.TYPE);
-		typeInfo.setDefaultKey("_type");
 		typeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
 		typeInfo.setValueWriterName("URI_WRITER");
+		Object typeStrategy = getAnnotationDetails(ec, CodecAnnotations.CODEC_TYPE_STRATEGY);
+		if(typeStrategy != null && typeStrategy instanceof String strategy) {
+			typeInfo.setTypeStrategy(strategy);
+		}
+		Object typeValue = getAnnotationDetails(ec, CodecAnnotations.CODEC_TYPE_VALUE);
+		if(typeValue != null && typeValue instanceof String value) {
+			typeInfo.setTypeValue(value);
+		}
 //		TODO: what should I put in the features list...?
 		eClassCodecInfo.setTypeInfo(typeInfo);
 		
 		
 		ReferenceInfo refInfo = CodecInfoFactory.eINSTANCE.createReferenceInfo();
-		refInfo.setDefaultKey("$ref");
 		refInfo.setId(UUID.randomUUID().toString());
 		refInfo.setType(InfoType.REFERENCE);
 		refInfo.setValueReaderName("DEFAULT_ECLASS_READER");
@@ -210,6 +238,50 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		eClassCodecInfo.setReferenceInfo(refInfo);
 		
 		return eClassCodecInfo;
+	}
+	
+	/**
+	 * @param att
+	 * @return
+	 */
+	private FeatureCodecInfo createCodecFeatureInfo(EAttribute att, EClassCodecInfo eClassCodecInfo) {
+		FeatureCodecInfo featureInfo = CodecInfoFactory.eINSTANCE.createFeatureCodecInfo();
+		featureInfo.setId(UUID.randomUUID().toString());
+		
+//		Retrieve id info from model annotations
+		Object idField = getAnnotationDetails(att, CodecAnnotations.CODEC_ID_FIELD);
+		if(idField != null && idField instanceof Boolean) {
+			Object idOrder = getAnnotationDetails(att, CodecAnnotations.CODEC_ID_ORDER);
+			if(idOrder != null && idOrder instanceof Integer order) {
+				eClassCodecInfo.getIdentityInfo().getFeatures().add(order, att);
+			} else eClassCodecInfo.getIdentityInfo().getFeatures().add(att);
+		}
+		
+//		Retrieve id info from model properties
+		if(att.isID()) {
+			eClassCodecInfo.getIdentityInfo().getFeatures().add(att);
+		}
+		
+//		Set value reader/writer from annotation
+		Object valueReaderName = getAnnotationDetails(att, CodecAnnotations.CODEC_VALUE_READER_NAME);
+		if(valueReaderName != null && valueReaderName instanceof String name) {
+			featureInfo.setValueReaderName(name);
+		}
+		
+		Object valueWriterName = getAnnotationDetails(att, CodecAnnotations.CODEC_VALUE_WRITER_NAME);
+		if(valueWriterName != null && valueWriterName instanceof String name) {
+			featureInfo.setValueWriterName(name);
+		}
+		
+//		Type info
+		
+		
+		return featureInfo;
+	}
+
+	private Object getAnnotationDetails(EModelElement element, String annotationKey) {
+		EAnnotation annotation = element.getEAnnotation(CODEC_MODEL_ANNOTATION);
+		return annotation.getDetails().get(annotationKey);
 	}
 	
 	private void createCodecInfoHolderMap() {

@@ -76,6 +76,18 @@ public class PersonAdapterFactory extends AdapterFactoryImpl {
 				return createAddressAdapter();
 			}
 			@Override
+			public Adapter caseBusinessPerson(BusinessPerson object) {
+				return createBusinessPersonAdapter();
+			}
+			@Override
+			public Adapter caseContact(Contact object) {
+				return createContactAdapter();
+			}
+			@Override
+			public Adapter caseBusinessAddress(BusinessAddress object) {
+				return createBusinessAddressAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -120,6 +132,48 @@ public class PersonAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createAddressAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.code.demo.model.person.BusinessPerson <em>Business Person</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.code.demo.model.person.BusinessPerson
+	 * @generated
+	 */
+	public Adapter createBusinessPersonAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.code.demo.model.person.Contact <em>Contact</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.code.demo.model.person.Contact
+	 * @generated
+	 */
+	public Adapter createContactAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.code.demo.model.person.BusinessAddress <em>Business Address</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.code.demo.model.person.BusinessAddress
+	 * @generated
+	 */
+	public Adapter createBusinessAddressAdapter() {
 		return null;
 	}
 

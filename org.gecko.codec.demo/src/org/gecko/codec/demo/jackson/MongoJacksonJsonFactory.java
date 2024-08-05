@@ -32,5 +32,7 @@ public class MongoJacksonJsonFactory extends JsonFactory {
 	
 	@Reference
 	private MongoDatabase database;
+	
+	
 
 }

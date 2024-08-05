@@ -2,8 +2,12 @@
  */
 package org.gecko.codec.info.codecinfo.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -11,6 +15,9 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.gecko.codec.info.codecinfo.CodecInfoPackage;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
@@ -33,9 +40,6 @@ import org.gecko.codec.info.codecinfo.TypeInfo;
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getTypeInfo <em>Type Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getFeatureInfo <em>Feature Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getReferenceInfo <em>Reference Info</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#isSerializeDefaultValue <em>Serialize Default Value</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#isSerializeArrayBatched <em>Serialize Array Batched</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#isUseNamesFromExtendedMetaData <em>Use Names From Extended Meta Data</em>}</li>
  * </ul>
  *
  * @generated
@@ -92,14 +96,14 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	protected TypeInfo typeInfo;
 
 	/**
-	 * The cached value of the '{@link #getFeatureInfo() <em>Feature Info</em>}' containment reference.
+	 * The cached value of the '{@link #getFeatureInfo() <em>Feature Info</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getFeatureInfo()
 	 * @generated
 	 * @ordered
 	 */
-	protected FeatureCodecInfo featureInfo;
+	protected EList<FeatureCodecInfo> featureInfo;
 
 	/**
 	 * The cached value of the '{@link #getReferenceInfo() <em>Reference Info</em>}' containment reference.
@@ -110,66 +114,6 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @ordered
 	 */
 	protected ReferenceInfo referenceInfo;
-
-	/**
-	 * The default value of the '{@link #isSerializeDefaultValue() <em>Serialize Default Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSerializeDefaultValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean SERIALIZE_DEFAULT_VALUE_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isSerializeDefaultValue() <em>Serialize Default Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSerializeDefaultValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean serializeDefaultValue = SERIALIZE_DEFAULT_VALUE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isSerializeArrayBatched() <em>Serialize Array Batched</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSerializeArrayBatched()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean SERIALIZE_ARRAY_BATCHED_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isSerializeArrayBatched() <em>Serialize Array Batched</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isSerializeArrayBatched()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean serializeArrayBatched = SERIALIZE_ARRAY_BATCHED_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isUseNamesFromExtendedMetaData() <em>Use Names From Extended Meta Data</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isUseNamesFromExtendedMetaData()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean USE_NAMES_FROM_EXTENDED_META_DATA_EDEFAULT = true;
-
-	/**
-	 * The cached value of the '{@link #isUseNamesFromExtendedMetaData() <em>Use Names From Extended Meta Data</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isUseNamesFromExtendedMetaData()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean useNamesFromExtendedMetaData = USE_NAMES_FROM_EXTENDED_META_DATA_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -349,43 +293,11 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
-	public FeatureCodecInfo getFeatureInfo() {
+	public EList<FeatureCodecInfo> getFeatureInfo() {
+		if (featureInfo == null) {
+			featureInfo = new EObjectContainmentEList<FeatureCodecInfo>(FeatureCodecInfo.class, this, CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO);
+		}
 		return featureInfo;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetFeatureInfo(FeatureCodecInfo newFeatureInfo, NotificationChain msgs) {
-		FeatureCodecInfo oldFeatureInfo = featureInfo;
-		featureInfo = newFeatureInfo;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO, oldFeatureInfo, newFeatureInfo);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setFeatureInfo(FeatureCodecInfo newFeatureInfo) {
-		if (newFeatureInfo != featureInfo) {
-			NotificationChain msgs = null;
-			if (featureInfo != null)
-				msgs = ((InternalEObject)featureInfo).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO, null, msgs);
-			if (newFeatureInfo != null)
-				msgs = ((InternalEObject)newFeatureInfo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO, null, msgs);
-			msgs = basicSetFeatureInfo(newFeatureInfo, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO, newFeatureInfo, newFeatureInfo));
 	}
 
 	/**
@@ -439,75 +351,6 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
-	public boolean isSerializeDefaultValue() {
-		return serializeDefaultValue;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setSerializeDefaultValue(boolean newSerializeDefaultValue) {
-		boolean oldSerializeDefaultValue = serializeDefaultValue;
-		serializeDefaultValue = newSerializeDefaultValue;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE, oldSerializeDefaultValue, serializeDefaultValue));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public boolean isSerializeArrayBatched() {
-		return serializeArrayBatched;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setSerializeArrayBatched(boolean newSerializeArrayBatched) {
-		boolean oldSerializeArrayBatched = serializeArrayBatched;
-		serializeArrayBatched = newSerializeArrayBatched;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED, oldSerializeArrayBatched, serializeArrayBatched));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public boolean isUseNamesFromExtendedMetaData() {
-		return useNamesFromExtendedMetaData;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setUseNamesFromExtendedMetaData(boolean newUseNamesFromExtendedMetaData) {
-		boolean oldUseNamesFromExtendedMetaData = useNamesFromExtendedMetaData;
-		useNamesFromExtendedMetaData = newUseNamesFromExtendedMetaData;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA, oldUseNamesFromExtendedMetaData, useNamesFromExtendedMetaData));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
@@ -515,7 +358,7 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
 				return basicSetTypeInfo(null, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
-				return basicSetFeatureInfo(null, msgs);
+				return ((InternalEList<?>)getFeatureInfo()).basicRemove(otherEnd, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				return basicSetReferenceInfo(null, msgs);
 		}
@@ -543,12 +386,6 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return getFeatureInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				return getReferenceInfo();
-			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE:
-				return isSerializeDefaultValue();
-			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED:
-				return isSerializeArrayBatched();
-			case CodecInfoPackage.ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA:
-				return isUseNamesFromExtendedMetaData();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -558,6 +395,7 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -574,19 +412,11 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				setTypeInfo((TypeInfo)newValue);
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
-				setFeatureInfo((FeatureCodecInfo)newValue);
+				getFeatureInfo().clear();
+				getFeatureInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				setReferenceInfo((ReferenceInfo)newValue);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE:
-				setSerializeDefaultValue((Boolean)newValue);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED:
-				setSerializeArrayBatched((Boolean)newValue);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA:
-				setUseNamesFromExtendedMetaData((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -613,19 +443,10 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				setTypeInfo((TypeInfo)null);
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
-				setFeatureInfo((FeatureCodecInfo)null);
+				getFeatureInfo().clear();
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				setReferenceInfo((ReferenceInfo)null);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE:
-				setSerializeDefaultValue(SERIALIZE_DEFAULT_VALUE_EDEFAULT);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED:
-				setSerializeArrayBatched(SERIALIZE_ARRAY_BATCHED_EDEFAULT);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA:
-				setUseNamesFromExtendedMetaData(USE_NAMES_FROM_EXTENDED_META_DATA_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -648,15 +469,9 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
 				return typeInfo != null;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
-				return featureInfo != null;
+				return featureInfo != null && !featureInfo.isEmpty();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				return referenceInfo != null;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_DEFAULT_VALUE:
-				return serializeDefaultValue != SERIALIZE_DEFAULT_VALUE_EDEFAULT;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZE_ARRAY_BATCHED:
-				return serializeArrayBatched != SERIALIZE_ARRAY_BATCHED_EDEFAULT;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__USE_NAMES_FROM_EXTENDED_META_DATA:
-				return useNamesFromExtendedMetaData != USE_NAMES_FROM_EXTENDED_META_DATA_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -673,12 +488,6 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (id: ");
 		result.append(id);
-		result.append(", serializeDefaultValue: ");
-		result.append(serializeDefaultValue);
-		result.append(", serializeArrayBatched: ");
-		result.append(serializeArrayBatched);
-		result.append(", useNamesFromExtendedMetaData: ");
-		result.append(useNamesFromExtendedMetaData);
 		result.append(')');
 		return result.toString();
 	}

@@ -13,9 +13,8 @@ import org.osgi.annotation.versioning.ProviderType;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeType <em>Serialize Type</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypes <em>Serialize Super Types</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypeAsArray <em>Serialize Super Type As Array</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeStrategy <em>Type Strategy</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeValue <em>Type Value</em>}</li>
  * </ul>
  *
  * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfo()
@@ -25,81 +24,53 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface TypeInfo extends FeatureCodecInfo {
 	/**
-	 * Returns the value of the '<em><b>Serialize Type</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
+	 * Returns the value of the '<em><b>Type Strategy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Option used to indicate the module to use the default type serializer if none are provided. The type serializer used by default is ETypeSerializer.
+	 * This supports the possibility of setting a strategy for type serialization, e.g. if the URI of the class should be used as type, or the class name, or another value.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Serialize Type</em>' attribute.
-	 * @see #setSerializeType(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_SerializeType()
-	 * @model default="true"
+	 * @return the value of the '<em>Type Strategy</em>' attribute.
+	 * @see #setTypeStrategy(String)
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_TypeStrategy()
+	 * @model
 	 * @generated
 	 */
-	boolean isSerializeType();
+	String getTypeStrategy();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeType <em>Serialize Type</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeStrategy <em>Type Strategy</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Serialize Type</em>' attribute.
-	 * @see #isSerializeType()
+	 * @param value the new value of the '<em>Type Strategy</em>' attribute.
+	 * @see #getTypeStrategy()
 	 * @generated
 	 */
-	void setSerializeType(boolean value);
+	void setTypeStrategy(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Serialize Super Types</b></em>' attribute.
-	 * The default value is <code>"false"</code>.
+	 * Returns the value of the '<em><b>Type Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * To avoid writing unnecessary URIs in the result format, we write eClassUris only for the root  class and for EReferences,\n where the actual value does not equal but inherit from the stated reference type.\n  By setting this option to Boolean.TRUE, all eClass URIs will be written regardless. 
+	 * This supports the possibility of serializing the type with the provided String.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Serialize Super Types</em>' attribute.
-	 * @see #setSerializeSuperTypes(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_SerializeSuperTypes()
-	 * @model default="false"
+	 * @return the value of the '<em>Type Value</em>' attribute.
+	 * @see #setTypeValue(String)
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_TypeValue()
+	 * @model
 	 * @generated
 	 */
-	boolean isSerializeSuperTypes();
+	String getTypeValue();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypes <em>Serialize Super Types</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeValue <em>Type Value</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Serialize Super Types</em>' attribute.
-	 * @see #isSerializeSuperTypes()
+	 * @param value the new value of the '<em>Type Value</em>' attribute.
+	 * @see #getTypeValue()
 	 * @generated
 	 */
-	void setSerializeSuperTypes(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Serialize Super Type As Array</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * By setting this to Boolean.TRUE the supertypes are written as an array of URIs.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Serialize Super Type As Array</em>' attribute.
-	 * @see #setSerializeSuperTypeAsArray(boolean)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_SerializeSuperTypeAsArray()
-	 * @model default="true"
-	 * @generated
-	 */
-	boolean isSerializeSuperTypeAsArray();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.TypeInfo#isSerializeSuperTypeAsArray <em>Serialize Super Type As Array</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Serialize Super Type As Array</em>' attribute.
-	 * @see #isSerializeSuperTypeAsArray()
-	 * @generated
-	 */
-	void setSerializeSuperTypeAsArray(boolean value);
+	void setTypeValue(String value);
 
 } // TypeInfo

@@ -78,6 +78,26 @@ public class PersonSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case PersonPackage.BUSINESS_PERSON: {
+				BusinessPerson businessPerson = (BusinessPerson)theEObject;
+				T result = caseBusinessPerson(businessPerson);
+				if (result == null) result = casePerson(businessPerson);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case PersonPackage.CONTACT: {
+				Contact contact = (Contact)theEObject;
+				T result = caseContact(contact);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case PersonPackage.BUSINESS_ADDRESS: {
+				BusinessAddress businessAddress = (BusinessAddress)theEObject;
+				T result = caseBusinessAddress(businessAddress);
+				if (result == null) result = caseAddress(businessAddress);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -109,6 +129,51 @@ public class PersonSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseAddress(Address object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Business Person</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Business Person</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseBusinessPerson(BusinessPerson object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Contact</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Contact</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseContact(Contact object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Business Address</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Business Address</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseBusinessAddress(BusinessAddress object) {
 		return null;
 	}
 

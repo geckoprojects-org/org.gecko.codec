@@ -5,6 +5,5 @@
 	org.gecko.codec.info.model;version=snapshot,\
 	org.gecko.codec.emfjson,\
 	com.fasterxml.jackson.core.jackson-databind,\
-	org.gecko.codec.io,\
 	org.gecko.codec
 	

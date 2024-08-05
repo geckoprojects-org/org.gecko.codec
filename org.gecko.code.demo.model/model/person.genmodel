@@ -8,11 +8,30 @@
   <genPackages prefix="Person" basePackage="org.gecko.code.demo.model" resource="XMI"
       disposableProviderFactory="true" ecorePackage="person.ecore#/">
     <genClasses ecoreClass="person.ecore#//Person">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/name"/>
+      <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="codec.id.strategy" value="COMBINED"/>
+      </genAnnotations>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/name">
+        <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="codec.id.order" value="1"/>
+        </genAnnotations>
+      </genFeatures>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/lastName">
+        <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="codec.id.order" value="2"/>
+        </genAnnotations>
+      </genFeatures>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//Person/address"/>
     </genClasses>
     <genClasses ecoreClass="person.ecore#//Address">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Address/street"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//BusinessPerson"/>
+    <genClasses ecoreClass="person.ecore#//Contact">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Contact/value"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//BusinessAddress">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//BusinessAddress/companyName"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

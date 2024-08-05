@@ -24,6 +24,7 @@ import org.gecko.code.demo.model.person.PersonPackage;
  * </p>
  * <ul>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getLastName <em>Last Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getAddress <em>Address</em>}</li>
  * </ul>
  *
@@ -49,6 +50,26 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected String name = NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLastName() <em>Last Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLastName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LAST_NAME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLastName() <em>Last Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLastName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String lastName = LAST_NAME_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getAddress() <em>Address</em>}' containment reference.
@@ -100,6 +121,29 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		name = newName;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__NAME, oldName, name));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getLastName() {
+		return lastName;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setLastName(String newLastName) {
+		String oldLastName = lastName;
+		lastName = newLastName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__LAST_NAME, oldLastName, lastName));
 	}
 
 	/**
@@ -171,6 +215,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		switch (featureID) {
 			case PersonPackage.PERSON__NAME:
 				return getName();
+			case PersonPackage.PERSON__LAST_NAME:
+				return getLastName();
 			case PersonPackage.PERSON__ADDRESS:
 				return getAddress();
 		}
@@ -187,6 +233,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		switch (featureID) {
 			case PersonPackage.PERSON__NAME:
 				setName((String)newValue);
+				return;
+			case PersonPackage.PERSON__LAST_NAME:
+				setLastName((String)newValue);
 				return;
 			case PersonPackage.PERSON__ADDRESS:
 				setAddress((Address)newValue);
@@ -206,6 +255,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__NAME:
 				setName(NAME_EDEFAULT);
 				return;
+			case PersonPackage.PERSON__LAST_NAME:
+				setLastName(LAST_NAME_EDEFAULT);
+				return;
 			case PersonPackage.PERSON__ADDRESS:
 				setAddress((Address)null);
 				return;
@@ -223,6 +275,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		switch (featureID) {
 			case PersonPackage.PERSON__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case PersonPackage.PERSON__LAST_NAME:
+				return LAST_NAME_EDEFAULT == null ? lastName != null : !LAST_NAME_EDEFAULT.equals(lastName);
 			case PersonPackage.PERSON__ADDRESS:
 				return address != null;
 		}
@@ -241,6 +295,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: ");
 		result.append(name);
+		result.append(", lastName: ");
+		result.append(lastName);
 		result.append(')');
 		return result.toString();
 	}
