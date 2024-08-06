@@ -13,6 +13,7 @@
  */
 package org.gecko.codec.info.helper;
 
+import org.eclipse.emf.ecore.EObject;
 import org.gecko.codec.info.codecinfo.CodecInfoFactory;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.InfoType;
@@ -34,8 +35,8 @@ public class CodecInfoHolderHelper {
 			break;
 		case IDENTITY:
 			codecInfoHolder.getReaders().add(CodecIOHelper.DEFAULT_ID_VALUE_READER);
-			codecInfoHolder.getWriters().add(CodecIOHelper.DEFAULT_ID_VALUE_WRITER);
 			codecInfoHolder.getWriters().add(CodecIOHelper.IDFIELD_VALUE_WRITER);			
+			codecInfoHolder.getWriters().add(CodecIOHelper.DEFAULT_ID_VALUE_WRITER);
 			break;
 		case OBJECT:
 			break;

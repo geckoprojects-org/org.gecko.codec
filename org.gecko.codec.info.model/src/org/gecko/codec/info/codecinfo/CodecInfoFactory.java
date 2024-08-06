@@ -88,6 +88,15 @@ public interface CodecInfoFactory extends EFactory {
 	CodecInfoHolder createCodecInfoHolder();
 
 	/**
+	 * Returns a new object of class '<em>Operation Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Operation Info</em>'.
+	 * @generated
+	 */
+	OperationInfo createOperationInfo();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

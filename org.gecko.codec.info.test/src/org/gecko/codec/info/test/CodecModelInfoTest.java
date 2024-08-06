@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Optional;
 
 import org.eclipse.emf.ecore.EClass;
+import org.gecko.code.demo.model.person.PersonPackage;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
@@ -29,7 +30,6 @@ import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.info.codecinfo.ReferenceInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
-import org.gecko.emf.osgi.example.model.basic.BasicPackage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -102,34 +102,33 @@ public class CodecModelInfoTest {
 //	  }
 	
 	@Test
-	public void testPackageCodecInfoCreation(@InjectService(timeout = 2000l) BasicPackage basicPackage,  
+	public void testPackageCodecInfoCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
 		
-		assertNotNull(basicPackage);
+		assertNotNull(demoModel);
 		assertNotNull(codecModelInfo);
 		
-		Optional<PackageCodecInfo> packageCodecInfoOpt = codecModelInfo.getCodecInfoForPackage(BasicPackage.eNS_URI);
+		Optional<PackageCodecInfo> packageCodecInfoOpt = codecModelInfo.getCodecInfoForPackage(PersonPackage.eNS_URI);
 		assertFalse(packageCodecInfoOpt.isEmpty());
 		
 		PackageCodecInfo packageCodecInfo = packageCodecInfoOpt.get();
-		assertEquals(packageCodecInfo.getId(), BasicPackage.eNS_URI);
-		assertEquals(packageCodecInfo.getEPackage(), basicPackage);
+		assertEquals(packageCodecInfo.getId(), PersonPackage.eNS_URI);
+		assertEquals(packageCodecInfo.getEPackage(), demoModel);
 	}
 	
 	@Test
-	public void testElassCodecInfoCreation(@InjectService(timeout = 2000l) BasicPackage basicPackage,  
+	public void testElassCodecInfoCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
 		
-		assertNotNull(basicPackage);
+		assertNotNull(demoModel);
 		assertNotNull(codecModelInfo);
 		
-		basicPackage.getEClassifiers().forEach(ec -> {
+		demoModel.getEClassifiers().forEach(ec -> {
 			if(ec instanceof EClass eClass) {
 				assertFalse(codecModelInfo.getCodecInfoForEClass(eClass).isEmpty());
 				EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(eClass).get();
 				assertEquals(eClassCodecInfo.getId(), eClass.getInstanceClassName());
-				assertEquals(eClassCodecInfo.getClassifier(), eClass);
-				
+				assertEquals(eClassCodecInfo.getClassifier(), eClass);				
 				
 				assertNotNull(eClassCodecInfo.getIdentityInfo());
 				assertEquals(eClassCodecInfo.getIdentityInfo().getType(), InfoType.IDENTITY);
@@ -144,45 +143,33 @@ public class CodecModelInfoTest {
 	}
 	
 	@Test
-	public void testIdentityInfoCreation(@InjectService(timeout = 2000l) BasicPackage basicPackage,  
+	public void testIdentityInfoCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
 		
-		assertNotNull(basicPackage);
+		assertNotNull(demoModel);
 		assertNotNull(codecModelInfo);
 		
-		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(basicPackage.getPerson()).get();
+		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(demoModel.getPerson()).get();
 		assertNotNull(eClassCodecInfo);
 		
 		IdentityInfo identityInfo = eClassCodecInfo.getIdentityInfo();
-		assertThat(identityInfo.getFeatures()).hasSize(1);
-		assertEquals(identityInfo.getFeatures().get(0), basicPackage.getPerson_Id());
+		assertThat(identityInfo.getFeatures()).hasSize(2);
+		assertEquals(identityInfo.getFeatures().get(0), demoModel.getPerson_Name());
+		assertEquals(identityInfo.getFeatures().get(1), demoModel.getPerson_LastName());
 		assertEquals("DEFAULT_ID_READER", identityInfo.getValueReaderName());
 		assertEquals( "DEFAULT_ID_WRITER", identityInfo.getValueWriterName());
-		
-		eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(basicPackage.getAddress()).get();
-		assertNotNull(eClassCodecInfo);
-		identityInfo = eClassCodecInfo.getIdentityInfo();
-		assertThat(identityInfo.getFeatures()).hasSize(1);
-		assertEquals(identityInfo.getFeatures().get(0), basicPackage.getAddress_Id());
-		assertEquals(identityInfo.getValueReaderName(), "DEFAULT_ID_READER");
-		assertEquals(identityInfo.getValueWriterName(), "DEFAULT_ID_WRITER");
-		
-		eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(basicPackage.getContact()).get();
-		assertNotNull(eClassCodecInfo);
-		identityInfo = eClassCodecInfo.getIdentityInfo();
-		assertThat(identityInfo.getFeatures()).hasSize(0);		
-		assertEquals(identityInfo.getValueReaderName(), "DEFAULT_ID_READER");
-		assertEquals(identityInfo.getValueWriterName(), "DEFAULT_ID_WRITER");
+		assertEquals("COMBINED", identityInfo.getIdStrategy());
+		assertEquals( "-", identityInfo.getIdSeparator());
 	}
 
 	@Test
-	public void testTypeInfoCreation(@InjectService(timeout = 2000l) BasicPackage basicPackage,  
+	public void testTypeInfoCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
 		
-		assertNotNull(basicPackage);
+		assertNotNull(demoModel);
 		assertNotNull(codecModelInfo);
 		
-		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(basicPackage.getPerson()).get();
+		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(demoModel.getPerson()).get();
 		assertNotNull(eClassCodecInfo);
 		
 		TypeInfo typeInfo = eClassCodecInfo.getTypeInfo();
@@ -192,13 +179,13 @@ public class CodecModelInfoTest {
 	}
 	
 	@Test
-	public void testReferenceInfoCreation(@InjectService(timeout = 2000l) BasicPackage basicPackage,  
+	public void testReferenceInfoCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
 		
-		assertNotNull(basicPackage);
+		assertNotNull(demoModel);
 		assertNotNull(codecModelInfo);
 		
-		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(basicPackage.getPerson()).get();
+		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(demoModel.getPerson()).get();
 		assertNotNull(eClassCodecInfo);
 		
 		ReferenceInfo refInfo = eClassCodecInfo.getReferenceInfo();
@@ -206,20 +193,15 @@ public class CodecModelInfoTest {
 		assertEquals(refInfo.getValueReaderName(), "DEFAULT_ECLASS_READER");
 		assertEquals(refInfo.getValueWriterName(), "URIS_WRITER");
 		assertThat(refInfo.getFeatures()).isNotEmpty();
-		assertThat(refInfo.getFeatures()).hasSize(6);
-		assertThat(refInfo.getFeatures()).contains(basicPackage.getPerson_Address());
-		assertThat(refInfo.getFeatures()).contains(basicPackage.getPerson_Contact());
-		assertThat(refInfo.getFeatures()).contains(basicPackage.getPerson_Relatives());
-		assertThat(refInfo.getFeatures()).contains(basicPackage.getPerson_Tags());
-		assertThat(refInfo.getFeatures()).contains(basicPackage.getPerson_Properties());
-		assertThat(refInfo.getFeatures()).contains(basicPackage.getPerson_TransientAddress());
+		assertThat(refInfo.getFeatures()).hasSize(1);
+		assertThat(refInfo.getFeatures()).contains(demoModel.getPerson_Address());
 	}
 	
 	@Test
-	public void testCodecInfoHolderCreation(@InjectService(timeout = 2000l) BasicPackage basicPackage,  
+	public void testCodecInfoHolderCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
 		
-		assertNotNull(basicPackage);
+		assertNotNull(demoModel);
 		assertNotNull(codecModelInfo);
 		
 		Optional<CodecInfoHolder> codecInfoHolderOpt = codecModelInfo.getCodecInfoHolderByType(InfoType.IDENTITY);

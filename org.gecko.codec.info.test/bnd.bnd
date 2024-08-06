@@ -8,9 +8,9 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 -buildpath: \
 	org.osgi.framework;version=latest,\
 	org.gecko.codec.info,\
-	org.gecko.emf.osgi.example.model.basic,\
 	org.gecko.codec.info.model;version=latest,\
-	org.gecko.emf.repository.api
+	org.gecko.emf.repository.api,\
+	org.gecko.code.demo.model;version=latest
 	
 Private-Package: org.gecko.codec.info.test
 

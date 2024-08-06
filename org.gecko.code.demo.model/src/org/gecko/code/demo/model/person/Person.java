@@ -21,8 +21,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getPerson()
- * @model annotation="codec codec.id.strategy='COMBINED'"
- *        annotation="codec codec.id.separator='-'"
+ * @model annotation="codec codec.id.strategy='COMBINED' codec.id.separator='-'"
  * @generated
  */
 @ProviderType
@@ -34,8 +33,7 @@ public interface Person extends EObject {
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Name()
-	 * @model annotation="codec codec.id.field='true'"
-	 *        annotation="codec codec.id.order='1'"
+	 * @model annotation="codec codec.id.field='true' codec.id.order='0'"
 	 * @generated
 	 */
 	String getName();
@@ -57,8 +55,7 @@ public interface Person extends EObject {
 	 * @return the value of the '<em>Last Name</em>' attribute.
 	 * @see #setLastName(String)
 	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_LastName()
-	 * @model annotation="codec codec.id.field='true'"
-	 *        annotation="codec codec.id.order='2'"
+	 * @model annotation="codec codec.id.field='true' codec.id.order='1'"
 	 * @generated
 	 */
 	String getLastName();

@@ -15,6 +15,7 @@
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/FEATURE"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/REFERENCE"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/OBJECT"/>
+      <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/OPERATION"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/OTHER"/>
     </genEnums>
     <genDataTypes ecoreDataType="codec-info.ecore#//SerializerProvider"/>
@@ -91,5 +92,6 @@
         <genParameters ecoreParameter="codec-info.ecore#//SampleValueReader/readValue/context"/>
       </genOperations>
     </genClasses>
+    <genClasses ecoreClass="codec-info.ecore#//OperationInfo"/>
   </genPackages>
 </genmodel:GenModel>

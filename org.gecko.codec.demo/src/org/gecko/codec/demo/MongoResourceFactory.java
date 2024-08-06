@@ -40,8 +40,8 @@ public class MongoResourceFactory extends ResourceFactoryImpl {
 	private JsonFactory jsonFactory;
 	@Reference(name  ="module")
 	private CodecModule module;
-	@Reference
-	MongoDatabaseProvider provider;
+//	@Reference
+//	MongoDatabaseProvider provider;
 	
 	/* 
 	 * (non-Javadoc)
@@ -51,7 +51,8 @@ public class MongoResourceFactory extends ResourceFactoryImpl {
 	public Resource createResource(URI uri) {
 		ObjectMapper mapper = new ObjectMapper(jsonFactory);
 		mapper.registerModule(module);
-		return new MongoResource(modelInfo, module, mapper, provider);
+		return new MongoResource(modelInfo, module, mapper, null);
+//		return new MongoResource(modelInfo, module, mapper, provider);
 	}
 
 }

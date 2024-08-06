@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.resource.Resource;
  */
 public @interface CodecModuleConfig {
 	
-	String cocecType();
+	String codecType();
 	
 	String codecModuleName() default "gecko-codec-module";
 	

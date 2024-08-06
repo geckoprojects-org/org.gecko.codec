@@ -11,10 +11,21 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
+package org.gecko.codec.info;
+
 /**
  * 
  * @author ilenia
- * @since 31.07.2024
+ * @since Aug 6, 2024
  */
-@org.osgi.annotation.bundle.Export
-package org.gecko.codec.info.helper;
+public interface ObjectMapperOptions {
+	
+	String OBJ_MAPPER_DATE_FORMAT = "obj.mapper.date.format";
+	
+	String OBJ_MAPPER_LOCALE = "obj.mapper.locale";
+	
+	String OBJ_MAPPER_TIME_ZONE = "obj.mapper.time.zone";
+	
+	String OBJ_MAPPER_INDENT_OUTPUT = "obj.mapper.indent.output";
+
+}

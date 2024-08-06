@@ -18,9 +18,11 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.gecko.codec.info.CodecAnnotations;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoFactory;
@@ -181,6 +183,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		IdentityInfo identityInfo = CodecInfoFactory.eINSTANCE.createIdentityInfo();
 		identityInfo.setType(InfoType.IDENTITY);
 		identityInfo.setId(UUID.randomUUID().toString());
+		eClassCodecInfo.setIdentityInfo(identityInfo);
 		
 		Object valueReaderName = getAnnotationDetails(ec, CodecAnnotations.CODEC_VALUE_READER_NAME);
 		if(valueReaderName != null && valueReaderName instanceof String name) {
@@ -195,8 +198,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		else identityInfo.setValueWriterName("DEFAULT_ID_WRITER");		
 		
 		Object identityStrategy = getAnnotationDetails(ec, CodecAnnotations.CODEC_ID_STRATEGY);
-		if(identityInfo != null && identityStrategy instanceof String strategy) {
-			identityInfo.setIdStrategy(strategy);
+		if(identityStrategy != null) {
+			identityInfo.setIdStrategy((String) identityStrategy);
 		}
 		Object identitySeparator = getAnnotationDetails(ec, CodecAnnotations.CODEC_ID_SEPARATOR);
 		if(identitySeparator != null && identitySeparator instanceof String separator) {
@@ -208,7 +211,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(att, eClassCodecInfo)));
 		}
 	
-		eClassCodecInfo.setIdentityInfo(identityInfo);
+		
 		
 		TypeInfo typeInfo = CodecInfoFactory.eINSTANCE.createTypeInfo();
 		typeInfo.setId(UUID.randomUUID().toString());
@@ -250,9 +253,12 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		
 //		Retrieve id info from model annotations
 		Object idField = getAnnotationDetails(att, CodecAnnotations.CODEC_ID_FIELD);
-		if(idField != null && idField instanceof Boolean) {
+		if(idField != null) {
+			Boolean isIdField = Boolean.valueOf((String) idField);
+			
 			Object idOrder = getAnnotationDetails(att, CodecAnnotations.CODEC_ID_ORDER);
-			if(idOrder != null && idOrder instanceof Integer order) {
+			if(idOrder != null) {
+				Integer order = Integer.valueOf((String) idOrder);
 				eClassCodecInfo.getIdentityInfo().getFeatures().add(order, att);
 			} else eClassCodecInfo.getIdentityInfo().getFeatures().add(att);
 		}
@@ -281,7 +287,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 
 	private Object getAnnotationDetails(EModelElement element, String annotationKey) {
 		EAnnotation annotation = element.getEAnnotation(CODEC_MODEL_ANNOTATION);
-		return annotation.getDetails().get(annotationKey);
+		if(annotation != null) return annotation.getDetails().get(annotationKey);
+		return null;
 	}
 	
 	private void createCodecInfoHolderMap() {
@@ -373,7 +380,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	 */
 	@Override
 	public Optional<PackageCodecInfo> getCodecInfoForPackage(String uri) {
-		return Optional.ofNullable(ePackageCodecInfoMap.getOrDefault(uri, null));
+		return Optional.ofNullable(ePackageCodecInfoMap.getOrDefault(uri, null))
+				.map(ci -> (PackageCodecInfo) EcoreUtil.copy((EObject) ci));	
 	}
 
 	
@@ -385,7 +393,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	public Optional<EClassCodecInfo> getCodecInfoForEClass(EClass eClass) {		
 		PackageCodecInfo ePackageCodecInfo = ePackageCodecInfoMap.getOrDefault(eClass.getEPackage().getNsURI(), null);
 		if(ePackageCodecInfo == null) return Optional.empty();
-		return ePackageCodecInfo.getEClassCodecInfo().stream().filter(ecci -> ecci.getId() == eClass.getInstanceClassName()).findFirst();		
+		return ePackageCodecInfo.getEClassCodecInfo().stream().filter(ecci -> ecci.getId() == eClass.getInstanceClassName())
+				.findFirst().map(ecci -> (EClassCodecInfo) EcoreUtil.copy((EObject) ecci));		
 	}
 
 
@@ -395,6 +404,6 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	 */
 	@Override
 	public Optional<CodecInfoHolder> getCodecInfoHolderByType(InfoType infoType) {
-		return Optional.ofNullable(codecInfoHolderMap.getOrDefault(infoType, null));
+		return Optional.ofNullable(codecInfoHolderMap.getOrDefault(infoType, null));	
 	}
 }

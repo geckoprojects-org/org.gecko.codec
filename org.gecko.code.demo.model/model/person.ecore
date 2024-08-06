@@ -7,24 +7,18 @@
   <eClassifiers xsi:type="ecore:EClass" name="Person">
     <eAnnotations source="codec">
       <details key="codec.id.strategy" value="COMBINED"/>
-    </eAnnotations>
-    <eAnnotations source="codec">
       <details key="codec.id.separator" value="-"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="codec">
         <details key="codec.id.field" value="true"/>
-      </eAnnotations>
-      <eAnnotations source="codec">
-        <details key="codec.id.order" value="1"/>
+        <details key="codec.id.order" value="0"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="codec">
         <details key="codec.id.field" value="true"/>
-      </eAnnotations>
-      <eAnnotations source="codec">
-        <details key="codec.id.order" value="2"/>
+        <details key="codec.id.order" value="1"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address"

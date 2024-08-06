@@ -72,6 +72,16 @@ public enum InfoType implements Enumerator {
 	OBJECT(4, "OBJECT", "OBJECT"),
 
 	/**
+	 * The '<em><b>OPERATION</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #OPERATION_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	OPERATION(5, "OPERATION", "OPERATION"),
+
+	/**
 	 * The '<em><b>OTHER</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -137,6 +147,17 @@ public enum InfoType implements Enumerator {
 	public static final int OBJECT_VALUE = 4;
 
 	/**
+	 * The '<em><b>OPERATION</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #OPERATION
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPERATION_VALUE = 5;
+
+	/**
 	 * The '<em><b>OTHER</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -160,6 +181,7 @@ public enum InfoType implements Enumerator {
 			FEATURE,
 			REFERENCE,
 			OBJECT,
+			OPERATION,
 			OTHER,
 		};
 
@@ -222,6 +244,7 @@ public enum InfoType implements Enumerator {
 			case FEATURE_VALUE: return FEATURE;
 			case REFERENCE_VALUE: return REFERENCE;
 			case OBJECT_VALUE: return OBJECT;
+			case OPERATION_VALUE: return OPERATION;
 			case OTHER_VALUE: return OTHER;
 		}
 		return null;

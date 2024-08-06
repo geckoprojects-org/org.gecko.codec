@@ -24,7 +24,7 @@ public interface CodecAnnotations {
 	 *  Annotation for specifying a strategy to be followed when building the id 
 	 *  of the {@link EObject} when serializing it
 	 * */
-	String CODEC_ID_STRATEGY = "codec.id.startegy";
+	String CODEC_ID_STRATEGY = "codec.id.strategy";
 	
 	/** CODEC_ID_FIELD 
 	 * Annotation for specifying that a field should be treated as an id field.

@@ -361,37 +361,22 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		  (personEClass,
 		   source,
 		   new String[] {
-			   "codec.id.strategy", "COMBINED"
-		   });
-		addAnnotation
-		  (personEClass,
-		   source,
-		   new String[] {
+			   "codec.id.strategy", "COMBINED",
 			   "codec.id.separator", "-"
 		   });
 		addAnnotation
 		  (getPerson_Name(),
 		   source,
 		   new String[] {
-			   "codec.id.field", "true"
+			   "codec.id.field", "true",
+			   "codec.id.order", "0"
 		   });
 		addAnnotation
-		  (getPerson_Name(),
+		  (getPerson_LastName(),
 		   source,
 		   new String[] {
+			   "codec.id.field", "true",
 			   "codec.id.order", "1"
-		   });
-		addAnnotation
-		  (getPerson_LastName(),
-		   source,
-		   new String[] {
-			   "codec.id.field", "true"
-		   });
-		addAnnotation
-		  (getPerson_LastName(),
-		   source,
-		   new String[] {
-			   "codec.id.order", "2"
 		   });
 	}
 

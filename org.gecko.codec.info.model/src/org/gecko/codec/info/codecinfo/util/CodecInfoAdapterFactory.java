@@ -108,6 +108,10 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 				return createSampleValueReaderAdapter();
 			}
 			@Override
+			public Adapter caseOperationInfo(OperationInfo object) {
+				return createOperationInfoAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -264,6 +268,20 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createSampleValueReaderAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.OperationInfo <em>Operation Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.info.codecinfo.OperationInfo
+	 * @generated
+	 */
+	public Adapter createOperationInfoAdapter() {
 		return null;
 	}
 

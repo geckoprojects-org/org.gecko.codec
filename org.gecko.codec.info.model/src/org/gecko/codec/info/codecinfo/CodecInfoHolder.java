@@ -58,7 +58,7 @@ public interface CodecInfoHolder {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Readers</em>' reference list.
 	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getCodecInfoHolder_Readers()
-	 * @model keys="name"
+	 * @model resolveProxies="false" keys="name" transient="true"
 	 * @generated
 	 */
 	EList<CodecValueReader> getReaders();
@@ -70,7 +70,7 @@ public interface CodecInfoHolder {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Writers</em>' reference list.
 	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getCodecInfoHolder_Writers()
-	 * @model keys="name"
+	 * @model resolveProxies="false" keys="name" transient="true"
 	 * @generated
 	 */
 	EList<CodecValueWriter> getWriters();

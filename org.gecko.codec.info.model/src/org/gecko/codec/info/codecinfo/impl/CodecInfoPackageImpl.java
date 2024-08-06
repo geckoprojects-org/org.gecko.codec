@@ -27,6 +27,7 @@ import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
+import org.gecko.codec.info.codecinfo.OperationInfo;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.info.codecinfo.ReferenceInfo;
 import org.gecko.codec.info.codecinfo.SampleValueReader;
@@ -108,6 +109,13 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	private EClass sampleValueReaderEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass operationInfoEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -619,6 +627,16 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
+	public EClass getOperationInfo() {
+		return operationInfoEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getInfoType() {
 		return infoTypeEEnum;
 	}
@@ -724,6 +742,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		createEAttribute(sampleValueReaderEClass, SAMPLE_VALUE_READER__NAME);
 		createEOperation(sampleValueReaderEClass, SAMPLE_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT);
 
+		operationInfoEClass = createEClass(OPERATION_INFO);
+
 		// Create enums
 		infoTypeEEnum = createEEnum(INFO_TYPE);
 
@@ -772,6 +792,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		typeInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
 		identityInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
 		referenceInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
+		operationInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(packageCodecInfoEClass, PackageCodecInfo.class, "PackageCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -829,9 +850,9 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 
 		initEClass(codecInfoHolderEClass, CodecInfoHolder.class, "CodecInfoHolder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCodecInfoHolder_InfoType(), this.getInfoType(), "infoType", null, 1, 1, CodecInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getCodecInfoHolder_Readers(), this.getCodecValueReader(), null, "readers", null, 0, -1, CodecInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCodecInfoHolder_Readers(), this.getCodecValueReader(), null, "readers", null, 0, -1, CodecInfoHolder.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		getCodecInfoHolder_Readers().getEKeys().add(this.getCodecValueReader_Name());
-		initEReference(getCodecInfoHolder_Writers(), this.getCodecValueWriter(), null, "writers", null, 0, -1, CodecInfoHolder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCodecInfoHolder_Writers(), this.getCodecValueWriter(), null, "writers", null, 0, -1, CodecInfoHolder.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		getCodecInfoHolder_Writers().getEKeys().add(this.getCodecValueWriter_Name());
 
 		op = initEOperation(getCodecInfoHolder__GetReaderByName__String(), this.getCodecValueReader(), "getReaderByName", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -850,6 +871,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		g1 = createEGenericType(sampleValueReaderEClass_T);
 		initEOperation(op, g1);
 
+		initEClass(operationInfoEClass, OperationInfo.class, "OperationInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
 		// Initialize enums and add enum literals
 		initEEnum(infoTypeEEnum, InfoType.class, "InfoType");
 		addEEnumLiteral(infoTypeEEnum, InfoType.IDENTITY);
@@ -857,6 +880,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		addEEnumLiteral(infoTypeEEnum, InfoType.FEATURE);
 		addEEnumLiteral(infoTypeEEnum, InfoType.REFERENCE);
 		addEEnumLiteral(infoTypeEEnum, InfoType.OBJECT);
+		addEEnumLiteral(infoTypeEEnum, InfoType.OPERATION);
 		addEEnumLiteral(infoTypeEEnum, InfoType.OTHER);
 
 		// Initialize data types

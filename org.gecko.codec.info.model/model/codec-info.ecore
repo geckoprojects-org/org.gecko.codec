@@ -85,6 +85,7 @@
     <eLiterals name="FEATURE" value="2"/>
     <eLiterals name="REFERENCE" value="3" literal="REFERENCE"/>
     <eLiterals name="OBJECT" value="4"/>
+    <eLiterals name="OPERATION" value="5"/>
     <eLiterals name="OTHER" value="10"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CodecValueReader" abstract="true" interface="true">
@@ -130,9 +131,9 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="infoType" lowerBound="1"
         eType="#//InfoType"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="readers" upperBound="-1"
-        eType="#//CodecValueReader" eKeys="#//CodecValueReader/name"/>
+        eType="#//CodecValueReader" transient="true" resolveProxies="false" eKeys="#//CodecValueReader/name"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="writers" upperBound="-1"
-        eType="#//CodecValueWriter" eKeys="#//CodecValueWriter/name"/>
+        eType="#//CodecValueWriter" transient="true" resolveProxies="false" eKeys="#//CodecValueWriter/name"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SampleValueReader" abstract="true" interface="true">
     <eTypeParameters name="V"/>
@@ -148,4 +149,5 @@
         changeable="false" iD="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="DeserializationContext" instanceClassName="com.fasterxml.jackson.databind.DeserializationContext"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OperationInfo" eSuperTypes="#//FeatureCodecInfo"/>
 </ecore:EPackage>

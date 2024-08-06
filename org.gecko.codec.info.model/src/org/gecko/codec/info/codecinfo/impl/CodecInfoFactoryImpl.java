@@ -67,6 +67,7 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 			case CodecInfoPackage.IDENTITY_INFO: return (EObject)createIdentityInfo();
 			case CodecInfoPackage.REFERENCE_INFO: return (EObject)createReferenceInfo();
 			case CodecInfoPackage.CODEC_INFO_HOLDER: return (EObject)createCodecInfoHolder();
+			case CodecInfoPackage.OPERATION_INFO: return (EObject)createOperationInfo();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -185,6 +186,17 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	public CodecInfoHolder createCodecInfoHolder() {
 		CodecInfoHolderImpl codecInfoHolder = new CodecInfoHolderImpl();
 		return codecInfoHolder;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public OperationInfo createOperationInfo() {
+		OperationInfoImpl operationInfo = new OperationInfoImpl();
+		return operationInfo;
 	}
 
 	/**

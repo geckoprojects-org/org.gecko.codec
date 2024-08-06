@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.ecore.util.EObjectEList;
 
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecInfoPackage;
@@ -129,7 +129,7 @@ public class CodecInfoHolderImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public EList<CodecValueReader> getReaders() {
 		if (readers == null) {
-			readers = new EObjectResolvingEList<CodecValueReader>(CodecValueReader.class, this, CodecInfoPackage.CODEC_INFO_HOLDER__READERS);
+			readers = new EObjectEList<CodecValueReader>(CodecValueReader.class, this, CodecInfoPackage.CODEC_INFO_HOLDER__READERS);
 		}
 		return readers;
 	}
@@ -142,7 +142,7 @@ public class CodecInfoHolderImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public EList<CodecValueWriter> getWriters() {
 		if (writers == null) {
-			writers = new EObjectResolvingEList<CodecValueWriter>(CodecValueWriter.class, this, CodecInfoPackage.CODEC_INFO_HOLDER__WRITERS);
+			writers = new EObjectEList<CodecValueWriter>(CodecValueWriter.class, this, CodecInfoPackage.CODEC_INFO_HOLDER__WRITERS);
 		}
 		return writers;
 	}

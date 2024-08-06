@@ -798,6 +798,88 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int SAMPLE_VALUE_READER_OPERATION_COUNT = 1;
 
 	/**
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.OperationInfoImpl <em>Operation Info</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.info.codecinfo.impl.OperationInfoImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getOperationInfo()
+	 * @generated
+	 */
+	int OPERATION_INFO = 10;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_INFO__ID = FEATURE_CODEC_INFO__ID;
+
+	/**
+	 * The feature id for the '<em><b>Features</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
+
+	/**
+	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_INFO__VALUE_READER_NAME = FEATURE_CODEC_INFO__VALUE_READER_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_INFO__VALUE_WRITER_NAME = FEATURE_CODEC_INFO__VALUE_WRITER_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_INFO__TYPE = FEATURE_CODEC_INFO__TYPE;
+
+	/**
+	 * The feature id for the '<em><b>Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_INFO__KEY = FEATURE_CODEC_INFO__KEY;
+
+	/**
+	 * The number of structural features of the '<em>Operation Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Operation Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -805,7 +887,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getInfoType()
 	 * @generated
 	 */
-	int INFO_TYPE = 10;
+	int INFO_TYPE = 11;
 
 	/**
 	 * The meta object id for the '<em>Serializer Provider</em>' data type.
@@ -815,7 +897,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
 	 * @generated
 	 */
-	int SERIALIZER_PROVIDER = 11;
+	int SERIALIZER_PROVIDER = 12;
 
 	/**
 	 * The meta object id for the '<em>Deserialization Context</em>' data type.
@@ -825,7 +907,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 	 * @generated
 	 */
-	int DESERIALIZATION_CONTEXT = 12;
+	int DESERIALIZATION_CONTEXT = 13;
 
 
 	/**
@@ -1276,6 +1358,16 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getSampleValueReader__ReadValue__Object_DeserializationContext();
 
 	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.OperationInfo <em>Operation Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Operation Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.OperationInfo
+	 * @generated
+	 */
+	EClass getOperationInfo();
+
+	/**
 	 * Returns the meta object for enum '{@link org.gecko.codec.info.codecinfo.InfoType <em>Info Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1685,6 +1777,16 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EOperation SAMPLE_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT = eINSTANCE.getSampleValueReader__ReadValue__Object_DeserializationContext();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.OperationInfoImpl <em>Operation Info</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.info.codecinfo.impl.OperationInfoImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getOperationInfo()
+		 * @generated
+		 */
+		EClass OPERATION_INFO = eINSTANCE.getOperationInfo();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.

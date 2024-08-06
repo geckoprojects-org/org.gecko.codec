@@ -8,22 +8,12 @@
     "jsonFactory.target":"(codecType=MONGO)",
     "module.target":"(codecType=MONGO)"
 	},
-	"DemoModule~test1":
+	"CodecModule~test":
 	{
-		"option_use_id" : true,
-		"option_id_on_top" : false,
-		"default_type_field": "_typ",
-		"default_id_field": "_primaryKey"
-		},
-	"DemoModule~test2":
-	{
-		"name" : "PersonAndAddress",
 		"codecType" : "MONGO",
-		"modelInfo.target": "(&(emf.name=person)(emf.name=address))",
-		"option_use_id" : true,
-		"option_id_on_top" : false,
-		"default_type_field": "_typ",
-		"default_id_field": "_primaryKey",
+		//"modelInfo.target": "(&(emf.name=person)(emf.name=address))",
+		"useId" : true,
+		"idOnTop" : false,
 		"dateFormat": "yyyy-MM-dd'T'HH:mm:ss",
 		"timeZone" : "Europe/Berlin",
 		"locale" : "en-US",
