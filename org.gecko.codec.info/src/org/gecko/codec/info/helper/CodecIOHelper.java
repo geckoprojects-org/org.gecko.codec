@@ -15,7 +15,8 @@ package org.gecko.codec.info.helper;
 
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.findEClass;
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.getURI;
-import static org.gecko.codec.jackson.databind.CodecContext.getURIs;
+
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -26,6 +27,7 @@ import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.gecko.codec.info.codecinfo.CodecValueReader;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
 
+import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -179,4 +181,22 @@ public class CodecIOHelper {
 		}
 		
 	};
+	
+	private static String[] getURIs(final DatabindContext ctxt, final EObject object) {
+	      if (object == null) {
+	         return null;
+	      }
+
+	      if (object instanceof EClass) {
+	    	  EClass eclass = (EClass) object;
+	    	  return eclass.getEAllSuperTypes().
+	    			  stream().
+	    			  map(EcoreUtil::getURI).
+	    			  map(Object::toString).
+	    			  collect(Collectors.toList()).
+	    			  toArray(new String[0]);
+	      }
+	      return new String[0];
+	   }
+
 }

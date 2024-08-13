@@ -34,6 +34,7 @@ import org.gecko.codec.info.codecinfo.InfoType;
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getValueWriterName <em>Value Writer Name</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl#isIgnore <em>Ignore</em>}</li>
  * </ul>
  *
  * @generated
@@ -148,6 +149,26 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 	 * @ordered
 	 */
 	protected String key = KEY_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isIgnore() <em>Ignore</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIgnore()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean IGNORE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isIgnore() <em>Ignore</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIgnore()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean ignore = IGNORE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -302,6 +323,29 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 */
 	@Override
+	public boolean isIgnore() {
+		return ignore;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setIgnore(boolean newIgnore) {
+		boolean oldIgnore = ignore;
+		ignore = newIgnore;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_CODEC_INFO__IGNORE, oldIgnore, ignore));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
@@ -316,6 +360,8 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 				return getType();
 			case CodecInfoPackage.FEATURE_CODEC_INFO__KEY:
 				return getKey();
+			case CodecInfoPackage.FEATURE_CODEC_INFO__IGNORE:
+				return isIgnore();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -348,6 +394,9 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 			case CodecInfoPackage.FEATURE_CODEC_INFO__KEY:
 				setKey((String)newValue);
 				return;
+			case CodecInfoPackage.FEATURE_CODEC_INFO__IGNORE:
+				setIgnore((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -378,6 +427,9 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 			case CodecInfoPackage.FEATURE_CODEC_INFO__KEY:
 				setKey(KEY_EDEFAULT);
 				return;
+			case CodecInfoPackage.FEATURE_CODEC_INFO__IGNORE:
+				setIgnore(IGNORE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -402,6 +454,8 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 				return type != TYPE_EDEFAULT;
 			case CodecInfoPackage.FEATURE_CODEC_INFO__KEY:
 				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+			case CodecInfoPackage.FEATURE_CODEC_INFO__IGNORE:
+				return ignore != IGNORE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -426,6 +480,8 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 		result.append(type);
 		result.append(", key: ");
 		result.append(key);
+		result.append(", ignore: ");
+		result.append(ignore);
 		result.append(')');
 		return result.toString();
 	}

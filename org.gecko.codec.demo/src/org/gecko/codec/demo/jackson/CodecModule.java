@@ -16,46 +16,46 @@ package org.gecko.codec.demo.jackson;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.gecko.codec.info.codecinfo.EClassCodecInfo;
+import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.gecko.codec.info.CodecModelInfo;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 /**
  * 
  * @author mark
  * @since 02.08.2024
  */
-@Component(name="CodecModule", service = Module.class, configurationPolicy = ConfigurationPolicy.REQUIRE)
-public class CodecModule extends SimpleModule {
-	
+@Component(name="CodecModule", service = CodecModule.class, configurationPolicy = ConfigurationPolicy.REQUIRE)
+public class CodecModule extends EMFModule {
+
 	/** serialVersionUID */
 	private static final long serialVersionUID = 1L;
-//	@Reference
-//	private PersonPackage personPackage;
 
-	private EClassCodecInfo eClassCodecInfo;
+	@Reference
+	private CodecModelInfo codecModelInfo;
+
 	private CodecModuleConfig codecConfig;
 	private Map<String, Object> properties = new HashMap<>();
-	
+
 	@Activate
 	public void activate(CodecModuleConfig codecConfig, Map<String, Object> properties) {
 		this.codecConfig = codecConfig;
 		this.properties = Map.copyOf(properties);
 	}
-	
+
 	public Map<String, Object> getCodecModuleProperties() {
 		return properties;
 	}
-	
+
 	public CodecModuleConfig getCodecModuleConfig() {
 		return codecConfig;
 	}
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.databind.module.SimpleModule#getModuleName()
@@ -64,7 +64,7 @@ public class CodecModule extends SimpleModule {
 	public String getModuleName() {
 		return codecConfig.codecModuleName();
 	}
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.emfcloud.jackson.module.EMFModule#version()
@@ -81,16 +81,9 @@ public class CodecModule extends SimpleModule {
 	@Override
 	public void setupModule(final SetupContext context) {
 		super.setupModule(context);
-		
-//		TODO: add the serializers based on the CodecModelInfo
-		if(eClassCodecInfo != null) {
-			
-		}
-		
+		CodecSerializersNew serializers = new CodecSerializersNew(this, codecModelInfo);
+		context.addSerializers(serializers);	
 	}
-	
-	public void setEClassCodecInfo(EClassCodecInfo eClassCodecInfo) {
-		this.eClassCodecInfo = eClassCodecInfo;
-	}
+
 
 }

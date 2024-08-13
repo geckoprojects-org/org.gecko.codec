@@ -20,7 +20,7 @@ import org.gecko.codec.info.codecinfo.TypeInfo;
  * </p>
  * <ul>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl#getTypeStrategy <em>Type Strategy</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl#getTypeValue <em>Type Value</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl#isIgnoreType <em>Ignore Type</em>}</li>
  * </ul>
  *
  * @generated
@@ -47,24 +47,24 @@ public class TypeInfoImpl extends FeatureCodecInfoImpl implements TypeInfo {
 	protected String typeStrategy = TYPE_STRATEGY_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getTypeValue() <em>Type Value</em>}' attribute.
+	 * The default value of the '{@link #isIgnoreType() <em>Ignore Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getTypeValue()
+	 * @see #isIgnoreType()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String TYPE_VALUE_EDEFAULT = null;
+	protected static final boolean IGNORE_TYPE_EDEFAULT = false;
 
 	/**
-	 * The cached value of the '{@link #getTypeValue() <em>Type Value</em>}' attribute.
+	 * The cached value of the '{@link #isIgnoreType() <em>Ignore Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getTypeValue()
+	 * @see #isIgnoreType()
 	 * @generated
 	 * @ordered
 	 */
-	protected String typeValue = TYPE_VALUE_EDEFAULT;
+	protected boolean ignoreType = IGNORE_TYPE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -114,8 +114,8 @@ public class TypeInfoImpl extends FeatureCodecInfoImpl implements TypeInfo {
 	 * @generated
 	 */
 	@Override
-	public String getTypeValue() {
-		return typeValue;
+	public boolean isIgnoreType() {
+		return ignoreType;
 	}
 
 	/**
@@ -124,11 +124,11 @@ public class TypeInfoImpl extends FeatureCodecInfoImpl implements TypeInfo {
 	 * @generated
 	 */
 	@Override
-	public void setTypeValue(String newTypeValue) {
-		String oldTypeValue = typeValue;
-		typeValue = newTypeValue;
+	public void setIgnoreType(boolean newIgnoreType) {
+		boolean oldIgnoreType = ignoreType;
+		ignoreType = newIgnoreType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.TYPE_INFO__TYPE_VALUE, oldTypeValue, typeValue));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.TYPE_INFO__IGNORE_TYPE, oldIgnoreType, ignoreType));
 	}
 
 	/**
@@ -141,8 +141,8 @@ public class TypeInfoImpl extends FeatureCodecInfoImpl implements TypeInfo {
 		switch (featureID) {
 			case CodecInfoPackage.TYPE_INFO__TYPE_STRATEGY:
 				return getTypeStrategy();
-			case CodecInfoPackage.TYPE_INFO__TYPE_VALUE:
-				return getTypeValue();
+			case CodecInfoPackage.TYPE_INFO__IGNORE_TYPE:
+				return isIgnoreType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -158,8 +158,8 @@ public class TypeInfoImpl extends FeatureCodecInfoImpl implements TypeInfo {
 			case CodecInfoPackage.TYPE_INFO__TYPE_STRATEGY:
 				setTypeStrategy((String)newValue);
 				return;
-			case CodecInfoPackage.TYPE_INFO__TYPE_VALUE:
-				setTypeValue((String)newValue);
+			case CodecInfoPackage.TYPE_INFO__IGNORE_TYPE:
+				setIgnoreType((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -176,8 +176,8 @@ public class TypeInfoImpl extends FeatureCodecInfoImpl implements TypeInfo {
 			case CodecInfoPackage.TYPE_INFO__TYPE_STRATEGY:
 				setTypeStrategy(TYPE_STRATEGY_EDEFAULT);
 				return;
-			case CodecInfoPackage.TYPE_INFO__TYPE_VALUE:
-				setTypeValue(TYPE_VALUE_EDEFAULT);
+			case CodecInfoPackage.TYPE_INFO__IGNORE_TYPE:
+				setIgnoreType(IGNORE_TYPE_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -193,8 +193,8 @@ public class TypeInfoImpl extends FeatureCodecInfoImpl implements TypeInfo {
 		switch (featureID) {
 			case CodecInfoPackage.TYPE_INFO__TYPE_STRATEGY:
 				return TYPE_STRATEGY_EDEFAULT == null ? typeStrategy != null : !TYPE_STRATEGY_EDEFAULT.equals(typeStrategy);
-			case CodecInfoPackage.TYPE_INFO__TYPE_VALUE:
-				return TYPE_VALUE_EDEFAULT == null ? typeValue != null : !TYPE_VALUE_EDEFAULT.equals(typeValue);
+			case CodecInfoPackage.TYPE_INFO__IGNORE_TYPE:
+				return ignoreType != IGNORE_TYPE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -211,8 +211,8 @@ public class TypeInfoImpl extends FeatureCodecInfoImpl implements TypeInfo {
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (typeStrategy: ");
 		result.append(typeStrategy);
-		result.append(", typeValue: ");
-		result.append(typeValue);
+		result.append(", ignoreType: ");
+		result.append(ignoreType);
 		result.append(')');
 		return result.toString();
 	}

@@ -101,13 +101,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__ADDRESS = 2;
 
 	/**
+	 * The feature id for the '<em><b>Birth Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__BIRTH_DATE = 3;
+
+	/**
 	 * The number of structural features of the '<em>Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 3;
+	int PERSON_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Person</em>' class.
@@ -138,13 +147,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int ADDRESS__STREET = 0;
 
 	/**
+	 * The feature id for the '<em><b>Zip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADDRESS__ZIP = 1;
+
+	/**
 	 * The number of structural features of the '<em>Address</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ADDRESS_FEATURE_COUNT = 1;
+	int ADDRESS_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Address</em>' class.
@@ -191,6 +209,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int BUSINESS_PERSON__ADDRESS = PERSON__ADDRESS;
+
+	/**
+	 * The feature id for the '<em><b>Birth Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__BIRTH_DATE = PERSON__BIRTH_DATE;
 
 	/**
 	 * The number of structural features of the '<em>Business Person</em>' class.
@@ -267,6 +294,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int BUSINESS_ADDRESS__STREET = ADDRESS__STREET;
 
 	/**
+	 * The feature id for the '<em><b>Zip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_ADDRESS__ZIP = ADDRESS__ZIP;
+
+	/**
 	 * The feature id for the '<em><b>Company Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -338,6 +374,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getPerson_Address();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getBirthDate <em>Birth Date</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Birth Date</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getBirthDate()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_BirthDate();
+
+	/**
 	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.Address <em>Address</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -357,6 +404,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getAddress_Street();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Address#getZip <em>Zip</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Zip</em>'.
+	 * @see org.gecko.code.demo.model.person.Address#getZip()
+	 * @see #getAddress()
+	 * @generated
+	 */
+	EAttribute getAddress_Zip();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.BusinessPerson <em>Business Person</em>}'.
@@ -468,6 +526,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		EReference PERSON__ADDRESS = eINSTANCE.getPerson_Address();
 
 		/**
+		 * The meta object literal for the '<em><b>Birth Date</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__BIRTH_DATE = eINSTANCE.getPerson_BirthDate();
+
+		/**
 		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.AddressImpl <em>Address</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -484,6 +550,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute ADDRESS__STREET = eINSTANCE.getAddress_Street();
+
+		/**
+		 * The meta object literal for the '<em><b>Zip</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADDRESS__ZIP = eINSTANCE.getAddress_Zip();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.BusinessPersonImpl <em>Business Person</em>}' class.

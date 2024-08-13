@@ -27,5 +27,9 @@ public interface ObjectMapperOptions {
 	String OBJ_MAPPER_TIME_ZONE = "obj.mapper.time.zone";
 	
 	String OBJ_MAPPER_INDENT_OUTPUT = "obj.mapper.indent.output";
+	
+	String OBJ_MAPPER_SERIALIZATION_FEATURES_WITH = "obj.mapper.serialization.features.with";
+	
+	String OBJ_MAPPER_SERIALIZATION_FEATURES_WITHOUT = "obj.mapper.serialization.features.without";
 
 }

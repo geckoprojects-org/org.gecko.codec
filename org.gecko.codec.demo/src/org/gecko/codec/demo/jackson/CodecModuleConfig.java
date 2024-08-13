@@ -159,12 +159,6 @@ public @interface CodecModuleConfig {
 	 */
 	String defaultTimestampKey() default "_timestamp";
 	
-	String dateFormat() default "yyyy-MM-dd'T'HH:mm:ss";
 	
-	String locale() default "en-US";
-	
-	String timeZone() default "Europe/Berlin";
-	
-	boolean indentOutput() default true;
 
 }

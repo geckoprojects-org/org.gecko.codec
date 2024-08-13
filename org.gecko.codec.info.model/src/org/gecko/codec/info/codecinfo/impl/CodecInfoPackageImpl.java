@@ -397,6 +397,16 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
+	public EAttribute getFeatureCodecInfo_Ignore() {
+		return (EAttribute)featureCodecInfoEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getTypeInfo() {
 		return typeInfoEClass;
 	}
@@ -417,7 +427,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EAttribute getTypeInfo_TypeValue() {
+	public EAttribute getTypeInfo_IgnoreType() {
 		return (EAttribute)typeInfoEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -711,10 +721,11 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__VALUE_WRITER_NAME);
 		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__TYPE);
 		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__KEY);
+		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__IGNORE);
 
 		typeInfoEClass = createEClass(TYPE_INFO);
 		createEAttribute(typeInfoEClass, TYPE_INFO__TYPE_STRATEGY);
-		createEAttribute(typeInfoEClass, TYPE_INFO__TYPE_VALUE);
+		createEAttribute(typeInfoEClass, TYPE_INFO__IGNORE_TYPE);
 
 		identityInfoEClass = createEClass(IDENTITY_INFO);
 		createEAttribute(identityInfoEClass, IDENTITY_INFO__ID_STRATEGY);
@@ -816,10 +827,11 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEAttribute(getFeatureCodecInfo_ValueWriterName(), theEcorePackage.getEString(), "valueWriterName", "DEFAULT", 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecInfo_Type(), this.getInfoType(), "type", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecInfo_Key(), theEcorePackage.getEString(), "key", null, 1, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecInfo_Ignore(), theEcorePackage.getEBoolean(), "ignore", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(typeInfoEClass, TypeInfo.class, "TypeInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTypeInfo_TypeStrategy(), ecorePackage.getEString(), "typeStrategy", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getTypeInfo_TypeValue(), ecorePackage.getEString(), "typeValue", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeInfo_IgnoreType(), ecorePackage.getEBoolean(), "ignoreType", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(identityInfoEClass, IdentityInfo.class, "IdentityInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getIdentityInfo_IdStrategy(), ecorePackage.getEString(), "idStrategy", null, 0, 1, IdentityInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -937,16 +949,22 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		   new String[] {
 		   });
 		addAnnotation
+		  (getFeatureCodecInfo_Ignore(),
+		   source,
+		   new String[] {
+			   "documentation", "If set to true, the EStructuralFeature marked with that will not be serialized."
+		   });
+		addAnnotation
 		  (getTypeInfo_TypeStrategy(),
 		   source,
 		   new String[] {
 			   "documentation", "This supports the possibility of setting a strategy for type serialization, e.g. if the URI of the class should be used as type, or the class name, or another value."
 		   });
 		addAnnotation
-		  (getTypeInfo_TypeValue(),
+		  (getTypeInfo_IgnoreType(),
 		   source,
 		   new String[] {
-			   "documentation", "This supports the possibility of serializing the type with the provided String."
+			   "documentation", "If set to false, the type information of the EClassifier with such a TypeInfo object will not be serialized, unless this property is then overwritten at a later point."
 		   });
 		addAnnotation
 		  (getIdentityInfo_IdStrategy(),

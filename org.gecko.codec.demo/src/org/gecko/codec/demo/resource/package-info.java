@@ -13,9 +13,9 @@
  */
 /**
  * 
- * @author mark
- * @since 02.08.2024
+ * @author ilenia
+ * @since Aug 9, 2024
  */
 @org.osgi.annotation.bundle.Export
 @org.osgi.annotation.versioning.Version("1.0.0")
-package org.gecko.codec.demo.jackson;
+package org.gecko.codec.demo.resource;

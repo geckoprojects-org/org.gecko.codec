@@ -2,6 +2,8 @@
  */
 package org.gecko.code.demo.model.person;
 
+import java.util.Date;
+
 import org.eclipse.emf.ecore.EObject;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -18,10 +20,12 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.code.demo.model.person.Person#getName <em>Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getLastName <em>Last Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getAddress <em>Address</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getBirthDate <em>Birth Date</em>}</li>
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getPerson()
- * @model annotation="codec codec.id.strategy='COMBINED' codec.id.separator='-'"
+ * @model annotation="codec.type include='true' use='NAME'"
+ *        annotation="codec.id strategy='COMBINED' separator='-'"
  * @generated
  */
 @ProviderType
@@ -33,7 +37,7 @@ public interface Person extends EObject {
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Name()
-	 * @model annotation="codec codec.id.field='true' codec.id.order='0'"
+	 * @model annotation="codec.id id.field='true' id.order='0'"
 	 * @generated
 	 */
 	String getName();
@@ -55,7 +59,7 @@ public interface Person extends EObject {
 	 * @return the value of the '<em>Last Name</em>' attribute.
 	 * @see #setLastName(String)
 	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_LastName()
-	 * @model annotation="codec codec.id.field='true' codec.id.order='1'"
+	 * @model annotation="codec.id id.field='true' id.order='1'"
 	 * @generated
 	 */
 	String getLastName();
@@ -91,5 +95,27 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setAddress(Address value);
+
+	/**
+	 * Returns the value of the '<em><b>Birth Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Birth Date</em>' attribute.
+	 * @see #setBirthDate(Date)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_BirthDate()
+	 * @model
+	 * @generated
+	 */
+	Date getBirthDate();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getBirthDate <em>Birth Date</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Birth Date</em>' attribute.
+	 * @see #getBirthDate()
+	 * @generated
+	 */
+	void setBirthDate(Date value);
 
 } // Person

@@ -278,13 +278,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_CODEC_INFO__KEY = 5;
 
 	/**
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_CODEC_INFO__IGNORE = 6;
+
+	/**
 	 * The number of structural features of the '<em>Feature Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_INFO_FEATURE_COUNT = 6;
+	int FEATURE_CODEC_INFO_FEATURE_COUNT = 7;
 
 	/**
 	 * The number of operations of the '<em>Feature Codec Info</em>' class.
@@ -360,6 +369,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int TYPE_INFO__KEY = FEATURE_CODEC_INFO__KEY;
 
 	/**
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
+
+	/**
 	 * The feature id for the '<em><b>Type Strategy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -369,13 +387,13 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int TYPE_INFO__TYPE_STRATEGY = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Type Value</b></em>' attribute.
+	 * The feature id for the '<em><b>Ignore Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO__TYPE_VALUE = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
+	int TYPE_INFO__IGNORE_TYPE = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Type Info</em>' class.
@@ -458,6 +476,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int IDENTITY_INFO__KEY = FEATURE_CODEC_INFO__KEY;
+
+	/**
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
 
 	/**
 	 * The feature id for the '<em><b>Id Strategy</b></em>' attribute.
@@ -567,6 +594,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int REFERENCE_INFO__KEY = FEATURE_CODEC_INFO__KEY;
+
+	/**
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
 
 	/**
 	 * The number of structural features of the '<em>Reference Info</em>' class.
@@ -862,6 +898,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int OPERATION_INFO__KEY = FEATURE_CODEC_INFO__KEY;
 
 	/**
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
+
+	/**
 	 * The number of structural features of the '<em>Operation Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1117,6 +1162,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getFeatureCodecInfo_Key();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#isIgnore <em>Ignore</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ignore</em>'.
+	 * @see org.gecko.codec.info.codecinfo.FeatureCodecInfo#isIgnore()
+	 * @see #getFeatureCodecInfo()
+	 * @generated
+	 */
+	EAttribute getFeatureCodecInfo_Ignore();
+
+	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.TypeInfo <em>Type Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1138,15 +1194,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getTypeInfo_TypeStrategy();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeValue <em>Type Value</em>}'.
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.TypeInfo#isIgnoreType <em>Ignore Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Type Value</em>'.
-	 * @see org.gecko.codec.info.codecinfo.TypeInfo#getTypeValue()
+	 * @return the meta object for the attribute '<em>Ignore Type</em>'.
+	 * @see org.gecko.codec.info.codecinfo.TypeInfo#isIgnoreType()
 	 * @see #getTypeInfo()
 	 * @generated
 	 */
-	EAttribute getTypeInfo_TypeValue();
+	EAttribute getTypeInfo_IgnoreType();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.IdentityInfo <em>Identity Info</em>}'.
@@ -1581,6 +1637,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute FEATURE_CODEC_INFO__KEY = eINSTANCE.getFeatureCodecInfo_Key();
 
 		/**
+		 * The meta object literal for the '<em><b>Ignore</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute FEATURE_CODEC_INFO__IGNORE = eINSTANCE.getFeatureCodecInfo_Ignore();
+
+		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.TypeInfoImpl <em>Type Info</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1599,12 +1663,12 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute TYPE_INFO__TYPE_STRATEGY = eINSTANCE.getTypeInfo_TypeStrategy();
 
 		/**
-		 * The meta object literal for the '<em><b>Type Value</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Ignore Type</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute TYPE_INFO__TYPE_VALUE = eINSTANCE.getTypeInfo_TypeValue();
+		EAttribute TYPE_INFO__IGNORE_TYPE = eINSTANCE.getTypeInfo_IgnoreType();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl <em>Identity Info</em>}' class.

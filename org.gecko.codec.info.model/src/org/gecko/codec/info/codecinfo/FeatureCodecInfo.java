@@ -23,6 +23,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getValueWriterName <em>Value Writer Name</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getType <em>Type</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#getKey <em>Key</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#isIgnore <em>Ignore</em>}</li>
  * </ul>
  *
  * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo()
@@ -157,5 +158,30 @@ public interface FeatureCodecInfo {
 	 * @generated
 	 */
 	void setKey(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Ignore</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * If set to true, the EStructuralFeature marked with that will not be serialized.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Ignore</em>' attribute.
+	 * @see #setIgnore(boolean)
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_Ignore()
+	 * @model
+	 * @generated
+	 */
+	boolean isIgnore();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo#isIgnore <em>Ignore</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Ignore</em>' attribute.
+	 * @see #isIgnore()
+	 * @generated
+	 */
+	void setIgnore(boolean value);
 
 } // FeatureCodecInfo

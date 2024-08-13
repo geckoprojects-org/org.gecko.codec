@@ -20,11 +20,28 @@ package org.gecko.codec.info;
  */
 public interface CodecAnnotations {
 	
+	/** CODEC_IGNORE 
+	 *  Annotation for specifying that the feature should not be serialize.
+	 * */
+	String CODEC_IGNORE = "codec.ignore";
+	
+	/** CODEC_NAME 
+	 *  Annotation for specifying the name with which the feature should be serialized.
+	 *  This might be overwritten if property {@link OPTION_USE_NAMES_FROM_EXTENDED_META_DATA}
+	 *  is set to true.
+	 * */
+	String CODEC_NAME = "codec.name";
+	
 	/** CODEC_ID_STRATEGY 
 	 *  Annotation for specifying a strategy to be followed when building the id 
 	 *  of the {@link EObject} when serializing it
 	 * */
 	String CODEC_ID_STRATEGY = "codec.id.strategy";
+	
+	/** CODEC_ID_FEATURES_LIST 
+	 * This option is to provide a list of {@link EStructuralFeature} that can be used as id fields when constructing the id
+	 * */
+	String CODEC_ID_FEATURES_LIST = "codec.id.features.list";
 	
 	/** CODEC_ID_FIELD 
 	 * Annotation for specifying that a field should be treated as an id field.
@@ -65,14 +82,14 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_VALUE_WRITER = "codec.value.writer";
 	
-	/** CODEC_TYPE_STRATEGY 
-	 * Annotation used for specifying a strategy to serialize the type of the object
+	/** CODEC_TYPE_USE 
+	 * Annotation used for specifying a strategy to serialize the type of the object (class name, uri, etc)
 	 * */
-	String CODEC_TYPE_STRATEGY = "codec.type.strategy";
+	String CODEC_TYPE_USE = "codec.type.use";
 	
-	/** CODEC_TYPE_VALUE
-	 * Annotation used to provide a specific type value to be used when serializing the object
+	/** CODEC_TYPE_INCLUDE
+	 * Annotation used to specify weather the type information should be serialized or not.
 	 * */
-	String CODEC_TYPE_VALUE = "codec.type.value";
+	String CODEC_TYPE_INCLUDE = "codec.type.include";
 
 }

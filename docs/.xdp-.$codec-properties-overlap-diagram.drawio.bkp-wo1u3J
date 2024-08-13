@@ -1,0 +1,43 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.5 Chrome/126.0.6478.183 Electron/31.3.0 Safari/537.36" version="24.7.5">
+  <diagram id="3228e29e-7158-1315-38df-8450db1d8a1d" name="Page-1">
+    <mxGraphModel dx="1364" dy="963" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="21565" value="" style="ellipse;whiteSpace=wrap;html=1;rounded=1;shadow=0;labelBackgroundColor=none;strokeColor=#e85642;strokeWidth=3;fillColor=#e85642;fontFamily=Helvetica;fontSize=14;fontColor=#2F5B7C;align=center;opacity=30;rotation=-135;" parent="1" vertex="1">
+          <mxGeometry x="316.57" y="186.93" width="280" height="213.45" as="geometry" />
+        </mxCell>
+        <mxCell id="21566" value="" style="ellipse;whiteSpace=wrap;html=1;rounded=1;shadow=0;labelBackgroundColor=none;strokeColor=#12aab5;strokeWidth=3;fillColor=#21B55C;fontFamily=Helvetica;fontSize=14;fontColor=#2F5B7C;align=center;opacity=30;rotation=142;" parent="1" vertex="1">
+          <mxGeometry x="330" y="470" width="320" height="216.94" as="geometry" />
+        </mxCell>
+        <mxCell id="21567" value="" style="ellipse;whiteSpace=wrap;html=1;rounded=1;shadow=0;labelBackgroundColor=none;strokeColor=#1699d3;strokeWidth=3;fillColor=#1699d3;fontFamily=Helvetica;fontSize=14;fontColor=#2F5B7C;align=center;opacity=30;rotation=74;" parent="1" vertex="1">
+          <mxGeometry x="460" y="260" width="295.98" height="344" as="geometry" />
+        </mxCell>
+        <mxCell id="21568" value="" style="ellipse;whiteSpace=wrap;html=1;rounded=1;shadow=0;labelBackgroundColor=none;strokeColor=#F08705;strokeWidth=3;fillColor=#F08705;fontFamily=Helvetica;fontSize=14;fontColor=#2F5B7C;align=center;opacity=30;rotation=-45;direction=west;" parent="1" vertex="1">
+          <mxGeometry x="630" y="173.89999999999998" width="274.02" height="239.52" as="geometry" />
+        </mxCell>
+        <mxCell id="21569" value="" style="ellipse;whiteSpace=wrap;html=1;rounded=1;shadow=0;labelBackgroundColor=none;strokeColor=#736ca8;strokeWidth=3;fillColor=#736ca8;fontFamily=Helvetica;fontSize=14;fontColor=#2F5B7C;align=center;opacity=30;rotation=15;" parent="1" vertex="1">
+          <mxGeometry x="650" y="470" width="440" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="iCVGjswf5mPfFr9611RF-21591" value="Resource#load(options)&lt;div&gt;Resource#save(options)&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="550" y="400.38" width="130" height="39.62" as="geometry" />
+        </mxCell>
+        <mxCell id="iCVGjswf5mPfFr9611RF-21592" value="CodecAnnotations&lt;div&gt;(taken into account via CodecModelInfo service)&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="860" y="580" width="170" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="iCVGjswf5mPfFr9611RF-21593" value="CodecModule config" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="360" y="600" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="iCVGjswf5mPfFr9611RF-21594" value="CodecFactory config" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="370" y="230" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="iCVGjswf5mPfFr9611RF-21595" value="CodecObjectMapper config" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="690" y="220" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="iCVGjswf5mPfFr9611RF-21597" value="The properties set through the options passed to the Resource at the moment of saving or loading should be able to overwrite the CodecFactory and CodecObjectMapper properties that can be configured per call (namely Serialization/Deserialization Features and Generator/Parser Features), as well as the ones defined in the CodecModule and through model annotations." style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;size=30;position=0.5;direction=north;position2=0.52;" parent="1" vertex="1">
+          <mxGeometry x="100" y="340" width="290" height="210" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

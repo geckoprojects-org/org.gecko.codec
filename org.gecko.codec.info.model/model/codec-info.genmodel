@@ -41,10 +41,11 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//FeatureCodecInfo/valueWriterName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//FeatureCodecInfo/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//FeatureCodecInfo/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//FeatureCodecInfo/ignore"/>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//TypeInfo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//TypeInfo/typeStrategy"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//TypeInfo/typeValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//TypeInfo/ignoreType"/>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//IdentityInfo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//IdentityInfo/idStrategy"/>

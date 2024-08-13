@@ -3,7 +3,8 @@
 -runrequires: \
 	bnd.identity;id='org.gecko.codec.info.test',\
 	bnd.identity;id='org.apache.felix.gogo.command',\
-	bnd.identity;id='org.apache.felix.gogo.shell'
+	bnd.identity;id='org.apache.felix.gogo.shell',\
+	bnd.identity;id='org.gecko.codec.demo'
 	
 -runbundles.test: \
 	org.gecko.codec.info.test;version=snapshot
@@ -38,10 +39,14 @@
 	org.osgi.util.function;version='[1.2.0,1.2.1)',\
 	org.osgi.util.promise;version='[1.3.0,1.3.1)',\
 	assertj-core;version='[3.24.2,3.24.3)',\
-	org.gecko.codec;version=snapshot,\
 	org.gecko.codec.emfjson;version=snapshot,\
 	org.apache.felix.gogo.command;version='[1.1.2,1.1.3)',\
 	org.apache.felix.gogo.runtime;version='[1.1.6,1.1.7)',\
 	org.apache.felix.gogo.shell;version='[1.1.4,1.1.5)',\
-	org.gecko.emf.osgi.api;version='[6.0.0,6.0.1)',\
-	org.gecko.code.demo.model;version=snapshot
+	org.gecko.code.demo.model;version=snapshot,\
+	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
+	org.gecko.codec.demo;version=snapshot,\
+	org.mongodb.mongo-java-driver;version='[3.12.14,3.12.15)',\
+	org.osgi.test.junit5.cm;version='[1.2.1,1.2.2)',\
+	org.gecko.codec;version=snapshot,\
+	org.gecko.emf.osgi.api;version='[6.0.0,6.0.1)'

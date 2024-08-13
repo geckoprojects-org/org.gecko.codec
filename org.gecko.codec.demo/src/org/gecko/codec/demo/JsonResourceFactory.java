@@ -16,14 +16,14 @@ package org.gecko.codec.demo;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
+import org.gecko.codec.demo.jackson.CodecFactory;
 import org.gecko.codec.demo.jackson.CodecModule;
+import org.gecko.codec.demo.resource.CodecJsonResource;
 import org.gecko.codec.info.CodecModelInfo;
-import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -31,28 +31,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author mark
  * @since 02.08.2024
  */
-@Component(name = "MongoRF", service = Resource.Factory.class, property = "codecType=MONGO", configurationPolicy = ConfigurationPolicy.REQUIRE)
-public class MongoResourceFactory extends ResourceFactoryImpl {
+@Component(name = "JsonRF", service = Resource.Factory.class, property = "codecType=json", configurationPolicy = ConfigurationPolicy.REQUIRE)
+public class JsonResourceFactory extends ResourceFactoryImpl {
 	
 	@Reference
 	private CodecModelInfo modelInfo;
+	
 	@Reference(name="jsonFactory")
-	private JsonFactory jsonFactory;
+	private CodecFactory jsonFactory;
+	
 	@Reference(name  ="module")
 	private CodecModule module;
-//	@Reference
-//	MongoDatabaseProvider provider;
 	
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl#createResource(org.eclipse.emf.common.util.URI)
 	 */
 	@Override
-	public Resource createResource(URI uri) {
-		ObjectMapper mapper = new ObjectMapper(jsonFactory);
+	public Resource createResource(URI uri) {		
+		
+		ObjectMapper mapper = new ObjectMapper(jsonFactory);		
+//		TODO: set the mapper with the properties set in the jsonFactory
 		mapper.registerModule(module);
-		return new MongoResource(modelInfo, module, mapper, null);
-//		return new MongoResource(modelInfo, module, mapper, provider);
+		
+		return new CodecJsonResource(uri, modelInfo, module, mapper);
 	}
 
 }

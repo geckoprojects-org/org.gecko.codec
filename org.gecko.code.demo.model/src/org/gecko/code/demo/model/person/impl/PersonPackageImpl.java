@@ -165,6 +165,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getPerson_BirthDate() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getAddress() {
 		return addressEClass;
 	}
@@ -177,6 +187,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	@Override
 	public EAttribute getAddress_Street() {
 		return (EAttribute)addressEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getAddress_Zip() {
+		return (EAttribute)addressEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -262,9 +282,11 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEAttribute(personEClass, PERSON__NAME);
 		createEAttribute(personEClass, PERSON__LAST_NAME);
 		createEReference(personEClass, PERSON__ADDRESS);
+		createEAttribute(personEClass, PERSON__BIRTH_DATE);
 
 		addressEClass = createEClass(ADDRESS);
 		createEAttribute(addressEClass, ADDRESS__STREET);
+		createEAttribute(addressEClass, ADDRESS__ZIP);
 
 		businessPersonEClass = createEClass(BUSINESS_PERSON);
 
@@ -311,9 +333,11 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEAttribute(getPerson_Name(), ecorePackage.getEString(), "name", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_LastName(), ecorePackage.getEString(), "lastName", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPerson_Address(), this.getAddress(), null, "address", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPerson_BirthDate(), ecorePackage.getEDate(), "birthDate", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addressEClass, Address.class, "Address", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddress_Street(), ecorePackage.getEString(), "street", null, 0, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAddress_Zip(), ecorePackage.getEString(), "zip", null, 0, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(businessPersonEClass, BusinessPerson.class, "BusinessPerson", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -329,8 +353,12 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		// Create annotations
 		// Version
 		createVersionAnnotations();
-		// codec
+		// codec.type
 		createCodecAnnotations();
+		// codec.id
+		createCodec_1Annotations();
+		// codec
+		createCodec_2Annotations();
 	}
 
 	/**
@@ -350,33 +378,66 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	}
 
 	/**
-	 * Initializes the annotations for <b>codec</b>.
+	 * Initializes the annotations for <b>codec.type</b>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	protected void createCodecAnnotations() {
-		String source = "codec";
+		String source = "codec.type";
 		addAnnotation
 		  (personEClass,
 		   source,
 		   new String[] {
-			   "codec.id.strategy", "COMBINED",
-			   "codec.id.separator", "-"
+			   "include", "true",
+			   "use", "NAME"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>codec.id</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createCodec_1Annotations() {
+		String source = "codec.id";
+		addAnnotation
+		  (personEClass,
+		   source,
+		   new String[] {
+			   "strategy", "COMBINED",
+			   "separator", "-"
 		   });
 		addAnnotation
 		  (getPerson_Name(),
 		   source,
 		   new String[] {
-			   "codec.id.field", "true",
-			   "codec.id.order", "0"
+			   "id.field", "true",
+			   "id.order", "0"
 		   });
 		addAnnotation
 		  (getPerson_LastName(),
 		   source,
 		   new String[] {
-			   "codec.id.field", "true",
-			   "codec.id.order", "1"
+			   "id.field", "true",
+			   "id.order", "1"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>codec</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createCodec_2Annotations() {
+		String source = "codec";
+		addAnnotation
+		  (getAddress_Zip(),
+		   source,
+		   new String[] {
+			   "ignore", "true"
 		   });
 	}
 

@@ -22,9 +22,11 @@
         </genAnnotations>
       </genFeatures>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//Person/address"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/birthDate"/>
     </genClasses>
     <genClasses ecoreClass="person.ecore#//Address">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Address/street"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Address/zip"/>
     </genClasses>
     <genClasses ecoreClass="person.ecore#//BusinessPerson"/>
     <genClasses ecoreClass="person.ecore#//Contact">

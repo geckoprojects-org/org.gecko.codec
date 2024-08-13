@@ -16,6 +16,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * </p>
  * <ul>
  *   <li>{@link org.gecko.code.demo.model.person.Address#getStreet <em>Street</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Address#getZip <em>Zip</em>}</li>
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getAddress()
@@ -45,5 +46,27 @@ public interface Address extends EObject {
 	 * @generated
 	 */
 	void setStreet(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Zip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Zip</em>' attribute.
+	 * @see #setZip(String)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getAddress_Zip()
+	 * @model annotation="codec ignore='true'"
+	 * @generated
+	 */
+	String getZip();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Address#getZip <em>Zip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Zip</em>' attribute.
+	 * @see #getZip()
+	 * @generated
+	 */
+	void setZip(String value);
 
 } // Address

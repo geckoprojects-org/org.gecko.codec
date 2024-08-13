@@ -14,7 +14,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * </p>
  * <ul>
  *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeStrategy <em>Type Strategy</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeValue <em>Type Value</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.TypeInfo#isIgnoreType <em>Ignore Type</em>}</li>
  * </ul>
  *
  * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfo()
@@ -49,28 +49,28 @@ public interface TypeInfo extends FeatureCodecInfo {
 	void setTypeStrategy(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Type Value</b></em>' attribute.
+	 * Returns the value of the '<em><b>Ignore Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * This supports the possibility of serializing the type with the provided String.
+	 * If set to false, the type information of the EClassifier with such a TypeInfo object will not be serialized, unless this property is then overwritten at a later point.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Type Value</em>' attribute.
-	 * @see #setTypeValue(String)
-	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_TypeValue()
+	 * @return the value of the '<em>Ignore Type</em>' attribute.
+	 * @see #setIgnoreType(boolean)
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_IgnoreType()
 	 * @model
 	 * @generated
 	 */
-	String getTypeValue();
+	boolean isIgnoreType();
 
 	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.TypeInfo#getTypeValue <em>Type Value</em>}' attribute.
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.TypeInfo#isIgnoreType <em>Ignore Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Type Value</em>' attribute.
-	 * @see #getTypeValue()
+	 * @param value the new value of the '<em>Ignore Type</em>' attribute.
+	 * @see #isIgnoreType()
 	 * @generated
 	 */
-	void setTypeValue(String value);
+	void setIgnoreType(boolean value);
 
 } // TypeInfo
