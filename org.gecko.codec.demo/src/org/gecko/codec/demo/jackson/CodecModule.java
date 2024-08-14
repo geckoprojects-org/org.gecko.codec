@@ -16,8 +16,10 @@ package org.gecko.codec.demo.jackson;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -41,6 +43,7 @@ public class CodecModule extends EMFModule {
 
 	private CodecModuleConfig codecConfig;
 	private Map<String, Object> properties = new HashMap<>();
+	private EClassCodecInfo eClassCodecInfo;
 
 	@Activate
 	public void activate(CodecModuleConfig codecConfig, Map<String, Object> properties) {
@@ -85,5 +88,12 @@ public class CodecModule extends EMFModule {
 		context.addSerializers(serializers);	
 	}
 
-
+	public void bindEClassCodecInfo(EClassCodecInfo eClassCodecInfo) {
+		this.eClassCodecInfo = eClassCodecInfo;
+	}
+	
+	public EClassCodecInfo getEClassCodecInfo(EClass eClass) {
+		if(eClassCodecInfo.getClassifier().equals(eClass))return eClassCodecInfo;
+		return null;
+	}
 }

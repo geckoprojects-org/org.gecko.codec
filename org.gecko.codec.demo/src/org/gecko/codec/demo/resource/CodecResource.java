@@ -35,12 +35,8 @@ import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.ObjectMapperOptions;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.json.JsonReadFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 
 /**
  * 
@@ -67,10 +63,6 @@ public class CodecResource extends ResourceImpl {
 	@Override
 	protected void doSave(OutputStream outputStream, Map<?, ?> options) throws IOException {
 		
-//		This part could be done in a more generic CodecResource...? And then MongoResource and other resources
-//		can extend the CodecResource...?
-		
-//		TODO: here we should setup the Module based on the options and on the CodecModelInfo
 		EObject eObject = this.getContents().isEmpty() ? null : this.getContents().get(0);
 		if(eObject == null) {
 			LOGGER.severe(String.format("No content for Resource %s", this.getURI()));
@@ -78,6 +70,7 @@ public class CodecResource extends ResourceImpl {
 		}
 		
 		if(options == null) options = Collections.emptyMap();
+		
 //		Update the CodecModule based on the passed options
 		updateCodecModuleFromOptions(options);
 		
@@ -85,11 +78,13 @@ public class CodecResource extends ResourceImpl {
 		updateMapperFromOptions(options);
 		
 		EClassCodecInfo codecInfo = modelInfo.getCodecInfoForEClass(eObject.eClass()).get();
+		
 		if(codecInfo == null) {
 			LOGGER.severe(String.format("No EClassCodecInfo found for EClass %s", eObject.eClass().getName()));
 			return;
 		}
 		
+		module.bindEClassCodecInfo(codecInfo);
 		updateCodecModelInfoFromOptions(codecInfo, options);
 		
 //		TODO: DOUBLE CHECK IF THIS IS REALLY NECESSARY

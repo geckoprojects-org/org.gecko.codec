@@ -1,0 +1,11 @@
+{
+  "custom_id_key" : "Ilenia/Salvadori",
+  "_type" : "Person",
+  "name" : "Ilenia",
+  "lastName" : "Salvadori",
+  "birthDate" : 645832800000,
+  "address" : {
+    "_type" : "http://example.de/person/1.0#//Address",
+    "street" : "Camsdorfer Str. 41"
+  }
+}

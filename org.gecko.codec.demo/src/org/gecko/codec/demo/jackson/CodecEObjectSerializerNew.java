@@ -16,6 +16,7 @@ package org.gecko.codec.demo.jackson;
 import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.gecko.codec.info.CodecModelInfo;
@@ -60,22 +61,24 @@ public class CodecEObjectSerializerNew extends JsonSerializer<EObject> {
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void serialize(EObject value, JsonGenerator gen, SerializerProvider provider) throws IOException {
 
 		gen.writeStartObject();
-		EClassCodecInfo eObjCodecInfo = codecModelInfo.getCodecInfoForEClass(value.eClass()).get();
+//		Otherwise we get a new instance which does not contain the changes we made from the options of the resource
+		EClassCodecInfo eObjCodecInfo = codecModule.getEClassCodecInfo(value.eClass());
+		if(eObjCodecInfo == null) {
+			eObjCodecInfo = codecModelInfo.getCodecInfoForEClass(value.eClass()).get();
+		}
 		if(eObjCodecInfo == null) return;
-		//		JsonSerializer<Object> featureCodecSer = provider.findValueSerializer(FeatureCodecInfo.class);
-		//		featureCodecSer.se
-
 		//		Serialize id field
 		if((boolean)codecModule.getCodecModuleProperties().get("useId")) {
 			//			1. Check if ID has to be serialized on top
+//			TODO: what to do if idOnTop is false??
 			if((boolean)codecModule.getCodecModuleProperties().get("idOnTop")) {
 				IdentityInfo idInfo = eObjCodecInfo.getIdentityInfo();
-//				CodecInfoHolder holder = codecModelInfo.getCodecInfoHolderByType(InfoType.IDENTITY).get();
-//				CodecValueWriter writer = holder.getWriterByName(eObjCodecInfo.getIdentityInfo().getValueWriterName());
+
 				String idStrategy = idInfo.getIdStrategy() != null ? idInfo.getIdStrategy() : "";
 				List<EStructuralFeature> idFeatures = idInfo.getFeatures();
 				switch(idStrategy) {
@@ -104,7 +107,7 @@ public class CodecEObjectSerializerNew extends JsonSerializer<EObject> {
 			TypeInfo typeInfo = eObjCodecInfo.getTypeInfo();
 			if(!typeInfo.isIgnoreType()) {
 				CodecInfoHolder holder = codecModelInfo.getCodecInfoHolderByType(InfoType.TYPE).get();
-				CodecValueWriter writer = holder.getWriterByName(typeInfo.getValueWriterName());
+				CodecValueWriter<EClass, ?> writer = holder.getWriterByName(typeInfo.getValueWriterName());
 				gen.writeFieldName((String)codecModule.getCodecModuleProperties().get("defaultTypeKey"));
 				gen.writeObject(writer.writeValue(value.eClass(), provider));
 			}

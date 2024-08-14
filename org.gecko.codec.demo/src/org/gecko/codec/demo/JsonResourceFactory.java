@@ -24,7 +24,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 /**
  * 
@@ -50,8 +53,13 @@ public class JsonResourceFactory extends ResourceFactoryImpl {
 	@Override
 	public Resource createResource(URI uri) {		
 		
-		ObjectMapper mapper = new ObjectMapper(jsonFactory);		
-//		TODO: set the mapper with the properties set in the jsonFactory
+//		The builder pattern should be used when constructing the ObjectMapper, as it would be the one used 
+//		in jackson 3.* Configuring the mapper properties differently is deprecated.
+		ObjectMapper mapper = JsonMapper.builder(jsonFactory)
+				.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+				.enable(SerializationFeature.INDENT_OUTPUT)
+				.build();
+
 		mapper.registerModule(module);
 		
 		return new CodecJsonResource(uri, modelInfo, module, mapper);

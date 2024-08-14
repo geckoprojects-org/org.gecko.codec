@@ -18,5 +18,12 @@
 		"timeZone" : "Europe/Berlin",
 		"locale" : "en-US",
 		"indentOutput": true
-		}
+	},
+	"CodecFactoryConfigurator": {
+		"codecType" : "json",
+		"enableFeatures": [
+			"JsonReadFeature.ALLOW_JAVA_COMMENTS"
+		],
+		"disableFeatures" : []
+	}
 }
