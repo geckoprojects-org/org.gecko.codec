@@ -44,7 +44,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
-@Component(service = CodecModelInfo.class)
+@Component(name = "CodecModelInfoService", service = CodecModelInfo.class)
 public class CodecModelInfoImpl extends HashMap<String, Object> implements CodecModelInfo {
 
 	/** serialVersionUID */
@@ -229,7 +229,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 					typeInfo.setValueWriterName("WRITE_BY_CLASS_NAME");
 					typeInfo.setValueReaderName("READ_BY_CLASS");
 					break;
-				case "uri": default:
+				case "URI": default:
 					typeInfo.setValueWriterName("URI_WRITER");
 					typeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
 					break;				

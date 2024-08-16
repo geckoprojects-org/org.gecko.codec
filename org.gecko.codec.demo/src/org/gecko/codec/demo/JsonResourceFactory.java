@@ -16,18 +16,13 @@ package org.gecko.codec.demo;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
-import org.gecko.codec.demo.jackson.CodecFactory;
-import org.gecko.codec.demo.jackson.CodecModule;
+import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
+import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.demo.resource.CodecJsonResource;
 import org.gecko.codec.info.CodecModelInfo;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
-
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 
 /**
  * 
@@ -40,11 +35,11 @@ public class JsonResourceFactory extends ResourceFactoryImpl {
 	@Reference
 	private CodecModelInfo modelInfo;
 	
-	@Reference(name="jsonFactory")
-	private CodecFactory jsonFactory;
+	@Reference(name="objMapperConfigurator")
+	private ObjectMapperConfigurator objMapperConfigurator;
 	
-	@Reference(name  ="module")
-	private CodecModule module;
+	@Reference(name  ="codecModuleConfigurator")
+	private CodecModuleConfigurator codecModuleConfigurator;
 	
 	/* 
 	 * (non-Javadoc)
@@ -52,17 +47,7 @@ public class JsonResourceFactory extends ResourceFactoryImpl {
 	 */
 	@Override
 	public Resource createResource(URI uri) {		
-		
-//		The builder pattern should be used when constructing the ObjectMapper, as it would be the one used 
-//		in jackson 3.* Configuring the mapper properties differently is deprecated.
-		ObjectMapper mapper = JsonMapper.builder(jsonFactory)
-				.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-				.enable(SerializationFeature.INDENT_OUTPUT)
-				.build();
-
-		mapper.registerModule(module);
-		
-		return new CodecJsonResource(uri, modelInfo, module, mapper);
+		return new CodecJsonResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
 	}
 
 }

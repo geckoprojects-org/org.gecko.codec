@@ -22,8 +22,25 @@ public interface CodecAnnotations {
 	
 	/** CODEC_IGNORE 
 	 *  Annotation for specifying that the feature should not be serialize.
+	 *  This is supposed to be used when annotating the model.
+	 *  If this has to be overwritten by {@link Resource}{@link #save} and {@link #load}
+	 *  options, use {@link CODEC_IGNORE_FEATURES_LIST} and {@link CODEC_IGNORE_NOT_FEATURES_LIST}
 	 * */
 	String CODEC_IGNORE = "codec.ignore";
+	
+	/** CODEC_IGNORE_FEATURES_LIST 
+	 * Option to be used with {@link Resource}{@link #save} and {@link #load}
+	 * to provide a list of {@link EStructuralFeature} that has to be ignored during 
+	 * serialization
+	 * */
+	String CODEC_IGNORE_FEATURES_LIST = "codec.ignore.features.list";
+	
+	/** CODEC_IGNORE_NOT_FEATURES_LIST 
+	 * Option to be used with {@link Resource}{@link #save} and {@link #load}
+	 * to provide a list of {@link EStructuralFeature} that has NOT to be ignored during 
+	 * serialization
+	 * */
+	String CODEC_IGNORE_NOT_FEATURES_LIST = "codec.ignore.not.feature.list";
 	
 	/** CODEC_NAME 
 	 *  Annotation for specifying the name with which the feature should be serialized.
@@ -46,6 +63,10 @@ public interface CodecAnnotations {
 	/** CODEC_ID_FIELD 
 	 * Annotation for specifying that a field should be treated as an id field.
 	 * This is needed especially when the id should be a combination of more fields.
+	 * This is intended to be used when annotating the model.
+	 * For overwriting this property via {@link Resource}{@link #save} and {@link #load} options
+	 * use {@link CODEC_ID_FEATURES_LIST} and pass a list of {@link EStructuralFeauture} which should
+	 * form the id field.
 	 * */
 	String CODEC_ID_FIELD = "codec.id.field";
 	

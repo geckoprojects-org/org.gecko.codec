@@ -17,34 +17,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.gecko.code.demo.model.person.Person;
-import org.gecko.code.demo.model.person.PersonFactory;
 import org.gecko.code.demo.model.person.PersonPackage;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
+import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.info.codecinfo.ReferenceInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
-import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
-import org.osgi.test.common.annotation.Property.Scalar;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
-import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
@@ -134,7 +128,7 @@ public class CodecModelInfoTest {
 	}
 	
 	@Test
-	public void testElassCodecInfoCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testEClassCodecInfoCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
 		
 		assertNotNull(demoModel);
@@ -191,8 +185,9 @@ public class CodecModelInfoTest {
 		
 		TypeInfo typeInfo = eClassCodecInfo.getTypeInfo();
 		assertNotNull(typeInfo);
-		assertEquals(typeInfo.getValueReaderName(), "DEFAULT_ECLASS_READER");
-		assertEquals(typeInfo.getValueWriterName(), "URI_WRITER");
+		assertEquals("NAME", typeInfo.getTypeStrategy());
+		assertEquals("READ_BY_NAME", typeInfo.getValueReaderName());
+		assertEquals("WRITE_BY_NAME", typeInfo.getValueWriterName());
 	}
 	
 	@Test
@@ -207,11 +202,30 @@ public class CodecModelInfoTest {
 		
 		ReferenceInfo refInfo = eClassCodecInfo.getReferenceInfo();
 		assertNotNull(refInfo);
-		assertEquals(refInfo.getValueReaderName(), "DEFAULT_ECLASS_READER");
-		assertEquals(refInfo.getValueWriterName(), "URIS_WRITER");
+		assertEquals("DEFAULT_ECLASS_READER", refInfo.getValueReaderName());
+		assertEquals("URIS_WRITER", refInfo.getValueWriterName());
 		assertThat(refInfo.getFeatures()).isNotEmpty();
 		assertThat(refInfo.getFeatures()).hasSize(1);
 		assertThat(refInfo.getFeatures()).contains(demoModel.getPerson_Address());
+	}
+	
+	@Test
+	public void testFeatureIgnore(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
+		
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		
+		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(demoModel.getAddress()).get();
+		assertNotNull(eClassCodecInfo);
+		
+		List<FeatureCodecInfo> featureInfos = eClassCodecInfo.getFeatureInfo();
+		assertThat(featureInfos).hasSize(2);
+		for(FeatureCodecInfo fci : featureInfos) {
+			if("zip".equals(fci.getFeatures().get(0).getName())) {
+				assertTrue(fci.isIgnore());
+			}
+		}
 	}
 	
 	@Test
@@ -245,42 +259,4 @@ public class CodecModelInfoTest {
 		assertThat(codecInfoHolder.getReaders()).hasSize(1);
 		assertThat(codecInfoHolder.getWriters()).hasSize(1);
 	}
-	
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
-	ServiceAware<ResourceSet> rsAware;
-	
-	@WithFactoryConfiguration(factoryPid = "CodecModule", location = "?", name = "test", properties = {
-			@Property(key = "codecType", value="MONGO"), 
-			@Property(key = "useId", value="true", scalar = Scalar.Boolean),
-			@Property(key = "idOnTop", value="true", scalar = Scalar.Boolean)
-	})
-	@WithFactoryConfiguration(factoryPid = "MongoRF", location = "?", name = "testRF", properties = {
-			@Property(key = "jsonFactory.target", value="(codecType=MONGO)"), 
-			@Property(key = "module.target", value="(codecType=MONGO)"),
-			@Property(key = EMFNamespaces.EMF_CONFIGURATOR_NAME, value="myMongo"),
-			@Property(key = EMFNamespaces.EMF_MODEL_PROTOCOL, value="mongodb")
-	})
-	@Test
-	public void testCodecDemo(@InjectService(timeout = 2000l) PersonPackage demoModel,  
-			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo
-//			@InjectService(timeout = 2000l, filter = "(component.name=MONGORF)" ) Resource.Factory resFactory
-			) throws InterruptedException, IOException {
-	
-		assertNotNull(demoModel);
-		assertNotNull(codecModelInfo);
-		
-		ResourceSet resourceSet = (ResourceSet) rsAware.waitForService(2000l);
-		assertNotNull(resourceSet.getPackageRegistry().getEPackage(PersonPackage.eNS_URI));
-		
-		Resource resource = resourceSet.createResource(URI.createURI("mongodb://localhost:27017/test/Person/"));
-		
-		Person person = PersonFactory.eINSTANCE.createPerson();
-		person.setName("Ilenia");
-		person.setLastName("Salvadori");
-		
-		resource.getContents().add(person);
-		resource.save(null);
-	}
-	
-	
 }

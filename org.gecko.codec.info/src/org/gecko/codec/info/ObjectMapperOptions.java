@@ -31,5 +31,13 @@ public interface ObjectMapperOptions {
 	String OBJ_MAPPER_SERIALIZATION_FEATURES_WITH = "obj.mapper.serialization.features.with";
 	
 	String OBJ_MAPPER_SERIALIZATION_FEATURES_WITHOUT = "obj.mapper.serialization.features.without";
+	
+	String OBJ_MAPPER_DESERIALIZATION_FEATURES_WITH = "obj.mapper.deserialization.features.with";
+	
+	String OBJ_MAPPER_DESERIALIZATION_FEATURES_WITHOUT = "obj.mapper.deserialization.features.without";
+	
+	String OBJ_MAPPER_FEATURES_WITH = "obj.mapper.features.with";
+	
+	String OBJ_MAPPER_FEATURES_WITHOUT = "obj.mapper.features.without";
 
 }

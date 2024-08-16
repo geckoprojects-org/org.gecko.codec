@@ -21,10 +21,10 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
 
 /**
  * 
@@ -33,15 +33,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class CodecJsonResource extends CodecResource {
 	
-	/**
-	 * Creates a new instance.
-	 * @param uri
-	 * @param modelInfo
-	 * @param module
-	 * @param mapper
-	 */
-	public CodecJsonResource(URI uri, CodecModelInfo modelInfo, EMFModule module, ObjectMapper mapper) {
-		super(uri, modelInfo, module, mapper);
+	public CodecJsonResource(URI uri, CodecModelInfo modelInfo, CodecModule.Builder moduleBuilder, Builder objMapperBuilder) {
+		super(uri, modelInfo, moduleBuilder, objMapperBuilder);
 	}
 
 	@Override
@@ -58,7 +51,7 @@ public class CodecJsonResource extends CodecResource {
 
 		} else {
 
-			mapper.writer()
+			objMapperBuilder.build().writer()
 			.with(EMFContext.from(options))
 			.writeValue(outputStream, this);
 

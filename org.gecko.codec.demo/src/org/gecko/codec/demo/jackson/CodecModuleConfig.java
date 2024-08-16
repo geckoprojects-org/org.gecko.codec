@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.resource.Resource;
  */
 public @interface CodecModuleConfig {
 	
-	String codecType();
+	String codecType() default "json";
 	
 	String codecModuleName() default "gecko-codec-module";
 	
@@ -102,7 +102,7 @@ public @interface CodecModuleConfig {
 	 * Default is "_id"
 	 * @return
 	 */
-	String defaultIdKey() default "_id";
+	String idKey() default "_id";
 	
 	
 	/**
@@ -135,7 +135,7 @@ public @interface CodecModuleConfig {
 	 * Default is "_type"
 	 * @return
 	 */
-	String defaultTypeKey() default "_type";
+	String typeKey() default "_type";
 	
 	
 	/**
@@ -143,21 +143,21 @@ public @interface CodecModuleConfig {
 	 * Default is "$ref"
 	 * @return
 	 */
-	String defaultRefKey() default "$ref";
+	String refKey() default "$ref";
 	
 	/**
 	 * Option to indicate the default key for proxies
 	 * Default is "_proxy"
 	 * @return
 	 */
-	String defaultProxyKey() default "_proxy";
+	String proxyKey() default "_proxy";
 	
 	/**
 	 * Option to indicate the default key for timestamp
 	 * Default is "_timestamp"
 	 * @return
 	 */
-	String defaultTimestampKey() default "_timestamp";
+	String timestampKey() default "_timestamp";
 	
 	
 

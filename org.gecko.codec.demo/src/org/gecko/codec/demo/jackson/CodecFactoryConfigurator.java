@@ -23,6 +23,7 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.core.StreamWriteFeature;
+import com.fasterxml.jackson.core.TSFBuilder;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.json.JsonWriteFeature;
 
@@ -33,24 +34,22 @@ import com.fasterxml.jackson.core.json.JsonWriteFeature;
  */
 @Component(name = "CodecFactoryConfigurator", service = CodecFactoryConfigurator.class, configurationPolicy = ConfigurationPolicy.REQUIRE)
 public class CodecFactoryConfigurator {
-	
+
 	private final static Logger LOGGER = Logger.getLogger(CodecFactoryConfigurator.class.getName());
-	private CodecFactory codecFactory;
-	
-	
+	private TSFBuilder<?,?> factoryBuilder;
 
 	@Activate
 	public void activate(Map<String, Object> properties) {
+		factoryBuilder = JsonFactory.builder();
 		buildAndConfigureCodecFactory(properties);
 	}
 	
-	public CodecFactory getCodecFactory() {
-		return codecFactory;
+	public TSFBuilder<?,?> getFactoryBuilder() {
+		return factoryBuilder;
 	}
-	
+
 	private void buildAndConfigureCodecFactory(Map<String, Object> properties) {
 		if(properties == null || properties.isEmpty()) {
-			codecFactory = (CodecFactory) JsonFactory.builder().build();
 			return;
 		}
 		String[] enableFeatures = (String[]) properties.getOrDefault("enableFeatures", new String[0]);
@@ -62,50 +61,86 @@ public class CodecFactoryConfigurator {
 			setFeature(f, false);
 		}
 	}
-	
+
 	private void setFeature(String featureString, boolean state) {
-		if(featureString.contains(".")) featureString = featureString.substring(featureString.lastIndexOf(".")+1);
+		if(featureString.contains(".")) {
+			String prefix = featureString.substring(0, featureString.lastIndexOf("."));
+			featureString = featureString.substring(featureString.lastIndexOf(".")+1);
+			switch(prefix) {
+			case "JsonFactory.Feature":
+				setJsonFactoryFeature(featureString, state);
+				break;
+			case "StreamWriteFeature":
+				setStreamWriteFeature(featureString, state);
+				break;
+			case "JsonWriteFeature":
+				setJsonWriteFeature(featureString, state);
+				break;
+			case "StreamReadFeature":
+				setStreamReadFeature(featureString, state);
+				break;
+			case "JsonReadFeature":
+				setJsonReadFeature(featureString, state);
+				break;
+			default:
+				LOGGER.warning(String.format("Feature prefix %s not supported", prefix));
+			}
+		} else {
+			setJsonFactoryFeature(featureString, state);
+			setStreamWriteFeature(featureString, state);
+			setJsonWriteFeature(featureString, state);
+			setStreamReadFeature(featureString, state);
+			setJsonReadFeature(featureString, state);
+		}
+	}
+	
+	private void setJsonFactoryFeature(String featureString, boolean state) {
 		try {
-			if(state) codecFactory = (CodecFactory) JsonFactory.builder().enable(JsonFactory.Feature.valueOf(featureString)).build();
-			else codecFactory = (CodecFactory) JsonFactory.builder().disable(JsonFactory.Feature.valueOf(featureString)).build();
+			if(state) factoryBuilder.enable(JsonFactory.Feature.valueOf(featureString));
+			else factoryBuilder.disable(JsonFactory.Feature.valueOf(featureString));
 			return;
 		} catch(Exception e) {
-
+			LOGGER.warning(String.format("No JsonFactoryFeature feature with name %s has been found", featureString));
 		} 
+	}
+	
+	private void setStreamWriteFeature(String featureString, boolean state) {
 		try {
-			if(state) codecFactory = (CodecFactory) JsonFactory.builder().enable(StreamWriteFeature.valueOf(featureString)).build();
-			else codecFactory = (CodecFactory) JsonFactory.builder().disable(StreamWriteFeature.valueOf(featureString)).build();
+			if(state) factoryBuilder.enable(StreamWriteFeature.valueOf(featureString));
+			else factoryBuilder.disable(StreamWriteFeature.valueOf(featureString));
 			return;
 		} catch(Exception e) {
-
+			LOGGER.warning(String.format("No StreamWriteFeature feature with name %s has been found", featureString));
 		} 
+	}
+	
+	private void setJsonWriteFeature(String featureString, boolean state) {
 		try {
-			if(state) codecFactory = (CodecFactory) JsonFactory.builder().enable(JsonWriteFeature.valueOf(featureString)).build();
-			else codecFactory = (CodecFactory) JsonFactory.builder().disable(JsonWriteFeature.valueOf(featureString)).build();
+			if(state) factoryBuilder.enable(JsonWriteFeature.valueOf(featureString));
+			else factoryBuilder.disable(JsonWriteFeature.valueOf(featureString));
 			return;
 		} catch(Exception e) {
-
+			LOGGER.warning(String.format("No JsonWriteFeature feature with name %s has been found", featureString));
 		} 
+	}
+	
+	private void setStreamReadFeature(String featureString, boolean state) {
 		try {
-			if(state) codecFactory = (CodecFactory) JsonFactory.builder().enable(JsonWriteFeature.valueOf(featureString)).build();
-			else codecFactory = (CodecFactory) JsonFactory.builder().disable(JsonWriteFeature.valueOf(featureString)).build();
+			if(state) factoryBuilder.enable(StreamReadFeature.valueOf(featureString));
+			else factoryBuilder.disable(StreamReadFeature.valueOf(featureString));
 			return;
 		} catch(Exception e) {
-
+			LOGGER.warning(String.format("No StreamReadFeature feature with name %s has been found", featureString));
 		} 
+	}
+	
+	private void setJsonReadFeature(String featureString, boolean state) {
 		try {
-			if(state) codecFactory = (CodecFactory) JsonFactory.builder().enable(StreamReadFeature.valueOf(featureString)).build();
-			else codecFactory = (CodecFactory) JsonFactory.builder().disable(StreamReadFeature.valueOf(featureString)).build();
+			if(state) factoryBuilder.enable(JsonReadFeature.valueOf(featureString));
+			else factoryBuilder.disable(JsonReadFeature.valueOf(featureString));
 			return;
 		} catch(Exception e) {
-
-		} 
-		try {
-			if(state) codecFactory = (CodecFactory) JsonFactory.builder().enable(JsonReadFeature.valueOf(featureString)).build();
-			else codecFactory = (CodecFactory) JsonFactory.builder().disable(JsonReadFeature.valueOf(featureString)).build();
-			return;
-		} catch(Exception e) {
-			LOGGER.warning(String.format("No JsonFactory feature with name %s has been found", featureString));
+			LOGGER.warning(String.format("No JsonReadFeature feature with name %s has been found", featureString));
 		} 
 	}
 }

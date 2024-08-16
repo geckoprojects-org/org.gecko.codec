@@ -30,17 +30,18 @@ import com.fasterxml.jackson.databind.SerializationConfig;
 public class CodecSerializersNew extends EMFSerializers {
 
 	private CodecModule codecModule;
-	private CodecModelInfo codecModelInfo;
+	private CodecModelInfo codecModelInfoService;
+	
 	/**
 	 * Creates a new instance.
 	 * @param module
 	 */
-	public CodecSerializersNew(final CodecModule module, final CodecModelInfo codecModelInfo) {
+	public CodecSerializersNew(final CodecModule module) {
 		super(module);
 		this.codecModule = module;
-		this.codecModelInfo = codecModelInfo;
+		this.codecModelInfoService = module.getCodecModelInfoService();
 	}
-
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.emfcloud.jackson.databind.ser.EMFSerializers#findSerializer(com.fasterxml.jackson.databind.SerializationConfig, com.fasterxml.jackson.databind.JavaType, com.fasterxml.jackson.databind.BeanDescription)
@@ -49,7 +50,7 @@ public class CodecSerializersNew extends EMFSerializers {
 	public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc) {
 		
 		if (type.isTypeOrSubTypeOf(EObject.class)) {
-			return new CodecEObjectSerializerNew(codecModule, codecModelInfo);
+			return new CodecEObjectSerializerNew(codecModule, codecModelInfoService);
 		}
 		return super.findSerializer(config, type, beanDesc);
 	}
