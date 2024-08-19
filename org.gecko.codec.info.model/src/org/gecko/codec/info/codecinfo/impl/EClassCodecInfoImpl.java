@@ -106,14 +106,14 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	protected EList<FeatureCodecInfo> featureInfo;
 
 	/**
-	 * The cached value of the '{@link #getReferenceInfo() <em>Reference Info</em>}' containment reference.
+	 * The cached value of the '{@link #getReferenceInfo() <em>Reference Info</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getReferenceInfo()
 	 * @generated
 	 * @ordered
 	 */
-	protected ReferenceInfo referenceInfo;
+	protected EList<ReferenceInfo> referenceInfo;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -306,43 +306,11 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
-	public ReferenceInfo getReferenceInfo() {
+	public EList<ReferenceInfo> getReferenceInfo() {
+		if (referenceInfo == null) {
+			referenceInfo = new EObjectContainmentEList<ReferenceInfo>(ReferenceInfo.class, this, CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO);
+		}
 		return referenceInfo;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetReferenceInfo(ReferenceInfo newReferenceInfo, NotificationChain msgs) {
-		ReferenceInfo oldReferenceInfo = referenceInfo;
-		referenceInfo = newReferenceInfo;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO, oldReferenceInfo, newReferenceInfo);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setReferenceInfo(ReferenceInfo newReferenceInfo) {
-		if (newReferenceInfo != referenceInfo) {
-			NotificationChain msgs = null;
-			if (referenceInfo != null)
-				msgs = ((InternalEObject)referenceInfo).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO, null, msgs);
-			if (newReferenceInfo != null)
-				msgs = ((InternalEObject)newReferenceInfo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO, null, msgs);
-			msgs = basicSetReferenceInfo(newReferenceInfo, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO, newReferenceInfo, newReferenceInfo));
 	}
 
 	/**
@@ -360,7 +328,7 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				return ((InternalEList<?>)getFeatureInfo()).basicRemove(otherEnd, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
-				return basicSetReferenceInfo(null, msgs);
+				return ((InternalEList<?>)getReferenceInfo()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -416,7 +384,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				getFeatureInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
-				setReferenceInfo((ReferenceInfo)newValue);
+				getReferenceInfo().clear();
+				getReferenceInfo().addAll((Collection<? extends ReferenceInfo>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -446,7 +415,7 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				getFeatureInfo().clear();
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
-				setReferenceInfo((ReferenceInfo)null);
+				getReferenceInfo().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -471,7 +440,7 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				return featureInfo != null && !featureInfo.isEmpty();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
-				return referenceInfo != null;
+				return referenceInfo != null && !referenceInfo.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

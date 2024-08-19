@@ -137,6 +137,11 @@ public @interface CodecModuleConfig {
 	 */
 	String typeKey() default "_type";
 	
+	/**
+	 * @return
+	 */
+	String superTypeKey() default "_supertype";
+	
 	
 	/**
 	 * Option to indicate the default key to be used for references

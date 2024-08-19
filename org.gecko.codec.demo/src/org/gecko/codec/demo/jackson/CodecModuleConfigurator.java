@@ -52,7 +52,8 @@ public class CodecModuleConfigurator {
 			.withTypeKey(codecConfig.typeKey())
 			.withUseId(codecConfig.useId())
 			.withUseIdField(codecConfig.useIdField())
-			.withUseNamesFromExtendedMetaData(codecConfig.useNamesFromExtendedMetaData());
+			.withUseNamesFromExtendedMetaData(codecConfig.useNamesFromExtendedMetaData())
+			.withSuperTypeKey(codecConfig.superTypeKey());
 	}
 	
 	public CodecModule.Builder getCodecModuleBuilder() {

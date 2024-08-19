@@ -24,6 +24,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
+import com.fasterxml.jackson.core.StreamReadFeature;
+import com.fasterxml.jackson.core.StreamWriteFeature;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -93,6 +97,18 @@ public class ObjectMapperConfigurator {
 			case "DeserializationFeature":
 				setDeserializationFeature(featureString, state);
 				break;
+			case "StreamWriteFeature":
+				setStreamWriteFeature(featureString, state);
+				break;
+			case "JsonWriteFeature":
+				setJsonWriteFeature(featureString, state);
+				break;
+			case "StreamReadFeature":
+				setStreamReadFeature(featureString, state);
+				break;
+			case "JsonReadFeature":
+				setJsonReadFeature(featureString, state);
+				break;
 			default:
 				LOGGER.warning(String.format("Feature prefix %s not supported", prefix));
 			}
@@ -130,6 +146,46 @@ public class ObjectMapperConfigurator {
 			return;
 		} catch(Exception e) {
 			LOGGER.warning(String.format("No DeserializationFeature feature with name %s has been found", featureString));
+		} 
+	}
+	
+	private void setStreamWriteFeature(String featureString, boolean state) {
+		try {
+			if(state) objMapperBuilder.enable(StreamWriteFeature.valueOf(featureString));
+			else objMapperBuilder.disable(StreamWriteFeature.valueOf(featureString));
+			return;
+		} catch(Exception e) {
+			LOGGER.warning(String.format("No StreamWriteFeature feature with name %s has been found", featureString));
+		} 
+	}
+	
+	private void setJsonWriteFeature(String featureString, boolean state) {
+		try {
+			if(state) objMapperBuilder.enable(JsonWriteFeature.valueOf(featureString));
+			else objMapperBuilder.disable(JsonWriteFeature.valueOf(featureString));
+			return;
+		} catch(Exception e) {
+			LOGGER.warning(String.format("No JsonWriteFeature feature with name %s has been found", featureString));
+		} 
+	}
+	
+	private void setStreamReadFeature(String featureString, boolean state) {
+		try {
+			if(state) objMapperBuilder.enable(StreamReadFeature.valueOf(featureString));
+			else objMapperBuilder.disable(StreamReadFeature.valueOf(featureString));
+			return;
+		} catch(Exception e) {
+			LOGGER.warning(String.format("No StreamReadFeature feature with name %s has been found", featureString));
+		} 
+	}
+	
+	private void setJsonReadFeature(String featureString, boolean state) {
+		try {
+			if(state) objMapperBuilder.enable(JsonReadFeature.valueOf(featureString));
+			else objMapperBuilder.disable(JsonReadFeature.valueOf(featureString));
+			return;
+		} catch(Exception e) {
+			LOGGER.warning(String.format("No JsonReadFeature feature with name %s has been found", featureString));
 		} 
 	}
 }

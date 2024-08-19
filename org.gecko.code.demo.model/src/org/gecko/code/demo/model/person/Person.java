@@ -21,6 +21,10 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.code.demo.model.person.Person#getLastName <em>Last Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getAddress <em>Address</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getBirthDate <em>Birth Date</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getAge <em>Age</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#isMarried <em>Married</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getGender <em>Gender</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getNonContainedAdd <em>Non Contained Add</em>}</li>
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getPerson()
@@ -117,5 +121,96 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setBirthDate(Date value);
+
+	/**
+	 * Returns the value of the '<em><b>Age</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Age</em>' attribute.
+	 * @see #setAge(int)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Age()
+	 * @model
+	 * @generated
+	 */
+	int getAge();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getAge <em>Age</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Age</em>' attribute.
+	 * @see #getAge()
+	 * @generated
+	 */
+	void setAge(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Married</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Married</em>' attribute.
+	 * @see #setMarried(boolean)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Married()
+	 * @model
+	 * @generated
+	 */
+	boolean isMarried();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#isMarried <em>Married</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Married</em>' attribute.
+	 * @see #isMarried()
+	 * @generated
+	 */
+	void setMarried(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Gender</b></em>' attribute.
+	 * The literals are from the enumeration {@link org.gecko.code.demo.model.person.GENDER_TYPE}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Gender</em>' attribute.
+	 * @see org.gecko.code.demo.model.person.GENDER_TYPE
+	 * @see #setGender(GENDER_TYPE)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Gender()
+	 * @model
+	 * @generated
+	 */
+	GENDER_TYPE getGender();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getGender <em>Gender</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Gender</em>' attribute.
+	 * @see org.gecko.code.demo.model.person.GENDER_TYPE
+	 * @see #getGender()
+	 * @generated
+	 */
+	void setGender(GENDER_TYPE value);
+
+	/**
+	 * Returns the value of the '<em><b>Non Contained Add</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Non Contained Add</em>' reference.
+	 * @see #setNonContainedAdd(Address)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_NonContainedAdd()
+	 * @model
+	 * @generated
+	 */
+	Address getNonContainedAdd();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getNonContainedAdd <em>Non Contained Add</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Non Contained Add</em>' reference.
+	 * @see #getNonContainedAdd()
+	 * @generated
+	 */
+	void setNonContainedAdd(Address value);
 
 } // Person

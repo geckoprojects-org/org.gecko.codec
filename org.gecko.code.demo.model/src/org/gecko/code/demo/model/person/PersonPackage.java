@@ -5,6 +5,7 @@ package org.gecko.code.demo.model.person;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EReference;
 
 import org.gecko.emf.osgi.annotation.provide.EPackage;
@@ -110,13 +111,49 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__BIRTH_DATE = 3;
 
 	/**
+	 * The feature id for the '<em><b>Age</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__AGE = 4;
+
+	/**
+	 * The feature id for the '<em><b>Married</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__MARRIED = 5;
+
+	/**
+	 * The feature id for the '<em><b>Gender</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__GENDER = 6;
+
+	/**
+	 * The feature id for the '<em><b>Non Contained Add</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__NON_CONTAINED_ADD = 7;
+
+	/**
 	 * The number of structural features of the '<em>Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 4;
+	int PERSON_FEATURE_COUNT = 8;
 
 	/**
 	 * The number of operations of the '<em>Person</em>' class.
@@ -218,6 +255,42 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int BUSINESS_PERSON__BIRTH_DATE = PERSON__BIRTH_DATE;
+
+	/**
+	 * The feature id for the '<em><b>Age</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__AGE = PERSON__AGE;
+
+	/**
+	 * The feature id for the '<em><b>Married</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__MARRIED = PERSON__MARRIED;
+
+	/**
+	 * The feature id for the '<em><b>Gender</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__GENDER = PERSON__GENDER;
+
+	/**
+	 * The feature id for the '<em><b>Non Contained Add</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__NON_CONTAINED_ADD = PERSON__NON_CONTAINED_ADD;
 
 	/**
 	 * The number of structural features of the '<em>Business Person</em>' class.
@@ -329,6 +402,16 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 */
 	int BUSINESS_ADDRESS_OPERATION_COUNT = ADDRESS_OPERATION_COUNT + 0;
 
+	/**
+	 * The meta object id for the '{@link org.gecko.code.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.code.demo.model.person.GENDER_TYPE
+	 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getGENDER_TYPE()
+	 * @generated
+	 */
+	int GENDER_TYPE = 5;
+
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.Person <em>Person</em>}'.
@@ -383,6 +466,50 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getPerson_BirthDate();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getAge <em>Age</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Age</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getAge()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_Age();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#isMarried <em>Married</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Married</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#isMarried()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_Married();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getGender <em>Gender</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Gender</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getGender()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_Gender();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.gecko.code.demo.model.person.Person#getNonContainedAdd <em>Non Contained Add</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Non Contained Add</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getNonContainedAdd()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EReference getPerson_NonContainedAdd();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.Address <em>Address</em>}'.
@@ -469,6 +596,16 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getBusinessAddress_CompanyName();
 
 	/**
+	 * Returns the meta object for enum '{@link org.gecko.code.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>GENDER TYPE</em>'.
+	 * @see org.gecko.code.demo.model.person.GENDER_TYPE
+	 * @generated
+	 */
+	EEnum getGENDER_TYPE();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -532,6 +669,38 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute PERSON__BIRTH_DATE = eINSTANCE.getPerson_BirthDate();
+
+		/**
+		 * The meta object literal for the '<em><b>Age</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__AGE = eINSTANCE.getPerson_Age();
+
+		/**
+		 * The meta object literal for the '<em><b>Married</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__MARRIED = eINSTANCE.getPerson_Married();
+
+		/**
+		 * The meta object literal for the '<em><b>Gender</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__GENDER = eINSTANCE.getPerson_Gender();
+
+		/**
+		 * The meta object literal for the '<em><b>Non Contained Add</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PERSON__NON_CONTAINED_ADD = eINSTANCE.getPerson_NonContainedAdd();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.AddressImpl <em>Address</em>}' class.
@@ -604,6 +773,16 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute BUSINESS_ADDRESS__COMPANY_NAME = eINSTANCE.getBusinessAddress_CompanyName();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.code.demo.model.person.GENDER_TYPE
+		 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getGENDER_TYPE()
+		 * @generated
+		 */
+		EEnum GENDER_TYPE = eINSTANCE.getGENDER_TYPE();
 
 	}
 

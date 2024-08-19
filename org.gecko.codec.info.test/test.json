@@ -1,10 +1,1 @@
-{
-  "eClass" : "http://example.de/person/1.0#//Person",
-  "name" : "Ilenia",
-  "lastName" : "Salvadori",
-  "address" : {
-    "street" : "Camsdorfer Str. 41",
-    "zip" : "07749"
-  },
-  "birthDate" : 645832800000
-}
+{"eClass":"http://example.de/person/1.0#//Person","name":"John","lastName":"Doe","address":{"street":"Camsdorfer Str.","zip":"07749"},"birthDate":645832800000}

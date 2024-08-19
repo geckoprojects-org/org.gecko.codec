@@ -46,7 +46,6 @@
 	org.gecko.code.demo.model;version=snapshot,\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
 	org.gecko.codec.demo;version=snapshot,\
-	org.mongodb.mongo-java-driver;version='[3.12.14,3.12.15)',\
 	org.osgi.test.junit5.cm;version='[1.2.1,1.2.2)',\
-	org.gecko.codec;version=snapshot,\
-	org.gecko.emf.osgi.api;version='[6.0.0,6.0.1)'
+	org.gecko.emf.osgi.api;version='[6.0.0,6.0.1)',\
+	org.gecko.codec;version=snapshot

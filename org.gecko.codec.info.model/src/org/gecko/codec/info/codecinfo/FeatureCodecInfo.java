@@ -141,10 +141,13 @@ public interface FeatureCodecInfo {
 	 * Returns the value of the '<em><b>Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * This is the field name to be used for serialization. Can be set in the model through the http:///org/eclipse/emf/ecore/util/ExtendedMetaData name annotation. If EXTENDED_META_DATA module option is enabled, this will be used, otherwise the field name will be used.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Key</em>' attribute.
 	 * @see #setKey(String)
 	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_Key()
-	 * @model required="true"
+	 * @model
 	 * @generated
 	 */
 	String getKey();

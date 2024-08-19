@@ -187,7 +187,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int ECLASS_CODEC_INFO__FEATURE_INFO = 4;
 
 	/**
-	 * The feature id for the '<em><b>Reference Info</b></em>' containment reference.
+	 * The feature id for the '<em><b>Reference Info</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1075,10 +1075,10 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getEClassCodecInfo_FeatureInfo();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo <em>Reference Info</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo <em>Reference Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Reference Info</em>'.
+	 * @return the meta object for the containment reference list '<em>Reference Info</em>'.
 	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo()
 	 * @see #getEClassCodecInfo()
 	 * @generated
@@ -1571,7 +1571,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EReference ECLASS_CODEC_INFO__FEATURE_INFO = eINSTANCE.getEClassCodecInfo_FeatureInfo();
 
 		/**
-		 * The meta object literal for the '<em><b>Reference Info</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Reference Info</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

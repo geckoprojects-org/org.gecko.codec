@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.gecko.code.demo.model.person.Address;
+import org.gecko.code.demo.model.person.GENDER_TYPE;
 import org.gecko.code.demo.model.person.Person;
 import org.gecko.code.demo.model.person.PersonPackage;
 
@@ -29,6 +30,10 @@ import org.gecko.code.demo.model.person.PersonPackage;
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getLastName <em>Last Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getAddress <em>Address</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getBirthDate <em>Birth Date</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getAge <em>Age</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#isMarried <em>Married</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getGender <em>Gender</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getNonContainedAdd <em>Non Contained Add</em>}</li>
  * </ul>
  *
  * @generated
@@ -103,6 +108,76 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected Date birthDate = BIRTH_DATE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getAge() <em>Age</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAge()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int AGE_EDEFAULT = 0;
+
+	/**
+	 * The cached value of the '{@link #getAge() <em>Age</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAge()
+	 * @generated
+	 * @ordered
+	 */
+	protected int age = AGE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isMarried() <em>Married</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isMarried()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean MARRIED_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isMarried() <em>Married</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isMarried()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean married = MARRIED_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getGender() <em>Gender</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getGender()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final GENDER_TYPE GENDER_EDEFAULT = GENDER_TYPE.MALE;
+
+	/**
+	 * The cached value of the '{@link #getGender() <em>Gender</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getGender()
+	 * @generated
+	 * @ordered
+	 */
+	protected GENDER_TYPE gender = GENDER_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getNonContainedAdd() <em>Non Contained Add</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getNonContainedAdd()
+	 * @generated
+	 * @ordered
+	 */
+	protected Address nonContainedAdd;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -243,6 +318,115 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public int getAge() {
+		return age;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setAge(int newAge) {
+		int oldAge = age;
+		age = newAge;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__AGE, oldAge, age));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isMarried() {
+		return married;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setMarried(boolean newMarried) {
+		boolean oldMarried = married;
+		married = newMarried;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__MARRIED, oldMarried, married));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public GENDER_TYPE getGender() {
+		return gender;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setGender(GENDER_TYPE newGender) {
+		GENDER_TYPE oldGender = gender;
+		gender = newGender == null ? GENDER_EDEFAULT : newGender;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__GENDER, oldGender, gender));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Address getNonContainedAdd() {
+		if (nonContainedAdd != null && nonContainedAdd.eIsProxy()) {
+			InternalEObject oldNonContainedAdd = (InternalEObject)nonContainedAdd;
+			nonContainedAdd = (Address)eResolveProxy(oldNonContainedAdd);
+			if (nonContainedAdd != oldNonContainedAdd) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, PersonPackage.PERSON__NON_CONTAINED_ADD, oldNonContainedAdd, nonContainedAdd));
+			}
+		}
+		return nonContainedAdd;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Address basicGetNonContainedAdd() {
+		return nonContainedAdd;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setNonContainedAdd(Address newNonContainedAdd) {
+		Address oldNonContainedAdd = nonContainedAdd;
+		nonContainedAdd = newNonContainedAdd;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__NON_CONTAINED_ADD, oldNonContainedAdd, nonContainedAdd));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case PersonPackage.PERSON__ADDRESS:
@@ -267,6 +451,15 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return getAddress();
 			case PersonPackage.PERSON__BIRTH_DATE:
 				return getBirthDate();
+			case PersonPackage.PERSON__AGE:
+				return getAge();
+			case PersonPackage.PERSON__MARRIED:
+				return isMarried();
+			case PersonPackage.PERSON__GENDER:
+				return getGender();
+			case PersonPackage.PERSON__NON_CONTAINED_ADD:
+				if (resolve) return getNonContainedAdd();
+				return basicGetNonContainedAdd();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -290,6 +483,18 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return;
 			case PersonPackage.PERSON__BIRTH_DATE:
 				setBirthDate((Date)newValue);
+				return;
+			case PersonPackage.PERSON__AGE:
+				setAge((Integer)newValue);
+				return;
+			case PersonPackage.PERSON__MARRIED:
+				setMarried((Boolean)newValue);
+				return;
+			case PersonPackage.PERSON__GENDER:
+				setGender((GENDER_TYPE)newValue);
+				return;
+			case PersonPackage.PERSON__NON_CONTAINED_ADD:
+				setNonContainedAdd((Address)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -315,6 +520,18 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__BIRTH_DATE:
 				setBirthDate(BIRTH_DATE_EDEFAULT);
 				return;
+			case PersonPackage.PERSON__AGE:
+				setAge(AGE_EDEFAULT);
+				return;
+			case PersonPackage.PERSON__MARRIED:
+				setMarried(MARRIED_EDEFAULT);
+				return;
+			case PersonPackage.PERSON__GENDER:
+				setGender(GENDER_EDEFAULT);
+				return;
+			case PersonPackage.PERSON__NON_CONTAINED_ADD:
+				setNonContainedAdd((Address)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -335,6 +552,14 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return address != null;
 			case PersonPackage.PERSON__BIRTH_DATE:
 				return BIRTH_DATE_EDEFAULT == null ? birthDate != null : !BIRTH_DATE_EDEFAULT.equals(birthDate);
+			case PersonPackage.PERSON__AGE:
+				return age != AGE_EDEFAULT;
+			case PersonPackage.PERSON__MARRIED:
+				return married != MARRIED_EDEFAULT;
+			case PersonPackage.PERSON__GENDER:
+				return gender != GENDER_EDEFAULT;
+			case PersonPackage.PERSON__NON_CONTAINED_ADD:
+				return nonContainedAdd != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -355,6 +580,12 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		result.append(lastName);
 		result.append(", birthDate: ");
 		result.append(birthDate);
+		result.append(", age: ");
+		result.append(age);
+		result.append(", married: ");
+		result.append(married);
+		result.append(", gender: ");
+		result.append(gender);
 		result.append(')');
 		return result.toString();
 	}

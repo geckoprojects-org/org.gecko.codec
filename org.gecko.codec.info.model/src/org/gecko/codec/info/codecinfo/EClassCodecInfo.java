@@ -132,25 +132,15 @@ public interface EClassCodecInfo {
 	EList<FeatureCodecInfo> getFeatureInfo();
 
 	/**
-	 * Returns the value of the '<em><b>Reference Info</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Reference Info</b></em>' containment reference list.
+	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.ReferenceInfo}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Reference Info</em>' containment reference.
-	 * @see #setReferenceInfo(ReferenceInfo)
+	 * @return the value of the '<em>Reference Info</em>' containment reference list.
 	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_ReferenceInfo()
 	 * @model containment="true"
 	 * @generated
 	 */
-	ReferenceInfo getReferenceInfo();
-
-	/**
-	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo <em>Reference Info</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Reference Info</em>' containment reference.
-	 * @see #getReferenceInfo()
-	 * @generated
-	 */
-	void setReferenceInfo(ReferenceInfo value);
+	EList<ReferenceInfo> getReferenceInfo();
 
 } // EClassCodecInfo

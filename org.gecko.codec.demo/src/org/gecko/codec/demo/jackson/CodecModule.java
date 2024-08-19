@@ -44,6 +44,7 @@ public class CodecModule extends EMFModule {
 	private boolean serializeSuperTypes;
 	private boolean serializeSuperTypesAsArray;
 	private String typeKey;
+	private String superTypeKey;
 	private String refKey;
 	private String proxyKey;
 	private String timestampKey;
@@ -110,6 +111,10 @@ public class CodecModule extends EMFModule {
 	public String getTypeKey() {
 		return typeKey;
 	}
+	
+	public String getSuperTypeKey() {
+		return superTypeKey;
+	}
 
 	public String getRefKey() {
 		return refKey;
@@ -142,6 +147,7 @@ public class CodecModule extends EMFModule {
 		this.idFeatureAsPrimaryKey = builder.idFeatureAsPrimaryKey;
 		this.idKey = builder.idKey;
 		this.typeKey = builder.typeKey;
+		this.superTypeKey = builder.superTypeKey;
 		this.timestampKey = builder.timestampKey;
 		this.proxyKey = builder.proxyKey;
 		this.refKey = builder.refKey;
@@ -203,6 +209,7 @@ public class CodecModule extends EMFModule {
 		private boolean serializeSuperTypes = false;
 		private boolean serializeSuperTypesAsArray = true;
 		private String typeKey = "_type";
+		private String superTypeKey = "_supertype";
 		private String refKey = "$ref";
 		private String proxyKey = "_proxy";
 		private String timestampKey = "_timestamp";
@@ -228,6 +235,11 @@ public class CodecModule extends EMFModule {
 		
 		public Builder withTypeKey(String typeKey) {
 			this.typeKey = typeKey;
+			return this;
+		}
+		
+		public Builder withSuperTypeKey(String superTypeKey) {
+			this.superTypeKey = superTypeKey;
 			return this;
 		}
 		

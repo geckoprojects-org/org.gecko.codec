@@ -33,8 +33,8 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="featureInfo" upperBound="-1"
         eType="#//FeatureCodecInfo" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="referenceInfo" eType="#//ReferenceInfo"
-        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="referenceInfo" upperBound="-1"
+        eType="#//ReferenceInfo" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FeatureCodecInfo">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"

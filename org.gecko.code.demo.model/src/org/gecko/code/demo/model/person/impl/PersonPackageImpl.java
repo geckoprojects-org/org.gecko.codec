@@ -4,6 +4,7 @@ package org.gecko.code.demo.model.person.impl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -58,6 +59,13 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	private EClass businessAddressEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum gendeR_TYPEEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -175,6 +183,46 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getPerson_Age() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getPerson_Married() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getPerson_Gender() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getPerson_NonContainedAdd() {
+		return (EReference)personEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getAddress() {
 		return addressEClass;
 	}
@@ -255,6 +303,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EEnum getGENDER_TYPE() {
+		return gendeR_TYPEEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public PersonFactory getPersonFactory() {
 		return (PersonFactory)getEFactoryInstance();
 	}
@@ -283,6 +341,10 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEAttribute(personEClass, PERSON__LAST_NAME);
 		createEReference(personEClass, PERSON__ADDRESS);
 		createEAttribute(personEClass, PERSON__BIRTH_DATE);
+		createEAttribute(personEClass, PERSON__AGE);
+		createEAttribute(personEClass, PERSON__MARRIED);
+		createEAttribute(personEClass, PERSON__GENDER);
+		createEReference(personEClass, PERSON__NON_CONTAINED_ADD);
 
 		addressEClass = createEClass(ADDRESS);
 		createEAttribute(addressEClass, ADDRESS__STREET);
@@ -295,6 +357,9 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 
 		businessAddressEClass = createEClass(BUSINESS_ADDRESS);
 		createEAttribute(businessAddressEClass, BUSINESS_ADDRESS__COMPANY_NAME);
+
+		// Create enums
+		gendeR_TYPEEEnum = createEEnum(GENDER_TYPE);
 	}
 
 	/**
@@ -334,6 +399,10 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEAttribute(getPerson_LastName(), ecorePackage.getEString(), "lastName", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPerson_Address(), this.getAddress(), null, "address", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_BirthDate(), ecorePackage.getEDate(), "birthDate", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPerson_Age(), ecorePackage.getEInt(), "age", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPerson_Married(), ecorePackage.getEBoolean(), "married", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPerson_Gender(), this.getGENDER_TYPE(), "gender", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPerson_NonContainedAdd(), this.getAddress(), null, "nonContainedAdd", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addressEClass, Address.class, "Address", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddress_Street(), ecorePackage.getEString(), "street", null, 0, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -346,6 +415,12 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 
 		initEClass(businessAddressEClass, BusinessAddress.class, "BusinessAddress", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBusinessAddress_CompanyName(), ecorePackage.getEString(), "companyName", null, 0, 1, BusinessAddress.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		// Initialize enums and add enum literals
+		initEEnum(gendeR_TYPEEEnum, org.gecko.code.demo.model.person.GENDER_TYPE.class, "GENDER_TYPE");
+		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.code.demo.model.person.GENDER_TYPE.MALE);
+		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.code.demo.model.person.GENDER_TYPE.FEMALE);
+		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.code.demo.model.person.GENDER_TYPE.OTHER);
 
 		// Create resource
 		createResource(eNS_URI);

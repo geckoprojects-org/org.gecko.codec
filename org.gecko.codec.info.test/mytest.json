@@ -1,1 +1,1 @@
-{"_id":"John-Doe","_type":"Person","name":"John","lastName":"Doe","birthDate":"1990-06-20","address":{"_type":"http://example.de/person/1.0#//Address","street":"Camsdorfer Str."}}
+{"_id":"Doe-John","_type":"Person","birthDate":"1990-06-20","address":{"street":"Camsdorfer Str."}}

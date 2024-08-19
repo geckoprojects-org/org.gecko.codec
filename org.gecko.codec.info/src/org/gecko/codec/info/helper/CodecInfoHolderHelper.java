@@ -13,9 +13,12 @@
  */
 package org.gecko.codec.info.helper;
 
-import org.eclipse.emf.ecore.EObject;
+import java.util.logging.Logger;
+
 import org.gecko.codec.info.codecinfo.CodecInfoFactory;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
+import org.gecko.codec.info.codecinfo.CodecValueReader;
+import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.InfoType;
 
 
@@ -25,6 +28,8 @@ import org.gecko.codec.info.codecinfo.InfoType;
  * @since Jul 31, 2024
  */
 public class CodecInfoHolderHelper {
+	
+	private static final Logger LOGGER = Logger.getLogger(CodecInfoHolderHelper.class.getName());
 
 	public static CodecInfoHolder createCodecInfoHolderForType(InfoType codecType) {
 		CodecInfoHolder codecInfoHolder = CodecInfoFactory.eINSTANCE.createCodecInfoHolder();
@@ -60,6 +65,36 @@ public class CodecInfoHolderHelper {
 
 		}
 		return codecInfoHolder;
+	}
+	
+	public static void addCodecReader(CodecInfoHolder infoHolder, CodecValueReader<?,?> reader) {
+		boolean alreadyInThere = false;
+		for(CodecValueReader<?,?> r : infoHolder.getReaders()) {
+			if(r.getName().equals(reader.getName())) {
+				alreadyInThere = true;
+				break;
+			}
+		}
+		if(alreadyInThere) {
+			LOGGER.warning(String.format("A CodecValueReader with name %s already exists. Change name or yours won't be added.", reader.getName()));
+			return;
+		}
+		infoHolder.getReaders().add(reader);
+	}
+	
+	public static void addCodecWriter(CodecInfoHolder infoHolder, CodecValueWriter<?,?> writer) {
+		boolean alreadyInThere = false;
+		for(CodecValueWriter<?,?> w : infoHolder.getWriters()) {
+			if(w.getName().equals(writer.getName())) {
+				alreadyInThere = true;
+				break;
+			}
+		}
+		if(alreadyInThere) {
+			LOGGER.warning(String.format("A CodecValueWriter with name %s already exists. Change name or yours won't be added.", writer.getName()));
+			return;
+		}
+		infoHolder.getWriters().add(writer);
 	}
 
 }

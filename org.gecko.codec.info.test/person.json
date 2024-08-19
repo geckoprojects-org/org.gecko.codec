@@ -1,0 +1,8 @@
+{
+  "_type" : "http://example.de/person/1.0#//BusinessPerson",
+  "_supertype" : "http://example.de/person/1.0#//Person",
+  "birthDate" : "test.1990-06-20",
+  "age" : 0,
+  "married" : false,
+  "gender" : "MALE"
+}

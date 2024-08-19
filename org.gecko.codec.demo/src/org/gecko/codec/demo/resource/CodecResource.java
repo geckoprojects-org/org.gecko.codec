@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -34,8 +35,11 @@ import org.gecko.codec.demo.jackson.CodecModuleOptions;
 import org.gecko.codec.info.CodecAnnotations;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.ObjectMapperOptions;
+import org.gecko.codec.info.codecinfo.CodecValueReader;
+import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
+import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -156,9 +160,28 @@ public class CodecResource extends ResourceImpl {
 				if(fci != null) fci.setIgnore(false);
 			});
 		}
-//		TODO: in principle from the options we could pass a reader and a writer but we need to specify for which ENamedElement
-//		and then we should add those to the InfoHolder basically...?
-		
+		if(options.containsKey(CodecAnnotations.CODEC_VALUE_READERS_MAP)) {
+			Map<ENamedElement, CodecValueReader<?,?>> readersMap = (Map<ENamedElement, CodecValueReader<?,?>>)options.get(CodecAnnotations.CODEC_VALUE_READERS_MAP);
+			readersMap.forEach((element, reader) -> {
+				FeatureCodecInfo fci = codecInfo.getFeatureInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+				if(fci != null) {
+					fci.setValueReaderName(reader.getName());
+					modelInfoService.addCodecValueReaderForType(InfoType.FEATURE, reader);
+				}
+			});
+		}
+		if(options.containsKey(CodecAnnotations.CODEC_VALUE_WRITERS_MAP)) {
+			Map<ENamedElement, CodecValueWriter<?,?>> writersMap = (Map<ENamedElement, CodecValueWriter<?,?>>)options.get(CodecAnnotations.CODEC_VALUE_WRITERS_MAP);
+			writersMap.forEach((element, writer) -> {
+				System.out.println(element.getName());
+				codecInfo.getFeatureInfo().forEach(f -> System.out.println(f.getFeatures().get(0).getName()));
+				FeatureCodecInfo fci = codecInfo.getFeatureInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).getName().equals(element.getName())).findFirst().get();
+				if(fci != null) {
+					fci.setValueWriterName(writer.getName());
+					modelInfoService.addCodecValueWriterForType(InfoType.FEATURE, writer);
+				}
+			});
+		}		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -223,6 +246,9 @@ public class CodecResource extends ResourceImpl {
 				break;
 			case CodecModuleOptions.CODEC_MODULE_TYPE_KEY:
 				moduleBuilder.withTypeKey((String) options.get(k));
+				break;
+			case CodecModuleOptions.CODEC_MODULE_SUPERTYPE_KEY:
+				moduleBuilder.withSuperTypeKey((String) options.get(k));
 				break;
 			case CodecModuleOptions.CODEC_MODULE_USE_ID:
 				moduleBuilder.withUseId((boolean) options.get(k));

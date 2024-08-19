@@ -31,6 +31,8 @@ import java.util.TimeZone;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.gecko.code.demo.model.person.Address;
 import org.gecko.code.demo.model.person.Person;
 import org.gecko.code.demo.model.person.PersonFactory;
@@ -51,6 +53,7 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -413,13 +416,17 @@ public class ObjMapperConfigOverwriteTest {
 		
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITH, List.of(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITH, 
+				List.of(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, 
+						MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,
+						MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
 		resource.save(options);
 		
 		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
 		assertNotNull(mapper);
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS));
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES));
+		assertTrue(mapper.isEnabled(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
@@ -460,49 +467,22 @@ public class ObjMapperConfigOverwriteTest {
 		assertFalse(mapper.isEnabled(MapperFeature.APPLY_DEFAULT_VALUES));
 	}
 	
-//	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
-//			@Property(key = "type", value="json")
-//	})
-//	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
-//			@Property(key = "type", value="json")
-//	})
-//	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
-//			@Property(key = "codecType", value="json"),
-//			@Property(key = "useId", value="true", scalar = Scalar.Boolean),
-//			@Property(key = "idOnTop", value="true", scalar = Scalar.Boolean),
-//			@Property(key = "idKey", value="custom_id_key")
-//	})
-//	@Test
-//	public void testCodecJsonIdSeparator(@InjectService(timeout = 2000l) PersonPackage demoModel,  
-//			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
-//			@InjectService(timeout = 2000l) CodecModule codecModule,
-//			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
-//			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
-//			) throws InterruptedException, IOException {
-//	
-//		assertNotNull(demoModel);
-//		assertNotNull(codecModelInfo);
-//		assertNotNull(codecModuleConfigurator);
-//		assertNotNull(factoryConfigurator);
-//		assertNotNull(objMapperConfigurator);
-//		
-//		CodecJsonResource resource = new CodecJsonResource(URI.createURI("mytest.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
-//		
-//		Person person = PersonFactory.eINSTANCE.createPerson();
-//		person.setName("Ilenia");
-//		person.setLastName("Salvadori");
-//		person.setBirthDate(Date.valueOf(LocalDate.of(1990, 6, 20)));
-//		Address address = PersonFactory.eINSTANCE.createAddress();
-//		address.setStreet("Camsdorfer Str. 41");
-//		address.setZip("07749");
-//		person.setAddress(address);
-//		
+	@Test
+	public void testEMFJson() throws IOException {
+		ObjectMapper mapper = new ObjectMapper(JsonFactory.builder().build());
+		EMFModule module = new EMFModule();
+		mapper.registerModule(module);
+		mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+		mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+		Person person = getTestPerson();
+		System.out.println(mapper.writeValueAsString(person));
+//		JsonResource resource = new JsonResource(URI.createURI("test.json"), mapper);
+//		Person person = getTestPerson();
 //		resource.getContents().add(person);
-//		Map<String, Object> options = new HashMap<>();
-//		options.put(CodecAnnotations.CODEC_ID_SEPARATOR, "/");
-//		resource.save(options);
-//	}
-	
+//		resource.save(null);
+	}
+
 	private Person getTestPerson() {
 		Person person = PersonFactory.eINSTANCE.createPerson();
 		person.setName("John");

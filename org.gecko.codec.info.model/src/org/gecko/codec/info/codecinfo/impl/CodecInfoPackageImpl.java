@@ -818,7 +818,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEReference(getEClassCodecInfo_IdentityInfo(), this.getIdentityInfo(), null, "identityInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_TypeInfo(), this.getTypeInfo(), null, "typeInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_FeatureInfo(), this.getFeatureCodecInfo(), null, "featureInfo", null, 0, -1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEClassCodecInfo_ReferenceInfo(), this.getReferenceInfo(), null, "referenceInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEClassCodecInfo_ReferenceInfo(), this.getReferenceInfo(), null, "referenceInfo", null, 0, -1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(featureCodecInfoEClass, FeatureCodecInfo.class, "FeatureCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getFeatureCodecInfo_Id(), ecorePackage.getEString(), "id", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -826,7 +826,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEAttribute(getFeatureCodecInfo_ValueReaderName(), theEcorePackage.getEString(), "valueReaderName", "DEFAULT", 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecInfo_ValueWriterName(), theEcorePackage.getEString(), "valueWriterName", "DEFAULT", 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecInfo_Type(), this.getInfoType(), "type", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getFeatureCodecInfo_Key(), theEcorePackage.getEString(), "key", null, 1, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecInfo_Key(), theEcorePackage.getEString(), "key", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecInfo_Ignore(), theEcorePackage.getEBoolean(), "ignore", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(typeInfoEClass, TypeInfo.class, "TypeInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -947,6 +947,12 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		  (packageCodecInfoEClass,
 		   source,
 		   new String[] {
+		   });
+		addAnnotation
+		  (getFeatureCodecInfo_Key(),
+		   source,
+		   new String[] {
+			   "documentation", "This is the field name to be used for serialization. Can be set in the model through the http:///org/eclipse/emf/ecore/util/ExtendedMetaData name annotation. If EXTENDED_META_DATA module option is enabled, this will be used, otherwise the field name will be used."
 		   });
 		addAnnotation
 		  (getFeatureCodecInfo_Ignore(),

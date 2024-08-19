@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
@@ -29,6 +30,8 @@ import org.gecko.codec.info.CodecAnnotations;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoFactory;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
+import org.gecko.codec.info.codecinfo.CodecValueReader;
+import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
@@ -189,7 +192,6 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		if(valueReaderName != null) identityInfo.setValueReaderName(valueReaderName);
 		else identityInfo.setValueReaderName("DEFAULT_ID_READER");
 
-
 		String valueWriterName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_VALUE_WRITER_NAME);
 		if(valueWriterName != null) identityInfo.setValueWriterName(valueWriterName);
 		else identityInfo.setValueWriterName("DEFAULT_ID_WRITER");		
@@ -203,8 +205,10 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		if(ec instanceof EClass eClass) {
 			eClass.getEAllAttributes().forEach(att -> 
 				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(att, eClassCodecInfo)));
-			eClass.getEAllContainments().forEach(ref -> 
-				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(ref, eClassCodecInfo)));
+//			eClass.getEAllContainments().forEach(ref -> 
+//				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(ref, eClassCodecInfo)));
+			eClass.getEAllReferences().forEach(ref -> 
+				eClassCodecInfo.getReferenceInfo().add(createCodecRefInfo(ref, eClassCodecInfo)));
 		};
 
 
@@ -241,22 +245,33 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		}
 
 
-
-		//		TODO: what should I put in the features list...?
 		eClassCodecInfo.setTypeInfo(typeInfo);
 
+		return eClassCodecInfo;
+	}
 
+	/**
+	 * @param ref
+	 * @param eClassCodecInfo
+	 * @return
+	 */
+	private ReferenceInfo createCodecRefInfo(EReference ref, EClassCodecInfo eClassCodecInfo) {
 		ReferenceInfo refInfo = CodecInfoFactory.eINSTANCE.createReferenceInfo();
 		refInfo.setId(UUID.randomUUID().toString());
 		refInfo.setType(InfoType.REFERENCE);
-		refInfo.setValueReaderName("DEFAULT_ECLASS_READER");
-		refInfo.setValueWriterName("URIS_WRITER");
-		if(ec instanceof EClass eClass) {
-			eClass.getEAllReferences().forEach(ref -> refInfo.getFeatures().add(ref));
-		}
-		eClassCodecInfo.setReferenceInfo(refInfo);
-
-		return eClassCodecInfo;
+		refInfo.getFeatures().add(ref);
+		refInfo.setKey(getElementName(ref));
+		String isIgnore = getAnnotationDetails(ref, "codec", "ignore");
+		if("true".equalsIgnoreCase(isIgnore)) refInfo.setIgnore(Boolean.valueOf(isIgnore));
+		
+//		Set value reader/writer from annotation
+		String valueReaderName = getAnnotationDetails(ref, "codec", CodecAnnotations.CODEC_VALUE_READER_NAME);
+		if(valueReaderName != null) refInfo.setValueReaderName(valueReaderName);
+		else refInfo.setValueReaderName("DEFAULT_ECLASS_READER");
+		String valueWriterName = getAnnotationDetails(ref, "codec", CodecAnnotations.CODEC_VALUE_WRITER_NAME);
+		if(valueWriterName != null) refInfo.setValueWriterName(valueWriterName);
+		else refInfo.setValueWriterName("URIS_WRITER");
+		return refInfo;
 	}
 
 	/**
@@ -266,6 +281,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	private FeatureCodecInfo createCodecFeatureInfo(EStructuralFeature feature, EClassCodecInfo eClassCodecInfo) {
 		FeatureCodecInfo featureInfo = CodecInfoFactory.eINSTANCE.createFeatureCodecInfo();
 		featureInfo.setId(UUID.randomUUID().toString());
+		featureInfo.setType(InfoType.FEATURE);
 		featureInfo.setKey(getElementName(feature));
 		featureInfo.getFeatures().add(feature);
 		String isIgnore = getAnnotationDetails(feature, "codec", "ignore");
@@ -420,7 +436,30 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	 * @see org.gecko.codec.info.CodecModelInfo#getCodecInfoHolderByType(org.gecko.codec.info.codecinfo.InfoType)
 	 */
 	@Override
-	public Optional<CodecInfoHolder> getCodecInfoHolderByType(InfoType infoType) {
-		return Optional.ofNullable(codecInfoHolderMap.getOrDefault(infoType, null));	
+	public CodecInfoHolder getCodecInfoHolderByType(InfoType infoType) {
+		return codecInfoHolderMap.get(infoType);	
+	}
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.info.CodecModelInfo#addCodecValueWriterForType(org.gecko.codec.info.codecinfo.InfoType, org.gecko.codec.info.codecinfo.CodecValueWriter)
+	 */
+	@Override
+	public void addCodecValueWriterForType(InfoType infoType, CodecValueWriter<?, ?> writer) {
+		CodecInfoHolderHelper.addCodecWriter(getCodecInfoHolderByType(infoType), writer);
+		codecInfoHolderMap.put(infoType, getCodecInfoHolderByType(infoType));		
+	}
+
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.info.CodecModelInfo#addCodecValueReaderForType(org.gecko.codec.info.codecinfo.InfoType, org.gecko.codec.info.codecinfo.CodecValueReader)
+	 */
+	@Override
+	public void addCodecValueReaderForType(InfoType infoType, CodecValueReader<?, ?> reader) {
+		CodecInfoHolderHelper.addCodecReader(getCodecInfoHolderByType(infoType), reader);
+		codecInfoHolderMap.put(infoType, getCodecInfoHolderByType(infoType));	
+		
 	}
 }

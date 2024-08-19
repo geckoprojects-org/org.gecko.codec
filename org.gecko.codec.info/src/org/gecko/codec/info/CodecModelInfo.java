@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
+import org.gecko.codec.info.codecinfo.CodecValueReader;
+import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
@@ -70,8 +72,21 @@ public interface CodecModelInfo extends EPackage.Registry {
 	/**
 	 * Retrieves the {@link CodecInfoHolder}, if available, for a given {@link InfoType}
 	 * @param infoType the {@link InfoType} for which we want to retrieve the {@link CodecInfoHolder}
-	 * @return an {@link Optional} for the {@link CodecInfoHolder}
+	 * @return the {@link CodecInfoHolder} for the requested type
 	 */
-	public Optional<CodecInfoHolder> getCodecInfoHolderByType(InfoType infoType);
+	public CodecInfoHolder getCodecInfoHolderByType(InfoType infoType);
+	
+	
+	/**
+	 * @param infoHolder
+	 * @param writer
+	 */
+	public void addCodecValueWriterForType(InfoType infoType, CodecValueWriter<?,?> writer);
+	
+	/**
+	 * @param infoHolder
+	 * @param reader
+	 */
+	public void addCodecValueReaderForType(InfoType infoType, CodecValueReader<?,?> reader);
 
 }

@@ -93,15 +93,19 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_VALUE_WRITER_NAME = "codec.value.writer.name";
 	
-	/** CODEC_VALUE_READER 
-	 * Annotation used for specifying a ValueReader to be used when deserializing the object marked like this
-	 * */
-	String CODEC_VALUE_READER = "codec.value.reader";
 	
-	/** CODEC_VALUE_WRITER 
-	 * Annotation for specifying a ValueWriter to be used when serializing the object marked like this
+	/** CODEC_VALUE_READERS_MAP 
+	 * Options to be passed via {@link Resource}{@link #load} and {@link #save} options for specifying
+	 * alternative {@link CodecValueReader} for a certain @link{EStructuralFeature} 
 	 * */
-	String CODEC_VALUE_WRITER = "codec.value.writer";
+	String CODEC_VALUE_READERS_MAP = "codec.value.readers.map";
+	
+	
+	/** CODEC_VALUE_WRITERS_MAP 
+	 * Options to be passed via {@link Resource}{@link #load} and {@link #save} options for specifying
+	 * alternative {@link CodecValueWriter} for a certain @link{EStructuralFeature} 
+	 * */
+	String CODEC_VALUE_WRITERS_MAP = "codec.value.writers.map";
 	
 	/** CODEC_TYPE_USE 
 	 * Annotation used for specifying a strategy to serialize the type of the object (class name, uri, etc)

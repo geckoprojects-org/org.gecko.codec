@@ -57,5 +57,7 @@ public interface CodecModuleOptions {
 	String CODEC_MODULE_PROXY_KEY = "codec.module.proxy.key";
 	
 	String CODEC_MODULE_TIMESTAMP_KEY = "codec.module.timestamp.key";
+	
+	String CODEC_MODULE_SUPERTYPE_KEY = "codec.module.supertype.key";
 
 }
