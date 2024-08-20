@@ -20,6 +20,13 @@ package org.gecko.codec.info;
  */
 public interface CodecAnnotations {
 	
+	/** CODEC_INHERIT 
+	 * Annotation for specifying that codec annotations on the direct parent should be inherited, even if the parent 
+	 * comes from another {@link EPackage}. By default only if the parent belongs to the same {@link EPackage} then the 
+	 * annotations are inherited. 
+	 * */
+	String CODEC_INHERIT = "codec.inherit";
+	
 	/** CODEC_IGNORE 
 	 *  Annotation for specifying that the feature should not be serialize.
 	 *  This is supposed to be used when annotating the model.

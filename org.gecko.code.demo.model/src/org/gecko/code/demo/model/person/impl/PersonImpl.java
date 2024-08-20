@@ -34,6 +34,7 @@ import org.gecko.code.demo.model.person.PersonPackage;
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#isMarried <em>Married</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getGender <em>Gender</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getNonContainedAdd <em>Non Contained Add</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getId <em>Id</em>}</li>
  * </ul>
  *
  * @generated
@@ -178,6 +179,26 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected Address nonContainedAdd;
+
+	/**
+	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ID_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected String id = ID_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -427,6 +448,29 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setId(String newId) {
+		String oldId = id;
+		id = newId;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__ID, oldId, id));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case PersonPackage.PERSON__ADDRESS:
@@ -460,6 +504,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__NON_CONTAINED_ADD:
 				if (resolve) return getNonContainedAdd();
 				return basicGetNonContainedAdd();
+			case PersonPackage.PERSON__ID:
+				return getId();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -495,6 +541,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return;
 			case PersonPackage.PERSON__NON_CONTAINED_ADD:
 				setNonContainedAdd((Address)newValue);
+				return;
+			case PersonPackage.PERSON__ID:
+				setId((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -532,6 +581,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__NON_CONTAINED_ADD:
 				setNonContainedAdd((Address)null);
 				return;
+			case PersonPackage.PERSON__ID:
+				setId(ID_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -560,6 +612,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return gender != GENDER_EDEFAULT;
 			case PersonPackage.PERSON__NON_CONTAINED_ADD:
 				return nonContainedAdd != null;
+			case PersonPackage.PERSON__ID:
+				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -586,6 +640,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		result.append(married);
 		result.append(", gender: ");
 		result.append(gender);
+		result.append(", id: ");
+		result.append(id);
 		result.append(')');
 		return result.toString();
 	}

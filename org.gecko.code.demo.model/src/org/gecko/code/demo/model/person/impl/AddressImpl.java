@@ -22,6 +22,7 @@ import org.gecko.code.demo.model.person.PersonPackage;
  * <ul>
  *   <li>{@link org.gecko.code.demo.model.person.impl.AddressImpl#getStreet <em>Street</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.AddressImpl#getZip <em>Zip</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.AddressImpl#getId <em>Id</em>}</li>
  * </ul>
  *
  * @generated
@@ -66,6 +67,26 @@ public class AddressImpl extends MinimalEObjectImpl.Container implements Address
 	 * @ordered
 	 */
 	protected String zip = ZIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ID_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected String id = ID_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -138,12 +159,37 @@ public class AddressImpl extends MinimalEObjectImpl.Container implements Address
 	 * @generated
 	 */
 	@Override
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setId(String newId) {
+		String oldId = id;
+		id = newId;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.ADDRESS__ID, oldId, id));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case PersonPackage.ADDRESS__STREET:
 				return getStreet();
 			case PersonPackage.ADDRESS__ZIP:
 				return getZip();
+			case PersonPackage.ADDRESS__ID:
+				return getId();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -161,6 +207,9 @@ public class AddressImpl extends MinimalEObjectImpl.Container implements Address
 				return;
 			case PersonPackage.ADDRESS__ZIP:
 				setZip((String)newValue);
+				return;
+			case PersonPackage.ADDRESS__ID:
+				setId((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -180,6 +229,9 @@ public class AddressImpl extends MinimalEObjectImpl.Container implements Address
 			case PersonPackage.ADDRESS__ZIP:
 				setZip(ZIP_EDEFAULT);
 				return;
+			case PersonPackage.ADDRESS__ID:
+				setId(ID_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -196,6 +248,8 @@ public class AddressImpl extends MinimalEObjectImpl.Container implements Address
 				return STREET_EDEFAULT == null ? street != null : !STREET_EDEFAULT.equals(street);
 			case PersonPackage.ADDRESS__ZIP:
 				return ZIP_EDEFAULT == null ? zip != null : !ZIP_EDEFAULT.equals(zip);
+			case PersonPackage.ADDRESS__ID:
+				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -214,6 +268,8 @@ public class AddressImpl extends MinimalEObjectImpl.Container implements Address
 		result.append(street);
 		result.append(", zip: ");
 		result.append(zip);
+		result.append(", id: ");
+		result.append(id);
 		result.append(')');
 		return result.toString();
 	}

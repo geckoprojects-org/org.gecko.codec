@@ -34,13 +34,15 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="featureInfo" upperBound="-1"
         eType="#//FeatureCodecInfo" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="referenceInfo" upperBound="-1"
-        eType="#//ReferenceInfo" containment="true"/>
+        eType="#//ReferenceCodecInfo" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="operationInfo" upperBound="-1"
+        eType="#//OperationCodecInfo" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FeatureCodecInfo">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         iD="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="features" upperBound="-1"
-        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EStructuralFeature"/>
+        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ETypedElement"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="valueReaderName" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
         defaultValueLiteral="DEFAULT"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="valueWriterName" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
@@ -87,7 +89,36 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ReferenceInfo" eSuperTypes="#//FeatureCodecInfo"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ReferenceCodecInfo" eSuperTypes="#//FeatureCodecInfo">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eReferences" upperBound="-1"
+        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EReference"
+        volatile="true" transient="true" derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EReference).map(EReference.class::cast).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+        <details key="suppressedSetVisibility" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AttributeCodecInfo" eSuperTypes="#//FeatureCodecInfo">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eAttributes" upperBound="-1"
+        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EAttribute"
+        volatile="true" transient="true" derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EAttribute).map(EAttribute.class::cast).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+        <details key="suppressedSetVisibility" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OperationCodecInfo" eSuperTypes="#//FeatureCodecInfo">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eOperations" upperBound="-1"
+        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EOperation"
+        volatile="true" transient="true" derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EOperation).map(EOperation.class::cast).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+        <details key="suppressedSetVisibility" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="InfoType">
     <eLiterals name="IDENTITY" literal="IDENTITY"/>
     <eLiterals name="TYPE" value="1" literal="TYPE"/>
@@ -158,5 +189,4 @@
         changeable="false" iD="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="DeserializationContext" instanceClassName="com.fasterxml.jackson.databind.DeserializationContext"/>
-  <eClassifiers xsi:type="ecore:EClass" name="OperationInfo" eSuperTypes="#//FeatureCodecInfo"/>
 </ecore:EPackage>

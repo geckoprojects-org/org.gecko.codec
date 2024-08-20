@@ -25,10 +25,12 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.gecko.code.demo.model.person.Address;
 import org.gecko.code.demo.model.person.BusinessAddress;
 import org.gecko.code.demo.model.person.BusinessPerson;
@@ -511,27 +513,83 @@ public class CodecModelInfoOverwriteTest {
 		assertEquals("TEST_WRITER", featureInfo.getValueWriterName());
 	}
 	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@Test
+	public void testSerialization(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+	
+		CodecJsonResource resource = new CodecJsonResource(URI.createURI("personSer.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		
+		Person person = getTestBusinessPerson();		
+//		resource.getContents().add(person.getNonContainedAdd());
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+//		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();		
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
+//		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
+//		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY, false);
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+//		options.put("codec.options", classOptions);
+		resource.save(options);
+		
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
+		assertNotNull(modelCodecInfo);
+		
+	}
+	
 	private Person getTestPerson() {
 		Person person = PersonFactory.eINSTANCE.createPerson();
+		person.setId(UUID.randomUUID().toString());
 		person.setName("John");
 		person.setLastName("Doe");
 		person.setBirthDate(Date.valueOf(LocalDate.of(1990, 6, 20)));
 		Address address = PersonFactory.eINSTANCE.createAddress();
+		address.setId(UUID.randomUUID().toString());
 		address.setStreet("Camsdorfer Str.");
 		address.setZip("07749");
 		person.setAddress(address);
+		address = PersonFactory.eINSTANCE.createAddress();
+		address.setId(UUID.randomUUID().toString());
+		address.setStreet("Via Oregne");
+		address.setZip("32037");
+		person.setNonContainedAdd(address);
 		return person;
 	}
 	
 	private BusinessPerson getTestBusinessPerson() {
 		BusinessPerson person = PersonFactory.eINSTANCE.createBusinessPerson();
+		person.setId(UUID.randomUUID().toString());
 		person.setName("John");
 		person.setLastName("Doe");
 		person.setBirthDate(Date.valueOf(LocalDate.of(1990, 6, 20)));
 		BusinessAddress address = PersonFactory.eINSTANCE.createBusinessAddress();
+		address.setId(UUID.randomUUID().toString());
 		address.setStreet("Camsdorfer Str.");
 		address.setZip("07749");
 		person.setAddress(address);
+		address = PersonFactory.eINSTANCE.createBusinessAddress();
+		address.setId(UUID.randomUUID().toString());
+		address.setStreet("Via Oregne");
+		address.setZip("32037");
+		person.setNonContainedAdd(address);
 		return person;
 	}
 }

@@ -32,6 +32,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="married" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gender" eType="#//GENDER_TYPE"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="nonContainedAdd" eType="#//Address"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        iD="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Address">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="street" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -40,8 +42,14 @@
         <details key="ignore" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        iD="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BusinessPerson" eSuperTypes="#//Person"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BusinessPerson" eSuperTypes="#//Person">
+    <eAnnotations source="codec.id">
+      <details key="strategy" value="ID_FIELD"/>
+    </eAnnotations>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Contact">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>

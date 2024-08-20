@@ -4,7 +4,7 @@ package org.gecko.codec.info.codecinfo;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypedElement;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -56,7 +56,7 @@ public interface FeatureCodecInfo {
 
 	/**
 	 * Returns the value of the '<em><b>Features</b></em>' reference list.
-	 * The list contents are of type {@link org.eclipse.emf.ecore.EStructuralFeature}.
+	 * The list contents are of type {@link org.eclipse.emf.ecore.ETypedElement}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Features</em>' reference list.
@@ -64,7 +64,7 @@ public interface FeatureCodecInfo {
 	 * @model
 	 * @generated
 	 */
-	EList<EStructuralFeature> getFeatures();
+	EList<ETypedElement> getFeatures();
 
 	/**
 	 * Returns the value of the '<em><b>Value Reader Name</b></em>' attribute.

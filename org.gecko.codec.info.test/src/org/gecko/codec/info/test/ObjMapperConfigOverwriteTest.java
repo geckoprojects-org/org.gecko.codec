@@ -28,9 +28,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.gecko.code.demo.model.person.Address;
@@ -489,9 +491,15 @@ public class ObjMapperConfigOverwriteTest {
 		person.setLastName("Doe");
 		person.setBirthDate(Date.valueOf(LocalDate.of(1990, 6, 20)));
 		Address address = PersonFactory.eINSTANCE.createAddress();
+		address.setId(UUID.randomUUID().toString());
 		address.setStreet("Camsdorfer Str.");
 		address.setZip("07749");
 		person.setAddress(address);
+		address = PersonFactory.eINSTANCE.createAddress();
+		address.setId(UUID.randomUUID().toString());
+		address.setStreet("Via Oregne");
+		address.setZip("32037");
+		person.setNonContainedAdd(address);
 		return person;
 	}
 }

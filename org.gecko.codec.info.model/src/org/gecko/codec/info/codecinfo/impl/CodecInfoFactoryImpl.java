@@ -65,9 +65,10 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 			case CodecInfoPackage.FEATURE_CODEC_INFO: return (EObject)createFeatureCodecInfo();
 			case CodecInfoPackage.TYPE_INFO: return (EObject)createTypeInfo();
 			case CodecInfoPackage.IDENTITY_INFO: return (EObject)createIdentityInfo();
-			case CodecInfoPackage.REFERENCE_INFO: return (EObject)createReferenceInfo();
+			case CodecInfoPackage.REFERENCE_CODEC_INFO: return (EObject)createReferenceCodecInfo();
+			case CodecInfoPackage.ATTRIBUTE_CODEC_INFO: return (EObject)createAttributeCodecInfo();
+			case CodecInfoPackage.OPERATION_CODEC_INFO: return (EObject)createOperationCodecInfo();
 			case CodecInfoPackage.CODEC_INFO_HOLDER: return (EObject)createCodecInfoHolder();
-			case CodecInfoPackage.OPERATION_INFO: return (EObject)createOperationInfo();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -172,9 +173,31 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * @generated
 	 */
 	@Override
-	public ReferenceInfo createReferenceInfo() {
-		ReferenceInfoImpl referenceInfo = new ReferenceInfoImpl();
-		return referenceInfo;
+	public ReferenceCodecInfo createReferenceCodecInfo() {
+		ReferenceCodecInfoImpl referenceCodecInfo = new ReferenceCodecInfoImpl();
+		return referenceCodecInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public AttributeCodecInfo createAttributeCodecInfo() {
+		AttributeCodecInfoImpl attributeCodecInfo = new AttributeCodecInfoImpl();
+		return attributeCodecInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public OperationCodecInfo createOperationCodecInfo() {
+		OperationCodecInfoImpl operationCodecInfo = new OperationCodecInfoImpl();
+		return operationCodecInfo;
 	}
 
 	/**
@@ -186,17 +209,6 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	public CodecInfoHolder createCodecInfoHolder() {
 		CodecInfoHolderImpl codecInfoHolder = new CodecInfoHolderImpl();
 		return codecInfoHolder;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public OperationInfo createOperationInfo() {
-		OperationInfoImpl operationInfo = new OperationInfoImpl();
-		return operationInfo;
 	}
 
 	/**

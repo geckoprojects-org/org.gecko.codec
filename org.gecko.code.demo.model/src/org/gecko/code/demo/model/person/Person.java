@@ -25,6 +25,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.code.demo.model.person.Person#isMarried <em>Married</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getGender <em>Gender</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getNonContainedAdd <em>Non Contained Add</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getId <em>Id</em>}</li>
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getPerson()
@@ -212,5 +213,27 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setNonContainedAdd(Address value);
+
+	/**
+	 * Returns the value of the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Id</em>' attribute.
+	 * @see #setId(String)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Id()
+	 * @model id="true" required="true"
+	 * @generated
+	 */
+	String getId();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getId <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Id</em>' attribute.
+	 * @see #getId()
+	 * @generated
+	 */
+	void setId(String value);
 
 } // Person

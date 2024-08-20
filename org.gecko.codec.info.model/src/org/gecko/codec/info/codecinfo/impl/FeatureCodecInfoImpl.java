@@ -9,7 +9,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypedElement;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
@@ -68,7 +68,7 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<EStructuralFeature> features;
+	protected EList<ETypedElement> features;
 
 	/**
 	 * The default value of the '{@link #getValueReaderName() <em>Value Reader Name</em>}' attribute.
@@ -218,9 +218,9 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 */
 	@Override
-	public EList<EStructuralFeature> getFeatures() {
+	public EList<ETypedElement> getFeatures() {
 		if (features == null) {
-			features = new EObjectResolvingEList<EStructuralFeature>(EStructuralFeature.class, this, CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES);
+			features = new EObjectResolvingEList<ETypedElement>(ETypedElement.class, this, CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES);
 		}
 		return features;
 	}
@@ -380,7 +380,7 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 				return;
 			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
 				getFeatures().clear();
-				getFeatures().addAll((Collection<? extends EStructuralFeature>)newValue);
+				getFeatures().addAll((Collection<? extends ETypedElement>)newValue);
 				return;
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				setValueReaderName((String)newValue);

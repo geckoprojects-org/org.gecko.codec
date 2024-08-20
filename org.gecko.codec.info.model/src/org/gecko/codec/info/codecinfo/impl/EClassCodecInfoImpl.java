@@ -23,7 +23,8 @@ import org.gecko.codec.info.codecinfo.CodecInfoPackage;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
-import org.gecko.codec.info.codecinfo.ReferenceInfo;
+import org.gecko.codec.info.codecinfo.OperationCodecInfo;
+import org.gecko.codec.info.codecinfo.ReferenceCodecInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 
 /**
@@ -40,6 +41,7 @@ import org.gecko.codec.info.codecinfo.TypeInfo;
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getTypeInfo <em>Type Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getFeatureInfo <em>Feature Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getReferenceInfo <em>Reference Info</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getOperationInfo <em>Operation Info</em>}</li>
  * </ul>
  *
  * @generated
@@ -113,7 +115,17 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ReferenceInfo> referenceInfo;
+	protected EList<ReferenceCodecInfo> referenceInfo;
+
+	/**
+	 * The cached value of the '{@link #getOperationInfo() <em>Operation Info</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getOperationInfo()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<OperationCodecInfo> operationInfo;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -306,11 +318,24 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
-	public EList<ReferenceInfo> getReferenceInfo() {
+	public EList<ReferenceCodecInfo> getReferenceInfo() {
 		if (referenceInfo == null) {
-			referenceInfo = new EObjectContainmentEList<ReferenceInfo>(ReferenceInfo.class, this, CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO);
+			referenceInfo = new EObjectContainmentEList<ReferenceCodecInfo>(ReferenceCodecInfo.class, this, CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO);
 		}
 		return referenceInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<OperationCodecInfo> getOperationInfo() {
+		if (operationInfo == null) {
+			operationInfo = new EObjectContainmentEList<OperationCodecInfo>(OperationCodecInfo.class, this, CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO);
+		}
+		return operationInfo;
 	}
 
 	/**
@@ -329,6 +354,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return ((InternalEList<?>)getFeatureInfo()).basicRemove(otherEnd, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				return ((InternalEList<?>)getReferenceInfo()).basicRemove(otherEnd, msgs);
+			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
+				return ((InternalEList<?>)getOperationInfo()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -354,6 +381,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return getFeatureInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				return getReferenceInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
+				return getOperationInfo();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -385,7 +414,11 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				getReferenceInfo().clear();
-				getReferenceInfo().addAll((Collection<? extends ReferenceInfo>)newValue);
+				getReferenceInfo().addAll((Collection<? extends ReferenceCodecInfo>)newValue);
+				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
+				getOperationInfo().clear();
+				getOperationInfo().addAll((Collection<? extends OperationCodecInfo>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -417,6 +450,9 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				getReferenceInfo().clear();
 				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
+				getOperationInfo().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -441,6 +477,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return featureInfo != null && !featureInfo.isEmpty();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
 				return referenceInfo != null && !referenceInfo.isEmpty();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
+				return operationInfo != null && !operationInfo.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

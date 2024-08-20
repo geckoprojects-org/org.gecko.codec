@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
+import org.gecko.codec.info.codecinfo.AttributeCodecInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoFactory;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecInfoPackage;
@@ -27,9 +28,9 @@ import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
-import org.gecko.codec.info.codecinfo.OperationInfo;
+import org.gecko.codec.info.codecinfo.OperationCodecInfo;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
-import org.gecko.codec.info.codecinfo.ReferenceInfo;
+import org.gecko.codec.info.codecinfo.ReferenceCodecInfo;
 import org.gecko.codec.info.codecinfo.SampleValueReader;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 
@@ -80,7 +81,21 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass referenceInfoEClass = null;
+	private EClass referenceCodecInfoEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass attributeCodecInfoEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass operationCodecInfoEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -109,13 +124,6 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	private EClass sampleValueReaderEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass operationInfoEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -327,6 +335,16 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
+	public EReference getEClassCodecInfo_OperationInfo() {
+		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getFeatureCodecInfo() {
 		return featureCodecInfoEClass;
 	}
@@ -477,8 +495,58 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EClass getReferenceInfo() {
-		return referenceInfoEClass;
+	public EClass getReferenceCodecInfo() {
+		return referenceCodecInfoEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getReferenceCodecInfo_EReferences() {
+		return (EReference)referenceCodecInfoEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getAttributeCodecInfo() {
+		return attributeCodecInfoEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getAttributeCodecInfo_EAttributes() {
+		return (EReference)attributeCodecInfoEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getOperationCodecInfo() {
+		return operationCodecInfoEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getOperationCodecInfo_EOperations() {
+		return (EReference)operationCodecInfoEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -637,16 +705,6 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EClass getOperationInfo() {
-		return operationInfoEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EEnum getInfoType() {
 		return infoTypeEEnum;
 	}
@@ -713,6 +771,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__TYPE_INFO);
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__FEATURE_INFO);
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__REFERENCE_INFO);
+		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__OPERATION_INFO);
 
 		featureCodecInfoEClass = createEClass(FEATURE_CODEC_INFO);
 		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__ID);
@@ -732,7 +791,14 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		createEAttribute(identityInfoEClass, IDENTITY_INFO__ID_SEPARATOR);
 		createEAttribute(identityInfoEClass, IDENTITY_INFO__ID_ORDER);
 
-		referenceInfoEClass = createEClass(REFERENCE_INFO);
+		referenceCodecInfoEClass = createEClass(REFERENCE_CODEC_INFO);
+		createEReference(referenceCodecInfoEClass, REFERENCE_CODEC_INFO__EREFERENCES);
+
+		attributeCodecInfoEClass = createEClass(ATTRIBUTE_CODEC_INFO);
+		createEReference(attributeCodecInfoEClass, ATTRIBUTE_CODEC_INFO__EATTRIBUTES);
+
+		operationCodecInfoEClass = createEClass(OPERATION_CODEC_INFO);
+		createEReference(operationCodecInfoEClass, OPERATION_CODEC_INFO__EOPERATIONS);
 
 		codecValueReaderEClass = createEClass(CODEC_VALUE_READER);
 		createEAttribute(codecValueReaderEClass, CODEC_VALUE_READER__NAME);
@@ -752,8 +818,6 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		sampleValueReaderEClass = createEClass(SAMPLE_VALUE_READER);
 		createEAttribute(sampleValueReaderEClass, SAMPLE_VALUE_READER__NAME);
 		createEOperation(sampleValueReaderEClass, SAMPLE_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT);
-
-		operationInfoEClass = createEClass(OPERATION_INFO);
 
 		// Create enums
 		infoTypeEEnum = createEEnum(INFO_TYPE);
@@ -802,8 +866,9 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		// Add supertypes to classes
 		typeInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
 		identityInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
-		referenceInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
-		operationInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
+		referenceCodecInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
+		attributeCodecInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
+		operationCodecInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(packageCodecInfoEClass, PackageCodecInfo.class, "PackageCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -818,11 +883,12 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEReference(getEClassCodecInfo_IdentityInfo(), this.getIdentityInfo(), null, "identityInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_TypeInfo(), this.getTypeInfo(), null, "typeInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_FeatureInfo(), this.getFeatureCodecInfo(), null, "featureInfo", null, 0, -1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEClassCodecInfo_ReferenceInfo(), this.getReferenceInfo(), null, "referenceInfo", null, 0, -1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEClassCodecInfo_ReferenceInfo(), this.getReferenceCodecInfo(), null, "referenceInfo", null, 0, -1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEClassCodecInfo_OperationInfo(), this.getOperationCodecInfo(), null, "operationInfo", null, 0, -1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(featureCodecInfoEClass, FeatureCodecInfo.class, "FeatureCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getFeatureCodecInfo_Id(), ecorePackage.getEString(), "id", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getFeatureCodecInfo_Features(), theEcorePackage.getEStructuralFeature(), null, "features", null, 0, -1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getFeatureCodecInfo_Features(), theEcorePackage.getETypedElement(), null, "features", null, 0, -1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecInfo_ValueReaderName(), theEcorePackage.getEString(), "valueReaderName", "DEFAULT", 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecInfo_ValueWriterName(), theEcorePackage.getEString(), "valueWriterName", "DEFAULT", 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecInfo_Type(), this.getInfoType(), "type", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -838,7 +904,14 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEAttribute(getIdentityInfo_IdSeparator(), ecorePackage.getEString(), "idSeparator", ".", 0, 1, IdentityInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIdentityInfo_IdOrder(), ecorePackage.getEInt(), "idOrder", null, 0, 1, IdentityInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(referenceInfoEClass, ReferenceInfo.class, "ReferenceInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(referenceCodecInfoEClass, ReferenceCodecInfo.class, "ReferenceCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getReferenceCodecInfo_EReferences(), theEcorePackage.getEReference(), null, "eReferences", null, 0, -1, ReferenceCodecInfo.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+
+		initEClass(attributeCodecInfoEClass, AttributeCodecInfo.class, "AttributeCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getAttributeCodecInfo_EAttributes(), theEcorePackage.getEAttribute(), null, "eAttributes", null, 0, -1, AttributeCodecInfo.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+
+		initEClass(operationCodecInfoEClass, OperationCodecInfo.class, "OperationCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getOperationCodecInfo_EOperations(), theEcorePackage.getEOperation(), null, "eOperations", null, 0, -1, OperationCodecInfo.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
 		initEClass(codecValueReaderEClass, CodecValueReader.class, "CodecValueReader", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCodecValueReader_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecValueReader.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -882,8 +955,6 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		addEParameter(op, this.getDeserializationContext(), "context", 1, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(sampleValueReaderEClass_T);
 		initEOperation(op, g1);
-
-		initEClass(operationInfoEClass, OperationInfo.class, "OperationInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize enums and add enum literals
 		initEEnum(infoTypeEEnum, InfoType.class, "InfoType");
@@ -989,6 +1060,27 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		   source,
 		   new String[] {
 			   "documentation", "This supports the possibility of setting an id as a combination of multiple fields. The idOrder defines the position of the fields to be used when building the id."
+		   });
+		addAnnotation
+		  (getReferenceCodecInfo_EReferences(),
+		   source,
+		   new String[] {
+			   "get", "return <%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EReference).map(EReference.class::cast).collect(<%java.util.stream.Collectors%>.toList()));",
+			   "suppressedSetVisibility", "true"
+		   });
+		addAnnotation
+		  (getAttributeCodecInfo_EAttributes(),
+		   source,
+		   new String[] {
+			   "get", "return <%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EAttribute).map(EAttribute.class::cast).collect(<%java.util.stream.Collectors%>.toList()));",
+			   "suppressedSetVisibility", "true"
+		   });
+		addAnnotation
+		  (getOperationCodecInfo_EOperations(),
+		   source,
+		   new String[] {
+			   "get", "return <%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EOperation).map(EOperation.class::cast).collect(<%java.util.stream.Collectors%>.toList()));",
+			   "suppressedSetVisibility", "true"
 		   });
 		addAnnotation
 		  (getCodecInfoHolder__GetReaderByName__String(),

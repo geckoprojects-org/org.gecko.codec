@@ -11,7 +11,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getBusinessPerson()
- * @model
+ * @model annotation="codec.id strategy='ID_FIELD'"
  * @generated
  */
 @ProviderType

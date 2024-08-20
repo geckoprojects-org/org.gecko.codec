@@ -147,13 +147,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__NON_CONTAINED_ADD = 7;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__ID = 8;
+
+	/**
 	 * The number of structural features of the '<em>Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 8;
+	int PERSON_FEATURE_COUNT = 9;
 
 	/**
 	 * The number of operations of the '<em>Person</em>' class.
@@ -193,13 +202,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int ADDRESS__ZIP = 1;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADDRESS__ID = 2;
+
+	/**
 	 * The number of structural features of the '<em>Address</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ADDRESS_FEATURE_COUNT = 2;
+	int ADDRESS_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Address</em>' class.
@@ -293,6 +311,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int BUSINESS_PERSON__NON_CONTAINED_ADD = PERSON__NON_CONTAINED_ADD;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__ID = PERSON__ID;
+
+	/**
 	 * The number of structural features of the '<em>Business Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -374,6 +401,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int BUSINESS_ADDRESS__ZIP = ADDRESS__ZIP;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_ADDRESS__ID = ADDRESS__ID;
 
 	/**
 	 * The feature id for the '<em><b>Company Name</b></em>' attribute.
@@ -512,6 +548,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getPerson_NonContainedAdd();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getId()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_Id();
+
+	/**
 	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.Address <em>Address</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -542,6 +589,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getAddress_Zip();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Address#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see org.gecko.code.demo.model.person.Address#getId()
+	 * @see #getAddress()
+	 * @generated
+	 */
+	EAttribute getAddress_Id();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.BusinessPerson <em>Business Person</em>}'.
@@ -703,6 +761,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		EReference PERSON__NON_CONTAINED_ADD = eINSTANCE.getPerson_NonContainedAdd();
 
 		/**
+		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__ID = eINSTANCE.getPerson_Id();
+
+		/**
 		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.AddressImpl <em>Address</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -727,6 +793,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute ADDRESS__ZIP = eINSTANCE.getAddress_Zip();
+
+		/**
+		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADDRESS__ID = eINSTANCE.getAddress_Id();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.BusinessPersonImpl <em>Business Person</em>}' class.

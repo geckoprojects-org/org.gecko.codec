@@ -223,6 +223,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getPerson_Id() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getAddress() {
 		return addressEClass;
 	}
@@ -245,6 +255,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	@Override
 	public EAttribute getAddress_Zip() {
 		return (EAttribute)addressEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getAddress_Id() {
+		return (EAttribute)addressEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -345,10 +365,12 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEAttribute(personEClass, PERSON__MARRIED);
 		createEAttribute(personEClass, PERSON__GENDER);
 		createEReference(personEClass, PERSON__NON_CONTAINED_ADD);
+		createEAttribute(personEClass, PERSON__ID);
 
 		addressEClass = createEClass(ADDRESS);
 		createEAttribute(addressEClass, ADDRESS__STREET);
 		createEAttribute(addressEClass, ADDRESS__ZIP);
+		createEAttribute(addressEClass, ADDRESS__ID);
 
 		businessPersonEClass = createEClass(BUSINESS_PERSON);
 
@@ -403,10 +425,12 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEAttribute(getPerson_Married(), ecorePackage.getEBoolean(), "married", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Gender(), this.getGENDER_TYPE(), "gender", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPerson_NonContainedAdd(), this.getAddress(), null, "nonContainedAdd", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPerson_Id(), ecorePackage.getEString(), "id", null, 1, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addressEClass, Address.class, "Address", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddress_Street(), ecorePackage.getEString(), "street", null, 0, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddress_Zip(), ecorePackage.getEString(), "zip", null, 0, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAddress_Id(), ecorePackage.getEString(), "id", null, 1, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(businessPersonEClass, BusinessPerson.class, "BusinessPerson", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -497,6 +521,12 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		   new String[] {
 			   "id.field", "true",
 			   "id.order", "1"
+		   });
+		addAnnotation
+		  (businessPersonEClass,
+		   source,
+		   new String[] {
+			   "strategy", "ID_FIELD"
 		   });
 	}
 

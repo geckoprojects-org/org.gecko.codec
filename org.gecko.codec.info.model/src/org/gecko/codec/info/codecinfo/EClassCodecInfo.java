@@ -23,6 +23,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getTypeInfo <em>Type Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo <em>Feature Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo <em>Reference Info</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getOperationInfo <em>Operation Info</em>}</li>
  * </ul>
  *
  * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo()
@@ -133,7 +134,7 @@ public interface EClassCodecInfo {
 
 	/**
 	 * Returns the value of the '<em><b>Reference Info</b></em>' containment reference list.
-	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.ReferenceInfo}.
+	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.ReferenceCodecInfo}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Reference Info</em>' containment reference list.
@@ -141,6 +142,18 @@ public interface EClassCodecInfo {
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<ReferenceInfo> getReferenceInfo();
+	EList<ReferenceCodecInfo> getReferenceInfo();
+
+	/**
+	 * Returns the value of the '<em><b>Operation Info</b></em>' containment reference list.
+	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.OperationCodecInfo}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Operation Info</em>' containment reference list.
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_OperationInfo()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<OperationCodecInfo> getOperationInfo();
 
 } // EClassCodecInfo
