@@ -24,10 +24,13 @@ import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.gecko.codec.demo.jackson.CodecModule;
@@ -112,6 +115,12 @@ public class CodecResource extends ResourceImpl {
 	private void updateCodecModelInfoFromOptions(EClassCodecInfo codecInfo, Map<?, ?> options) {
 		if(options.containsKey(CodecAnnotations.CODEC_ID_STRATEGY)) {
 			codecInfo.getIdentityInfo().setIdStrategy((String) options.get(CodecAnnotations.CODEC_ID_STRATEGY));
+			if("ID_FIELD".equals(codecInfo.getIdentityInfo().getIdStrategy())) {
+				codecInfo.getIdentityInfo().getFeatures().clear();
+				if(codecInfo.getClassifier() instanceof EClass ec) {
+					codecInfo.getIdentityInfo().getFeatures().add(ec.getEIDAttribute());
+				}
+			}
 		}
 		if(options.containsKey(CodecAnnotations.CODEC_ID_SEPARATOR)) {
 			codecInfo.getIdentityInfo().setIdSeparator((String) options.get(CodecAnnotations.CODEC_ID_SEPARATOR));
@@ -120,6 +129,22 @@ public class CodecResource extends ResourceImpl {
 			List<EStructuralFeature> idFeatures = (List<EStructuralFeature>) options.get(CodecAnnotations.CODEC_ID_FEATURES_LIST);
 			codecInfo.getIdentityInfo().getFeatures().clear();
 			codecInfo.getIdentityInfo().getFeatures().addAll(idFeatures);
+		}
+		if(options.containsKey(CodecAnnotations.CODEC_ID_VALUE_READER_NAME)) {
+			codecInfo.getIdentityInfo().setValueReaderName((String) options.get(CodecAnnotations.CODEC_ID_VALUE_READER_NAME));
+		}
+		if(options.containsKey(CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME)) {
+			codecInfo.getIdentityInfo().setValueWriterName((String) options.get(CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME));
+		}
+		if(options.containsKey(CodecAnnotations.CODEC_ID_VALUE_READER)) {
+			CodecValueReader<?,?> reader = (CodecValueReader<?,?>) options.get(CodecAnnotations.CODEC_ID_VALUE_READER);
+			codecInfo.getIdentityInfo().setValueReaderName(reader.getName());
+			modelInfoService.addCodecValueReaderForType(InfoType.IDENTITY, reader);
+		}
+		if(options.containsKey(CodecAnnotations.CODEC_ID_VALUE_WRITER)) {
+			CodecValueWriter<?,?> writer = (CodecValueWriter<?,?>) options.get(CodecAnnotations.CODEC_ID_VALUE_WRITER);
+			codecInfo.getIdentityInfo().setValueWriterName(writer.getName());
+			modelInfoService.addCodecValueWriterForType(InfoType.IDENTITY, writer);
 		}
 		if(options.containsKey(CodecAnnotations.CODEC_TYPE_USE)) {
 			String typeUse = (String) options.get(CodecAnnotations.CODEC_TYPE_USE);
@@ -143,6 +168,22 @@ public class CodecResource extends ResourceImpl {
 				LOGGER.warning(String.format("No Reader/Writer available for type use %s. Keeping the default ones.", typeUse));
 			}			
 		}
+		if(options.containsKey(CodecAnnotations.CODEC_TYPE_VALUE_READER_NAME)) {
+			codecInfo.getTypeInfo().setValueReaderName((String) options.get(CodecAnnotations.CODEC_TYPE_VALUE_READER_NAME));
+		}
+		if(options.containsKey(CodecAnnotations.CODEC_TYPE_VALUE_WRITER_NAME)) {
+			codecInfo.getTypeInfo().setValueWriterName((String) options.get(CodecAnnotations.CODEC_TYPE_VALUE_WRITER_NAME));
+		}
+		if(options.containsKey(CodecAnnotations.CODEC_TYPE_VALUE_READER)) {
+			CodecValueReader<?,?> reader = (CodecValueReader<?,?>) options.get(CodecAnnotations.CODEC_TYPE_VALUE_READER);
+			codecInfo.getTypeInfo().setValueReaderName(reader.getName());
+			modelInfoService.addCodecValueReaderForType(InfoType.TYPE, reader);
+		}
+		if(options.containsKey(CodecAnnotations.CODEC_TYPE_VALUE_WRITER)) {
+			CodecValueWriter<?,?> writer = (CodecValueWriter<?,?>) options.get(CodecAnnotations.CODEC_TYPE_VALUE_WRITER);
+			codecInfo.getTypeInfo().setValueWriterName(writer.getName());
+			modelInfoService.addCodecValueWriterForType(InfoType.TYPE, writer);
+		}
 		if(options.containsKey(CodecAnnotations.CODEC_TYPE_INCLUDE)) {
 			codecInfo.getTypeInfo().setIgnoreType(!((Boolean) options.get(CodecAnnotations.CODEC_TYPE_INCLUDE)));
 		}
@@ -161,24 +202,54 @@ public class CodecResource extends ResourceImpl {
 			});
 		}
 		if(options.containsKey(CodecAnnotations.CODEC_VALUE_READERS_MAP)) {
-			Map<ENamedElement, CodecValueReader<?,?>> readersMap = (Map<ENamedElement, CodecValueReader<?,?>>)options.get(CodecAnnotations.CODEC_VALUE_READERS_MAP);
+			Map<ETypedElement, CodecValueReader<?,?>> readersMap = (Map<ETypedElement, CodecValueReader<?,?>>)options.get(CodecAnnotations.CODEC_VALUE_READERS_MAP);
 			readersMap.forEach((element, reader) -> {
-				FeatureCodecInfo fci = codecInfo.getFeatureInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
-				if(fci != null) {
-					fci.setValueReaderName(reader.getName());
-					modelInfoService.addCodecValueReaderForType(InfoType.FEATURE, reader);
+				if(element instanceof EAttribute) {
+					FeatureCodecInfo fci = codecInfo.getAttributeCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					if(fci != null) {
+						fci.setValueReaderName(reader.getName());
+						modelInfoService.addCodecValueReaderForType(InfoType.ATTRIBUTE, reader);
+					}
+				}
+				else if(element instanceof EReference) {
+					FeatureCodecInfo fci = codecInfo.getReferenceCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					if(fci != null) {
+						fci.setValueReaderName(reader.getName());
+						modelInfoService.addCodecValueReaderForType(InfoType.REFERENCE, reader);
+					}
+				}
+				else if(element instanceof EOperation) {
+					FeatureCodecInfo fci = codecInfo.getOperationCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					if(fci != null) {
+						fci.setValueReaderName(reader.getName());
+						modelInfoService.addCodecValueReaderForType(InfoType.OPERATION, reader);
+					}
 				}
 			});
 		}
 		if(options.containsKey(CodecAnnotations.CODEC_VALUE_WRITERS_MAP)) {
-			Map<ENamedElement, CodecValueWriter<?,?>> writersMap = (Map<ENamedElement, CodecValueWriter<?,?>>)options.get(CodecAnnotations.CODEC_VALUE_WRITERS_MAP);
+			Map<ETypedElement, CodecValueWriter<?,?>> writersMap = (Map<ETypedElement, CodecValueWriter<?,?>>)options.get(CodecAnnotations.CODEC_VALUE_WRITERS_MAP);
 			writersMap.forEach((element, writer) -> {
-				System.out.println(element.getName());
-				codecInfo.getFeatureInfo().forEach(f -> System.out.println(f.getFeatures().get(0).getName()));
-				FeatureCodecInfo fci = codecInfo.getFeatureInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).getName().equals(element.getName())).findFirst().get();
-				if(fci != null) {
-					fci.setValueWriterName(writer.getName());
-					modelInfoService.addCodecValueWriterForType(InfoType.FEATURE, writer);
+				if(element instanceof EAttribute) {
+					FeatureCodecInfo fci = codecInfo.getAttributeCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					if(fci != null) {
+						fci.setValueWriterName(writer.getName());
+						modelInfoService.addCodecValueWriterForType(InfoType.ATTRIBUTE, writer);
+					}
+				}
+				else if(element instanceof EReference) {
+					FeatureCodecInfo fci = codecInfo.getReferenceCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					if(fci != null) {
+						fci.setValueWriterName(writer.getName());
+						modelInfoService.addCodecValueWriterForType(InfoType.REFERENCE, writer);
+					}
+				}
+				else if(element instanceof EOperation) {
+					FeatureCodecInfo fci = codecInfo.getOperationCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					if(fci != null) {
+						fci.setValueWriterName(writer.getName());
+						modelInfoService.addCodecValueWriterForType(InfoType.OPERATION, writer);
+					}
 				}
 			});
 		}		

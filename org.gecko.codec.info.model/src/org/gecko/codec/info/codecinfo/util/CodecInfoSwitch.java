@@ -98,27 +98,6 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CodecInfoPackage.REFERENCE_CODEC_INFO: {
-				ReferenceCodecInfo referenceCodecInfo = (ReferenceCodecInfo)theEObject;
-				T1 result = caseReferenceCodecInfo(referenceCodecInfo);
-				if (result == null) result = caseFeatureCodecInfo(referenceCodecInfo);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case CodecInfoPackage.ATTRIBUTE_CODEC_INFO: {
-				AttributeCodecInfo attributeCodecInfo = (AttributeCodecInfo)theEObject;
-				T1 result = caseAttributeCodecInfo(attributeCodecInfo);
-				if (result == null) result = caseFeatureCodecInfo(attributeCodecInfo);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case CodecInfoPackage.OPERATION_CODEC_INFO: {
-				OperationCodecInfo operationCodecInfo = (OperationCodecInfo)theEObject;
-				T1 result = caseOperationCodecInfo(operationCodecInfo);
-				if (result == null) result = caseFeatureCodecInfo(operationCodecInfo);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case CodecInfoPackage.CODEC_VALUE_READER: {
 				CodecValueReader<?, ?> codecValueReader = (CodecValueReader<?, ?>)theEObject;
 				T1 result = caseCodecValueReader(codecValueReader);
@@ -219,51 +198,6 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseIdentityInfo(IdentityInfo object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Reference Codec Info</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Reference Codec Info</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseReferenceCodecInfo(ReferenceCodecInfo object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Attribute Codec Info</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Attribute Codec Info</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseAttributeCodecInfo(AttributeCodecInfo object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Operation Codec Info</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Operation Codec Info</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseOperationCodecInfo(OperationCodecInfo object) {
 		return null;
 	}
 

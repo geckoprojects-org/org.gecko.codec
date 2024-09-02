@@ -5,6 +5,7 @@ package org.gecko.code.demo.model.person.impl;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -233,6 +234,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EOperation getPerson__GetFullName() {
+		return personEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getAddress() {
 		return addressEClass;
 	}
@@ -366,6 +377,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEAttribute(personEClass, PERSON__GENDER);
 		createEReference(personEClass, PERSON__NON_CONTAINED_ADD);
 		createEAttribute(personEClass, PERSON__ID);
+		createEOperation(personEClass, PERSON___GET_FULL_NAME);
 
 		addressEClass = createEClass(ADDRESS);
 		createEAttribute(addressEClass, ADDRESS__STREET);
@@ -427,6 +439,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEReference(getPerson_NonContainedAdd(), this.getAddress(), null, "nonContainedAdd", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Id(), ecorePackage.getEString(), "id", null, 1, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEOperation(getPerson__GetFullName(), ecorePackage.getEString(), "getFullName", 0, 1, IS_UNIQUE, IS_ORDERED);
+
 		initEClass(addressEClass, Address.class, "Address", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddress_Street(), ecorePackage.getEString(), "street", null, 0, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddress_Zip(), ecorePackage.getEString(), "zip", null, 0, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -456,6 +470,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createCodecAnnotations();
 		// codec.id
 		createCodec_1Annotations();
+		// http://www.eclipse.org/emf/2002/GenModel
+		createGenModelAnnotations();
 		// codec
 		createCodec_2Annotations();
 	}
@@ -527,6 +543,22 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		   source,
 		   new String[] {
 			   "strategy", "ID_FIELD"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/GenModel</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createGenModelAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/GenModel";
+		addAnnotation
+		  (getPerson__GetFullName(),
+		   source,
+		   new String[] {
+			   "body", "return this.name + \" \" + this.lastName;"
 		   });
 	}
 

@@ -30,22 +30,17 @@ import java.util.UUID;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.gecko.code.demo.model.person.Address;
-import org.gecko.code.demo.model.person.BusinessAddress;
-import org.gecko.code.demo.model.person.BusinessPerson;
 import org.gecko.code.demo.model.person.Person;
 import org.gecko.code.demo.model.person.PersonFactory;
 import org.gecko.code.demo.model.person.PersonPackage;
 import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
 import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.CodecModuleOptions;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.demo.resource.CodecJsonResource;
 import org.gecko.codec.info.CodecAnnotations;
 import org.gecko.codec.info.CodecModelInfo;
-import org.gecko.codec.info.ObjectMapperOptions;
 import org.gecko.codec.info.codecinfo.CodecValueReader;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
@@ -62,7 +57,6 @@ import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 //import org.mockito.Mock;
@@ -88,7 +82,7 @@ public class CodecModelInfoOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testCodecModuleOverwriteIdStrategy(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testCodecModelInfoOverwriteIdStrategy(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -130,7 +124,7 @@ public class CodecModelInfoOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testCodecModuleOverwriteIdOrder(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testCodecModelInfoOverwriteIdOrder(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -174,7 +168,7 @@ public class CodecModelInfoOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testCodecModuleOverwriteIdSeparator(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testCodecModelInfoOverwriteIdSeparator(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -216,7 +210,7 @@ public class CodecModelInfoOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testCodecModuleOverwriteIgnoreFeature(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testCodecModelInfoOverwriteIgnoreFeature(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -248,7 +242,7 @@ public class CodecModelInfoOverwriteTest {
 		EClassCodecInfo addressCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getAddress().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(addressCodecInfo);
 		assertNotNull(addressCodecInfo.getFeatureInfo());
-		assertThat(addressCodecInfo.getFeatureInfo()).hasSize(2);
+		assertThat(addressCodecInfo.getFeatureInfo()).hasSize(3);
 		for(FeatureCodecInfo fi : addressCodecInfo.getFeatureInfo()) {
 			if(PersonPackage.eINSTANCE.getAddress_Zip().equals(fi.getFeatures().get(0))) {
 				assertFalse(fi.isIgnore());
@@ -267,7 +261,7 @@ public class CodecModelInfoOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testCodecModuleOverwriteTypeInclude(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testCodecModelInfoOverwriteTypeInclude(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -309,7 +303,7 @@ public class CodecModelInfoOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testCodecModuleOverwriteTypeUse(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testCodecModelInfoOverwriteTypeUse(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -354,7 +348,7 @@ public class CodecModelInfoOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testCodecModuleOverwriteWriter(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testCodecModelInfoOverwriteWriter(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -408,7 +402,7 @@ public class CodecModelInfoOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testCodecModuleOverwriteReader(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testCodecModelInfoOverwriteReader(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -462,7 +456,7 @@ public class CodecModelInfoOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void test(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testCodecModelInfoOverwriteIdWriter(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -475,85 +469,40 @@ public class CodecModelInfoOverwriteTest {
 		assertNotNull(factoryConfigurator);
 		assertNotNull(objMapperConfigurator);
 	
-		CodecJsonResource resource = new CodecJsonResource(URI.createURI("person.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		CodecJsonResource resource = new CodecJsonResource(URI.createURI("mytest.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
 		
-		BusinessPerson person = getTestBusinessPerson();		
+		Person person = getTestPerson();		
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
-		CodecValueWriter<Date, Object> TEST_WRITER = new CodecValueWriter<>() {
+		CodecValueWriter<Object, ?> TEST_WRITER = new CodecValueWriter<>() {
 			@Override
 			public String getName() {
-				return "TEST_WRITER";
+				return "TEST_ID_WRITER";
 			}
 
 			@Override
-			public Object writeValue(Date value, SerializerProvider provider) {
+			public Object writeValue(Object value, SerializerProvider provider) {
 				return "test.".concat(value.toString());
 			}
 		};
-		personOptions.put(CodecAnnotations.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_BirthDate(), TEST_WRITER));
-		classOptions.put(PersonPackage.eINSTANCE.getBusinessPerson(), personOptions);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_WRITER, TEST_WRITER);
+		personOptions.put(CodecAnnotations.CODEC_ID_STRATEGY, "ID_FIELD");
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put("codec.options", classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
-		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getBusinessPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
+		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
-		FeatureCodecInfo featureInfo = personCodecInfo.getFeatureInfo().stream().filter(fi -> fi.getFeatures().get(0).equals(PersonPackage.eINSTANCE.getPerson_BirthDate())).findFirst().get();
+		FeatureCodecInfo featureInfo = personCodecInfo.getIdentityInfo();
 		assertNotNull(featureInfo);
-		assertEquals("TEST_WRITER", featureInfo.getValueWriterName());
+		assertEquals("TEST_ID_WRITER", featureInfo.getValueWriterName());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="json")
-	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="json")
-	})
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
-	@Test
-	public void testSerialization(@InjectService(timeout = 2000l) PersonPackage demoModel,  
-			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
-			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
-			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
-			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
-			) throws InterruptedException, IOException {
-	
-		assertNotNull(demoModel);
-		assertNotNull(codecModelInfo);
-		assertNotNull(codecModuleConfigurator);
-		assertNotNull(factoryConfigurator);
-		assertNotNull(objMapperConfigurator);
-	
-		CodecJsonResource resource = new CodecJsonResource(URI.createURI("personSer.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
-		
-		Person person = getTestBusinessPerson();		
-//		resource.getContents().add(person.getNonContainedAdd());
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-//		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();		
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-//		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
-//		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-//		options.put("codec.options", classOptions);
-		resource.save(options);
-		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
-		assertNotNull(modelCodecInfo);
-		
-	}
 	
 	private Person getTestPerson() {
 		Person person = PersonFactory.eINSTANCE.createPerson();
@@ -574,22 +523,4 @@ public class CodecModelInfoOverwriteTest {
 		return person;
 	}
 	
-	private BusinessPerson getTestBusinessPerson() {
-		BusinessPerson person = PersonFactory.eINSTANCE.createBusinessPerson();
-		person.setId(UUID.randomUUID().toString());
-		person.setName("John");
-		person.setLastName("Doe");
-		person.setBirthDate(Date.valueOf(LocalDate.of(1990, 6, 20)));
-		BusinessAddress address = PersonFactory.eINSTANCE.createBusinessAddress();
-		address.setId(UUID.randomUUID().toString());
-		address.setStreet("Camsdorfer Str.");
-		address.setZip("07749");
-		person.setAddress(address);
-		address = PersonFactory.eINSTANCE.createBusinessAddress();
-		address.setId(UUID.randomUUID().toString());
-		address.setStreet("Via Oregne");
-		address.setZip("32037");
-		person.setNonContainedAdd(address);
-		return person;
-	}
 }

@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//.settings/org.eclipse.core.resources.prefs=UTF-8
 encoding//src/org/gecko/codec/info/test/CodecFactoryConfiguratorTest.java=UTF-8
+encoding//src/org/gecko/codec/info/test/CodecJsonSerializationTest.java=UTF-8
 encoding//src/org/gecko/codec/info/test/CodecModelInfoOverwriteTest.java=UTF-8
 encoding//src/org/gecko/codec/info/test/CodecModelInfoTest.java=UTF-8
 encoding//src/org/gecko/codec/info/test/CodecModuleConfigOverwriteTest.java=UTF-8

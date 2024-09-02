@@ -70,33 +70,6 @@ public interface CodecInfoFactory extends EFactory {
 	IdentityInfo createIdentityInfo();
 
 	/**
-	 * Returns a new object of class '<em>Reference Codec Info</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Reference Codec Info</em>'.
-	 * @generated
-	 */
-	ReferenceCodecInfo createReferenceCodecInfo();
-
-	/**
-	 * Returns a new object of class '<em>Attribute Codec Info</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Attribute Codec Info</em>'.
-	 * @generated
-	 */
-	AttributeCodecInfo createAttributeCodecInfo();
-
-	/**
-	 * Returns a new object of class '<em>Operation Codec Info</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Operation Codec Info</em>'.
-	 * @generated
-	 */
-	OperationCodecInfo createOperationCodecInfo();
-
-	/**
 	 * Returns a new object of class '<em>Holder</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -88,18 +88,6 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 				return createIdentityInfoAdapter();
 			}
 			@Override
-			public Adapter caseReferenceCodecInfo(ReferenceCodecInfo object) {
-				return createReferenceCodecInfoAdapter();
-			}
-			@Override
-			public Adapter caseAttributeCodecInfo(AttributeCodecInfo object) {
-				return createAttributeCodecInfoAdapter();
-			}
-			@Override
-			public Adapter caseOperationCodecInfo(OperationCodecInfo object) {
-				return createOperationCodecInfoAdapter();
-			}
-			@Override
 			public <V, T> Adapter caseCodecValueReader(CodecValueReader<V, T> object) {
 				return createCodecValueReaderAdapter();
 			}
@@ -202,48 +190,6 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createIdentityInfoAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.ReferenceCodecInfo <em>Reference Codec Info</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.gecko.codec.info.codecinfo.ReferenceCodecInfo
-	 * @generated
-	 */
-	public Adapter createReferenceCodecInfoAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.AttributeCodecInfo <em>Attribute Codec Info</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.gecko.codec.info.codecinfo.AttributeCodecInfo
-	 * @generated
-	 */
-	public Adapter createAttributeCodecInfoAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.OperationCodecInfo <em>Operation Codec Info</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.gecko.codec.info.codecinfo.OperationCodecInfo
-	 * @generated
-	 */
-	public Adapter createOperationCodecInfoAdapter() {
 		return null;
 	}
 

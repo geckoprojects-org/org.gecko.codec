@@ -31,7 +31,6 @@ import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
-import org.gecko.codec.info.codecinfo.ReferenceCodecInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -197,7 +196,7 @@ public class CodecModelInfoTest {
 		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(demoModel.getPerson()).get();
 		assertNotNull(eClassCodecInfo);
 		
-		List<ReferenceCodecInfo> refInfos = eClassCodecInfo.getReferenceInfo();
+		List<FeatureCodecInfo> refInfos = eClassCodecInfo.getReferenceCodecInfo();
 		assertNotNull(refInfos);
 		assertThat(refInfos).hasSize(2);
 	}
@@ -213,7 +212,7 @@ public class CodecModelInfoTest {
 		assertNotNull(eClassCodecInfo);
 		
 		List<FeatureCodecInfo> featureInfos = eClassCodecInfo.getFeatureInfo();
-		assertThat(featureInfos).hasSize(2);
+		assertThat(featureInfos).hasSize(3);
 		for(FeatureCodecInfo fci : featureInfos) {
 			if("zip".equals(fci.getFeatures().get(0).getName())) {
 				assertTrue(fci.isIgnore());
@@ -246,7 +245,10 @@ public class CodecModelInfoTest {
 		assertThat(codecInfoHolder.getReaders()).hasSize(1);
 		assertThat(codecInfoHolder.getWriters()).hasSize(1);
 		
-		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.FEATURE);
+		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
+		assertNotNull(codecInfoHolder);
+		
+		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.OPERATION);
 		assertNotNull(codecInfoHolder);
 	}
 }

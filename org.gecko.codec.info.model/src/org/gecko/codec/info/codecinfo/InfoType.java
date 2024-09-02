@@ -42,14 +42,14 @@ public enum InfoType implements Enumerator {
 	TYPE(1, "TYPE", "TYPE"),
 
 	/**
-	 * The '<em><b>FEATURE</b></em>' literal object.
+	 * The '<em><b>ATTRIBUTE</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #FEATURE_VALUE
+	 * @see #ATTRIBUTE_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	FEATURE(2, "FEATURE", "FEATURE"),
+	ATTRIBUTE(2, "ATTRIBUTE", "ATTRIBUTE"),
 
 	/**
 	 * The '<em><b>REFERENCE</b></em>' literal object.
@@ -114,15 +114,15 @@ public enum InfoType implements Enumerator {
 	public static final int TYPE_VALUE = 1;
 
 	/**
-	 * The '<em><b>FEATURE</b></em>' literal value.
+	 * The '<em><b>ATTRIBUTE</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #FEATURE
+	 * @see #ATTRIBUTE
 	 * @model
 	 * @generated
 	 * @ordered
 	 */
-	public static final int FEATURE_VALUE = 2;
+	public static final int ATTRIBUTE_VALUE = 2;
 
 	/**
 	 * The '<em><b>REFERENCE</b></em>' literal value.
@@ -178,7 +178,7 @@ public enum InfoType implements Enumerator {
 		new InfoType[] {
 			IDENTITY,
 			TYPE,
-			FEATURE,
+			ATTRIBUTE,
 			REFERENCE,
 			OBJECT,
 			OPERATION,
@@ -241,7 +241,7 @@ public enum InfoType implements Enumerator {
 		switch (value) {
 			case IDENTITY_VALUE: return IDENTITY;
 			case TYPE_VALUE: return TYPE;
-			case FEATURE_VALUE: return FEATURE;
+			case ATTRIBUTE_VALUE: return ATTRIBUTE;
 			case REFERENCE_VALUE: return REFERENCE;
 			case OBJECT_VALUE: return OBJECT;
 			case OPERATION_VALUE: return OPERATION;

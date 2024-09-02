@@ -1,0 +1,18 @@
+{
+  "_id" : "John-Doe",
+  "_type" : "Person",
+  "birthDate" : "1990-06-20",
+  "age" : 0,
+  "married" : false,
+  "gender" : "MALE",
+  "id" : "c5674efa-32f6-44d8-a6a4-433ebd2ac05b",
+  "address" : {
+    "_id" : "9d36d363-e73e-40ca-8445-e88b16e45434",
+    "street" : "Camsdorfer Str."
+  },
+  "nonContainedAdd" : {
+    "_type" : "Address",
+    "$ref" : "#22504d92-636b-4f5c-a021-e8fb738c3df3"
+  },
+  "getFullName" : "John Doe"
+}

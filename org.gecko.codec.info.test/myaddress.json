@@ -1,0 +1,5 @@
+{
+  "_id" : "f36e0280-36d7-4527-a220-5c5990082e9b",
+  "_type" : "http://example.de/person/1.0#//Address",
+  "street" : "Via Oregne"
+}

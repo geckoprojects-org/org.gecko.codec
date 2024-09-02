@@ -6,6 +6,7 @@ package org.gecko.code.demo.model.person;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
 
 import org.gecko.emf.osgi.annotation.provide.EPackage;
@@ -165,13 +166,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON_FEATURE_COUNT = 9;
 
 	/**
+	 * The operation id for the '<em>Get Full Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON___GET_FULL_NAME = 0;
+
+	/**
 	 * The number of operations of the '<em>Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_OPERATION_COUNT = 0;
+	int PERSON_OPERATION_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link org.gecko.code.demo.model.person.impl.AddressImpl <em>Address</em>}' class.
@@ -327,6 +337,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int BUSINESS_PERSON_FEATURE_COUNT = PERSON_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Get Full Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON___GET_FULL_NAME = PERSON___GET_FULL_NAME;
 
 	/**
 	 * The number of operations of the '<em>Business Person</em>' class.
@@ -559,6 +578,16 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getPerson_Id();
 
 	/**
+	 * Returns the meta object for the '{@link org.gecko.code.demo.model.person.Person#getFullName() <em>Get Full Name</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Full Name</em>' operation.
+	 * @see org.gecko.code.demo.model.person.Person#getFullName()
+	 * @generated
+	 */
+	EOperation getPerson__GetFullName();
+
+	/**
 	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.Address <em>Address</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -767,6 +796,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute PERSON__ID = eINSTANCE.getPerson_Id();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Full Name</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation PERSON___GET_FULL_NAME = eINSTANCE.getPerson__GetFullName();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.AddressImpl <em>Address</em>}' class.

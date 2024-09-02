@@ -473,11 +473,18 @@ public class ObjMapperConfigOverwriteTest {
 	public void testEMFJson() throws IOException {
 		ObjectMapper mapper = new ObjectMapper(JsonFactory.builder().build());
 		EMFModule module = new EMFModule();
+		JsonResource res = new JsonResource(URI.createURI("address.json"), mapper);
 		mapper.registerModule(module);
 		mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
 		mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
 		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 		Person person = getTestPerson();
+		res.getContents().add(person.getNonContainedAdd());
+//		res.getContents().add(person);
+		res.save(null);
+		res = new JsonResource(URI.createURI("person.json"), mapper);
+		res.getContents().add(person);
+		res.save(null);
 		System.out.println(mapper.writeValueAsString(person));
 //		JsonResource resource = new JsonResource(URI.createURI("test.json"), mapper);
 //		Person person = getTestPerson();

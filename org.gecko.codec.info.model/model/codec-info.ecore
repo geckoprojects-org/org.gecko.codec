@@ -33,10 +33,27 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="featureInfo" upperBound="-1"
         eType="#//FeatureCodecInfo" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="referenceInfo" upperBound="-1"
-        eType="#//ReferenceCodecInfo" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="operationInfo" upperBound="-1"
-        eType="#//OperationCodecInfo" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="referenceCodecInfo" upperBound="-1"
+        eType="#//FeatureCodecInfo" volatile="true" transient="true" derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatureInfo().stream().filter(f->&lt;%org.gecko.codec.info.codecinfo.InfoType%>.REFERENCE.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+        <details key="suppressedSetVisibility" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="attributeCodecInfo" upperBound="-1"
+        eType="#//FeatureCodecInfo" volatile="true" transient="true" derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatureInfo().stream().filter(f->&lt;%org.gecko.codec.info.codecinfo.InfoType%>.ATTRIBUTE.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+        <details key="suppressedSetVisibility" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="operationCodecInfo" upperBound="-1"
+        eType="#//FeatureCodecInfo" volatile="true" transient="true" derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatureInfo().stream().filter(f->&lt;%org.gecko.codec.info.codecinfo.InfoType%>.OPERATION.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+        <details key="suppressedSetVisibility" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FeatureCodecInfo">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -89,40 +106,10 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ReferenceCodecInfo" eSuperTypes="#//FeatureCodecInfo">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="eReferences" upperBound="-1"
-        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EReference"
-        volatile="true" transient="true" derived="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EReference).map(EReference.class::cast).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
-        <details key="suppressedSetVisibility" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="AttributeCodecInfo" eSuperTypes="#//FeatureCodecInfo">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="eAttributes" upperBound="-1"
-        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EAttribute"
-        volatile="true" transient="true" derived="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EAttribute).map(EAttribute.class::cast).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
-        <details key="suppressedSetVisibility" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="OperationCodecInfo" eSuperTypes="#//FeatureCodecInfo">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="eOperations" upperBound="-1"
-        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EOperation"
-        volatile="true" transient="true" derived="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EOperation).map(EOperation.class::cast).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
-        <details key="suppressedSetVisibility" value="true"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="InfoType">
     <eLiterals name="IDENTITY" literal="IDENTITY"/>
     <eLiterals name="TYPE" value="1" literal="TYPE"/>
-    <eLiterals name="FEATURE" value="2"/>
+    <eLiterals name="ATTRIBUTE" value="2"/>
     <eLiterals name="REFERENCE" value="3" literal="REFERENCE"/>
     <eLiterals name="OBJECT" value="4"/>
     <eLiterals name="OPERATION" value="5"/>

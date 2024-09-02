@@ -187,22 +187,31 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int ECLASS_CODEC_INFO__FEATURE_INFO = 4;
 
 	/**
-	 * The feature id for the '<em><b>Reference Info</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Reference Codec Info</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO__REFERENCE_INFO = 5;
+	int ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO = 5;
 
 	/**
-	 * The feature id for the '<em><b>Operation Info</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Attribute Codec Info</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO__OPERATION_INFO = 6;
+	int ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO = 6;
+
+	/**
+	 * The feature id for the '<em><b>Operation Codec Info</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO__OPERATION_CODEC_INFO = 7;
 
 	/**
 	 * The number of structural features of the '<em>EClass Codec Info</em>' class.
@@ -211,7 +220,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO_FEATURE_COUNT = 7;
+	int ECLASS_CODEC_INFO_FEATURE_COUNT = 8;
 
 	/**
 	 * The number of operations of the '<em>EClass Codec Info</em>' class.
@@ -541,306 +550,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int IDENTITY_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.ReferenceCodecInfoImpl <em>Reference Codec Info</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.impl.ReferenceCodecInfoImpl
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getReferenceCodecInfo()
-	 * @generated
-	 */
-	int REFERENCE_CODEC_INFO = 5;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO__ID = FEATURE_CODEC_INFO__ID;
-
-	/**
-	 * The feature id for the '<em><b>Features</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
-
-	/**
-	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO__VALUE_READER_NAME = FEATURE_CODEC_INFO__VALUE_READER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO__VALUE_WRITER_NAME = FEATURE_CODEC_INFO__VALUE_WRITER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO__TYPE = FEATURE_CODEC_INFO__TYPE;
-
-	/**
-	 * The feature id for the '<em><b>Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO__KEY = FEATURE_CODEC_INFO__KEY;
-
-	/**
-	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
-
-	/**
-	 * The feature id for the '<em><b>EReferences</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO__EREFERENCES = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Reference Codec Info</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Reference Codec Info</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.AttributeCodecInfoImpl <em>Attribute Codec Info</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.impl.AttributeCodecInfoImpl
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getAttributeCodecInfo()
-	 * @generated
-	 */
-	int ATTRIBUTE_CODEC_INFO = 6;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO__ID = FEATURE_CODEC_INFO__ID;
-
-	/**
-	 * The feature id for the '<em><b>Features</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
-
-	/**
-	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO__VALUE_READER_NAME = FEATURE_CODEC_INFO__VALUE_READER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO__VALUE_WRITER_NAME = FEATURE_CODEC_INFO__VALUE_WRITER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO__TYPE = FEATURE_CODEC_INFO__TYPE;
-
-	/**
-	 * The feature id for the '<em><b>Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO__KEY = FEATURE_CODEC_INFO__KEY;
-
-	/**
-	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
-
-	/**
-	 * The feature id for the '<em><b>EAttributes</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO__EATTRIBUTES = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Attribute Codec Info</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Attribute Codec Info</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ATTRIBUTE_CODEC_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.OperationCodecInfoImpl <em>Operation Codec Info</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.gecko.codec.info.codecinfo.impl.OperationCodecInfoImpl
-	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getOperationCodecInfo()
-	 * @generated
-	 */
-	int OPERATION_CODEC_INFO = 7;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO__ID = FEATURE_CODEC_INFO__ID;
-
-	/**
-	 * The feature id for the '<em><b>Features</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
-
-	/**
-	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO__VALUE_READER_NAME = FEATURE_CODEC_INFO__VALUE_READER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO__VALUE_WRITER_NAME = FEATURE_CODEC_INFO__VALUE_WRITER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO__TYPE = FEATURE_CODEC_INFO__TYPE;
-
-	/**
-	 * The feature id for the '<em><b>Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO__KEY = FEATURE_CODEC_INFO__KEY;
-
-	/**
-	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
-
-	/**
-	 * The feature id for the '<em><b>EOperations</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO__EOPERATIONS = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Operation Codec Info</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Operation Codec Info</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_CODEC_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -848,7 +557,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueReader()
 	 * @generated
 	 */
-	int CODEC_VALUE_READER = 8;
+	int CODEC_VALUE_READER = 5;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -894,7 +603,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueWriter()
 	 * @generated
 	 */
-	int CODEC_VALUE_WRITER = 9;
+	int CODEC_VALUE_WRITER = 6;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -940,7 +649,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecInfoHolder()
 	 * @generated
 	 */
-	int CODEC_INFO_HOLDER = 10;
+	int CODEC_INFO_HOLDER = 7;
 
 	/**
 	 * The feature id for the '<em><b>Info Type</b></em>' attribute.
@@ -1013,7 +722,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSampleValueReader()
 	 * @generated
 	 */
-	int SAMPLE_VALUE_READER = 11;
+	int SAMPLE_VALUE_READER = 8;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1059,7 +768,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getInfoType()
 	 * @generated
 	 */
-	int INFO_TYPE = 12;
+	int INFO_TYPE = 9;
 
 	/**
 	 * The meta object id for the '<em>Serializer Provider</em>' data type.
@@ -1069,7 +778,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
 	 * @generated
 	 */
-	int SERIALIZER_PROVIDER = 13;
+	int SERIALIZER_PROVIDER = 10;
 
 	/**
 	 * The meta object id for the '<em>Deserialization Context</em>' data type.
@@ -1079,7 +788,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 	 * @generated
 	 */
-	int DESERIALIZATION_CONTEXT = 14;
+	int DESERIALIZATION_CONTEXT = 11;
 
 
 	/**
@@ -1202,26 +911,37 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getEClassCodecInfo_FeatureInfo();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo <em>Reference Info</em>}'.
+	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceCodecInfo <em>Reference Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Reference Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceInfo()
+	 * @return the meta object for the reference list '<em>Reference Codec Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceCodecInfo()
 	 * @see #getEClassCodecInfo()
 	 * @generated
 	 */
-	EReference getEClassCodecInfo_ReferenceInfo();
+	EReference getEClassCodecInfo_ReferenceCodecInfo();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getOperationInfo <em>Operation Info</em>}'.
+	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getAttributeCodecInfo <em>Attribute Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Operation Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getOperationInfo()
+	 * @return the meta object for the reference list '<em>Attribute Codec Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getAttributeCodecInfo()
 	 * @see #getEClassCodecInfo()
 	 * @generated
 	 */
-	EReference getEClassCodecInfo_OperationInfo();
+	EReference getEClassCodecInfo_AttributeCodecInfo();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getOperationCodecInfo <em>Operation Codec Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Operation Codec Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getOperationCodecInfo()
+	 * @see #getEClassCodecInfo()
+	 * @generated
+	 */
+	EReference getEClassCodecInfo_OperationCodecInfo();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo <em>Feature Codec Info</em>}'.
@@ -1384,69 +1104,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getIdentityInfo_IdOrder();
-
-	/**
-	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.ReferenceCodecInfo <em>Reference Codec Info</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Reference Codec Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.ReferenceCodecInfo
-	 * @generated
-	 */
-	EClass getReferenceCodecInfo();
-
-	/**
-	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.ReferenceCodecInfo#getEReferences <em>EReferences</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>EReferences</em>'.
-	 * @see org.gecko.codec.info.codecinfo.ReferenceCodecInfo#getEReferences()
-	 * @see #getReferenceCodecInfo()
-	 * @generated
-	 */
-	EReference getReferenceCodecInfo_EReferences();
-
-	/**
-	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.AttributeCodecInfo <em>Attribute Codec Info</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Attribute Codec Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.AttributeCodecInfo
-	 * @generated
-	 */
-	EClass getAttributeCodecInfo();
-
-	/**
-	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.AttributeCodecInfo#getEAttributes <em>EAttributes</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>EAttributes</em>'.
-	 * @see org.gecko.codec.info.codecinfo.AttributeCodecInfo#getEAttributes()
-	 * @see #getAttributeCodecInfo()
-	 * @generated
-	 */
-	EReference getAttributeCodecInfo_EAttributes();
-
-	/**
-	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.OperationCodecInfo <em>Operation Codec Info</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Operation Codec Info</em>'.
-	 * @see org.gecko.codec.info.codecinfo.OperationCodecInfo
-	 * @generated
-	 */
-	EClass getOperationCodecInfo();
-
-	/**
-	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.OperationCodecInfo#getEOperations <em>EOperations</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>EOperations</em>'.
-	 * @see org.gecko.codec.info.codecinfo.OperationCodecInfo#getEOperations()
-	 * @see #getOperationCodecInfo()
-	 * @generated
-	 */
-	EReference getOperationCodecInfo_EOperations();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}'.
@@ -1752,20 +1409,28 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EReference ECLASS_CODEC_INFO__FEATURE_INFO = eINSTANCE.getEClassCodecInfo_FeatureInfo();
 
 		/**
-		 * The meta object literal for the '<em><b>Reference Info</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Reference Codec Info</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ECLASS_CODEC_INFO__REFERENCE_INFO = eINSTANCE.getEClassCodecInfo_ReferenceInfo();
+		EReference ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO = eINSTANCE.getEClassCodecInfo_ReferenceCodecInfo();
 
 		/**
-		 * The meta object literal for the '<em><b>Operation Info</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Attribute Codec Info</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference ECLASS_CODEC_INFO__OPERATION_INFO = eINSTANCE.getEClassCodecInfo_OperationInfo();
+		EReference ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO = eINSTANCE.getEClassCodecInfo_AttributeCodecInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Operation Codec Info</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ECLASS_CODEC_INFO__OPERATION_CODEC_INFO = eINSTANCE.getEClassCodecInfo_OperationCodecInfo();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl <em>Feature Codec Info</em>}' class.
@@ -1892,60 +1557,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute IDENTITY_INFO__ID_ORDER = eINSTANCE.getIdentityInfo_IdOrder();
-
-		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.ReferenceCodecInfoImpl <em>Reference Codec Info</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.impl.ReferenceCodecInfoImpl
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getReferenceCodecInfo()
-		 * @generated
-		 */
-		EClass REFERENCE_CODEC_INFO = eINSTANCE.getReferenceCodecInfo();
-
-		/**
-		 * The meta object literal for the '<em><b>EReferences</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference REFERENCE_CODEC_INFO__EREFERENCES = eINSTANCE.getReferenceCodecInfo_EReferences();
-
-		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.AttributeCodecInfoImpl <em>Attribute Codec Info</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.impl.AttributeCodecInfoImpl
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getAttributeCodecInfo()
-		 * @generated
-		 */
-		EClass ATTRIBUTE_CODEC_INFO = eINSTANCE.getAttributeCodecInfo();
-
-		/**
-		 * The meta object literal for the '<em><b>EAttributes</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ATTRIBUTE_CODEC_INFO__EATTRIBUTES = eINSTANCE.getAttributeCodecInfo_EAttributes();
-
-		/**
-		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.OperationCodecInfoImpl <em>Operation Codec Info</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.gecko.codec.info.codecinfo.impl.OperationCodecInfoImpl
-		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getOperationCodecInfo()
-		 * @generated
-		 */
-		EClass OPERATION_CODEC_INFO = eINSTANCE.getOperationCodecInfo();
-
-		/**
-		 * The meta object literal for the '<em><b>EOperations</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference OPERATION_CODEC_INFO__EOPERATIONS = eINSTANCE.getOperationCodecInfo_EOperations();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}' class.

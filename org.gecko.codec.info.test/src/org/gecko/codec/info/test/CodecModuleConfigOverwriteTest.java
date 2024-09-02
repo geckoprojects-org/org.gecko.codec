@@ -23,6 +23,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.eclipse.emf.common.util.URI;
 import org.gecko.code.demo.model.person.Address;
@@ -639,13 +640,20 @@ public class CodecModuleConfigOverwriteTest {
 	
 	private Person getTestPerson() {
 		Person person = PersonFactory.eINSTANCE.createPerson();
+		person.setId(UUID.randomUUID().toString());
 		person.setName("John");
 		person.setLastName("Doe");
 		person.setBirthDate(Date.valueOf(LocalDate.of(1990, 6, 20)));
 		Address address = PersonFactory.eINSTANCE.createAddress();
+		address.setId(UUID.randomUUID().toString());
 		address.setStreet("Camsdorfer Str.");
 		address.setZip("07749");
 		person.setAddress(address);
+		address = PersonFactory.eINSTANCE.createAddress();
+		address.setId(UUID.randomUUID().toString());
+		address.setStreet("Via Oregne");
+		address.setZip("32037");
+		person.setNonContainedAdd(address);
 		return person;
 	}
 }

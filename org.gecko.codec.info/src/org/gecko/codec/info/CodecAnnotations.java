@@ -90,6 +90,47 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_ID_SEPARATOR = "codec.id.separator";
 	
+	/** CODEC_ID_VALUE_READER_NAME 
+	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
+	 * */
+	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
+	
+	/** CODEC_ID_VALUE_WRITER_NAME 
+	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
+	 * */
+	String CODEC_ID_VALUE_WRITER_NAME = "codec.id.value.writer.name";
+	
+	/** CODEC_ID_VALUE_READER
+	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
+	 * */
+	String CODEC_ID_VALUE_READER = "codec.id.value.reader";
+	
+	/** CODEC_ID_VALUE_WRITER 
+	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
+	 * */
+	String CODEC_ID_VALUE_WRITER = "codec.id.value.writer";
+	
+	/** CODEC_TYPE_VALUE_READER_NAME 
+	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
+	 * */
+	String CODEC_TYPE_VALUE_READER_NAME = "codec.type.value.reader.name";
+	
+	/** CODEC_TYPE_VALUE_WRITER_NAME 
+	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
+	 * */
+	String CODEC_TYPE_VALUE_WRITER_NAME = "codec.type.value.writer.name";
+	
+	/** CODEC_TYPE_VALUE_READER
+	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
+	 * */
+	String CODEC_TYPE_VALUE_READER = "codec.type.value.reader";
+	
+	/** CODEC_TYPE_VALUE_WRITER 
+	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
+	 * */
+	String CODEC_TYPE_VALUE_WRITER = "codec.type.value.writer";
+	
+	
 	/** CODEC_VALUE_READER_NAME 
 	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
 	 * */

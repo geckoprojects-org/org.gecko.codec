@@ -236,4 +236,13 @@ public interface Person extends EObject {
 	 */
 	void setId(String value);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel body='return this.name + \" \" + this.lastName;'"
+	 * @generated
+	 */
+	String getFullName();
+
 } // Person

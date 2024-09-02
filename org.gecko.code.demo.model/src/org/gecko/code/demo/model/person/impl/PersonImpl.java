@@ -2,10 +2,14 @@
  */
 package org.gecko.code.demo.model.person.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import java.util.Date;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -471,6 +475,16 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public String getFullName() {
+		return this.name + " " + this.lastName;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case PersonPackage.PERSON__ADDRESS:
@@ -616,6 +630,20 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case PersonPackage.PERSON___GET_FULL_NAME:
+				return getFullName();
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

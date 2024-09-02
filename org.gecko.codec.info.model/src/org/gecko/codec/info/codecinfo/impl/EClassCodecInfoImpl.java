@@ -4,9 +4,12 @@ package org.gecko.codec.info.codecinfo.impl;
 
 import java.util.Collection;
 
+import java.util.stream.Collectors;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -23,8 +26,7 @@ import org.gecko.codec.info.codecinfo.CodecInfoPackage;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
-import org.gecko.codec.info.codecinfo.OperationCodecInfo;
-import org.gecko.codec.info.codecinfo.ReferenceCodecInfo;
+import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 
 /**
@@ -40,8 +42,9 @@ import org.gecko.codec.info.codecinfo.TypeInfo;
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getIdentityInfo <em>Identity Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getTypeInfo <em>Type Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getFeatureInfo <em>Feature Info</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getReferenceInfo <em>Reference Info</em>}</li>
- *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getOperationInfo <em>Operation Info</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getReferenceCodecInfo <em>Reference Codec Info</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getAttributeCodecInfo <em>Attribute Codec Info</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getOperationCodecInfo <em>Operation Codec Info</em>}</li>
  * </ul>
  *
  * @generated
@@ -106,26 +109,6 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @ordered
 	 */
 	protected EList<FeatureCodecInfo> featureInfo;
-
-	/**
-	 * The cached value of the '{@link #getReferenceInfo() <em>Reference Info</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getReferenceInfo()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<ReferenceCodecInfo> referenceInfo;
-
-	/**
-	 * The cached value of the '{@link #getOperationInfo() <em>Operation Info</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getOperationInfo()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<OperationCodecInfo> operationInfo;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -318,11 +301,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
-	public EList<ReferenceCodecInfo> getReferenceInfo() {
-		if (referenceInfo == null) {
-			referenceInfo = new EObjectContainmentEList<ReferenceCodecInfo>(ReferenceCodecInfo.class, this, CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO);
-		}
-		return referenceInfo;
+	public EList<FeatureCodecInfo> getReferenceCodecInfo() {
+		return ECollections.asEList(getFeatureInfo().stream().filter(f->InfoType.REFERENCE.equals(f.getType())).collect(Collectors.toList()));
 	}
 
 	/**
@@ -331,11 +311,18 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
-	public EList<OperationCodecInfo> getOperationInfo() {
-		if (operationInfo == null) {
-			operationInfo = new EObjectContainmentEList<OperationCodecInfo>(OperationCodecInfo.class, this, CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO);
-		}
-		return operationInfo;
+	public EList<FeatureCodecInfo> getAttributeCodecInfo() {
+		return ECollections.asEList(getFeatureInfo().stream().filter(f->InfoType.ATTRIBUTE.equals(f.getType())).collect(Collectors.toList()));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<FeatureCodecInfo> getOperationCodecInfo() {
+		return ECollections.asEList(getFeatureInfo().stream().filter(f->InfoType.OPERATION.equals(f.getType())).collect(Collectors.toList()));
 	}
 
 	/**
@@ -352,10 +339,6 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return basicSetTypeInfo(null, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				return ((InternalEList<?>)getFeatureInfo()).basicRemove(otherEnd, msgs);
-			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
-				return ((InternalEList<?>)getReferenceInfo()).basicRemove(otherEnd, msgs);
-			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
-				return ((InternalEList<?>)getOperationInfo()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -379,10 +362,12 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return getTypeInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				return getFeatureInfo();
-			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
-				return getReferenceInfo();
-			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
-				return getOperationInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO:
+				return getReferenceCodecInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO:
+				return getAttributeCodecInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_CODEC_INFO:
+				return getOperationCodecInfo();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -412,13 +397,17 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				getFeatureInfo().clear();
 				getFeatureInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
 				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
-				getReferenceInfo().clear();
-				getReferenceInfo().addAll((Collection<? extends ReferenceCodecInfo>)newValue);
+			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO:
+				getReferenceCodecInfo().clear();
+				getReferenceCodecInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
 				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
-				getOperationInfo().clear();
-				getOperationInfo().addAll((Collection<? extends OperationCodecInfo>)newValue);
+			case CodecInfoPackage.ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO:
+				getAttributeCodecInfo().clear();
+				getAttributeCodecInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
+				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_CODEC_INFO:
+				getOperationCodecInfo().clear();
+				getOperationCodecInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -447,11 +436,14 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				getFeatureInfo().clear();
 				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
-				getReferenceInfo().clear();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO:
+				getReferenceCodecInfo().clear();
 				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
-				getOperationInfo().clear();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO:
+				getAttributeCodecInfo().clear();
+				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_CODEC_INFO:
+				getOperationCodecInfo().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -475,10 +467,12 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return typeInfo != null;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				return featureInfo != null && !featureInfo.isEmpty();
-			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_INFO:
-				return referenceInfo != null && !referenceInfo.isEmpty();
-			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_INFO:
-				return operationInfo != null && !operationInfo.isEmpty();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO:
+				return !getReferenceCodecInfo().isEmpty();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO:
+				return !getAttributeCodecInfo().isEmpty();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_CODEC_INFO:
+				return !getOperationCodecInfo().isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

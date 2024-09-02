@@ -65,9 +65,6 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 			case CodecInfoPackage.FEATURE_CODEC_INFO: return (EObject)createFeatureCodecInfo();
 			case CodecInfoPackage.TYPE_INFO: return (EObject)createTypeInfo();
 			case CodecInfoPackage.IDENTITY_INFO: return (EObject)createIdentityInfo();
-			case CodecInfoPackage.REFERENCE_CODEC_INFO: return (EObject)createReferenceCodecInfo();
-			case CodecInfoPackage.ATTRIBUTE_CODEC_INFO: return (EObject)createAttributeCodecInfo();
-			case CodecInfoPackage.OPERATION_CODEC_INFO: return (EObject)createOperationCodecInfo();
 			case CodecInfoPackage.CODEC_INFO_HOLDER: return (EObject)createCodecInfoHolder();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -165,39 +162,6 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	public IdentityInfo createIdentityInfo() {
 		IdentityInfoImpl identityInfo = new IdentityInfoImpl();
 		return identityInfo;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public ReferenceCodecInfo createReferenceCodecInfo() {
-		ReferenceCodecInfoImpl referenceCodecInfo = new ReferenceCodecInfoImpl();
-		return referenceCodecInfo;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public AttributeCodecInfo createAttributeCodecInfo() {
-		AttributeCodecInfoImpl attributeCodecInfo = new AttributeCodecInfoImpl();
-		return attributeCodecInfo;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public OperationCodecInfo createOperationCodecInfo() {
-		OperationCodecInfoImpl operationCodecInfo = new OperationCodecInfoImpl();
-		return operationCodecInfo;
 	}
 
 	/**

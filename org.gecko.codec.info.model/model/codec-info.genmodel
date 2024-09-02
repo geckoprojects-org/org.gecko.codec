@@ -12,7 +12,7 @@
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="codec-info.ecore#//InfoType">
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/IDENTITY"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/TYPE"/>
-      <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/FEATURE"/>
+      <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/ATTRIBUTE"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/REFERENCE"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/OBJECT"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/OPERATION"/>
@@ -32,8 +32,12 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec-info.ecore#//EClassCodecInfo/identityInfo"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec-info.ecore#//EClassCodecInfo/typeInfo"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec-info.ecore#//EClassCodecInfo/featureInfo"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec-info.ecore#//EClassCodecInfo/referenceInfo"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec-info.ecore#//EClassCodecInfo/operationInfo"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codec-info.ecore#//EClassCodecInfo/referenceCodecInfo"
+          get="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatureInfo().stream().filter(f->&lt;%org.gecko.codec.info.codecinfo.InfoType%>.REFERENCE.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codec-info.ecore#//EClassCodecInfo/attributeCodecInfo"
+          get="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatureInfo().stream().filter(f->&lt;%org.gecko.codec.info.codecinfo.InfoType%>.ATTRIBUTE.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codec-info.ecore#//EClassCodecInfo/operationCodecInfo"
+          get="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatureInfo().stream().filter(f->&lt;%org.gecko.codec.info.codecinfo.InfoType%>.OPERATION.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//FeatureCodecInfo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//FeatureCodecInfo/id"/>
@@ -52,18 +56,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//IdentityInfo/idStrategy"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//IdentityInfo/idSeparator"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//IdentityInfo/idOrder"/>
-    </genClasses>
-    <genClasses ecoreClass="codec-info.ecore#//ReferenceCodecInfo">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codec-info.ecore#//ReferenceCodecInfo/eReferences"
-          get="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EReference).map(EReference.class::cast).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
-    </genClasses>
-    <genClasses ecoreClass="codec-info.ecore#//AttributeCodecInfo">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codec-info.ecore#//AttributeCodecInfo/eAttributes"
-          get="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EAttribute).map(EAttribute.class::cast).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
-    </genClasses>
-    <genClasses ecoreClass="codec-info.ecore#//OperationCodecInfo">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codec-info.ecore#//OperationCodecInfo/eOperations"
-          get="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatures().stream().filter(f->f instanceof EOperation).map(EOperation.class::cast).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//CodecValueReader">
       <genTypeParameters ecoreTypeParameter="codec-info.ecore#//CodecValueReader/V"/>
