@@ -41,6 +41,7 @@ import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 import org.gecko.codec.info.helper.CodecInfoHolderHelper;
 import org.gecko.emf.osgi.configurator.EPackageConfigurator;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
@@ -62,6 +63,12 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	private Map<InfoType, CodecInfoHolder> codecInfoHolderMap = new HashMap<>();
 
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
+	
+	@Activate
+	public void activate() {
+		PackageCodecInfo packageInfo = createCodecInfo(EcorePackage.eINSTANCE);
+		ePackageCodecInfoMap.put(EcorePackage.eINSTANCE.getNsURI(), packageInfo);
+	}
 
 
 	/*
@@ -156,6 +163,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	}
 
 	private PackageCodecInfo createCodecInfo(EPackage ePackage) {
+		System.out.println("Creating codec info for " + ePackage.getNsURI());
 		PackageCodecInfo ePackageCodecInfo = CodecInfoFactory.eINSTANCE.createPackageCodecInfo();
 		ePackageCodecInfo.setId(ePackage.getNsURI());
 		ePackageCodecInfo.setEPackage(ePackage);

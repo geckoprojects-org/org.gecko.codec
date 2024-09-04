@@ -116,6 +116,10 @@ public class ObjectMapperConfigurator {
 			setMapperFeature(featureString, state);
 			setSerializationFeature(featureString, state);
 			setDeserializationFeature(featureString, state);
+			setStreamReadFeature(featureString, state);
+			setStreamWriteFeature(featureString, state);
+			setJsonReadFeature(featureString, state);
+			setJsonWriteFeature(featureString, state);
 		}
 	}
 	

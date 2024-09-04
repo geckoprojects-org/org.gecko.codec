@@ -64,9 +64,19 @@ public class CodecEObjectSerializerNew extends JsonSerializer<EObject> implement
 	 */
 	@Override
 	public void serialize(EObject value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-		
+
+	
 		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
-		EClassCodecInfo eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().filter(eci -> eci.getClassifier().getInstanceClassName().equals(value.eClass().getInstanceClassName())).findFirst().get();
+		EClassCodecInfo eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().
+				map(eci -> {
+					System.out.println(value);
+					System.out.println(eci.getClassifier().getName() + "-----" + value.eClass().getName());
+					return eci;
+				}).
+				filter(eci -> 
+				eci.getClassifier().getInstanceClassName().equals(value.eClass().getInstanceClassName()))
+				.findFirst().get();
+
 		if(eObjCodecInfo == null) {
 			LOGGER.severe(String.format("No EClassCodecInfo found in CodecModule for EObject of class %s", value.eClass().getInstanceClassName()));
 			return;
@@ -81,7 +91,7 @@ public class CodecEObjectSerializerNew extends JsonSerializer<EObject> implement
 		eObjCodecInfo.getOperationCodecInfo().forEach(aci -> codecInfoSerializers.add(new OperationCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
 
 		gen.writeStartObject();
-				
+
 		if(codecModule.isUseId()) {
 			if(codecModule.isIdOnTop()) {
 				idInfoSerializer.serialize(value, gen, provider);

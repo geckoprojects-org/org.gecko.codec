@@ -250,6 +250,42 @@ public class CodecModuleConfigOverwriteTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
+	public void testCodecModuleOverwriteSupertypeKey(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+		
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertEquals("_supertype", module.getSuperTypeKey());		
+		
+		CodecJsonResource resource = new CodecJsonResource(URI.createURI("mytest.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		
+		Person person = getTestPerson();		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SUPERTYPE_KEY, "test");
+		resource.save(options);
+		
+		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertEquals("test", module.getSuperTypeKey());		
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@Test
 	public void testCodecModuleOverwriteUseId(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
@@ -564,6 +600,78 @@ public class CodecModuleConfigOverwriteTest {
 		
 		module = codecModuleConfigurator.getCodecModuleBuilder().build();
 		assertTrue(module.isSerializeDefaultValue());	
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@Test
+	public void testCodecModuleOverwriteSerializeEmptyValue(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+		
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertFalse(module.isSerializeEmptyValue());	
+		
+		CodecJsonResource resource = new CodecJsonResource(URI.createURI("mytest.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		
+		Person person = getTestPerson();		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
+		resource.save(options);
+		
+		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertTrue(module.isSerializeEmptyValue());	
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@Test
+	public void testCodecModuleOverwriteSerializeNullValue(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+		
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertFalse(module.isSerializeNullValue());	
+		
+		CodecJsonResource resource = new CodecJsonResource(URI.createURI("mytest.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		
+		Person person = getTestPerson();		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
+		resource.save(options);
+		
+		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertTrue(module.isSerializeNullValue());	
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {

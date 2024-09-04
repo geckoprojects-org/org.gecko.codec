@@ -32,6 +32,8 @@ public class CodecModule extends EMFModule {
 	private String codecType;
 	private String codecModuleName;
 	private boolean serializeDefaultValue;
+	private boolean serializeEmptyValue;
+	private boolean serializeNullValue;
 	private boolean serializeArrayBatched;
 	private boolean useNamesFromExtendedMetaData;
 	private boolean useId;
@@ -62,6 +64,14 @@ public class CodecModule extends EMFModule {
 
 	public boolean isSerializeDefaultValue() {
 		return serializeDefaultValue;
+	}
+	
+	public boolean isSerializeEmptyValue() {
+		return serializeEmptyValue;
+	}
+	
+	public boolean isSerializeNullValue() {
+		return serializeNullValue;
 	}
 
 	public boolean isSerializeArrayBatched() {
@@ -142,6 +152,8 @@ public class CodecModule extends EMFModule {
 		this.serializeArrayBatched = builder.serializeArrayBatched;
 		this.serializeSuperTypesAsArray = builder.serializeSuperTypesAsArray;
 		this.serializeDefaultValue = builder.serializeDefaultValue;
+		this.serializeEmptyValue = builder.serializeEmptyValue;
+		this.serializeNullValue = builder.serializeNullValue;
 		this.serializeSuperTypes = builder.serializeSuperTypes;
 		this.serializeType = builder.serializeType;
 		this.idFeatureAsPrimaryKey = builder.idFeatureAsPrimaryKey;
@@ -197,6 +209,8 @@ public class CodecModule extends EMFModule {
 		private String codecType = "";
 		private String codecModuleName = "gecko-codec-module";
 		private boolean serializeDefaultValue = false;
+		private boolean serializeEmptyValue = false;
+		private boolean serializeNullValue = false;
 		private boolean serializeArrayBatched = false;
 		private boolean useNamesFromExtendedMetaData = true;
 		private boolean useId = true;
@@ -262,6 +276,17 @@ public class CodecModule extends EMFModule {
 			this.serializeDefaultValue = serializeDefaultValue;
 			return this;
 		}
+		
+		public Builder withSerializeEmptyValue(boolean serializeEmptyValue) {
+			this.serializeEmptyValue = serializeEmptyValue;
+			return this;
+		}
+		
+		public Builder withSerializeNullValue(boolean serializeNullValue) {
+			this.serializeNullValue = serializeNullValue;
+			return this;
+		}
+		
 		public Builder withSerializeArrayBatched(boolean serializeArrayBatched) {
 			this.serializeArrayBatched = serializeArrayBatched;
 			return this;

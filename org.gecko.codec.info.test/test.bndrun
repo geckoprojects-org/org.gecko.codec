@@ -48,4 +48,8 @@
 	org.gecko.codec.demo;version=snapshot,\
 	org.osgi.test.junit5.cm;version='[1.2.1,1.2.2)',\
 	org.gecko.emf.osgi.api;version='[6.0.0,6.0.1)',\
-	org.gecko.codec;version=snapshot
+	org.gecko.codec;version=snapshot,\
+	org.apache.felix.metatype;version='[1.2.4,1.2.5)',\
+	org.gecko.emf.osgi.component;version='[6.0.0,6.0.1)',\
+	org.osgi.service.log;version='[1.5.0,1.5.1)',\
+	org.osgi.util.converter;version='[1.0.9,1.0.10)'

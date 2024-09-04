@@ -68,8 +68,6 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 				return;
 			}
 		}
-		
-		
 		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
 		CodecValueWriter<Object,?> writer = infoHolder.getWriterByName(featureCodecInfo.getValueWriterName());
 		if (rootObj.eIsSet(feature)) {

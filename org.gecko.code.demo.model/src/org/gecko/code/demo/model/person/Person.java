@@ -4,6 +4,8 @@ package org.gecko.code.demo.model.person;
 
 import java.util.Date;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -26,6 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.code.demo.model.person.Person#getGender <em>Gender</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getNonContainedAdd <em>Non Contained Add</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getId <em>Id</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getTitles <em>Titles</em>}</li>
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getPerson()
@@ -235,6 +238,18 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setId(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Titles</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Titles</em>' attribute list.
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Titles()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getTitles();
 
 	/**
 	 * <!-- begin-user-doc -->

@@ -32,7 +32,6 @@ import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.core.StreamWriteFeature;
 
@@ -52,15 +51,13 @@ import com.fasterxml.jackson.core.StreamWriteFeature;
 public class CodecFactoryConfiguratorTest {
 
 	
-	
-	@SuppressWarnings("deprecation")
 	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
-			@Property(key = "enableFeatures", value={"WRITE_NUMBERS_AS_STRINGS", "JsonWriteFeature.ESCAPE_NON_ASCII", 
-					"StreamWriteFeature.STRICT_DUPLICATE_DETECTION", "StreamReadFeature.STRICT_DUPLICATE_DETECTION"}, type = Type.Array)
+			@Property(key = "disableFeatures", value={"INTERN_FIELD_NAMES", "JsonFactory.Feature.CANONICALIZE_FIELD_NAMES", 
+					"FAIL_ON_SYMBOL_HASH_OVERFLOW", "JsonFactory.Feature.USE_THREAD_LOCAL_FOR_BUFFER_RECYCLING", "CHARSET_DETECTION"}, type = Type.Array)
 	})
 	@Test
-	public void testFactoryConfigEnable(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+	public void testFactoryConfigDisableJsonFactoryFeature(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
 			) throws InterruptedException, IOException {
 	
 		assertNotNull(configurator);
@@ -68,19 +65,42 @@ public class CodecFactoryConfiguratorTest {
 		JsonFactory codecFactory = configurator.getFactoryBuilder().build();
 		assertNotNull(codecFactory);
 				
-		assertTrue(codecFactory.isEnabled(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS));
-		assertTrue(codecFactory.isEnabled(JsonGenerator.Feature.ESCAPE_NON_ASCII));
+		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.INTERN_FIELD_NAMES));
+		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.CANONICALIZE_FIELD_NAMES));
+		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.FAIL_ON_SYMBOL_HASH_OVERFLOW));
+		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.USE_THREAD_LOCAL_FOR_BUFFER_RECYCLING));
+		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.CHARSET_DETECTION));	
+	}
+	
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json"),
+			@Property(key = "enableFeatures", value={"WRITE_BIGDECIMAL_AS_PLAIN", "StreamWriteFeature.IGNORE_UNKNOWN", 
+					"StreamWriteFeature.STRICT_DUPLICATE_DETECTION", "StreamWriteFeature.USE_FAST_DOUBLE_WRITER"}, type = Type.Array)
+	})
+	@Test
+	public void testFactoryConfigEnableStreamWrite(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(configurator);
+		
+		JsonFactory codecFactory = configurator.getFactoryBuilder().build();
+		assertNotNull(codecFactory);
+				
+		assertTrue(codecFactory.isEnabled(StreamWriteFeature.IGNORE_UNKNOWN));
+		assertTrue(codecFactory.isEnabled(StreamWriteFeature.USE_FAST_DOUBLE_WRITER));
 		assertTrue(codecFactory.isEnabled(StreamWriteFeature.STRICT_DUPLICATE_DETECTION));
-		assertTrue(codecFactory.isEnabled(StreamReadFeature.STRICT_DUPLICATE_DETECTION));
+		assertTrue(codecFactory.isEnabled(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN));
 	
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
-			@Property(key = "disableFeatures", value={"CANONICALIZE_FIELD_NAMES", "JsonFactory.Feature.INTERN_FIELD_NAMES", "AUTO_CLOSE_SOURCE", "AUTO_CLOSE_TARGET"}, type = Type.Array),
+			@Property(key = "disableFeatures", value={"AUTO_CLOSE_TARGET", "StreamWriteFeature.AUTO_CLOSE_CONTENT", 
+					"StreamWriteFeature.FLUSH_PASSED_TO_STREAM"}, type = Type.Array)
 	})
 	@Test
-	public void testFactoryConfigDisable(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+	public void testFactoryConfigDisableStreamWrite(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
 			) throws InterruptedException, IOException {
 	
 		assertNotNull(configurator);
@@ -88,9 +108,45 @@ public class CodecFactoryConfiguratorTest {
 		JsonFactory codecFactory = configurator.getFactoryBuilder().build();
 		assertNotNull(codecFactory);
 				
-		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.CANONICALIZE_FIELD_NAMES));
-		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.INTERN_FIELD_NAMES));
-		assertFalse(codecFactory.isEnabled(StreamReadFeature.AUTO_CLOSE_SOURCE));
 		assertFalse(codecFactory.isEnabled(StreamWriteFeature.AUTO_CLOSE_TARGET));
+		assertFalse(codecFactory.isEnabled(StreamWriteFeature.AUTO_CLOSE_CONTENT));
+		assertFalse(codecFactory.isEnabled(StreamWriteFeature.FLUSH_PASSED_TO_STREAM));	
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json"),
+			@Property(key = "enableFeatures", value={"STRICT_DUPLICATE_DETECTION", "IGNORE_UNDEFINED", 
+					"INCLUDE_SOURCE_IN_LOCATION", "USE_FAST_DOUBLE_PARSER", "USE_FAST_BIG_NUMBER_PARSER"}, type = Type.Array)
+	})
+	@Test
+	public void testFactoryConfigEnableStreamRead(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(configurator);
+		
+		JsonFactory codecFactory = configurator.getFactoryBuilder().build();
+		assertNotNull(codecFactory);
+				
+		assertTrue(codecFactory.isEnabled(StreamReadFeature.STRICT_DUPLICATE_DETECTION));
+		assertTrue(codecFactory.isEnabled(StreamReadFeature.IGNORE_UNDEFINED));
+		assertTrue(codecFactory.isEnabled(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION));
+		assertTrue(codecFactory.isEnabled(StreamReadFeature.USE_FAST_BIG_NUMBER_PARSER));
+		assertTrue(codecFactory.isEnabled(StreamReadFeature.USE_FAST_DOUBLE_PARSER));	
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json"),
+			@Property(key = "disableFeatures", value={"AUTO_CLOSE_SOURCE"}, type = Type.Array)
+	})
+	@Test
+	public void testFactoryConfigDisableStreamRead(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(configurator);
+		
+		JsonFactory codecFactory = configurator.getFactoryBuilder().build();
+		assertNotNull(codecFactory);
+				
+		assertFalse(codecFactory.isEnabled(StreamReadFeature.AUTO_CLOSE_SOURCE));
 	}
 }

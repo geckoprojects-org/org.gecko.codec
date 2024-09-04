@@ -37,6 +37,22 @@ public @interface CodecModuleConfig {
 	boolean serializeDefaultValue() default false;
 	
 	/**
+	 * Option used to indicate the module to serialize null values.
+	 * This is used for objects in general and for map values.
+	 * Default is false
+	 * @return
+	 */
+	boolean serializeNullValue() default false;
+	
+	/**
+	 * Option to specify weather or not to serialize empty values.
+	 * This is used for arrays, or lists.
+	 * Default is false.
+	 * @return
+	 */
+	boolean serializeEmptyValue() default false;
+	
+	/**
 	 * Setting this option to <code>true</code>, will send lists and arrays using the writeArray callbacks.
      * Per default the serialization happens with startArray, then calling writeValue for each element. 
      * Default is Boolean.FALSE

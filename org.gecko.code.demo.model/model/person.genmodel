@@ -33,6 +33,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/gender"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference person.ecore#//Person/nonContainedAdd"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/titles"/>
       <genOperations ecoreOperation="person.ecore#//Person/getFullName" body="return this.name + &quot; &quot; + this.lastName;"/>
     </genClasses>
     <genClasses ecoreClass="person.ecore#//Address">

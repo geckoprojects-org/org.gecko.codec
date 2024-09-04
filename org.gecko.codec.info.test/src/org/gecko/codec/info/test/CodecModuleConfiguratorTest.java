@@ -57,11 +57,14 @@ public class CodecModuleConfiguratorTest {
 		assertEquals("json", module.getCodecType());	
 		assertEquals("_id", module.getIdKey());		
 		assertEquals("_type", module.getTypeKey());		
+		assertEquals("_supertype", module.getSuperTypeKey());		
 		assertEquals("$ref", module.getRefKey());		
 		assertEquals("_proxy", module.getProxyKey());		
 		assertEquals("_timestamp", module.getTimestampKey());		
 		assertEquals("gecko-codec-module", module.getModuleName());		
 		assertFalse(module.isSerializeDefaultValue());		
+		assertFalse(module.isSerializeNullValue());		
+		assertFalse(module.isSerializeEmptyValue());		
 		assertFalse(module.isSerializeArrayBatched());
 		assertTrue(module.isUseNamesFromExtendedMetaData());
 		assertTrue(module.isUseId());
@@ -108,6 +111,17 @@ public class CodecModuleConfiguratorTest {
 		assertNotNull(codecModuleConfigurator);
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
 		assertEquals("test", module.getTypeKey());		
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "superTypeKey", value="test")
+	})
+	@Test
+	public void testCodecModuleConfigCodecSuperTypeKey(@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator) throws InterruptedException, IOException {
+	
+		assertNotNull(codecModuleConfigurator);
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertEquals("test", module.getSuperTypeKey());		
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
@@ -163,6 +177,28 @@ public class CodecModuleConfiguratorTest {
 		assertNotNull(codecModuleConfigurator);
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
 		assertTrue(module.isSerializeDefaultValue());
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "serializeEmptyValue", value="true", scalar = Scalar.Boolean)
+	})
+	@Test
+	public void testCodecModuleConfigSerEmptyValue(@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator) throws InterruptedException, IOException {
+	
+		assertNotNull(codecModuleConfigurator);
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertTrue(module.isSerializeEmptyValue());
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "serializeNullValue", value="true", scalar = Scalar.Boolean)
+	})
+	@Test
+	public void testCodecModuleConfigSerNullValue(@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator) throws InterruptedException, IOException {
+	
+		assertNotNull(codecModuleConfigurator);
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertTrue(module.isSerializeNullValue());
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {

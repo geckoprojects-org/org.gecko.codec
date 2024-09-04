@@ -59,7 +59,7 @@ public class OperationCodecInfoSerializer implements CodecInfoSerializer {
 		EOperation operation = (EOperation) featureCodecInfo.getFeatures().get(0);
 		try {
 			value = rootObj.eInvoke(operation, null);
-		} catch (InvocationTargetException e) {
+		} catch (InvocationTargetException | NullPointerException e) {
 			// handle error
 			value = null;
 		}

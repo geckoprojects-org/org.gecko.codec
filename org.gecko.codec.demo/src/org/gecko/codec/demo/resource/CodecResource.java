@@ -79,8 +79,9 @@ public class CodecResource extends ResourceImpl {
 			LOGGER.severe(String.format("No content for Resource %s", this.getURI()));
 			return;
 		}
-		
-		PackageCodecInfo modelCodecInfo = modelInfoService.getCodecInfoForPackage(eObject.eClass().getEPackage().getNsURI()).get();
+
+		PackageCodecInfo modelCodecInfo = modelInfoService.getCodecInfoForPackage(eObject.eClass().getEPackage().getNsURI()).get();	
+
 		if(modelCodecInfo == null) {
 			LOGGER.severe(String.format("No PackageCodecInfo associated with EObject %s has been found", eObject.eClass().getName()));
 			return;
@@ -299,6 +300,12 @@ public class CodecResource extends ResourceImpl {
 				break;
 			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE:
 				moduleBuilder.withSerializeDefaultValue((boolean) options.get(k));
+				break;
+			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE:
+				moduleBuilder.withSerializeEmptyValue((boolean) options.get(k));
+				break;
+			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE:
+				moduleBuilder.withSerializeNullValue((boolean) options.get(k));
 				break;
 			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD:
 				moduleBuilder.withSerializeIdField((boolean) options.get(k));

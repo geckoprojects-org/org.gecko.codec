@@ -72,6 +72,10 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 			gen.writeString(id);
 			break;
 		case "ID_FIELD": default:
+			if(idFeatures.size() == 0) {
+				LOGGER.warning(String.format("ID strategy is ID_FIELD but no id feature has been found. Not doing anything."));
+				break;
+			}
 			if(idFeatures.size() != 1) {
 				LOGGER.severe(String.format("ID strategy is ID_FIELD but id features are %d. There should be exactly 1!", idFeatures.size()));
 				break;

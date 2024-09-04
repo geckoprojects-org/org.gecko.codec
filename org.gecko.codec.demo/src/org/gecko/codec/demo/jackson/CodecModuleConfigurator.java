@@ -45,6 +45,8 @@ public class CodecModuleConfigurator {
 			.withSerailizeSuperTypesAsArray(codecConfig.serailizeSuperTypesAsArray())
 			.withSerializeArrayBatched(codecConfig.serializeArrayBatched())
 			.withSerializeDefaultValue(codecConfig.serializeDefaultValue())
+			.withSerializeEmptyValue(codecConfig.serializeEmptyValue())
+			.withSerializeNullValue(codecConfig.serializeNullValue())
 			.withSerializeIdField(codecConfig.serializeIdField())
 			.withSerializeSuperTypes(codecConfig.serializeSuperTypes())
 			.withSerializeType(codecConfig.serializeType())

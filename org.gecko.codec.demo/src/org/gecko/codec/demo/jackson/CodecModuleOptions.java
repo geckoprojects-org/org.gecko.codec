@@ -27,6 +27,10 @@ public interface CodecModuleOptions {
 	String CODEC_MODULE_VERSION = "codec.module.version";
 	
 	String CODEC_MODULE_SERIALIZE_DEFAULT_VALUE = "codec.module.serialize.default.value";
+
+	String CODEC_MODULE_SERIALIZE_EMPTY_VALUE = "codec.module.serialize.empty.value";
+	
+	String CODEC_MODULE_SERIALIZE_NULL_VALUE = "codec.module.serialize.null.value";
 	
 	String CODEC_MODULE_SERIALIZE_ARRAY_BATCHED = "codec.module.serialize.array.batched";
 	

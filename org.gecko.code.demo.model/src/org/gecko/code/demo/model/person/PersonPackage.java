@@ -157,13 +157,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__ID = 8;
 
 	/**
+	 * The feature id for the '<em><b>Titles</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__TITLES = 9;
+
+	/**
 	 * The number of structural features of the '<em>Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 9;
+	int PERSON_FEATURE_COUNT = 10;
 
 	/**
 	 * The operation id for the '<em>Get Full Name</em>' operation.
@@ -328,6 +337,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int BUSINESS_PERSON__ID = PERSON__ID;
+
+	/**
+	 * The feature id for the '<em><b>Titles</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__TITLES = PERSON__TITLES;
 
 	/**
 	 * The number of structural features of the '<em>Business Person</em>' class.
@@ -578,6 +596,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getPerson_Id();
 
 	/**
+	 * Returns the meta object for the attribute list '{@link org.gecko.code.demo.model.person.Person#getTitles <em>Titles</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Titles</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getTitles()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_Titles();
+
+	/**
 	 * Returns the meta object for the '{@link org.gecko.code.demo.model.person.Person#getFullName() <em>Get Full Name</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -796,6 +825,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute PERSON__ID = eINSTANCE.getPerson_Id();
+
+		/**
+		 * The meta object literal for the '<em><b>Titles</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__TITLES = eINSTANCE.getPerson_Titles();
 
 		/**
 		 * The meta object literal for the '<em><b>Get Full Name</b></em>' operation.

@@ -4,6 +4,7 @@ package org.gecko.code.demo.model.person.impl;
 
 import java.lang.reflect.InvocationTargetException;
 
+import java.util.Collection;
 import java.util.Date;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -16,6 +17,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 import org.gecko.code.demo.model.person.Address;
 import org.gecko.code.demo.model.person.GENDER_TYPE;
@@ -39,6 +42,7 @@ import org.gecko.code.demo.model.person.PersonPackage;
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getGender <em>Gender</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getNonContainedAdd <em>Non Contained Add</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getTitles <em>Titles</em>}</li>
  * </ul>
  *
  * @generated
@@ -203,6 +207,16 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected String id = ID_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getTitles() <em>Titles</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTitles()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> titles;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -475,6 +489,19 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public EList<String> getTitles() {
+		if (titles == null) {
+			titles = new EDataTypeUniqueEList<String>(String.class, this, PersonPackage.PERSON__TITLES);
+		}
+		return titles;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String getFullName() {
 		return this.name + " " + this.lastName;
 	}
@@ -520,6 +547,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return basicGetNonContainedAdd();
 			case PersonPackage.PERSON__ID:
 				return getId();
+			case PersonPackage.PERSON__TITLES:
+				return getTitles();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -529,6 +558,7 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -558,6 +588,10 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return;
 			case PersonPackage.PERSON__ID:
 				setId((String)newValue);
+				return;
+			case PersonPackage.PERSON__TITLES:
+				getTitles().clear();
+				getTitles().addAll((Collection<? extends String>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -598,6 +632,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__ID:
 				setId(ID_EDEFAULT);
 				return;
+			case PersonPackage.PERSON__TITLES:
+				getTitles().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -628,6 +665,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return nonContainedAdd != null;
 			case PersonPackage.PERSON__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+			case PersonPackage.PERSON__TITLES:
+				return titles != null && !titles.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -670,6 +709,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		result.append(gender);
 		result.append(", id: ");
 		result.append(id);
+		result.append(", titles: ");
+		result.append(titles);
 		result.append(')');
 		return result.toString();
 	}

@@ -14,6 +14,7 @@
 package org.gecko.codec.demo.jackson;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
@@ -71,18 +72,66 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 			return;
 		}
 		EReference feature = (EReference) featureCodecInfo.getFeatures().get(0);
-		EObject value = (EObject) rootObj.eGet(feature);
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
+		
+		
+		if(feature.isMany()) {
+			List<EObject> values = (List<EObject>) rootObj.eGet(feature);
+			serializeManyReferences(rootObj, values, feature, jg, provider);
+			
+			
+		} else {
+			EObject value = (EObject) rootObj.eGet(feature);
+			if(value != null || codecModule.isSerializeDefaultValue()) {
+				if(codecModule.isUseNamesFromExtendedMetaData()) {
+					jg.writeFieldName(featureCodecInfo.getKey() != null ? featureCodecInfo.getKey() : feature.getName());
+				} else {
+					jg.writeFieldName(feature.getName());
+				}	
+			}
+			else return;
+			serializeSingleReference(rootObj, value, feature, jg, provider);
+		}
+	}
 
+
+	private void serializeManyReferences(EObject rootObj, List<EObject> values, EReference feature, JsonGenerator jg,
+			SerializerProvider provider) throws IOException {
+
+		if(values.isEmpty() && !codecModule.isSerializeDefaultValue()) return;
 		if(codecModule.isUseNamesFromExtendedMetaData()) {
 			jg.writeFieldName(featureCodecInfo.getKey() != null ? featureCodecInfo.getKey() : feature.getName());
 		} else {
 			jg.writeFieldName(feature.getName());
 		}	
+		jg.writeStartArray();
+		values.forEach(value -> {
+			try {
+				serializeSingleReference(rootObj, value, feature, jg, provider);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+		jg.writeEndArray();
+		
+	}
 
+	private void serializeSingleReference(EObject rootObj, EObject value, EReference feature, JsonGenerator jg, SerializerProvider provider) throws IOException {
 		if(feature.isContainment()) {
-			new CodecEObjectSerializerNew(codecModule, codecModelInfoService).serialize(value, jg, provider);
+			if(value == null && !codecModule.isSerializeDefaultValue()) return;
+			else if(value == null) jg.writeNull();
+			else new CodecEObjectSerializerNew(codecModule, codecModelInfoService).serialize(value, jg, provider);
+		} else {
+			serializeNonContainment(rootObj, value, feature, jg, provider);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void serializeNonContainment(EObject rootObj, EObject value, EReference feature, JsonGenerator jg, SerializerProvider provider) throws IOException {
+		if(value == null && !codecModule.isSerializeDefaultValue()) return;	
+		if(value == null) {
+			jg.writeNull();
 			return;
 		}
 		final String href = getHRef(provider, rootObj, value);
@@ -98,7 +147,6 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		} else {
 			jg.writeString(v);
 		}
-		//       jg.writeStringField(codecModule.getTypeKey(), typeInfo.getValueWriter().writeValue(value.eClass(), provider));
 		if (href == null) {
 			jg.writeNullField(codecModule.getRefKey());
 		} else {
@@ -106,7 +154,6 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		}
 		jg.writeEndObject();
 	}
-
 
 	private String getHRef(final SerializerProvider ctxt, final EObject parent, final EObject value) {
 		if (isExternal(ctxt, parent, value)) {
