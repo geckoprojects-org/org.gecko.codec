@@ -82,6 +82,16 @@ public enum InfoType implements Enumerator {
 	OPERATION(5, "OPERATION", "OPERATION"),
 
 	/**
+	 * The '<em><b>SUPER TYPE</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #SUPER_TYPE_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	SUPER_TYPE(6, "SUPER_TYPE", "SUPER_TYPE"),
+
+	/**
 	 * The '<em><b>OTHER</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -158,6 +168,17 @@ public enum InfoType implements Enumerator {
 	public static final int OPERATION_VALUE = 5;
 
 	/**
+	 * The '<em><b>SUPER TYPE</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #SUPER_TYPE
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SUPER_TYPE_VALUE = 6;
+
+	/**
 	 * The '<em><b>OTHER</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -182,6 +203,7 @@ public enum InfoType implements Enumerator {
 			REFERENCE,
 			OBJECT,
 			OPERATION,
+			SUPER_TYPE,
 			OTHER,
 		};
 
@@ -245,6 +267,7 @@ public enum InfoType implements Enumerator {
 			case REFERENCE_VALUE: return REFERENCE;
 			case OBJECT_VALUE: return OBJECT;
 			case OPERATION_VALUE: return OPERATION;
+			case SUPER_TYPE_VALUE: return SUPER_TYPE;
 			case OTHER_VALUE: return OTHER;
 		}
 		return null;

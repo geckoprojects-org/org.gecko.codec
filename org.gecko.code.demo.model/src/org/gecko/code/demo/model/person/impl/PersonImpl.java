@@ -43,6 +43,7 @@ import org.gecko.code.demo.model.person.PersonPackage;
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getNonContainedAdd <em>Non Contained Add</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getTitles <em>Titles</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getTransientAtt <em>Transient Att</em>}</li>
  * </ul>
  *
  * @generated
@@ -217,6 +218,26 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected EList<String> titles;
+
+	/**
+	 * The default value of the '{@link #getTransientAtt() <em>Transient Att</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTransientAtt()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int TRANSIENT_ATT_EDEFAULT = 0;
+
+	/**
+	 * The cached value of the '{@link #getTransientAtt() <em>Transient Att</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTransientAtt()
+	 * @generated
+	 * @ordered
+	 */
+	protected int transientAtt = TRANSIENT_ATT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -502,6 +523,29 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public int getTransientAtt() {
+		return transientAtt;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setTransientAtt(int newTransientAtt) {
+		int oldTransientAtt = transientAtt;
+		transientAtt = newTransientAtt;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__TRANSIENT_ATT, oldTransientAtt, transientAtt));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String getFullName() {
 		return this.name + " " + this.lastName;
 	}
@@ -549,6 +593,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return getId();
 			case PersonPackage.PERSON__TITLES:
 				return getTitles();
+			case PersonPackage.PERSON__TRANSIENT_ATT:
+				return getTransientAtt();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -593,6 +639,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				getTitles().clear();
 				getTitles().addAll((Collection<? extends String>)newValue);
 				return;
+			case PersonPackage.PERSON__TRANSIENT_ATT:
+				setTransientAtt((Integer)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -635,6 +684,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__TITLES:
 				getTitles().clear();
 				return;
+			case PersonPackage.PERSON__TRANSIENT_ATT:
+				setTransientAtt(TRANSIENT_ATT_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -667,6 +719,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case PersonPackage.PERSON__TITLES:
 				return titles != null && !titles.isEmpty();
+			case PersonPackage.PERSON__TRANSIENT_ATT:
+				return transientAtt != TRANSIENT_ATT_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -711,6 +765,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		result.append(id);
 		result.append(", titles: ");
 		result.append(titles);
+		result.append(", transientAtt: ");
+		result.append(transientAtt);
 		result.append(')');
 		return result.toString();
 	}

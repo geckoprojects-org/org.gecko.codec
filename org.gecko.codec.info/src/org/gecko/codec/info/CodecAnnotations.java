@@ -27,13 +27,13 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_INHERIT = "codec.inherit";
 	
-	/** CODEC_IGNORE 
+	/** CODEC_TRANSIENT 
 	 *  Annotation for specifying that the feature should not be serialize.
 	 *  This is supposed to be used when annotating the model.
 	 *  If this has to be overwritten by {@link Resource}{@link #save} and {@link #load}
 	 *  options, use {@link CODEC_IGNORE_FEATURES_LIST} and {@link CODEC_IGNORE_NOT_FEATURES_LIST}
 	 * */
-	String CODEC_IGNORE = "codec.ignore";
+	String CODEC_TRANSIENT = "codec.transient";
 	
 	/** CODEC_IGNORE_FEATURES_LIST 
 	 * Option to be used with {@link Resource}{@link #save} and {@link #load}
@@ -129,6 +129,26 @@ public interface CodecAnnotations {
 	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
 	 * */
 	String CODEC_TYPE_VALUE_WRITER = "codec.type.value.writer";
+	
+	/** CODEC_TYPE_VALUE_READER_NAME 
+	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
+	 * */
+	String CODEC_SUPERTYPE_VALUE_READER_NAME = "codec.supertype.value.reader.name";
+	
+	/** CODEC_TYPE_VALUE_WRITER_NAME 
+	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
+	 * */
+	String CODEC_SUPERTYPE_VALUE_WRITER_NAME = "codec.supertype.value.writer.name";
+	
+	/** CODEC_TYPE_VALUE_READER
+	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
+	 * */
+	String CODEC_SUPERTYPE_VALUE_READER = "codec.supertype.value.reader";
+	
+	/** CODEC_TYPE_VALUE_WRITER 
+	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
+	 * */
+	String CODEC_SUPERTYPE_VALUE_WRITER = "codec.supertype.value.writer";
 	
 	
 	/** CODEC_VALUE_READER_NAME 

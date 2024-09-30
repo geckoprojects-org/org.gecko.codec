@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
@@ -38,6 +39,7 @@ import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
+import org.gecko.codec.info.codecinfo.SuperTypeInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 import org.gecko.codec.info.helper.CodecInfoHolderHelper;
 import org.gecko.emf.osgi.configurator.EPackageConfigurator;
@@ -255,6 +257,43 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		}
 
 		eClassCodecInfo.setTypeInfo(typeInfo);
+		
+		SuperTypeInfo superTypeInfo = CodecInfoFactory.eINSTANCE.createSuperTypeInfo();
+		superTypeInfo.setId(UUID.randomUUID().toString());
+		superTypeInfo.setType(InfoType.SUPER_TYPE);		
+		String supertypeValue = getAnnotationDetails(ec, "codec.supertype", "include", true);
+		if(supertypeValue != null && "false".equalsIgnoreCase(supertypeValue)) {
+			superTypeInfo.setIgnoreSuperType(true);
+		}
+		if(!superTypeInfo.isIgnoreSuperType()) {
+			String superTypeStrategy = getAnnotationDetails(ec, "codec.supertype", "use", true);
+			if(superTypeStrategy != null) {
+				superTypeInfo.setSuperTypeStrategy(superTypeStrategy);
+				switch(superTypeStrategy) {
+				case "ARRAY": default:
+					superTypeInfo.setValueWriterName("URIS_WRITER");
+					superTypeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
+					break;				
+				}
+			} else {
+				valueReaderName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_SUPERTYPE_VALUE_READER_NAME);
+				valueWriterName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_SUPERTYPE_VALUE_WRITER_NAME);
+
+				if(valueReaderName != null) {
+					superTypeInfo.setValueReaderName(valueReaderName);
+				} else {
+					superTypeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
+				}
+
+				if(valueWriterName != null) {
+					superTypeInfo.setValueWriterName(valueWriterName);
+				} else {
+					superTypeInfo.setValueWriterName("URIS_WRITER");
+				}
+			}
+		}
+
+		eClassCodecInfo.setSuperTypeInfo(superTypeInfo);
 		return eClassCodecInfo;
 	}
 
@@ -264,9 +303,11 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		featureInfo.setId(UUID.randomUUID().toString());
 		featureInfo.setType(feature instanceof EAttribute ? InfoType.ATTRIBUTE : 
 			feature instanceof EOperation ? InfoType.OPERATION : InfoType.REFERENCE);
-		featureInfo.setKey(getElementName(feature));
+		featureInfo.setKey(getElementName(feature) != null ? getElementName(feature) : feature.getName());
 		featureInfo.getFeatures().add(feature);
-		String isIgnore = getAnnotationDetails(feature, "codec", "ignore");
+		
+		if(feature instanceof EStructuralFeature f && f.isTransient()) featureInfo.setIgnore(true);
+		String isIgnore = getAnnotationDetails(feature, "codec", "transient");
 		if("true".equalsIgnoreCase(isIgnore)) featureInfo.setIgnore(Boolean.valueOf(isIgnore));
 
 		//		Retrieve id info from model annotations

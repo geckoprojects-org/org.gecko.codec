@@ -29,7 +29,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author mark
  * @since 02.08.2024
  */
-@Component(name = "JsonRF", service = Resource.Factory.class, property = "codecType=json", configurationPolicy = ConfigurationPolicy.REQUIRE)
+@Component(name = "JsonRF", service = {Resource.Factory.class, JsonResourceFactory.class} , configurationPolicy = ConfigurationPolicy.REQUIRE, configurationPid = "CodecJsonRF")
 public class JsonResourceFactory extends ResourceFactoryImpl {
 	
 	@Reference

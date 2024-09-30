@@ -127,6 +127,14 @@
         "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       }
+    }, {
+      "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EAttribute",
+      "name" : "transientAtt",
+      "eType" : {
+        "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
+        "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EInt"
+      },
+      "transient" : true
     } ]
   }, {
     "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
@@ -143,7 +151,7 @@
       "eAnnotations" : [ {
         "source" : "codec",
         "details" : {
-          "ignore" : "true"
+          "transient" : "true"
         }
       } ],
       "name" : "zip",

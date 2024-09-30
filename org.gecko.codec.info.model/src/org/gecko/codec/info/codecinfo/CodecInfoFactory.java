@@ -61,6 +61,15 @@ public interface CodecInfoFactory extends EFactory {
 	TypeInfo createTypeInfo();
 
 	/**
+	 * Returns a new object of class '<em>Super Type Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Super Type Info</em>'.
+	 * @generated
+	 */
+	SuperTypeInfo createSuperTypeInfo();
+
+	/**
 	 * Returns a new object of class '<em>Identity Info</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

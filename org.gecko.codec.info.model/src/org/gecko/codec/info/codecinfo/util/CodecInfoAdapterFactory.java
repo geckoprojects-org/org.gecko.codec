@@ -84,6 +84,10 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 				return createTypeInfoAdapter();
 			}
 			@Override
+			public Adapter caseSuperTypeInfo(SuperTypeInfo object) {
+				return createSuperTypeInfoAdapter();
+			}
+			@Override
 			public Adapter caseIdentityInfo(IdentityInfo object) {
 				return createIdentityInfoAdapter();
 			}
@@ -176,6 +180,20 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createTypeInfoAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.info.codecinfo.SuperTypeInfo <em>Super Type Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.info.codecinfo.SuperTypeInfo
+	 * @generated
+	 */
+	public Adapter createSuperTypeInfoAdapter() {
 		return null;
 	}
 

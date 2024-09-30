@@ -43,11 +43,11 @@ public class CodecInfoHolderHelper {
 			codecInfoHolder.getWriters().add(CodecIOHelper.IDFIELD_VALUE_WRITER);			
 			codecInfoHolder.getWriters().add(CodecIOHelper.DEFAULT_ID_VALUE_WRITER);
 			break;
-		case REFERENCE:
+		case REFERENCE: case SUPER_TYPE:
 			codecInfoHolder.getReaders().add(CodecIOHelper.DEFAULT_ECLASS_READER);
 			codecInfoHolder.getWriters().add(CodecIOHelper.URIS_WRITER);		
 			break;
-		case TYPE:
+		case TYPE: 
 			codecInfoHolder.getReaders().add(CodecIOHelper.DEFAULT_ECLASS_READER);
 			codecInfoHolder.getReaders().add(CodecIOHelper.READ_BY_NAME);
 			codecInfoHolder.getReaders().add(CodecIOHelper.READ_BY_CLASS);

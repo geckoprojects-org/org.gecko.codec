@@ -29,6 +29,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.code.demo.model.person.Person#getNonContainedAdd <em>Non Contained Add</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getId <em>Id</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getTitles <em>Titles</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getTransientAtt <em>Transient Att</em>}</li>
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getPerson()
@@ -250,6 +251,28 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	EList<String> getTitles();
+
+	/**
+	 * Returns the value of the '<em><b>Transient Att</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Transient Att</em>' attribute.
+	 * @see #setTransientAtt(int)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_TransientAtt()
+	 * @model transient="true"
+	 * @generated
+	 */
+	int getTransientAtt();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getTransientAtt <em>Transient Att</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Transient Att</em>' attribute.
+	 * @see #getTransientAtt()
+	 * @generated
+	 */
+	void setTransientAtt(int value);
 
 	/**
 	 * <!-- begin-user-doc -->

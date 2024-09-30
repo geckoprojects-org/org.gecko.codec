@@ -1,18 +1,23 @@
-{
+[ {
+  "_id" : "38740388-033e-43cc-97f4-91b9af6408ac",
+  "_type" : "http://example.de/person/1.0#//Address",
+  "street" : "Via Test",
+  "id" : "38740388-033e-43cc-97f4-91b9af6408ac"
+}, {
   "_id" : "John-Doe",
   "_type" : "Person",
-  "birthDate" : "1990-06-20",
-  "age" : 0,
-  "married" : false,
+  "name" : "John",
+  "lastName" : "Doe",
+  "birthDate" : "1990-06-20T00:00:00",
+  "age" : 42,
+  "married" : true,
   "gender" : "MALE",
-  "id" : "b01303e3-233a-4481-951c-e11646f8d6e1",
-  "address" : {
-    "_id" : "2bfb6166-a0a0-4400-8f26-d9698d5dada7",
-    "street" : "Camsdorfer Str."
-  },
+  "id" : "1a5b88d2-8334-4840-8674-60e4a474a393",
+  "titles" : [ "Mrs", "Dr" ],
+  "address" : null,
   "nonContainedAdd" : {
     "_type" : "Address",
-    "$ref" : "#2904cee4-5241-4ef2-9d34-54130339e3a4"
+    "$ref" : "38740388-033e-43cc-97f4-91b9af6408ac"
   },
   "getFullName" : "John Doe"
-}
+} ]

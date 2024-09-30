@@ -166,13 +166,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__TITLES = 9;
 
 	/**
+	 * The feature id for the '<em><b>Transient Att</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__TRANSIENT_ATT = 10;
+
+	/**
 	 * The number of structural features of the '<em>Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 10;
+	int PERSON_FEATURE_COUNT = 11;
 
 	/**
 	 * The operation id for the '<em>Get Full Name</em>' operation.
@@ -346,6 +355,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int BUSINESS_PERSON__TITLES = PERSON__TITLES;
+
+	/**
+	 * The feature id for the '<em><b>Transient Att</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__TRANSIENT_ATT = PERSON__TRANSIENT_ATT;
 
 	/**
 	 * The number of structural features of the '<em>Business Person</em>' class.
@@ -607,6 +625,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getPerson_Titles();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getTransientAtt <em>Transient Att</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Transient Att</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getTransientAtt()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_TransientAtt();
+
+	/**
 	 * Returns the meta object for the '{@link org.gecko.code.demo.model.person.Person#getFullName() <em>Get Full Name</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -833,6 +862,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute PERSON__TITLES = eINSTANCE.getPerson_Titles();
+
+		/**
+		 * The meta object literal for the '<em><b>Transient Att</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__TRANSIENT_ATT = eINSTANCE.getPerson_TransientAtt();
 
 		/**
 		 * The meta object literal for the '<em><b>Get Full Name</b></em>' operation.

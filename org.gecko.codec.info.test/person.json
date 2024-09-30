@@ -1,15 +1,18 @@
 {
-  "eClass" : "http://example.de/person/1.0#//Person",
+  "_id" : "John-Doe",
+  "_type" : "Person",
   "name" : "John",
   "lastName" : "Doe",
-  "address" : {
-    "street" : "Camsdorfer Str.",
-    "zip" : "07749",
-    "id" : "48eefa96-5536-4ba8-b533-fada6bc707ed"
-  },
-  "birthDate" : 645832800000,
+  "birthDate" : "1990-06-20T00:00:00",
+  "age" : 42,
+  "married" : true,
+  "gender" : "MALE",
+  "id" : "8ec21532-18e4-4cc8-a08d-49eec43f5f09",
+  "titles" : [ "Mrs", "Dr" ],
+  "address" : null,
   "nonContainedAdd" : {
-    "eClass" : "http://example.de/person/1.0#//Address",
-    "$ref" : "address.json#2ac393f3-2a86-485a-b601-cdcc172596e8"
-  }
+    "_type" : "Address",
+    "$ref" : "address.json#bead8182-eb23-4510-bd80-cbb5f84ec7e5"
+  },
+  "getFullName" : "John Doe"
 }

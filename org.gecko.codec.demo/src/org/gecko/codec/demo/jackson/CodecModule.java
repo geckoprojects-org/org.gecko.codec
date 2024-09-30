@@ -14,6 +14,8 @@
 package org.gecko.codec.demo.jackson;
 
 import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.gecko.codec.demo.jackson.deser.CodecDeserializersNew;
+import org.gecko.codec.demo.jackson.ser.CodecSerializersNew;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 
@@ -198,7 +200,9 @@ public class CodecModule extends EMFModule {
 	public void setupModule(final SetupContext context) {
 		super.setupModule(context);
 		CodecSerializersNew serializers = new CodecSerializersNew(this);
-		context.addSerializers(serializers);	
+		context.addSerializers(serializers);
+		CodecDeserializersNew deserializers = new CodecDeserializersNew(this);
+		context.addDeserializers(deserializers);
 	}
 	
 	public static class Builder {

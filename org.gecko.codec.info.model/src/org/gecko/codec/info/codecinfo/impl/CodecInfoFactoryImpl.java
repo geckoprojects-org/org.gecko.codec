@@ -64,6 +64,7 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 			case CodecInfoPackage.ECLASS_CODEC_INFO: return (EObject)createEClassCodecInfo();
 			case CodecInfoPackage.FEATURE_CODEC_INFO: return (EObject)createFeatureCodecInfo();
 			case CodecInfoPackage.TYPE_INFO: return (EObject)createTypeInfo();
+			case CodecInfoPackage.SUPER_TYPE_INFO: return (EObject)createSuperTypeInfo();
 			case CodecInfoPackage.IDENTITY_INFO: return (EObject)createIdentityInfo();
 			case CodecInfoPackage.CODEC_INFO_HOLDER: return (EObject)createCodecInfoHolder();
 			default:
@@ -151,6 +152,17 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	public TypeInfo createTypeInfo() {
 		TypeInfoImpl typeInfo = new TypeInfoImpl();
 		return typeInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public SuperTypeInfo createSuperTypeInfo() {
+		SuperTypeInfoImpl superTypeInfo = new SuperTypeInfoImpl();
+		return superTypeInfo;
 	}
 
 	/**

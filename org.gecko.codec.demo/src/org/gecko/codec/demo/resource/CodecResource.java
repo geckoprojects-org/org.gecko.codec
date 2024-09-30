@@ -14,6 +14,7 @@
 package org.gecko.codec.demo.resource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.Collections;
@@ -105,6 +106,45 @@ public class CodecResource extends ResourceImpl {
 
 //		Register the module with the mapper
 		objMapperBuilder.build().registerModule(moduleBuilder.build());		
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.emf.ecore.resource.impl.ResourceImpl#doLoad(java.io.InputStream, java.util.Map)
+	 */
+	@Override
+	protected void doLoad(InputStream inputStream, Map<?, ?> options) throws IOException {
+		
+//		We need to know which object has to be deserialized, otherwise we cannot access the right model info at this stage
+		if(options == null || options.isEmpty() || !options.containsKey("ROOT_OBJECT")) {
+			LOGGER.severe(String.format("Cannot deserialize without providing ROOT_OBJECT option!"));
+			return;
+		}
+		
+		EClass eClass = (EClass) options.get("ROOT_OBJECT");
+		PackageCodecInfo modelCodecInfo = modelInfoService.getCodecInfoForPackage(eClass.getEPackage().getNsURI()).get();	
+		if(modelCodecInfo == null) {
+			LOGGER.severe(String.format("No PackageCodecInfo associated with EClass %s has been found", eClass.getName()));
+			return;
+		}
+		
+//		TODO: check other deserialization options and adjust module and mapper accordingly
+//		Update the CodecModule based on the passed options
+		updateCodecModuleFromOptions(options);
+
+		//		Update ObjectMapper based on the passed options
+		updateMapperFromOptions(options);
+
+//		Update the CodecModelInfo based on the passed options
+		updateCodecModelInfoFromOptions(modelCodecInfo, options);
+		
+//		Bind the CodecModelInfo to the CodecModule.
+//		This is necessary otherwise asking the ModelInfoService we would get a new instance every time
+//		instead we need the same one here since it's the one we updated based on the options
+		moduleBuilder.bindCodecModelInfo(modelCodecInfo);
+
+//		Register the module with the mapper
+		objMapperBuilder.build().registerModule(moduleBuilder.build());	
 	}
 
 	/**

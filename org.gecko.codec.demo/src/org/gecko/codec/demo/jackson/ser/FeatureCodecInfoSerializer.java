@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.demo.jackson;
+package org.gecko.codec.demo.jackson.ser;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
+import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
@@ -73,7 +74,8 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		if (rootObj.eIsSet(feature)) {
 			Object value = rootObj.eGet(feature);
 			if(codecModule.isUseNamesFromExtendedMetaData()) {
-				gen.writeFieldName(featureCodecInfo.getKey() != null ? featureCodecInfo.getKey() : feature.getName());
+//				gen.writeFieldName(featureCodecInfo.getKey() != null ? featureCodecInfo.getKey() : feature.getName());
+				gen.writeFieldName(featureCodecInfo.getKey());
 			} else {
 				gen.writeFieldName(feature.getName());
 			}			

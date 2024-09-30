@@ -31,6 +31,8 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="typeInfo" eType="#//TypeInfo"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="superTypeInfo" eType="#//SuperTypeInfo"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="featureInfo" upperBound="-1"
         eType="#//FeatureCodecInfo" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="referenceCodecInfo" upperBound="-1"
@@ -88,6 +90,23 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SuperTypeInfo" eSuperTypes="#//FeatureCodecInfo">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="superTypeStrategy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="This supports the possibility of setting a strategy for super type serialization, e.g. if the URI of the class should be used as type, or the class name, or another value."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="superTypeSeparator" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="If the superTypeStrategy is set to COMBINED, the supertype info will be serailized as a concatnated String, and this attribute will set the character to use as separator."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ignoreSuperType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="If set to false, the supertype information of the EClassifier with such a SuperTypeInfo object will not be serialized, unless this property is then overwritten at a later point."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IdentityInfo" eSuperTypes="#//FeatureCodecInfo">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="idStrategy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -113,6 +132,7 @@
     <eLiterals name="REFERENCE" value="3" literal="REFERENCE"/>
     <eLiterals name="OBJECT" value="4"/>
     <eLiterals name="OPERATION" value="5"/>
+    <eLiterals name="SUPER_TYPE" value="6"/>
     <eLiterals name="OTHER" value="10"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CodecValueReader" abstract="true" interface="true">

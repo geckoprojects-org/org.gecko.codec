@@ -5,15 +5,15 @@
   "age" : 0,
   "married" : false,
   "gender" : "MALE",
-  "id" : "e47f734f-29e4-4fad-9d8b-21dd964c49ee",
+  "id" : "9f889ebf-58b2-4bbe-848e-67db0b2d5230",
   "titles" : [ "Mrs", "Dr" ],
   "address" : {
-    "_id" : "988d9bd1-f876-4463-bafd-5f5a72f08103",
+    "_id" : "162a2d19-efe3-43db-8e54-e1ee16d802b7",
     "street" : "Camsdorfer Str."
   },
   "nonContainedAdd" : {
     "_type" : "Address",
-    "$ref" : "myaddress.json#bfd6f2e9-524f-4b40-a574-21319703ae32"
+    "$ref" : "myaddress.json#21a3decb-2546-4683-a6b1-de81093defdc"
   },
   "getFullName" : "John Doe"
 }

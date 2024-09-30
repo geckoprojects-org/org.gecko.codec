@@ -94,7 +94,7 @@ public @interface CodecModuleConfig {
 	boolean idOnTop() default true;
 	
 	/**
-	 * Option used to indicate the module to additionally serialize the if field of an EObject as it is.
+	 * Option used to indicate the module to additionally serialize the id field of an EObject as it is.
      * This is usually not needed, because the _id key always holds the ID at the first position. 
      * This id-field itself can be found at a later index. So finding it may cost a lot of effort.
      * It can be useful to OPTION_USE_ID(true) and OPTIONS_USE_ID_FIELD(false) and additionally store this 

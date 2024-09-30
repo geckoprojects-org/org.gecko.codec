@@ -91,6 +91,13 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case CodecInfoPackage.SUPER_TYPE_INFO: {
+				SuperTypeInfo superTypeInfo = (SuperTypeInfo)theEObject;
+				T1 result = caseSuperTypeInfo(superTypeInfo);
+				if (result == null) result = caseFeatureCodecInfo(superTypeInfo);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case CodecInfoPackage.IDENTITY_INFO: {
 				IdentityInfo identityInfo = (IdentityInfo)theEObject;
 				T1 result = caseIdentityInfo(identityInfo);
@@ -183,6 +190,21 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseTypeInfo(TypeInfo object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Super Type Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Super Type Info</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseSuperTypeInfo(SuperTypeInfo object) {
 		return null;
 	}
 

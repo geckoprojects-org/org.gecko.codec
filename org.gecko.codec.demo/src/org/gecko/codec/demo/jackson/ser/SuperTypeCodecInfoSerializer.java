@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.demo.jackson;
+package org.gecko.codec.demo.jackson.ser;
 
 import static java.util.Objects.nonNull;
 
@@ -26,11 +26,13 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
+import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
+import org.gecko.codec.info.codecinfo.SuperTypeInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 import org.gecko.codec.jackson.CodecGeneratorBase;
 
@@ -52,14 +54,14 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
 	private EClassCodecInfo eObjCodecInfo;
-	private TypeInfo typeCodecInfo;
+	private SuperTypeInfo superTypeCodecInfo;
 	
 	public SuperTypeCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
-			final EClassCodecInfo eObjCodecInfo, final TypeInfo typeCodecInfo) {
+			final EClassCodecInfo eObjCodecInfo, final SuperTypeInfo superTypeCodecInfo) {
 		this.codecModule = codecMoule;
 		this.codecModelInfoService = codecModelInfoService;
 		this.eObjCodecInfo = eObjCodecInfo;
-		this.typeCodecInfo = typeCodecInfo;
+		this.superTypeCodecInfo = superTypeCodecInfo;
 	}
 
 	/* 
@@ -79,8 +81,8 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 		}
 
 		if (isRoot(rootObj) || shouldSaveType(objectType, containment.getEReferenceType(), containment)) {
-			CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.REFERENCE);
-			CodecValueWriter<EClass, String[]> writer = holder.getWriterByName("URIS_WRITER");
+			CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.SUPER_TYPE);
+			CodecValueWriter<EClass, String[]> writer = holder.getWriterByName(superTypeCodecInfo.getValueWriterName());
 
 			String[] values = writer.writeValue(rootObj.eClass(), provider);
 

@@ -16,12 +16,10 @@ package org.gecko.codec.info.helper;
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.findEClass;
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.getURI;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;

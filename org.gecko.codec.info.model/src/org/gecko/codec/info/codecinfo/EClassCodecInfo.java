@@ -21,6 +21,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getClassifier <em>Classifier</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getIdentityInfo <em>Identity Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getTypeInfo <em>Type Info</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getSuperTypeInfo <em>Super Type Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo <em>Feature Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceCodecInfo <em>Reference Codec Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getAttributeCodecInfo <em>Attribute Codec Info</em>}</li>
@@ -120,6 +121,28 @@ public interface EClassCodecInfo {
 	 * @generated
 	 */
 	void setTypeInfo(TypeInfo value);
+
+	/**
+	 * Returns the value of the '<em><b>Super Type Info</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Super Type Info</em>' containment reference.
+	 * @see #setSuperTypeInfo(SuperTypeInfo)
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_SuperTypeInfo()
+	 * @model containment="true"
+	 * @generated
+	 */
+	SuperTypeInfo getSuperTypeInfo();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getSuperTypeInfo <em>Super Type Info</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Super Type Info</em>' containment reference.
+	 * @see #getSuperTypeInfo()
+	 * @generated
+	 */
+	void setSuperTypeInfo(SuperTypeInfo value);
 
 	/**
 	 * Returns the value of the '<em><b>Feature Info</b></em>' containment reference list.

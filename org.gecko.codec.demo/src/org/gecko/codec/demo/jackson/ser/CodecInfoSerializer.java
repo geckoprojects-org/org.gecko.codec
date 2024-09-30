@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.demo.jackson;
+package org.gecko.codec.demo.jackson.ser;
 
 import java.io.IOException;
 

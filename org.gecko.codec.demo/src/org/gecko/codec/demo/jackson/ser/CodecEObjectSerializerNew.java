@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.demo.jackson;
+package org.gecko.codec.demo.jackson.ser;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EObject;
+import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
@@ -68,11 +69,6 @@ public class CodecEObjectSerializerNew extends JsonSerializer<EObject> implement
 	
 		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
 		EClassCodecInfo eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().
-				map(eci -> {
-					System.out.println(value);
-					System.out.println(eci.getClassifier().getName() + "-----" + value.eClass().getName());
-					return eci;
-				}).
 				filter(eci -> 
 				eci.getClassifier().getInstanceClassName().equals(value.eClass().getInstanceClassName()))
 				.findFirst().get();
@@ -83,7 +79,7 @@ public class CodecEObjectSerializerNew extends JsonSerializer<EObject> implement
 		}
 		CodecInfoSerializer idInfoSerializer = new IdCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getIdentityInfo());
 		CodecInfoSerializer typeInfoSerializer = new TypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getTypeInfo());
-		CodecInfoSerializer superTypeInfoSerializer = new SuperTypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getTypeInfo());
+		CodecInfoSerializer superTypeInfoSerializer = new SuperTypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getSuperTypeInfo());
 
 		List<CodecInfoSerializer> codecInfoSerializers = new LinkedList<>();
 		eObjCodecInfo.getAttributeCodecInfo().forEach(aci -> codecInfoSerializers.add(new FeatureCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));

@@ -11,10 +11,11 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.demo.jackson;
+package org.gecko.codec.demo.jackson.ser;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emfcloud.jackson.databind.ser.EMFSerializers;
+import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
 
 import com.fasterxml.jackson.databind.BeanDescription;

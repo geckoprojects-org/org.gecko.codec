@@ -27,6 +27,7 @@ import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
+import org.gecko.codec.info.codecinfo.SuperTypeInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 
 /**
@@ -41,6 +42,7 @@ import org.gecko.codec.info.codecinfo.TypeInfo;
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getClassifier <em>Classifier</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getIdentityInfo <em>Identity Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getTypeInfo <em>Type Info</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getSuperTypeInfo <em>Super Type Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getFeatureInfo <em>Feature Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getReferenceCodecInfo <em>Reference Codec Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getAttributeCodecInfo <em>Attribute Codec Info</em>}</li>
@@ -99,6 +101,16 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @ordered
 	 */
 	protected TypeInfo typeInfo;
+
+	/**
+	 * The cached value of the '{@link #getSuperTypeInfo() <em>Super Type Info</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSuperTypeInfo()
+	 * @generated
+	 * @ordered
+	 */
+	protected SuperTypeInfo superTypeInfo;
 
 	/**
 	 * The cached value of the '{@link #getFeatureInfo() <em>Feature Info</em>}' containment reference list.
@@ -288,6 +300,51 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
+	public SuperTypeInfo getSuperTypeInfo() {
+		return superTypeInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetSuperTypeInfo(SuperTypeInfo newSuperTypeInfo, NotificationChain msgs) {
+		SuperTypeInfo oldSuperTypeInfo = superTypeInfo;
+		superTypeInfo = newSuperTypeInfo;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO, oldSuperTypeInfo, newSuperTypeInfo);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setSuperTypeInfo(SuperTypeInfo newSuperTypeInfo) {
+		if (newSuperTypeInfo != superTypeInfo) {
+			NotificationChain msgs = null;
+			if (superTypeInfo != null)
+				msgs = ((InternalEObject)superTypeInfo).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO, null, msgs);
+			if (newSuperTypeInfo != null)
+				msgs = ((InternalEObject)newSuperTypeInfo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO, null, msgs);
+			msgs = basicSetSuperTypeInfo(newSuperTypeInfo, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO, newSuperTypeInfo, newSuperTypeInfo));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EList<FeatureCodecInfo> getFeatureInfo() {
 		if (featureInfo == null) {
 			featureInfo = new EObjectContainmentEList<FeatureCodecInfo>(FeatureCodecInfo.class, this, CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO);
@@ -337,6 +394,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return basicSetIdentityInfo(null, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
 				return basicSetTypeInfo(null, msgs);
+			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
+				return basicSetSuperTypeInfo(null, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				return ((InternalEList<?>)getFeatureInfo()).basicRemove(otherEnd, msgs);
 		}
@@ -360,6 +419,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return getIdentityInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
 				return getTypeInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
+				return getSuperTypeInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				return getFeatureInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO:
@@ -392,6 +453,9 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
 				setTypeInfo((TypeInfo)newValue);
+				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
+				setSuperTypeInfo((SuperTypeInfo)newValue);
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				getFeatureInfo().clear();
@@ -433,6 +497,9 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
 				setTypeInfo((TypeInfo)null);
 				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
+				setSuperTypeInfo((SuperTypeInfo)null);
+				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				getFeatureInfo().clear();
 				return;
@@ -465,6 +532,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return identityInfo != null;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
 				return typeInfo != null;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
+				return superTypeInfo != null;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				return featureInfo != null && !featureInfo.isEmpty();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO:

@@ -1,1 +1,1 @@
-{"_type":"Person","_id":"John-Doe","birthDate":"1990-06-20","id":"99ed78da-8716-466b-846e-b9d1d4ac9dde","address":{"_id":"95aa9374-9aed-4deb-9348-f46cbf9c41bf","street":"Camsdorfer Str."},"nonContainedAdd":{"_type":"Address","$ref":"#e3108b44-8a4f-46bd-b94f-70b037a2cc61"},"getFullName":"John Doe"}
+{"_id":"John-Doe","_type":"Person","birthDate":"1990-06-20","address":{"_id":"81561f16-462b-4635-a5de-95c7431e9d9a","street":"Camsdorfer Str.","zip":"07749"},"nonContainedAdd":{"_type":"Address","$ref":"#41a479ab-ad11-4f4d-8bef-049859a7f54f"},"getFullName":"John Doe"}

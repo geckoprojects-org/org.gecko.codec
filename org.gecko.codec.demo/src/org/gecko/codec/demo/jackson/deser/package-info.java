@@ -14,8 +14,6 @@
 /**
  * 
  * @author ilenia
- * @since Aug 9, 2024
+ * @since Sep 26, 2024
  */
-@org.osgi.annotation.bundle.Export
-@org.osgi.annotation.versioning.Version("1.0.0")
-package org.gecko.codec.demo;
+package org.gecko.codec.demo.jackson.deser;

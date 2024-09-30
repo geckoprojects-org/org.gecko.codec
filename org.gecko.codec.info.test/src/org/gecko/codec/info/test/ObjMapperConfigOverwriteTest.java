@@ -19,10 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,6 @@ import java.util.UUID;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.gecko.code.demo.model.person.Address;
@@ -151,7 +151,19 @@ public class ObjMapperConfigOverwriteTest {
 		assertNotNull(mapper);
 		
 		DateFormat mapperDF = mapper.getDateFormat();
-		assertEquals(df.format(Date.valueOf(LocalDate.of(1990, 6, 20))), mapperDF.format(Date.valueOf(LocalDate.of(1990, 6, 20))));
+		assertEquals(df.format(Date.from(                     // Convert from modern java.time class to troublesome old legacy class.  DO NOT DO THIS unless you must, to inter operate with old code not yet updated for java.time.
+			    LocalDate.of(1990, 6, 20)                        // `LocalDate` class represents a date-only, without time-of-day and without time zone nor offset-from-UTC. 
+			    .atStartOfDay(                       // Let java.time determine the first moment of the day on that date in that zone. Never assume the day starts at 00:00:00.
+			        ZoneId.of( "Europe/Berlin" )  // Specify time zone using proper name in `continent/region` format, never 3-4 letter pseudo-zones such as “PST”, “CST”, “IST”. 
+			    )                                    // Produce a `ZonedDateTime` object. 
+			    .toInstant()                         // Extract an `Instant` object, a moment always in UTC.
+			)), mapperDF.format(Date.from(                     // Convert from modern java.time class to troublesome old legacy class.  DO NOT DO THIS unless you must, to inter operate with old code not yet updated for java.time.
+				    LocalDate.of(1990, 6, 20)                        // `LocalDate` class represents a date-only, without time-of-day and without time zone nor offset-from-UTC. 
+				    .atStartOfDay(                       // Let java.time determine the first moment of the day on that date in that zone. Never assume the day starts at 00:00:00.
+				        ZoneId.of( "Europe/Berlin" )  // Specify time zone using proper name in `continent/region` format, never 3-4 letter pseudo-zones such as “PST”, “CST”, “IST”. 
+				    )                                    // Produce a `ZonedDateTime` object. 
+				    .toInstant()                         // Extract an `Instant` object, a moment always in UTC.
+				)));
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
@@ -496,7 +508,13 @@ public class ObjMapperConfigOverwriteTest {
 		Person person = PersonFactory.eINSTANCE.createPerson();
 		person.setName("John");
 		person.setLastName("Doe");
-		person.setBirthDate(Date.valueOf(LocalDate.of(1990, 6, 20)));
+		person.setBirthDate(Date.from(                     // Convert from modern java.time class to troublesome old legacy class.  DO NOT DO THIS unless you must, to inter operate with old code not yet updated for java.time.
+			    LocalDate.of(1990, 6, 20)                        // `LocalDate` class represents a date-only, without time-of-day and without time zone nor offset-from-UTC. 
+			    .atStartOfDay(                       // Let java.time determine the first moment of the day on that date in that zone. Never assume the day starts at 00:00:00.
+			        ZoneId.of( "Europe/Berlin" )  // Specify time zone using proper name in `continent/region` format, never 3-4 letter pseudo-zones such as “PST”, “CST”, “IST”. 
+			    )                                    // Produce a `ZonedDateTime` object. 
+			    .toInstant()                         // Extract an `Instant` object, a moment always in UTC.
+			));
 		Address address = PersonFactory.eINSTANCE.createAddress();
 		address.setId(UUID.randomUUID().toString());
 		address.setStreet("Camsdorfer Str.");

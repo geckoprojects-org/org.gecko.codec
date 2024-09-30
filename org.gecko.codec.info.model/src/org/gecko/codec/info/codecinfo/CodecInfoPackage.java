@@ -178,13 +178,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int ECLASS_CODEC_INFO__TYPE_INFO = 3;
 
 	/**
+	 * The feature id for the '<em><b>Super Type Info</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO__SUPER_TYPE_INFO = 4;
+
+	/**
 	 * The feature id for the '<em><b>Feature Info</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO__FEATURE_INFO = 4;
+	int ECLASS_CODEC_INFO__FEATURE_INFO = 5;
 
 	/**
 	 * The feature id for the '<em><b>Reference Codec Info</b></em>' reference list.
@@ -193,7 +202,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO = 5;
+	int ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO = 6;
 
 	/**
 	 * The feature id for the '<em><b>Attribute Codec Info</b></em>' reference list.
@@ -202,7 +211,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO = 6;
+	int ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO = 7;
 
 	/**
 	 * The feature id for the '<em><b>Operation Codec Info</b></em>' reference list.
@@ -211,7 +220,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO__OPERATION_CODEC_INFO = 7;
+	int ECLASS_CODEC_INFO__OPERATION_CODEC_INFO = 8;
 
 	/**
 	 * The number of structural features of the '<em>EClass Codec Info</em>' class.
@@ -220,7 +229,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO_FEATURE_COUNT = 8;
+	int ECLASS_CODEC_INFO_FEATURE_COUNT = 9;
 
 	/**
 	 * The number of operations of the '<em>EClass Codec Info</em>' class.
@@ -432,6 +441,124 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int TYPE_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.SuperTypeInfoImpl <em>Super Type Info</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.info.codecinfo.impl.SuperTypeInfoImpl
+	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSuperTypeInfo()
+	 * @generated
+	 */
+	int SUPER_TYPE_INFO = 4;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__ID = FEATURE_CODEC_INFO__ID;
+
+	/**
+	 * The feature id for the '<em><b>Features</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
+
+	/**
+	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__VALUE_READER_NAME = FEATURE_CODEC_INFO__VALUE_READER_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__VALUE_WRITER_NAME = FEATURE_CODEC_INFO__VALUE_WRITER_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__TYPE = FEATURE_CODEC_INFO__TYPE;
+
+	/**
+	 * The feature id for the '<em><b>Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__KEY = FEATURE_CODEC_INFO__KEY;
+
+	/**
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
+
+	/**
+	 * The feature id for the '<em><b>Super Type Strategy</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__SUPER_TYPE_STRATEGY = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Super Type Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__SUPER_TYPE_SEPARATOR = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Super Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__IGNORE_SUPER_TYPE = FEATURE_CODEC_INFO_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Super Type Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of operations of the '<em>Super Type Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl <em>Identity Info</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -439,7 +566,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getIdentityInfo()
 	 * @generated
 	 */
-	int IDENTITY_INFO = 4;
+	int IDENTITY_INFO = 5;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -557,7 +684,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueReader()
 	 * @generated
 	 */
-	int CODEC_VALUE_READER = 5;
+	int CODEC_VALUE_READER = 6;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -603,7 +730,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecValueWriter()
 	 * @generated
 	 */
-	int CODEC_VALUE_WRITER = 6;
+	int CODEC_VALUE_WRITER = 7;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -649,7 +776,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecInfoHolder()
 	 * @generated
 	 */
-	int CODEC_INFO_HOLDER = 7;
+	int CODEC_INFO_HOLDER = 8;
 
 	/**
 	 * The feature id for the '<em><b>Info Type</b></em>' attribute.
@@ -722,7 +849,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSampleValueReader()
 	 * @generated
 	 */
-	int SAMPLE_VALUE_READER = 8;
+	int SAMPLE_VALUE_READER = 9;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -768,7 +895,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getInfoType()
 	 * @generated
 	 */
-	int INFO_TYPE = 9;
+	int INFO_TYPE = 10;
 
 	/**
 	 * The meta object id for the '<em>Serializer Provider</em>' data type.
@@ -778,7 +905,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
 	 * @generated
 	 */
-	int SERIALIZER_PROVIDER = 10;
+	int SERIALIZER_PROVIDER = 11;
 
 	/**
 	 * The meta object id for the '<em>Deserialization Context</em>' data type.
@@ -788,7 +915,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 	 * @generated
 	 */
-	int DESERIALIZATION_CONTEXT = 11;
+	int DESERIALIZATION_CONTEXT = 12;
 
 
 	/**
@@ -898,6 +1025,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EReference getEClassCodecInfo_TypeInfo();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getSuperTypeInfo <em>Super Type Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Super Type Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getSuperTypeInfo()
+	 * @see #getEClassCodecInfo()
+	 * @generated
+	 */
+	EReference getEClassCodecInfo_SuperTypeInfo();
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo <em>Feature Info</em>}'.
@@ -1061,6 +1199,49 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getTypeInfo_IgnoreType();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.SuperTypeInfo <em>Super Type Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Super Type Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.SuperTypeInfo
+	 * @generated
+	 */
+	EClass getSuperTypeInfo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.SuperTypeInfo#getSuperTypeStrategy <em>Super Type Strategy</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Super Type Strategy</em>'.
+	 * @see org.gecko.codec.info.codecinfo.SuperTypeInfo#getSuperTypeStrategy()
+	 * @see #getSuperTypeInfo()
+	 * @generated
+	 */
+	EAttribute getSuperTypeInfo_SuperTypeStrategy();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.SuperTypeInfo#getSuperTypeSeparator <em>Super Type Separator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Super Type Separator</em>'.
+	 * @see org.gecko.codec.info.codecinfo.SuperTypeInfo#getSuperTypeSeparator()
+	 * @see #getSuperTypeInfo()
+	 * @generated
+	 */
+	EAttribute getSuperTypeInfo_SuperTypeSeparator();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.info.codecinfo.SuperTypeInfo#isIgnoreSuperType <em>Ignore Super Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ignore Super Type</em>'.
+	 * @see org.gecko.codec.info.codecinfo.SuperTypeInfo#isIgnoreSuperType()
+	 * @see #getSuperTypeInfo()
+	 * @generated
+	 */
+	EAttribute getSuperTypeInfo_IgnoreSuperType();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.IdentityInfo <em>Identity Info</em>}'.
@@ -1401,6 +1582,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EReference ECLASS_CODEC_INFO__TYPE_INFO = eINSTANCE.getEClassCodecInfo_TypeInfo();
 
 		/**
+		 * The meta object literal for the '<em><b>Super Type Info</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ECLASS_CODEC_INFO__SUPER_TYPE_INFO = eINSTANCE.getEClassCodecInfo_SuperTypeInfo();
+
+		/**
 		 * The meta object literal for the '<em><b>Feature Info</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1523,6 +1712,40 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute TYPE_INFO__IGNORE_TYPE = eINSTANCE.getTypeInfo_IgnoreType();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.SuperTypeInfoImpl <em>Super Type Info</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.info.codecinfo.impl.SuperTypeInfoImpl
+		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSuperTypeInfo()
+		 * @generated
+		 */
+		EClass SUPER_TYPE_INFO = eINSTANCE.getSuperTypeInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Super Type Strategy</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SUPER_TYPE_INFO__SUPER_TYPE_STRATEGY = eINSTANCE.getSuperTypeInfo_SuperTypeStrategy();
+
+		/**
+		 * The meta object literal for the '<em><b>Super Type Separator</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SUPER_TYPE_INFO__SUPER_TYPE_SEPARATOR = eINSTANCE.getSuperTypeInfo_SuperTypeSeparator();
+
+		/**
+		 * The meta object literal for the '<em><b>Ignore Super Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SUPER_TYPE_INFO__IGNORE_SUPER_TYPE = eINSTANCE.getSuperTypeInfo_IgnoreSuperType();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.IdentityInfoImpl <em>Identity Info</em>}' class.

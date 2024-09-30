@@ -55,7 +55,7 @@ public interface Address extends EObject {
 	 * @return the value of the '<em>Zip</em>' attribute.
 	 * @see #setZip(String)
 	 * @see org.gecko.code.demo.model.person.PersonPackage#getAddress_Zip()
-	 * @model annotation="codec ignore='true'"
+	 * @model annotation="codec transient='true'"
 	 * @generated
 	 */
 	String getZip();

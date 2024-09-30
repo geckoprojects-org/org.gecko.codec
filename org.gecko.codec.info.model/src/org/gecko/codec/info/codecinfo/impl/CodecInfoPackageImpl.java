@@ -29,6 +29,7 @@ import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.info.codecinfo.SampleValueReader;
+import org.gecko.codec.info.codecinfo.SuperTypeInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 
 /**
@@ -65,6 +66,13 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	private EClass typeInfoEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass superTypeInfoEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -291,7 +299,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getEClassCodecInfo_FeatureInfo() {
+	public EReference getEClassCodecInfo_SuperTypeInfo() {
 		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -301,7 +309,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getEClassCodecInfo_ReferenceCodecInfo() {
+	public EReference getEClassCodecInfo_FeatureInfo() {
 		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(5);
 	}
 
@@ -311,7 +319,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getEClassCodecInfo_AttributeCodecInfo() {
+	public EReference getEClassCodecInfo_ReferenceCodecInfo() {
 		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(6);
 	}
 
@@ -321,8 +329,18 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EReference getEClassCodecInfo_OperationCodecInfo() {
+	public EReference getEClassCodecInfo_AttributeCodecInfo() {
 		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getEClassCodecInfo_OperationCodecInfo() {
+		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -433,6 +451,46 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	@Override
 	public EAttribute getTypeInfo_IgnoreType() {
 		return (EAttribute)typeInfoEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getSuperTypeInfo() {
+		return superTypeInfoEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getSuperTypeInfo_SuperTypeStrategy() {
+		return (EAttribute)superTypeInfoEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getSuperTypeInfo_SuperTypeSeparator() {
+		return (EAttribute)superTypeInfoEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getSuperTypeInfo_IgnoreSuperType() {
+		return (EAttribute)superTypeInfoEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -695,6 +753,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__CLASSIFIER);
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__IDENTITY_INFO);
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__TYPE_INFO);
+		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__SUPER_TYPE_INFO);
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__FEATURE_INFO);
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__REFERENCE_CODEC_INFO);
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO);
@@ -712,6 +771,11 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		typeInfoEClass = createEClass(TYPE_INFO);
 		createEAttribute(typeInfoEClass, TYPE_INFO__TYPE_STRATEGY);
 		createEAttribute(typeInfoEClass, TYPE_INFO__IGNORE_TYPE);
+
+		superTypeInfoEClass = createEClass(SUPER_TYPE_INFO);
+		createEAttribute(superTypeInfoEClass, SUPER_TYPE_INFO__SUPER_TYPE_STRATEGY);
+		createEAttribute(superTypeInfoEClass, SUPER_TYPE_INFO__SUPER_TYPE_SEPARATOR);
+		createEAttribute(superTypeInfoEClass, SUPER_TYPE_INFO__IGNORE_SUPER_TYPE);
 
 		identityInfoEClass = createEClass(IDENTITY_INFO);
 		createEAttribute(identityInfoEClass, IDENTITY_INFO__ID_STRATEGY);
@@ -783,6 +847,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 
 		// Add supertypes to classes
 		typeInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
+		superTypeInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
 		identityInfoEClass.getESuperTypes().add(this.getFeatureCodecInfo());
 
 		// Initialize classes, features, and operations; add parameters
@@ -797,6 +862,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEReference(getEClassCodecInfo_Classifier(), theEcorePackage.getEClassifier(), null, "classifier", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_IdentityInfo(), this.getIdentityInfo(), null, "identityInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_TypeInfo(), this.getTypeInfo(), null, "typeInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEClassCodecInfo_SuperTypeInfo(), this.getSuperTypeInfo(), null, "superTypeInfo", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_FeatureInfo(), this.getFeatureCodecInfo(), null, "featureInfo", null, 0, -1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_ReferenceCodecInfo(), this.getFeatureCodecInfo(), null, "referenceCodecInfo", null, 0, -1, EClassCodecInfo.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_AttributeCodecInfo(), this.getFeatureCodecInfo(), null, "attributeCodecInfo", null, 0, -1, EClassCodecInfo.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
@@ -814,6 +880,11 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEClass(typeInfoEClass, TypeInfo.class, "TypeInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTypeInfo_TypeStrategy(), ecorePackage.getEString(), "typeStrategy", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTypeInfo_IgnoreType(), ecorePackage.getEBoolean(), "ignoreType", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(superTypeInfoEClass, SuperTypeInfo.class, "SuperTypeInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSuperTypeInfo_SuperTypeStrategy(), ecorePackage.getEString(), "superTypeStrategy", null, 0, 1, SuperTypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSuperTypeInfo_SuperTypeSeparator(), theEcorePackage.getEString(), "superTypeSeparator", null, 0, 1, SuperTypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSuperTypeInfo_IgnoreSuperType(), ecorePackage.getEBoolean(), "ignoreSuperType", null, 0, 1, SuperTypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(identityInfoEClass, IdentityInfo.class, "IdentityInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getIdentityInfo_IdStrategy(), ecorePackage.getEString(), "idStrategy", null, 0, 1, IdentityInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -871,6 +942,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		addEEnumLiteral(infoTypeEEnum, InfoType.REFERENCE);
 		addEEnumLiteral(infoTypeEEnum, InfoType.OBJECT);
 		addEEnumLiteral(infoTypeEEnum, InfoType.OPERATION);
+		addEEnumLiteral(infoTypeEEnum, InfoType.SUPER_TYPE);
 		addEEnumLiteral(infoTypeEEnum, InfoType.OTHER);
 
 		// Initialize data types
@@ -970,6 +1042,24 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		   source,
 		   new String[] {
 			   "documentation", "If set to false, the type information of the EClassifier with such a TypeInfo object will not be serialized, unless this property is then overwritten at a later point."
+		   });
+		addAnnotation
+		  (getSuperTypeInfo_SuperTypeStrategy(),
+		   source,
+		   new String[] {
+			   "documentation", "This supports the possibility of setting a strategy for super type serialization, e.g. if the URI of the class should be used as type, or the class name, or another value."
+		   });
+		addAnnotation
+		  (getSuperTypeInfo_SuperTypeSeparator(),
+		   source,
+		   new String[] {
+			   "documentation", "If the superTypeStrategy is set to COMBINED, the supertype info will be serailized as a concatnated String, and this attribute will set the character to use as separator."
+		   });
+		addAnnotation
+		  (getSuperTypeInfo_IgnoreSuperType(),
+		   source,
+		   new String[] {
+			   "documentation", "If set to false, the supertype information of the EClassifier with such a SuperTypeInfo object will not be serialized, unless this property is then overwritten at a later point."
 		   });
 		addAnnotation
 		  (getIdentityInfo_IdStrategy(),

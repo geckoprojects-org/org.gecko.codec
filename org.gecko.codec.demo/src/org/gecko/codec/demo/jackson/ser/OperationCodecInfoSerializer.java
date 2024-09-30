@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.demo.jackson;
+package org.gecko.codec.demo.jackson.ser;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
+import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
@@ -55,7 +56,8 @@ public class OperationCodecInfoSerializer implements CodecInfoSerializer {
 	 */
 	@Override
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
-		Object value;
+		if(featureCodecInfo.isIgnore()) return;
+		Object value;		
 		EOperation operation = (EOperation) featureCodecInfo.getFeatures().get(0);
 		try {
 			value = rootObj.eInvoke(operation, null);
