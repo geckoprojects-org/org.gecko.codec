@@ -85,18 +85,23 @@ public interface ReferenceEntry {
 
       @SuppressWarnings("checkstyle:illegalCatch")
       private EObject createProxy(final ResourceSet resourceSet, final URI uri) {
-         EClass eClass;
-         try {
-            eClass = (EClass) resourceSet.getEObject(URI.createURI(type), true);
-         } catch (Exception e) {
-            return null;
-         }
-
-         if (eClass == null) {
-            return null;
-         }
-
-         EObject object = EcoreUtil.create(eClass);
+//         EClass eClass;
+//         try {
+//            eClass = (EClass) resourceSet.getEObject(URI.createURI(type), true);
+//         } catch (Exception e) {
+//            return null;
+//         }
+//
+//         if (eClass == null) {
+//            return null;
+//         }
+    	  EObject object = null;
+    	 try {
+        	 object = resourceSet.getEObject(uri, true);
+    	 } catch(Exception e) {
+    		 throw e;
+    	 }
+    	 if(object == null) return null;
          if (object instanceof InternalEObject) {
             ((InternalEObject) object).eSetProxyURI(uri);
          }

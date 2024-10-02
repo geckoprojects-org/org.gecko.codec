@@ -19,6 +19,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.gecko.code.demo.model.person.Address;
 import org.gecko.code.demo.model.person.GENDER_TYPE;
@@ -36,11 +39,13 @@ import org.gecko.code.demo.model.person.PersonPackage;
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getLastName <em>Last Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getAddress <em>Address</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getAddresses <em>Addresses</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getBirthDate <em>Birth Date</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getAge <em>Age</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#isMarried <em>Married</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getGender <em>Gender</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getNonContainedAdd <em>Non Contained Add</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getNonContainedAdds <em>Non Contained Adds</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getTitles <em>Titles</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getTransientAtt <em>Transient Att</em>}</li>
@@ -98,6 +103,16 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected Address address;
+
+	/**
+	 * The cached value of the '{@link #getAddresses() <em>Addresses</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAddresses()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Address> addresses;
 
 	/**
 	 * The default value of the '{@link #getBirthDate() <em>Birth Date</em>}' attribute.
@@ -188,6 +203,16 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected Address nonContainedAdd;
+
+	/**
+	 * The cached value of the '{@link #getNonContainedAdds() <em>Non Contained Adds</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getNonContainedAdds()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Address> nonContainedAdds;
 
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
@@ -355,6 +380,19 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public EList<Address> getAddresses() {
+		if (addresses == null) {
+			addresses = new EObjectContainmentEList<Address>(Address.class, this, PersonPackage.PERSON__ADDRESSES);
+		}
+		return addresses;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Date getBirthDate() {
 		return birthDate;
 	}
@@ -487,6 +525,19 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public EList<Address> getNonContainedAdds() {
+		if (nonContainedAdds == null) {
+			nonContainedAdds = new EObjectResolvingEList<Address>(Address.class, this, PersonPackage.PERSON__NON_CONTAINED_ADDS);
+		}
+		return nonContainedAdds;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -560,6 +611,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		switch (featureID) {
 			case PersonPackage.PERSON__ADDRESS:
 				return basicSetAddress(null, msgs);
+			case PersonPackage.PERSON__ADDRESSES:
+				return ((InternalEList<?>)getAddresses()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -578,6 +631,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return getLastName();
 			case PersonPackage.PERSON__ADDRESS:
 				return getAddress();
+			case PersonPackage.PERSON__ADDRESSES:
+				return getAddresses();
 			case PersonPackage.PERSON__BIRTH_DATE:
 				return getBirthDate();
 			case PersonPackage.PERSON__AGE:
@@ -589,6 +644,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__NON_CONTAINED_ADD:
 				if (resolve) return getNonContainedAdd();
 				return basicGetNonContainedAdd();
+			case PersonPackage.PERSON__NON_CONTAINED_ADDS:
+				return getNonContainedAdds();
 			case PersonPackage.PERSON__ID:
 				return getId();
 			case PersonPackage.PERSON__TITLES:
@@ -617,6 +674,10 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__ADDRESS:
 				setAddress((Address)newValue);
 				return;
+			case PersonPackage.PERSON__ADDRESSES:
+				getAddresses().clear();
+				getAddresses().addAll((Collection<? extends Address>)newValue);
+				return;
 			case PersonPackage.PERSON__BIRTH_DATE:
 				setBirthDate((Date)newValue);
 				return;
@@ -631,6 +692,10 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return;
 			case PersonPackage.PERSON__NON_CONTAINED_ADD:
 				setNonContainedAdd((Address)newValue);
+				return;
+			case PersonPackage.PERSON__NON_CONTAINED_ADDS:
+				getNonContainedAdds().clear();
+				getNonContainedAdds().addAll((Collection<? extends Address>)newValue);
 				return;
 			case PersonPackage.PERSON__ID:
 				setId((String)newValue);
@@ -663,6 +728,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__ADDRESS:
 				setAddress((Address)null);
 				return;
+			case PersonPackage.PERSON__ADDRESSES:
+				getAddresses().clear();
+				return;
 			case PersonPackage.PERSON__BIRTH_DATE:
 				setBirthDate(BIRTH_DATE_EDEFAULT);
 				return;
@@ -677,6 +745,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return;
 			case PersonPackage.PERSON__NON_CONTAINED_ADD:
 				setNonContainedAdd((Address)null);
+				return;
+			case PersonPackage.PERSON__NON_CONTAINED_ADDS:
+				getNonContainedAdds().clear();
 				return;
 			case PersonPackage.PERSON__ID:
 				setId(ID_EDEFAULT);
@@ -705,6 +776,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return LAST_NAME_EDEFAULT == null ? lastName != null : !LAST_NAME_EDEFAULT.equals(lastName);
 			case PersonPackage.PERSON__ADDRESS:
 				return address != null;
+			case PersonPackage.PERSON__ADDRESSES:
+				return addresses != null && !addresses.isEmpty();
 			case PersonPackage.PERSON__BIRTH_DATE:
 				return BIRTH_DATE_EDEFAULT == null ? birthDate != null : !BIRTH_DATE_EDEFAULT.equals(birthDate);
 			case PersonPackage.PERSON__AGE:
@@ -715,6 +788,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return gender != GENDER_EDEFAULT;
 			case PersonPackage.PERSON__NON_CONTAINED_ADD:
 				return nonContainedAdd != null;
+			case PersonPackage.PERSON__NON_CONTAINED_ADDS:
+				return nonContainedAdds != null && !nonContainedAdds.isEmpty();
 			case PersonPackage.PERSON__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case PersonPackage.PERSON__TITLES:

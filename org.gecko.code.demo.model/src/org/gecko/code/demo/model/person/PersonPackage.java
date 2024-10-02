@@ -103,13 +103,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__ADDRESS = 2;
 
 	/**
+	 * The feature id for the '<em><b>Addresses</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__ADDRESSES = 3;
+
+	/**
 	 * The feature id for the '<em><b>Birth Date</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__BIRTH_DATE = 3;
+	int PERSON__BIRTH_DATE = 4;
 
 	/**
 	 * The feature id for the '<em><b>Age</b></em>' attribute.
@@ -118,7 +127,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__AGE = 4;
+	int PERSON__AGE = 5;
 
 	/**
 	 * The feature id for the '<em><b>Married</b></em>' attribute.
@@ -127,7 +136,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__MARRIED = 5;
+	int PERSON__MARRIED = 6;
 
 	/**
 	 * The feature id for the '<em><b>Gender</b></em>' attribute.
@@ -136,7 +145,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__GENDER = 6;
+	int PERSON__GENDER = 7;
 
 	/**
 	 * The feature id for the '<em><b>Non Contained Add</b></em>' reference.
@@ -145,7 +154,16 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__NON_CONTAINED_ADD = 7;
+	int PERSON__NON_CONTAINED_ADD = 8;
+
+	/**
+	 * The feature id for the '<em><b>Non Contained Adds</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__NON_CONTAINED_ADDS = 9;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -154,7 +172,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__ID = 8;
+	int PERSON__ID = 10;
 
 	/**
 	 * The feature id for the '<em><b>Titles</b></em>' attribute list.
@@ -163,7 +181,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__TITLES = 9;
+	int PERSON__TITLES = 11;
 
 	/**
 	 * The feature id for the '<em><b>Transient Att</b></em>' attribute.
@@ -172,7 +190,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__TRANSIENT_ATT = 10;
+	int PERSON__TRANSIENT_ATT = 12;
 
 	/**
 	 * The number of structural features of the '<em>Person</em>' class.
@@ -181,7 +199,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 11;
+	int PERSON_FEATURE_COUNT = 13;
 
 	/**
 	 * The operation id for the '<em>Get Full Name</em>' operation.
@@ -294,6 +312,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int BUSINESS_PERSON__ADDRESS = PERSON__ADDRESS;
 
 	/**
+	 * The feature id for the '<em><b>Addresses</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__ADDRESSES = PERSON__ADDRESSES;
+
+	/**
 	 * The feature id for the '<em><b>Birth Date</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -337,6 +364,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int BUSINESS_PERSON__NON_CONTAINED_ADD = PERSON__NON_CONTAINED_ADD;
+
+	/**
+	 * The feature id for the '<em><b>Non Contained Adds</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__NON_CONTAINED_ADDS = PERSON__NON_CONTAINED_ADDS;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -548,6 +584,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getPerson_Address();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.gecko.code.demo.model.person.Person#getAddresses <em>Addresses</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Addresses</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getAddresses()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EReference getPerson_Addresses();
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getBirthDate <em>Birth Date</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -601,6 +648,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EReference getPerson_NonContainedAdd();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.gecko.code.demo.model.person.Person#getNonContainedAdds <em>Non Contained Adds</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Non Contained Adds</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getNonContainedAdds()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EReference getPerson_NonContainedAdds();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getId <em>Id</em>}'.
@@ -808,6 +866,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		EReference PERSON__ADDRESS = eINSTANCE.getPerson_Address();
 
 		/**
+		 * The meta object literal for the '<em><b>Addresses</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PERSON__ADDRESSES = eINSTANCE.getPerson_Addresses();
+
+		/**
 		 * The meta object literal for the '<em><b>Birth Date</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -846,6 +912,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference PERSON__NON_CONTAINED_ADD = eINSTANCE.getPerson_NonContainedAdd();
+
+		/**
+		 * The meta object literal for the '<em><b>Non Contained Adds</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PERSON__NON_CONTAINED_ADDS = eINSTANCE.getPerson_NonContainedAdds();
 
 		/**
 		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.

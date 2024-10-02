@@ -174,8 +174,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getPerson_BirthDate() {
-		return (EAttribute)personEClass.getEStructuralFeatures().get(3);
+	public EReference getPerson_Addresses() {
+		return (EReference)personEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getPerson_Age() {
+	public EAttribute getPerson_BirthDate() {
 		return (EAttribute)personEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -194,7 +194,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getPerson_Married() {
+	public EAttribute getPerson_Age() {
 		return (EAttribute)personEClass.getEStructuralFeatures().get(5);
 	}
 
@@ -204,7 +204,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getPerson_Gender() {
+	public EAttribute getPerson_Married() {
 		return (EAttribute)personEClass.getEStructuralFeatures().get(6);
 	}
 
@@ -214,8 +214,28 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getPerson_Gender() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EReference getPerson_NonContainedAdd() {
-		return (EReference)personEClass.getEStructuralFeatures().get(7);
+		return (EReference)personEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getPerson_NonContainedAdds() {
+		return (EReference)personEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -225,7 +245,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 */
 	@Override
 	public EAttribute getPerson_Id() {
-		return (EAttribute)personEClass.getEStructuralFeatures().get(8);
+		return (EAttribute)personEClass.getEStructuralFeatures().get(10);
 	}
 
 	/**
@@ -235,7 +255,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 */
 	@Override
 	public EAttribute getPerson_Titles() {
-		return (EAttribute)personEClass.getEStructuralFeatures().get(9);
+		return (EAttribute)personEClass.getEStructuralFeatures().get(11);
 	}
 
 	/**
@@ -245,7 +265,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 */
 	@Override
 	public EAttribute getPerson_TransientAtt() {
-		return (EAttribute)personEClass.getEStructuralFeatures().get(10);
+		return (EAttribute)personEClass.getEStructuralFeatures().get(12);
 	}
 
 	/**
@@ -391,11 +411,13 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEAttribute(personEClass, PERSON__NAME);
 		createEAttribute(personEClass, PERSON__LAST_NAME);
 		createEReference(personEClass, PERSON__ADDRESS);
+		createEReference(personEClass, PERSON__ADDRESSES);
 		createEAttribute(personEClass, PERSON__BIRTH_DATE);
 		createEAttribute(personEClass, PERSON__AGE);
 		createEAttribute(personEClass, PERSON__MARRIED);
 		createEAttribute(personEClass, PERSON__GENDER);
 		createEReference(personEClass, PERSON__NON_CONTAINED_ADD);
+		createEReference(personEClass, PERSON__NON_CONTAINED_ADDS);
 		createEAttribute(personEClass, PERSON__ID);
 		createEAttribute(personEClass, PERSON__TITLES);
 		createEAttribute(personEClass, PERSON__TRANSIENT_ATT);
@@ -454,11 +476,13 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEAttribute(getPerson_Name(), ecorePackage.getEString(), "name", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_LastName(), ecorePackage.getEString(), "lastName", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPerson_Address(), this.getAddress(), null, "address", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPerson_Addresses(), this.getAddress(), null, "addresses", null, 0, -1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_BirthDate(), ecorePackage.getEDate(), "birthDate", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Age(), ecorePackage.getEInt(), "age", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Married(), ecorePackage.getEBoolean(), "married", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Gender(), this.getGENDER_TYPE(), "gender", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPerson_NonContainedAdd(), this.getAddress(), null, "nonContainedAdd", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPerson_NonContainedAdds(), this.getAddress(), null, "nonContainedAdds", null, 0, -1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Id(), ecorePackage.getEString(), "id", null, 1, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Titles(), ecorePackage.getEString(), "titles", null, 0, -1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_TransientAtt(), ecorePackage.getEInt(), "transientAtt", null, 0, 1, Person.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

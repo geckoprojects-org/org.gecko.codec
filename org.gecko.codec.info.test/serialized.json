@@ -1,23 +1,27 @@
-[ {
-  "_id" : "38740388-033e-43cc-97f4-91b9af6408ac",
-  "_type" : "http://example.de/person/1.0#//Address",
-  "street" : "Via Test",
-  "id" : "38740388-033e-43cc-97f4-91b9af6408ac"
-}, {
+{
   "_id" : "John-Doe",
   "_type" : "Person",
-  "name" : "John",
-  "lastName" : "Doe",
   "birthDate" : "1990-06-20T00:00:00",
-  "age" : 42,
-  "married" : true,
+  "age" : 0,
+  "married" : false,
   "gender" : "MALE",
-  "id" : "1a5b88d2-8334-4840-8674-60e4a474a393",
+  "id" : "08bc2109-09d7-4572-933a-21cc9a70baee",
   "titles" : [ "Mrs", "Dr" ],
-  "address" : null,
+  "address" : {
+    "_id" : "a34b98f3-9ab0-4a4f-b89d-a4fd17ce9765",
+    "street" : "Camsdorfer Str."
+  },
+  "addresses" : [ {
+    "_id" : "7a209fc9-be48-4e9f-9880-e94b94128624",
+    "street" : "b7e0cfe1-0eda-49fd-a0d2-9f26a0aa946b"
+  }, {
+    "_id" : "dcf4b6d7-5271-45a9-a69d-b9f52e946442",
+    "street" : "def7ceb1-55be-4c41-b8e3-c6b77f269269"
+  } ],
   "nonContainedAdd" : {
     "_type" : "Address",
-    "$ref" : "38740388-033e-43cc-97f4-91b9af6408ac"
+    "$ref" : "#5aa68ce1-ddfc-4ebf-a513-749f8f566784"
   },
+  "nonContainedAdds" : [ ],
   "getFullName" : "John Doe"
-} ]
+}

@@ -7,12 +7,19 @@
   "age" : 42,
   "married" : true,
   "gender" : "MALE",
-  "id" : "8ec21532-18e4-4cc8-a08d-49eec43f5f09",
+  "id" : "f557186e-2636-42c6-b9d4-75f7e560e4d9",
   "titles" : [ "Mrs", "Dr" ],
   "address" : null,
-  "nonContainedAdd" : {
-    "_type" : "Address",
-    "$ref" : "address.json#bead8182-eb23-4510-bd80-cbb5f84ec7e5"
-  },
+  "addresses" : [ {
+    "_id" : "257fd801-910f-4d29-b606-9233e2ccc638",
+    "street" : "bf400ad7-acfe-4ad4-9ab4-42cd97e5ec55",
+    "id" : "257fd801-910f-4d29-b606-9233e2ccc638"
+  }, {
+    "_id" : "b2105657-1f44-4741-a0b0-50541b294405",
+    "street" : "c0dd1cc6-2eb2-4cda-9355-f5b83576330a",
+    "id" : "b2105657-1f44-4741-a0b0-50541b294405"
+  } ],
+  "nonContainedAdd" : null,
+  "nonContainedAdds" : [ ],
   "getFullName" : "John Doe"
 }

@@ -115,38 +115,55 @@ public class CodecResource extends ResourceImpl {
 	@Override
 	protected void doLoad(InputStream inputStream, Map<?, ?> options) throws IOException {
 		
+		if (options == null) {
+			options = Collections.<String, Object> emptyMap();
+		}
+		
+		EClass eClass = null;
+		
 //		We need to know which object has to be deserialized, otherwise we cannot access the right model info at this stage
-		if(options == null || options.isEmpty() || !options.containsKey("ROOT_OBJECT")) {
-			LOGGER.severe(String.format("Cannot deserialize without providing ROOT_OBJECT option!"));
-			return;
+		if(options.containsKey("ROOT_OBJECT")) {
+			eClass = (EClass) options.get("ROOT_OBJECT");
 		}
 		
-		EClass eClass = (EClass) options.get("ROOT_OBJECT");
-		PackageCodecInfo modelCodecInfo = modelInfoService.getCodecInfoForPackage(eClass.getEPackage().getNsURI()).get();	
-		if(modelCodecInfo == null) {
-			LOGGER.severe(String.format("No PackageCodecInfo associated with EClass %s has been found", eClass.getName()));
-			return;
+		PackageCodecInfo modelCodecInfo = null;
+		if(eClass != null) {
+			modelCodecInfo = modelInfoService.getCodecInfoForPackage(eClass.getEPackage().getNsURI()).get();	
+			if(modelCodecInfo == null) {
+				LOGGER.warning(String.format("No PackageCodecInfo associated with EClass %s has been found", eClass.getName()));
+			}
+		} else {
+			LOGGER.warning(String.format("Not able to retrieve EClass from options ROOT_OBJECT"));
 		}
 		
-//		TODO: check other deserialization options and adjust module and mapper accordingly
+		try {
+			updateCodecModuleFromOptions(options);
+
+			//		Update ObjectMapper based on the passed options
+			updateMapperFromOptions(options);
+
+			if(modelCodecInfo != null) {
+//				Update the CodecModelInfo based on the passed options
+				updateCodecModelInfoFromOptions(modelCodecInfo, options);
+				
+//				Bind the CodecModelInfo to the CodecModule.
+//				This is necessary otherwise asking the ModelInfoService we would get a new instance every time
+//				instead we need the same one here since it's the one we updated based on the options
+				moduleBuilder.bindCodecModelInfo(modelCodecInfo);
+			}
+//			
+
+//			Register the module with the mapper
+			objMapperBuilder.build().registerModule(moduleBuilder.build());	
+		} catch(Exception e) {
+			throw e;
+		}
+		
 //		Update the CodecModule based on the passed options
-		updateCodecModuleFromOptions(options);
-
-		//		Update ObjectMapper based on the passed options
-		updateMapperFromOptions(options);
-
-//		Update the CodecModelInfo based on the passed options
-		updateCodecModelInfoFromOptions(modelCodecInfo, options);
 		
-//		Bind the CodecModelInfo to the CodecModule.
-//		This is necessary otherwise asking the ModelInfoService we would get a new instance every time
-//		instead we need the same one here since it's the one we updated based on the options
-		moduleBuilder.bindCodecModelInfo(modelCodecInfo);
-
-//		Register the module with the mapper
-		objMapperBuilder.build().registerModule(moduleBuilder.build());	
 	}
-
+	
+	
 	/**
 	 * This is responsible to update the EClassCodecInfo based on the options used to save/load the resource
 	 *

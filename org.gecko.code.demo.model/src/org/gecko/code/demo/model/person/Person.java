@@ -22,11 +22,13 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.code.demo.model.person.Person#getName <em>Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getLastName <em>Last Name</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getAddress <em>Address</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getAddresses <em>Addresses</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getBirthDate <em>Birth Date</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getAge <em>Age</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#isMarried <em>Married</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getGender <em>Gender</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getNonContainedAdd <em>Non Contained Add</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getNonContainedAdds <em>Non Contained Adds</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getId <em>Id</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getTitles <em>Titles</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getTransientAtt <em>Transient Att</em>}</li>
@@ -104,6 +106,18 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setAddress(Address value);
+
+	/**
+	 * Returns the value of the '<em><b>Addresses</b></em>' containment reference list.
+	 * The list contents are of type {@link org.gecko.code.demo.model.person.Address}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Addresses</em>' containment reference list.
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Addresses()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<Address> getAddresses();
 
 	/**
 	 * Returns the value of the '<em><b>Birth Date</b></em>' attribute.
@@ -217,6 +231,18 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setNonContainedAdd(Address value);
+
+	/**
+	 * Returns the value of the '<em><b>Non Contained Adds</b></em>' reference list.
+	 * The list contents are of type {@link org.gecko.code.demo.model.person.Address}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Non Contained Adds</em>' reference list.
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_NonContainedAdds()
+	 * @model
+	 * @generated
+	 */
+	EList<Address> getNonContainedAdds();
 
 	/**
 	 * Returns the value of the '<em><b>Id</b></em>' attribute.

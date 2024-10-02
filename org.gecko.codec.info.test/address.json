@@ -1,6 +1,6 @@
 {
-  "_id" : "bead8182-eb23-4510-bd80-cbb5f84ec7e5",
+  "_id" : "d6603aa8-ca73-4c93-aca9-898fe2106f52",
   "_type" : "http://example.de/person/1.0#//Address",
   "street" : "Via Test",
-  "id" : "bead8182-eb23-4510-bd80-cbb5f84ec7e5"
+  "id" : "d6603aa8-ca73-4c93-aca9-898fe2106f52"
 }

@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gecko.code.demo.model.person.Address;
@@ -42,8 +44,11 @@ import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleOptions;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.demo.resource.CodecJsonResource;
+import org.gecko.codec.info.CodecAnnotations;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.ObjectMapperOptions;
+import org.gecko.codec.info.codecinfo.CodecValueReader;
+import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,7 +60,9 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
@@ -104,8 +111,6 @@ public class CodecJsonDeserializationTest {
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-//		DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-//		options.put(ObjectMapperOptions.OBJ_MAPPER_DATE_FORMAT, df);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
 		resource.save(options);
 		
@@ -134,6 +139,154 @@ public class CodecJsonDeserializationTest {
 		assertEquals(person.getGender(), p.getGender());
 		assertEquals(person.getAge(), p.getAge());
 		assertEquals(0, p.getTransientAtt());
+	}
+	
+	public static final CodecValueReader<String, String> TEST_VALUE_READER = new CodecValueReader<>() {
+
+		@Override
+		public String getName() {
+			return "TEST_VALUE_READER";
+		}
+
+		@Override
+		public String readValue(String value, DeserializationContext context) {
+			if(value == null) return null;
+			if(value.startsWith("Super")) return value.substring(5, value.length());
+			return value;
+		}		
+	};
+	
+	
+	public static final CodecValueWriter<String, String> TEST_VALUE_WRITER = new CodecValueWriter<>() {
+
+		@Override
+		public String getName() {
+			return "TEST_VALUE_WRITER";
+		}
+
+		@Override
+		public String writeValue(String value, SerializerProvider provider) {
+			if(value == null) return null;
+			return "Super".concat(value);
+		}
+	};
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+//			,
+//			@Property(key="dateFormat", value="dd-MM-yyyy")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@Test
+	public void testDeserializationCustomReaderSingleAttribute(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+	
+		CodecJsonResource resource = new CodecJsonResource(URI.createURI("serialized.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		
+		Person person = getTestPerson();
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+		personOptions.put(CodecAnnotations.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), TEST_VALUE_WRITER));
+		personOptions.put(CodecAnnotations.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), TEST_VALUE_READER));
+
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put("codec.options", classOptions);
+		resource.save(options);
+		
+		resource.getContents().clear();
+		resource.unload();
+		
+		CodecJsonResource findResource = new CodecJsonResource(URI.createURI("serialized.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		options = new HashMap<>();
+		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		
+		findResource.load(options);
+
+		// get the person
+		assertNotNull(findResource);
+		assertFalse(findResource.getContents().isEmpty());
+		assertEquals(1, findResource.getContents().size());
+
+		// doing some object checks
+		Person p = (Person) findResource.getContents().get(0);
+		assertEquals("John", p.getName());
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+//			,
+//			@Property(key="dateFormat", value="dd-MM-yyyy")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@Test
+	public void testDeserializationCustomReaderManyAttribute(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+	
+		CodecJsonResource resource = new CodecJsonResource(URI.createURI("serialized.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		
+		Person person = getTestPerson();
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+		personOptions.put(CodecAnnotations.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), TEST_VALUE_WRITER));
+		personOptions.put(CodecAnnotations.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), TEST_VALUE_READER));
+
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put("codec.options", classOptions);
+		resource.save(options);
+		
+		resource.getContents().clear();
+		resource.unload();
+		
+		CodecJsonResource findResource = new CodecJsonResource(URI.createURI("serialized.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		options = new HashMap<>();
+		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		
+		findResource.load(options);
+
+		// get the person
+		assertNotNull(findResource);
+		assertFalse(findResource.getContents().isEmpty());
+		assertEquals(1, findResource.getContents().size());
+
+		// doing some object checks
+		Person p = (Person) findResource.getContents().get(0);
+		assertThat(p.getTitles()).contains("Mrs", "Dr");
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
@@ -183,10 +336,10 @@ public class CodecJsonDeserializationTest {
 		addRes.save(options);
 		personRes.save(options);
 		
-//		addRes.getContents().clear();
-//		addRes.unload();
-//		personRes.getContents().clear();
-//		personRes.unload();
+		addRes.getContents().clear();
+		addRes.unload();
+		personRes.getContents().clear();
+		personRes.unload();
 		
 		Resource findResource = rs.createResource(URI.createURI("person.json"));
 		options = new HashMap<>();
@@ -202,7 +355,243 @@ public class CodecJsonDeserializationTest {
 		// doing some object checks
 		Person p = (Person) findResource.getContents().get(0);
 		assertEquals(person.getId(), p.getId());
-		assertNotNull(p.getNonContainedAdd());
+		Address add = p.getNonContainedAdd();
+		
+		assertNotNull(add);
+		assertEquals(address.getStreet(), add.getStreet());
+		assertEquals(address.getId(), add.getId());
+		assertNull(add.getZip());
+		
+		
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+//			,
+//			@Property(key="dateFormat", value="dd-MM-yyyy")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@WithFactoryConfiguration(factoryPid = "CodecJsonRF", location = "?", name = "test", properties = {
+			@Property(key = "codecType", value="json")
+	})
+	@Test
+	public void testDeserializationContainedReference(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator,
+			@InjectService(timeout = 2000l) JsonResourceFactory jsonResFactory,
+			@InjectService(timeout = 2000l) ResourceSet rs
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+		assertNotNull(jsonResFactory);
+		assertNotNull(rs);
+		
+		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("json", jsonResFactory);
+		
+		Resource personRes = rs.createResource(URI.createURI("person.json"));
+
+		Address address = getTestAddress();
+		Person person = getTestPerson();
+		person.setAddress(address);
+		personRes.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+		personRes.save(options);
+		
+		personRes.getContents().clear();
+		personRes.unload();
+		
+		Resource findResource = rs.createResource(URI.createURI("person.json"));
+		options = new HashMap<>();
+		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		
+		findResource.load(options);
+
+		// get the person
+		assertNotNull(findResource);
+		assertFalse(findResource.getContents().isEmpty());
+		assertEquals(1, findResource.getContents().size());
+
+		// doing some object checks
+		Person p = (Person) findResource.getContents().get(0);
+		assertEquals(person.getId(), p.getId());
+		Address add = p.getAddress();		
+		assertNotNull(add);
+		assertEquals(address.getStreet(), add.getStreet());
+		assertEquals(address.getId(), add.getId());
+		assertNull(add.getZip());
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+//			,
+//			@Property(key="dateFormat", value="dd-MM-yyyy")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@WithFactoryConfiguration(factoryPid = "CodecJsonRF", location = "?", name = "test", properties = {
+			@Property(key = "codecType", value="json")
+	})
+	@Test
+	public void testDeserializationManyContainedReference(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator,
+			@InjectService(timeout = 2000l) JsonResourceFactory jsonResFactory,
+			@InjectService(timeout = 2000l) ResourceSet rs
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+		assertNotNull(jsonResFactory);
+		assertNotNull(rs);
+		
+		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("json", jsonResFactory);
+		
+		Resource personRes = rs.createResource(URI.createURI("person.json"));
+
+		Address address1 = getTestAddress();
+		Address address2 = getTestAddress();
+		Person person = getTestPerson();
+		person.getAddresses().add(address1);
+		person.getAddresses().add(address2);
+		personRes.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+		personRes.save(options);
+		
+		personRes.getContents().clear();
+		personRes.unload();
+		
+		Resource findResource = rs.createResource(URI.createURI("person.json"));
+		options = new HashMap<>();
+		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		
+		findResource.load(options);
+
+		// get the person
+		assertNotNull(findResource);
+		assertFalse(findResource.getContents().isEmpty());
+		assertEquals(1, findResource.getContents().size());
+
+		// doing some object checks
+		Person p = (Person) findResource.getContents().get(0);
+		assertThat(p.getAddresses()).hasSize(2);
+		Address add1 = null, add2 = null;
+		for(Address add : p.getAddresses()) {
+			if(add.getId().equals(address1.getId())) add1 = add;
+			else if(add.getId().equals(address2.getId())) add2 = add;
+		}
+		assertNotNull(add1);
+		assertNotNull(add2);
+	}
+	
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+//			,
+//			@Property(key="dateFormat", value="dd-MM-yyyy")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@WithFactoryConfiguration(factoryPid = "CodecJsonRF", location = "?", name = "test", properties = {
+			@Property(key = "codecType", value="json")
+	})
+	@Test
+	public void testDeserializationMultipleReference(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator,
+			@InjectService(timeout = 2000l) JsonResourceFactory jsonResFactory,
+			@InjectService(timeout = 2000l) ResourceSet rs
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+		assertNotNull(jsonResFactory);
+		assertNotNull(rs);
+		
+		rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("json", jsonResFactory);
+		
+		Resource addRes1 = rs.createResource(URI.createURI("address1.json"));
+		Resource addRes2 = rs.createResource(URI.createURI("address2.json"));
+		Resource personRes = rs.createResource(URI.createURI("person.json"));
+
+		Address address1 = getTestAddress();
+		Address address2 = getTestAddress();
+		Person person = getTestPerson();
+		person.getNonContainedAdds().add(address1);
+		person.getNonContainedAdds().add(address2);
+		addRes1.getContents().add(address1);
+		addRes2.getContents().add(address2);
+		personRes.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+		addRes1.save(options);
+		addRes2.save(options);
+		personRes.save(options);
+		
+		addRes1.getContents().clear();
+		addRes1.unload();
+		addRes2.getContents().clear();
+		addRes2.unload();
+		personRes.getContents().clear();
+		personRes.unload();
+		
+		Resource findResource = rs.createResource(URI.createURI("person.json"));
+		options = new HashMap<>();
+		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		
+		findResource.load(options);
+
+		// get the person
+		assertNotNull(findResource);
+		assertFalse(findResource.getContents().isEmpty());
+		assertEquals(1, findResource.getContents().size());
+
+		// doing some object checks
+		Person p = (Person) findResource.getContents().get(0);
+		assertEquals(person.getId(), p.getId());
+		assertThat(p.getNonContainedAdds()).hasSize(2);
+		Address add1 = null, add2 = null;
+		for(Address add : p.getNonContainedAdds()) {
+			if(add.getId().equals(address1.getId())) add1 = add;
+			else if(add.getId().equals(address2.getId())) add2 = add;
+		}
+		assertNotNull(add1);
+		assertNotNull(add2);	
+		assertEquals(address1.getStreet(), add1.getStreet());
+		assertNull(add1.getZip());
+		assertEquals(address2.getStreet(), add2.getStreet());
+		assertNull(add2.getZip());
+		
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
@@ -307,8 +696,8 @@ public class CodecJsonDeserializationTest {
 	private Address getTestAddress() {
 		Address address = PersonFactory.eINSTANCE.createAddress();
 		address.setId(UUID.randomUUID().toString());
-		address.setStreet("Via Test");
-		address.setZip("7777");
+		address.setStreet(UUID.randomUUID().toString());
+		address.setZip(UUID.randomUUID().toString());
 		return address;
 	}
 }

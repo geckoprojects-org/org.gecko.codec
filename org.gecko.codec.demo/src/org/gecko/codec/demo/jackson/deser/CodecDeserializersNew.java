@@ -23,7 +23,6 @@ import org.eclipse.emfcloud.jackson.databind.deser.ResourceDeserializer;
 import org.eclipse.emfcloud.jackson.databind.type.EcoreType;
 import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
-import org.gecko.codec.jackson.databind.deser.CodecEObjectDeserializer;
 
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
@@ -39,7 +38,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
  * @since Sep 26, 2024
  */
 public class CodecDeserializersNew extends EMFDeserializers {
-	
+
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
 	private final ResourceDeserializer resourceDeserializer;
@@ -58,19 +57,18 @@ public class CodecDeserializersNew extends EMFDeserializers {
 		this.referenceDeserializer = module.getReferenceDeserializer();
 		this.dataTypeDeserializer = new EDataTypeDeserializer();
 	}
-	
+
 	@Override
 	public JsonDeserializer<?> findCollectionDeserializer(CollectionType type, DeserializationConfig config,
 			BeanDescription beanDesc, TypeDeserializer elementTypeDeserializer, JsonDeserializer<?> elementDeserializer)
-			throws JsonMappingException {
+					throws JsonMappingException {
 		if (type.getContentType().isTypeOrSubTypeOf(EObject.class)) {
-			return new CodecEObjectDeserializerNew(type.getContentType().getRawClass(), codecModule, codecModelInfoService);
-//		     return new CollectionDeserializer(type, new CodecEObjectDeserializer(builder.with(config), type.getContentType().getRawClass()),
-//		        referenceDeserializer);
-		  }
-		  return super.findCollectionDeserializer(type, config, beanDesc, elementTypeDeserializer, (JsonDeserializer<?>) elementDeserializer);
+			return new CollectionDeserializer(type, new CodecEObjectDeserializerNew(type.getContentType().getRawClass(), codecModule, codecModelInfoService),
+					referenceDeserializer);
+		}
+		return super.findCollectionDeserializer(type, config, beanDesc, elementTypeDeserializer, (JsonDeserializer<?>) elementDeserializer);
 	}
-	
+
 	@Override
 	public JsonDeserializer<?> findBeanDeserializer(JavaType type, DeserializationConfig config,
 			BeanDescription beanDesc) throws JsonMappingException {
@@ -88,13 +86,12 @@ public class CodecDeserializersNew extends EMFDeserializers {
 
 		if (type.isTypeOrSubTypeOf(EObject.class)) {
 			return new CodecEObjectDeserializerNew(type.getRawClass(), codecModule, codecModelInfoService);
-//			return new CodecEObjectDeserializer(builder.with(config), type.getRawClass());
 		}
 
 		return super.findBeanDeserializer(type, config, beanDesc);
 	}
-	
-	
-	
+
+
+
 
 }
