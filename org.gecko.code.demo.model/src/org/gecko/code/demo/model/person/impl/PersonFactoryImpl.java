@@ -62,6 +62,7 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 			case PersonPackage.BUSINESS_PERSON: return createBusinessPerson();
 			case PersonPackage.CONTACT: return createContact();
 			case PersonPackage.BUSINESS_ADDRESS: return createBusinessAddress();
+			case PersonPackage.SPECIFIC_BUSINESS_PERSON: return createSpecificBusinessPerson();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -150,6 +151,17 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 	public BusinessAddress createBusinessAddress() {
 		BusinessAddressImpl businessAddress = new BusinessAddressImpl();
 		return businessAddress;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public SpecificBusinessPerson createSpecificBusinessPerson() {
+		SpecificBusinessPersonImpl specificBusinessPerson = new SpecificBusinessPersonImpl();
+		return specificBusinessPerson;
 	}
 
 	/**

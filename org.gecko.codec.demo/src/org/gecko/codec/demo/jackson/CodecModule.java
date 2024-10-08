@@ -46,6 +46,7 @@ public class CodecModule extends EMFModule {
 	private String idKey;
 	private boolean serializeType;
 	private boolean serializeSuperTypes;
+	private boolean serializeAllSuperTypes;
 	private boolean serializeSuperTypesAsArray;
 	private String typeKey;
 	private String superTypeKey;
@@ -115,6 +116,10 @@ public class CodecModule extends EMFModule {
 	public boolean isSerializeSuperTypes() {
 		return serializeSuperTypes;
 	}
+	
+	public boolean isSerializeAllSuperTypes() {
+		return serializeAllSuperTypes;
+	}
 
 	public boolean isSerializeSuperTypesAsArray() {
 		return serializeSuperTypesAsArray;
@@ -157,6 +162,7 @@ public class CodecModule extends EMFModule {
 		this.serializeEmptyValue = builder.serializeEmptyValue;
 		this.serializeNullValue = builder.serializeNullValue;
 		this.serializeSuperTypes = builder.serializeSuperTypes;
+		this.serializeAllSuperTypes = builder.serializeAllSuperTypes;
 		this.serializeType = builder.serializeType;
 		this.idFeatureAsPrimaryKey = builder.idFeatureAsPrimaryKey;
 		this.idKey = builder.idKey;
@@ -225,6 +231,7 @@ public class CodecModule extends EMFModule {
 		private String idKey = "_id";
 		private boolean serializeType = true;
 		private boolean serializeSuperTypes = false;
+		private boolean serializeAllSuperTypes = false;
 		private boolean serializeSuperTypesAsArray = true;
 		private String typeKey = "_type";
 		private String superTypeKey = "_supertype";
@@ -321,6 +328,7 @@ public class CodecModule extends EMFModule {
 			this.idFeatureAsPrimaryKey = idFeatureAsPrimaryKey;
 			return this;
 		}
+		
 		public Builder withSerializeType(boolean serializeType) {
 			this.serializeType = serializeType;
 			return this;
@@ -328,6 +336,11 @@ public class CodecModule extends EMFModule {
 		
 		public Builder withSerializeSuperTypes(boolean serializeSuperTypes) {
 			this.serializeSuperTypes = serializeSuperTypes;
+			return this;
+		}
+		
+		public Builder withSerializeAllSuperTypes(boolean serializeAllSuperTypes) {
+			this.serializeAllSuperTypes = serializeAllSuperTypes;
 			return this;
 		}
 		

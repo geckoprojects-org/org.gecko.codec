@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.gecko.code.demo.model.person.Address;
+import org.gecko.code.demo.model.person.BusinessAddress;
 import org.gecko.code.demo.model.person.GENDER_TYPE;
 import org.gecko.code.demo.model.person.Person;
 import org.gecko.code.demo.model.person.PersonPackage;
@@ -49,6 +50,7 @@ import org.gecko.code.demo.model.person.PersonPackage;
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getTitles <em>Titles</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getTransientAtt <em>Transient Att</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getBusinessAdd <em>Business Add</em>}</li>
  * </ul>
  *
  * @generated
@@ -263,6 +265,16 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected int transientAtt = TRANSIENT_ATT_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getBusinessAdd() <em>Business Add</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBusinessAdd()
+	 * @generated
+	 * @ordered
+	 */
+	protected BusinessAddress businessAdd;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -597,6 +609,51 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public BusinessAddress getBusinessAdd() {
+		return businessAdd;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetBusinessAdd(BusinessAddress newBusinessAdd, NotificationChain msgs) {
+		BusinessAddress oldBusinessAdd = businessAdd;
+		businessAdd = newBusinessAdd;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__BUSINESS_ADD, oldBusinessAdd, newBusinessAdd);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setBusinessAdd(BusinessAddress newBusinessAdd) {
+		if (newBusinessAdd != businessAdd) {
+			NotificationChain msgs = null;
+			if (businessAdd != null)
+				msgs = ((InternalEObject)businessAdd).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - PersonPackage.PERSON__BUSINESS_ADD, null, msgs);
+			if (newBusinessAdd != null)
+				msgs = ((InternalEObject)newBusinessAdd).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - PersonPackage.PERSON__BUSINESS_ADD, null, msgs);
+			msgs = basicSetBusinessAdd(newBusinessAdd, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__BUSINESS_ADD, newBusinessAdd, newBusinessAdd));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String getFullName() {
 		return this.name + " " + this.lastName;
 	}
@@ -613,6 +670,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return basicSetAddress(null, msgs);
 			case PersonPackage.PERSON__ADDRESSES:
 				return ((InternalEList<?>)getAddresses()).basicRemove(otherEnd, msgs);
+			case PersonPackage.PERSON__BUSINESS_ADD:
+				return basicSetBusinessAdd(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -652,6 +711,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return getTitles();
 			case PersonPackage.PERSON__TRANSIENT_ATT:
 				return getTransientAtt();
+			case PersonPackage.PERSON__BUSINESS_ADD:
+				return getBusinessAdd();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -707,6 +768,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__TRANSIENT_ATT:
 				setTransientAtt((Integer)newValue);
 				return;
+			case PersonPackage.PERSON__BUSINESS_ADD:
+				setBusinessAdd((BusinessAddress)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -758,6 +822,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__TRANSIENT_ATT:
 				setTransientAtt(TRANSIENT_ATT_EDEFAULT);
 				return;
+			case PersonPackage.PERSON__BUSINESS_ADD:
+				setBusinessAdd((BusinessAddress)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -796,6 +863,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return titles != null && !titles.isEmpty();
 			case PersonPackage.PERSON__TRANSIENT_ATT:
 				return transientAtt != TRANSIENT_ATT_EDEFAULT;
+			case PersonPackage.PERSON__BUSINESS_ADD:
+				return businessAdd != null;
 		}
 		return super.eIsSet(featureID);
 	}

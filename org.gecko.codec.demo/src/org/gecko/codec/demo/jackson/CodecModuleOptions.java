@@ -52,6 +52,8 @@ public interface CodecModuleOptions {
 	
 	String CODEC_MODULE_SERIALIZE_SUPER_TYPES = "codec.module.serialize.super.types";
 	
+	String CODEC_MODULE_SERIALIZE_ALL_SUPER_TYPES = "codec.module.serialize.all.super.types";
+	
 	String CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY = "codec.module.serialize.super.types.as.array";
 	
 	String CODEC_MODULE_TYPE_KEY = "codec.module.type.key";

@@ -14,6 +14,7 @@
 package org.gecko.codec.demo.jackson.ser;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -37,14 +38,14 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  * @since Aug 22, 2024
  */
 public class IdCodecInfoSerializer implements CodecInfoSerializer{
-	
+
 	private final static Logger LOGGER = Logger.getLogger(IdCodecInfoSerializer.class.getName());
-	
+
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
 	private EClassCodecInfo eObjCodecInfo;
 	private IdentityInfo idCodecInfo;
-	
+
 	public IdCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final IdentityInfo idCodecInfo) {
 		this.codecModule = codecMoule;
@@ -52,25 +53,36 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 		this.eObjCodecInfo = eObjCodecInfo;
 		this.idCodecInfo = idCodecInfo;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		EMFContext.setParent(provider, rootObj);
 		String idStrategy = idCodecInfo.getIdStrategy() != null ? idCodecInfo.getIdStrategy() : "";
 		List<EStructuralFeature> idFeatures = idCodecInfo.getFeatures().stream().filter(f -> f instanceof EStructuralFeature).map(EStructuralFeature.class::cast).collect(Collectors.toList());
-		
+
 		switch(idStrategy) {
 		case "COMBINED":
-			String idSeparator = idCodecInfo.getIdSeparator();
-			String id = "";
-			for(EStructuralFeature f : idFeatures) {
-				id = id.concat((String) rootObj.eGet(f)).concat(idSeparator);
+			//			TODO: We have to specify in the documentation that we are expecting a writer which takes the id features values as input
+			CodecValueWriter<Object, String> w = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY).getWriterByName(idCodecInfo.getValueWriterName());
+			if(w != null) {
+				gen.writeFieldName(codecModule.getIdKey());
+				List<Object> values = new LinkedList<>();
+				idFeatures.forEach(f -> values.add(rootObj.eGet(f)));
+				gen.writeString(w.writeValue(values, provider));
+			} else {
+				String idSeparator = idCodecInfo.getIdSeparator();
+				String id = "";
+				for(EStructuralFeature f : idFeatures) {
+					if(rootObj.eGet(f) != null) {
+						id = id.concat(rootObj.eGet(f).toString()).concat(idSeparator);
+					}
+				}
+				int start = id.lastIndexOf(idSeparator);
+				StringBuilder builder = new StringBuilder();						
+				id = builder.append(id.substring(0, start)).toString();
+				gen.writeFieldName(codecModule.getIdKey());
+				gen.writeString(id);
 			}
-			int start = id.lastIndexOf(idSeparator);
-			StringBuilder builder = new StringBuilder();						
-			id = builder.append(id.substring(0, start)).toString();
-			gen.writeFieldName(codecModule.getIdKey());
-			gen.writeString(id);
 			break;
 		case "ID_FIELD": default:
 			if(idFeatures.size() == 0) {
@@ -82,16 +94,26 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 				break;
 			}
 			gen.writeFieldName(codecModule.getIdKey());
-			if(gen.canWriteObjectId()) {
-				gen.writeObjectId(rootObj.eGet(idFeatures.get(0)));
-			} else {
-//				TODO: how could I know which argument to pass to a custom writer..?
-				CodecValueWriter<Object, String> writer = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY).getWriterByName(idCodecInfo.getValueWriterName());
-				if(writer != null) gen.writeString(writer.writeValue(rootObj, provider));
-				else gen.writeString(rootObj.eGet(idFeatures.get(0)).toString());
+
+			//TODO: We have to specify in the documentation that we are expecting a writer which takes the id field as input
+			CodecValueWriter<Object, String> writer = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY).getWriterByName(idCodecInfo.getValueWriterName());
+			if(writer != null) {
+				String value = writer.writeValue(rootObj.eGet(idFeatures.get(0)), provider);
+				if(gen.canWriteObjectId()) {
+					gen.writeObjectId(value);
+				} else {
+					gen.writeString(value);
+				}
 			}
-			break;					
-		}	
-	}
+			else {
+				if(gen.canWriteObjectId()) {
+					gen.writeObjectId(rootObj.eGet(idFeatures.get(0)));
+				} else {
+					gen.writeString(rootObj.eGet(idFeatures.get(0)).toString());
+				}
+			}
+		break;					
+	}	
+}
 
 }

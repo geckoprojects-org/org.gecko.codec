@@ -20,11 +20,6 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
@@ -33,7 +28,7 @@ import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.SuperTypeInfo;
-import org.gecko.codec.info.codecinfo.TypeInfo;
+import org.gecko.codec.info.helper.CodecIOHelper;
 import org.gecko.codec.jackson.CodecGeneratorBase;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -72,20 +67,22 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 	@Override
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		EMFContext.setParent(provider, rootObj);
-		EClass objectType = rootObj.eClass();
-		EReference containment = rootObj.eContainmentFeature();
+		if(superTypeCodecInfo.isIgnoreSuperType()) return;
+//		EClass objectType = rootObj.eClass();
+//		EReference containment = rootObj.eContainmentFeature();
 		// check for our implementation with additional callbacks 
-		CodecGeneratorBase cgb = null;
-		if (gen instanceof CodecGeneratorBase) {
-			cgb = (CodecGeneratorBase) gen;
-		}
-
-		if (isRoot(rootObj) || shouldSaveType(objectType, containment.getEReferenceType(), containment)) {
+		
+		
+		if (codecModule.isSerializeType() && codecModule.isSerializeSuperTypes()) {
 			CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.SUPER_TYPE);
-			CodecValueWriter<EClass, String[]> writer = holder.getWriterByName(superTypeCodecInfo.getValueWriterName());
-
+			CodecValueWriter<EClass, String[]> writer = holder
+					.getWriterByName(codecModule.isSerializeAllSuperTypes() ? CodecIOHelper.ALL_SUPERTYPE_WRITER.getName() 
+							: CodecIOHelper.SINGLE_SUPERTYPE_WRITER.getName());
 			String[] values = writer.writeValue(rootObj.eClass(), provider);
-
+			CodecGeneratorBase cgb = null;
+			if (gen instanceof CodecGeneratorBase) {
+				cgb = (CodecGeneratorBase) gen;
+			}
 			if (nonNull(values) && values.length > 0) {
 				gen.writeFieldName(codecModule.getSuperTypeKey());
 				/*
@@ -120,15 +117,15 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 		}
 	}
 	
-	private boolean shouldSaveType(final EClass objectType, final EClass featureType, final EStructuralFeature feature) {
-		return objectType != featureType && objectType != EcorePackage.Literals.EOBJECT;
-	}
-	
-	private boolean isRoot(final EObject bean) {
-		EObject container = bean.eContainer();
-		Resource.Internal resource = ((InternalEObject) bean).eDirectResource();
-
-		return container == null || resource != null && resource != ((InternalEObject) container).eDirectResource();
-	}
+//	private boolean shouldSaveType(final EClass objectType, final EClass featureType, final EStructuralFeature feature) {
+//		return objectType != featureType && objectType != EcorePackage.Literals.EOBJECT;
+//	}
+//	
+//	private boolean isRoot(final EObject bean) {
+//		EObject container = bean.eContainer();
+//		Resource.Internal resource = ((InternalEObject) bean).eDirectResource();
+//
+//		return container == null || resource != null && resource != ((InternalEObject) container).eDirectResource();
+//	}
 
 }

@@ -36,16 +36,16 @@ public class CodecInfoHolderHelper {
 		codecInfoHolder.setInfoType(codecType);
 
 		switch(codecType) {
-		case ATTRIBUTE: case OBJECT: case OPERATION: case OTHER:
+		case ATTRIBUTE: case REFERENCE: case OBJECT: case OPERATION: case OTHER:
 			break;
 		case IDENTITY:
 			codecInfoHolder.getReaders().add(CodecIOHelper.DEFAULT_ID_VALUE_READER);
 			codecInfoHolder.getWriters().add(CodecIOHelper.IDFIELD_VALUE_WRITER);			
 			codecInfoHolder.getWriters().add(CodecIOHelper.DEFAULT_ID_VALUE_WRITER);
 			break;
-		case REFERENCE: case SUPER_TYPE:
-			codecInfoHolder.getReaders().add(CodecIOHelper.DEFAULT_ECLASS_READER);
-			codecInfoHolder.getWriters().add(CodecIOHelper.URIS_WRITER);		
+		case SUPER_TYPE:
+			codecInfoHolder.getWriters().add(CodecIOHelper.ALL_SUPERTYPE_WRITER);	
+			codecInfoHolder.getWriters().add(CodecIOHelper.SINGLE_SUPERTYPE_WRITER);	
 			break;
 		case TYPE: 
 			codecInfoHolder.getReaders().add(CodecIOHelper.DEFAULT_ECLASS_READER);

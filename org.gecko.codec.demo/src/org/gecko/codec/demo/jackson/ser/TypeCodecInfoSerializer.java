@@ -19,17 +19,12 @@ import java.util.logging.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
-import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 
@@ -67,10 +62,9 @@ public class TypeCodecInfoSerializer implements CodecInfoSerializer {
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		EMFContext.setParent(provider, rootObj);
 		if(!typeCodecInfo.isIgnoreType()) {
-			EClass objectType = rootObj.eClass();
-			EReference containment = rootObj.eContainmentFeature();
-
-			if (isRoot(rootObj) || shouldSaveType(objectType, containment.getEReferenceType(), containment)) {
+//			EClass objectType = rootObj.eClass();
+//			EReference containment = rootObj.eContainmentFeature();
+			if (codecModule.isSerializeType()) {
 				CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
 				CodecValueWriter<EClass, String> writer = holder.getWriterByName(typeCodecInfo.getValueWriterName());
 				String v = writer.writeValue(rootObj.eClass(), provider);
@@ -84,15 +78,15 @@ public class TypeCodecInfoSerializer implements CodecInfoSerializer {
 		}
 	}
 	
-	private boolean shouldSaveType(final EClass objectType, final EClass featureType, final EStructuralFeature feature) {
-		return objectType != featureType && objectType != EcorePackage.Literals.EOBJECT;
-	}
-	
-	private boolean isRoot(final EObject bean) {
-		EObject container = bean.eContainer();
-		Resource.Internal resource = ((InternalEObject) bean).eDirectResource();
-
-		return container == null || resource != null && resource != ((InternalEObject) container).eDirectResource();
-	}
+//	private boolean shouldSaveType(final EClass objectType, final EClass featureType, final EStructuralFeature feature) {
+//		return objectType != featureType && objectType != EcorePackage.Literals.EOBJECT;
+//	}
+//	
+//	private boolean isRoot(final EObject bean) {
+//		EObject container = bean.eContainer();
+//		Resource.Internal resource = ((InternalEObject) bean).eDirectResource();
+//
+//		return container == null || resource != null && resource != ((InternalEObject) container).eDirectResource();
+//	}
 
 }

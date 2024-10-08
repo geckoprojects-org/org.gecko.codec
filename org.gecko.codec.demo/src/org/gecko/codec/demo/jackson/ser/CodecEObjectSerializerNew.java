@@ -66,7 +66,6 @@ public class CodecEObjectSerializerNew extends JsonSerializer<EObject> implement
 	@Override
 	public void serialize(EObject value, JsonGenerator gen, SerializerProvider provider) throws IOException {
 
-	
 		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
 		EClassCodecInfo eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().
 				filter(eci -> 

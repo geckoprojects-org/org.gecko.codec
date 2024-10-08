@@ -98,6 +98,14 @@ public class PersonSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case PersonPackage.SPECIFIC_BUSINESS_PERSON: {
+				SpecificBusinessPerson specificBusinessPerson = (SpecificBusinessPerson)theEObject;
+				T result = caseSpecificBusinessPerson(specificBusinessPerson);
+				if (result == null) result = caseBusinessPerson(specificBusinessPerson);
+				if (result == null) result = casePerson(specificBusinessPerson);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -174,6 +182,21 @@ public class PersonSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseBusinessAddress(BusinessAddress object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Specific Business Person</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Specific Business Person</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSpecificBusinessPerson(SpecificBusinessPerson object) {
 		return null;
 	}
 

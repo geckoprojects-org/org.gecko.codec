@@ -76,6 +76,16 @@
       "containment" : true,
       "resolveProxies" : false
     }, {
+      "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EReference",
+      "name" : "addresses",
+      "upperBound" : -1,
+      "eType" : {
+        "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+        "$ref" : "//Address"
+      },
+      "containment" : true,
+      "resolveProxies" : false
+    }, {
       "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EAttribute",
       "name" : "birthDate",
       "eType" : {
@@ -111,6 +121,14 @@
         "$ref" : "//Address"
       }
     }, {
+      "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EReference",
+      "name" : "nonContainedAdds",
+      "upperBound" : -1,
+      "eType" : {
+        "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+        "$ref" : "//Address"
+      }
+    }, {
       "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EAttribute",
       "name" : "id",
       "lowerBound" : 1,
@@ -121,6 +139,12 @@
       "iD" : true
     }, {
       "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EAttribute",
+      "eAnnotations" : [ {
+        "source" : "http:///org/eclipse/emf/ecore/util/ExtendedMetaData",
+        "details" : {
+          "name" : "title"
+        }
+      } ],
       "name" : "titles",
       "upperBound" : -1,
       "eType" : {
@@ -135,6 +159,15 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EInt"
       },
       "transient" : true
+    }, {
+      "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EReference",
+      "name" : "businessAdd",
+      "eType" : {
+        "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+        "$ref" : "//BusinessAddress"
+      },
+      "containment" : true,
+      "resolveProxies" : false
     } ]
   }, {
     "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
@@ -207,6 +240,13 @@
         "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       }
+    } ]
+  }, {
+    "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+    "name" : "SpecificBusinessPerson",
+    "eSuperTypes" : [ {
+      "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+      "$ref" : "//BusinessPerson"
     } ]
   }, {
     "eClass" : "http://www.eclipse.org/emf/2002/Ecore#//EEnum",

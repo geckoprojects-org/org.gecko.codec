@@ -370,8 +370,6 @@ public class CodecJsonDeserializationTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
-//			,
-//			@Property(key="dateFormat", value="dd-MM-yyyy")
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@WithFactoryConfiguration(factoryPid = "CodecJsonRF", location = "?", name = "test", properties = {
@@ -438,8 +436,6 @@ public class CodecJsonDeserializationTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
-//			,
-//			@Property(key="dateFormat", value="dd-MM-yyyy")
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@WithFactoryConfiguration(factoryPid = "CodecJsonRF", location = "?", name = "test", properties = {
@@ -511,8 +507,6 @@ public class CodecJsonDeserializationTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
-//			,
-//			@Property(key="dateFormat", value="dd-MM-yyyy")
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@WithFactoryConfiguration(factoryPid = "CodecJsonRF", location = "?", name = "test", properties = {

@@ -61,7 +61,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 			return;
 		}
 		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
-
+		
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
 
@@ -76,52 +76,70 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 				serializeManyAttribute(rootObj, values, feature, gen, provider);
 			} else {
 				Object value = rootObj.eGet(feature);
-				if(value == null && !codecModule.isSerializeDefaultValue()) return;
-				if(codecModule.isUseNamesFromExtendedMetaData()) {
-					gen.writeFieldName(featureCodecInfo.getKey());
-				} else {
-					gen.writeFieldName(feature.getName());
-				}	
 				serializeSingleAttribute(rootObj, value, feature, gen, provider);
 			}			
 		} else if(codecModule.isSerializeDefaultValue()) {
-			if(codecModule.isUseNamesFromExtendedMetaData()) {
-				gen.writeFieldName(featureCodecInfo.getKey() != null ? featureCodecInfo.getKey() : feature.getName());
+			if(feature.isMany()) {
+				List<Object> values = (List<Object>) rootObj.eGet(feature);
+				serializeManyAttribute(rootObj, values, feature, gen, provider);
 			} else {
-				gen.writeFieldName(feature.getName());
+				Object value = feature.getDefaultValue();
+				serializeSingleAttribute(rootObj, value, feature, gen, provider);
 			}
-			Object value = feature.getDefaultValue();
-			serializeSingleAttribute(rootObj, value, feature, gen, provider);
 		}
 	}
 
 	
-	@SuppressWarnings("unchecked")
 	private void serializeSingleAttribute(EObject rootObj, Object value, EStructuralFeature feature, JsonGenerator gen,
 			SerializerProvider provider) throws IOException {
-		if(value == null && codecModule.isSerializeDefaultValue()) {
-			gen.writeNull();
+		
+		if(value == null && !codecModule.isSerializeNullValue()) {
 			return;
 		}
-		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
-		CodecValueWriter<Object,?> writer = infoHolder.getWriterByName(featureCodecInfo.getValueWriterName());
-		if(writer != null) gen.writeObject(writer.writeValue(value, provider));
-		else gen.writeObject(value);
+		if(value instanceof String str && str != null && str.isEmpty() && !codecModule.isSerializeEmptyValue()) {
+			return;
+		}
+		if(codecModule.isUseNamesFromExtendedMetaData()) {
+			gen.writeFieldName(featureCodecInfo.getKey());
+		} else {
+			gen.writeFieldName(feature.getName());
+		}
+		
+		serializeSingleAttributeValue(rootObj, value, feature, gen, provider);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void serializeSingleAttributeValue(EObject rootObj, Object value, EStructuralFeature feature, JsonGenerator gen,
+			SerializerProvider provider) throws IOException {
+		
+		if(value == null) {
+			gen.writeNull();
+			return;
+		} 
+		else {
+			CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
+			CodecValueWriter<Object,?> writer = infoHolder.getWriterByName(featureCodecInfo.getValueWriterName());
+			if(writer != null) gen.writeObject(writer.writeValue(value, provider));
+			else gen.writeObject(value);
+		}
 	}
 
 	
 	private void serializeManyAttribute(EObject rootObj, List<Object> values, EStructuralFeature feature,
 			JsonGenerator gen, SerializerProvider provider) throws IOException {
-		if(values.isEmpty() && !codecModule.isSerializeDefaultValue()) return;
+		if(values.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue())) return;
 		if(codecModule.isUseNamesFromExtendedMetaData()) {
 			gen.writeFieldName(featureCodecInfo.getKey());
 		} else {
 			gen.writeFieldName(feature.getName());
 		}	
+		
+//		TODO: check serailized array batched here...?
+		
 		gen.writeStartArray();
 		values.forEach(value -> {
 			try {
-				serializeSingleAttribute(rootObj, value, feature, gen, provider);
+				serializeSingleAttributeValue(rootObj, value, feature, gen, provider);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

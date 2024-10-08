@@ -81,6 +81,9 @@ public class ObjectMapperConfigurator {
 		String tzStr = (String) properties.getOrDefault("timeZone", "Europe/Berlin");
 		TimeZone tz = TimeZone.getTimeZone(tzStr);
 		objMapperBuilder.defaultTimeZone(tz);
+		
+//		This is needed otherwise subsequent calls to Resource#save() will use the same module even if we are changing options!
+		objMapperBuilder.disable(MapperFeature.IGNORE_DUPLICATE_MODULE_REGISTRATIONS);
 	}
 	
 	private void setFeature(String featureString, boolean state) {

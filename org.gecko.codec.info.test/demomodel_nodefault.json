@@ -4,8 +4,10 @@
   "nsURI" : "http://example.de/person/1.0",
   "nsPrefix" : "person",
   "eAnnotations" : [ {
+    "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAnnotation",
     "source" : "Version",
     "details" : [ {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
       "key" : "value",
       "value" : "1.0"
     } ]
@@ -14,29 +16,38 @@
     "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
     "name" : "Person",
     "eAnnotations" : [ {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAnnotation",
       "source" : "codec.type",
       "details" : [ {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
         "key" : "include",
         "value" : "true"
       }, {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
         "key" : "use",
         "value" : "NAME"
       } ]
     }, {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAnnotation",
       "source" : "codec.id",
       "details" : [ {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
         "key" : "strategy",
         "value" : "COMBINED"
       }, {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
         "key" : "separator",
         "value" : "-"
       } ]
     } ],
     "eOperations" : [ {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EOperation",
       "name" : "getFullName",
       "eAnnotations" : [ {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAnnotation",
         "source" : "http://www.eclipse.org/emf/2002/GenModel",
         "details" : [ {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
           "key" : "body",
           "value" : "return this.name + \" \" + this.lastName;"
         } ]
@@ -46,6 +57,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -57,11 +69,14 @@
       "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAttribute",
       "name" : "name",
       "eAnnotations" : [ {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAnnotation",
         "source" : "codec.id",
         "details" : [ {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
           "key" : "id.field",
           "value" : "true"
         }, {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
           "key" : "id.order",
           "value" : "0"
         } ]
@@ -71,6 +86,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -81,11 +97,14 @@
       "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAttribute",
       "name" : "lastName",
       "eAnnotations" : [ {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAnnotation",
         "source" : "codec.id",
         "details" : [ {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
           "key" : "id.field",
           "value" : "true"
         }, {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
           "key" : "id.order",
           "value" : "1"
         } ]
@@ -95,6 +114,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -111,6 +131,25 @@
         "$ref" : "//Address"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
+        "eClassifier" : {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+          "$ref" : "//Address"
+        }
+      },
+      "getFeatureID" : -1
+    }, {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EReference",
+      "name" : "addresses",
+      "upperBound" : -1,
+      "containment" : true,
+      "resolveProxies" : false,
+      "eType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+        "$ref" : "//Address"
+      },
+      "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
           "$ref" : "//Address"
@@ -125,6 +164,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EDate"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EDate"
@@ -139,6 +179,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EInt"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EInt"
@@ -153,6 +194,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
@@ -167,6 +209,7 @@
         "$ref" : "//GENDER_TYPE"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EEnum",
           "$ref" : "//GENDER_TYPE"
@@ -181,6 +224,23 @@
         "$ref" : "//Address"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
+        "eClassifier" : {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+          "$ref" : "//Address"
+        }
+      },
+      "getFeatureID" : -1
+    }, {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EReference",
+      "name" : "nonContainedAdds",
+      "upperBound" : -1,
+      "eType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+        "$ref" : "//Address"
+      },
+      "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
           "$ref" : "//Address"
@@ -197,6 +257,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -207,11 +268,21 @@
       "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAttribute",
       "name" : "titles",
       "upperBound" : -1,
+      "eAnnotations" : [ {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAnnotation",
+        "source" : "http:///org/eclipse/emf/ecore/util/ExtendedMetaData",
+        "details" : [ {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
+          "key" : "name",
+          "value" : "title"
+        } ]
+      } ],
       "eType" : {
         "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -227,15 +298,33 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EInt"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EInt"
         }
       },
       "getFeatureID" : -1
+    }, {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EReference",
+      "name" : "businessAdd",
+      "containment" : true,
+      "resolveProxies" : false,
+      "eType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+        "$ref" : "//BusinessAddress"
+      },
+      "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
+        "eClassifier" : {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+          "$ref" : "//BusinessAddress"
+        }
+      },
+      "getFeatureID" : -1
     } ],
     "getClassifierID" : 0,
-    "getFeatureCount" : 11,
+    "getFeatureCount" : 14,
     "getOperationCount" : 1
   }, {
     "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
@@ -248,6 +337,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -258,8 +348,10 @@
       "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAttribute",
       "name" : "zip",
       "eAnnotations" : [ {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAnnotation",
         "source" : "codec",
         "details" : [ {
+          "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
           "key" : "transient",
           "value" : "true"
         } ]
@@ -269,6 +361,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -285,6 +378,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -299,8 +393,10 @@
     "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
     "name" : "BusinessPerson",
     "eAnnotations" : [ {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EAnnotation",
       "source" : "codec.id",
       "details" : [ {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EStringToStringMapEntry",
         "key" : "strategy",
         "value" : "ID_FIELD"
       } ]
@@ -310,13 +406,14 @@
       "$ref" : "//Person"
     } ],
     "eGenericSuperTypes" : [ {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
       "eClassifier" : {
         "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
         "$ref" : "//Person"
       }
     } ],
     "getClassifierID" : 2,
-    "getFeatureCount" : 11,
+    "getFeatureCount" : 14,
     "getOperationCount" : 1
   }, {
     "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
@@ -329,6 +426,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -354,6 +452,7 @@
         "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
       },
       "eGenericType" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
         "eClassifier" : {
           "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EDataType",
           "$ref" : "http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -362,6 +461,7 @@
       "getFeatureID" : -1
     } ],
     "eGenericSuperTypes" : [ {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
       "eClassifier" : {
         "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
         "$ref" : "//Address"
@@ -371,17 +471,37 @@
     "getFeatureCount" : 4,
     "getOperationCount" : 0
   }, {
+    "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+    "name" : "SpecificBusinessPerson",
+    "eSuperTypes" : [ {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+      "$ref" : "//BusinessPerson"
+    } ],
+    "eGenericSuperTypes" : [ {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EGenericType",
+      "eClassifier" : {
+        "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EClass",
+        "$ref" : "//BusinessPerson"
+      }
+    } ],
+    "getClassifierID" : 5,
+    "getFeatureCount" : 14,
+    "getOperationCount" : 1
+  }, {
     "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EEnum",
     "name" : "GENDER_TYPE",
     "eLiterals" : [ {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral",
       "name" : "MALE"
     }, {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral",
       "name" : "FEMALE",
       "value" : 1
     }, {
+      "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral",
       "name" : "OTHER",
       "value" : 2
     } ],
-    "getClassifierID" : 5
+    "getClassifierID" : 6
   } ]
 }

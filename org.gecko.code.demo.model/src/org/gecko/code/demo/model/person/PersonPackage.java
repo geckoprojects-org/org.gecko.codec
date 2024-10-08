@@ -193,13 +193,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__TRANSIENT_ATT = 12;
 
 	/**
+	 * The feature id for the '<em><b>Business Add</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__BUSINESS_ADD = 13;
+
+	/**
 	 * The number of structural features of the '<em>Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 13;
+	int PERSON_FEATURE_COUNT = 14;
 
 	/**
 	 * The operation id for the '<em>Get Full Name</em>' operation.
@@ -402,6 +411,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int BUSINESS_PERSON__TRANSIENT_ATT = PERSON__TRANSIENT_ATT;
 
 	/**
+	 * The feature id for the '<em><b>Business Add</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__BUSINESS_ADD = PERSON__BUSINESS_ADD;
+
+	/**
 	 * The number of structural features of the '<em>Business Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -530,6 +548,169 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int BUSINESS_ADDRESS_OPERATION_COUNT = ADDRESS_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.gecko.code.demo.model.person.impl.SpecificBusinessPersonImpl <em>Specific Business Person</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.code.demo.model.person.impl.SpecificBusinessPersonImpl
+	 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getSpecificBusinessPerson()
+	 * @generated
+	 */
+	int SPECIFIC_BUSINESS_PERSON = 5;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__NAME = BUSINESS_PERSON__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Last Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__LAST_NAME = BUSINESS_PERSON__LAST_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Address</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__ADDRESS = BUSINESS_PERSON__ADDRESS;
+
+	/**
+	 * The feature id for the '<em><b>Addresses</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__ADDRESSES = BUSINESS_PERSON__ADDRESSES;
+
+	/**
+	 * The feature id for the '<em><b>Birth Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__BIRTH_DATE = BUSINESS_PERSON__BIRTH_DATE;
+
+	/**
+	 * The feature id for the '<em><b>Age</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__AGE = BUSINESS_PERSON__AGE;
+
+	/**
+	 * The feature id for the '<em><b>Married</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__MARRIED = BUSINESS_PERSON__MARRIED;
+
+	/**
+	 * The feature id for the '<em><b>Gender</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__GENDER = BUSINESS_PERSON__GENDER;
+
+	/**
+	 * The feature id for the '<em><b>Non Contained Add</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__NON_CONTAINED_ADD = BUSINESS_PERSON__NON_CONTAINED_ADD;
+
+	/**
+	 * The feature id for the '<em><b>Non Contained Adds</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__NON_CONTAINED_ADDS = BUSINESS_PERSON__NON_CONTAINED_ADDS;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__ID = BUSINESS_PERSON__ID;
+
+	/**
+	 * The feature id for the '<em><b>Titles</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__TITLES = BUSINESS_PERSON__TITLES;
+
+	/**
+	 * The feature id for the '<em><b>Transient Att</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__TRANSIENT_ATT = BUSINESS_PERSON__TRANSIENT_ATT;
+
+	/**
+	 * The feature id for the '<em><b>Business Add</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__BUSINESS_ADD = BUSINESS_PERSON__BUSINESS_ADD;
+
+	/**
+	 * The number of structural features of the '<em>Specific Business Person</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON_FEATURE_COUNT = BUSINESS_PERSON_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Get Full Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON___GET_FULL_NAME = BUSINESS_PERSON___GET_FULL_NAME;
+
+	/**
+	 * The number of operations of the '<em>Specific Business Person</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON_OPERATION_COUNT = BUSINESS_PERSON_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.gecko.code.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -537,7 +718,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getGENDER_TYPE()
 	 * @generated
 	 */
-	int GENDER_TYPE = 5;
+	int GENDER_TYPE = 6;
 
 
 	/**
@@ -694,6 +875,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getPerson_TransientAtt();
 
 	/**
+	 * Returns the meta object for the containment reference '{@link org.gecko.code.demo.model.person.Person#getBusinessAdd <em>Business Add</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Business Add</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getBusinessAdd()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EReference getPerson_BusinessAdd();
+
+	/**
 	 * Returns the meta object for the '{@link org.gecko.code.demo.model.person.Person#getFullName() <em>Get Full Name</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -797,6 +989,16 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getBusinessAddress_CompanyName();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.SpecificBusinessPerson <em>Specific Business Person</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Specific Business Person</em>'.
+	 * @see org.gecko.code.demo.model.person.SpecificBusinessPerson
+	 * @generated
+	 */
+	EClass getSpecificBusinessPerson();
 
 	/**
 	 * Returns the meta object for enum '{@link org.gecko.code.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}'.
@@ -946,6 +1148,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute PERSON__TRANSIENT_ATT = eINSTANCE.getPerson_TransientAtt();
 
 		/**
+		 * The meta object literal for the '<em><b>Business Add</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PERSON__BUSINESS_ADD = eINSTANCE.getPerson_BusinessAdd();
+
+		/**
 		 * The meta object literal for the '<em><b>Get Full Name</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1032,6 +1242,16 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute BUSINESS_ADDRESS__COMPANY_NAME = eINSTANCE.getBusinessAddress_CompanyName();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.SpecificBusinessPersonImpl <em>Specific Business Person</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.code.demo.model.person.impl.SpecificBusinessPersonImpl
+		 * @see org.gecko.code.demo.model.person.impl.PersonPackageImpl#getSpecificBusinessPerson()
+		 * @generated
+		 */
+		EClass SPECIFIC_BUSINESS_PERSON = eINSTANCE.getSpecificBusinessPerson();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}' enum.

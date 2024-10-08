@@ -28,7 +28,7 @@ public interface CodecAnnotations {
 	String CODEC_INHERIT = "codec.inherit";
 	
 	/** CODEC_TRANSIENT 
-	 *  Annotation for specifying that the feature should not be serialize.
+	 *  Annotation for specifying that the feature should not be serialized.
 	 *  This is supposed to be used when annotating the model.
 	 *  If this has to be overwritten by {@link Resource}{@link #save} and {@link #load}
 	 *  options, use {@link CODEC_IGNORE_FEATURES_LIST} and {@link CODEC_IGNORE_NOT_FEATURES_LIST}
@@ -63,7 +63,8 @@ public interface CodecAnnotations {
 	String CODEC_ID_STRATEGY = "codec.id.strategy";
 	
 	/** CODEC_ID_FEATURES_LIST 
-	 * This option is to provide a list of {@link EStructuralFeature} that can be used as id fields when constructing the id
+	 * This option is to provide a list of {@link EStructuralFeature} that can be used as id fields 
+	 * when constructing the id
 	 * */
 	String CODEC_ID_FEATURES_LIST = "codec.id.features.list";
 	
@@ -91,7 +92,8 @@ public interface CodecAnnotations {
 	String CODEC_ID_SEPARATOR = "codec.id.separator";
 	
 	/** CODEC_ID_VALUE_READER_NAME 
-	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
+	 * Annotation for specifying a ValueReader name to be used when deserializing the object 
+	 * marked like this
 	 * */
 	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
 	
@@ -129,27 +131,6 @@ public interface CodecAnnotations {
 	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
 	 * */
 	String CODEC_TYPE_VALUE_WRITER = "codec.type.value.writer";
-	
-	/** CODEC_TYPE_VALUE_READER_NAME 
-	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
-	 * */
-	String CODEC_SUPERTYPE_VALUE_READER_NAME = "codec.supertype.value.reader.name";
-	
-	/** CODEC_TYPE_VALUE_WRITER_NAME 
-	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
-	 * */
-	String CODEC_SUPERTYPE_VALUE_WRITER_NAME = "codec.supertype.value.writer.name";
-	
-	/** CODEC_TYPE_VALUE_READER
-	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
-	 * */
-	String CODEC_SUPERTYPE_VALUE_READER = "codec.supertype.value.reader";
-	
-	/** CODEC_TYPE_VALUE_WRITER 
-	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
-	 * */
-	String CODEC_SUPERTYPE_VALUE_WRITER = "codec.supertype.value.writer";
-	
 	
 	/** CODEC_VALUE_READER_NAME 
 	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this

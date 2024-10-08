@@ -18,6 +18,7 @@ import org.gecko.code.demo.model.person.Contact;
 import org.gecko.code.demo.model.person.Person;
 import org.gecko.code.demo.model.person.PersonFactory;
 import org.gecko.code.demo.model.person.PersonPackage;
+import org.gecko.code.demo.model.person.SpecificBusinessPerson;
 
 /**
  * <!-- begin-user-doc -->
@@ -60,6 +61,13 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	private EClass businessAddressEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass specificBusinessPersonEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -274,6 +282,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EReference getPerson_BusinessAdd() {
+		return (EReference)personEClass.getEStructuralFeatures().get(13);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EOperation getPerson__GetFullName() {
 		return personEClass.getEOperations().get(0);
 	}
@@ -374,6 +392,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EClass getSpecificBusinessPerson() {
+		return specificBusinessPersonEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getGENDER_TYPE() {
 		return gendeR_TYPEEEnum;
 	}
@@ -421,6 +449,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEAttribute(personEClass, PERSON__ID);
 		createEAttribute(personEClass, PERSON__TITLES);
 		createEAttribute(personEClass, PERSON__TRANSIENT_ATT);
+		createEReference(personEClass, PERSON__BUSINESS_ADD);
 		createEOperation(personEClass, PERSON___GET_FULL_NAME);
 
 		addressEClass = createEClass(ADDRESS);
@@ -435,6 +464,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 
 		businessAddressEClass = createEClass(BUSINESS_ADDRESS);
 		createEAttribute(businessAddressEClass, BUSINESS_ADDRESS__COMPANY_NAME);
+
+		specificBusinessPersonEClass = createEClass(SPECIFIC_BUSINESS_PERSON);
 
 		// Create enums
 		gendeR_TYPEEEnum = createEEnum(GENDER_TYPE);
@@ -470,6 +501,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		// Add supertypes to classes
 		businessPersonEClass.getESuperTypes().add(this.getPerson());
 		businessAddressEClass.getESuperTypes().add(this.getAddress());
+		specificBusinessPersonEClass.getESuperTypes().add(this.getBusinessPerson());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(personEClass, Person.class, "Person", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -486,6 +518,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEAttribute(getPerson_Id(), ecorePackage.getEString(), "id", null, 1, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Titles(), ecorePackage.getEString(), "titles", null, 0, -1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_TransientAtt(), ecorePackage.getEInt(), "transientAtt", null, 0, 1, Person.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPerson_BusinessAdd(), this.getBusinessAddress(), null, "businessAdd", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEOperation(getPerson__GetFullName(), ecorePackage.getEString(), "getFullName", 0, 1, IS_UNIQUE, IS_ORDERED);
 
@@ -501,6 +534,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 
 		initEClass(businessAddressEClass, BusinessAddress.class, "BusinessAddress", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBusinessAddress_CompanyName(), ecorePackage.getEString(), "companyName", null, 0, 1, BusinessAddress.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(specificBusinessPersonEClass, SpecificBusinessPerson.class, "SpecificBusinessPerson", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize enums and add enum literals
 		initEEnum(gendeR_TYPEEEnum, org.gecko.code.demo.model.person.GENDER_TYPE.class, "GENDER_TYPE");
@@ -520,6 +555,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createCodec_1Annotations();
 		// http://www.eclipse.org/emf/2002/GenModel
 		createGenModelAnnotations();
+		// http:///org/eclipse/emf/ecore/util/ExtendedMetaData
+		createExtendedMetaDataAnnotations();
 		// codec
 		createCodec_2Annotations();
 	}
@@ -607,6 +644,22 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		   source,
 		   new String[] {
 			   "body", "return this.name + \" \" + this.lastName;"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>http:///org/eclipse/emf/ecore/util/ExtendedMetaData</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createExtendedMetaDataAnnotations() {
+		String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";
+		addAnnotation
+		  (getPerson_Titles(),
+		   source,
+		   new String[] {
+			   "name", "title"
 		   });
 	}
 

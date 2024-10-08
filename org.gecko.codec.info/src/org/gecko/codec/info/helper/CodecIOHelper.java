@@ -101,16 +101,31 @@ public class CodecIOHelper {
 	};
 	
 	
-	public static final CodecValueWriter<EClass, String[]> URIS_WRITER = new CodecValueWriter<>() {
+	public static final CodecValueWriter<EClass, String[]> ALL_SUPERTYPE_WRITER = new CodecValueWriter<>() {
 
 		@Override
 		public String getName() {
-			return "URIS_WRITER";
+			return "ALL_SUPERTYPE_WRITER";
 		}
 
 		@Override
 		public String[] writeValue(EClass value, SerializerProvider provider) {
-			return getURIs(provider, value);
+			return getAllSuperTypeURIs(provider, value);
+		}		
+	};
+	
+	public static final CodecValueWriter<EClass, String[]> SINGLE_SUPERTYPE_WRITER = new CodecValueWriter<>() {
+
+		@Override
+		public String getName() {
+			return "SINGLE_SUPERTYPE_WRITER";
+		}
+
+		@Override
+		public String[] writeValue(EClass value, SerializerProvider provider) {
+			String[] superTypesArr = getAllSuperTypeURIs(provider, value);
+			if(superTypesArr != null && superTypesArr.length > 0) return new String[] {superTypesArr[superTypesArr.length-1]}; 
+			return null;
 		}		
 	};
 			
@@ -185,7 +200,7 @@ public class CodecIOHelper {
 		
 	};
 	
-	private static String[] getURIs(final DatabindContext ctxt, final EObject object) {
+	private static String[] getAllSuperTypeURIs(final DatabindContext ctxt, final EObject object) {
 	      if (object == null) {
 	         return null;
 	      }

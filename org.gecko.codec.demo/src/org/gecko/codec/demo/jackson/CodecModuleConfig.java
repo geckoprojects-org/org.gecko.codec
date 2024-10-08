@@ -46,7 +46,7 @@ public @interface CodecModuleConfig {
 	
 	/**
 	 * Option to specify weather or not to serialize empty values.
-	 * This is used for arrays, or lists.
+	 * This is used for arrays, lists, or empty String.
 	 * Default is false.
 	 * @return
 	 */
@@ -71,8 +71,11 @@ public @interface CodecModuleConfig {
 	
 	
 	/**
-	 * Option used to indicate the module to use the default ID serializer if
-     * none are provided. The ID serializer used by default is IdSerializer.
+	 * Option used to indicate the module to serialize a special id field, which 
+	 * might coincide with the ID field of the EObject or might be constructed 
+	 * differently, depending on the strategy specified in the model or in the 
+	 * serialization options.
+	 * 
      * Default is Boolean.TRUE
 	 * @return
 	 */
@@ -86,7 +89,7 @@ public @interface CodecModuleConfig {
 	boolean useIdField() default true;
 	
 	/**
-	 * Value	Option used to indicate the module to serialize the id field 
+	 * Option used to indicate the module to serialize the id field 
 	 * on top of the document.
 	 * Default is Boolean.TRUE
 	 * @return
@@ -95,10 +98,11 @@ public @interface CodecModuleConfig {
 	
 	/**
 	 * Option used to indicate the module to additionally serialize the id field of an EObject as it is.
-     * This is usually not needed, because the _id key always holds the ID at the first position. 
-     * This id-field itself can be found at a later index. So finding it may cost a lot of effort.
+     * This might be superfluous when using as id strategy the one that uses the id field itself, but it 
+     * might be useful when the id strategy is set to COMBINED.
      * It can be useful to OPTION_USE_ID(true) and OPTIONS_USE_ID_FIELD(false) and additionally store this 
      * id field, while using the URI fragment or {@link Resource} ID as primary key
+     * 
 	 * Default is Boolean.FALSE
 	 * @return
 	 */
@@ -122,29 +126,37 @@ public @interface CodecModuleConfig {
 	
 	
 	/**
-	 * Option used to indicate the module to use the default type serializer if
-     * none are provided. The type serializer used by default is ETypeSerializer.
+	 * Option used to indicate the module to serialize the type information.
 	 * Default is Boolean.TRUE
 	 * @return
 	 */
 	boolean serializeType() default true;
 	
 	/**
-	 * To avoid writing unnecessary URIs in the result format, we write eClassUris only for the root 
-	 * class and for EReferences, where the actual value does not equal but inherit from the 
-	 * stated reference type. 
-	 * By setting this option to Boolean.TRUE, all eClass URIs will be written regardless. 
+	 * Option used to indicate the module to serialize the supertype information.
+	 * If this is set to TRUE but serializeType is set to FALSE, then this option
+	 * is ignored.
+	 * If this is set to TRUE, only the direct parent will be listed as supertype.
+	 * For the whole inheritance chain, look at serializeAllSuperTypes option.
 	 * Default is Boolean.FALSE
 	 * @return
 	 */
 	boolean serializeSuperTypes() default false;
 	
 	/**
+	 * Option used to indicate the module to serialize the whole chain of inheritance.
+	 * Default is Boolean.FALSE
+	 * @return
+	 */
+	boolean serializeAllSuperTypes() default false;
+	
+	/**
 	 * By setting this to Boolean.TRUE the supertypes are written as an array of URIs.
+	 * If this is set to FALSE, the supertypes are written as a comma separated String.
 	 * Default is Boolean.TRUE
 	 * @return
 	 */
-	boolean serailizeSuperTypesAsArray() default true;
+	boolean serializeSuperTypesAsArray() default true;
 	
 	/**
 	 * Option to indicate the default key to be used for type

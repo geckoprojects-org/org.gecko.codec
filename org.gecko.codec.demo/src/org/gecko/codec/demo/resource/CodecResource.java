@@ -370,6 +370,9 @@ public class CodecResource extends ResourceImpl {
 			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES:
 				moduleBuilder.withSerializeSuperTypes((boolean) options.get(k));
 				break;
+			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_ALL_SUPER_TYPES:
+				moduleBuilder.withSerializeAllSuperTypes((boolean) options.get(k));
+				break;
 			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY:
 				moduleBuilder.withSerailizeSuperTypesAsArray((boolean) options.get(k));
 				break;
@@ -409,7 +412,6 @@ public class CodecResource extends ResourceImpl {
 
 		DateFormat dateFormat =  options.containsKey(ObjectMapperOptions.OBJ_MAPPER_DATE_FORMAT) ? (DateFormat) options.get(ObjectMapperOptions.OBJ_MAPPER_DATE_FORMAT) : null;
 		if(dateFormat != null) objMapperBuilder = objMapperBuilder.defaultDateFormat(dateFormat);
-
 
 		Locale locale = options.containsKey(ObjectMapperOptions.OBJ_MAPPER_LOCALE) ? (Locale) options.get(ObjectMapperOptions.OBJ_MAPPER_LOCALE) : null;
 		if(locale != null) objMapperBuilder = objMapperBuilder.defaultLocale(locale);

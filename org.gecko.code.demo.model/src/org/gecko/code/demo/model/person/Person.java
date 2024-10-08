@@ -32,6 +32,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.code.demo.model.person.Person#getId <em>Id</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getTitles <em>Titles</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getTransientAtt <em>Transient Att</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getBusinessAdd <em>Business Add</em>}</li>
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getPerson()
@@ -273,7 +274,7 @@ public interface Person extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Titles</em>' attribute list.
 	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Titles()
-	 * @model
+	 * @model extendedMetaData="name='title'"
 	 * @generated
 	 */
 	EList<String> getTitles();
@@ -299,6 +300,28 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setTransientAtt(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Business Add</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Business Add</em>' containment reference.
+	 * @see #setBusinessAdd(BusinessAddress)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_BusinessAdd()
+	 * @model containment="true"
+	 * @generated
+	 */
+	BusinessAddress getBusinessAdd();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getBusinessAdd <em>Business Add</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Business Add</em>' containment reference.
+	 * @see #getBusinessAdd()
+	 * @generated
+	 */
+	void setBusinessAdd(BusinessAddress value);
 
 	/**
 	 * <!-- begin-user-doc -->

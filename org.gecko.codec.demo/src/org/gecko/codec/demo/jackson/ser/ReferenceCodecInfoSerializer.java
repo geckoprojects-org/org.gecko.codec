@@ -75,23 +75,13 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		EReference feature = (EReference) featureCodecInfo.getFeatures().get(0);
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
-		
-		
+
+
 		if(feature.isMany()) {
 			List<EObject> values = (List<EObject>) rootObj.eGet(feature);
 			serializeManyReferences(rootObj, values, feature, jg, provider);
-			
-			
 		} else {
 			EObject value = (EObject) rootObj.eGet(feature);
-			if(value != null || codecModule.isSerializeDefaultValue()) {
-				if(codecModule.isUseNamesFromExtendedMetaData()) {
-					jg.writeFieldName(featureCodecInfo.getKey() != null ? featureCodecInfo.getKey() : feature.getName());
-				} else {
-					jg.writeFieldName(feature.getName());
-				}	
-			}
-			else return;
 			serializeSingleReference(rootObj, value, feature, jg, provider);
 		}
 	}
@@ -100,37 +90,48 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 	private void serializeManyReferences(EObject rootObj, List<EObject> values, EReference feature, JsonGenerator jg,
 			SerializerProvider provider) throws IOException {
 
-		if(values.isEmpty() && !codecModule.isSerializeDefaultValue()) return;
+		if(values.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue())) return;
 		if(codecModule.isUseNamesFromExtendedMetaData()) {
-			jg.writeFieldName(featureCodecInfo.getKey() != null ? featureCodecInfo.getKey() : feature.getName());
+			jg.writeFieldName(featureCodecInfo.getKey());
 		} else {
 			jg.writeFieldName(feature.getName());
 		}	
 		jg.writeStartArray();
 		values.forEach(value -> {
 			try {
-				serializeSingleReference(rootObj, value, feature, jg, provider);
+				serializeSingleReferenceValue(rootObj, value, feature, jg, provider);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		});
 		jg.writeEndArray();
-		
+
 	}
 
 	private void serializeSingleReference(EObject rootObj, EObject value, EReference feature, JsonGenerator jg, SerializerProvider provider) throws IOException {
+		if(value == null && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeNullValue())) return;
+		
+		if(codecModule.isUseNamesFromExtendedMetaData()) {
+			jg.writeFieldName(featureCodecInfo.getKey());
+		} else {
+			jg.writeFieldName(feature.getName());
+		}	
+		
+		serializeSingleReferenceValue(rootObj, value, feature, jg, provider);
+	}
+	
+	private void serializeSingleReferenceValue(EObject rootObj, EObject value, EReference feature, JsonGenerator jg, SerializerProvider provider) throws IOException {
+		
 		if(feature.isContainment()) {
-			if(value == null && !codecModule.isSerializeDefaultValue()) return;
-			else if(value == null) jg.writeNull();
+			if(value == null) jg.writeNull();
 			else new CodecEObjectSerializerNew(codecModule, codecModelInfoService).serialize(value, jg, provider);
 		} else {
 			serializeNonContainment(rootObj, value, feature, jg, provider);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void serializeNonContainment(EObject rootObj, EObject value, EReference feature, JsonGenerator jg, SerializerProvider provider) throws IOException {
-		if(value == null && !codecModule.isSerializeDefaultValue()) return;	
+	private void serializeNonContainment(EObject rootObj, EObject value, EReference feature, JsonGenerator jg, SerializerProvider provider) throws IOException {	
 		if(value == null) {
 			jg.writeNull();
 			return;
@@ -138,9 +139,13 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		final String href = getHRef(provider, rootObj, value);
 
 		jg.writeStartObject();
-
+		
+		EClassCodecInfo refClassCodecInfo = codecModule.getCodecModelInfo().getEClassCodecInfo().stream()
+			.filter(ecci -> ecci.getClassifier().getName().equals(value.eClass().getName()))
+			.findFirst().orElse(null);
 		CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
-		CodecValueWriter<EClass, String> writer = holder.getWriterByName(eObjCodecInfo.getTypeInfo().getValueWriterName());
+		CodecValueWriter<EClass, String> writer = holder.getWriterByName(refClassCodecInfo != null ? 
+				refClassCodecInfo.getTypeInfo().getValueWriterName() : eObjCodecInfo.getTypeInfo().getValueWriterName());
 		String v = writer.writeValue(value.eClass(), provider);
 		jg.writeFieldName(codecModule.getTypeKey());
 		if (jg.canWriteTypeId()) {
@@ -154,6 +159,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 			jg.writeStringField(codecModule.getRefKey(), href);
 		}
 		jg.writeEndObject();
+		
 	}
 
 	private String getHRef(final SerializerProvider ctxt, final EObject parent, final EObject value) {

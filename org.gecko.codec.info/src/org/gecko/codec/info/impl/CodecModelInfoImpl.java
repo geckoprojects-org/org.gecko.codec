@@ -191,11 +191,9 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 
 		String valueReaderName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_ID_VALUE_READER_NAME);
 		if(valueReaderName != null) identityInfo.setValueReaderName(valueReaderName);
-		else identityInfo.setValueReaderName("DEFAULT_ID_READER");
 
 		String valueWriterName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME);
-		if(valueWriterName != null) identityInfo.setValueWriterName(valueWriterName);
-		else identityInfo.setValueWriterName("DEFAULT_ID_WRITER");		
+		if(valueWriterName != null) identityInfo.setValueWriterName(valueWriterName);	
 
 		String identityStrategy = getAnnotationDetails(ec, "codec.id", "strategy", true);
 		if(identityStrategy != null) identityInfo.setIdStrategy(identityStrategy);
@@ -265,33 +263,34 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		if(supertypeValue != null && "false".equalsIgnoreCase(supertypeValue)) {
 			superTypeInfo.setIgnoreSuperType(true);
 		}
-		if(!superTypeInfo.isIgnoreSuperType()) {
-			String superTypeStrategy = getAnnotationDetails(ec, "codec.supertype", "use", true);
-			if(superTypeStrategy != null) {
-				superTypeInfo.setSuperTypeStrategy(superTypeStrategy);
-				switch(superTypeStrategy) {
-				case "ARRAY": default:
-					superTypeInfo.setValueWriterName("URIS_WRITER");
-					superTypeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
-					break;				
-				}
-			} else {
-				valueReaderName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_SUPERTYPE_VALUE_READER_NAME);
-				valueWriterName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_SUPERTYPE_VALUE_WRITER_NAME);
-
-				if(valueReaderName != null) {
-					superTypeInfo.setValueReaderName(valueReaderName);
-				} else {
-					superTypeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
-				}
-
-				if(valueWriterName != null) {
-					superTypeInfo.setValueWriterName(valueWriterName);
-				} else {
-					superTypeInfo.setValueWriterName("URIS_WRITER");
-				}
-			}
-		}
+//		SUPPORT FOR DIFFERENT SUPERTYPE SERIALIZATION STRATEGIES...?
+//		if(!superTypeInfo.isIgnoreSuperType()) {
+//			String superTypeStrategy = getAnnotationDetails(ec, "codec.supertype", "use", true);
+//			if(superTypeStrategy != null) {
+//				superTypeInfo.setSuperTypeStrategy(superTypeStrategy);
+//				switch(superTypeStrategy) {
+//				case "ARRAY": default:
+//					superTypeInfo.setValueWriterName("URIS_WRITER");
+//					superTypeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
+//					break;				
+//				}
+//			} else {
+//				valueReaderName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_SUPERTYPE_VALUE_READER_NAME);
+//				valueWriterName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_SUPERTYPE_VALUE_WRITER_NAME);
+//
+//				if(valueReaderName != null) {
+//					superTypeInfo.setValueReaderName(valueReaderName);
+//				} else {
+//					superTypeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
+//				}
+//
+//				if(valueWriterName != null) {
+//					superTypeInfo.setValueWriterName(valueWriterName);
+//				} else {
+//					superTypeInfo.setValueWriterName("URIS_WRITER");
+//				}
+//			}
+//		}
 
 		eClassCodecInfo.setSuperTypeInfo(superTypeInfo);
 		return eClassCodecInfo;
@@ -303,7 +302,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		featureInfo.setId(UUID.randomUUID().toString());
 		featureInfo.setType(feature instanceof EAttribute ? InfoType.ATTRIBUTE : 
 			feature instanceof EOperation ? InfoType.OPERATION : InfoType.REFERENCE);
-		featureInfo.setKey(getElementName(feature) != null ? getElementName(feature) : feature.getName());
+		featureInfo.setKey(getElementName(feature));
 		featureInfo.getFeatures().add(feature);
 		
 		if(feature instanceof EStructuralFeature f && f.isTransient()) featureInfo.setIgnore(true);
@@ -366,7 +365,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	private static final String EXTENDED_METADATA = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";
 	private String getElementName(final ENamedElement element) {
 		String value = getAnnotationDetails(element, EXTENDED_METADATA, "name");
-		return value;
+		if(value != null) return value;
+		return element.getName();
 	}
 
 	private void createCodecInfoHolderMap() {
