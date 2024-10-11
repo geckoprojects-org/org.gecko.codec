@@ -1,1 +1,0 @@
-{"_id":"John-Doe","_type":"Person","birthDate":"1990-06-20","address":{"_id":"81561f16-462b-4635-a5de-95c7431e9d9a","street":"Camsdorfer Str.","zip":"07749"},"nonContainedAdd":{"_type":"Address","$ref":"#41a479ab-ad11-4f4d-8bef-049859a7f54f"},"getFullName":"John Doe"}

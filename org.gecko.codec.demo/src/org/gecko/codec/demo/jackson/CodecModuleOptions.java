@@ -37,9 +37,7 @@ public interface CodecModuleOptions {
 	String CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA = "codec.module.use.names.from.extended.metadata";
 	
 	String CODEC_MODULE_USE_ID = "codec.module.use.id";
-	
-	String CODEC_MODULE_USE_ID_FIELD = "codec.module.use.id.field";
-	
+		
 	String CODEC_MODULE_ID_ON_TOP = "codec.module.id.on.top";
 	
 	String CODEC_MODULE_SERIALIZE_ID_FIELD = "codec.module.serialize.id.field";

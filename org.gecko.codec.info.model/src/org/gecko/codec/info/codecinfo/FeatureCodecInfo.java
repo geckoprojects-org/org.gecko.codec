@@ -68,13 +68,12 @@ public interface FeatureCodecInfo {
 
 	/**
 	 * Returns the value of the '<em><b>Value Reader Name</b></em>' attribute.
-	 * The default value is <code>"DEFAULT"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Value Reader Name</em>' attribute.
 	 * @see #setValueReaderName(String)
 	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_ValueReaderName()
-	 * @model default="DEFAULT"
+	 * @model
 	 * @generated
 	 */
 	String getValueReaderName();
@@ -91,13 +90,12 @@ public interface FeatureCodecInfo {
 
 	/**
 	 * Returns the value of the '<em><b>Value Writer Name</b></em>' attribute.
-	 * The default value is <code>"DEFAULT"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Value Writer Name</em>' attribute.
 	 * @see #setValueWriterName(String)
 	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_ValueWriterName()
-	 * @model default="DEFAULT"
+	 * @model
 	 * @generated
 	 */
 	String getValueWriterName();

@@ -314,42 +314,7 @@ public class CodecModuleConfigOverwriteTest {
 		module = codecModuleConfigurator.getCodecModuleBuilder().build();
 		assertFalse(module.isUseId());	
 	}
-	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="json")
-	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="json")
-	})
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
-	@Test
-	public void testCodecModuleOverwriteUseIdField(@InjectService(timeout = 2000l) PersonPackage demoModel,  
-			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
-			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
-			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
-			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
-			) throws InterruptedException, IOException {
-	
-		assertNotNull(demoModel);
-		assertNotNull(codecModelInfo);
-		assertNotNull(codecModuleConfigurator);
-		assertNotNull(factoryConfigurator);
-		assertNotNull(objMapperConfigurator);
-		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isUseIdField());	
-		
-		CodecJsonResource resource = new CodecJsonResource(URI.createURI("mytest.json"), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
-		
-		Person person = getTestPerson();		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_ID_FIELD, false);
-		resource.save(options);
-		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertFalse(module.isUseIdField());	
-	}
+
 	
 	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")

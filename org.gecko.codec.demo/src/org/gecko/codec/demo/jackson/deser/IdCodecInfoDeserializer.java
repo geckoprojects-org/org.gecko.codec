@@ -16,10 +16,10 @@ package org.gecko.codec.demo.jackson.deser;
 import java.io.IOException;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emfcloud.jackson.resource.JsonResource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.gecko.codec.demo.jackson.CodecModule;
-import org.gecko.codec.demo.resource.CodecJsonResource;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
@@ -88,10 +88,17 @@ public class IdCodecInfoDeserializer implements CodecInfoDeserializer {
 
 		if (value != null) {
 			String readerName = idCodecInfo.getValueReaderName();
-			CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY);
-			infoHolder.getReaderByName(readerName);
-//			TODO: how can I be sure that the reader returns a String in this case...??
-			String id = (String) infoHolder.getReaderByName(readerName).readValue(value, ctxt);
+			String id = null;
+			if(readerName != null) {
+				CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY);
+				id = (String) infoHolder.getReaderByName(readerName).readValue(value, ctxt);
+			} else {
+				id = value.toString();
+			}
+//			If the serializedIdField is false then we need to retireve the values from the _id
+			if(!codecModule.isSerializeIdField()) {
+				setIdFields(current, id);
+			}
 			// TODO watch the ID handling in other resources?
 //			if (resource instanceof CodecJsonResource codecJsonRes && id != null) {
 //				((JsonResource) resource).setID(current, id);
@@ -100,4 +107,20 @@ public class IdCodecInfoDeserializer implements CodecInfoDeserializer {
 
 	}
 
+	private void setIdFields(EObject current, String deserializedIdValue) {
+		switch(idCodecInfo.getIdStrategy()) {
+		case "COMBINED":
+			String[] idSegments = deserializedIdValue.split(idCodecInfo.getIdSeparator());
+			for(int i = 0; i < idSegments.length; i++) {
+				EStructuralFeature feature = (EStructuralFeature) idCodecInfo.getFeatures().get(i);
+				current.eSet(feature, idSegments[i]);
+			}
+			break;
+		case "ID_FIELD":
+			EcoreUtil.setID(current, deserializedIdValue);
+			break;
+		default:
+			
+		}
+	}
 }

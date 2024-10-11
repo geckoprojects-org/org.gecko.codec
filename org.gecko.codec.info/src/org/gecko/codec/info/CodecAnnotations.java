@@ -38,14 +38,14 @@ public interface CodecAnnotations {
 	/** CODEC_IGNORE_FEATURES_LIST 
 	 * Option to be used with {@link Resource}{@link #save} and {@link #load}
 	 * to provide a list of {@link EStructuralFeature} that has to be ignored during 
-	 * serialization
+	 * serialization/deserialization
 	 * */
 	String CODEC_IGNORE_FEATURES_LIST = "codec.ignore.features.list";
 	
 	/** CODEC_IGNORE_NOT_FEATURES_LIST 
 	 * Option to be used with {@link Resource}{@link #save} and {@link #load}
 	 * to provide a list of {@link EStructuralFeature} that has NOT to be ignored during 
-	 * serialization
+	 * serialization/deserialization
 	 * */
 	String CODEC_IGNORE_NOT_FEATURES_LIST = "codec.ignore.not.feature.list";
 	

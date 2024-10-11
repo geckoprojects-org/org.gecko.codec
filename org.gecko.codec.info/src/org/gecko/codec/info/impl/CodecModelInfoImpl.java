@@ -165,7 +165,6 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	}
 
 	private PackageCodecInfo createCodecInfo(EPackage ePackage) {
-		System.out.println("Creating codec info for " + ePackage.getNsURI());
 		PackageCodecInfo ePackageCodecInfo = CodecInfoFactory.eINSTANCE.createPackageCodecInfo();
 		ePackageCodecInfo.setId(ePackage.getNsURI());
 		ePackageCodecInfo.setEPackage(ePackage);
@@ -197,6 +196,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 
 		String identityStrategy = getAnnotationDetails(ec, "codec.id", "strategy", true);
 		if(identityStrategy != null) identityInfo.setIdStrategy(identityStrategy);
+		else identityInfo.setIdStrategy("ID_FIELD");
 
 		String identitySeparator = getAnnotationDetails(ec, "codec.id", "separator", true);
 		if(identitySeparator != null) identityInfo.setIdSeparator(identitySeparator);

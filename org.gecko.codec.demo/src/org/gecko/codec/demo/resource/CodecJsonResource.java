@@ -57,7 +57,7 @@ public class CodecJsonResource extends CodecResource {
 
 		} else {
 
-			objMapperBuilder.build().writer()
+			mapper.writer()
 			.with(EMFContext.from(options))
 			.writeValue(outputStream, this);
 
@@ -83,7 +83,7 @@ public class CodecJsonResource extends CodecResource {
 	            .withPerCallAttribute(RESOURCE_SET, getResourceSet())
 	            .withPerCallAttribute(RESOURCE, this);
 
-	         objMapperBuilder.build().reader()
+	         mapper.reader()
 	            .with(attributes)
 	            .forType(Resource.class)
 	            .withValueToUpdate(this)

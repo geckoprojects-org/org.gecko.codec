@@ -2216,7 +2216,7 @@ public class CodecModuleJsonSerializationTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testSerializationNonContainedRefType(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+	public void testSerializationNonContainedRefTypeYES(@InjectService(timeout = 2000l) PersonPackage demoModel,  
 			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
 			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
 			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -2253,6 +2253,54 @@ public class CodecModuleJsonSerializationTest {
 				 line = reader.readLine();
 			 }
 			 assertTrue(found);
+		 }
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@Test
+	public void testSerializationNonContainedRefTypeNO(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+	
+		CodecJsonResource resource = new CodecJsonResource(URI.createURI(addFileName), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		Map<String, Object> options = new HashMap<>();
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+		Person person = getTestPerson();
+		Address address = getTestAddress();
+		person.setNonContainedAdd(address);
+		resource.getContents().add(address);
+		resource.save(options);
+		
+		resource = new CodecJsonResource(URI.createURI(personFileName), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		resource.getContents().add(person);
+		resource.save(options);
+		
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			 String line = reader.readLine();
+			 boolean found = false;
+			 while(line != null) {
+				 if(line.contains("\"_type\" : \"http://example.de/person/1.0#//Address\"")) {
+					 found = true;
+				 }
+				 line = reader.readLine();
+			 }
+			 assertFalse(found);
 		 }
 	}
 	

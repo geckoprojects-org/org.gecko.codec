@@ -20,6 +20,7 @@ import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationContext;
 
 /**
  * 
@@ -30,7 +31,7 @@ public class CodecModule extends EMFModule {
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 1L;
-	
+
 	private String codecType;
 	private String codecModuleName;
 	private boolean serializeDefaultValue;
@@ -39,7 +40,6 @@ public class CodecModule extends EMFModule {
 	private boolean serializeArrayBatched;
 	private boolean useNamesFromExtendedMetaData;
 	private boolean useId;
-	private boolean useIdField;
 	private boolean idOnTop;
 	private boolean serializeIdField;
 	private boolean idFeatureAsPrimaryKey;
@@ -53,10 +53,10 @@ public class CodecModule extends EMFModule {
 	private String refKey;
 	private String proxyKey;
 	private String timestampKey;
-	
+
 	private PackageCodecInfo codecModelInfo;
 	private CodecModelInfo codecModelInfoService;
-	
+
 	public String getCodecType() {
 		return codecType;
 	}
@@ -68,11 +68,11 @@ public class CodecModule extends EMFModule {
 	public boolean isSerializeDefaultValue() {
 		return serializeDefaultValue;
 	}
-	
+
 	public boolean isSerializeEmptyValue() {
 		return serializeEmptyValue;
 	}
-	
+
 	public boolean isSerializeNullValue() {
 		return serializeNullValue;
 	}
@@ -87,10 +87,6 @@ public class CodecModule extends EMFModule {
 
 	public boolean isUseId() {
 		return useId;
-	}
-
-	public boolean isUseIdField() {
-		return useIdField;
 	}
 
 	public boolean isIdOnTop() {
@@ -116,7 +112,7 @@ public class CodecModule extends EMFModule {
 	public boolean isSerializeSuperTypes() {
 		return serializeSuperTypes;
 	}
-	
+
 	public boolean isSerializeAllSuperTypes() {
 		return serializeAllSuperTypes;
 	}
@@ -128,7 +124,7 @@ public class CodecModule extends EMFModule {
 	public String getTypeKey() {
 		return typeKey;
 	}
-	
+
 	public String getSuperTypeKey() {
 		return superTypeKey;
 	}
@@ -144,11 +140,11 @@ public class CodecModule extends EMFModule {
 	public String getTimestampKey() {
 		return timestampKey;
 	}
-	
+
 	public PackageCodecInfo getCodecModelInfo() {
 		return codecModelInfo;
 	}
-	
+
 	public CodecModelInfo getCodecModelInfoService() {
 		return codecModelInfoService;
 	}
@@ -172,7 +168,6 @@ public class CodecModule extends EMFModule {
 		this.proxyKey = builder.proxyKey;
 		this.refKey = builder.refKey;
 		this.useId = builder.useId;
-		this.useIdField = builder.useIdField;
 		this.useNamesFromExtendedMetaData = builder.useNamesFromExtendedMetaData;
 		this.idOnTop = builder.idOnTop;
 		this.serializeIdField = builder.serializeIdField;
@@ -180,6 +175,8 @@ public class CodecModule extends EMFModule {
 		this.codecModelInfoService = builder.codecModelInfoService;
 	}
 
+	
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.databind.module.SimpleModule#getModuleName()
@@ -197,7 +194,7 @@ public class CodecModule extends EMFModule {
 	public Version version() {
 		return new Version(1, 0, 0, "SNAPSHOT", "org.geckoprojects.codec", "org.gecko.codec");
 	}
-
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.databind.module.SimpleModule#setupModule(com.fasterxml.jackson.databind.Module.SetupContext)
@@ -205,14 +202,16 @@ public class CodecModule extends EMFModule {
 	@Override
 	public void setupModule(final SetupContext context) {
 		super.setupModule(context);
+
 		CodecSerializersNew serializers = new CodecSerializersNew(this);
 		context.addSerializers(serializers);
+
 		CodecDeserializersNew deserializers = new CodecDeserializersNew(this);
 		context.addDeserializers(deserializers);
 	}
-	
+
 	public static class Builder {
-		
+
 		private PackageCodecInfo codecModelInfo;
 		private CodecModelInfo codecModelInfoService;
 
@@ -224,7 +223,6 @@ public class CodecModule extends EMFModule {
 		private boolean serializeArrayBatched = false;
 		private boolean useNamesFromExtendedMetaData = true;
 		private boolean useId = true;
-		private boolean useIdField = true;
 		private boolean idOnTop = true;
 		private boolean serializeIdField = false;
 		private boolean idFeatureAsPrimaryKey = true;
@@ -238,66 +236,66 @@ public class CodecModule extends EMFModule {
 		private String refKey = "$ref";
 		private String proxyKey = "_proxy";
 		private String timestampKey = "_timestamp";
-		
+
 		public Builder() {
-			
+
 		}
-		
+
 		public Builder withCodecType(String codecType) {
 			this.codecType = codecType;
 			return this;
 		}
-		
+
 		public Builder withCodecModuleName(String codecModuleName) {
 			this.codecModuleName = codecModuleName;
 			return this;
 		}
-		
+
 		public Builder withIdKey(String idKey) {
 			this.idKey = idKey;
 			return this;
 		}
-		
+
 		public Builder withTypeKey(String typeKey) {
 			this.typeKey = typeKey;
 			return this;
 		}
-		
+
 		public Builder withSuperTypeKey(String superTypeKey) {
 			this.superTypeKey = superTypeKey;
 			return this;
 		}
-		
+
 		public Builder withProxyKey(String proxyKey) {
 			this.proxyKey = proxyKey;
 			return this;
 		}
-		
+
 		public Builder withRefKey(String refKey) {
 			this.refKey = refKey;
 			return this;
 		}
-		
+
 		public Builder withTimestampKey(String timestampKey) {
 			this.timestampKey = timestampKey;
 			return this;
 		}
-		
+
 		public Builder withSerializeDefaultValue(boolean serializeDefaultValue) {
 			this.serializeDefaultValue = serializeDefaultValue;
 			return this;
 		}
-		
+
 		public Builder withSerializeEmptyValue(boolean serializeEmptyValue) {
 			this.serializeEmptyValue = serializeEmptyValue;
 			return this;
 		}
-		
+
 		public Builder withSerializeNullValue(boolean serializeNullValue) {
 			this.serializeNullValue = serializeNullValue;
 			return this;
 		}
-		
+
 		public Builder withSerializeArrayBatched(boolean serializeArrayBatched) {
 			this.serializeArrayBatched = serializeArrayBatched;
 			return this;
@@ -310,55 +308,51 @@ public class CodecModule extends EMFModule {
 			this.useId = useId;
 			return this;
 		}
-		public Builder withUseIdField(boolean useIdField) {
-			this.useIdField = useIdField;
-			return this;
-		}
 		public Builder withIdOnTop(boolean idOnTop) {
 			this.idOnTop = idOnTop;
 			return this;
 		}
-		
+
 		public Builder withSerializeIdField(boolean serializeIdField) {
 			this.serializeIdField = serializeIdField;
 			return this;
 		}
-		
+
 		public Builder withIdFeatureAsPrimaryKey(boolean idFeatureAsPrimaryKey) {
 			this.idFeatureAsPrimaryKey = idFeatureAsPrimaryKey;
 			return this;
 		}
-		
+
 		public Builder withSerializeType(boolean serializeType) {
 			this.serializeType = serializeType;
 			return this;
 		}
-		
+
 		public Builder withSerializeSuperTypes(boolean serializeSuperTypes) {
 			this.serializeSuperTypes = serializeSuperTypes;
 			return this;
 		}
-		
+
 		public Builder withSerializeAllSuperTypes(boolean serializeAllSuperTypes) {
 			this.serializeAllSuperTypes = serializeAllSuperTypes;
 			return this;
 		}
-		
+
 		public Builder withSerailizeSuperTypesAsArray(boolean serializeSuperTypesAsArray) {
 			this.serializeSuperTypesAsArray = serializeSuperTypesAsArray;
 			return this;
 		}
-		
+
 		public Builder bindCodecModelInfo(PackageCodecInfo codecModelInfo) {
 			this.codecModelInfo = codecModelInfo;
 			return this;
 		}
-		
+
 		public Builder bindCodecModelInfoService(CodecModelInfo codecModelInfoService) {
 			this.codecModelInfoService = codecModelInfoService;
 			return this;
 		}
-		
+
 		public CodecModule build() {
 			return new CodecModule(this);
 		}

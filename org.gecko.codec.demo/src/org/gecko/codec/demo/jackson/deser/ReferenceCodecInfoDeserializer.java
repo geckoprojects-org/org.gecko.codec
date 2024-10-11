@@ -29,6 +29,7 @@ import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecValueReader;
+import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 
@@ -70,9 +71,10 @@ public class ReferenceCodecInfoDeserializer implements CodecInfoDeserializer {
 	@Override
 	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource)
 			throws IOException {
+			
 		EObject parent = EMFContext.getParent(ctxt);
 		EReference reference = EMFContext.getReference(ctxt);
-
+	
 		String id = null;
 		String type = null;
 
@@ -87,10 +89,18 @@ public class ReferenceCodecInfoDeserializer implements CodecInfoDeserializer {
 			}
 		}
 		EClass eClass = null;
+		EClassCodecInfo refClassCodecInfo = codecModule.getCodecModelInfo().getEClassCodecInfo().stream()
+				.filter(ecci -> ecci.getClassifier().getName().equals(reference.getEType().getName()))
+				.findFirst().orElse(null);
+		
 		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
-		CodecValueReader<String, EClass> valueReader = infoHolder.getReaderByName(typeCodecInfo.getValueReaderName());
+		CodecValueReader<String, EClass> valueReader = infoHolder.getReaderByName(refClassCodecInfo != null ? refClassCodecInfo.getTypeInfo().getValueReaderName() : typeCodecInfo.getValueReaderName());
 		if(type != null) {
 			eClass = valueReader.readValue(type, ctxt);
+		}
+//		If there is no type info in the serialized document
+		if(type == null && reference.getEType() instanceof EClass refEClass) {
+			eClass = refEClass;
 		}
 		if (id != null && eClass != null) {
 			EObject ref = createProxy(eClass, URI.createURI(id));
@@ -108,7 +118,6 @@ public class ReferenceCodecInfoDeserializer implements CodecInfoDeserializer {
 		if (object instanceof InternalEObject) {
 			((InternalEObject) object).eSetProxyURI(uri);
 		}
-
 		return object;
 	}
 

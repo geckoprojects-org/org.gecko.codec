@@ -86,6 +86,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 			throws IOException {
 
 		if(featureCodecInfo.getFeatures().get(0) instanceof EOperation) return;
+		if(featureCodecInfo.isIgnore()) return;
 		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
 
 		JsonToken token = null;
@@ -99,7 +100,6 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		}
 		//	      Use TypeFactory to create JavaType from Eclass
 		EcoreTypeFactory factory = EMFContext.getTypeFactory(ctxt);
-		System.out.println(feature.eClass());
 		JavaType javaType = factory.typeOf(ctxt, feature.eClass(), feature);
 		deserializer = ctxt.findContextualValueDeserializer(javaType, null);
 

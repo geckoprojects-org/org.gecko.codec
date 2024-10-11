@@ -68,7 +68,6 @@ public class CodecModuleConfiguratorTest {
 		assertFalse(module.isSerializeArrayBatched());
 		assertTrue(module.isUseNamesFromExtendedMetaData());
 		assertTrue(module.isUseId());
-		assertTrue(module.isUseIdField());
 		assertTrue(module.isIdOnTop());
 		assertFalse(module.isSerializeIdField());
 		assertTrue(module.isIdFeatureAsPrimaryKey());
@@ -255,17 +254,7 @@ public class CodecModuleConfiguratorTest {
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
 		assertFalse(module.isUseId());
 	}
-	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "useIdField", value="false", scalar = Scalar.Boolean)
-	})
-	@Test
-	public void testCodecModuleConfigUseIdField(@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator) throws InterruptedException, IOException {
-	
-		assertNotNull(codecModuleConfigurator);
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertFalse(module.isUseIdField());
-	}
+
 	
 	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "idOnTop", value="false", scalar = Scalar.Boolean)

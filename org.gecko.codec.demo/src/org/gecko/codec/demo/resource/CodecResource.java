@@ -48,6 +48,7 @@ import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
 
@@ -64,6 +65,7 @@ public class CodecResource extends ResourceImpl {
 	protected CodecModelInfo modelInfoService;
 	protected Builder objMapperBuilder;
 	protected CodecModule.Builder moduleBuilder;
+	protected ObjectMapper mapper;
 
 	public CodecResource(URI uri, CodecModelInfo modelInfoService, CodecModule.Builder moduleBuilder, Builder objMapperBuilder) {
 		super(uri);
@@ -105,7 +107,8 @@ public class CodecResource extends ResourceImpl {
 		moduleBuilder.bindCodecModelInfo(modelCodecInfo);
 
 //		Register the module with the mapper
-		objMapperBuilder.build().registerModule(moduleBuilder.build());		
+		mapper = objMapperBuilder.build();
+		mapper.registerModule(moduleBuilder.build());		
 	}
 	
 	/* 
@@ -154,7 +157,8 @@ public class CodecResource extends ResourceImpl {
 //			
 
 //			Register the module with the mapper
-			objMapperBuilder.build().registerModule(moduleBuilder.build());	
+			mapper = objMapperBuilder.build();
+			mapper.registerModule(moduleBuilder.build());	
 		} catch(Exception e) {
 			throw e;
 		}
@@ -390,9 +394,6 @@ public class CodecResource extends ResourceImpl {
 				break;
 			case CodecModuleOptions.CODEC_MODULE_USE_ID:
 				moduleBuilder.withUseId((boolean) options.get(k));
-				break;
-			case CodecModuleOptions.CODEC_MODULE_USE_ID_FIELD:
-				moduleBuilder.withUseIdField((boolean) options.get(k));
 				break;
 			case CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA:
 				moduleBuilder.withUseNamesFromExtendedMetaData((boolean) options.get(k));

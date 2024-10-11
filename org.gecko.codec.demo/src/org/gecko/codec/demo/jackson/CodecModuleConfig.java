@@ -80,13 +80,6 @@ public @interface CodecModuleConfig {
 	 * @return
 	 */
 	boolean useId() default true;
-		
-	/**
-	 * Option used to indicate the module to use the ID field of the EObject.
-	 * Default is Boolean.TRUE
-	 * @return
-	 */
-	boolean useIdField() default true;
 	
 	/**
 	 * Option used to indicate the module to serialize the id field 

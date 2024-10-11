@@ -54,7 +54,6 @@ public class CodecModuleConfigurator {
 			.withTimestampKey(codecConfig.timestampKey())
 			.withTypeKey(codecConfig.typeKey())
 			.withUseId(codecConfig.useId())
-			.withUseIdField(codecConfig.useIdField())
 			.withUseNamesFromExtendedMetaData(codecConfig.useNamesFromExtendedMetaData())
 			.withSuperTypeKey(codecConfig.superTypeKey());
 	}

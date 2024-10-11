@@ -111,23 +111,23 @@ public class CodecAnnotationsJsonSerializationTest {
 		}
 	};
 	
-	public static final CodecValueWriter<List<Object>, String> TEST_VALUE_WRITER_BIS = new CodecValueWriter<>() {
-
-		@Override
-		public String getName() {
-			return "TEST_VALUE_WRITER_BIS";
-		}
-
-		@Override
-		public String writeValue(List<Object> value, SerializerProvider provider) {
-			if(value == null || value.isEmpty()) return null;
-			String result = "Super";
-			for(Object v : value) {
-				result = result.concat(v.toString());
-			}
-			return result;
-		}
-	};
+//	public static final CodecValueWriter<List<Object>, String> TEST_VALUE_WRITER_BIS = new CodecValueWriter<>() {
+//
+//		@Override
+//		public String getName() {
+//			return "TEST_VALUE_WRITER_BIS";
+//		}
+//
+//		@Override
+//		public String writeValue(List<Object> value, SerializerProvider provider) {
+//			if(value == null || value.isEmpty()) return null;
+//			String result = "Super";
+//			for(Object v : value) {
+//				result = result.concat(v.toString());
+//			}
+//			return result;
+//		}
+//	};
 	
 	public static final CodecValueWriter<EClass, String> TEST_TYPE_WRITER = new CodecValueWriter<>() {
 
@@ -324,7 +324,7 @@ public class CodecAnnotationsJsonSerializationTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
 		personOptions.put(CodecAnnotations.CODEC_ID_STRATEGY, "COMBINED");
-		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_WRITER, TEST_VALUE_WRITER_BIS);
+		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_WRITER, TEST_VALUE_WRITER);
 		personOptions.put(CodecAnnotations.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Name(), PersonPackage.eINSTANCE.getPerson_LastName()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
@@ -335,7 +335,7 @@ public class CodecAnnotationsJsonSerializationTest {
 			 String line = reader.readLine();
 			 boolean found = false;
 			 while(line != null) {
-				 if(line.contains("\"_id\" : \"Super" + person.getName() + person.getLastName() + "\",")) {
+				 if(line.contains("\"_id\" : \"Super" + person.getName() + "-" + person.getLastName() + "\",")) {
 					 found = true;
 				 }
 				 line = reader.readLine();
@@ -676,7 +676,7 @@ public class CodecAnnotationsJsonSerializationTest {
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> addOptions = new HashMap<>();
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-//		zip is marked as transient in the model but with this we should be able to serialize it anyway
+//		zip is marked with the codec annotation codec.transient in the model but with this we should be able to serialize it anyway
 		addOptions.put(CodecAnnotations.CODEC_IGNORE_NOT_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getAddress_Zip()));
 		
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
@@ -688,6 +688,55 @@ public class CodecAnnotationsJsonSerializationTest {
 			 boolean found = false;
 			 while(line != null) {
 				 if(line.contains("\"zip\" : ")) {
+					 found = true;
+				 }
+				 line = reader.readLine();
+			 }
+			 assertTrue(found);
+		 }
+	}
+	
+	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@Test
+	public void testSerializationIgnoreNOTFeatureList2(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
+			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
+			@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
+			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator
+			) throws InterruptedException, IOException {
+	
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		assertNotNull(codecModuleConfigurator);
+		assertNotNull(factoryConfigurator);
+		assertNotNull(objMapperConfigurator);
+	
+		CodecJsonResource resource = new CodecJsonResource(URI.createURI(personFileName), codecModelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		
+		Person person = getTestPerson();
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+//		transientAtt is marked as transient in the model property view but with this we should be able to serialize it anyway
+		personOptions.put(CodecAnnotations.CODEC_IGNORE_NOT_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_TransientAtt()));
+		
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put("codec.options", classOptions);
+		resource.save(options);
+		
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			 String line = reader.readLine();
+			 boolean found = false;
+			 while(line != null) {
+				 if(line.contains("\"transientAtt\" : 7")) {
 					 found = true;
 				 }
 				 line = reader.readLine();

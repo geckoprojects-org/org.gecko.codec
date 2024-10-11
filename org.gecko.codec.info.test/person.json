@@ -1,23 +1,10 @@
 {
-  "_id" : "John-Doe",
-  "_type" : "Person",
+  "eClass" : "http://example.de/person/1.0#//Person",
   "name" : "John",
   "lastName" : "Doe",
   "birthDate" : "1990-06-20T00:00:00",
-  "age" : 42,
-  "married" : true,
-  "gender" : "MALE",
-  "id" : "c598d354-de92-46a5-9b5f-a59b11a3732f",
-  "titles" : [ "Mrs", "Dr" ],
-  "address" : null,
-  "addresses" : [ ],
-  "nonContainedAdd" : null,
-  "nonContainedAdds" : [ {
-    "_type" : "Address",
-    "$ref" : "address1.json#12da7b63-0ef7-4047-8b52-b21a157b1776"
-  }, {
-    "_type" : "Address",
-    "$ref" : "address2.json#4447a037-dd68-47a8-8488-caced3705456"
-  } ],
-  "getFullName" : "John Doe"
+  "nonContainedAdd" : {
+    "$ref" : "address.json#58ffcf5d-de46-4f10-822c-423480ec5463"
+  },
+  "id" : "fc730968-5afe-42ae-b976-0ae02f4c7882"
 }

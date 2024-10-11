@@ -46,9 +46,9 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.cfg.ContextAttributes;
 
-public final class EMFContext {
+public final class EMFContext2 {
 
-   private EMFContext() {
+   private EMFContext2() {
 
    }
 
@@ -79,7 +79,7 @@ public final class EMFContext {
       if (context.getAttribute(Internals.INIT) != null) {
          return;
       }
-      
+
       ReferenceEntries entries = new ReferenceEntries();
       EcoreTypeFactory ecoreType = new EcoreTypeFactory();
       ResourceSet resourceSet = resource.getResourceSet();
@@ -88,16 +88,8 @@ public final class EMFContext {
       context.setAttribute(Attributes.RESOURCE_SET, resourceSet);
       context.setAttribute(Internals.REFERENCE_ENTRIES, entries);
       context.setAttribute(Internals.TYPE_FACTORY, ecoreType);
+
       context.setAttribute(Internals.INIT, true);
-      
-      if(context.getAttribute("ROOT_OBJECT") != null) {
-    	  rootCtxt = context;
-      }
-   }
-   
-   static DatabindContext rootCtxt;
-   public static DatabindContext getRootContext() {
-	   return rootCtxt;
    }
 
    public static void prepare(final DatabindContext ctxt) {

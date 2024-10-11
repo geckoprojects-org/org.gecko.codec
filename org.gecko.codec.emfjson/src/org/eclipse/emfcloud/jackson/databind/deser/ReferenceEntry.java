@@ -66,9 +66,13 @@ public interface ReferenceEntry {
                URI baseURI = resource.getURI().trimFragment();
                URI uri = handler.resolve(baseURI, URI.createURI(id));
 
+//               I don't understand why we create a proxy if resolveProxy is true
                if (reference.isResolveProxies() && type != null) {
                   target = createProxy(resourceSet, uri);
                } else {
+//            	   I need to modify here and add as load options the type of the reference!!
+//            	  Resource res = resourceSet.getResource(uri, true);
+//            	  res.load(null);
                   target = resourceSet.getEObject(uri, true);
                }
             }

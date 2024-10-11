@@ -62,27 +62,22 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 
 		switch(idStrategy) {
 		case "COMBINED":
-			//			TODO: We have to specify in the documentation that we are expecting a writer which takes the id features values as input
 			CodecValueWriter<Object, String> w = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY).getWriterByName(idCodecInfo.getValueWriterName());
-			if(w != null) {
-				gen.writeFieldName(codecModule.getIdKey());
-				List<Object> values = new LinkedList<>();
-				idFeatures.forEach(f -> values.add(rootObj.eGet(f)));
-				gen.writeString(w.writeValue(values, provider));
-			} else {
-				String idSeparator = idCodecInfo.getIdSeparator();
-				String id = "";
-				for(EStructuralFeature f : idFeatures) {
-					if(rootObj.eGet(f) != null) {
-						id = id.concat(rootObj.eGet(f).toString()).concat(idSeparator);
-					}
+			String idSeparator = idCodecInfo.getIdSeparator();
+			String id = "";
+			for(EStructuralFeature f : idFeatures) {
+				if(rootObj.eGet(f) != null) {
+					id = id.concat(rootObj.eGet(f).toString()).concat(idSeparator);
 				}
-				int start = id.lastIndexOf(idSeparator);
-				StringBuilder builder = new StringBuilder();						
-				id = builder.append(id.substring(0, start)).toString();
-				gen.writeFieldName(codecModule.getIdKey());
-				gen.writeString(id);
 			}
+			int start = id.lastIndexOf(idSeparator);
+			StringBuilder builder = new StringBuilder();						
+			id = builder.append(id.substring(0, start)).toString();
+			if(w != null) {
+				id = w.writeValue(id, provider);
+			}
+			gen.writeFieldName(codecModule.getIdKey());
+			gen.writeString(id);
 			break;
 		case "ID_FIELD": default:
 			if(idFeatures.size() == 0) {
@@ -112,8 +107,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 					gen.writeString(rootObj.eGet(idFeatures.get(0)).toString());
 				}
 			}
-		break;					
-	}	
-}
-
+			break;					
+		}	
+	}
 }

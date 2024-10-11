@@ -78,7 +78,7 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String VALUE_READER_NAME_EDEFAULT = "DEFAULT";
+	protected static final String VALUE_READER_NAME_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getValueReaderName() <em>Value Reader Name</em>}' attribute.
@@ -98,7 +98,7 @@ public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implement
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String VALUE_WRITER_NAME_EDEFAULT = "DEFAULT";
+	protected static final String VALUE_WRITER_NAME_EDEFAULT = null;
 
 	/**
 	 * The cached value of the '{@link #getValueWriterName() <em>Value Writer Name</em>}' attribute.
