@@ -420,13 +420,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int BUSINESS_PERSON__BUSINESS_ADD = PERSON__BUSINESS_ADD;
 
 	/**
+	 * The feature id for the '<em><b>Company Id Card Number</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER = PERSON_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Business Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BUSINESS_PERSON_FEATURE_COUNT = PERSON_FEATURE_COUNT + 0;
+	int BUSINESS_PERSON_FEATURE_COUNT = PERSON_FEATURE_COUNT + 1;
 
 	/**
 	 * The operation id for the '<em>Get Full Name</em>' operation.
@@ -682,6 +691,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int SPECIFIC_BUSINESS_PERSON__BUSINESS_ADD = BUSINESS_PERSON__BUSINESS_ADD;
+
+	/**
+	 * The feature id for the '<em><b>Company Id Card Number</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER = BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER;
 
 	/**
 	 * The number of structural features of the '<em>Specific Business Person</em>' class.
@@ -949,6 +967,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EClass getBusinessPerson();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.BusinessPerson#getCompanyIdCardNumber <em>Company Id Card Number</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Company Id Card Number</em>'.
+	 * @see org.gecko.code.demo.model.person.BusinessPerson#getCompanyIdCardNumber()
+	 * @see #getBusinessPerson()
+	 * @generated
+	 */
+	EAttribute getBusinessPerson_CompanyIdCardNumber();
+
+	/**
 	 * Returns the meta object for class '{@link org.gecko.code.demo.model.person.Contact <em>Contact</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1206,6 +1235,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EClass BUSINESS_PERSON = eINSTANCE.getBusinessPerson();
+
+		/**
+		 * The meta object literal for the '<em><b>Company Id Card Number</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER = eINSTANCE.getBusinessPerson_CompanyIdCardNumber();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.code.demo.model.person.impl.ContactImpl <em>Contact</em>}' class.

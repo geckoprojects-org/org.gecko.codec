@@ -32,6 +32,7 @@ import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
+import org.gecko.codec.jackson.databind.CodecWriteContext;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DatabindContext;
@@ -75,7 +76,10 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		EReference feature = (EReference) featureCodecInfo.getFeatures().get(0);
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
-
+		
+		if(jg.getOutputContext() instanceof CodecWriteContext cwt) {
+			cwt.setFeature(feature);
+		}
 
 		if(feature.isMany()) {
 			List<EObject> values = (List<EObject>) rootObj.eGet(feature);
@@ -96,7 +100,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		} else {
 			jg.writeFieldName(feature.getName());
 		}	
-		jg.writeStartArray();
+		jg.writeStartArray(values);
 		values.forEach(value -> {
 			try {
 				serializeSingleReferenceValue(rootObj, value, feature, jg, provider);
@@ -138,7 +142,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		}
 		final String href = getHRef(provider, rootObj, value);
 
-		jg.writeStartObject();
+		jg.writeStartObject(value);
 
 		if(codecModule.isSerializeType()) {
 			EClassCodecInfo refClassCodecInfo = codecModule.getCodecModelInfo().getEClassCodecInfo().stream()

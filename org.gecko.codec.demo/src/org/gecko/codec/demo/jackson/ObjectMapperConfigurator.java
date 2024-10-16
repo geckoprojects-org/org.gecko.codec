@@ -42,7 +42,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
 @Component(name = "ObjectMapperConfigurator", service = ObjectMapperConfigurator.class, configurationPolicy = ConfigurationPolicy.REQUIRE)
 public class ObjectMapperConfigurator {
 	
-	@Reference
+	@Reference(target="(type=json)")
 	CodecFactoryConfigurator codecFactoryConfigurator;
 
 	private static final Logger LOGGER = Logger.getLogger(ObjectMapperConfigurator.class.getName());

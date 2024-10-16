@@ -85,7 +85,7 @@ public class CodecEObjectSerializerNew extends JsonSerializer<EObject> implement
 		eObjCodecInfo.getReferenceCodecInfo().forEach(aci -> codecInfoSerializers.add(new ReferenceCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
 		eObjCodecInfo.getOperationCodecInfo().forEach(aci -> codecInfoSerializers.add(new OperationCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
 
-		gen.writeStartObject();
+		gen.writeStartObject(value);
 
 		if(codecModule.isUseId()) {
 			if(codecModule.isIdOnTop()) {

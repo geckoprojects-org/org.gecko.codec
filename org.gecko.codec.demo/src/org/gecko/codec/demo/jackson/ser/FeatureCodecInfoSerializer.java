@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
+import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
 import org.gecko.codec.demo.jackson.CodecModule;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
@@ -27,8 +28,11 @@ import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
+import org.gecko.codec.jackson.databind.CodecWriteContext;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
@@ -44,6 +48,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 	private CodecModelInfo codecModelInfoService;
 	private EClassCodecInfo eObjCodecInfo;
 	private FeatureCodecInfo featureCodecInfo;
+	private JsonSerializer<Object> serializer;
 	
 	public FeatureCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final FeatureCodecInfo featureCodecInfo) {
@@ -64,12 +69,20 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
-
+		
 		if(!codecModule.isSerializeIdField()) {
 			if(eObjCodecInfo.getIdentityInfo().getFeatures().contains(feature)) {
 				return;
 			}
 		}
+		
+		if(gen.getOutputContext() instanceof CodecWriteContext cwt) {
+			cwt.setFeature(feature);
+		}
+		EcoreTypeFactory factory = EMFContext.getTypeFactory(provider);
+		JavaType javaType = factory.typeOf(provider, feature.eClass(), feature);
+		serializer = provider.findValueSerializer(javaType);
+		
 		if (rootObj.eIsSet(feature)) {					
 			if(feature.isMany()) {
 				List<Object> values = (List<Object>) rootObj.eGet(feature);
@@ -119,12 +132,17 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		else {
 			CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
 			CodecValueWriter<Object,?> writer = infoHolder.getWriterByName(featureCodecInfo.getValueWriterName());
-			if(writer != null) gen.writeObject(writer.writeValue(value, provider));
-			else gen.writeObject(value);
+//			if(writer != null) gen.writeObject(writer.writeValue(value, provider));
+//			else gen.writeObject(value);
+			
+			
+			if(writer != null) serializer.serialize(writer.writeValue(value, provider), gen, provider);
+			else serializer.serialize(value, gen, provider);
 		}
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	private void serializeManyAttribute(EObject rootObj, List<Object> values, EStructuralFeature feature,
 			JsonGenerator gen, SerializerProvider provider) throws IOException {
 		if(values.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue())) return;
@@ -136,14 +154,20 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		
 //		TODO: check serailized array batched here...?
 		
-		gen.writeStartArray();
-		values.forEach(value -> {
-			try {
-				serializeSingleAttributeValue(rootObj, value, feature, gen, provider);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		});
-		gen.writeEndArray();
+		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
+		CodecValueWriter<Object,?> writer = infoHolder.getWriterByName(featureCodecInfo.getValueWriterName());
+		
+//		gen.writeStartArray();
+		
+		if(writer != null) serializer.serialize(writer.writeValue(values, provider), gen, provider);
+		else serializer.serialize(values, gen, provider);
+//		values.forEach(value -> {
+//			try {
+//				serializeSingleAttributeValue(rootObj, value, feature, gen, provider);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		});
+//		gen.writeEndArray();
 	}
 }

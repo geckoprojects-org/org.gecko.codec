@@ -18,36 +18,33 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
-import org.gecko.codec.demo.resource.CodecJsonResource;
+import org.gecko.codec.demo.resource.MongoResource;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.emf.osgi.constants.EMFNamespaces;
+import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
-/**
- * 
- * @author mark
- * @since 02.08.2024
- */
-@Component(name = "JsonRF", service = {Resource.Factory.class, JsonResourceFactory.class} , configurationPolicy = ConfigurationPolicy.REQUIRE, configurationPid = "CodecJsonRF")
-public class JsonResourceFactory extends ResourceFactoryImpl {
+@Component(name= "MongoRF", service = Resource.Factory.class, property = { EMFNamespaces.EMF_CONFIGURATOR_NAME + "=myMongo",
+		EMFNamespaces.EMF_MODEL_PROTOCOL + "=mongodb" })
+public class MongoResourceFactory extends ResourceFactoryImpl {
+	
+	@Reference
+	MongoDatabaseProvider provider;
 	
 	@Reference
 	private CodecModelInfo modelInfo;
 	
-	@Reference(target="(type=json)")
+	@Reference(target="(type=mongo)")
 	private ObjectMapperConfigurator objMapperConfigurator;
 	
-	@Reference(target="(type=json)")
+	@Reference(target="(type=mongo)")
 	private CodecModuleConfigurator codecModuleConfigurator;
 	
-	/* 
-	 * (non-Javadoc)
-	 * @see org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl#createResource(org.eclipse.emf.common.util.URI)
-	 */
+	
 	@Override
-	public Resource createResource(URI uri) {		
-		return new CodecJsonResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+	public Resource createResource(URI uri) {
+		return new MongoResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder(), provider);
 	}
 
 }

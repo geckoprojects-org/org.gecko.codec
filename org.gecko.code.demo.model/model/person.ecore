@@ -68,6 +68,11 @@
     <eAnnotations source="codec.id">
       <details key="strategy" value="ID_FIELD"/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="companyIdCardNumber" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+        <details key="name" value="compId"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Contact">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

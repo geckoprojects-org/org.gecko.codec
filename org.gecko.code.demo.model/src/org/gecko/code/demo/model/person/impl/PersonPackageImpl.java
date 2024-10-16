@@ -352,6 +352,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getBusinessPerson_CompanyIdCardNumber() {
+		return (EAttribute)businessPersonEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getContact() {
 		return contactEClass;
 	}
@@ -458,6 +468,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEAttribute(addressEClass, ADDRESS__ID);
 
 		businessPersonEClass = createEClass(BUSINESS_PERSON);
+		createEAttribute(businessPersonEClass, BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER);
 
 		contactEClass = createEClass(CONTACT);
 		createEAttribute(contactEClass, CONTACT__VALUE);
@@ -528,6 +539,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEAttribute(getAddress_Id(), ecorePackage.getEString(), "id", null, 1, 1, Address.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(businessPersonEClass, BusinessPerson.class, "BusinessPerson", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getBusinessPerson_CompanyIdCardNumber(), ecorePackage.getEString(), "companyIdCardNumber", null, 0, 1, BusinessPerson.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(contactEClass, Contact.class, "Contact", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getContact_Value(), ecorePackage.getEString(), "value", null, 0, 1, Contact.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -660,6 +672,12 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		   source,
 		   new String[] {
 			   "name", "title"
+		   });
+		addAnnotation
+		  (getBusinessPerson_CompanyIdCardNumber(),
+		   source,
+		   new String[] {
+			   "name", "compId"
 		   });
 	}
 

@@ -45,7 +45,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Address/zip"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Address/id"/>
     </genClasses>
-    <genClasses ecoreClass="person.ecore#//BusinessPerson"/>
+    <genClasses ecoreClass="person.ecore#//BusinessPerson">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//BusinessPerson/companyIdCardNumber"/>
+    </genClasses>
     <genClasses ecoreClass="person.ecore#//Contact">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Contact/value"/>
     </genClasses>

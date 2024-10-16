@@ -1,0 +1,16 @@
+eclipse.preferences.version=1
+encoding//.settings/org.eclipse.core.resources.prefs=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoCustomDateFormatTest.java=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoIdOptionsTest.java=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoNameFromExtendedMetadataTest.java=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoSerializeDefaultValuesTest.java=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoSerializeEmptyValuesTest.java=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoSerializeNullValuesTest.java=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoSerializePrimaryKeyTest.java=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoSerializeSuperTypeTest.java=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoSerializeTypeTest.java=UTF-8
+encoding//src/org/gecko/codec/demo/mongo/test/CodecMongoSerializeWithCustomKeysTest.java=UTF-8
+encoding/<project>=UTF-8
+encoding/bnd.bnd=UTF-8
+encoding/build.gradle=UTF-8
+encoding/test.bndrun=UTF-8

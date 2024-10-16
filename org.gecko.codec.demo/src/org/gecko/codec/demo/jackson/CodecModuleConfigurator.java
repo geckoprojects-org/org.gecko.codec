@@ -22,7 +22,8 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
  * @author ilenia
  * @since Aug 15, 2024
  */
-@Component(name = "CodecModuleConfigurator", service = CodecModuleConfigurator.class, configurationPolicy = ConfigurationPolicy.REQUIRE)
+@Component(name = "CodecModuleConfigurator", service = CodecModuleConfigurator.class, 
+	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
 public class CodecModuleConfigurator {
 	
 	private CodecModule.Builder moduleBuilder; 

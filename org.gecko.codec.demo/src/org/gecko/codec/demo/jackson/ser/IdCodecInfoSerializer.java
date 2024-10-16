@@ -14,7 +14,6 @@
 package org.gecko.codec.demo.jackson.ser;
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -77,7 +76,12 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 				id = w.writeValue(id, provider);
 			}
 			gen.writeFieldName(codecModule.getIdKey());
-			gen.writeString(id);
+			
+			if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
+				gen.writeObjectId(id);
+			} else {
+				gen.writeString(id);
+			}
 			break;
 		case "ID_FIELD": default:
 			if(idFeatures.size() == 0) {
@@ -94,14 +98,14 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 			CodecValueWriter<Object, String> writer = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY).getWriterByName(idCodecInfo.getValueWriterName());
 			if(writer != null) {
 				String value = writer.writeValue(rootObj.eGet(idFeatures.get(0)), provider);
-				if(gen.canWriteObjectId()) {
+				if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
 					gen.writeObjectId(value);
 				} else {
 					gen.writeString(value);
 				}
 			}
 			else {
-				if(gen.canWriteObjectId()) {
+				if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
 					gen.writeObjectId(rootObj.eGet(idFeatures.get(0)));
 				} else {
 					gen.writeString(rootObj.eGet(idFeatures.get(0)).toString());

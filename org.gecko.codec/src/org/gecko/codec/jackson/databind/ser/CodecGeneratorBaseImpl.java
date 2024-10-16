@@ -261,6 +261,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
+//		the _writeContext has no currentName set because it is on the parent context and not on the array child context
 		doWriteString(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), text);
 		CodecWriteContext.resetFeature(_writeContext);
 	}

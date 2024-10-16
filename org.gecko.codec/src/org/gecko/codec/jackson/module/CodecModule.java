@@ -188,7 +188,7 @@ public class CodecModule extends EMFModule {
 //		This is called when registering the module with mapper.register(module)
 		
 //		We should create the EcoreTypeInfo and so on starting from our CodecTypeInfo and so on...?
-		IdentityInfo idInfo = eClassCodecInfo.getIdentityInfo();
+//		IdentityInfo idInfo = eClassCodecInfo.getIdentityInfo();
 //		setIdentityInfo()
 		
 		String typeKey = (String) properties.getOrDefault(TYPE_KEY.name(), TYPE_KEY.getKeyValue());

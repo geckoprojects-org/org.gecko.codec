@@ -16,9 +16,13 @@ package org.gecko.codec.demo.jackson;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.gecko.codec.CodecFactory;
+import org.gecko.codec.CodecGeneratorFactory;
+import org.gecko.codec.CodecParserFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Reference;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.StreamReadFeature;
@@ -30,17 +34,41 @@ import com.fasterxml.jackson.core.json.JsonWriteFeature;
 /**
  * 
  * @author ilenia
+ * @param <W>
+ * @param <G>
  * @since Aug 14, 2024
  */
-@Component(name = "CodecFactoryConfigurator", service = CodecFactoryConfigurator.class, configurationPolicy = ConfigurationPolicy.REQUIRE)
+@Component(name = "CodecFactoryConfigurator", service = CodecFactoryConfigurator.class, 
+	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
 public class CodecFactoryConfigurator {
-
+	
+	@Reference(target="(type=json)")
+	CodecGeneratorFactory genFactory;
+	
+	@Reference(target="(type=json)")
+	CodecParserFactory parserFactory;
+	
 	private final static Logger LOGGER = Logger.getLogger(CodecFactoryConfigurator.class.getName());
 	private TSFBuilder<?,?> factoryBuilder;
+	private JsonFactory codecFactory;
+	
+	private class CodecFactoryBuilder<F extends JsonFactory, B extends TSFBuilder<F, B>> extends TSFBuilder<F, B>{
+
+		/* 
+		 * (non-Javadoc)
+		 * @see com.fasterxml.jackson.core.TSFBuilder#build()
+		 */
+		@SuppressWarnings("unchecked")
+		@Override
+		public F build() {
+			return (F) new CodecFactory(genFactory, parserFactory);
+		}
+		
+	}
 
 	@Activate
 	public void activate(Map<String, Object> properties) {
-		factoryBuilder = JsonFactory.builder();
+		factoryBuilder = new CodecFactoryBuilder();
 		buildAndConfigureCodecFactory(properties);
 	}
 	
@@ -96,8 +124,10 @@ public class CodecFactoryConfigurator {
 	
 	private void setJsonFactoryFeature(String featureString, boolean state) {
 		try {
-			if(state) factoryBuilder.enable(JsonFactory.Feature.valueOf(featureString));
-			else factoryBuilder.disable(JsonFactory.Feature.valueOf(featureString));
+//			if(state) factoryBuilder.enable(JsonFactory.Feature.valueOf(featureString));
+//			else factoryBuilder.disable(JsonFactory.Feature.valueOf(featureString));
+			if(state) codecFactory.enable(JsonFactory.Feature.valueOf(featureString));
+			else codecFactory.disable(JsonFactory.Feature.valueOf(featureString));
 			return;
 		} catch(Exception e) {
 			LOGGER.warning(String.format("No JsonFactoryFeature feature with name %s has been found", featureString));
