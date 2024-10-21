@@ -16,6 +16,7 @@ import org.gecko.codec.CodecWriterProvider;
 import org.osgi.service.component.annotations.Component;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.json.UTF8JsonGenerator;
 
 /**
  * 

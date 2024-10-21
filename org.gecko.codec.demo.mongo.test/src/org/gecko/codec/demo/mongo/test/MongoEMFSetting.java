@@ -13,10 +13,13 @@
  */
 package org.gecko.codec.demo.mongo.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.bson.Document;
 import org.gecko.mongo.osgi.MongoClientProvider;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.gecko.mongo.osgi.configuration.ConfigurationProperties;
@@ -41,7 +44,7 @@ public abstract class MongoEMFSetting {
 	protected MongoClient client;
 	protected MongoCollection<?> collection;
 	
-	public void doBefore(BundleContext ctx) {
+	public void doBefore(BundleContext ctx) throws Exception {
 		MongoClientOptions options = MongoClientOptions.builder().build();
 		client = new MongoClient(mongoHost, options);
 	}
@@ -54,6 +57,12 @@ public abstract class MongoEMFSetting {
 			client.close();
 		}
 	}
+	
+	protected void cleanDBCollection(MongoCollection<Document> collection ) {
+		collection.drop();		
+		assertEquals(0, collection.countDocuments());
+	}
+
 	
 	protected void defaultSetup(ConfigurationAdmin ca) throws IOException, InvalidSyntaxException {
 		// has to be a new configuration

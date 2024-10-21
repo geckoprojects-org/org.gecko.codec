@@ -23,6 +23,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.StreamReadFeature;
@@ -42,10 +43,10 @@ import com.fasterxml.jackson.core.json.JsonWriteFeature;
 	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
 public class CodecFactoryConfigurator {
 	
-	@Reference(target="(type=json)")
+	@Reference(target="(type=json)", cardinality = ReferenceCardinality.OPTIONAL)
 	CodecGeneratorFactory genFactory;
 	
-	@Reference(target="(type=json)")
+	@Reference(target="(type=json)", cardinality = ReferenceCardinality.OPTIONAL)
 	CodecParserFactory parserFactory;
 	
 	private final static Logger LOGGER = Logger.getLogger(CodecFactoryConfigurator.class.getName());
@@ -68,7 +69,11 @@ public class CodecFactoryConfigurator {
 
 	@Activate
 	public void activate(Map<String, Object> properties) {
-		factoryBuilder = new CodecFactoryBuilder();
+		if(genFactory == null || parserFactory == null) {
+			factoryBuilder = JsonFactory.builder();
+		} else {
+			factoryBuilder = new CodecFactoryBuilder();
+		}
 		buildAndConfigureCodecFactory(properties);
 	}
 	

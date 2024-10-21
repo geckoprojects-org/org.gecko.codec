@@ -20,6 +20,7 @@ import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.demo.resource.CodecJsonResource;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
@@ -29,7 +30,8 @@ import org.osgi.service.component.annotations.Reference;
  * @author mark
  * @since 02.08.2024
  */
-@Component(name = "JsonRF", service = {Resource.Factory.class, JsonResourceFactory.class} , configurationPolicy = ConfigurationPolicy.REQUIRE, configurationPid = "CodecJsonRF")
+@Component(name = "JsonRF", service = {Resource.Factory.class, JsonResourceFactory.class}, 
+		property = {EMFNamespaces.EMF_CONFIGURATOR_NAME + "=myJson", EMFNamespaces.EMF_MODEL_FILE_EXT + "=json"})
 public class JsonResourceFactory extends ResourceFactoryImpl {
 	
 	@Reference

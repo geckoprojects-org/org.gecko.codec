@@ -16,30 +16,25 @@ package org.gecko.codec.demo.mongo.test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.bson.Document;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gecko.code.demo.model.person.BusinessPerson;
-import org.gecko.code.demo.model.person.PersonFactory;
 import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleOptions;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
-import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
-import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,45 +72,61 @@ import com.mongodb.client.MongoCollection;
 		@Property(key = "client_id", value = "test"), @Property(key = "uri", value = "mongodb://localhost:27017") })
 @WithFactoryConfiguration(name = "mongoDatabase", location = "?", factoryPid = "MongoDatabaseProvider", properties = {
 		@Property(key = "alias", value = "TestDB"), @Property(key = "database", value = "test") })
+@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+		@Property(key = "type", value="mongo"),
+		@Property(key = "genFactory.target", value="(type=mongo)"), 
+		@Property(key = "parserFactory.target", value="(type=mongo)")
+})
+@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+		@Property(key = "codecFactoryConfigurator.target", value="(type=mongo)"),
+		@Property(key = "type", value="mongo")
+})
+@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+		@Property(key = "type", value="mongo")
+})
 public class CodecMongoIdOptionsTest extends MongoEMFSetting {
 
 	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
 			+ EMFNamespaces.EMF_MODEL_NAME + "=collection)("+ EMFNamespaces.EMF_MODEL_NAME + "=person))")
 	ServiceAware<ResourceSet> rsAware;
 
-
+	@InjectService(cardinality = 0, filter = "(type=mongo)")
+	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
+	
+	@InjectService(cardinality = 0, filter = "(type=mongo)")
+	ServiceAware<ObjectMapperConfigurator> mapperAware;
+	
+	@InjectService(cardinality = 0, filter = "(type=mongo)")
+	ServiceAware<CodecModuleConfigurator> codecModuleAware;
+	
+	private ResourceSet resourceSet;
+	private MongoCollection<Document> bpCollection;
+	
 	@BeforeEach
-	public void doBefore(@InjectBundleContext BundleContext ctx) {
+	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
 		super.doBefore(ctx);
+		bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		cleanDBCollection(bpCollection);
+		codecFactoryAware.waitForService(2000l);
+		mapperAware.waitForService(2000l);
+		codecModuleAware.waitForService(2000l);	
+		resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
 	}
 
 	@AfterEach
 	public void doAfter() {
-		super.doAfter();
+		cleanDBCollection(bpCollection);
+		super.doAfter();		
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "genFactory.target", value="(type=mongo)"), 
-			@Property(key = "parserFactory.target", value="(type=mongo)")
-	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test")
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testSaveIdOnTopYES(@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
-			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
-			@InjectService(timeout = 5000l) CodecFactoryConfigurator factoryConfigurator,
-			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator,
-			@InjectService(timeout = 2000l) MongoDatabaseProvider provider) throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
+	public void testSaveIdOnTopYES() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
 		
-		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
-		bpCollection.drop();
-		
-		assertEquals(0, bpCollection.countDocuments());
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
-		BusinessPerson person = getTestBusinessPerson();
+		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, true);
@@ -138,33 +149,16 @@ public class CodecMongoIdOptionsTest extends MongoEMFSetting {
 			index++;
 		}
 		assertEquals(1, index);
-		
-		bpCollection.drop();
 	}
 	
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "genFactory.target", value="(type=mongo)"), 
-			@Property(key = "parserFactory.target", value="(type=mongo)")
-	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test")
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
 	@Test
-	public void testSaveIdOnTopNO(@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
-			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
-			@InjectService(timeout = 5000l) CodecFactoryConfigurator factoryConfigurator,
-			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator,
-			@InjectService(timeout = 2000l) MongoDatabaseProvider provider) throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
+	public void testSaveIdOnTopNO() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
 		
-		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
-		bpCollection.drop();
-		
-		assertEquals(0, bpCollection.countDocuments());
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
-		BusinessPerson person = getTestBusinessPerson();
+		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
@@ -188,31 +182,16 @@ public class CodecMongoIdOptionsTest extends MongoEMFSetting {
 		}
 		assertThat(index).isGreaterThan(1);
 		
-		bpCollection.drop();
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "genFactory.target", value="(type=mongo)"), 
-			@Property(key = "parserFactory.target", value="(type=mongo)")
-	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test")
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+
 	@Test
-	public void testSaveIdFieldYES(@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
-			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
-			@InjectService(timeout = 5000l) CodecFactoryConfigurator factoryConfigurator,
-			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator,
-			@InjectService(timeout = 2000l) MongoDatabaseProvider provider) throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
+	public void testSaveIdFieldYES() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
 		
-		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
-		bpCollection.drop();
-		
-		assertEquals(0, bpCollection.countDocuments());
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
-		BusinessPerson person = getTestBusinessPerson();
+		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
@@ -229,31 +208,16 @@ public class CodecMongoIdOptionsTest extends MongoEMFSetting {
 		assertTrue(first.containsKey("id"));
 		assertEquals(person.getId(), first.get("id"));
 		
-		bpCollection.drop();
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "genFactory.target", value="(type=mongo)"), 
-			@Property(key = "parserFactory.target", value="(type=mongo)")
-	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test")
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	
 	@Test
-	public void testSaveIdFieldNO(@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo,
-			@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator,
-			@InjectService(timeout = 5000l) CodecFactoryConfigurator factoryConfigurator,
-			@InjectService(timeout = 2000l) ObjectMapperConfigurator objMapperConfigurator,
-			@InjectService(timeout = 2000l) MongoDatabaseProvider provider) throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
+	public void testSaveIdFieldNO() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
 		
-		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
-		bpCollection.drop();
-		
-		assertEquals(0, bpCollection.countDocuments());
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
-		BusinessPerson person = getTestBusinessPerson();
+		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, false);
@@ -269,30 +233,5 @@ public class CodecMongoIdOptionsTest extends MongoEMFSetting {
 		Document first = docIterable.first();
 		assertFalse(first.containsKey("id"));
 		
-		bpCollection.drop();
-	}
-	
-	
-	
-	
-	
-	
-	private BusinessPerson getTestBusinessPerson() {
-		BusinessPerson person = PersonFactory.eINSTANCE.createBusinessPerson();
-		person.setId(UUID.randomUUID().toString());
-		person.setName("John");
-		person.setLastName("Doe");
-		person.setBirthDate(Date.from(                     // Convert from modern java.time class to troublesome old legacy class.  DO NOT DO THIS unless you must, to inter operate with old code not yet updated for java.time.
-			    LocalDate.of(1990, 6, 20)                        // `LocalDate` class represents a date-only, without time-of-day and without time zone nor offset-from-UTC. 
-			    .atStartOfDay(                       // Let java.time determine the first moment of the day on that date in that zone. Never assume the day starts at 00:00:00.
-			        ZoneId.of( "Europe/Berlin" )  // Specify time zone using proper name in `continent/region` format, never 3-4 letter pseudo-zones such as “PST”, “CST”, “IST”. 
-			    )                                    // Produce a `ZonedDateTime` object. 
-			    .toInstant()                         // Extract an `Instant` object, a moment always in UTC.
-			));
-		person.getTitles().add("Mrs");
-		person.getTitles().add("Dr");
-		person.setTransientAtt(7);
-		person.setCompanyIdCardNumber(UUID.randomUUID().toString());
-		return person;
 	}
 }

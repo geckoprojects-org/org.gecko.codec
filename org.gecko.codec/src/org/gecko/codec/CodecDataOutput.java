@@ -35,6 +35,10 @@ public class CodecDataOutput<W> extends CodecWriterProvider<W> implements DataOu
 		super(writer, mapper);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#write(int)
+	 */
 	@Override
 	public void write(int arg0) throws IOException {
 	}

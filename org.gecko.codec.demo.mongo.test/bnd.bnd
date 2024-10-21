@@ -22,7 +22,9 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.gecko.codec.demo,\
 	org.gecko.codec.info,\
 	com.fasterxml.jackson.core.jackson-databind,\
-	com.fasterxml.jackson.core.jackson-core
+	com.fasterxml.jackson.core.jackson-core,\
+	org.gecko.codec.test.helper;version=latest,\
+	org.gecko.codec.info.model;version=latest
 	
 Private-Package: org.gecko.codec.demo.mongo.test
 
