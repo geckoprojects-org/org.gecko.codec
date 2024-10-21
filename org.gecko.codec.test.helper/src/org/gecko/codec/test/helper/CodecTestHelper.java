@@ -21,14 +21,17 @@ import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.gecko.code.demo.model.person.Address;
 import org.gecko.code.demo.model.person.BusinessAddress;
 import org.gecko.code.demo.model.person.BusinessPerson;
 import org.gecko.code.demo.model.person.Person;
 import org.gecko.code.demo.model.person.PersonFactory;
 import org.gecko.code.demo.model.person.SpecificBusinessPerson;
+import org.gecko.codec.info.codecinfo.CodecValueReader;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
 
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
@@ -154,4 +157,33 @@ public class CodecTestHelper {
 		}
 	};
 
+	public static final CodecValueReader<String, String> TEST_VALUE_READER = new CodecValueReader<>() {
+
+		@Override
+		public String getName() {
+			return "TEST_VALUE_READER";
+		}
+
+		@Override
+		public String readValue(String value, DeserializationContext context) {
+			if(value == null) return null;
+			if(value.startsWith("Super")) return value.substring(5, value.length());
+			return value;
+		}		
+	};
+
+	public static final CodecValueReader<String, EClass> TEST_TYPE_READER = new CodecValueReader<>() {
+
+		@Override
+		public String getName() {
+			return "TEST_TYPE_READER";
+		}
+
+		@Override
+		public EClass readValue(String value, DeserializationContext ctxt) {
+			if(value == null) return null;
+			if(value.startsWith("test.")) value = value.substring(5);
+			return EMFContext.findEClassByName(ctxt, value);
+		}
+	};
 }

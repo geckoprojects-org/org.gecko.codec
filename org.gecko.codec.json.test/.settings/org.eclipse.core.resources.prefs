@@ -1,6 +1,11 @@
 eclipse.preferences.version=1
 encoding//.settings/org.eclipse.core.resources.prefs=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonCustomDateFormatTest.java=UTF-8
+encoding//src/org/gecko/codec/json/test/CodecJsonDeserializeFeatureListTest.java=UTF-8
+encoding//src/org/gecko/codec/json/test/CodecJsonDeserializeIdTest.java=UTF-8
+encoding//src/org/gecko/codec/json/test/CodecJsonDeserializeNoTypeInfoTest.java=UTF-8
+encoding//src/org/gecko/codec/json/test/CodecJsonDeserializeReferenceTest.java=UTF-8
+encoding//src/org/gecko/codec/json/test/CodecJsonDeserializeWithCustomReaderTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonIdOptionsTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonSerializeDefaultValuesTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonSerializeEmptyValuesTest.java=UTF-8
