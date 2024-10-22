@@ -38,6 +38,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/titles"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/transientAtt"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//Person/businessAdd"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/height"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/weight"/>
       <genOperations ecoreOperation="person.ecore#//Person/getFullName" body="return this.name + &quot; &quot; + this.lastName;"/>
     </genClasses>
     <genClasses ecoreClass="person.ecore#//Address">

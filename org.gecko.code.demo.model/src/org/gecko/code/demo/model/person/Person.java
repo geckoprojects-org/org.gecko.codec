@@ -33,6 +33,8 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.code.demo.model.person.Person#getTitles <em>Titles</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getTransientAtt <em>Transient Att</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.Person#getBusinessAdd <em>Business Add</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getHeight <em>Height</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.Person#getWeight <em>Weight</em>}</li>
  * </ul>
  *
  * @see org.gecko.code.demo.model.person.PersonPackage#getPerson()
@@ -322,6 +324,50 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setBusinessAdd(BusinessAddress value);
+
+	/**
+	 * Returns the value of the '<em><b>Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Height</em>' attribute.
+	 * @see #setHeight(Double)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Height()
+	 * @model
+	 * @generated
+	 */
+	Double getHeight();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getHeight <em>Height</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Height</em>' attribute.
+	 * @see #getHeight()
+	 * @generated
+	 */
+	void setHeight(Double value);
+
+	/**
+	 * Returns the value of the '<em><b>Weight</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Weight</em>' attribute.
+	 * @see #setWeight(Float)
+	 * @see org.gecko.code.demo.model.person.PersonPackage#getPerson_Weight()
+	 * @model
+	 * @generated
+	 */
+	Float getWeight();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.code.demo.model.person.Person#getWeight <em>Weight</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Weight</em>' attribute.
+	 * @see #getWeight()
+	 * @generated
+	 */
+	void setWeight(Float value);
 
 	/**
 	 * <!-- begin-user-doc -->

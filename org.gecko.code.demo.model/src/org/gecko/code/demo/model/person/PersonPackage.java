@@ -202,13 +202,31 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__BUSINESS_ADD = 13;
 
 	/**
+	 * The feature id for the '<em><b>Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__HEIGHT = 14;
+
+	/**
+	 * The feature id for the '<em><b>Weight</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__WEIGHT = 15;
+
+	/**
 	 * The number of structural features of the '<em>Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 14;
+	int PERSON_FEATURE_COUNT = 16;
 
 	/**
 	 * The operation id for the '<em>Get Full Name</em>' operation.
@@ -418,6 +436,24 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int BUSINESS_PERSON__BUSINESS_ADD = PERSON__BUSINESS_ADD;
+
+	/**
+	 * The feature id for the '<em><b>Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__HEIGHT = PERSON__HEIGHT;
+
+	/**
+	 * The feature id for the '<em><b>Weight</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__WEIGHT = PERSON__WEIGHT;
 
 	/**
 	 * The feature id for the '<em><b>Company Id Card Number</b></em>' attribute.
@@ -693,6 +729,24 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int SPECIFIC_BUSINESS_PERSON__BUSINESS_ADD = BUSINESS_PERSON__BUSINESS_ADD;
 
 	/**
+	 * The feature id for the '<em><b>Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__HEIGHT = BUSINESS_PERSON__HEIGHT;
+
+	/**
+	 * The feature id for the '<em><b>Weight</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__WEIGHT = BUSINESS_PERSON__WEIGHT;
+
+	/**
 	 * The feature id for the '<em><b>Company Id Card Number</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -902,6 +956,28 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EReference getPerson_BusinessAdd();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getHeight <em>Height</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Height</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getHeight()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_Height();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.code.demo.model.person.Person#getWeight <em>Weight</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Weight</em>'.
+	 * @see org.gecko.code.demo.model.person.Person#getWeight()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_Weight();
 
 	/**
 	 * Returns the meta object for the '{@link org.gecko.code.demo.model.person.Person#getFullName() <em>Get Full Name</em>}' operation.
@@ -1183,6 +1259,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference PERSON__BUSINESS_ADD = eINSTANCE.getPerson_BusinessAdd();
+
+		/**
+		 * The meta object literal for the '<em><b>Height</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__HEIGHT = eINSTANCE.getPerson_Height();
+
+		/**
+		 * The meta object literal for the '<em><b>Weight</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__WEIGHT = eINSTANCE.getPerson_Weight();
 
 		/**
 		 * The meta object literal for the '<em><b>Get Full Name</b></em>' operation.

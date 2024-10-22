@@ -51,6 +51,8 @@ import org.gecko.code.demo.model.person.PersonPackage;
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getTitles <em>Titles</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getTransientAtt <em>Transient Att</em>}</li>
  *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getBusinessAdd <em>Business Add</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getHeight <em>Height</em>}</li>
+ *   <li>{@link org.gecko.code.demo.model.person.impl.PersonImpl#getWeight <em>Weight</em>}</li>
  * </ul>
  *
  * @generated
@@ -275,6 +277,46 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected BusinessAddress businessAdd;
+
+	/**
+	 * The default value of the '{@link #getHeight() <em>Height</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHeight()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Double HEIGHT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getHeight() <em>Height</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHeight()
+	 * @generated
+	 * @ordered
+	 */
+	protected Double height = HEIGHT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getWeight() <em>Weight</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWeight()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Float WEIGHT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getWeight() <em>Weight</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWeight()
+	 * @generated
+	 * @ordered
+	 */
+	protected Float weight = WEIGHT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -654,6 +696,52 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public Double getHeight() {
+		return height;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setHeight(Double newHeight) {
+		Double oldHeight = height;
+		height = newHeight;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__HEIGHT, oldHeight, height));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Float getWeight() {
+		return weight;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setWeight(Float newWeight) {
+		Float oldWeight = weight;
+		weight = newWeight;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__WEIGHT, oldWeight, weight));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String getFullName() {
 		return this.name + " " + this.lastName;
 	}
@@ -713,6 +801,10 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return getTransientAtt();
 			case PersonPackage.PERSON__BUSINESS_ADD:
 				return getBusinessAdd();
+			case PersonPackage.PERSON__HEIGHT:
+				return getHeight();
+			case PersonPackage.PERSON__WEIGHT:
+				return getWeight();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -771,6 +863,12 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__BUSINESS_ADD:
 				setBusinessAdd((BusinessAddress)newValue);
 				return;
+			case PersonPackage.PERSON__HEIGHT:
+				setHeight((Double)newValue);
+				return;
+			case PersonPackage.PERSON__WEIGHT:
+				setWeight((Float)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -825,6 +923,12 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__BUSINESS_ADD:
 				setBusinessAdd((BusinessAddress)null);
 				return;
+			case PersonPackage.PERSON__HEIGHT:
+				setHeight(HEIGHT_EDEFAULT);
+				return;
+			case PersonPackage.PERSON__WEIGHT:
+				setWeight(WEIGHT_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -865,6 +969,10 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return transientAtt != TRANSIENT_ATT_EDEFAULT;
 			case PersonPackage.PERSON__BUSINESS_ADD:
 				return businessAdd != null;
+			case PersonPackage.PERSON__HEIGHT:
+				return HEIGHT_EDEFAULT == null ? height != null : !HEIGHT_EDEFAULT.equals(height);
+			case PersonPackage.PERSON__WEIGHT:
+				return WEIGHT_EDEFAULT == null ? weight != null : !WEIGHT_EDEFAULT.equals(weight);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -911,6 +1019,10 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		result.append(titles);
 		result.append(", transientAtt: ");
 		result.append(transientAtt);
+		result.append(", height: ");
+		result.append(height);
+		result.append(", weight: ");
+		result.append(weight);
 		result.append(')');
 		return result.toString();
 	}

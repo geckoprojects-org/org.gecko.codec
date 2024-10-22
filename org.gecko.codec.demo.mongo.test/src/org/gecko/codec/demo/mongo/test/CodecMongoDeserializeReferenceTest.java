@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.json.test;
+package org.gecko.codec.demo.mongo.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bson.Document;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -40,7 +41,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.osgi.framework.BundleContext;
+import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
@@ -48,6 +50,9 @@ import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
+
+import com.mongodb.client.MongoCollection;
+
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
@@ -61,53 +66,68 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @RequireEMF
 @ExtendWith(BundleContextExtension.class)
 @ExtendWith(ServiceExtension.class)
-@ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
+@WithFactoryConfiguration(name = "mongoClient", location = "?", factoryPid = "MongoClientProvider", properties = {
+		@Property(key = "client_id", value = "test"), @Property(key = "uri", value = "mongodb://localhost:27017") })
+@WithFactoryConfiguration(name = "mongoDatabase", location = "?", factoryPid = "MongoDatabaseProvider", properties = {
+		@Property(key = "alias", value = "TestDB"), @Property(key = "database", value = "test") })
 @WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
+		@Property(key = "type", value="mongo"),
+		@Property(key = "genFactory.target", value="(type=mongo)"), 
+		@Property(key = "parserFactory.target", value="(type=mongo)")
 })
 @WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
+		@Property(key = "codecFactoryConfigurator.target", value="(type=mongo)"),
+		@Property(key = "type", value="mongo")
 })
 @WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
+		@Property(key = "type", value="mongo")
 })
-public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
+public class CodecMongoDeserializeReferenceTest extends MongoEMFSetting {
 
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
+			+ EMFNamespaces.EMF_MODEL_NAME + "=collection)("+ EMFNamespaces.EMF_MODEL_NAME + "=person))")
 	ServiceAware<ResourceSet> rsAware;
-	
-	@InjectService(cardinality = 0, filter = "(type=json)")
+
+
+	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
-	
-	@InjectService(cardinality = 0, filter = "(type=json)")
+
+	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<ObjectMapperConfigurator> mapperAware;
-	
-	@InjectService(cardinality = 0, filter = "(type=json)")
+
+	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
-	
-	private ResourceSet resourceSet;	
-	
-	@BeforeEach() 
-	public void beforeEach() throws Exception{
-		super.beforeEach();
+
+	private ResourceSet resourceSet;
+	private MongoCollection<Document> bpCollection;
+
+	@BeforeEach
+	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
+		super.doBefore(ctx);
+		bpCollection = client.getDatabase("test").getCollection("Person");
+		cleanDBCollection(bpCollection);
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);
 		codecModuleAware.waitForService(2000l);	
 		resourceSet = rsAware.waitForService(2000l);
 		assertNotNull(resourceSet);
 	}
-	
-	@AfterEach() 
-	public void afterEach() {
-		super.afterEach();
+
+	@AfterEach
+	public void doAfter() {
+		cleanDBCollection(bpCollection);
+		super.doAfter();		
 	}
+
 
 	@Test
 	public void testDeserializationReference() throws InterruptedException, IOException {
 
-		Resource addRes = resourceSet.createResource(URI.createURI(addFileName));
-		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
+		URI perURI = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
+		URI addURI = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Address/");
+		Resource addRes = resourceSet.createResource(addURI);
+		Resource personRes = resourceSet.createResource(perURI);
 
 		Address address = CodecTestHelper.getTestAddress();
 		Person person = CodecTestHelper.getTestPerson();
@@ -125,7 +145,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		personRes.getContents().clear();
 		personRes.unload();
 
-		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
+		Resource findResource = resourceSet.createResource(perURI);
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
@@ -150,7 +170,8 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationContainedReference() throws InterruptedException, IOException {
 
-		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
+		URI perURI = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
+		Resource personRes = resourceSet.createResource(perURI);
 
 		Address address = CodecTestHelper.getTestAddress();
 		Person person = CodecTestHelper.getTestPerson();
@@ -163,7 +184,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		personRes.getContents().clear();
 		personRes.unload();
 
-		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
+		Resource findResource = resourceSet.createResource(perURI);
 		options = new HashMap<>();
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
 
@@ -188,7 +209,8 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationManyContainedReference() throws InterruptedException, IOException {
 
-		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
+		URI perURI = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
+		Resource personRes = resourceSet.createResource(perURI);
 
 		Address address1 = CodecTestHelper.getTestAddress();
 		Address address2 = CodecTestHelper.getTestAddress();
@@ -203,7 +225,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		personRes.getContents().clear();
 		personRes.unload();
 
-		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
+		Resource findResource = resourceSet.createResource(perURI);
 		options = new HashMap<>();
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
 
@@ -230,28 +252,30 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationMultipleReference( ) throws InterruptedException, IOException {
 
-		Resource addRes1 = resourceSet.createResource(URI.createURI(addFileName));
-		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
+		URI perURI = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
+		URI addURI = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Address/");
+		Resource addRes = resourceSet.createResource(addURI);
+		Resource personRes = resourceSet.createResource(perURI);
 
 		Address address1 = CodecTestHelper.getTestAddress();
 		Address address2 = CodecTestHelper.getTestAddress();
 		Person person = CodecTestHelper.getTestPerson();
 		person.getNonContainedAdds().add(address1);
 		person.getNonContainedAdds().add(address2);
-		addRes1.getContents().add(address1);
-		addRes1.getContents().add(address2);
+		addRes.getContents().add(address1);
+		addRes.getContents().add(address2);
 		personRes.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		addRes1.save(options);
+		addRes.save(options);
 		personRes.save(options);
 
-		addRes1.getContents().clear();
-		addRes1.unload();
+		addRes.getContents().clear();
+		addRes.unload();
 		personRes.getContents().clear();
 		personRes.unload();
 
-		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
+		Resource findResource = resourceSet.createResource(perURI);
 		options = new HashMap<>();
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
 
@@ -278,5 +302,4 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		assertEquals(address2.getStreet(), add2.getStreet());
 		assertNull(add2.getZip());
 	}
-
 }

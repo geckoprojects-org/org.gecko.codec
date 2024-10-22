@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.json.test;
+package org.gecko.codec.demo.mongo.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bson.Document;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -41,7 +42,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
@@ -49,6 +53,9 @@ import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
+
+import com.mongodb.client.MongoCollection;
+
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
@@ -62,53 +69,70 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @RequireEMF
 @ExtendWith(BundleContextExtension.class)
 @ExtendWith(ServiceExtension.class)
-@ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
+@WithFactoryConfiguration(name = "mongoClient", location = "?", factoryPid = "MongoClientProvider", properties = {
+		@Property(key = "client_id", value = "test"), @Property(key = "uri", value = "mongodb://localhost:27017") })
+@WithFactoryConfiguration(name = "mongoDatabase", location = "?", factoryPid = "MongoDatabaseProvider", properties = {
+		@Property(key = "alias", value = "TestDB"), @Property(key = "database", value = "test") })
 @WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
+		@Property(key = "type", value="mongo"),
+		@Property(key = "genFactory.target", value="(type=mongo)"), 
+		@Property(key = "parserFactory.target", value="(type=mongo)")
 })
 @WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
+		@Property(key = "codecFactoryConfigurator.target", value="(type=mongo)"),
+		@Property(key = "type", value="mongo")
 })
 @WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
+		@Property(key = "type", value="mongo")
 })
-public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
+public class CodecMongoDeserializeWithCustomReaderTest extends MongoEMFSetting {
 
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
+			+ EMFNamespaces.EMF_MODEL_NAME + "=collection)("+ EMFNamespaces.EMF_MODEL_NAME + "=person))")
 	ServiceAware<ResourceSet> rsAware;
-	
-	@InjectService(cardinality = 0, filter = "(type=json)")
+
+
+	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
-	
-	@InjectService(cardinality = 0, filter = "(type=json)")
+
+	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<ObjectMapperConfigurator> mapperAware;
-	
-	@InjectService(cardinality = 0, filter = "(type=json)")
+
+	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
-	
-	private ResourceSet resourceSet;	
-	
-	@BeforeEach() 
-	public void beforeEach() throws Exception{
-		super.beforeEach();
+
+	private ResourceSet resourceSet;
+	private MongoCollection<Document> bpCollection;
+	private MongoCollection<Document> addCollection;
+
+	@BeforeEach
+	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
+		super.doBefore(ctx);
+		bpCollection = client.getDatabase("test").getCollection("Person");
+		cleanDBCollection(bpCollection);
+		addCollection = client.getDatabase("test").getCollection("Address");
+		cleanDBCollection(addCollection);
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);
 		codecModuleAware.waitForService(2000l);	
 		resourceSet = rsAware.waitForService(2000l);
 		assertNotNull(resourceSet);
 	}
-	
-	@AfterEach() 
-	public void afterEach() {
-		super.afterEach();
+
+	@AfterEach
+	public void doAfter() {
+		cleanDBCollection(bpCollection);
+		cleanDBCollection(addCollection);
+		super.doAfter();		
 	}
-	
+
 
 	@Test
-	public void testDeserializationIdCustomReader() throws InterruptedException, IOException {
+	public void testDeserializationIdCustomReader() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
 
-		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
+		URI uri = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Address/");
+		Resource resource = resourceSet.createResource(uri);
 
 		Address address = CodecTestHelper.getTestAddress();
 		resource.getContents().add(address);
@@ -125,7 +149,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		resource.getContents().clear();
 		resource.unload();
 
-		Resource findResource = resourceSet.createResource(URI.createURI(addFileName));
+		Resource findResource = resourceSet.createResource(uri);
 		options = new HashMap<>();
 		classOptions = new HashMap<>();
 		addOptions = new HashMap<>();
@@ -148,47 +172,10 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 	}
 	
 	@Test
-	public void testDeserializationIdCombinedCustomReader() throws InterruptedException, IOException {
-
-		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-
-		Person person = CodecTestHelper.getTestPerson();
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
-		resource.save(options);
-
-		resource.getContents().clear();
-		resource.unload();
-
-		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
-		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
-
-		findResource.load(options);
-
-		// get the person
-		assertNotNull(findResource);
-		assertFalse(findResource.getContents().isEmpty());
-		assertEquals(1, findResource.getContents().size());
-
-		// doing some object checks
-		Person p = (Person) findResource.getContents().get(0);
-		assertEquals("John", p.getName());
-		assertEquals("Doe", p.getLastName());
-	}
-	
-	
-	@Test
 	public void testDeserializationTypeCustomReader() throws InterruptedException, IOException {
-
-		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
-
+		
+		URI uri = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Address/");
+		Resource resource = resourceSet.createResource(uri);
 		Address address = CodecTestHelper.getTestAddress();
 		resource.getContents().add(address);
 		Map<String, Object> options = new HashMap<>();
@@ -203,7 +190,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		resource.getContents().clear();
 		resource.unload();
 
-		Resource findResource = resourceSet.createResource(URI.createURI(addFileName));
+		Resource findResource = resourceSet.createResource(uri);
 		options = new HashMap<>();
 		classOptions = new HashMap<>();
 		addOptions = new HashMap<>();
@@ -225,10 +212,48 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 	}
 	
 	@Test
+	public void testDeserializationIdCombinedCustomReader() throws InterruptedException, IOException {
+
+		URI uri = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
+		Resource resource = resourceSet.createResource(uri);
+		
+		Person person = CodecTestHelper.getTestPerson();
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put("codec.options", classOptions);
+		resource.save(options);
+
+		resource.getContents().clear();
+		resource.unload();
+
+		Resource findResource = resourceSet.createResource(uri);
+		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
+
+		findResource.load(options);
+
+		// get the person
+		assertNotNull(findResource);
+		assertFalse(findResource.getContents().isEmpty());
+		assertEquals(1, findResource.getContents().size());
+
+		// doing some object checks
+		Person p = (Person) findResource.getContents().get(0);
+		assertEquals("John", p.getName());
+		assertEquals("Doe", p.getLastName());
+		
+	}
+	
+	@Test
 	public void testDeserializationCustomReaderSingleAttribute() throws InterruptedException, IOException {
 
-
-		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+		URI uri = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
+		Resource resource = resourceSet.createResource(uri);
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
@@ -246,7 +271,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		resource.getContents().clear();
 		resource.unload();
 
-		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
+		Resource findResource = resourceSet.createResource(uri);
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
@@ -264,8 +289,8 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationCustomReaderManyAttribute() throws InterruptedException, IOException {
 
-
-		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+		URI uri = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
+		Resource resource = resourceSet.createResource(uri);
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
@@ -282,7 +307,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		resource.getContents().clear();
 		resource.unload();
 
-		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
+		Resource findResource = resourceSet.createResource(uri);
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);

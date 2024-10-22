@@ -95,7 +95,7 @@ public class IdCodecInfoDeserializer implements CodecInfoDeserializer {
 			} else {
 				id = value.toString();
 			}
-//			If the serializedIdField is false then we need to retireve the values from the _id
+//			If the serializedIdField is false then we need to retrieve the values from the _id
 			if(!codecModule.isSerializeIdField()) {
 				setIdFields(current, id);
 			}

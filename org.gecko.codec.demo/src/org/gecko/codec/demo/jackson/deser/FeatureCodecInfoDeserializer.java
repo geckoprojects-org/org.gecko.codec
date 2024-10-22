@@ -98,6 +98,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		if (jp.getCurrentToken() == JsonToken.VALUE_NULL) {
 			return;
 		}
+		
 		//	      Use TypeFactory to create JavaType from Eclass
 		EcoreTypeFactory factory = EMFContext.getTypeFactory(ctxt);
 		JavaType javaType = factory.typeOf(ctxt, feature.eClass(), feature);
@@ -138,6 +139,9 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 					current.eSet(feature, newObjs);
 				}
 			}  else {
+				System.out.println(jp.getParsingContext().getCurrentIndex() + " " 
+						+ jp.getParsingContext().getCurrentName() + " "
+						+ jp.getParsingContext().getCurrentValue());
 				Object value = deserializer.deserialize(jp, ctxt);
 				//		                If a custom ValueReader is set we use it to convert the deserialized value
 				if (value != null && reader != null) {    	

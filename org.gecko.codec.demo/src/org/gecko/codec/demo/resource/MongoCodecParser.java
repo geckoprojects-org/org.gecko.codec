@@ -65,7 +65,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	@Override
 	public JsonToken nextToken() throws IOException {
 		BsonType currentType = reader.getCurrentBsonType();
-		System.out.println("currentType " + currentType);
+		System.out.println("----------------------------------------------------");
+		System.out.println("currentType is " + currentType);
 
 		if (currentType == BsonType.END_OF_DOCUMENT) {
 			if (_parsingContext.inArray()) {
@@ -84,12 +85,11 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 			}
 		} else if (_parsingContext.inObject() && _currToken != JsonToken.FIELD_NAME) {
 			String name = reader.readName();
-			System.out.print(name + "=");
+			System.out.println("FieldName is " + name);
 			_parsingContext.setCurrentName(name);
 			_currToken = JsonToken.FIELD_NAME;
 		} else if (currentType == BsonType.DOCUMENT) {
 			System.out.println("start document");
-
 			reader.readStartDocument();
 			_parsingContext = _parsingContext.createChildObjectContext(1, 0);
 			BsonType nextType = reader.readBsonType();
@@ -104,14 +104,17 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 			_nextToken = map(nextType);
 		} else {
 			currentValue = getCurrentValue(currentType);
-			System.out.println(currentValue);
-			BsonType nextType = reader.readBsonType();
+			System.out.println("CurrentValue is " + currentValue);
 			setCurrentValue(currentValue);
+			
+			// 17-Sep-2019, tatu: [core#563] Need to call this to update index 
+	        _parsingContext.expectComma();
+			
+	        BsonType nextType = reader.readBsonType();
+			
 			_currToken = map(currentType);
 			_nextToken = map(nextType);
 		}
-//		System.out.println(" currentToken: " + _currToken + " nextType: " + nextType + " nextToken: " + _nextToken
-//				+ " col: " + _tokenInputCol);
 		return _currToken;
 	}
 
@@ -129,6 +132,9 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 			return reader.readDouble();
 		case OBJECT_ID:
 			return reader.readObjectId().toHexString();
+		case NULL:
+			reader.readNull();
+			//go through
 		default:
 			return null;
 		}
@@ -150,11 +156,46 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		case STRING:
 		case OBJECT_ID:
 			return JsonToken.VALUE_STRING;
+		case BOOLEAN:
+			return JsonToken.VALUE_TRUE; //not sure here because in principle also JsonToken.VALUE_FALSE is a valid one...?
+		case NULL:
+			return JsonToken.VALUE_NULL;
 		default:
 			return JsonToken.FIELD_NAME;
 		}
 	}
 
+
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.base.ParserBase#getDoubleValue()
+	 */
+	@Override
+	public double getDoubleValue() throws IOException {
+		System.out.println("get double " + currentValue);
+		return (double) currentValue;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.base.ParserBase#getFloatValue()
+	 */
+	@Override
+	public float getFloatValue() throws IOException {
+		System.out.println("get float " + currentValue);
+		if(currentValue instanceof Double doubCurrentValue) {
+			return (float)(double)doubCurrentValue;
+		}
+		return (float) currentValue;
+	}
+	
+	@Override
+	public int getIntValue() throws IOException {
+		System.out.println("get int " + currentValue);
+		return (int) currentValue;
+	}
+	
 	@Override
 	public String getText() throws IOException {
 		System.out.println("get text " + currentValue);

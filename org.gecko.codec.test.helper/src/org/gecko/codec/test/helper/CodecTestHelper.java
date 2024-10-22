@@ -83,6 +83,7 @@ public class CodecTestHelper {
 		person.setId(UUID.randomUUID().toString());
 		person.setName("John");
 		person.setLastName("Doe");
+		person.setAge(42);
 		person.setBirthDate(Date.from(                     // Convert from modern java.time class to troublesome old legacy class.  DO NOT DO THIS unless you must, to inter operate with old code not yet updated for java.time.
 			    LocalDate.of(1990, 6, 20)                        // `LocalDate` class represents a date-only, without time-of-day and without time zone nor offset-from-UTC. 
 			    .atStartOfDay(                       // Let java.time determine the first moment of the day on that date in that zone. Never assume the day starts at 00:00:00.
@@ -93,6 +94,8 @@ public class CodecTestHelper {
 		person.getTitles().add("Mrs");
 		person.getTitles().add("Dr");
 		person.setTransientAtt(7);
+		person.setHeight(1.77);
+		person.setWeight(78.3f);
 		return person;
 	}
 	

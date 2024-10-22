@@ -292,6 +292,26 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getPerson_Height() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(14);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getPerson_Weight() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(15);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EOperation getPerson__GetFullName() {
 		return personEClass.getEOperations().get(0);
 	}
@@ -460,6 +480,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEAttribute(personEClass, PERSON__TITLES);
 		createEAttribute(personEClass, PERSON__TRANSIENT_ATT);
 		createEReference(personEClass, PERSON__BUSINESS_ADD);
+		createEAttribute(personEClass, PERSON__HEIGHT);
+		createEAttribute(personEClass, PERSON__WEIGHT);
 		createEOperation(personEClass, PERSON___GET_FULL_NAME);
 
 		addressEClass = createEClass(ADDRESS);
@@ -530,6 +552,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEAttribute(getPerson_Titles(), ecorePackage.getEString(), "titles", null, 0, -1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_TransientAtt(), ecorePackage.getEInt(), "transientAtt", null, 0, 1, Person.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPerson_BusinessAdd(), this.getBusinessAddress(), null, "businessAdd", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPerson_Height(), ecorePackage.getEDoubleObject(), "height", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPerson_Weight(), ecorePackage.getEFloatObject(), "weight", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEOperation(getPerson__GetFullName(), ecorePackage.getEString(), "getFullName", 0, 1, IS_UNIQUE, IS_ORDERED);
 
