@@ -51,7 +51,6 @@ public class CodecFactoryConfigurator {
 	
 	private final static Logger LOGGER = Logger.getLogger(CodecFactoryConfigurator.class.getName());
 	private TSFBuilder<?,?> factoryBuilder;
-	private JsonFactory codecFactory;
 	
 	private class CodecFactoryBuilder<F extends JsonFactory, B extends TSFBuilder<F, B>> extends TSFBuilder<F, B>{
 
@@ -129,10 +128,8 @@ public class CodecFactoryConfigurator {
 	
 	private void setJsonFactoryFeature(String featureString, boolean state) {
 		try {
-//			if(state) factoryBuilder.enable(JsonFactory.Feature.valueOf(featureString));
-//			else factoryBuilder.disable(JsonFactory.Feature.valueOf(featureString));
-			if(state) codecFactory.enable(JsonFactory.Feature.valueOf(featureString));
-			else codecFactory.disable(JsonFactory.Feature.valueOf(featureString));
+			if(state) factoryBuilder.enable(JsonFactory.Feature.valueOf(featureString));
+			else factoryBuilder.disable(JsonFactory.Feature.valueOf(featureString));
 			return;
 		} catch(Exception e) {
 			LOGGER.warning(String.format("No JsonFactoryFeature feature with name %s has been found", featureString));

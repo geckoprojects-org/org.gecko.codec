@@ -24,13 +24,13 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.gecko.code.demo.model.person.Address;
-import org.gecko.code.demo.model.person.Person;
-import org.gecko.code.demo.model.person.PersonPackage;
 import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleOptions;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.demo.model.person.Address;
+import org.gecko.codec.demo.model.person.Person;
+import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -38,7 +38,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
@@ -59,7 +58,6 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @RequireEMF
 @ExtendWith(BundleContextExtension.class)
 @ExtendWith(ServiceExtension.class)
-@ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
 @WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="json")

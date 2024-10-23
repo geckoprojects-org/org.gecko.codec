@@ -13,42 +13,37 @@
  */
 package org.gecko.codec.mongo.resource;
 
-import java.util.Collections;
-
-import org.bson.BsonReader;
-import org.bson.BsonWriter;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
-import org.gecko.codec.CodecFactory;
-import org.gecko.codec.CodecGeneratorFactory;
-import org.gecko.codec.CodecParserFactory;
-import org.gecko.codec.jackson.module.CodecModule;
-import org.gecko.codec.mongo.MongoCodecGenerator;
-import org.gecko.codec.mongo.MongoCodecParser;
+import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
+import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-@Component(service = Resource.Factory.class, property = { EMFNamespaces.EMF_CONFIGURATOR_NAME + "=myMongo",
+@Component(name= "MongoRF", service = Resource.Factory.class, property = { EMFNamespaces.EMF_CONFIGURATOR_NAME + "=myMongo",
 		EMFNamespaces.EMF_MODEL_PROTOCOL + "=mongodb" })
 public class MongoResourceFactory extends ResourceFactoryImpl {
 	
 	@Reference
 	MongoDatabaseProvider provider;
+	
 	@Reference
-	CodecGeneratorFactory<BsonWriter, MongoCodecGenerator> generatorFactory;
-	@Reference
-	CodecParserFactory<BsonReader, MongoCodecParser> parserFactory;
+	private CodecModelInfo modelInfo;
+	
+	@Reference(target="(type=mongo)")
+	private ObjectMapperConfigurator objMapperConfigurator;
+	
+	@Reference(target="(type=mongo)")
+	private CodecModuleConfigurator codecModuleConfigurator;
+	
 	
 	@Override
 	public Resource createResource(URI uri) {
-		ObjectMapper mapper = CodecModule.setupDefaultMapper(new CodecFactory<>(generatorFactory, parserFactory), Collections.emptyMap());
-		return new MongoResource(uri, provider, mapper);
+		return new CodecMongoResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder(), provider);
 	}
-	
-	
+
 }

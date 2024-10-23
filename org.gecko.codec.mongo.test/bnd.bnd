@@ -2,25 +2,29 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 
 -library: enableOSGi-Test, enable-emf
 
+
 # sets the usually required buildpath using the bnd library, you can extend it with the normal -buildpath to your liking
 -buildpath: \
 	org.osgi.framework;version=latest,\
-	com.fasterxml.jackson.core.jackson-core;version=latest,\
-	com.fasterxml.jackson.core.jackson-databind;version=latest,\
-	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
-	org.gecko.codec.emfjson;version=project,\
-	org.gecko.codec,\
 	org.osgi.service.cm;version=latest,\
-	org.osgi.test.junit5,\
-	org.osgi.test.junit5.cm,\
-	org.osgi.test.common,\
-	org.gecko.emf.mongo.component,\
-	org.gecko.mongo.osgi.api,\
-	org.gecko.emf.osgi.example.model.basic;version=latest,\
-	org.mongodb.mongo-java-driver,\
+	org.osgi.test.junit5.cm;version=latest,\
+	org.mongodb.mongo-java-driver;version=latest,\
+	org.gecko.emf.osgi.api;version=latest,\
 	org.gecko.emf.collections,\
-	org.gecko.codec.mongo;version=latest,\
-	org.gecko.emf.osgi.component
+	org.gecko.mongo.osgi.api;version=latest,\
+	org.gecko.mongo.osgi.component;version=latest,\
+	org.gecko.emf.mongo.component;version=latest,\
+	org.gecko.emf.mongo.pushstream;version=latest,\
+	org.osgi.util.promise,\
+	org.osgi.util.pushstream,\
+	org.osgi.service.component,\
+	org.gecko.codec.demo.model;version=latest,\
+	org.gecko.codec.demo,\
+	org.gecko.codec.info,\
+	com.fasterxml.jackson.core.jackson-databind,\
+	com.fasterxml.jackson.core.jackson-core,\
+	org.gecko.codec.test.helper;version=latest,\
+	org.gecko.codec.info.model;version=latest
 	
 Private-Package: org.gecko.codec.mongo.test
 
@@ -28,4 +32,3 @@ Bundle-Version: 1.0.0.SNAPSHOT
 
 # Sometimes without DynamicImport Mockito will not find certain classes
 #DynamicImport-Package: *
--privatepackage: org.gecko.codec.mongo.test.helper

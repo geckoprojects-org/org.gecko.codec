@@ -20,7 +20,6 @@ import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.DeserializationContext;
 
 /**
  * 

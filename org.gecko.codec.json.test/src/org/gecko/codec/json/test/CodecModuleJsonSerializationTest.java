@@ -13,7 +13,6 @@
  */
 package org.gecko.codec.json.test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,15 +31,13 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResource;
-import org.gecko.code.demo.model.person.Address;
-import org.gecko.code.demo.model.person.BusinessPerson;
-import org.gecko.code.demo.model.person.Person;
-import org.gecko.code.demo.model.person.PersonPackage;
-import org.gecko.code.demo.model.person.SpecificBusinessPerson;
 import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleOptions;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.demo.model.person.Address;
+import org.gecko.codec.demo.model.person.Person;
+import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.ObjectMapperOptions;
 import org.gecko.codec.test.helper.CodecTestHelper;

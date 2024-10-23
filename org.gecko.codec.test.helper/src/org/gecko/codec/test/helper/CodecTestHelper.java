@@ -22,12 +22,12 @@ import java.util.UUID;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.gecko.code.demo.model.person.Address;
-import org.gecko.code.demo.model.person.BusinessAddress;
-import org.gecko.code.demo.model.person.BusinessPerson;
-import org.gecko.code.demo.model.person.Person;
-import org.gecko.code.demo.model.person.PersonFactory;
-import org.gecko.code.demo.model.person.SpecificBusinessPerson;
+import org.gecko.codec.demo.model.person.Address;
+import org.gecko.codec.demo.model.person.BusinessAddress;
+import org.gecko.codec.demo.model.person.BusinessPerson;
+import org.gecko.codec.demo.model.person.Person;
+import org.gecko.codec.demo.model.person.PersonFactory;
+import org.gecko.codec.demo.model.person.SpecificBusinessPerson;
 import org.gecko.codec.info.codecinfo.CodecValueReader;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
 

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.emf.ecore.EClass;
-import org.gecko.code.demo.model.person.PersonPackage;
+import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
@@ -36,8 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.test.common.annotation.InjectService;
-import org.osgi.test.common.annotation.Property;
-import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
@@ -55,61 +53,8 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @ExtendWith(ServiceExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
-@WithFactoryConfiguration(name = "mongoClient", location = "?", factoryPid = "MongoClientProvider", properties = {
-		@Property(key = "client_id", value = "test"), @Property(key = "uri", value = "mongodb://localhost:27017") })
-@WithFactoryConfiguration(name = "mongoDatabase", location = "?", factoryPid = "MongoDatabaseProvider", properties = {
-		@Property(key = "alias", value = "TestDB"), @Property(key = "database", value = "test") })
 public class CodecModelInfoTest {
-	
-//	  private ServiceRegistration<EMFRepository> repoRegistration;
-	  
-//	  @BeforeEach
-//	  public void before(@InjectBundleContext BundleContext ctx, @Mock
-//	                     EMFRepository repoMock) {
-//	                       repoRegistration = ctx.registerService(EMFRepository.class, new PrototypeServiceFactory<EMFRepository>()
-//	                       {
-//
-//	                         @Override
-//	                         public EMFRepository getService(Bundle bundle,
-//	                                                         ServiceRegistration<EMFRepository> registration)
-//	                         {
-//	                           return repoMock;
-//	                         }
-//
-//	                         @Override
-//	                         public void ungetService(Bundle bundle,
-//	                                                  ServiceRegistration<EMFRepository> registration,
-//	                                                  EMFRepository service)
-//	                         {
-//	                         }
-//	                       }, Dictionaries.dictionaryOf(Constants.SERVICE_RANKING, Integer.valueOf(1000)));
-//	  }
-//
-//	  @AfterEach
-//	  public void after() {
-//	    repoRegistration.unregister();
-//	  }
-	
-//	 @Test
-//	  public void testLoadGroup(@InjectService EMFRepository repo, @InjectService GroupsService groupService, @InjectService ResourceSet rs) {
-//	    assertNotNull(repo);
-//	    assertNotNull(groupService);
-//	    assertThrows(NullPointerException.class, ()->groupService.loadGroup(null));
-//	    verify(repo, never()).getEObject(any(EClass.class), any(Object.class));
-//
-//	    Group g = groupService.loadGroup("test");
-//	    assertNull(g);
-//	    verify(repo, times(1)).getEObject(any(EClass.class), eq("test"));
-//
-//	    reset(repo);
-//	    Group dbg = createGroup(rs, "test");
-//	    dbg.setId("myGroup");
-//	    when(repo.getEObject(RuntimePackage.Literals.GROUP, "test")).thenReturn(dbg);
-//	    g = groupService.loadGroup("test");
-//	    assertNotNull(g);
-//	    assertEquals(dbg.getId(), g.getId());
-//	    verify(repo, times(1)).getEObject(eq(RuntimePackage.Literals.GROUP), eq("test"));
-//	  }
+
 	
 	@Test
 	public void testPackageCodecInfoCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  

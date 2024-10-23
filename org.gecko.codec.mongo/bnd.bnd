@@ -12,8 +12,6 @@
 	org.gecko.mongo.osgi.api,\
 	org.gecko.emf.collections,\
 	org.gecko.codec.info;version=latest,\
-	org.gecko.codec.info.model;version=latest
+	org.gecko.codec.info.model;version=latest,\
+	org.gecko.codec.demo
 	
--testpath.model: \
-	org.gecko.codec.test.models;version=project,\
-	org.gecko.emf.osgi.example.model.basic;version=latest

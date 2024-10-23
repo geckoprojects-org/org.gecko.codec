@@ -1,0 +1,22 @@
+Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.annotation.Testable;CONCRETE}
+
+-library: \
+	enableOSGi-Test,\
+	enable-emf
+
+# sets the usually required buildpath using the bnd library, you can extend it with the normal -buildpath to your liking
+-buildpath: \
+	org.osgi.framework;version=latest,\
+	org.gecko.codec.info,\
+	org.gecko.codec.info.model;version=latest,\
+	org.gecko.codec.demo.model;version=latest,\
+	org.osgi.test.junit5.cm,\
+	org.gecko.codec.demo,\
+	com.fasterxml.jackson.core.jackson-databind,\
+	org.gecko.codec.emfjson,\
+	com.fasterxml.jackson.core.jackson-core,\
+	org.gecko.codec.test.helper
+	
+Private-Package: org.gecko.codec.test
+
+Bundle-Version: 1.0.0.SNAPSHOT

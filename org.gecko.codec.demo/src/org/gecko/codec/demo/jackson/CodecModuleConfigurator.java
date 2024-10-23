@@ -39,7 +39,7 @@ public class CodecModuleConfigurator {
 			.withIdKey(codecConfig.idKey())
 			.withIdOnTop(codecConfig.idOnTop())
 			.withCodecModuleName(codecConfig.codecModuleName())
-			.withCodecType(codecConfig.codecType())
+			.withCodecType(codecConfig.type())
 			.withIdFeatureAsPrimaryKey(codecConfig.idFeatureAsPrimaryKey())
 			.withProxyKey(codecConfig.proxyKey())
 			.withRefKey(codecConfig.refKey())

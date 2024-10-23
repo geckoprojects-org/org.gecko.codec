@@ -86,6 +86,10 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.CodecGenerator#doStartWriteEObject(int, java.lang.String, org.eclipse.emf.ecore.EObject)
+	 */
 	@Override
 	public void doStartWriteEObject(int index, String fieldName, EObject object) throws IOException {
 		if (fieldName != null && !fieldName.isEmpty()) {
@@ -116,7 +120,8 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 
 	@Override
 	public void doWriteString(int index, String fieldName, String value) throws IOException {
-		writer.writeString(fieldName, value);
+		if(_writeContext.inArray()) writer.writeString(value);
+		else writer.writeString(fieldName, value);
 	}
 
 	@Override

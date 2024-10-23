@@ -23,7 +23,7 @@ import com.fasterxml.jackson.core.io.IOContext;
  * @author grune
  * @since Apr 10, 2024
  */
-@Component(service = CodecParserFactory.class)
+@Component(immediate=true, name = "MongoParserFactory", service = CodecParserFactory.class, property = {"type=mongo"})
 public class MongoParserFactory implements CodecParserFactory<BsonReader, MongoCodecParser>{
 
 	/* 

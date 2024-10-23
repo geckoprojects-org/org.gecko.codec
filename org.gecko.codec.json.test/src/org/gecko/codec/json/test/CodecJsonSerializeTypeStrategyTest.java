@@ -28,11 +28,11 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.gecko.code.demo.model.person.Address;
-import org.gecko.code.demo.model.person.PersonPackage;
 import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.demo.model.person.Address;
+import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.codec.info.CodecAnnotations;
 import org.gecko.codec.info.ObjectMapperOptions;
 import org.gecko.codec.test.helper.CodecTestHelper;
@@ -159,7 +159,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 			String line = reader.readLine();
 			boolean found = false;
 			while(line != null) {
-				if(line.contains("\"_type\" : \"org.gecko.code.demo.model.person.Address\"")) {
+				if(line.contains("\"_type\" : \"org.gecko.codec.demo.model.person.Address\"")) {
 					found = true;
 				}
 				line = reader.readLine();

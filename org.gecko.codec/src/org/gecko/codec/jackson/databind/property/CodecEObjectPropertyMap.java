@@ -1,361 +1,361 @@
-/**
- * Copyright (c) 2012 - 2024 Data In Motion and others.
- * All rights reserved. 
- * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
- * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors:
- * 	   Guillaume Hillairet - initial API and implementation
- *     Data In Motion
- */
-package org.gecko.codec.jackson.databind.property;
-
-import static java.util.Objects.nonNull;
-import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterators.spliteratorUnknownSize;
-import static java.util.stream.StreamSupport.stream;
-import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.getAliases;
-import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.getElementName;
-import static org.gecko.codec.jackson.module.CodecFeature.OPTION_ID_TOP;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
-import org.eclipse.emf.ecore.EAnnotation;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EOperation;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.ExtendedMetaData;
-import org.eclipse.emf.ecore.util.FeatureMapUtil;
-import org.eclipse.emfcloud.jackson.annotations.EcoreIdentityInfo;
-import org.eclipse.emfcloud.jackson.annotations.EcoreReferenceInfo;
-import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
-import org.eclipse.emfcloud.jackson.annotations.JsonAnnotations;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.eclipse.emfcloud.jackson.databind.property.EObjectFeatureProperty;
-import org.eclipse.emfcloud.jackson.databind.property.EObjectIdentityProperty;
-import org.eclipse.emfcloud.jackson.databind.property.EObjectOperationProperty;
-import org.eclipse.emfcloud.jackson.databind.property.EObjectProperty;
-import org.eclipse.emfcloud.jackson.databind.property.EObjectReferenceProperty;
-import org.eclipse.emfcloud.jackson.databind.property.EObjectTypeProperty;
-import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
-import org.gecko.codec.jackson.databind.annotations.CodecIdentityInfo;
-import org.gecko.codec.jackson.databind.annotations.CodecSuperTypeInfo;
-import org.gecko.codec.jackson.module.CodecFeature;
-import org.gecko.codec.jackson.module.CodecModule;
-import org.gecko.codec.jackson.module.CodecProperties;
-
-import com.fasterxml.jackson.databind.DatabindContext;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.cfg.ConfigFeature;
-import com.fasterxml.jackson.databind.cfg.MapperConfigBase;
-
-/**
- * Map that hold all information for serializing and de-serializing EObjects. It
- * uses the semantics of so called properties. They describe a certain context
- * of an EObject: - ID config - IdentityProperty - Type config - TypeProperty,
- * SuperTypeProperty - Reference handling - ReferenceProperty -
- * EStructuralFeature handling - FeatureProperty (a different context than the
- * Jackson Features!) - Operation handling - OperationProperty If you need a new
- * aspect to be described, create an own Property
- * 
- * @author Mark Hoffmann
- * @since 12.01.2024
- */
-public final class CodecEObjectPropertyMap {
-
-	public static class Builder {
-
-		private final Map<EClass, CodecEObjectPropertyMap> cache = Collections.synchronizedMap(new WeakHashMap<>());
-
-		private final EcoreIdentityInfo identityInfo;
-		private final EcoreTypeInfo typeInfo;
-		private final EcoreReferenceInfo referenceInfo;
-		private final int features;
-
-		private MapperConfigBase<? extends ConfigFeature, ? extends MapperConfigBase<?,?>> config;
-
-		public Builder(final EcoreIdentityInfo identityInfo, final EcoreTypeInfo typeInfo,
-				final EcoreReferenceInfo referenceInfo, final int features) {
-			this.identityInfo = identityInfo;
-			this.typeInfo = typeInfo;
-			this.referenceInfo = referenceInfo;
-			this.features = features;
-		}
-
-		public static Builder from(final CodecModule module, final int features) {
-			return new Builder(module.getIdentityInfo(), module.getTypeInfo(), module.getReferenceInfo(), features);
-		}
-
-		public <CFG extends ConfigFeature, T extends MapperConfigBase<CFG, T>> Builder with(
-				final MapperConfigBase<CFG, T> config) {
-			this.config = config;
-			return this;
-		}
-
-		protected MapperConfigBase<? extends ConfigFeature, ? extends MapperConfigBase<?,?>> getConfig() {
-			return this.config;
-		}
-
-		public CodecEObjectPropertyMap construct(final DatabindContext ctxt, final EClass type) {
-			if (type == null) {
- 				buildCache(ctxt);
-			}
-
-			CodecEObjectPropertyMap propertyMap = type == null ? null : cache.get(type);
-
-			if (propertyMap == null) {
-				propertyMap = createPropertyMap(ctxt, type);
-				if (type != null) {
-					cache.put(type, propertyMap);
-				}
-			}
-			return propertyMap;
-		}
-
-		private void buildCache(final DatabindContext ctxt) {
-			ResourceSet resourceSet = EMFContext.getResourceSet(ctxt);
-
-			Set<EClass> types = resourceSet.getPackageRegistry().values().stream()
-					.flatMap(model -> stream(spliteratorUnknownSize(((EPackage) model).eAllContents(), ORDERED), false))
-					.filter(e -> e instanceof EClass).map(e -> (EClass) e).collect(Collectors.toSet());
-
-			types.forEach(type -> cache.put(type, construct(ctxt, type)));
-		}
-
-		private CodecEObjectPropertyMap createPropertyMap(final DatabindContext ctxt, final EClass type) {
-			EcoreTypeFactory factory = EMFContext.getTypeFactory(ctxt);
-			HashMap<String, EObjectProperty> propertiesMap = new HashMap<>();
-			Set<EObjectProperty> properties = new LinkedHashSet<>();
-
-			Consumer<EObjectProperty> add = p -> {
-				properties.add(p);
-				propertiesMap.put(p.getFieldName(), p);
-			};
-			
-			if (type == null) {
-				add.accept(new EObjectReferenceProperty(referenceInfo));
-				add.accept(getTypeProperty(type, features));
-
-				if (EMFModule.Feature.OPTION_USE_ID.enabledIn(features)) {
-					if (CodecFeature.OPTION_USE_IDFIELD.enabledIn(features)) {
-						CodecIdentityInfo info = new CodecIdentityInfo(CodecProperties.ID_KEY.getKeyValue(), true);
-						add.accept(new EObjectIdentityProperty(info));
-					} else {
-						add.accept(new EObjectIdentityProperty(identityInfo));
-					}
-				}
-			} else {
-				EAttribute idAttribute = type.getEIDAttribute();
-				// Handle property setup for ID's
-				if (OPTION_ID_TOP.enabledIn(features)) {
-					handleIdentity(add, idAttribute);
-				}
-
-				add.accept(new EObjectReferenceProperty(referenceInfo));
-				// Handle property setup for EClass type information
-				add.accept(getTypeProperty(type, features));
-				add.accept(getSuperTypeProperty(type, features));
-
-				// Handle alternative ID index property setup
-				if (!OPTION_ID_TOP.enabledIn(features)) {
-					handleIdentity(add, idAttribute);
-				}
-			}
-
-			if (type != null) {
-				for (EStructuralFeature feature : type.getEAllStructuralFeatures()) {
-					createFeatureProperty(ctxt, factory, type, feature).ifPresent(property -> {
-						add.accept(property);
-
-						for (String alias : getAliases(feature)) {
-							propertiesMap.put(alias, property);
-						}
-					});
-				}
-
-				for (EOperation operation : type.getEAllOperations()) {
-					EAnnotation annotation = operation.getEAnnotation("JsonProperty");
-
-					if (annotation != null && operation.getEParameters().isEmpty()) {
-						add.accept(new EObjectOperationProperty(getElementName(operation, features), operation));
-					}
-				}
-			}
-
-			return new CodecEObjectPropertyMap(type, propertiesMap, properties);
-		}
-
-		private void handleIdentity(Consumer<EObjectProperty> add, EStructuralFeature idFeature) {
-			if (EMFModule.Feature.OPTION_USE_ID.enabledIn(features)) {
-				add.accept(new CodecIdentityProperty(identityInfo, idFeature));
-				return;
-			}
-			if (CodecFeature.OPTION_USE_IDFIELD.enabledIn(features)) {
-				add.accept(new CodecIdentityProperty(new CodecIdentityInfo(CodecProperties.ID_KEY.getKeyValue(), true),
-						idFeature));
-			}
-		}
-
-		private Optional<EObjectFeatureProperty> createFeatureProperty(final DatabindContext ctxt,
-				final EcoreTypeFactory factory, final EClass type, final EStructuralFeature feature) {
-			if (isCandidate(feature)) {
-				JavaType javaType = factory.typeOf(ctxt, type, feature);
-				if (javaType != null) {
-					return Optional.of(new CodecFeatureProperty(feature, javaType, features));
-				}
-			}
-
-			return Optional.empty();
-		}
-
-		boolean isFeatureMapEntry(final EStructuralFeature feature) {
-			EAnnotation annotation = feature.getEAnnotation(ExtendedMetaData.ANNOTATION_URI);
-
-			return annotation != null && annotation.getDetails().containsKey("group");
-		}
-
-		boolean isCandidate(final EStructuralFeature feature) {
-			if (feature instanceof EAttribute) {
-				return isCandidate((EAttribute) feature);
-			}
-			return isCandidate((EReference) feature);
-		}
-
-		boolean isCandidate(final EAttribute attribute) {
-			return isFeatureMapEntry(attribute) || (!FeatureMapUtil.isFeatureMap(attribute)
-					&& !(attribute.isDerived() || attribute.isTransient()) && !JsonAnnotations.shouldIgnore(attribute));
-		}
-
-		boolean isCandidate(final EReference eReference) {
-			if (isFeatureMapEntry(eReference)) {
-				return true;
-			}
-			if (FeatureMapUtil.isFeatureMap(eReference) || eReference.isTransient()
-					|| JsonAnnotations.shouldIgnore(eReference)) {
-				return false;
-			}
-
-			EReference opposite = eReference.getEOpposite();
-			return !(opposite != null && opposite.isContainment());
-		}
-
-		private EObjectProperty getTypeProperty(final EClass type, final int features) {
-			EcoreTypeInfo currentTypeInfo = null;
-
-			if (type != null && !JsonAnnotations.shouldIgnoreType(type)) {
-				currentTypeInfo = JsonAnnotations.getTypeProperty(type, typeInfo.getValueReader(),
-						typeInfo.getValueWriter());
-			}
-
-			if (currentTypeInfo == null) {
-				currentTypeInfo = typeInfo;
-			}
-
-			return new CodecTypeProperty(currentTypeInfo, features);
-		}
-
-		private CodecSuperTypeProperty getSuperTypeProperty(final EClass type, final int features) {
-			Object attribute = config.getAttributes().getAttribute(CodecProperties.SUPER_TYPE_KEY.name());
-			CodecSuperTypeInfo superTypeInfo = new CodecSuperTypeInfo();
-			if (nonNull(attribute)) {
-				superTypeInfo = new CodecSuperTypeInfo(attribute.toString());
-			}
-			return new CodecSuperTypeProperty(superTypeInfo, features);
-		}
-
-		public CodecEObjectPropertyMap constructDefault(final DatabindContext ctxt) {
-			return construct(ctxt, null);
-		}
-
-		public CodecEObjectPropertyMap find(final DeserializationContext ctxt, final EClass defaultType,
-				final Iterator<String> fields) {
-			List<EClass> types = EMFContext.allSubTypes(ctxt, defaultType);
-			Map<String, EClass> properties = new HashMap<>();
-			for (EClass type : types) {
-				EObjectProperty p = getTypeProperty(type, features);
-				properties.put(p.getFieldName(), type);
-			}
-
-			while (fields.hasNext()) {
-				String field = fields.next();
-
-				if (properties.containsKey(field)) {
-					return construct(ctxt, properties.get(field));
-				}
-			}
-
-			return construct(ctxt, defaultType);
-		}
-
-	}
-
-	private final Map<String, EObjectProperty> propertiesMap;
-	private final Set<EObjectProperty> properties;
-	private final EClass type;
-
-	private EObjectTypeProperty typeProperty;
-
-	private CodecEObjectPropertyMap(final EClass type, final Map<String, EObjectProperty> propertiesMap,
-			final Set<EObjectProperty> properties) {
-		this.type = type;
-		this.propertiesMap = propertiesMap;
-		this.properties = properties;
-	}
-
-	public EObjectProperty findProperty(final String field) {
-		return propertiesMap.get(field);
-	}
-
-	public Iterable<EObjectProperty> getProperties() {
-		return properties;
-	}
-
-	public EObjectTypeProperty getTypeProperty() {
-		if (typeProperty == null) {
-			for (EObjectProperty property : properties) {
-				if (property instanceof EObjectTypeProperty) {
-					typeProperty = (EObjectTypeProperty) property;
-				}
-			}
-		}
-		return typeProperty;
-	}
-
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		CodecEObjectPropertyMap that = (CodecEObjectPropertyMap) o;
-		return Objects.equals(properties, that.properties) && Objects.equals(type, that.type);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(properties, type);
-	}
-}
+///**
+// * Copyright (c) 2012 - 2024 Data In Motion and others.
+// * All rights reserved. 
+// * 
+// * This program and the accompanying materials are made
+// * available under the terms of the Eclipse Public License 2.0
+// * which is available at https://www.eclipse.org/legal/epl-2.0/
+// *
+// * SPDX-License-Identifier: EPL-2.0
+// * 
+// * Contributors:
+// * 	   Guillaume Hillairet - initial API and implementation
+// *     Data In Motion
+// */
+//package org.gecko.codec.jackson.databind.property;
+//
+//import static java.util.Objects.nonNull;
+//import static java.util.Spliterator.ORDERED;
+//import static java.util.Spliterators.spliteratorUnknownSize;
+//import static java.util.stream.StreamSupport.stream;
+//import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.getAliases;
+//import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.getElementName;
+//import static org.gecko.codec.jackson.module.CodecFeature.OPTION_ID_TOP;
+//
+//import java.util.Collections;
+//import java.util.HashMap;
+//import java.util.Iterator;
+//import java.util.LinkedHashSet;
+//import java.util.List;
+//import java.util.Map;
+//import java.util.Objects;
+//import java.util.Optional;
+//import java.util.Set;
+//import java.util.WeakHashMap;
+//import java.util.function.Consumer;
+//import java.util.stream.Collectors;
+//
+//import org.eclipse.emf.ecore.EAnnotation;
+//import org.eclipse.emf.ecore.EAttribute;
+//import org.eclipse.emf.ecore.EClass;
+//import org.eclipse.emf.ecore.EOperation;
+//import org.eclipse.emf.ecore.EPackage;
+//import org.eclipse.emf.ecore.EReference;
+//import org.eclipse.emf.ecore.EStructuralFeature;
+//import org.eclipse.emf.ecore.resource.ResourceSet;
+//import org.eclipse.emf.ecore.util.ExtendedMetaData;
+//import org.eclipse.emf.ecore.util.FeatureMapUtil;
+//import org.eclipse.emfcloud.jackson.annotations.EcoreIdentityInfo;
+//import org.eclipse.emfcloud.jackson.annotations.EcoreReferenceInfo;
+//import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
+//import org.eclipse.emfcloud.jackson.annotations.JsonAnnotations;
+//import org.eclipse.emfcloud.jackson.databind.EMFContext;
+//import org.eclipse.emfcloud.jackson.databind.property.EObjectFeatureProperty;
+//import org.eclipse.emfcloud.jackson.databind.property.EObjectIdentityProperty;
+//import org.eclipse.emfcloud.jackson.databind.property.EObjectOperationProperty;
+//import org.eclipse.emfcloud.jackson.databind.property.EObjectProperty;
+//import org.eclipse.emfcloud.jackson.databind.property.EObjectReferenceProperty;
+//import org.eclipse.emfcloud.jackson.databind.property.EObjectTypeProperty;
+//import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
+//import org.eclipse.emfcloud.jackson.module.EMFModule;
+//import org.gecko.codec.jackson.databind.annotations.CodecIdentityInfo;
+//import org.gecko.codec.jackson.databind.annotations.CodecSuperTypeInfo;
+//import org.gecko.codec.jackson.module.CodecFeature;
+//import org.gecko.codec.jackson.module.CodecModule;
+//import org.gecko.codec.jackson.module.CodecProperties;
+//
+//import com.fasterxml.jackson.databind.DatabindContext;
+//import com.fasterxml.jackson.databind.DeserializationContext;
+//import com.fasterxml.jackson.databind.JavaType;
+//import com.fasterxml.jackson.databind.cfg.ConfigFeature;
+//import com.fasterxml.jackson.databind.cfg.MapperConfigBase;
+//
+///**
+// * Map that hold all information for serializing and de-serializing EObjects. It
+// * uses the semantics of so called properties. They describe a certain context
+// * of an EObject: - ID config - IdentityProperty - Type config - TypeProperty,
+// * SuperTypeProperty - Reference handling - ReferenceProperty -
+// * EStructuralFeature handling - FeatureProperty (a different context than the
+// * Jackson Features!) - Operation handling - OperationProperty If you need a new
+// * aspect to be described, create an own Property
+// * 
+// * @author Mark Hoffmann
+// * @since 12.01.2024
+// */
+//public final class CodecEObjectPropertyMap {
+//
+//	public static class Builder {
+//
+//		private final Map<EClass, CodecEObjectPropertyMap> cache = Collections.synchronizedMap(new WeakHashMap<>());
+//
+//		private final EcoreIdentityInfo identityInfo;
+//		private final EcoreTypeInfo typeInfo;
+//		private final EcoreReferenceInfo referenceInfo;
+//		private final int features;
+//
+//		private MapperConfigBase<? extends ConfigFeature, ? extends MapperConfigBase<?,?>> config;
+//
+//		public Builder(final EcoreIdentityInfo identityInfo, final EcoreTypeInfo typeInfo,
+//				final EcoreReferenceInfo referenceInfo, final int features) {
+//			this.identityInfo = identityInfo;
+//			this.typeInfo = typeInfo;
+//			this.referenceInfo = referenceInfo;
+//			this.features = features;
+//		}
+//
+//		public static Builder from(final CodecModule module, final int features) {
+//			return new Builder(module.getIdentityInfo(), module.getTypeInfo(), module.getReferenceInfo(), features);
+//		}
+//
+//		public <CFG extends ConfigFeature, T extends MapperConfigBase<CFG, T>> Builder with(
+//				final MapperConfigBase<CFG, T> config) {
+//			this.config = config;
+//			return this;
+//		}
+//
+//		protected MapperConfigBase<? extends ConfigFeature, ? extends MapperConfigBase<?,?>> getConfig() {
+//			return this.config;
+//		}
+//
+//		public CodecEObjectPropertyMap construct(final DatabindContext ctxt, final EClass type) {
+//			if (type == null) {
+// 				buildCache(ctxt);
+//			}
+//
+//			CodecEObjectPropertyMap propertyMap = type == null ? null : cache.get(type);
+//
+//			if (propertyMap == null) {
+//				propertyMap = createPropertyMap(ctxt, type);
+//				if (type != null) {
+//					cache.put(type, propertyMap);
+//				}
+//			}
+//			return propertyMap;
+//		}
+//
+//		private void buildCache(final DatabindContext ctxt) {
+//			ResourceSet resourceSet = EMFContext.getResourceSet(ctxt);
+//
+//			Set<EClass> types = resourceSet.getPackageRegistry().values().stream()
+//					.flatMap(model -> stream(spliteratorUnknownSize(((EPackage) model).eAllContents(), ORDERED), false))
+//					.filter(e -> e instanceof EClass).map(e -> (EClass) e).collect(Collectors.toSet());
+//
+//			types.forEach(type -> cache.put(type, construct(ctxt, type)));
+//		}
+//
+//		private CodecEObjectPropertyMap createPropertyMap(final DatabindContext ctxt, final EClass type) {
+//			EcoreTypeFactory factory = EMFContext.getTypeFactory(ctxt);
+//			HashMap<String, EObjectProperty> propertiesMap = new HashMap<>();
+//			Set<EObjectProperty> properties = new LinkedHashSet<>();
+//
+//			Consumer<EObjectProperty> add = p -> {
+//				properties.add(p);
+//				propertiesMap.put(p.getFieldName(), p);
+//			};
+//			
+//			if (type == null) {
+//				add.accept(new EObjectReferenceProperty(referenceInfo));
+//				add.accept(getTypeProperty(type, features));
+//
+//				if (EMFModule.Feature.OPTION_USE_ID.enabledIn(features)) {
+//					if (CodecFeature.OPTION_USE_IDFIELD.enabledIn(features)) {
+//						CodecIdentityInfo info = new CodecIdentityInfo(CodecProperties.ID_KEY.getKeyValue(), true);
+//						add.accept(new EObjectIdentityProperty(info));
+//					} else {
+//						add.accept(new EObjectIdentityProperty(identityInfo));
+//					}
+//				}
+//			} else {
+//				EAttribute idAttribute = type.getEIDAttribute();
+//				// Handle property setup for ID's
+//				if (OPTION_ID_TOP.enabledIn(features)) {
+//					handleIdentity(add, idAttribute);
+//				}
+//
+//				add.accept(new EObjectReferenceProperty(referenceInfo));
+//				// Handle property setup for EClass type information
+//				add.accept(getTypeProperty(type, features));
+//				add.accept(getSuperTypeProperty(type, features));
+//
+//				// Handle alternative ID index property setup
+//				if (!OPTION_ID_TOP.enabledIn(features)) {
+//					handleIdentity(add, idAttribute);
+//				}
+//			}
+//
+//			if (type != null) {
+//				for (EStructuralFeature feature : type.getEAllStructuralFeatures()) {
+//					createFeatureProperty(ctxt, factory, type, feature).ifPresent(property -> {
+//						add.accept(property);
+//
+//						for (String alias : getAliases(feature)) {
+//							propertiesMap.put(alias, property);
+//						}
+//					});
+//				}
+//
+//				for (EOperation operation : type.getEAllOperations()) {
+//					EAnnotation annotation = operation.getEAnnotation("JsonProperty");
+//
+//					if (annotation != null && operation.getEParameters().isEmpty()) {
+//						add.accept(new EObjectOperationProperty(getElementName(operation, features), operation));
+//					}
+//				}
+//			}
+//
+//			return new CodecEObjectPropertyMap(type, propertiesMap, properties);
+//		}
+//
+//		private void handleIdentity(Consumer<EObjectProperty> add, EStructuralFeature idFeature) {
+//			if (EMFModule.Feature.OPTION_USE_ID.enabledIn(features)) {
+//				add.accept(new CodecIdentityProperty(identityInfo, idFeature));
+//				return;
+//			}
+//			if (CodecFeature.OPTION_USE_IDFIELD.enabledIn(features)) {
+//				add.accept(new CodecIdentityProperty(new CodecIdentityInfo(CodecProperties.ID_KEY.getKeyValue(), true),
+//						idFeature));
+//			}
+//		}
+//
+//		private Optional<EObjectFeatureProperty> createFeatureProperty(final DatabindContext ctxt,
+//				final EcoreTypeFactory factory, final EClass type, final EStructuralFeature feature) {
+//			if (isCandidate(feature)) {
+//				JavaType javaType = factory.typeOf(ctxt, type, feature);
+//				if (javaType != null) {
+//					return Optional.of(new CodecFeatureProperty(feature, javaType, features));
+//				}
+//			}
+//
+//			return Optional.empty();
+//		}
+//
+//		boolean isFeatureMapEntry(final EStructuralFeature feature) {
+//			EAnnotation annotation = feature.getEAnnotation(ExtendedMetaData.ANNOTATION_URI);
+//
+//			return annotation != null && annotation.getDetails().containsKey("group");
+//		}
+//
+//		boolean isCandidate(final EStructuralFeature feature) {
+//			if (feature instanceof EAttribute) {
+//				return isCandidate((EAttribute) feature);
+//			}
+//			return isCandidate((EReference) feature);
+//		}
+//
+//		boolean isCandidate(final EAttribute attribute) {
+//			return isFeatureMapEntry(attribute) || (!FeatureMapUtil.isFeatureMap(attribute)
+//					&& !(attribute.isDerived() || attribute.isTransient()) && !JsonAnnotations.shouldIgnore(attribute));
+//		}
+//
+//		boolean isCandidate(final EReference eReference) {
+//			if (isFeatureMapEntry(eReference)) {
+//				return true;
+//			}
+//			if (FeatureMapUtil.isFeatureMap(eReference) || eReference.isTransient()
+//					|| JsonAnnotations.shouldIgnore(eReference)) {
+//				return false;
+//			}
+//
+//			EReference opposite = eReference.getEOpposite();
+//			return !(opposite != null && opposite.isContainment());
+//		}
+//
+//		private EObjectProperty getTypeProperty(final EClass type, final int features) {
+//			EcoreTypeInfo currentTypeInfo = null;
+//
+//			if (type != null && !JsonAnnotations.shouldIgnoreType(type)) {
+//				currentTypeInfo = JsonAnnotations.getTypeProperty(type, typeInfo.getValueReader(),
+//						typeInfo.getValueWriter());
+//			}
+//
+//			if (currentTypeInfo == null) {
+//				currentTypeInfo = typeInfo;
+//			}
+//
+//			return new CodecTypeProperty(currentTypeInfo, features);
+//		}
+//
+//		private CodecSuperTypeProperty getSuperTypeProperty(final EClass type, final int features) {
+//			Object attribute = config.getAttributes().getAttribute(CodecProperties.SUPER_TYPE_KEY.name());
+//			CodecSuperTypeInfo superTypeInfo = new CodecSuperTypeInfo();
+//			if (nonNull(attribute)) {
+//				superTypeInfo = new CodecSuperTypeInfo(attribute.toString());
+//			}
+//			return new CodecSuperTypeProperty(superTypeInfo, features);
+//		}
+//
+//		public CodecEObjectPropertyMap constructDefault(final DatabindContext ctxt) {
+//			return construct(ctxt, null);
+//		}
+//
+//		public CodecEObjectPropertyMap find(final DeserializationContext ctxt, final EClass defaultType,
+//				final Iterator<String> fields) {
+//			List<EClass> types = EMFContext.allSubTypes(ctxt, defaultType);
+//			Map<String, EClass> properties = new HashMap<>();
+//			for (EClass type : types) {
+//				EObjectProperty p = getTypeProperty(type, features);
+//				properties.put(p.getFieldName(), type);
+//			}
+//
+//			while (fields.hasNext()) {
+//				String field = fields.next();
+//
+//				if (properties.containsKey(field)) {
+//					return construct(ctxt, properties.get(field));
+//				}
+//			}
+//
+//			return construct(ctxt, defaultType);
+//		}
+//
+//	}
+//
+//	private final Map<String, EObjectProperty> propertiesMap;
+//	private final Set<EObjectProperty> properties;
+//	private final EClass type;
+//
+//	private EObjectTypeProperty typeProperty;
+//
+//	private CodecEObjectPropertyMap(final EClass type, final Map<String, EObjectProperty> propertiesMap,
+//			final Set<EObjectProperty> properties) {
+//		this.type = type;
+//		this.propertiesMap = propertiesMap;
+//		this.properties = properties;
+//	}
+//
+//	public EObjectProperty findProperty(final String field) {
+//		return propertiesMap.get(field);
+//	}
+//
+//	public Iterable<EObjectProperty> getProperties() {
+//		return properties;
+//	}
+//
+//	public EObjectTypeProperty getTypeProperty() {
+//		if (typeProperty == null) {
+//			for (EObjectProperty property : properties) {
+//				if (property instanceof EObjectTypeProperty) {
+//					typeProperty = (EObjectTypeProperty) property;
+//				}
+//			}
+//		}
+//		return typeProperty;
+//	}
+//
+//	@Override
+//	public boolean equals(final Object o) {
+//		if (this == o) {
+//			return true;
+//		}
+//		if (o == null || getClass() != o.getClass()) {
+//			return false;
+//		}
+//		CodecEObjectPropertyMap that = (CodecEObjectPropertyMap) o;
+//		return Objects.equals(properties, that.properties) && Objects.equals(type, that.type);
+//	}
+//
+//	@Override
+//	public int hashCode() {
+//		return Objects.hash(properties, type);
+//	}
+//}

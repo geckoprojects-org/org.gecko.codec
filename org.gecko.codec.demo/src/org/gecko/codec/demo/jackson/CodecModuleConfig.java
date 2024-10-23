@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.resource.Resource;
  */
 public @interface CodecModuleConfig {
 	
-	String codecType() default "json";
+	String type() default "json";
 	
 	String codecModuleName() default "gecko-codec-module";
 	

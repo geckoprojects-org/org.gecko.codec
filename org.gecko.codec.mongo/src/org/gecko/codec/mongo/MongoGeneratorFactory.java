@@ -21,7 +21,7 @@ import org.osgi.service.component.annotations.Component;
  * @author grune
  * @since Apr 10, 2024
  */
-@Component(service = CodecGeneratorFactory.class)
+@Component(immediate=true, name = "MongoGeneratorFactory", service = CodecGeneratorFactory.class, property = {"type=mongo"})
 public class MongoGeneratorFactory implements CodecGeneratorFactory<BsonWriter, MongoCodecGenerator>{
 
 	/* 
