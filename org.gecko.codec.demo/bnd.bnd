@@ -9,4 +9,5 @@
 	org.gecko.codec.emfjson,\
 	org.gecko.codec.info.model,\
 	org.gecko.codec,\
-	com.fasterxml.jackson.core.jackson-annotations
+	com.fasterxml.jackson.core.jackson-annotations,\
+	org.gecko.codec.constants;version=latest

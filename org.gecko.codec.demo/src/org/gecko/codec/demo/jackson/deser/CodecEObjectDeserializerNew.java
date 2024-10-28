@@ -93,6 +93,7 @@ public class CodecEObjectDeserializerNew extends JsonDeserializer<EObject> {
 //		This fixes the issue when we don't have a _type property for contained ref, to retrieve the actual type
 //		In case of root obj we have the ROOT_OBJECT option that is mandatory if the _type is not set so we 
 //		can use that to construct everything		
+//		TODO: constant for root object
 		EClass type = defaultType == null ? ctxt.getAttribute("ROOT_OBJECT") == null ? null : (EClass) ctxt.getAttribute("ROOT_OBJECT") : defaultType;	
 		EObject current = type == null ? null : EcoreUtil.create(type);
 		

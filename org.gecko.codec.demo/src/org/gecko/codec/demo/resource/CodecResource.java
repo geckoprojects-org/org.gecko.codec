@@ -34,11 +34,11 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
+import org.gecko.codec.constants.CodecAnnotations;
+import org.gecko.codec.constants.CodecModuleOptions;
+import org.gecko.codec.constants.ObjectMapperOptions;
 import org.gecko.codec.demo.jackson.CodecModule;
-import org.gecko.codec.demo.jackson.CodecModuleOptions;
-import org.gecko.codec.info.CodecAnnotations;
 import org.gecko.codec.info.CodecModelInfo;
-import org.gecko.codec.info.ObjectMapperOptions;
 import org.gecko.codec.info.codecinfo.CodecValueReader;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
@@ -397,7 +397,10 @@ public class CodecResource extends ResourceImpl {
 				break;
 			case CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA:
 				moduleBuilder.withUseNamesFromExtendedMetaData((boolean) options.get(k));
-				break;				
+				break;			
+			case CodecModuleOptions.CODEC_MODULE_WIRTE_ENUM_LITERAL:
+				moduleBuilder.withWriteEnumLiterals((boolean) options.get(k));
+				break;
 			}
 		});
 	}

@@ -1,9 +1,7 @@
 package org.gecko.codec.info.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +14,7 @@ import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
@@ -26,9 +25,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.impl.DynamicEObjectImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.gecko.codec.info.CodecAnnotations;
+import org.gecko.codec.constants.CodecAnnotations;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoFactory;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
@@ -56,51 +54,17 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	/** serialVersionUID */
 	private static final long serialVersionUID = 7749336016374647599L;
 
-	private transient Map<Class<?>, EClassifier> classes = new ConcurrentHashMap<>();
-	private transient Map<EClass, List<EClass>> upperHierarchy = new ConcurrentHashMap<>();
-	private transient Map<EClass, List<EClass>> needsRevisiting = new ConcurrentHashMap<>();
 	private transient List<EPackageConfigurator> list = new ArrayList<>();
 
-	private Map<String, PackageCodecInfo> ePackageCodecInfoMap = new HashMap<>();
-	private Map<InfoType, CodecInfoHolder> codecInfoHolderMap = new HashMap<>();
+	private Map<String, PackageCodecInfo> ePackageCodecInfoMap = new ConcurrentHashMap<>();
+	private Map<InfoType, CodecInfoHolder> codecInfoHolderMap = new ConcurrentHashMap<>();
 
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 	
 	@Activate
 	public void activate() {
-		PackageCodecInfo packageInfo = createCodecInfo(EcorePackage.eINSTANCE);
+		PackageCodecInfo packageInfo = doCreatePackageCodecInfo(EcorePackage.eINSTANCE);
 		ePackageCodecInfoMap.put(EcorePackage.eINSTANCE.getNsURI(), packageInfo);
-	}
-
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gecko.emf.osgi.model.info.EMFModelInfo#getEClassifierForClass(java.
-	 * lang.Class)
-	 */
-	@Override
-	public Optional<EClassifier> getEClassifierForClass(Class<?> clazz) {
-		return classes.entrySet().stream().filter(e -> e.getKey().equals(clazz)).map(Entry::getValue).findFirst();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gecko.emf.osgi.model.info.EMFModelInfo#getEClassifierForClass(java.
-	 * lang.String)
-	 */
-	@Override
-	public Optional<EClassifier> getEClassifierForClass(String fullQualifiedClassName) {
-		lock.readLock().lock();
-		try {
-			return classes.entrySet().stream().filter(e -> e.getKey().getName().equals(fullQualifiedClassName))
-					.map(Entry::getValue).findFirst();
-		} finally {
-			lock.readLock().unlock();
-		}
 	}
 
 	@Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
@@ -115,12 +79,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	}
 
 	private synchronized void refresh() {
-		classes = new ConcurrentHashMap<>();
-		upperHierarchy = new ConcurrentHashMap<>();
-		needsRevisiting = new ConcurrentHashMap<>();
-
 		list.forEach(c -> c.configureEPackage(this));
-
 	}
 
 	public void unbindEPackageConfigurator(EPackageConfigurator configurator) {
@@ -143,33 +102,24 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	public Object put(String uri, Object value) {
 		if (value instanceof EPackage) {
 			EPackage ePackage = (EPackage) value;
-			addEClassesOfEPackage(ePackage);
+			createPackageCodecInfo(ePackage);
 		}
 		return null;
 	}
 
-	private synchronized void addEClassesOfEPackage(EPackage ePackage) {
+	private synchronized void createPackageCodecInfo(EPackage ePackage) {
 
-		PackageCodecInfo packageInfo = createCodecInfo(ePackage);
+		PackageCodecInfo packageInfo = doCreatePackageCodecInfo(ePackage);
 		ePackageCodecInfoMap.put(ePackage.getNsURI(), packageInfo);
-
 		createCodecInfoHolderMap();
-
-		ePackage.getEClassifiers().stream().filter(ec -> ec.getInstanceClass() != null).forEach(ec -> {
-			analyseHierarchy(ec);
-			Class<?> instanceClass = ec.getInstanceClass();
-			if (instanceClass != DynamicEObjectImpl.class) {
-				classes.put(instanceClass, ec);
-			}
-		});
 	}
 
-	private PackageCodecInfo createCodecInfo(EPackage ePackage) {
+	private PackageCodecInfo doCreatePackageCodecInfo(EPackage ePackage) {
 		PackageCodecInfo ePackageCodecInfo = CodecInfoFactory.eINSTANCE.createPackageCodecInfo();
 		ePackageCodecInfo.setId(ePackage.getNsURI());
 		ePackageCodecInfo.setEPackage(ePackage);
 		for(EPackage subPackage : ePackage.getESubpackages()) {
-			ePackageCodecInfo.getSubPackageCodecInfo().add(createCodecInfo(subPackage));
+			ePackageCodecInfo.getSubPackageCodecInfo().add(doCreatePackageCodecInfo(subPackage));
 		}
 		ePackage.getEClassifiers().stream().filter(ec -> ec.getInstanceClass() != null).forEach(ec -> {
 			ePackageCodecInfo.getEClassCodecInfo().add(createCodecEClassInfo(ec));
@@ -302,6 +252,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		featureInfo.setId(UUID.randomUUID().toString());
 		featureInfo.setType(feature instanceof EAttribute ? InfoType.ATTRIBUTE : 
 			feature instanceof EOperation ? InfoType.OPERATION : InfoType.REFERENCE);
+		if(feature.getEType() instanceof EEnum) featureInfo.setType(InfoType.ENUMERATOR);
+		
 		featureInfo.setKey(getElementName(feature));
 		featureInfo.getFeatures().add(feature);
 		
@@ -381,34 +333,34 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	 * Here we create the {@link TypeInfo} instance ... 
 	 * @param ec EClass to analyze the Hierarchy for
 	 */
-	private void analyseHierarchy(EClassifier ec) {
-		if (!(ec instanceof EClass) || ec.getEPackage().equals(EcorePackage.eINSTANCE)) {
-			return;
-		}
-		EClass eClass = (EClass) ec;
-		List<EClass> thisHierarchy = needsRevisiting.remove(eClass);
-		if (thisHierarchy == null) {
-			thisHierarchy = Collections.synchronizedList(new LinkedList<EClass>());
-		}
-		upperHierarchy.put(eClass, thisHierarchy);
-		eClass.getEAllSuperTypes().forEach(superEClass -> {
-			if (superEClass.equals(EcorePackage.Literals.ECLASS)) {
-				return;
-			}
-			if (upperHierarchy.containsKey(superEClass)) {
-				List<EClass> hierarchy = upperHierarchy.get(superEClass);
-				if (!hierarchy.contains(superEClass)) {
-					hierarchy.add(eClass);
-				}
-			} else {
-				List<EClass> otherHierachy = needsRevisiting.getOrDefault(superEClass,
-						Collections.synchronizedList(new LinkedList<EClass>()));
-				otherHierachy.add(eClass);
-				needsRevisiting.put(superEClass, otherHierachy);
-			}
-		});
-
-	}
+//	private void analyseHierarchy(EClassifier ec) {
+//		if (!(ec instanceof EClass) || ec.getEPackage().equals(EcorePackage.eINSTANCE)) {
+//			return;
+//		}
+//		EClass eClass = (EClass) ec;
+//		List<EClass> thisHierarchy = needsRevisiting.remove(eClass);
+//		if (thisHierarchy == null) {
+//			thisHierarchy = Collections.synchronizedList(new LinkedList<EClass>());
+//		}
+//		upperHierarchy.put(eClass, thisHierarchy);
+//		eClass.getEAllSuperTypes().forEach(superEClass -> {
+//			if (superEClass.equals(EcorePackage.Literals.ECLASS)) {
+//				return;
+//			}
+//			if (upperHierarchy.containsKey(superEClass)) {
+//				List<EClass> hierarchy = upperHierarchy.get(superEClass);
+//				if (!hierarchy.contains(superEClass)) {
+//					hierarchy.add(eClass);
+//				}
+//			} else {
+//				List<EClass> otherHierachy = needsRevisiting.getOrDefault(superEClass,
+//						Collections.synchronizedList(new LinkedList<EClass>()));
+//				otherHierachy.add(eClass);
+//				needsRevisiting.put(superEClass, otherHierachy);
+//			}
+//		});
+//
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -429,27 +381,6 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	public EPackage getEPackage(String nsUri) {
 		throw new UnsupportedOperationException("This method must not be called");
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gecko.emf.osgi.model.info.EMFModelInfo#getUpperTypeHierarchyForEClass(
-	 * org.eclipse.emf.ecore.EClass)
-	 */
-	@Override
-	public List<EClass> getUpperTypeHierarchyForEClass(EClass eClass) {
-		lock.readLock().lock();
-		try {
-			if (!upperHierarchy.containsKey(eClass)) {
-				return Collections.emptyList();
-			}
-
-			return upperHierarchy.get(eClass);
-		} finally {
-			lock.readLock().unlock();
-		}
 	}
 
 	/* 

@@ -26,6 +26,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getReferenceCodecInfo <em>Reference Codec Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getAttributeCodecInfo <em>Attribute Codec Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getOperationCodecInfo <em>Operation Codec Info</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getEnumeratorCodecInfo <em>Enumerator Codec Info</em>}</li>
  * </ul>
  *
  * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo()
@@ -194,5 +195,18 @@ public interface EClassCodecInfo {
 	 * @generated
 	 */
 	EList<FeatureCodecInfo> getOperationCodecInfo();
+
+	/**
+	 * Returns the value of the '<em><b>Enumerator Codec Info</b></em>' reference list.
+	 * The list contents are of type {@link org.gecko.codec.info.codecinfo.FeatureCodecInfo}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Enumerator Codec Info</em>' reference list.
+	 * @see org.gecko.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_EnumeratorCodecInfo()
+	 * @model transient="true" volatile="true" derived="true" suppressedSetVisibility="true"
+	 *        annotation="http://www.eclipse.org/emf/2002/GenModel get='return &lt;%org.eclipse.emf.common.util.ECollections%&gt;.asEList(getFeatureInfo().stream().filter(f-&gt;&lt;%org.gecko.codec.info.codecinfo.InfoType%&gt;.ENUMERATOR.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%&gt;.toList()));'"
+	 * @generated
+	 */
+	EList<FeatureCodecInfo> getEnumeratorCodecInfo();
 
 } // EClassCodecInfo

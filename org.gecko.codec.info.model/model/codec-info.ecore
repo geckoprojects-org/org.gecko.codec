@@ -56,6 +56,13 @@
         <details key="suppressedSetVisibility" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="enumeratorCodecInfo" upperBound="-1"
+        eType="#//FeatureCodecInfo" volatile="true" transient="true" derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="get" value="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatureInfo().stream().filter(f->&lt;%org.gecko.codec.info.codecinfo.InfoType%>.ENUMERATOR.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+        <details key="suppressedSetVisibility" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FeatureCodecInfo">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -131,7 +138,8 @@
     <eLiterals name="OBJECT" value="4"/>
     <eLiterals name="OPERATION" value="5"/>
     <eLiterals name="SUPER_TYPE" value="6"/>
-    <eLiterals name="OTHER" value="10"/>
+    <eLiterals name="ENUMERATOR" value="7"/>
+    <eLiterals name="OTHER" value="100"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CodecValueReader" abstract="true" interface="true">
     <eTypeParameters name="V"/>

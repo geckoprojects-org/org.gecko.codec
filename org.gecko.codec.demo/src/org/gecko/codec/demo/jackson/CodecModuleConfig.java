@@ -186,5 +186,8 @@ public @interface CodecModuleConfig {
 	String timestampKey() default "_timestamp";
 	
 	
+	boolean writeEnumLiterals() default false;
+	
+	
 
 }

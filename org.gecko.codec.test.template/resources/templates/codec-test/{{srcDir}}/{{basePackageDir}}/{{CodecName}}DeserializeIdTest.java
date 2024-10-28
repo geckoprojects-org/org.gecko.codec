@@ -18,8 +18,9 @@ import org.gecko.code.demo.model.person.PersonPackage;
 
 import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.CodecModuleOptions;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
+
+import org.gecko.codec.constants.CodecModuleOptions;
 
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.test.helper.CodecTestSetting;

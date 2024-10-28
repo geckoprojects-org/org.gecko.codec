@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.demo.jackson;
+package org.gecko.codec.constants;
 
 /**
  * 
@@ -63,5 +63,7 @@ public interface CodecModuleOptions {
 	String CODEC_MODULE_TIMESTAMP_KEY = "codec.module.timestamp.key";
 	
 	String CODEC_MODULE_SUPERTYPE_KEY = "codec.module.supertype.key";
+	
+	String CODEC_MODULE_WIRTE_ENUM_LITERAL = "codec.module.write.enum.literal";
 
 }

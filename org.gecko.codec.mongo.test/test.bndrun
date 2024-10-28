@@ -8,7 +8,7 @@
 	bnd.identity;id='org.gecko.codec.mongo.test'
 	
 -runbundles.test: \
-	org.gecko.codec.demo.mongo.test;version=snapshot
+	org.gecko.codec.mongo.test;version=snapshot
 
 -runfw: org.apache.felix.framework
 

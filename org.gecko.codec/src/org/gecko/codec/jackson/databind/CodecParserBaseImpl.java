@@ -19,13 +19,14 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.base.ParserBase;
 import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.json.JsonReadContext;
 
 /**
  * 
  * @author mark
  * @since 09.01.2024
  */
-public class CodecParserBaseImpl extends ParserBase {
+public class CodecParserBaseImpl extends CodecParserBase {
 
 	/**
 	 * Creates a new instance.
@@ -116,6 +117,15 @@ public class CodecParserBaseImpl extends ParserBase {
 	public void setCodec(ObjectCodec oc) {
 		// TODO Auto-generated method stub
 		System.out.println("set codec");
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.base.ParserBase#getParsingContext()
+	 */
+	@Override
+	public CodecReadContext getParsingContext() {
+		return super.getParsingContext();
 	}
 
 }

@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.info;
+package org.gecko.codec.constants;
 
 /**
  * 

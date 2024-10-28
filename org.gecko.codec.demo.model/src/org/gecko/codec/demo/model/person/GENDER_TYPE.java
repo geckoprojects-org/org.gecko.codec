@@ -39,7 +39,7 @@ public enum GENDER_TYPE implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	FEMALE(1, "FEMALE", "FEMALE"),
+	FEMALE(1, "FEMALE", "Female"),
 
 	/**
 	 * The '<em><b>OTHER</b></em>' literal object.
@@ -67,7 +67,7 @@ public enum GENDER_TYPE implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #FEMALE
-	 * @model
+	 * @model literal="Female"
 	 * @generated
 	 * @ordered
 	 */

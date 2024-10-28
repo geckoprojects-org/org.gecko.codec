@@ -84,7 +84,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="GENDER_TYPE">
     <eLiterals name="MALE"/>
-    <eLiterals name="FEMALE" value="1"/>
+    <eLiterals name="FEMALE" value="1" literal="Female"/>
     <eLiterals name="OTHER" value="2"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SpecificBusinessPerson" eSuperTypes="#//BusinessPerson"/>

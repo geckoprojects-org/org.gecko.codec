@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -139,16 +141,31 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 					current.eSet(feature, newObjs);
 				}
 			}  else {
-				System.out.println(jp.getParsingContext().getCurrentIndex() + " " 
-						+ jp.getParsingContext().getCurrentName() + " "
-						+ jp.getParsingContext().getCurrentValue());
-				Object value = deserializer.deserialize(jp, ctxt);
-				//		                If a custom ValueReader is set we use it to convert the deserialized value
-				if (value != null && reader != null) {    	
-					Object v = reader.readValue(value, ctxt);
-					current.eSet(feature, v);
+//				System.out.println(jp.getParsingContext().getCurrentIndex() + " " 
+//						+ jp.getParsingContext().getCurrentName() + " "
+//						+ jp.getParsingContext().getCurrentValue());
+				
+				
+				if(feature.getEType() instanceof EEnum eDataType) {
+					EEnumLiteral literal = null;
+					if(codecModule.isWriteEnumLiterals()) {
+						literal = ((EEnum) eDataType).getEEnumLiteralByLiteral(jp.getText());
+					}
+					else {
+						literal = ((EEnum) eDataType).getEEnumLiteral(jp.getText());
+					}
+					current.eSet(feature, literal.getInstance());
 				}
-				else current.eSet(feature, value);
+				else {
+					Object value = deserializer.deserialize(jp, ctxt);
+					//		                If a custom ValueReader is set we use it to convert the deserialized value
+					if (value != null && reader != null) {    	
+						Object v = reader.readValue(value, ctxt);
+						current.eSet(feature, v);
+					}
+					else current.eSet(feature, value);
+				}
+				
 			}
 		}
 		break;

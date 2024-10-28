@@ -28,7 +28,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
 import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.CodecModuleOptions;
+import org.gecko.codec.constants.CodecModuleOptions;
 import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;

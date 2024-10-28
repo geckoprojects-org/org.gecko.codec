@@ -10,6 +10,7 @@ encoding//src/org/gecko/codec/mongo/test/CodecMongoDeserializeNoTypeInfoTest.jav
 encoding//src/org/gecko/codec/mongo/test/CodecMongoDeserializeNullValuesTest.java=UTF-8
 encoding//src/org/gecko/codec/mongo/test/CodecMongoDeserializeReferenceTest.java=UTF-8
 encoding//src/org/gecko/codec/mongo/test/CodecMongoDeserializeWithCustomReaderTest.java=UTF-8
+encoding//src/org/gecko/codec/mongo/test/CodecMongoEnumTest.java=UTF-8
 encoding//src/org/gecko/codec/mongo/test/CodecMongoIdOptionsTest.java=UTF-8
 encoding//src/org/gecko/codec/mongo/test/CodecMongoNameFromExtendedMetadataTest.java=UTF-8
 encoding//src/org/gecko/codec/mongo/test/CodecMongoSerializeDefaultValuesTest.java=UTF-8

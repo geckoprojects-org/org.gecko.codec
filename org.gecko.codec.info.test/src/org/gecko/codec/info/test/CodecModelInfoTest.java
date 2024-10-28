@@ -108,8 +108,6 @@ public class CodecModelInfoTest {
 		assertThat(identityInfo.getFeatures()).hasSize(2);
 		assertEquals(identityInfo.getFeatures().get(0), demoModel.getPerson_Name());
 		assertEquals(identityInfo.getFeatures().get(1), demoModel.getPerson_LastName());
-		assertEquals("DEFAULT_ID_READER", identityInfo.getValueReaderName());
-		assertEquals( "DEFAULT_ID_WRITER", identityInfo.getValueWriterName());
 		assertEquals("COMBINED", identityInfo.getIdStrategy());
 		assertEquals( "-", identityInfo.getIdSeparator());
 	}
@@ -143,7 +141,7 @@ public class CodecModelInfoTest {
 		
 		List<FeatureCodecInfo> refInfos = eClassCodecInfo.getReferenceCodecInfo();
 		assertNotNull(refInfos);
-		assertThat(refInfos).hasSize(2);
+		assertThat(refInfos).hasSize(5); //containedAdd, containedAdds, nonContainedAdd, nonContainedAdds, businessAdd
 	}
 	
 	@Test
@@ -184,16 +182,36 @@ public class CodecModelInfoTest {
 		assertThat(codecInfoHolder.getReaders()).hasSize(3);
 		assertThat(codecInfoHolder.getWriters()).hasSize(3);
 		
+		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.SUPER_TYPE);
+		assertNotNull(codecInfoHolder);
+		assertEquals(codecInfoHolder.getInfoType(), InfoType.SUPER_TYPE);
+		assertThat(codecInfoHolder.getReaders()).isEmpty();
+		assertThat(codecInfoHolder.getWriters()).hasSize(2);
+		
 		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.REFERENCE);
 		assertNotNull(codecInfoHolder);
 		assertEquals(codecInfoHolder.getInfoType(), InfoType.REFERENCE);
-		assertThat(codecInfoHolder.getReaders()).hasSize(1);
-		assertThat(codecInfoHolder.getWriters()).hasSize(1);
+		assertThat(codecInfoHolder.getReaders()).isEmpty();
+		assertThat(codecInfoHolder.getWriters()).isEmpty();
 		
 		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
 		assertNotNull(codecInfoHolder);
+		assertThat(codecInfoHolder.getReaders()).isEmpty();
+		assertThat(codecInfoHolder.getWriters()).isEmpty();
 		
 		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.OPERATION);
 		assertNotNull(codecInfoHolder);
+		assertThat(codecInfoHolder.getReaders()).isEmpty();
+		assertThat(codecInfoHolder.getWriters()).isEmpty();
+		
+		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.OBJECT);
+		assertNotNull(codecInfoHolder);
+		assertThat(codecInfoHolder.getReaders()).isEmpty();
+		assertThat(codecInfoHolder.getWriters()).isEmpty();
+		
+		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.OTHER);
+		assertNotNull(codecInfoHolder);
+		assertThat(codecInfoHolder.getReaders()).isEmpty();
+		assertThat(codecInfoHolder.getWriters()).isEmpty();
 	}
 }

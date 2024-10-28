@@ -119,7 +119,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	}
 
 	private Object getCurrentValue(BsonType bsonType) {
-		switch (bsonType) {
+		switch (bsonType) { 
 		case STRING:
 			return reader.readString();
 		case BOOLEAN:

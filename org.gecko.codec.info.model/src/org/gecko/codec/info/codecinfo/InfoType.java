@@ -92,6 +92,16 @@ public enum InfoType implements Enumerator {
 	SUPER_TYPE(6, "SUPER_TYPE", "SUPER_TYPE"),
 
 	/**
+	 * The '<em><b>ENUMERATOR</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #ENUMERATOR_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	ENUMERATOR(7, "ENUMERATOR", "ENUMERATOR"),
+
+	/**
 	 * The '<em><b>OTHER</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -99,7 +109,7 @@ public enum InfoType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	OTHER(10, "OTHER", "OTHER");
+	OTHER(100, "OTHER", "OTHER");
 
 	/**
 	 * The '<em><b>IDENTITY</b></em>' literal value.
@@ -179,6 +189,17 @@ public enum InfoType implements Enumerator {
 	public static final int SUPER_TYPE_VALUE = 6;
 
 	/**
+	 * The '<em><b>ENUMERATOR</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #ENUMERATOR
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENUMERATOR_VALUE = 7;
+
+	/**
 	 * The '<em><b>OTHER</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -187,7 +208,7 @@ public enum InfoType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int OTHER_VALUE = 10;
+	public static final int OTHER_VALUE = 100;
 
 	/**
 	 * An array of all the '<em><b>Info Type</b></em>' enumerators.
@@ -204,6 +225,7 @@ public enum InfoType implements Enumerator {
 			OBJECT,
 			OPERATION,
 			SUPER_TYPE,
+			ENUMERATOR,
 			OTHER,
 		};
 
@@ -268,6 +290,7 @@ public enum InfoType implements Enumerator {
 			case OBJECT_VALUE: return OBJECT;
 			case OPERATION_VALUE: return OPERATION;
 			case SUPER_TYPE_VALUE: return SUPER_TYPE;
+			case ENUMERATOR_VALUE: return ENUMERATOR;
 			case OTHER_VALUE: return OTHER;
 		}
 		return null;

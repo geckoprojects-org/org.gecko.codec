@@ -16,4 +16,5 @@
  * @author mark
  * @since 30.07.2024
  */
+@org.osgi.annotation.versioning.Version("1.0.0")
 package org.gecko.codec.info.impl;

@@ -223,13 +223,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int ECLASS_CODEC_INFO__OPERATION_CODEC_INFO = 8;
 
 	/**
+	 * The feature id for the '<em><b>Enumerator Codec Info</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO = 9;
+
+	/**
 	 * The number of structural features of the '<em>EClass Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO_FEATURE_COUNT = 9;
+	int ECLASS_CODEC_INFO_FEATURE_COUNT = 10;
 
 	/**
 	 * The number of operations of the '<em>EClass Codec Info</em>' class.
@@ -1082,6 +1091,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getEClassCodecInfo_OperationCodecInfo();
 
 	/**
+	 * Returns the meta object for the reference list '{@link org.gecko.codec.info.codecinfo.EClassCodecInfo#getEnumeratorCodecInfo <em>Enumerator Codec Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Enumerator Codec Info</em>'.
+	 * @see org.gecko.codec.info.codecinfo.EClassCodecInfo#getEnumeratorCodecInfo()
+	 * @see #getEClassCodecInfo()
+	 * @generated
+	 */
+	EReference getEClassCodecInfo_EnumeratorCodecInfo();
+
+	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.FeatureCodecInfo <em>Feature Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1620,6 +1640,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference ECLASS_CODEC_INFO__OPERATION_CODEC_INFO = eINSTANCE.getEClassCodecInfo_OperationCodecInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Enumerator Codec Info</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO = eINSTANCE.getEClassCodecInfo_EnumeratorCodecInfo();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.FeatureCodecInfoImpl <em>Feature Codec Info</em>}' class.

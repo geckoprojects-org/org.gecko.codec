@@ -52,6 +52,7 @@ public class CodecModule extends EMFModule {
 	private String refKey;
 	private String proxyKey;
 	private String timestampKey;
+	private boolean writeEnumLiterals;
 
 	private PackageCodecInfo codecModelInfo;
 	private CodecModelInfo codecModelInfoService;
@@ -139,6 +140,10 @@ public class CodecModule extends EMFModule {
 	public String getTimestampKey() {
 		return timestampKey;
 	}
+	
+	public boolean isWriteEnumLiterals() {
+		return writeEnumLiterals;
+	}
 
 	public PackageCodecInfo getCodecModelInfo() {
 		return codecModelInfo;
@@ -172,6 +177,7 @@ public class CodecModule extends EMFModule {
 		this.serializeIdField = builder.serializeIdField;
 		this.codecModelInfo = builder.codecModelInfo;
 		this.codecModelInfoService = builder.codecModelInfoService;
+		this.writeEnumLiterals = builder.writeEnumLiterals;
 	}
 
 	
@@ -214,7 +220,7 @@ public class CodecModule extends EMFModule {
 		private PackageCodecInfo codecModelInfo;
 		private CodecModelInfo codecModelInfoService;
 
-		private String codecType = "";
+		private String codecType = "json";
 		private String codecModuleName = "gecko-codec-module";
 		private boolean serializeDefaultValue = false;
 		private boolean serializeEmptyValue = false;
@@ -225,7 +231,7 @@ public class CodecModule extends EMFModule {
 		private boolean idOnTop = true;
 		private boolean serializeIdField = false;
 		private boolean idFeatureAsPrimaryKey = true;
-		private String idKey = "_id";
+		private String idKey =  "_id";
 		private boolean serializeType = true;
 		private boolean serializeSuperTypes = false;
 		private boolean serializeAllSuperTypes = false;
@@ -235,6 +241,7 @@ public class CodecModule extends EMFModule {
 		private String refKey = "$ref";
 		private String proxyKey = "_proxy";
 		private String timestampKey = "_timestamp";
+		private boolean writeEnumLiterals = false;
 
 		public Builder() {
 
@@ -341,6 +348,11 @@ public class CodecModule extends EMFModule {
 			this.serializeSuperTypesAsArray = serializeSuperTypesAsArray;
 			return this;
 		}
+		
+		public Builder withWriteEnumLiterals(boolean writeEnumLiterals) {
+			this.writeEnumLiterals = writeEnumLiterals;
+			return this;
+		}
 
 		public Builder bindCodecModelInfo(PackageCodecInfo codecModelInfo) {
 			this.codecModelInfo = codecModelInfo;
@@ -351,6 +363,7 @@ public class CodecModule extends EMFModule {
 			this.codecModelInfoService = codecModelInfoService;
 			return this;
 		}
+	
 
 		public CodecModule build() {
 			return new CodecModule(this);

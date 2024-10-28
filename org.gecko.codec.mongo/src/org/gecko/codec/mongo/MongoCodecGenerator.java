@@ -105,6 +105,7 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 
 	@Override
 	public <T> void doWriteArray(T[] array, int offset, int length, Class<T> clazz) throws IOException {
+//		TODO: this doesn't look right to me...
 		writer.writeEndArray();
 	}
 

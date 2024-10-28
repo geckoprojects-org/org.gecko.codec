@@ -117,7 +117,6 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		} else {
 			gen.writeFieldName(feature.getName());
 		}
-		
 		serializeSingleAttributeValue(rootObj, value, feature, gen, provider);
 	}
 	

@@ -39,7 +39,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
  * @author ilenia
  * @since Aug 14, 2024
  */
-@Component(name = "ObjectMapperConfigurator", service = ObjectMapperConfigurator.class, configurationPolicy = ConfigurationPolicy.REQUIRE)
+@Component(name = "ObjectMapperConfigurator", service = ObjectMapperConfigurator.class, 
+configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
 public class ObjectMapperConfigurator {
 	
 	@Reference(target="(type=json)")

@@ -68,10 +68,6 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		EMFContext.setParent(provider, rootObj);
 		if(superTypeCodecInfo.isIgnoreSuperType()) return;
-//		EClass objectType = rootObj.eClass();
-//		EReference containment = rootObj.eContainmentFeature();
-		// check for our implementation with additional callbacks 
-		
 		
 		if (codecModule.isSerializeType() && codecModule.isSerializeSuperTypes()) {
 			CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.SUPER_TYPE);

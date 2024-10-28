@@ -47,6 +47,7 @@ import org.gecko.codec.info.codecinfo.TypeInfo;
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getReferenceCodecInfo <em>Reference Codec Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getAttributeCodecInfo <em>Attribute Codec Info</em>}</li>
  *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getOperationCodecInfo <em>Operation Codec Info</em>}</li>
+ *   <li>{@link org.gecko.codec.info.codecinfo.impl.EClassCodecInfoImpl#getEnumeratorCodecInfo <em>Enumerator Codec Info</em>}</li>
  * </ul>
  *
  * @generated
@@ -388,6 +389,16 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
+	public EList<FeatureCodecInfo> getEnumeratorCodecInfo() {
+		return ECollections.asEList(getFeatureInfo().stream().filter(f->InfoType.ENUMERATOR.equals(f.getType())).collect(Collectors.toList()));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
@@ -429,6 +440,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return getAttributeCodecInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_CODEC_INFO:
 				return getOperationCodecInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
+				return getEnumeratorCodecInfo();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -473,6 +486,10 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				getOperationCodecInfo().clear();
 				getOperationCodecInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
 				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
+				getEnumeratorCodecInfo().clear();
+				getEnumeratorCodecInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -512,6 +529,9 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_CODEC_INFO:
 				getOperationCodecInfo().clear();
 				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
+				getEnumeratorCodecInfo().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -542,6 +562,8 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return !getAttributeCodecInfo().isEmpty();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__OPERATION_CODEC_INFO:
 				return !getOperationCodecInfo().isEmpty();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
+				return !getEnumeratorCodecInfo().isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
