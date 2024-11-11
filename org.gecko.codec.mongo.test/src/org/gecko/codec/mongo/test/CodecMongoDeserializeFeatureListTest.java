@@ -28,12 +28,12 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.gecko.codec.constants.CodecAnnotations;
-import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.constants.CodecModelInfoOptions;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.codec.jackson.CodecFactoryConfigurator;
+import org.gecko.codec.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -139,7 +139,7 @@ public class CodecMongoDeserializeFeatureListTest extends MongoEMFSetting {
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
-		personOptions.put(CodecAnnotations.CODEC_IGNORE_FEATURES_LIST, 
+		personOptions.put(CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST, 
 				List.of(PersonPackage.eINSTANCE.getPerson_Age()));
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put("codec.options", classOptions);
@@ -170,7 +170,7 @@ public class CodecMongoDeserializeFeatureListTest extends MongoEMFSetting {
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecAnnotations.CODEC_IGNORE_NOT_FEATURES_LIST, 
+		personOptions.put(CodecModelInfoOptions.CODEC_IGNORE_NOT_FEATURES_LIST, 
 				List.of(PersonPackage.eINSTANCE.getPerson_Age(), 
 						PersonPackage.eINSTANCE.getPerson_TransientAtt()));
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);

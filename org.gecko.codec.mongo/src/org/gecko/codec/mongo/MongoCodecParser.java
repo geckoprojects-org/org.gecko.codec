@@ -14,17 +14,19 @@
 package org.gecko.codec.mongo;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.gecko.codec.CodecReaderProvider;
-import org.gecko.codec.jackson.databind.CodecParserBaseImpl;
+import org.gecko.codec.jackson.databind.CodecParserBaseImpl2;
 
+import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.io.IOContext;
 
-public class MongoCodecParser extends CodecParserBaseImpl {
+public class MongoCodecParser extends CodecParserBaseImpl2 {
 
 	private BsonReader reader;
 	private Object currentValue;
@@ -118,6 +120,25 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		return _currToken;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonParser#canReadObjectId()
+	 */
+	@Override
+	public boolean canReadObjectId() {
+		return true;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonParser#getObjectId()
+	 */
+	@Override
+	public Object getObjectId() throws IOException {
+		System.out.println("OBJECT ID " + currentValue);
+		return currentValue;
+	}
+	
 	private Object getCurrentValue(BsonType bsonType) {
 		switch (bsonType) { 
 		case STRING:
@@ -132,6 +153,10 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 			return reader.readDouble();
 		case OBJECT_ID:
 			return reader.readObjectId().toHexString();
+		case BINARY:
+			return reader.readBinaryData();
+		case DECIMAL128:
+			return reader.readDecimal128();
 		case NULL:
 			reader.readNull();
 			//go through
@@ -158,8 +183,12 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 			return JsonToken.VALUE_STRING;
 		case BOOLEAN:
 			return JsonToken.VALUE_TRUE; //not sure here because in principle also JsonToken.VALUE_FALSE is a valid one...?
+		case BINARY:
+			return JsonToken.VALUE_STRING; // what to put here???
 		case NULL:
 			return JsonToken.VALUE_NULL;
+		case DECIMAL128:
+			return JsonToken.VALUE_NUMBER_FLOAT;
 		default:
 			return JsonToken.FIELD_NAME;
 		}
@@ -190,6 +219,16 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		return (float) currentValue;
 	}
 	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.base.ParserBase#getDecimalValue()
+	 */
+	@Override
+	public BigDecimal getDecimalValue() throws IOException {
+		System.out.println("get BigDecimal" + currentValue);
+		return ((org.bson.types.Decimal128) currentValue).bigDecimalValue();
+	}
+	
 	@Override
 	public int getIntValue() throws IOException {
 		System.out.println("get int " + currentValue);
@@ -198,9 +237,24 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	
 	@Override
 	public String getText() throws IOException {
-		System.out.println("get text " + currentValue);
 		return (String) currentValue;
 	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonParser#getBinaryValue()
+	 */
+	@Override
+	public byte[] getBinaryValue() throws IOException {
+		return ((org.bson.BsonBinary) currentValue).getData();
+	}
+	
+	@Override
+	public byte[] getBinaryValue(Base64Variant variant) throws IOException {
+		
+		return((org.bson.BsonBinary) currentValue).getData();
+    }
+
 
 	@Override
 	public char[] getTextCharacters() throws IOException {

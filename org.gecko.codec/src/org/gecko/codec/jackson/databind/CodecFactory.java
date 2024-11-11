@@ -70,8 +70,8 @@ public class CodecFactory extends JsonFactory {
 	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.DataInput)
 	 */
 	@Override
-	public CodecParserBaseImpl createParser(DataInput in) throws IOException {
-		return new CodecParserBaseImpl(null, -1);
+	public CodecParserBaseImpl2 createParser(DataInput in) throws IOException {
+		return new CodecParserBaseImpl2(null, -1);
 	}
 	
 	/* 
@@ -79,11 +79,11 @@ public class CodecFactory extends JsonFactory {
 	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.net.URL)
 	 */
 	@Override
-	public CodecParserBaseImpl createParser(URL url) throws IOException, JsonParseException {
+	public CodecParserBaseImpl2 createParser(URL url) throws IOException, JsonParseException {
 		IOContext context = _createContext(
 				ContentReference.construct(false, "Hallo Welt", ErrorReportConfiguration.defaults()), true);
 
-		return new CodecParserBaseImpl(context, -1);
+		return new CodecParserBaseImpl2(context, -1);
 	}
 	
 	

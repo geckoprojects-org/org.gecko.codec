@@ -35,11 +35,11 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gecko.codec.constants.ObjectMapperOptions;
-import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.codec.jackson.CodecFactoryConfigurator;
+import org.gecko.codec.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -138,7 +138,7 @@ public class ObjMapperConfigOverwriteTest {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_DATE_FORMAT, df);
 		resource.save(options);
 		
-		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		DateFormat mapperDF = mapper.getDateFormat();
@@ -170,7 +170,7 @@ public class ObjMapperConfigOverwriteTest {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_LOCALE, loc);
 		resource.save(options);
 		
-		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		Locale mapperLoc = mapper.getSerializationConfig().getLocale();
@@ -191,7 +191,7 @@ public class ObjMapperConfigOverwriteTest {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_TIME_ZONE, tz);
 		resource.save(options);
 		
-		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		TimeZone mapperTZ = mapper.getSerializationConfig().getTimeZone();
@@ -211,7 +211,7 @@ public class ObjMapperConfigOverwriteTest {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT, SerializationFeature.CLOSE_CLOSEABLE));
 		resource.save(options);
 		
-		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		assertTrue(mapper.isEnabled(SerializationFeature.INDENT_OUTPUT));
 		assertTrue(mapper.isEnabled(SerializationFeature.CLOSE_CLOSEABLE));
@@ -229,7 +229,7 @@ public class ObjMapperConfigOverwriteTest {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITHOUT, List.of(SerializationFeature.FAIL_ON_EMPTY_BEANS, SerializationFeature.FAIL_ON_SELF_REFERENCES));
 		resource.save(options);
 		
-		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		assertFalse(mapper.isEnabled(SerializationFeature.FAIL_ON_EMPTY_BEANS));
 		assertFalse(mapper.isEnabled(SerializationFeature.FAIL_ON_SELF_REFERENCES));
@@ -247,7 +247,7 @@ public class ObjMapperConfigOverwriteTest {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_DESERIALIZATION_FEATURES_WITH, List.of(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY));
 		resource.save(options);
 		
-		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		assertTrue(mapper.isEnabled(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT));
 		assertTrue(mapper.isEnabled(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY));
@@ -265,7 +265,7 @@ public class ObjMapperConfigOverwriteTest {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_DESERIALIZATION_FEATURES_WITHOUT, List.of(DeserializationFeature.ACCEPT_FLOAT_AS_INT, DeserializationFeature.EAGER_DESERIALIZER_FETCH));
 		resource.save(options);
 		
-		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		assertFalse(mapper.isEnabled(DeserializationFeature.ACCEPT_FLOAT_AS_INT));
 		assertFalse(mapper.isEnabled(DeserializationFeature.EAGER_DESERIALIZER_FETCH));
@@ -287,7 +287,7 @@ public class ObjMapperConfigOverwriteTest {
 						MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
 		resource.save(options);
 		
-		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS));
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES));
@@ -306,7 +306,7 @@ public class ObjMapperConfigOverwriteTest {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT, List.of(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS, MapperFeature.APPLY_DEFAULT_VALUES));
 		resource.save(options);
 		
-		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = objMapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		assertFalse(mapper.isEnabled(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS));
 		assertFalse(mapper.isEnabled(MapperFeature.APPLY_DEFAULT_VALUES));

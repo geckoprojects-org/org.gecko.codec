@@ -28,15 +28,15 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.gecko.codec.constants.CodecAnnotations;
+import org.gecko.codec.constants.CodecModelInfoOptions;
 import org.gecko.codec.constants.CodecModuleOptions;
 import org.gecko.codec.constants.ObjectMapperOptions;
-import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.codec.jackson.CodecFactoryConfigurator;
+import org.gecko.codec.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -144,7 +144,7 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		personOptions.put(CodecAnnotations.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER));
+		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put("codec.options", classOptions);
@@ -177,7 +177,7 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, false); //needed because in the model there is "title" and not "titles" in metadata
-		personOptions.put(CodecAnnotations.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER));
+		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put("codec.options", classOptions);
@@ -207,8 +207,8 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		Map<String, Object> personOptions = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		personOptions.put(CodecAnnotations.CODEC_ID_STRATEGY, "ID_FIELD");
-		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "ID_FIELD");
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put("codec.options", classOptions);
@@ -233,9 +233,9 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		Map<String, Object> personOptions = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		personOptions.put(CodecAnnotations.CODEC_ID_STRATEGY, "COMBINED");
-		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
-		personOptions.put(CodecAnnotations.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Name(), PersonPackage.eINSTANCE.getPerson_LastName()));
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Name(), PersonPackage.eINSTANCE.getPerson_LastName()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put("codec.options", classOptions);
@@ -259,7 +259,7 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> addOptions = new HashMap<>();
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		addOptions.put(CodecAnnotations.CODEC_TYPE_VALUE_WRITER, CodecTestHelper.TEST_TYPE_WRITER);
+		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER, CodecTestHelper.TEST_TYPE_WRITER);
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put("codec.options", classOptions);

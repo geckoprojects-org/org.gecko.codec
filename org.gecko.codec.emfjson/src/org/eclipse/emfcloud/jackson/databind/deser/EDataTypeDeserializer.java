@@ -39,6 +39,8 @@ public class EDataTypeDeserializer extends JsonDeserializer<Object> {
          || EJAVA_OBJECT.equals(dataType)) {
          return EcoreUtil.createFromString(dataType, jp.getText());
       }
+      
+      
       return ctxt.readValue(jp, type);
    }
 

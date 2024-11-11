@@ -14,17 +14,13 @@
 package org.gecko.codec.constants;
 
 /**
+ * These are the options that can be used when saving/loading a Resource, in order to 
+ * overwrite the CodecModule configuration
  * 
  * @author ilenia
  * @since Aug 16, 2024
  */
 public interface CodecModuleOptions {
-	
-	String CODEC_MODULE_TYPE = "codec.type";
-
-	String CODEC_MODULE_NAME = "codec.module.name";
-
-	String CODEC_MODULE_VERSION = "codec.module.version";
 	
 	String CODEC_MODULE_SERIALIZE_DEFAULT_VALUE = "codec.module.serialize.default.value";
 

@@ -26,7 +26,7 @@ import com.fasterxml.jackson.core.json.JsonReadContext;
  * @author mark
  * @since 09.01.2024
  */
-public class CodecParserBaseImpl extends CodecParserBase {
+public class CodecParserBaseImpl extends ParserBase {
 
 	/**
 	 * Creates a new instance.
@@ -124,7 +124,7 @@ public class CodecParserBaseImpl extends CodecParserBase {
 	 * @see com.fasterxml.jackson.core.base.ParserBase#getParsingContext()
 	 */
 	@Override
-	public CodecReadContext getParsingContext() {
+	public JsonReadContext getParsingContext() {
 		return super.getParsingContext();
 	}
 

@@ -79,7 +79,9 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 				writer.writeString(fieldName, (String) object);
 			}
 		} else if (object == null) {
-			writer.writeObjectId(fieldName, new ObjectId());
+			ObjectId objectId = new ObjectId();
+			setCurrentValue(objectId);
+			writer.writeObjectId(fieldName, objectId);
 		} else {
 			System.out.println("???" + object);
 		}
@@ -111,7 +113,8 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 
 	@Override
 	public void doStartWriteArray(int index, String fieldName, Object object) throws IOException {
-		writer.writeStartArray(fieldName);
+		if(fieldName == null) writer.writeStartArray();
+		else writer.writeStartArray(fieldName);
 	}
 
 	@Override
@@ -127,71 +130,84 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 
 	@Override
 	public void doWriteShort(int index, String fieldName, short value) throws IOException {
-		writer.writeInt32(fieldName, value);
+		if(fieldName == null) writer.writeInt32(value);
+		else writer.writeInt32(fieldName, value);
 	}
 
 	@Override
 	public void doWriteLong(int index, String fieldName, long value) throws IOException {
-		writer.writeInt64(fieldName, value);
+		if(fieldName == null) writer.writeInt64(value);
+		else writer.writeInt64(fieldName, value);
 	}
 
 	@Override
 	public void doWriteInt(int index, String fieldName, int value) throws IOException {
-		writer.writeInt32(fieldName, value);
+		if(fieldName == null) writer.writeInt32(value);
+		else writer.writeInt32(fieldName, value);
 	}
 
 	@Override
 	public void doWriteBigInt(int index, String fieldName, BigInteger value) throws IOException {
-		writer.writeString(fieldName, value.toString());
+		if(fieldName == null) writer.writeString(value.toString());
+		else writer.writeString(fieldName, value.toString());
 	}
 
 	@Override
 	public void doWriteBigDecimal(int index, String fieldName, BigDecimal value) throws IOException {
-		writer.writeDecimal128(fieldName, new Decimal128(value));
+		if(fieldName == null) writer.writeDecimal128(new Decimal128(value));
+		else writer.writeDecimal128(fieldName, new Decimal128(value));
 	}
 
 	@Override
 	public void doWriteFloat(int index, String fieldName, float value) throws IOException {
 		// https://stackoverflow.com/questions/7682714/does-mongodb-support-floating-point-types
-		writer.writeDouble(fieldName, value);
+		if(fieldName == null) writer.writeDouble(value);
+		else writer.writeDouble(fieldName, value);
 	}
 
 	@Override
 	public void doWriteDouble(int index, String fieldName, double value) throws IOException {
-		writer.writeDouble(fieldName, value);
+		if(fieldName == null) writer.writeDouble(value);
+		else writer.writeDouble(fieldName, value);
 	}
 
 	@Override
 	public void doWriteChar(int index, String fieldName, char value) throws IOException {
 		// TODO
-		writer.writeString(fieldName, "" + value);
+		if(fieldName == null) writer.writeString(""+value);
+		else writer.writeString(fieldName, "" + value);
 	}
 
 	@Override
 	public void doWriteChars(int index, String fieldName, char[] values) throws IOException {
-		writer.writeString(fieldName, new String(values));
+		if(fieldName == null) writer.writeString(new String(values));
+		else writer.writeString(fieldName, new String(values));
 	}
 
 	@Override
 	public void doWriteBoolean(int index, String fieldName, boolean value) throws IOException {
-		writer.writeBoolean(fieldName, value);
-
+		if(fieldName == null) writer.writeBoolean(value);
+		else writer.writeBoolean(fieldName, value);
 	}
 
 	@Override
 	public void doWriteStringNumber(int index, String fieldName, String value) throws IOException {
-		writer.writeString(fieldName, value);
+		if(fieldName == null) writer.writeString(value);
+		else writer.writeString(fieldName, value);
 	}
 
 	@Override
 	public void doWriteBinary(int index, String fieldName, Base64Variant b64variant, byte[] values, int offset, int len)
 			throws IOException {
-		writer.writeBinaryData(fieldName, new BsonBinary(values));
+		if(fieldName == null) writer.writeBinaryData(new BsonBinary(values));
+		else writer.writeBinaryData(fieldName, new BsonBinary(values));
 	}
 
 	@Override
 	public void doWriteNull(int index, String fieldName) throws IOException {
-		writer.writeNull(fieldName);
+		if(fieldName == null) writer.writeNull();
+		else writer.writeNull(fieldName);
 	}
+	
 
 }

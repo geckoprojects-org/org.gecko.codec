@@ -19,16 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.jackson.CodecFactoryConfigurator;
+import org.gecko.codec.jackson.ObjectMapperConfigurator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -82,7 +82,7 @@ public class ObjMapperConfiguratorTest {
 		assertNotNull(factoryConfigurator);
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		assertTrue(mapper.isEnabled(MapperFeature.PROPAGATE_TRANSIENT_MARKER));
@@ -119,7 +119,7 @@ public class ObjMapperConfiguratorTest {
 		assertNotNull(factoryConfigurator);
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		assertFalse(mapper.isEnabled(MapperFeature.USE_ANNOTATIONS));
@@ -163,7 +163,7 @@ public class ObjMapperConfiguratorTest {
 		assertNotNull(factoryConfigurator);
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		assertTrue(mapper.isEnabled(SerializationFeature.WRAP_ROOT_VALUE));
@@ -197,7 +197,7 @@ public class ObjMapperConfiguratorTest {
 		assertNotNull(factoryConfigurator);
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		assertFalse(mapper.isEnabled(SerializationFeature.FAIL_ON_EMPTY_BEANS));
@@ -229,7 +229,7 @@ public class ObjMapperConfiguratorTest {
 		assertNotNull(factoryConfigurator);
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		assertTrue(mapper.isEnabled(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS));
@@ -268,7 +268,7 @@ public class ObjMapperConfiguratorTest {
 		assertNotNull(factoryConfigurator);
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		assertFalse(mapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
@@ -298,7 +298,7 @@ public class ObjMapperConfiguratorTest {
 	
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 				
 		assertTrue(mapper.isEnabled(StreamWriteFeature.IGNORE_UNKNOWN));
@@ -322,7 +322,7 @@ public class ObjMapperConfiguratorTest {
 	
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 					
 		assertFalse(mapper.isEnabled(StreamWriteFeature.AUTO_CLOSE_TARGET));
@@ -345,7 +345,7 @@ public class ObjMapperConfiguratorTest {
 	
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 					
 		assertTrue(mapper.isEnabled(StreamReadFeature.STRICT_DUPLICATE_DETECTION));
@@ -369,7 +369,7 @@ public class ObjMapperConfiguratorTest {
 	
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 					
 		assertFalse(mapper.isEnabled(StreamReadFeature.AUTO_CLOSE_SOURCE));
@@ -392,7 +392,7 @@ public class ObjMapperConfiguratorTest {
 		assertNotNull(factoryConfigurator);
 		assertNotNull(mapperConfigurator);
 		
-		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilder().build();
+		ObjectMapper mapper = mapperConfigurator.getObjMapperBuilderFactory().createObjectMapperBuilder().build();
 		assertNotNull(mapper);
 		
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");

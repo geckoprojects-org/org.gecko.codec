@@ -551,7 +551,8 @@
     }, {
       "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral",
       "name" : "FEMALE",
-      "value" : 1
+      "value" : 1,
+      "literal" : "Female"
     }, {
       "_type" : "http://www.eclipse.org/emf/2002/Ecore#//EEnumLiteral",
       "name" : "OTHER",

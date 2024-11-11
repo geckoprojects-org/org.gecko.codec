@@ -14,6 +14,9 @@
 package org.gecko.codec.constants;
 
 /**
+ * These are the annotations which can be used directly on an EMF model to specify the general
+ * codec properties that the model should follow. Accroding to these annotations, the ModelInfo
+ * objects are created.
  * 
  * @author ilenia
  * @since Aug 5, 2024
@@ -31,30 +34,10 @@ public interface CodecAnnotations {
 	 *  Annotation for specifying that the feature should not be serialized.
 	 *  This is supposed to be used when annotating the model.
 	 *  If this has to be overwritten by {@link Resource}{@link #save} and {@link #load}
-	 *  options, use {@link CODEC_IGNORE_FEATURES_LIST} and {@link CODEC_IGNORE_NOT_FEATURES_LIST}
+	 *  options, use {@link CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST} and 
+	 *  {@link CodecModelInfoOptions.CODEC_IGNORE_NOT_FEATURES_LIST}
 	 * */
 	String CODEC_TRANSIENT = "codec.transient";
-	
-	/** CODEC_IGNORE_FEATURES_LIST 
-	 * Option to be used with {@link Resource}{@link #save} and {@link #load}
-	 * to provide a list of {@link EStructuralFeature} that has to be ignored during 
-	 * serialization/deserialization
-	 * */
-	String CODEC_IGNORE_FEATURES_LIST = "codec.ignore.features.list";
-	
-	/** CODEC_IGNORE_NOT_FEATURES_LIST 
-	 * Option to be used with {@link Resource}{@link #save} and {@link #load}
-	 * to provide a list of {@link EStructuralFeature} that has NOT to be ignored during 
-	 * serialization/deserialization
-	 * */
-	String CODEC_IGNORE_NOT_FEATURES_LIST = "codec.ignore.not.feature.list";
-	
-	/** CODEC_NAME 
-	 *  Annotation for specifying the name with which the feature should be serialized.
-	 *  This might be overwritten if property {@link OPTION_USE_NAMES_FROM_EXTENDED_META_DATA}
-	 *  is set to true.
-	 * */
-	String CODEC_NAME = "codec.name";
 	
 	/** CODEC_ID_STRATEGY 
 	 *  Annotation for specifying a strategy to be followed when building the id 
@@ -62,11 +45,6 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_ID_STRATEGY = "codec.id.strategy";
 	
-	/** CODEC_ID_FEATURES_LIST 
-	 * This option is to provide a list of {@link EStructuralFeature} that can be used as id fields 
-	 * when constructing the id
-	 * */
-	String CODEC_ID_FEATURES_LIST = "codec.id.features.list";
 	
 	/** CODEC_ID_FIELD 
 	 * Annotation for specifying that a field should be treated as an id field.
@@ -102,35 +80,15 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_ID_VALUE_WRITER_NAME = "codec.id.value.writer.name";
 	
-	/** CODEC_ID_VALUE_READER
-	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
-	 * */
-	String CODEC_ID_VALUE_READER = "codec.id.value.reader";
-	
-	/** CODEC_ID_VALUE_WRITER 
-	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
-	 * */
-	String CODEC_ID_VALUE_WRITER = "codec.id.value.writer";
-	
 	/** CODEC_TYPE_VALUE_READER_NAME 
-	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
+	 * Annotation for specifying a ValueReader name to be used when deserializing the type 
 	 * */
 	String CODEC_TYPE_VALUE_READER_NAME = "codec.type.value.reader.name";
 	
 	/** CODEC_TYPE_VALUE_WRITER_NAME 
-	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
+	 * Annotation for specifying a ValueWriter name to be used when serializing the type
 	 * */
 	String CODEC_TYPE_VALUE_WRITER_NAME = "codec.type.value.writer.name";
-	
-	/** CODEC_TYPE_VALUE_READER
-	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
-	 * */
-	String CODEC_TYPE_VALUE_READER = "codec.type.value.reader";
-	
-	/** CODEC_TYPE_VALUE_WRITER 
-	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
-	 * */
-	String CODEC_TYPE_VALUE_WRITER = "codec.type.value.writer";
 	
 	/** CODEC_VALUE_READER_NAME 
 	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
@@ -141,20 +99,6 @@ public interface CodecAnnotations {
 	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
 	 * */
 	String CODEC_VALUE_WRITER_NAME = "codec.value.writer.name";
-	
-	
-	/** CODEC_VALUE_READERS_MAP 
-	 * Options to be passed via {@link Resource}{@link #load} and {@link #save} options for specifying
-	 * alternative {@link CodecValueReader} for a certain @link{EStructuralFeature} 
-	 * */
-	String CODEC_VALUE_READERS_MAP = "codec.value.readers.map";
-	
-	
-	/** CODEC_VALUE_WRITERS_MAP 
-	 * Options to be passed via {@link Resource}{@link #load} and {@link #save} options for specifying
-	 * alternative {@link CodecValueWriter} for a certain @link{EStructuralFeature} 
-	 * */
-	String CODEC_VALUE_WRITERS_MAP = "codec.value.writers.map";
 	
 	/** CODEC_TYPE_USE 
 	 * Annotation used for specifying a strategy to serialize the type of the object (class name, uri, etc)

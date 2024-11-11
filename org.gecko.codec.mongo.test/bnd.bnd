@@ -19,7 +19,7 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.osgi.util.pushstream,\
 	org.osgi.service.component,\
 	org.gecko.codec.demo.model;version=latest,\
-	org.gecko.codec.demo,\
+	org.gecko.codec,\
 	org.gecko.codec.info,\
 	com.fasterxml.jackson.core.jackson-databind,\
 	com.fasterxml.jackson.core.jackson-core,\

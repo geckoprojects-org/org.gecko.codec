@@ -16,12 +16,11 @@ package org.gecko.codec.json.resource;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
-import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.codec.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -48,7 +47,7 @@ public class JsonResourceFactory extends ResourceFactoryImpl {
 	 */
 	@Override
 	public Resource createResource(URI uri) {		
-		return new CodecJsonResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder());
+		return new CodecJsonResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilderFactory());
 	}
 
 }

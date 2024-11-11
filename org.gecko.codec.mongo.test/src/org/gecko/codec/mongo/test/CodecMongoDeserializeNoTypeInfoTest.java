@@ -16,6 +16,7 @@ package org.gecko.codec.mongo.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,11 +27,12 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gecko.codec.constants.CodecModuleOptions;
-import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.codec.jackson.CodecFactoryConfigurator;
+import org.gecko.codec.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -154,6 +156,49 @@ public class CodecMongoDeserializeNoTypeInfoTest extends MongoEMFSetting {
 		assertEquals(person.getBirthDate(), p.getBirthDate());
 	}
 
+	@Test
+	public void testDeserializationReferenceWOType() throws InterruptedException, IOException {
+
+		URI uriPerson = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
+		URI uriAddress = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Address/");
+		Resource addRes = resourceSet.createResource(uriAddress);
+		Resource personRes = resourceSet.createResource(uriPerson);
+
+		Address address = CodecTestHelper.getTestAddress();
+		Person person = CodecTestHelper.getTestPerson();
+		person.setNonContainedAdd(address);
+		addRes.getContents().add(address);
+		personRes.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+		addRes.save(options);
+		personRes.save(options);
+
+		addRes.getContents().clear();
+		addRes.unload();
+		personRes.getContents().clear();
+		personRes.unload();
+
+		Resource findResource = resourceSet.createResource(uriPerson);
+		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+
+		findResource.load(options);
+
+		// get the person
+		assertNotNull(findResource);
+		assertFalse(findResource.getContents().isEmpty());
+		assertEquals(1, findResource.getContents().size());
+
+		// doing some object checks
+		Person p = (Person) findResource.getContents().get(0);
+		assertEquals(person.getId(), p.getId());
+		Address add = p.getNonContainedAdd();
+
+		assertNotNull(add);
+		assertEquals(address.getStreet(), add.getStreet());
+		assertEquals(address.getId(), add.getId());
+		assertNull(add.getZip()); //zip is marked as transient in the model so it was not serialized
+	}
 
 	
 }

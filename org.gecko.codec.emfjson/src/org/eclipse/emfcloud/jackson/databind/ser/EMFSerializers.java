@@ -80,7 +80,6 @@ public class EMFSerializers extends Serializers.Base {
 	}
 
 	@Override
-	@SuppressWarnings("checkstyle:cyclomaticComplexity")
 	public JsonSerializer<?> findSerializer(final SerializationConfig config, final JavaType type,
 			final BeanDescription beanDesc) {
 		if (type.isTypeOrSubTypeOf(Resource.class)) {
@@ -96,6 +95,7 @@ public class EMFSerializers extends Serializers.Base {
 		if (type.isReferenceType() || type.isTypeOrSubTypeOf(ReferenceEntry.class)) {
 			return referenceSerializer;
 		}
+		
 
 		if (type.isTypeOrSubTypeOf(EcoreType.DataType.class)) {
 			return dataTypeSerializer;

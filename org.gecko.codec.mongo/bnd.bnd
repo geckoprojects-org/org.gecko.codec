@@ -12,6 +12,5 @@
 	org.gecko.mongo.osgi.api,\
 	org.gecko.emf.collections,\
 	org.gecko.codec.info;version=latest,\
-	org.gecko.codec.info.model;version=latest,\
-	org.gecko.codec.demo
+	org.gecko.codec.info.model;version=latest
 	

@@ -33,7 +33,6 @@
 	org.eclipse.emf.ecore;version='[2.35.0,2.35.1)',\
 	org.eclipse.emf.ecore.xmi;version='[2.36.0,2.36.1)',\
 	org.gecko.codec;version=snapshot,\
-	org.gecko.codec.demo;version=snapshot,\
 	org.gecko.codec.emfjson;version=snapshot,\
 	org.gecko.codec.info;version=snapshot,\
 	org.gecko.codec.info.model;version=snapshot,\

@@ -26,12 +26,12 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.gecko.codec.demo.jackson.CodecModule;
-import org.gecko.codec.demo.resource.CodecResource;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.codec.jackson.ObjectMapperBuilderFactory;
+import org.gecko.codec.jackson.module.CodecModule;
+import org.gecko.codec.jackson.resource.CodecResource;
 
 import com.fasterxml.jackson.databind.cfg.ContextAttributes;
-import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
 
 /**
  * 
@@ -40,8 +40,9 @@ import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
  */
 public class CodecJsonResource extends CodecResource {
 	
-	public CodecJsonResource(URI uri, CodecModelInfo modelInfo, CodecModule.Builder moduleBuilder, Builder objMapperBuilder) {
-		super(uri, modelInfo, moduleBuilder, objMapperBuilder);
+	public CodecJsonResource(URI uri, CodecModelInfo modelInfo, 
+			CodecModule.Builder moduleBuilder, ObjectMapperBuilderFactory objMapperBuilderFactory) {
+		super(uri, modelInfo, moduleBuilder, objMapperBuilderFactory);
 	}
 
 	@Override

@@ -16,9 +16,9 @@ package org.gecko.codec.mongo.resource;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
-import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.codec.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.osgi.service.component.annotations.Component;
@@ -43,7 +43,7 @@ public class MongoResourceFactory extends ResourceFactoryImpl {
 	
 	@Override
 	public Resource createResource(URI uri) {
-		return new CodecMongoResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilder(), provider);
+		return new CodecMongoResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilderFactory(), provider);
 	}
 
 }

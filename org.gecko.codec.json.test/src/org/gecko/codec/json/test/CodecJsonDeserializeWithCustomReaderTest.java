@@ -26,14 +26,14 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.gecko.codec.constants.CodecAnnotations;
+import org.gecko.codec.constants.CodecModelInfoOptions;
 import org.gecko.codec.constants.CodecModuleOptions;
-import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
-import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.codec.jackson.CodecFactoryConfigurator;
+import org.gecko.codec.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -115,7 +115,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecAnnotations.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
+		addOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
@@ -130,7 +130,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		classOptions = new HashMap<>();
 		addOptions = new HashMap<>();
 
-		addOptions.put(CodecAnnotations.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
+		addOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put("codec.options", classOptions);
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getAddress());
@@ -158,7 +158,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put("codec.options", classOptions);
 		resource.save(options);
@@ -168,7 +168,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
-		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
 
 		findResource.load(options);
 
@@ -194,7 +194,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecAnnotations.CODEC_TYPE_VALUE_WRITER, CodecTestHelper.TEST_TYPE_WRITER);
+		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER, CodecTestHelper.TEST_TYPE_WRITER);
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put("codec.options", classOptions);
@@ -208,7 +208,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		classOptions = new HashMap<>();
 		addOptions = new HashMap<>();
 
-		addOptions.put(CodecAnnotations.CODEC_TYPE_VALUE_READER, CodecTestHelper.TEST_TYPE_READER);
+		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER, CodecTestHelper.TEST_TYPE_READER);
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put("codec.options", classOptions);
 		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getAddress());
@@ -236,8 +236,8 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		personOptions.put(CodecAnnotations.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER));
-		personOptions.put(CodecAnnotations.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_READER));
+		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER));
+		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_READER));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put("codec.options", classOptions);
@@ -272,8 +272,8 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecAnnotations.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER));
-		personOptions.put(CodecAnnotations.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_VALUE_READER));
+		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER));
+		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_VALUE_READER));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put("codec.options", classOptions);

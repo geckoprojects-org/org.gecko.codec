@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.gecko.codec.demo.jackson.CodecModule;
-import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
+import org.gecko.codec.jackson.module.CodecModule;
+import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

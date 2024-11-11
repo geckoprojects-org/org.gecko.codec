@@ -20,14 +20,15 @@ import java.util.Map;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.gecko.codec.demo.jackson.CodecModule;
-import org.gecko.codec.demo.resource.CodecResource;
 import org.gecko.codec.info.CodecModelInfo;
+import org.gecko.codec.jackson.ObjectMapperBuilderFactory;
+import org.gecko.codec.jackson.module.CodecModule;
+import org.gecko.codec.jackson.resource.CodecResource;
 import org.gecko.codec.mongo.MongoCodecProvider;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
 
-import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -38,12 +39,14 @@ public final class CodecMongoResource extends CodecResource {
 
 	private MongoDatabaseProvider provider;
 	
-	public CodecMongoResource(URI uri, CodecModelInfo modelInfo, CodecModule.Builder moduleBuilder, Builder objMapperBuilder) {
-		super(uri, modelInfo, moduleBuilder, objMapperBuilder);
+	public CodecMongoResource(URI uri, CodecModelInfo modelInfo, CodecModule.Builder moduleBuilder, 
+			ObjectMapperBuilderFactory objMapperBuilderFactory) {
+		super(uri, modelInfo, moduleBuilder, objMapperBuilderFactory);
 	}
 
-	public CodecMongoResource(URI uri, CodecModelInfo modelInfo, CodecModule.Builder moduleBuilder, Builder objMapperBuilder, MongoDatabaseProvider provider) {
-		super(uri, modelInfo, moduleBuilder, objMapperBuilder);
+	public CodecMongoResource(URI uri, CodecModelInfo modelInfo, CodecModule.Builder moduleBuilder, 
+			ObjectMapperBuilderFactory objMapperBuilderFactory, MongoDatabaseProvider provider) {
+		super(uri, modelInfo, moduleBuilder, objMapperBuilderFactory);
 		this.provider = provider;
 	}
 
@@ -63,6 +66,7 @@ public final class CodecMongoResource extends CodecResource {
 		CodecRegistry codecRegistry = CodecRegistries.fromRegistries(eobjectRegistry, defaultRegistry);
 
 		collection.withCodecRegistry(codecRegistry).insertMany(getContents());
+		
 	}
 
 	@Override
@@ -91,6 +95,14 @@ public final class CodecMongoResource extends CodecResource {
 
 	private MongoCollection<EObject> getCollection(Map<?, ?> options) {
 		MongoDatabase database = provider.getDatabase();
+		if(options.containsKey("COLLECTION_NAME")) {
+			if(options.get("COLLECTION_NAME") instanceof EClass collEClass) {
+				return database.getCollection(collEClass.getName(), EObject.class);
+			}
+			else if(options.get("COLLECTION_NAME") instanceof String collName) {
+				return database.getCollection(collName, EObject.class);
+			}
+		}
 		String collectionName = uri.segment(1);
 		return database.getCollection(collectionName, EObject.class);
 	}

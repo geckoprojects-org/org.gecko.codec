@@ -20,7 +20,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.core.json.DupDetector;
-import com.fasterxml.jackson.core.json.JsonReadContext;
 
 /**
  * 
@@ -120,6 +119,8 @@ public class CodecReadContext extends JsonStreamContext {
     public static CodecReadContext createRootContext(DupDetector dups) {
         return new CodecReadContext(null, 0, dups, TYPE_ROOT, 1, 0);
     }
+    
+  
 
     public CodecReadContext createChildArrayContext(int lineNr, int colNr) {
     	CodecReadContext ctxt = _child;
@@ -163,73 +164,6 @@ public class CodecReadContext extends JsonStreamContext {
         _dups = dups;
         return this;
     }
-
-//-----------------------------------------
-//	public CodecReadContext createChildArrayContext() {
-//		CodecReadContext ctxt = (CodecReadContext) _child;
-//		if (ctxt == null) {
-//			_child = ctxt = new CodecReadContext(TYPE_ARRAY, this,
-//					(_dups == null) ? null : _dups.child());
-//			return ctxt;
-//		}
-//		return (CodecReadContext) ctxt.reset(TYPE_ARRAY);
-//	}
-//	
-//	public CodecReadContext createChildArrayContext(Object currValue) {
-//		CodecReadContext ctxt = (CodecReadContext) _child;
-//        if (ctxt == null) {
-//            _child = ctxt = new CodecReadContext(TYPE_ARRAY, this,
-//                    (_dups == null) ? null : _dups.child(), currValue);
-//            return ctxt;
-//        }
-//        return (CodecReadContext) ctxt.reset(TYPE_ARRAY, currValue);
-//    }
-//
-//	public CodecReadContext createChildObjectContext() {
-//		CodecReadContext ctxt = _child;
-//        if (ctxt == null) {
-//            _child = ctxt = new CodecReadContext(TYPE_OBJECT, this,
-//                    (_dups == null) ? null : _dups.child());
-//            return (CodecReadContext) ctxt;
-//        }
-//        return (CodecReadContext) ctxt.reset(TYPE_OBJECT);
-//    }
-//	
-//	public CodecReadContext createChildObjectContext(Object currValue) {
-//		CodecReadContext ctxt = _child;
-//        if (ctxt == null) {
-//            _child = ctxt = new CodecReadContext(TYPE_OBJECT, this,
-//                    (_dups == null) ? null : _dups.child(), currValue);
-//            return (CodecReadContext) ctxt;
-//        }
-//        return (CodecReadContext) ctxt.reset(TYPE_OBJECT, currValue);
-//    }
-//	
-//	public CodecReadContext reset(int type) {
-//		_type = type;
-//		_index = -1;
-//		_lineNr = -1;
-//		_columnNr = -1;
-//		_currentName = null;
-//		_currentValue = null;
-//		if (_dups != null) {
-//			_dups.reset();
-//		}
-//		return this;
-//	}
-//	
-//	public CodecReadContext reset(int type, Object currentValue) {
-//		_type = type;
-//		_index = -1;
-//		_lineNr = -1;
-//		_columnNr = -1;
-//		_currentName = null;
-//		_currentValue = currentValue;
-//		if (_dups != null) {
-//			_dups.reset();
-//		}
-//		return this;
-//	}
 
 	/* 
 	 * (non-Javadoc)
@@ -276,7 +210,7 @@ public class CodecReadContext extends JsonStreamContext {
 
 
 	public static boolean isCodecContext(JsonStreamContext ctx) {
-		return ctx == null ? false : ctx instanceof CodecWriteContext;
+		return ctx == null ? false : ctx instanceof CodecReadContext;
 	}
 	
 	private void _checkDup(DupDetector dd, String name) throws JsonProcessingException {

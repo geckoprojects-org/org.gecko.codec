@@ -14,6 +14,8 @@
 package org.gecko.codec.constants;
 
 /**
+ * These are the options that can be used when loading/saving a Resource, in order
+ * to overwrite the ObjectMapper configuration.
  * 
  * @author ilenia
  * @since Aug 6, 2024
