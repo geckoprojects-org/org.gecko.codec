@@ -11,15 +11,15 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.jackson.module;
+package org.gecko.codec.constants;
 
 /**
  * 
  * @author ilenia
- * @since Aug 15, 2024
+ * @since Nov 12, 2024
  */
-public abstract class CodecModuleConfigurator {	
+public interface CodecResourceOptions {
 	
-	public abstract CodecModule.Builder getCodecModuleBuilder();
-	
+	String CODEC_ROOT_OBJECT = "codec.root.object";
+
 }

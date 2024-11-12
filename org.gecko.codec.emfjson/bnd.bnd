@@ -3,7 +3,8 @@
 -buildpath: \
 	com.fasterxml.jackson.core.jackson-databind;version=latest,\
 	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
-	com.fasterxml.jackson.core.jackson-core;version=latest
+	com.fasterxml.jackson.core.jackson-core;version=latest,\
+	org.gecko.codec.constants
 	
 -testpath.guava: \
 	org.gecko.codec.test.models;version=project,\

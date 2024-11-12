@@ -26,13 +26,14 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.gecko.codec.configurator.CodecFactoryConfigurator;
+import org.gecko.codec.configurator.CodecModuleConfigurator;
+import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.gecko.codec.constants.CodecModuleOptions;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
-import org.gecko.codec.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.jackson.ObjectMapperConfigurator;
-import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -63,13 +64,13 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @ExtendWith(ServiceExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
-@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="json")
 })
-@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="json")
 })
-@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="json")
 })
 public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
@@ -126,7 +127,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		personRes.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
 
@@ -165,7 +166,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
 		options = new HashMap<>();
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
 
@@ -205,7 +206,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
 		options = new HashMap<>();
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
 
@@ -253,7 +254,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
 		options = new HashMap<>();
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
 

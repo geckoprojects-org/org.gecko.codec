@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.jackson;
+package org.gecko.codec;
 
 import java.io.IOException;
 import java.math.BigDecimal;

@@ -23,9 +23,10 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.gecko.codec.info.CodecModelInfo;
-import org.gecko.codec.jackson.ObjectMapperBuilderFactory;
+import org.gecko.codec.configurator.ObjectMapperBuilderFactory;
 import org.gecko.codec.jackson.module.CodecModule;
 import org.gecko.codec.jackson.resource.CodecResource;
+import org.gecko.codec.mongo.CodecMongoOptions;
 import org.gecko.codec.mongo.MongoCodecProvider;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
 
@@ -64,6 +65,20 @@ public final class CodecMongoResource extends CodecResource {
 				.fromProviders(new MongoCodecProvider(mapper, this, options));
 		CodecRegistry defaultRegistry = MongoClient.getDefaultCodecRegistry();
 		CodecRegistry codecRegistry = CodecRegistries.fromRegistries(eobjectRegistry, defaultRegistry);
+		
+//		FindOneAndReplaceOptions farOptions = new FindOneAndReplaceOptions()
+//				.upsert(true) //this is to insert a new document if none is found to be updated
+//				.returnDocument(ReturnDocument.AFTER); //this is to return the document after the update and not the one before
+//
+//		
+////		loop over the contents of the resource
+//		for(EObject eObject : getContents()) {
+//			
+////			create the update filter looking for the id of the EObject
+//			Bson updateFilter = createUpdateFilter(eObject, options);
+//		}
+		
+//		
 
 		collection.withCodecRegistry(codecRegistry).insertMany(getContents());
 		
@@ -95,11 +110,11 @@ public final class CodecMongoResource extends CodecResource {
 
 	private MongoCollection<EObject> getCollection(Map<?, ?> options) {
 		MongoDatabase database = provider.getDatabase();
-		if(options.containsKey("COLLECTION_NAME")) {
-			if(options.get("COLLECTION_NAME") instanceof EClass collEClass) {
+		if(options.containsKey(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME)) {
+			if(options.get(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME) instanceof EClass collEClass) {
 				return database.getCollection(collEClass.getName(), EObject.class);
 			}
-			else if(options.get("COLLECTION_NAME") instanceof String collName) {
+			else if(options.get(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME) instanceof String collName) {
 				return database.getCollection(collName, EObject.class);
 			}
 		}

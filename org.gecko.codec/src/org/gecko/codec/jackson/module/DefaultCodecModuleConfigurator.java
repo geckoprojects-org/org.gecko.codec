@@ -13,6 +13,8 @@
  */
 package org.gecko.codec.jackson.module;
 
+import org.gecko.codec.configurator.CodecModuleConfig;
+import org.gecko.codec.configurator.CodecModuleConfigurator;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -22,9 +24,9 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
  * @author ilenia
  * @since Aug 15, 2024
  */
-@Component(name = "CodecModuleConfigurator", service = CodecModuleConfigurator.class, 
+@Component(name = "DefaultCodecModuleConfigurator", service = CodecModuleConfigurator.class, 
 	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
-public class DefaultCodecModuleConfigurator extends CodecModuleConfigurator {
+public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 	
 	private CodecModule.Builder moduleBuilder; 
 

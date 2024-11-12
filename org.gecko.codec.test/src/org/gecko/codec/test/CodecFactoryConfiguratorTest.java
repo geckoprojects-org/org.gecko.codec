@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import org.gecko.codec.jackson.CodecFactoryConfigurator;
+import org.gecko.codec.configurator.CodecFactoryConfigurator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -51,7 +51,7 @@ import com.fasterxml.jackson.core.StreamWriteFeature;
 public class CodecFactoryConfiguratorTest {
 
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "disableFeatures", value={"INTERN_FIELD_NAMES", "JsonFactory.Feature.CANONICALIZE_FIELD_NAMES", 
 					"FAIL_ON_SYMBOL_HASH_OVERFLOW", "JsonFactory.Feature.USE_THREAD_LOCAL_FOR_BUFFER_RECYCLING", "CHARSET_DETECTION"}, type = Type.Array)
@@ -73,7 +73,7 @@ public class CodecFactoryConfiguratorTest {
 	}
 	
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "enableFeatures", value={"WRITE_BIGDECIMAL_AS_PLAIN", "StreamWriteFeature.IGNORE_UNKNOWN", 
 					"StreamWriteFeature.STRICT_DUPLICATE_DETECTION", "StreamWriteFeature.USE_FAST_DOUBLE_WRITER"}, type = Type.Array)
@@ -94,7 +94,7 @@ public class CodecFactoryConfiguratorTest {
 	
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "disableFeatures", value={"AUTO_CLOSE_TARGET", "StreamWriteFeature.AUTO_CLOSE_CONTENT", 
 					"StreamWriteFeature.FLUSH_PASSED_TO_STREAM"}, type = Type.Array)
@@ -113,7 +113,7 @@ public class CodecFactoryConfiguratorTest {
 		assertFalse(codecFactory.isEnabled(StreamWriteFeature.FLUSH_PASSED_TO_STREAM));	
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "enableFeatures", value={"STRICT_DUPLICATE_DETECTION", "IGNORE_UNDEFINED", 
 					"INCLUDE_SOURCE_IN_LOCATION", "USE_FAST_DOUBLE_PARSER", "USE_FAST_BIG_NUMBER_PARSER"}, type = Type.Array)
@@ -134,7 +134,7 @@ public class CodecFactoryConfiguratorTest {
 		assertTrue(codecFactory.isEnabled(StreamReadFeature.USE_FAST_DOUBLE_PARSER));	
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "disableFeatures", value={"AUTO_CLOSE_SOURCE"}, type = Type.Array)
 	})

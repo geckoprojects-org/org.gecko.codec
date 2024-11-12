@@ -13,8 +13,9 @@
  */
 /**
  * 
- * @author mark
- * @since 10.01.2024
+ * @author ilenia
+ * @since Nov 12, 2024
  */
 @org.osgi.annotation.versioning.Version("1.0.0")
-package org.gecko.codec.mongo.resource;
+@org.osgi.annotation.bundle.Export
+package org.gecko.codec.configurator;

@@ -27,10 +27,11 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.gecko.codec.configurator.CodecFactoryConfigurator;
+import org.gecko.codec.configurator.CodecModuleConfigurator;
+import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.gecko.codec.constants.CodecModuleOptions;
-import org.gecko.codec.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.jackson.ObjectMapperConfigurator;
-import org.gecko.codec.jackson.module.CodecModuleConfigurator;
+import org.gecko.codec.mongo.CodecMongoOptions;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.emf.osgi.example.model.basic.BasicFactory;
@@ -76,16 +77,16 @@ import com.mongodb.client.MongoCollection;
 		@Property(key = "client_id", value = "test"), @Property(key = "uri", value = "mongodb://localhost:27017") })
 @WithFactoryConfiguration(name = "mongoDatabase", location = "?", factoryPid = "MongoDatabaseProvider", properties = {
 		@Property(key = "alias", value = "TestDB"), @Property(key = "database", value = "test") })
-@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="mongo"),
 		@Property(key = "genFactory.target", value="(type=mongo)"), 
 		@Property(key = "parserFactory.target", value="(type=mongo)")
 })
-@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "codecFactoryConfigurator.target", value="(type=mongo)"),
 		@Property(key = "type", value="mongo")
 })
-@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="mongo")
 })
 public class CollectionNameIntegrationTest extends MongoEMFSetting{
@@ -115,7 +116,7 @@ public class CollectionNameIntegrationTest extends MongoEMFSetting{
 	}
 	
 	@Test
-	public void testWriteCollectionName() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
+	public void testWriteCollectionNameEClass() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
 		ResourceSet resourceSet = rsAware.getService();
 		
 		System.out.println("Dropping DB");
@@ -138,7 +139,7 @@ public class CollectionNameIntegrationTest extends MongoEMFSetting{
 		testResourceSet(resourceSet, resource, 1, 0);
 		
 		Map<String, Object> saveOptions = new HashMap<String, Object>();
-		saveOptions.put("COLLECTION_NAME", BasicPackage.Literals.PERSON);
+		saveOptions.put(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME, BasicPackage.Literals.PERSON);
 		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.TRUE);
 		BusinessPerson person = BasicFactory.eINSTANCE.createBusinessPerson();
 		person.setFirstName("Mark");
@@ -188,7 +189,7 @@ public class CollectionNameIntegrationTest extends MongoEMFSetting{
 		/*
 		 * Option super type overwrites collection name
 		 */
-		saveOptions.put("COLLECTION_NAME", BasicPackage.Literals.PERSON);
+		saveOptions.put(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME, BasicPackage.Literals.PERSON);
 		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.FALSE);
 		resource.getContents().add(person);
 		
@@ -210,7 +211,129 @@ public class CollectionNameIntegrationTest extends MongoEMFSetting{
 		resource.unload();
 		
 		saveOptions = new HashMap<String, Object>();
-		saveOptions.put("COLLECTION_NAME", BasicPackage.Literals.PERSON);
+		saveOptions.put(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME, BasicPackage.Literals.PERSON);
+		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.FALSE);
+		
+		Person p = BasicFactory.eINSTANCE.createPerson();
+		p.setFirstName("Emil");
+		p.setLastName("Tester" );
+		p.setId("etester");
+		person.setGender(GenderType.MALE);
+		
+		resource.getContents().clear();
+		testResourceSet(resourceSet, resource, 1, 0);
+		resource.unload();
+		resource.getContents().add(p);
+		testResourceSet(resourceSet, resource, 1, 1);
+		resource.save(saveOptions);
+		testResourceSet(resourceSet, resource, 1, 1);
+		
+		assertEquals(1, personCollection.countDocuments());
+		document = personCollection.find().first();
+		assertEquals("etester", document.get("_id"));
+		assertFalse(document.containsKey("_supertype"));
+		
+		personCollection.drop();
+		
+	}
+	
+	@Test
+	public void testWriteCollectionNameString() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
+		ResourceSet resourceSet = rsAware.getService();
+		
+		System.out.println("Dropping DB");
+		MongoCollection<Document> personCollection = client.getDatabase("test").getCollection("Person");
+		personCollection.drop();
+		
+		// create contacts
+		Contact c1 = BasicFactory.eINSTANCE.createContact();
+		c1.setContext(ContactContextType.PRIVATE);
+		c1.setType(ContactType.SKYPE);
+		c1.setValue("charles-brown");
+		Contact c2 = BasicFactory.eINSTANCE.createContact();
+		c2.setContext(ContactContextType.WORK);
+		c2.setType(ContactType.EMAIL);
+		c2.setValue("mark.hoffmann@tests.de");
+		
+		assertEquals(0, resourceSet.getResources().size());
+		assertEquals(0, personCollection.countDocuments());
+		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
+		testResourceSet(resourceSet, resource, 1, 0);
+		
+		Map<String, Object> saveOptions = new HashMap<String, Object>();
+		saveOptions.put(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME, "Person");
+		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.TRUE);
+		BusinessPerson person = BasicFactory.eINSTANCE.createBusinessPerson();
+		person.setFirstName("Mark");
+		person.setLastName("Hoffmann" );
+		person.setId("maho");
+		person.setCompanyIdCardNumber("666");
+		person.setGender(GenderType.MALE);
+		person.getContact().add(EcoreUtil.copy(c1));
+		person.getContact().add(EcoreUtil.copy(c2));
+		resource.getContents().add(person);
+		
+		testResourceSet(resourceSet, resource, 1, 1);
+		resource.save(saveOptions);
+		testResourceSet(resourceSet, resource, 1, 1);
+		
+		resource.getContents().clear();
+		testResourceSet(resourceSet, resource, 1, 0);
+		resource.unload();
+		
+		assertEquals(1, personCollection.countDocuments());
+		Document document = personCollection.find().first();
+		assertNotNull(document);
+		assertEquals("maho", document.get("_id"));
+		assertTrue(document.containsKey("_supertype"));
+		personCollection.drop();
+		
+		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SUPERTYPE_KEY, "mySupaType");
+		resource.getContents().add(person);
+		
+		testResourceSet(resourceSet, resource, 1, 1);
+		resource.save(saveOptions);
+		testResourceSet(resourceSet, resource, 1, 1);
+		
+		assertEquals(1, personCollection.countDocuments());
+		document = personCollection.find().first();
+		assertNotNull(document);
+		assertEquals("maho", document.get("_id"));
+		assertFalse(document.containsKey("_supertype"));
+		assertTrue(document.containsKey("mySupaType"));
+		
+		personCollection.drop();
+		
+		resource.getContents().clear();
+		testResourceSet(resourceSet, resource, 1, 0);
+		resource.unload();
+		
+		/*
+		 * Option super type overwrites collection name
+		 */
+		saveOptions.put(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME, "Person");
+		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.FALSE);
+		resource.getContents().add(person);
+		
+		testResourceSet(resourceSet, resource, 1, 1);
+		resource.save(saveOptions);
+		testResourceSet(resourceSet, resource, 1, 1);
+		
+		assertEquals(1, personCollection.countDocuments());
+		document = personCollection.find().first();
+		assertNotNull(document);
+		assertEquals("maho", document.get("_id"));
+		assertFalse(document.containsKey("_supertype"));
+		assertFalse(document.containsKey("mySupaType"));
+		
+		personCollection.drop();
+		
+		resource.getContents().clear();
+		testResourceSet(resourceSet, resource, 1, 0);
+		resource.unload();
+		
+		saveOptions = new HashMap<String, Object>();
+		saveOptions.put(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME, "Person");
 		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.FALSE);
 		
 		Person p = BasicFactory.eINSTANCE.createPerson();

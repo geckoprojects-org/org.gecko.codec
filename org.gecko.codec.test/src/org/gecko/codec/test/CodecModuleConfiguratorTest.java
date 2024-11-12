@@ -20,8 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
+import org.gecko.codec.configurator.CodecModuleConfigurator;
 import org.gecko.codec.jackson.module.CodecModule;
-import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -48,7 +48,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @ExtendWith(ConfigurationExtension.class)
 public class CodecModuleConfiguratorTest {
 
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test")
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test")
 	@Test
 	public void testCodecModuleConfigCodecDefault(@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator) throws InterruptedException, IOException {
 	
@@ -76,7 +76,7 @@ public class CodecModuleConfiguratorTest {
 		assertTrue(module.isSerializeSuperTypesAsArray());		
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="test")
 	})
 	@Test
@@ -88,7 +88,7 @@ public class CodecModuleConfiguratorTest {
 	}
 	
 		
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "idKey", value="test")
 	})
 	@Test
@@ -101,7 +101,7 @@ public class CodecModuleConfiguratorTest {
 	
 	
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "typeKey", value="test")
 	})
 	@Test
@@ -112,7 +112,7 @@ public class CodecModuleConfiguratorTest {
 		assertEquals("test", module.getTypeKey());		
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "superTypeKey", value="test")
 	})
 	@Test
@@ -123,7 +123,7 @@ public class CodecModuleConfiguratorTest {
 		assertEquals("test", module.getSuperTypeKey());		
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "refKey", value="test")
 	})
 	@Test
@@ -134,7 +134,7 @@ public class CodecModuleConfiguratorTest {
 		assertEquals("test", module.getRefKey());		
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "proxyKey", value="test")
 	})
 	@Test
@@ -145,7 +145,7 @@ public class CodecModuleConfiguratorTest {
 		assertEquals("test", module.getProxyKey());		
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "timestampKey", value="test")
 	})
 	@Test
@@ -156,7 +156,7 @@ public class CodecModuleConfiguratorTest {
 		assertEquals("test", module.getTimestampKey());		
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "codecModuleName", value="test")
 	})
 	@Test
@@ -167,7 +167,7 @@ public class CodecModuleConfiguratorTest {
 		assertEquals("test", module.getModuleName());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "serializeDefaultValue", value="true", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -178,7 +178,7 @@ public class CodecModuleConfiguratorTest {
 		assertTrue(module.isSerializeDefaultValue());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "serializeEmptyValue", value="true", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -189,7 +189,7 @@ public class CodecModuleConfiguratorTest {
 		assertTrue(module.isSerializeEmptyValue());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "serializeNullValue", value="true", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -200,7 +200,7 @@ public class CodecModuleConfiguratorTest {
 		assertTrue(module.isSerializeNullValue());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "serializeArrayBatched", value="true", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -211,7 +211,7 @@ public class CodecModuleConfiguratorTest {
 		assertTrue(module.isSerializeArrayBatched());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "serializeIdField", value="true", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -222,7 +222,7 @@ public class CodecModuleConfiguratorTest {
 		assertTrue(module.isSerializeIdField());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "serializeSuperTypes", value="true", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -233,7 +233,7 @@ public class CodecModuleConfiguratorTest {
 		assertTrue(module.isSerializeSuperTypes());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "useNamesFromExtendedMetaData", value="false", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -244,7 +244,7 @@ public class CodecModuleConfiguratorTest {
 		assertFalse(module.isUseNamesFromExtendedMetaData());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "useId", value="false", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -256,7 +256,7 @@ public class CodecModuleConfiguratorTest {
 	}
 
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "idOnTop", value="false", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -267,7 +267,7 @@ public class CodecModuleConfiguratorTest {
 		assertFalse(module.isIdOnTop());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "idFeatureAsPrimaryKey", value="false", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -278,7 +278,7 @@ public class CodecModuleConfiguratorTest {
 		assertFalse(module.isIdFeatureAsPrimaryKey());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "serializeType", value="false", scalar = Scalar.Boolean)
 	})
 	@Test
@@ -289,7 +289,7 @@ public class CodecModuleConfiguratorTest {
 		assertFalse(module.isSerializeType());
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "serializeSuperTypesAsArray", value="false", scalar = Scalar.Boolean)
 	})
 	@Test

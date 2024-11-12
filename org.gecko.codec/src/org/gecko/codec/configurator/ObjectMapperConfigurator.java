@@ -11,10 +11,17 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
+package org.gecko.codec.configurator;
+
 /**
  * 
- * @author mark
- * @since 10.01.2024
+ * @author ilenia
+ * @since Aug 14, 2024
  */
-@org.osgi.annotation.versioning.Version("1.0.0")
-package org.gecko.codec.mongo.resource;
+public interface ObjectMapperConfigurator {
+	
+	
+	public ObjectMapperBuilderFactory getObjMapperBuilderFactory();
+	
+	
+}

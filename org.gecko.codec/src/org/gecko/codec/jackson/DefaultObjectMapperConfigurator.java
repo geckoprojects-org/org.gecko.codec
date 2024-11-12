@@ -15,6 +15,9 @@ package org.gecko.codec.jackson;
 
 import java.util.Map;
 
+import org.gecko.codec.configurator.CodecFactoryConfigurator;
+import org.gecko.codec.configurator.ObjectMapperBuilderFactory;
+import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -25,9 +28,9 @@ import org.osgi.service.component.annotations.Reference;
  * @author ilenia
  * @since Aug 14, 2024
  */
-@Component(name = "ObjectMapperConfigurator", service = ObjectMapperConfigurator.class, 
+@Component(name = "DefaultObjectMapperConfigurator", service = ObjectMapperConfigurator.class, 
 configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
-public class ObjectMapperConfigurator {
+public class DefaultObjectMapperConfigurator implements ObjectMapperConfigurator {
 	
 	@Reference(target="(type=json)")
 	CodecFactoryConfigurator codecFactoryConfigurator;

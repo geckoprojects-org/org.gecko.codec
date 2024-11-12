@@ -34,8 +34,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
+import org.gecko.codec.configurator.ObjectMapperBuilderFactory;
 import org.gecko.codec.constants.CodecModelInfoOptions;
 import org.gecko.codec.constants.CodecModuleOptions;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.constants.ObjectMapperOptions;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecValueReader;
@@ -44,7 +46,6 @@ import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
-import org.gecko.codec.jackson.ObjectMapperBuilderFactory;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -77,6 +78,10 @@ public class CodecResource extends ResourceImpl {
 		this.modelInfoService = modelInfoService;
 		this.objMapperBuilderFactory = objMapperBuilderFactory;
 		this.moduleBuilder = moduleBuilder.bindCodecModelInfoService(modelInfoService);
+	}
+	
+	public ObjectMapper getMapper() {
+		return mapper;
 	}
 	
 	/**
@@ -140,8 +145,8 @@ public class CodecResource extends ResourceImpl {
 		EClass eClass = null;
 		
 //		We need to know which object has to be deserialized, otherwise we cannot access the right model info at this stage
-		if(options.containsKey("ROOT_OBJECT")) {
-			eClass = (EClass) options.get("ROOT_OBJECT");
+		if(options.containsKey(CodecResourceOptions.CODEC_ROOT_OBJECT)) {
+			eClass = (EClass) options.get(CodecResourceOptions.CODEC_ROOT_OBJECT);
 		}
 		
 		PackageCodecInfo modelCodecInfo = null;

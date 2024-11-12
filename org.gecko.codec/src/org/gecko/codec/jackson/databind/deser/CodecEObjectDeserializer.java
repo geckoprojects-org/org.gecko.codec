@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.emfcloud.jackson.errors.JSONException;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecValueReader;
@@ -95,8 +96,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 //		This fixes the issue when we don't have a _type property for contained ref, to retrieve the actual type
 //		In case of root obj we have the ROOT_OBJECT option that is mandatory if the _type is not set so we 
 //		can use that to construct everything		
-//		TODO: constant for root object
-		EClass type = defaultType == null ? ctxt.getAttribute("ROOT_OBJECT") == null ? null : (EClass) ctxt.getAttribute("ROOT_OBJECT") : defaultType;	
+		EClass type = defaultType == null ? ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) == null ? null : (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) : defaultType;	
 		EObject current = type == null ? null : EcoreUtil.create(type);
 		
 		

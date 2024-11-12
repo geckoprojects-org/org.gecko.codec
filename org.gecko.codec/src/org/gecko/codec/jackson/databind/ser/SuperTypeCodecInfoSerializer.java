@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
+import org.gecko.codec.CodecGeneratorBase;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
@@ -28,7 +29,6 @@ import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.SuperTypeInfo;
 import org.gecko.codec.info.helper.CodecIOHelper;
-import org.gecko.codec.jackson.CodecGeneratorBase;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.core.JsonGenerator;

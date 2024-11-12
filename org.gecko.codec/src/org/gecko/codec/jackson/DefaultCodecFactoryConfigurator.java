@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import org.gecko.codec.CodecFactory;
 import org.gecko.codec.CodecGeneratorFactory;
 import org.gecko.codec.CodecParserFactory;
+import org.gecko.codec.configurator.CodecFactoryConfigurator;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -39,9 +40,9 @@ import com.fasterxml.jackson.core.json.JsonWriteFeature;
  * @param <G>
  * @since Aug 14, 2024
  */
-@Component(name = "CodecFactoryConfigurator", service = CodecFactoryConfigurator.class, 
+@Component(name = "DefaultCodecFactoryConfigurator", service = CodecFactoryConfigurator.class, 
 	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
-public class DefaultCodecFactoryConfigurator extends CodecFactoryConfigurator{
+public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator{
 	
 	@Reference(target="(type=json)", cardinality = ReferenceCardinality.OPTIONAL)
 	CodecGeneratorFactory genFactory;

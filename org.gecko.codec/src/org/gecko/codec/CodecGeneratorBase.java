@@ -11,10 +11,23 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
+package org.gecko.codec;
+
+import java.io.IOException;
+
 /**
- * 
- * @author mark
- * @since 10.01.2024
+ * Codec generator extensions 
+ * @author Mark Hoffmann
+ * @since 12.01.2024
  */
-@org.osgi.annotation.versioning.Version("1.0.0")
-package org.gecko.codec.mongo.resource;
+public interface CodecGeneratorBase {
+
+	boolean canWriteSuperTypes();
+
+	void writeSuperTypes(String[] supertypes) throws IOException;
+	
+	boolean canWriteOneShotArray();
+	
+	<T> void writeArray(T[] array, int offset, int length, Class<T> clazz) throws IOException;
+
+}

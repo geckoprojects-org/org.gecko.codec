@@ -20,8 +20,8 @@ import java.nio.charset.StandardCharsets;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.gecko.codec.jackson.CodecGenerator;
-import org.gecko.codec.jackson.CodecGeneratorBase;
+import org.gecko.codec.CodecGenerator;
+import org.gecko.codec.CodecGeneratorBase;
 import org.gecko.codec.jackson.databind.CodecWriteContext;
 
 import com.fasterxml.jackson.core.Base64Variant;

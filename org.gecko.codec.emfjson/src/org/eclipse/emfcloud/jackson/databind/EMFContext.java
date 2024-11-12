@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntries;
 import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
 import org.eclipse.emfcloud.jackson.handlers.URIHandler;
+import org.gecko.codec.constants.CodecResourceOptions;
 
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -90,7 +91,7 @@ public final class EMFContext {
       context.setAttribute(Internals.TYPE_FACTORY, ecoreType);
       context.setAttribute(Internals.INIT, true);
       
-      if(context.getAttribute("ROOT_OBJECT") != null) {
+      if(context.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) != null) {
     	  rootCtxt = context;
       }
    }

@@ -27,14 +27,15 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.gecko.codec.configurator.CodecFactoryConfigurator;
+import org.gecko.codec.configurator.CodecModuleConfigurator;
+import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.gecko.codec.constants.CodecModelInfoOptions;
 import org.gecko.codec.constants.CodecModuleOptions;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
-import org.gecko.codec.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.jackson.ObjectMapperConfigurator;
-import org.gecko.codec.jackson.module.CodecModuleConfigurator;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -74,16 +75,16 @@ import com.mongodb.client.MongoCollection;
 		@Property(key = "client_id", value = "test"), @Property(key = "uri", value = "mongodb://localhost:27017") })
 @WithFactoryConfiguration(name = "mongoDatabase", location = "?", factoryPid = "MongoDatabaseProvider", properties = {
 		@Property(key = "alias", value = "TestDB"), @Property(key = "database", value = "test") })
-@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="mongo"),
 		@Property(key = "genFactory.target", value="(type=mongo)"), 
 		@Property(key = "parserFactory.target", value="(type=mongo)")
 })
-@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "codecFactoryConfigurator.target", value="(type=mongo)"),
 		@Property(key = "type", value="mongo")
 })
-@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="mongo")
 })
 public class CodecMongoDeserializeWithCustomReaderTest extends MongoEMFSetting {
@@ -157,7 +158,7 @@ public class CodecMongoDeserializeWithCustomReaderTest extends MongoEMFSetting {
 		addOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put("codec.options", classOptions);
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getAddress());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getAddress());
 		findResource.load(options);
 
 		// get the person
@@ -198,7 +199,7 @@ public class CodecMongoDeserializeWithCustomReaderTest extends MongoEMFSetting {
 		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER, CodecTestHelper.TEST_TYPE_READER);
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put("codec.options", classOptions);
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getAddress());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getAddress());
 		findResource.load(options);
 
 		// get the person
@@ -232,7 +233,7 @@ public class CodecMongoDeserializeWithCustomReaderTest extends MongoEMFSetting {
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(uri);
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
 
 		findResource.load(options);
@@ -272,7 +273,7 @@ public class CodecMongoDeserializeWithCustomReaderTest extends MongoEMFSetting {
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(uri);
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
 
@@ -308,7 +309,7 @@ public class CodecMongoDeserializeWithCustomReaderTest extends MongoEMFSetting {
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(uri);
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
 

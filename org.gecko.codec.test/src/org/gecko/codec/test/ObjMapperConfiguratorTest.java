@@ -27,8 +27,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.gecko.codec.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.configurator.CodecFactoryConfigurator;
+import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -64,10 +64,10 @@ public class ObjMapperConfiguratorTest {
 
 	
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "enableFeatures", value={"PROPAGATE_TRANSIENT_MARKER", "REQUIRE_SETTERS_FOR_GETTERS", "USE_STATIC_TYPING", "SORT_PROPERTIES_ALPHABETICALLY",
 					"ACCEPT_CASE_INSENSITIVE_PROPERTIES", "ACCEPT_CASE_INSENSITIVE_ENUMS", "ACCEPT_CASE_INSENSITIVE_VALUES",
@@ -101,10 +101,10 @@ public class ObjMapperConfiguratorTest {
 		assertTrue(mapper.isEnabled(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL));	
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "disableFeatures", value={"USE_ANNOTATIONS", "USE_GETTERS_AS_SETTERS", "AUTO_DETECT_CREATORS", "AUTO_DETECT_FIELDS", "AUTO_DETECT_GETTERS", 
 					"AUTO_DETECT_IS_GETTERS", "AUTO_DETECT_SETTERS", "ALLOW_FINAL_FIELDS_AS_MUTATORS", "INFER_PROPERTY_MUTATORS", "INFER_CREATOR_FROM_CONSTRUCTOR_PROPERTIES", 
@@ -145,10 +145,10 @@ public class ObjMapperConfiguratorTest {
 	}
 	
 
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "enableFeatures", value={"WRAP_ROOT_VALUE", "INDENT_OUTPUT", "WRITE_SELF_REFERENCES_AS_NULL", "CLOSE_CLOSEABLE",
 					"WRITE_DATE_KEYS_AS_TIMESTAMPS", "WRITE_DATES_WITH_ZONE_ID", "WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS",
@@ -181,10 +181,10 @@ public class ObjMapperConfiguratorTest {
 		assertTrue(mapper.isEnabled(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS));
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "disableFeatures", value={"FAIL_ON_EMPTY_BEANS", "FAIL_ON_SELF_REFERENCES", "WRAP_EXCEPTIONS", "FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS", "FLUSH_AFTER_WRITE_VALUE", 
 					"WRITE_DATES_AS_TIMESTAMPS", "WRITE_DATES_WITH_CONTEXT_TIME_ZONE", "WRITE_DURATIONS_AS_TIMESTAMPS", "WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS", "EAGER_SERIALIZER_FETCH"}, type = Type.Array)
@@ -210,10 +210,10 @@ public class ObjMapperConfiguratorTest {
 		assertFalse(mapper.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS));
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "enableFeatures", value={"USE_BIG_DECIMAL_FOR_FLOATS", "USE_BIG_INTEGER_FOR_INTS", "USE_LONG_FOR_INTS", "USE_JAVA_ARRAY_FOR_JSON_ARRAY",
 					"FAIL_ON_NULL_FOR_PRIMITIVES", "FAIL_ON_NUMBERS_FOR_ENUMS", "FAIL_ON_READING_DUP_TREE_KEY",
@@ -252,10 +252,10 @@ public class ObjMapperConfiguratorTest {
 		assertTrue(mapper.isEnabled(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE));
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "disableFeatures", value={"FAIL_ON_UNKNOWN_PROPERTIES", "FAIL_ON_INVALID_SUBTYPE", "FAIL_ON_UNRESOLVED_OBJECT_IDS", "FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY", "WRAP_EXCEPTIONS", 
 					"ACCEPT_FLOAT_AS_INT", "READ_DATE_TIMESTAMPS_AS_NANOSECONDS", "ADJUST_DATES_TO_CONTEXT_TIME_ZONE", "EAGER_DESERIALIZER_FETCH"}, type = Type.Array)
@@ -283,10 +283,10 @@ public class ObjMapperConfiguratorTest {
 
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "enableFeatures", value={"WRITE_BIGDECIMAL_AS_PLAIN", "StreamWriteFeature.IGNORE_UNKNOWN", 
 					"StreamWriteFeature.STRICT_DUPLICATE_DETECTION", "StreamWriteFeature.USE_FAST_DOUBLE_WRITER"}, type = Type.Array)
@@ -307,10 +307,10 @@ public class ObjMapperConfiguratorTest {
 		assertTrue(mapper.isEnabled(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN));
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "disableFeatures", value={"AUTO_CLOSE_TARGET", "StreamWriteFeature.AUTO_CLOSE_CONTENT", 
 					"StreamWriteFeature.FLUSH_PASSED_TO_STREAM"}, type = Type.Array)
@@ -330,10 +330,10 @@ public class ObjMapperConfiguratorTest {
 		assertFalse(mapper.isEnabled(StreamWriteFeature.FLUSH_PASSED_TO_STREAM));	
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "enableFeatures", value={"STRICT_DUPLICATE_DETECTION", "IGNORE_UNDEFINED", 
 					"INCLUDE_SOURCE_IN_LOCATION", "USE_FAST_DOUBLE_PARSER", "USE_FAST_BIG_NUMBER_PARSER"}, type = Type.Array)
@@ -355,10 +355,10 @@ public class ObjMapperConfiguratorTest {
 		assertTrue(mapper.isEnabled(StreamReadFeature.USE_FAST_DOUBLE_PARSER));	
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "disableFeatures", value={"AUTO_CLOSE_SOURCE"}, type = Type.Array)
 	})
@@ -375,10 +375,10 @@ public class ObjMapperConfiguratorTest {
 		assertFalse(mapper.isEnabled(StreamReadFeature.AUTO_CLOSE_SOURCE));
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json")
 	})
-	@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
 			@Property(key = "dateFormat", value="yyyy-MM-dd"),
 			@Property(key = "locale", value="it-IT"),

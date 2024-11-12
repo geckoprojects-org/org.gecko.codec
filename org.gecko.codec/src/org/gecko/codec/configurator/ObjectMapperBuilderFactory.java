@@ -11,20 +11,17 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.jackson;
+package org.gecko.codec.configurator;
 
-import com.fasterxml.jackson.core.TSFBuilder;
+import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
 
 /**
  * 
  * @author ilenia
- * @param <W>
- * @param <G>
- * @since Aug 14, 2024
+ * @since Oct 30, 2024
  */
+public interface ObjectMapperBuilderFactory {
+	
+	Builder createObjectMapperBuilder();
 
-public abstract class CodecFactoryConfigurator {
-	
-	
-	public abstract TSFBuilder<?,?> getFactoryBuilder();
 }

@@ -107,7 +107,7 @@ public class CodecReadContext extends JsonStreamContext {
 
 	public static void resetFeature(JsonStreamContext ctx) {
 		if (isCodecContext(ctx)) {
-			((CodecWriteContext)ctx).setFeature(null);
+			((CodecReadContext)ctx).setFeature(null);
 		}
 	}
 	

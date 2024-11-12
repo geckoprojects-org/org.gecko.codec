@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.jackson.module;
+package org.gecko.codec.configurator;
 
 import org.eclipse.emf.ecore.resource.Resource;
 
