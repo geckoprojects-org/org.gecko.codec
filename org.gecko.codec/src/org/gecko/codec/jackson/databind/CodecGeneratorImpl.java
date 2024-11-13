@@ -323,14 +323,4 @@ public class CodecGeneratorImpl extends CodecGeneratorBaseImpl {
 		doWriteType(index, fieldName, superTypes);
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.CodecGenerator#doWriteArray(java.lang.Object[], int, int, java.lang.Class)
-	 */
-	@Override
-	public <T> void doWriteArray(T[] array, int offset, int length, Class<T> clazz) throws IOException {
-		// TODO Auto-generated method stub
-
-	}
-
 }

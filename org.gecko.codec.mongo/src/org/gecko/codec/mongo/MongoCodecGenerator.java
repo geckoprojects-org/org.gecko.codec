@@ -100,16 +100,13 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 		writer.writeStartDocument();
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.CodecGenerator#doEndWriteEObject(int, java.lang.String, org.eclipse.emf.ecore.EObject)
+	 */
 	@Override
 	public void doEndWriteEObject(int index, String fieldName, EObject object) throws IOException {
 		writer.writeEndDocument();
-	}
-
-	@Override
-	public <T> void doWriteArray(T[] array, int offset, int length, Class<T> clazz) throws IOException {
-//		TODO: this doesn't look right to me...
-	
-		writer.writeEndArray();
 	}
 
 	@Override

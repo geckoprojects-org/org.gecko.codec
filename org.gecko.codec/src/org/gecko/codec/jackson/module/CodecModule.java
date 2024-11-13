@@ -36,7 +36,6 @@ public class CodecModule extends EMFModule {
 	private boolean serializeDefaultValue;
 	private boolean serializeEmptyValue;
 	private boolean serializeNullValue;
-	private boolean serializeArrayBatched;
 	private boolean useNamesFromExtendedMetaData;
 	private boolean useId;
 	private boolean idOnTop;
@@ -75,10 +74,6 @@ public class CodecModule extends EMFModule {
 
 	public boolean isSerializeNullValue() {
 		return serializeNullValue;
-	}
-
-	public boolean isSerializeArrayBatched() {
-		return serializeArrayBatched;
 	}
 
 	public boolean isUseNamesFromExtendedMetaData() {
@@ -156,7 +151,6 @@ public class CodecModule extends EMFModule {
 	public CodecModule(Builder builder) {
 		this.codecType = builder.codecType;
 		this.codecModuleName = builder.codecModuleName;
-		this.serializeArrayBatched = builder.serializeArrayBatched;
 		this.serializeSuperTypesAsArray = builder.serializeSuperTypesAsArray;
 		this.serializeDefaultValue = builder.serializeDefaultValue;
 		this.serializeEmptyValue = builder.serializeEmptyValue;
@@ -225,7 +219,6 @@ public class CodecModule extends EMFModule {
 		private boolean serializeDefaultValue = false;
 		private boolean serializeEmptyValue = false;
 		private boolean serializeNullValue = false;
-		private boolean serializeArrayBatched = false;
 		private boolean useNamesFromExtendedMetaData = true;
 		private boolean useId = true;
 		private boolean idOnTop = true;
@@ -302,10 +295,6 @@ public class CodecModule extends EMFModule {
 			return this;
 		}
 
-		public Builder withSerializeArrayBatched(boolean serializeArrayBatched) {
-			this.serializeArrayBatched = serializeArrayBatched;
-			return this;
-		}
 		public Builder withUseNamesFromExtendedMetaData(boolean useNamesFromExtendedMetaData) {
 			this.useNamesFromExtendedMetaData = useNamesFromExtendedMetaData;
 			return this;

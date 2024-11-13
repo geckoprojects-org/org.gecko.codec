@@ -46,7 +46,6 @@ public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 			.withProxyKey(codecConfig.proxyKey())
 			.withRefKey(codecConfig.refKey())
 			.withSerailizeSuperTypesAsArray(codecConfig.serializeSuperTypesAsArray())
-			.withSerializeArrayBatched(codecConfig.serializeArrayBatched())
 			.withSerializeDefaultValue(codecConfig.serializeDefaultValue())
 			.withSerializeEmptyValue(codecConfig.serializeEmptyValue())
 			.withSerializeNullValue(codecConfig.serializeNullValue())

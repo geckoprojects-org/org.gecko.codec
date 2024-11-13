@@ -13,7 +13,6 @@
  */
 package org.gecko.codec.mongo.test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -202,34 +201,5 @@ public class CodecMongoSerializeSuperTypeTest extends MongoEMFSetting {
 		assertFalse(first.containsKey("_supertype"));
 		
 	}
-	
-	@Test
-	public void testSerializeArrayBatched() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
-		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/SpecificBusinessPerson/"));
-		
-		SpecificBusinessPerson person = CodecTestHelper.getTestSpecificBusinessPerson();
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ARRAY_BATCHED, true);
-		resource.save(options);
-		
-		resource.getContents().clear();
-		resource.unload();
-		/*
-		 * Find person in the collection
-		 */
-		assertEquals(1, sbpCollection.countDocuments());
-		FindIterable<Document> docIterable = sbpCollection.find();
-		Document first = docIterable.first();
-		assertTrue(first.containsKey("_supertype"));
-		String[] supertypes = (String[]) first.get("_supertype");
-		assertThat(supertypes.length).isGreaterThan(0);
-	}
-	
-
 	
 }

@@ -26,6 +26,7 @@ import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
+import org.gecko.codec.jackson.databind.CodecWriteContext;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -56,6 +57,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 	@SuppressWarnings("unchecked")
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		EMFContext.setParent(provider, rootObj);
+		
 		String idStrategy = idCodecInfo.getIdStrategy() != null ? idCodecInfo.getIdStrategy() : "";
 		List<EStructuralFeature> idFeatures = idCodecInfo.getFeatures().stream().filter(f -> f instanceof EStructuralFeature).map(EStructuralFeature.class::cast).collect(Collectors.toList());
 
@@ -107,10 +109,9 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 			}
 			else {
 				if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
-					System.out.println("ID FEATURE " + featureValue);
 					gen.writeObjectId(featureValue);
 					if(featureValue == null) {
-						rootObj.eSet(idFeature, gen.getCurrentValue().toString());
+						rootObj.eSet(idFeature, gen.getCurrentValue().toString()); //if the id feature is null, the generator takes care of creating a new one and then we have to set it to the EObject
 					}
 				} else {
 					if(featureValue == null) {

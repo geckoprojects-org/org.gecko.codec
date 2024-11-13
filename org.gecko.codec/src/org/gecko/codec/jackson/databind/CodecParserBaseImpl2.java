@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.json.JsonReadContext;
  * 
  * @author mark
  * @since 09.01.2024
+ * @deprecated not needed
  */
 public class CodecParserBaseImpl2 extends CodecParserBase {
 

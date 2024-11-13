@@ -102,10 +102,6 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 						}
 
 					}        		 
-				} else if (codecModule.isSerializeArrayBatched() && 
-						nonNull(cgb) && 
-						cgb.canWriteOneShotArray()) {
-					cgb.writeArray(values, 0, values.length, String.class);
 				} else {
 					serializer.serialize(values, gen, provider);
 				}

@@ -38,7 +38,6 @@ public interface CodecGenerator {
 	void doStartWriteEObject(int index, String fieldName, EObject object) throws IOException;
 	void doEndWriteEObject(int index, String fieldName, EObject object) throws IOException;
 
-	<T> void doWriteArray(T[] array, int offset, int length, Class<T> clazz) throws IOException;
 	void doStartWriteArray(int index, String fieldName, Object object) throws IOException;
 	void doEndWriteArray(int index, String fieldName, Object object) throws IOException;
 	

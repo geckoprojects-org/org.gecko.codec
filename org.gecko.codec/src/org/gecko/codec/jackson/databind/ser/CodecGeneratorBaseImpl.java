@@ -87,7 +87,6 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	public void flush() throws IOException {
-		System.out.println("Flush Objects");
 		_writeContext.reset(JsonWriteContext.TYPE_ROOT);
 	}
 
@@ -96,10 +95,8 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.base.GeneratorBase#_releaseBuffers()
 	 */
 	@Override
-	protected void _releaseBuffers() {
-		System.out.println("release buffers");
-		// TODO Auto-generated method stub
-
+	final protected void _releaseBuffers() {
+		_reportUnsupportedOperation();
 	}
 
 	/* 
@@ -107,9 +104,8 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.base.GeneratorBase#_verifyValueWrite(java.lang.String)
 	 */
 	@Override
-	protected void _verifyValueWrite(String typeMsg) throws IOException {
-//		System.out.println("Verify message: " + typeMsg);
-		// TODO add diagnostic here
+	final protected void _verifyValueWrite(String typeMsg) throws IOException {
+		// We have no use for this method. It does nothing
 	}
 
 	/* 
@@ -272,12 +268,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	public void writeArray(String[] array, int offset, int length) throws IOException {
-		// TODO Auto-generated method stub
 		super.writeArray(array, offset, length);
-		CodecWriteContext.resetFeature(_writeContext);
-	}
-	
-	public void writeOneShotArray(Object[] array, int offset, int length) throws IOException {
 		CodecWriteContext.resetFeature(_writeContext);
 	}
 	
@@ -296,8 +287,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	public void writeRawUTF8String(byte[] buffer, int offset, int len) throws IOException {
-		System.out.println("write raw utf8 byte buffer " + new String(buffer, StandardCharsets.UTF_8));
-		// TODO Auto-generated method stub
+		writeRaw(new String(buffer, StandardCharsets.UTF_8));
 
 	}
 
@@ -307,9 +297,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	public void writeUTF8String(byte[] buffer, int offset, int len) throws IOException {
-		System.out.println("write raw utf8 string " + new String(buffer, StandardCharsets.UTF_8));
-		// TODO Auto-generated method stub
-
+		writeString(new String(buffer, StandardCharsets.UTF_8));
 	}
 
 	/* 
@@ -541,29 +529,6 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 			_reportError("Error writing type information while expecting a value");
 		}
 		doWriteType(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), id);
-		CodecWriteContext.resetFeature(_writeContext);
-	}
-	
-	/* 
-	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.CodeGeneratorBase#canWriteOneShotArray()
-	 */
-	@Override
-	public boolean canWriteOneShotArray() {
-		return true;
-	}
-	
-	/* 
-	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.CodeGeneratorBase#writeArray(java.lang.Object[], int, int, java.lang.Class)
-	 */
-	@Override
-	public <T> void writeArray(T[] array, int offset, int length, Class<T> clazz) throws IOException {
-		setCurrentValue(array);
-		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
-			_reportError("Error writing array expecting a value, but need a name");
-		}
-		doWriteArray(array, offset, length, clazz);
 		CodecWriteContext.resetFeature(_writeContext);
 	}
 	

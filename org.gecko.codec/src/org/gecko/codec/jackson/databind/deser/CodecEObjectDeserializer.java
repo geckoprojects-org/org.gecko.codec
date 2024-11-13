@@ -85,7 +85,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 	@Override
 	public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
 		
-//		EMFContext.prepare(ctxt);
+		EMFContext.prepare(ctxt);
 		
 		final Resource resource = getResource(ctxt);
 		EStructuralFeature feature = getFeature(ctxt);

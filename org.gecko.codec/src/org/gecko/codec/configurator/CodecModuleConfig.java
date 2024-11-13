@@ -53,14 +53,6 @@ public @interface CodecModuleConfig {
 	boolean serializeEmptyValue() default false;
 	
 	/**
-	 * Setting this option to <code>true</code>, will send lists and arrays using the writeArray callbacks.
-     * Per default the serialization happens with startArray, then calling writeValue for each element. 
-     * Default is Boolean.FALSE
-	 * @return
-	 */
-	boolean serializeArrayBatched() default false;
-	
-	/**
 	 * Option used to indicate whether feature names specified in
      * {@link org.eclipse.emf.ecore.util.ExtendedMetaData} annotations should
      * be respected.

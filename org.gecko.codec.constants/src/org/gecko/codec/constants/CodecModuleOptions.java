@@ -28,8 +28,6 @@ public interface CodecModuleOptions {
 	
 	String CODEC_MODULE_SERIALIZE_NULL_VALUE = "codec.module.serialize.null.value";
 	
-	String CODEC_MODULE_SERIALIZE_ARRAY_BATCHED = "codec.module.serialize.array.batched";
-	
 	String CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA = "codec.module.use.names.from.extended.metadata";
 	
 	String CODEC_MODULE_USE_ID = "codec.module.use.id";

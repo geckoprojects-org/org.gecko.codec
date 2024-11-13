@@ -376,9 +376,6 @@ public class CodecResource extends ResourceImpl {
 			case CodecModuleOptions.CODEC_MODULE_REFERENCE_KEY:
 				moduleBuilder.withRefKey((String) v);
 				break;
-			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_ARRAY_BATCHED:
-				moduleBuilder.withSerializeArrayBatched((boolean) v);
-				break;
 			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE:
 				moduleBuilder.withSerializeDefaultValue((boolean) v);
 				break;

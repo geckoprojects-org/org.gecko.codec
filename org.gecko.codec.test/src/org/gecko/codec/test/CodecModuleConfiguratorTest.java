@@ -65,7 +65,6 @@ public class CodecModuleConfiguratorTest {
 		assertFalse(module.isSerializeDefaultValue());		
 		assertFalse(module.isSerializeNullValue());		
 		assertFalse(module.isSerializeEmptyValue());		
-		assertFalse(module.isSerializeArrayBatched());
 		assertTrue(module.isUseNamesFromExtendedMetaData());
 		assertTrue(module.isUseId());
 		assertTrue(module.isIdOnTop());
@@ -198,17 +197,6 @@ public class CodecModuleConfiguratorTest {
 		assertNotNull(codecModuleConfigurator);
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
 		assertTrue(module.isSerializeNullValue());
-	}
-	
-	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "serializeArrayBatched", value="true", scalar = Scalar.Boolean)
-	})
-	@Test
-	public void testCodecModuleConfigSerArrayBatched(@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator) throws InterruptedException, IOException {
-	
-		assertNotNull(codecModuleConfigurator);
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isSerializeArrayBatched());
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {

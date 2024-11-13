@@ -388,23 +388,6 @@ public class CodecModuleConfigOverwriteTest {
 	}
 	
 	@Test
-	public void testCodecModuleOverwriteSerializeArrayBatched() throws InterruptedException, IOException {
-	
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertFalse(module.isSerializeArrayBatched());	
-		
-		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ARRAY_BATCHED, true);
-		resource.save(options);
-		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isSerializeArrayBatched());	
-	}
-	
-	@Test
 	public void testCodecModuleOverwriteSerializeIdField() throws InterruptedException, IOException {
 	
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();

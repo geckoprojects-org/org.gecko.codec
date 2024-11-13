@@ -19,18 +19,16 @@ import java.math.BigDecimal;
 import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.gecko.codec.CodecReaderProvider;
-import org.gecko.codec.jackson.databind.CodecParserBaseImpl2;
+import org.gecko.codec.jackson.databind.CodecParserBaseImpl;
 
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.io.IOContext;
 
-public class MongoCodecParser extends CodecParserBaseImpl2 {
+public class MongoCodecParser extends CodecParserBaseImpl {
 
 	private BsonReader reader;
-	private Object currentValue;
-	private ObjectCodec objectCodec;
 	
 	/**
 	 * Creates a new instance.
@@ -42,7 +40,7 @@ public class MongoCodecParser extends CodecParserBaseImpl2 {
 	public MongoCodecParser(IOContext context, CodecReaderProvider<BsonReader> reader) {
 		super(context, -1);
 		this.reader = reader.getReader();
-		this.objectCodec = reader.getObjectCodec();
+		setCodec(reader.getObjectCodec());
 	}
 
 	/**
@@ -55,70 +53,122 @@ public class MongoCodecParser extends CodecParserBaseImpl2 {
 	public MongoCodecParser(IOContext context, BsonReader reader, ObjectCodec objectCodec) {
 		super(context, -1);
 		this.reader = reader;
-		this.objectCodec = objectCodec;
+		setCodec(objectCodec);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#closeInput()
+	 */
 	@Override
-	protected void _closeInput() throws IOException {
-		System.out.println("close input");
-//		reader.close();
+	public void closeInput() {
+		// Do not close the mongo reader here!
+		// reader.close();
 	}
-
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#isEnddocument()
+	 */
 	@Override
-	public JsonToken nextToken() throws IOException {
+	public boolean isEndDocument() {
+		return reader.getCurrentBsonType() == BsonType.END_OF_DOCUMENT;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#isBeginDocument()
+	 */
+	@Override
+	public boolean isBeginDocument() {
+		return reader.getCurrentBsonType() == BsonType.DOCUMENT;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#isBeginArray()
+	 */
+	@Override
+	public boolean isBeginArray() {
+		return reader.getCurrentBsonType() == BsonType.ARRAY;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doBeginArray()
+	 */
+	@Override
+	public void doBeginArray() {
+		reader.readStartArray();
+	}
+	
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doEndArray()
+	 */
+	@Override
+	public void doEndArray() {
+		reader.readEndArray();
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doEndDocument()
+	 */
+	@Override
+	public void doEndDocument() {
+		reader.readEndDocument();
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doReadName()
+	 */
+	@Override
+	public String doReadName() {
+		return reader.readName();
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doBeginDocument()
+	 */
+	@Override
+	public void doBeginDocument() {
+		reader.readStartDocument();
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doGetCurrentToken()
+	 */
+	@Override
+	public JsonToken doGetCurrentToken() {
 		BsonType currentType = reader.getCurrentBsonType();
-		System.out.println("----------------------------------------------------");
-		System.out.println("currentType is " + currentType);
-
-		if (currentType == BsonType.END_OF_DOCUMENT) {
-			if (_parsingContext.inArray()) {
-				System.out.println("end array");
-				reader.readEndArray();
-				_currToken = JsonToken.END_ARRAY;
-			} else {
-				System.out.println("end document");
-				reader.readEndDocument();
-				_currToken = JsonToken.END_OBJECT;
-			}
-			_parsingContext = _parsingContext.clearAndGetParent();
-			if(!_parsingContext.inRoot()) {
-				BsonType nextType = reader.readBsonType();
-				_nextToken = map(nextType);
-			}
-		} else if (_parsingContext.inObject() && _currToken != JsonToken.FIELD_NAME) {
-			String name = reader.readName();
-			System.out.println("FieldName is " + name);
-			_parsingContext.setCurrentName(name);
-			_currToken = JsonToken.FIELD_NAME;
-		} else if (currentType == BsonType.DOCUMENT) {
-			System.out.println("start document");
-			reader.readStartDocument();
-			_parsingContext = _parsingContext.createChildObjectContext(1, 0);
-			BsonType nextType = reader.readBsonType();
-			_currToken = JsonToken.START_OBJECT;
-			_nextToken = map(nextType);
-		} else if (currentType == BsonType.ARRAY) {
-			System.out.println("start array");
-			reader.readStartArray();
-			_parsingContext = _parsingContext.createChildArrayContext(1, 0);
-			BsonType nextType = reader.readBsonType();
-			_currToken = JsonToken.START_ARRAY;
-			_nextToken = map(nextType);
-		} else {
-			currentValue = getCurrentValue(currentType);
-			System.out.println("CurrentValue is " + currentValue);
-			setCurrentValue(currentValue);
-			
-			// 17-Sep-2019, tatu: [core#563] Need to call this to update index 
-	        _parsingContext.expectComma();
-			
-	        BsonType nextType = reader.readBsonType();
-			
-			_currToken = map(currentType);
-			_nextToken = map(nextType);
-		}
-		return _currToken;
+		return map(currentType);
 	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doNextToken()
+	 */
+	@Override
+	public JsonToken doGetNextToken() {
+		BsonType nextType = reader.readBsonType();
+		return map(nextType);
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doGetCurrentValue()
+	 */
+	@Override
+	public Object doGetCurrentValue() {
+		return getCurrentValue(reader.getCurrentBsonType());
+	}
+	
+	
 
 	/* 
 	 * (non-Javadoc)
@@ -135,8 +185,7 @@ public class MongoCodecParser extends CodecParserBaseImpl2 {
 	 */
 	@Override
 	public Object getObjectId() throws IOException {
-		System.out.println("OBJECT ID " + currentValue);
-		return currentValue;
+		return getCurrentValue();
 	}
 	
 	private Object getCurrentValue(BsonType bsonType) {
@@ -194,29 +243,16 @@ public class MongoCodecParser extends CodecParserBaseImpl2 {
 		}
 	}
 
-
-	
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.base.ParserBase#getDoubleValue()
-	 */
-	@Override
-	public double getDoubleValue() throws IOException {
-		System.out.println("get double " + currentValue);
-		return (double) currentValue;
-	}
-	
 	/* 
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.core.base.ParserBase#getFloatValue()
 	 */
 	@Override
 	public float getFloatValue() throws IOException {
-		System.out.println("get float " + currentValue);
-		if(currentValue instanceof Double doubCurrentValue) {
+		if(getCurrentValue() instanceof Double doubCurrentValue) {
 			return (float)(double)doubCurrentValue;
 		}
-		return (float) currentValue;
+		return (float) getCurrentValue();
 	}
 	
 	/* 
@@ -225,19 +261,7 @@ public class MongoCodecParser extends CodecParserBaseImpl2 {
 	 */
 	@Override
 	public BigDecimal getDecimalValue() throws IOException {
-		System.out.println("get BigDecimal" + currentValue);
-		return ((org.bson.types.Decimal128) currentValue).bigDecimalValue();
-	}
-	
-	@Override
-	public int getIntValue() throws IOException {
-		System.out.println("get int " + currentValue);
-		return (int) currentValue;
-	}
-	
-	@Override
-	public String getText() throws IOException {
-		return (String) currentValue;
+		return ((org.bson.types.Decimal128) getCurrentValue()).bigDecimalValue();
 	}
 	
 	/* 
@@ -246,43 +270,13 @@ public class MongoCodecParser extends CodecParserBaseImpl2 {
 	 */
 	@Override
 	public byte[] getBinaryValue() throws IOException {
-		return ((org.bson.BsonBinary) currentValue).getData();
+		return ((org.bson.BsonBinary) getCurrentValue()).getData();
 	}
 	
 	@Override
 	public byte[] getBinaryValue(Base64Variant variant) throws IOException {
 		
-		return((org.bson.BsonBinary) currentValue).getData();
+		return((org.bson.BsonBinary) getCurrentValue()).getData();
     }
 
-
-	@Override
-	public char[] getTextCharacters() throws IOException {
-		System.out.println("get text chars " + currentValue);
-		return getText().toCharArray();
-	}
-
-	@Override
-	public int getTextLength() throws IOException {
-		System.out.println("get text length");
-		return getText().length();
-	}
-
-	@Override
-	public int getTextOffset() throws IOException {
-		System.out.println("get text offset");
-		return 0;
-	}
-
-	@Override
-	public ObjectCodec getCodec() {
-		System.out.println("get codec");
-		return objectCodec;
-	}
-
-	@Override
-	public void setCodec(ObjectCodec oc) {
-		System.out.println("set codec" + oc);
-		this.objectCodec = oc;
-	}
 }

@@ -25,6 +25,7 @@ import com.fasterxml.jackson.core.json.DupDetector;
  * 
  * @author ilenia
  * @since Oct 28, 2024
+ * @deprecated not needed
  */
 public class CodecReadContext extends JsonStreamContext {
 

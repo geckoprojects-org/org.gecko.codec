@@ -26,8 +26,4 @@ public interface CodecGeneratorBase {
 
 	void writeSuperTypes(String[] supertypes) throws IOException;
 	
-	boolean canWriteOneShotArray();
-	
-	<T> void writeArray(T[] array, int offset, int length, Class<T> clazz) throws IOException;
-
 }
