@@ -25,7 +25,6 @@ import org.gecko.codec.info.codecinfo.CodecValueReader;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.SuperTypeInfo;
-import org.gecko.codec.info.codecinfo.TypeInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -43,16 +42,12 @@ public class SuperTypeCodecInfoDeserializer implements CodecInfoDeserializer {
 	
 	private final JsonDeserializer<String> deserializer = StringDeserializer.instance;
 	
-	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
-	private EClassCodecInfo eObjCodecInfo;
 	private SuperTypeInfo typeCodecInfo;
 	
 	public SuperTypeCodecInfoDeserializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final SuperTypeInfo typeCodecInfo) {
-		this.codecModule = codecMoule;
 		this.codecModelInfoService = codecModelInfoService;
-		this.eObjCodecInfo = eObjCodecInfo;
 		this.typeCodecInfo = typeCodecInfo;
 	}
 

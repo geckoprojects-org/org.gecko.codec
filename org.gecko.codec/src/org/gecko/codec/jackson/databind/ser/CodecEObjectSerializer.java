@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * 
+ * Codec Serializer for EObject
  * @author ilenia
  * @since Aug 6, 2024
  */

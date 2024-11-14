@@ -20,8 +20,5 @@ import com.fasterxml.jackson.core.ObjectCodec;
  */
 public interface ObjectCodecProvider {
 
-	/**
-	 * @return
-	 */
 	ObjectCodec getObjectCodec();
 }

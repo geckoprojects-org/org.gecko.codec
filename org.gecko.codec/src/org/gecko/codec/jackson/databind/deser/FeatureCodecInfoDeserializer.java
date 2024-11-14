@@ -35,7 +35,6 @@ import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.TypeInfo;
-import org.gecko.codec.jackson.databind.CodecReadContext;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -46,7 +45,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
- * 
+ * Codec Deserializer for FeatureInfo
  * @author ilenia
  * @since Sep 27, 2024
  */
@@ -54,7 +53,6 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
-	private EClassCodecInfo eObjCodecInfo;
 	private FeatureCodecInfo featureCodecInfo;
 	private TypeInfo typeCodecInfo;
 	private JsonDeserializer<Object> deserializer;
@@ -64,7 +62,6 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 			final EClassCodecInfo eObjCodecInfo, final FeatureCodecInfo featureCodecInfo, TypeInfo typeInfo) {
 		this.codecModule = codecMoule;
 		this.codecModelInfoService = codecModelInfoService;
-		this.eObjCodecInfo = eObjCodecInfo;
 		this.featureCodecInfo = featureCodecInfo;
 		this.typeCodecInfo = typeInfo;
 	}
@@ -114,9 +111,6 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 			//$FALL-THROUGH$
 		case MANY_CONTAINMENT:
 		case SINGLE_CONTAINMENT: {
-			if(jp.getParsingContext() instanceof CodecReadContext codecCtxt) {
-				codecCtxt.setFeature(feature);
-			}
 			EMFContext.setFeature(ctxt, feature);
 			EMFContext.setParent(ctxt, current);
 		}

@@ -22,6 +22,7 @@ import org.gecko.codec.jackson.databind.ser.CodecSerializers;
 import com.fasterxml.jackson.core.Version;
 
 /**
+ * Extension of EMFModule which allows to set codec specific options
  * 
  * @author mark
  * @since 02.08.2024

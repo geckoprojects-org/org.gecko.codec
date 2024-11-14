@@ -14,7 +14,6 @@
 package org.gecko.codec.configurator;
 
 import org.gecko.codec.jackson.module.CodecModule;
-import org.gecko.codec.jackson.module.CodecModule.Builder;
 
 /**
  * 

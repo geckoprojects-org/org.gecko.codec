@@ -47,31 +47,55 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 		this.parserFactory = parserFactory;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonFactory#createGenerator(java.io.DataOutput)
+	 */
 	@Override
 	public JsonGenerator createGenerator(DataOutput out) throws IOException {
 		return internalCreateGenerator(out);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonFactory#createGenerator(java.io.OutputStream)
+	 */
 	@Override
 	public JsonGenerator createGenerator(OutputStream out) throws IOException {
 		return internalCreateGenerator(out);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonFactory#_createUTF8Generator(java.io.OutputStream, com.fasterxml.jackson.core.io.IOContext)
+	 */
 	@Override
 	protected JsonGenerator _createUTF8Generator(OutputStream out, IOContext ctxt) throws IOException {
 		return internalCreateGenerator(out);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.DataInput)
+	 */
 	@Override
 	public JsonParser createParser(DataInput in) throws IOException {
 		return internalCreateParser(in);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.net.URL)
+	 */
 	@Override
 	public JsonParser createParser(URL url) throws IOException, JsonParseException {
 		return internalCreateParser(url);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.InputStream)
+	 */
 	@Override
 	public JsonParser createParser(InputStream in) throws IOException, JsonParseException {
 		return internalCreateParser(in);

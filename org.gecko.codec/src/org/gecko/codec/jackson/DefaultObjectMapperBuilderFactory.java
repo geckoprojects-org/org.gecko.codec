@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
 
 /**
- * 
+ * Default implementation of {@link ObjectMapperBuilderFactory}
  * @author ilenia
  * @since Oct 30, 2024
  */
@@ -115,7 +115,7 @@ public class DefaultObjectMapperBuilderFactory implements ObjectMapperBuilderFac
 				setJsonReadFeature(featureString, state, objMapperBuilder);
 				break;
 			default:
-//				LOGGER.warning(String.format("Feature prefix %s not supported", prefix));
+				LOGGER.warning(String.format("Feature prefix %s not supported", prefix));
 			}
 		} else {
 			setMapperFeature(featureString, state, objMapperBuilder);

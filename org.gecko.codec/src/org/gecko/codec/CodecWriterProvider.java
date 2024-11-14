@@ -14,6 +14,7 @@ package org.gecko.codec;
 import com.fasterxml.jackson.core.ObjectCodec;
 
 /**
+ * Simple provider for the writer and ObjectCodec used for generating.
  * 
  * @author grune
  * @since Apr 10, 2024
@@ -35,6 +36,10 @@ public class CodecWriterProvider<W> implements ObjectCodecProvider{
 		return writer;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.ObjectCodecProvider#getObjectCodec()
+	 */
 	@Override
 	public ObjectCodec getObjectCodec() {
 		return objectCodec;

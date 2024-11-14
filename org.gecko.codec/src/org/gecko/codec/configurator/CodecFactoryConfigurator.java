@@ -18,8 +18,6 @@ import com.fasterxml.jackson.core.TSFBuilder;
 /**
  * 
  * @author ilenia
- * @param <W>
- * @param <G>
  * @since Aug 14, 2024
  */
 

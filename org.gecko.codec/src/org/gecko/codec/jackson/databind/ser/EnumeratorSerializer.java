@@ -28,10 +28,10 @@ import org.gecko.codec.jackson.databind.CodecWriteContext;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
+ * Codec Enumerator serializer 
  * 
  * @author ilenia
  * @since Oct 28, 2024
@@ -41,16 +41,10 @@ public class EnumeratorSerializer implements CodecInfoSerializer{
 	private static final Logger LOGGER = Logger.getLogger(EnumeratorSerializer.class.getName());
 	
 	private CodecModule codecModule;
-	private CodecModelInfo codecModelInfoService;
-	private EClassCodecInfo eObjCodecInfo;
 	private FeatureCodecInfo featureCodecInfo;
-	private JsonSerializer<Object> serializer;
-	
 	public EnumeratorSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final FeatureCodecInfo featureCodecInfo) {
 		this.codecModule = codecMoule;
-		this.codecModelInfoService = codecModelInfoService;
-		this.eObjCodecInfo = eObjCodecInfo;
 		this.featureCodecInfo = featureCodecInfo;
 	}
 
@@ -59,6 +53,7 @@ public class EnumeratorSerializer implements CodecInfoSerializer{
 	 * (non-Javadoc)
 	 * @see org.gecko.codec.demo.jackson.ser.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		if(featureCodecInfo.isIgnore()) return;
@@ -108,11 +103,10 @@ public class EnumeratorSerializer implements CodecInfoSerializer{
 		} else {
 			gen.writeFieldName(feature.getName());
 		}
-		serializeSingleAttributeValue(rootObj, value, feature, gen, provider);
+		serializeSingleAttributeValue(value, gen);
 	}
 	
-	private void serializeSingleAttributeValue(EObject rootObj, Object value, EStructuralFeature feature, JsonGenerator gen,
-			SerializerProvider provider) throws IOException {
+	private void serializeSingleAttributeValue(Object value, JsonGenerator gen) throws IOException {
 		
 		if(codecModule.isWriteEnumLiterals()) {
 			gen.writeString(((Enumerator) value).getLiteral());
@@ -135,7 +129,7 @@ public class EnumeratorSerializer implements CodecInfoSerializer{
 		gen.writeStartArray();
 		values.forEach(value -> {
 			try {
-				serializeSingleAttributeValue(rootObj, value, feature, gen, provider);
+				serializeSingleAttributeValue(value, gen);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

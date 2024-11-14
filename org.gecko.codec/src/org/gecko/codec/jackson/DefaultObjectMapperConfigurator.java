@@ -24,7 +24,7 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * 
+ * Default implementation of {@link ObjectMapperConfigurator}
  * @author ilenia
  * @since Aug 14, 2024
  */
@@ -43,10 +43,13 @@ public class DefaultObjectMapperConfigurator implements ObjectMapperConfigurator
 		this.properties = properties;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.configurator.ObjectMapperConfigurator#getObjMapperBuilderFactory()
+	 */
+	@Override
 	public ObjectMapperBuilderFactory getObjMapperBuilderFactory() {
 		DefaultObjectMapperBuilderFactory factory = new DefaultObjectMapperBuilderFactory(properties, codecFactoryConfigurator);
 		return factory;
 	}
-	
-	
 }

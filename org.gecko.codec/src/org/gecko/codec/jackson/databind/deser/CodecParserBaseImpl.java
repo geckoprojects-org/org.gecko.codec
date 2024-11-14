@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.jackson.databind;
+package org.gecko.codec.jackson.databind.deser;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -24,7 +24,7 @@ import com.fasterxml.jackson.core.io.IOContext;
 import com.fasterxml.jackson.core.json.JsonReadContext;
 
 /**
- * 
+ * This is the default basic impl of the Parser. 
  * @author mark
  * @since 09.01.2024
  */

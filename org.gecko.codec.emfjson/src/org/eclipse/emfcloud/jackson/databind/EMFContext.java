@@ -384,7 +384,6 @@ public final class EMFContext {
       return factory;
    }
 
-   @SuppressWarnings("checkstyle:cyclomaticComplexity")
    public static List<EClass> allSubTypes(final DatabindContext ctxt, final EClass eClass) {
       if (eClass == null) {
          return Collections.emptyList();

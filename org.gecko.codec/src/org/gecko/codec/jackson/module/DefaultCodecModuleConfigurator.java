@@ -20,7 +20,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 
 /**
- * 
+ * Default implementation of {@link CodecModuleConfigurator}
  * @author ilenia
  * @since Aug 15, 2024
  */

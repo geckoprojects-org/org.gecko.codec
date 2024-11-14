@@ -40,7 +40,6 @@ import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.info.codecinfo.SuperTypeInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
-import org.gecko.codec.jackson.databind.CodecReadContext;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -57,13 +56,13 @@ import com.fasterxml.jackson.databind.util.TokenBuffer;
  * @since Sep 26, 2024
  */
 public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(CodecEObjectDeserializer.class.getName());
 
 	private Class<?> currentType;
 	private final CodecModule codecModule;
 	private final CodecModelInfo codecModelInfoService;
-	
+
 	public CodecEObjectDeserializer(final Class<?> currentType, final CodecModule codecModule, 
 			final CodecModelInfo codecModelInfoService) {
 		this.currentType = currentType;
@@ -71,12 +70,16 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 		this.codecModelInfoService = codecModelInfoService;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.databind.JsonDeserializer#handledType()
+	 */
 	@Override
 	public Class<?> handledType() {
 		return EObject.class;
 	}
 
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext)
@@ -84,35 +87,24 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
-		
+
 		EMFContext.prepare(ctxt);
-		
+
 		final Resource resource = getResource(ctxt);
 		EStructuralFeature feature = getFeature(ctxt);
 		final EClass defaultType = getDefaultType(ctxt);
-		
-		
-//		In case of contained ref, the defaultType is set and we can immediately construct everything. 
-//		This fixes the issue when we don't have a _type property for contained ref, to retrieve the actual type
-//		In case of root obj we have the ROOT_OBJECT option that is mandatory if the _type is not set so we 
-//		can use that to construct everything		
+
+
+		//		In case of contained ref, the defaultType is set and we can immediately construct everything. 
+		//		This fixes the issue when we don't have a _type property for contained ref, to retrieve the actual type
+		//		In case of root obj we have the ROOT_OBJECT option that is mandatory if the _type is not set so we 
+		//		can use that to construct everything		
 		EClass type = defaultType == null ? ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) == null ? null : (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) : defaultType;	
 		EObject current = type == null ? null : EcoreUtil.create(type);
-		
-		
-//		In case of non contained ref w/o type info we try to retrieve the root ctxt so we know which ref we are trying to deserialize
+
+
+		//		In case of non contained ref w/o type info we try to retrieve the root ctxt so we know which ref we are trying to deserialize
 		if(current == null) {
-			
-//			This should replace the root context we set in the EMFContext
-//			This doesn't work because we have a new instance of JsonParser at the point of 
-//			deserializing the reference!! 
-			if(jp.getParsingContext() instanceof CodecReadContext codecCtxt) {
-				CodecReadContext parentReadCtxt = codecCtxt.getParent();
-				if(parentReadCtxt != null) {
-					feature = parentReadCtxt.getFeature();
-				}
-			}
-			
 			DatabindContext rootCtxt = EMFContext.getRootContext();
 			if(rootCtxt != null) {
 				feature = EMFContext.getFeature(rootCtxt);
@@ -122,7 +114,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 				}
 			}
 		}
-		
+
 		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
 		EClassCodecInfo eObjCodecInfo = null;
 		if(type != null) {
@@ -133,13 +125,13 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 				}
 			}
 		}
-				
+
 		TokenBuffer buffer = null;
 		JsonToken nextToken = jp.nextToken();
 		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
 		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
 			final String field = jp.getCurrentName();
-//			If it was not possible to determine the type from the conditions before then we look for the _type in the serialized document
+			//			If it was not possible to determine the type from the conditions before then we look for the _type in the serialized document
 			if(field.equals(codecModule.getTypeKey()) && current == null) {
 				jp.nextToken();
 				for(CodecValueReader<String, EClass> reader : infoHolder.getReaders()) {
@@ -161,22 +153,22 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 				FeatureCodecInfo featureCodecInfo = getFeatureCodecInfo(field, eObjCodecInfo);
 				if(featureCodecInfo instanceof IdentityInfo idInfo) {
 					new IdCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, idInfo)
-						.deserializeAndSet(jp, current, ctxt, resource);
+					.deserializeAndSet(jp, current, ctxt, resource);
 				} 
 				else if(featureCodecInfo instanceof SuperTypeInfo superTypeInfo) {
 					new SuperTypeCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, superTypeInfo)
-						.deserialize(jp, ctxt);
+					.deserialize(jp, ctxt);
 				} 	
 				else if(featureCodecInfo != null && !(featureCodecInfo instanceof TypeInfo)) {
 					new FeatureCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, featureCodecInfo, eObjCodecInfo.getTypeInfo())
-						.deserializeAndSet(jp, current, ctxt, resource);
-					
+					.deserializeAndSet(jp, current, ctxt, resource);
+
 				} else if(featureCodecInfo == null && current != null) {
 					handleUnknownProperty(jp, resource, ctxt, current.eClass());
 				} 
 			} else {
-//				since current is not set, I guess we are copying the structure and try with the next property (e.g. we want to look for the type first so we know
-//				which object we have to build)...?
+				//				since current is not set, we are copying the structure and try with the next property 
+				//				(because we want to look for the type first so we know which object we have to build)
 				if (buffer == null) {
 					buffer = new TokenBuffer(jp);
 				}
@@ -184,11 +176,11 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 			}
 			nextToken = jp.nextToken();
 		}
-		
-//		 handle empty objects
-				if (buffer == null && current == null && defaultType != null) {
-					return EcoreUtil.create(defaultType);
-				}
+
+		//		 handle empty objects
+		if (buffer == null && current == null && defaultType != null) {
+			return EcoreUtil.create(defaultType);
+		}
 		return current;
 	}
 

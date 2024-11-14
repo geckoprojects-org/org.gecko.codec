@@ -31,7 +31,6 @@ import org.gecko.codec.info.codecinfo.CodecValueReader;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.TypeInfo;
-import org.gecko.codec.jackson.databind.CodecReadContext;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -39,7 +38,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
 /**
- * 
+ * Codec Deserializer for References
  * @author ilenia
  * @since Sep 30, 2024
  */
@@ -76,10 +75,6 @@ public class ReferenceCodecInfoDeserializer implements CodecInfoDeserializer {
 		EObject parent = EMFContext.getParent(ctxt);
 		EReference reference = EMFContext.getReference(ctxt);
 		
-		if(jp.getParsingContext() instanceof CodecReadContext codecCtxt) {
-			codecCtxt.setFeature(reference);
-		}
-	
 		String id = null;
 		String type = null;
 

@@ -33,22 +33,22 @@ import com.fasterxml.jackson.core.TSFBuilder;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.json.JsonWriteFeature;
 
+
 /**
+ * Default implementation of {@link CodecFactoryConfigurator} 
  * 
  * @author ilenia
- * @param <W>
- * @param <G>
- * @since Aug 14, 2024
+ * @since Nov 14, 2024
  */
 @Component(name = "DefaultCodecFactoryConfigurator", service = CodecFactoryConfigurator.class, 
 	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
 public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator{
 	
 	@Reference(target="(type=json)", cardinality = ReferenceCardinality.OPTIONAL)
-	CodecGeneratorFactory genFactory;
+	CodecGeneratorFactory<?,?> genFactory;
 	
 	@Reference(target="(type=json)", cardinality = ReferenceCardinality.OPTIONAL)
-	CodecParserFactory parserFactory;
+	CodecParserFactory<?,?> parserFactory;
 	
 	private final static Logger LOGGER = Logger.getLogger(DefaultCodecFactoryConfigurator.class.getName());
 	private TSFBuilder<?,?> factoryBuilder;

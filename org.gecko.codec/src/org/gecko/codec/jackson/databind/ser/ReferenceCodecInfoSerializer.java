@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
+ * Codec Serializer for References
  * 
  * @author ilenia
  * @since Aug 22, 2024
@@ -76,6 +77,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		EReference feature = (EReference) featureCodecInfo.getFeatures().get(0);
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
+		
 		
 		if(jg.getOutputContext() instanceof CodecWriteContext cwt) {
 			cwt.setFeature(feature);

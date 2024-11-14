@@ -13,8 +13,6 @@
  */
 package org.gecko.codec.configurator;
 
-import org.eclipse.emf.ecore.resource.Resource;
-
 /**
  * This is the CodecModule configuration, which should be used to configure 
  * general serialization/deserialization properties
@@ -24,10 +22,58 @@ import org.eclipse.emf.ecore.resource.Resource;
  */
 public @interface CodecModuleConfig {
 	
+	/**
+	 * The Type of the Module. Default is "json".
+	 * @return
+	 */
 	String type() default "json";
 	
+	/**
+	 * A name for the Module.
+	 * @return
+	 */
 	String codecModuleName() default "gecko-codec-module";
 	
+	/**
+	 * Option to indicate the default key to be used for id 
+	 * Default is "_id"
+	 * @return
+	 */
+	String idKey() default "_id";
+	
+	/**
+	 * Option to indicate the default key to be used for type
+	 * Default is "_type"
+	 * @return
+	 */
+	String typeKey() default "_type";
+	
+	/**
+	 * Option to indicate the default key used for supertype
+	 * @return
+	 */
+	String superTypeKey() default "_supertype";
+	
+	/**
+	 * Option to indicate the default key to be used for references
+	 * Default is "$ref"
+	 * @return
+	 */
+	String refKey() default "$ref";
+	
+	/**
+	 * Option to indicate the default key for proxies
+	 * Default is "_proxy"
+	 * @return
+	 */
+	String proxyKey() default "_proxy";
+	
+	/**
+	 * Option to indicate the default key for timestamp
+	 * Default is "_timestamp"
+	 * @return
+	 */
+	String timestampKey() default "_timestamp";
 	
 	/**
 	 * Option used to indicate the module to serialize default attributes values.
@@ -38,7 +84,7 @@ public @interface CodecModuleConfig {
 	
 	/**
 	 * Option used to indicate the module to serialize null values.
-	 * This is used for objects in general and for map values.
+	 * This is used for objects in general.
 	 * Default is false
 	 * @return
 	 */
@@ -60,7 +106,6 @@ public @interface CodecModuleConfig {
 	 * @return
 	 */
 	boolean useNamesFromExtendedMetaData() default true;
-	
 	
 	/**
 	 * Option used to indicate the module to serialize a special id field, which 
@@ -85,8 +130,6 @@ public @interface CodecModuleConfig {
 	 * Option used to indicate the module to additionally serialize the id field of an EObject as it is.
      * This might be superfluous when using as id strategy the one that uses the id field itself, but it 
      * might be useful when the id strategy is set to COMBINED.
-     * It can be useful to OPTION_USE_ID(true) and OPTIONS_USE_ID_FIELD(false) and additionally store this 
-     * id field, while using the URI fragment or {@link Resource} ID as primary key
      * 
 	 * Default is Boolean.FALSE
 	 * @return
@@ -101,14 +144,12 @@ public @interface CodecModuleConfig {
 	 */
 	boolean idFeatureAsPrimaryKey() default true;
 	
-	
 	/**
-	 * Option to indicate the default key to be used for id 
-	 * Default is "_id"
+	 * Option to indicate weather the literals of enumerators should be 
+	 * serialized. Default is FALSE, so enumerator will be written by name.
 	 * @return
 	 */
-	String idKey() default "_id";
-	
+	boolean writeEnumLiterals() default false;
 	
 	/**
 	 * Option used to indicate the module to serialize the type information.
@@ -136,50 +177,11 @@ public @interface CodecModuleConfig {
 	boolean serializeAllSuperTypes() default false;
 	
 	/**
-	 * By setting this to Boolean.TRUE the supertypes are written as an array of URIs.
+	 * By setting this to Boolean.TRUE the supertypes are written as an array of URIs (or
+	 * class names, depending on the type strategy).
 	 * If this is set to FALSE, the supertypes are written as a comma separated String.
 	 * Default is Boolean.TRUE
 	 * @return
 	 */
 	boolean serializeSuperTypesAsArray() default true;
-	
-	/**
-	 * Option to indicate the default key to be used for type
-	 * Default is "_type"
-	 * @return
-	 */
-	String typeKey() default "_type";
-	
-	/**
-	 * @return
-	 */
-	String superTypeKey() default "_supertype";
-	
-	
-	/**
-	 * Option to indicate the default key to be used for references
-	 * Default is "$ref"
-	 * @return
-	 */
-	String refKey() default "$ref";
-	
-	/**
-	 * Option to indicate the default key for proxies
-	 * Default is "_proxy"
-	 * @return
-	 */
-	String proxyKey() default "_proxy";
-	
-	/**
-	 * Option to indicate the default key for timestamp
-	 * Default is "_timestamp"
-	 * @return
-	 */
-	String timestampKey() default "_timestamp";
-	
-	
-	boolean writeEnumLiterals() default false;
-	
-	
-
 }

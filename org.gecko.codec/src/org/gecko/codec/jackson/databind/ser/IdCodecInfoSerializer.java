@@ -26,14 +26,13 @@ import org.gecko.codec.info.codecinfo.CodecValueWriter;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
-import org.gecko.codec.jackson.databind.CodecWriteContext;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * 
+ * Codec Serializer for IdInfo
  * @author ilenia
  * @since Aug 22, 2024
  */
@@ -43,14 +42,12 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
-	private EClassCodecInfo eObjCodecInfo;
 	private IdentityInfo idCodecInfo;
 
 	public IdCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final IdentityInfo idCodecInfo) {
 		this.codecModule = codecMoule;
 		this.codecModelInfoService = codecModelInfoService;
-		this.eObjCodecInfo = eObjCodecInfo;
 		this.idCodecInfo = idCodecInfo;
 	}
 

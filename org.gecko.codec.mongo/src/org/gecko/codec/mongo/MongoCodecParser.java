@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.gecko.codec.CodecReaderProvider;
-import org.gecko.codec.jackson.databind.CodecParserBaseImpl;
+import org.gecko.codec.jackson.databind.deser.CodecParserBaseImpl;
 
 import com.fasterxml.jackson.core.Base64Variant;
 import com.fasterxml.jackson.core.JsonToken;

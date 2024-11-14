@@ -43,6 +43,10 @@ public class CodecReaderProvider<R> implements ObjectCodecProvider {
 		return reader;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.ObjectCodecProvider#getObjectCodec()
+	 */
 	@Override
 	public ObjectCodec getObjectCodec() {
 		return codec;

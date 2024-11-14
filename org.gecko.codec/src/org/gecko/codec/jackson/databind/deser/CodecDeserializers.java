@@ -58,6 +58,10 @@ public class CodecDeserializers extends EMFDeserializers {
 		this.dataTypeDeserializer = new EDataTypeDeserializer();
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.emfcloud.jackson.databind.deser.EMFDeserializers#findCollectionDeserializer(com.fasterxml.jackson.databind.type.CollectionType, com.fasterxml.jackson.databind.DeserializationConfig, com.fasterxml.jackson.databind.BeanDescription, com.fasterxml.jackson.databind.jsontype.TypeDeserializer, com.fasterxml.jackson.databind.JsonDeserializer)
+	 */
 	@Override
 	public JsonDeserializer<?> findCollectionDeserializer(CollectionType type, DeserializationConfig config,
 			BeanDescription beanDesc, TypeDeserializer elementTypeDeserializer, JsonDeserializer<?> elementDeserializer)
@@ -69,6 +73,10 @@ public class CodecDeserializers extends EMFDeserializers {
 		return super.findCollectionDeserializer(type, config, beanDesc, elementTypeDeserializer, (JsonDeserializer<?>) elementDeserializer);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.emfcloud.jackson.databind.deser.EMFDeserializers#findBeanDeserializer(com.fasterxml.jackson.databind.JavaType, com.fasterxml.jackson.databind.DeserializationConfig, com.fasterxml.jackson.databind.BeanDescription)
+	 */
 	@Override
 	public JsonDeserializer<?> findBeanDeserializer(JavaType type, DeserializationConfig config,
 			BeanDescription beanDesc) throws JsonMappingException {

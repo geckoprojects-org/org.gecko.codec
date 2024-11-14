@@ -13,12 +13,9 @@ package org.eclipse.emfcloud.jackson.databind.ser;
 import java.io.IOException;
 
 import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -34,7 +31,6 @@ public class EDataTypeSerializer extends JsonSerializer<Object> {
     	  feature.getEAttributeType().getInstanceClassName();
   		  JsonSerializer<Object> ser = serializers.findValueSerializer(feature.getEAttributeType().getInstanceClass());
   		  ser.serialize(value, gen, serializers);
-//    	  gen.writeString(EcoreUtil.convertToString(feature.getEAttributeType(), value));
       } else {
          gen.writeNull();
       }

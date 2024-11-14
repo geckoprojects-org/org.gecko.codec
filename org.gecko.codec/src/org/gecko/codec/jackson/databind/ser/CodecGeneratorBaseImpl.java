@@ -32,7 +32,8 @@ import com.fasterxml.jackson.core.json.DupDetector;
 import com.fasterxml.jackson.core.json.JsonWriteContext;
 
 /**
- * A basic class to write Lucene Documents
+ * A basic implementation of the Generator
+ * 
  * @author mark
  * @since 09.01.2024
  */

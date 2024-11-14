@@ -14,7 +14,6 @@
 package org.gecko.codec.jackson.databind.ser;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -31,24 +30,20 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * 
+ * Codec Serializer for TypeInfo
  * @author ilenia
  * @since Aug 22, 2024
  */
 public class TypeCodecInfoSerializer implements CodecInfoSerializer {
-	
-	private final static Logger LOGGER = Logger.getLogger(TypeCodecInfoSerializer.class.getName());
-	
+		
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
-	private EClassCodecInfo eObjCodecInfo;
 	private TypeInfo typeCodecInfo;
 	
 	public TypeCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final TypeInfo typeCodecInfo) {
 		this.codecModule = codecMoule;
 		this.codecModelInfoService = codecModelInfoService;
-		this.eObjCodecInfo = eObjCodecInfo;
 		this.typeCodecInfo = typeCodecInfo;
 	}
 

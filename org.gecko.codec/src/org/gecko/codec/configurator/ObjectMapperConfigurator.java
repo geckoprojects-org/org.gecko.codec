@@ -20,8 +20,5 @@ package org.gecko.codec.configurator;
  */
 public interface ObjectMapperConfigurator {
 	
-	
 	public ObjectMapperBuilderFactory getObjMapperBuilderFactory();
-	
-	
 }

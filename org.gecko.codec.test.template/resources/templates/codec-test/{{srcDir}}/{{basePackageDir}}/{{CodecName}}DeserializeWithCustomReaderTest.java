@@ -26,14 +26,15 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.gecko.codec.demo.jackson.CodecFactoryConfigurator;
-import org.gecko.codec.demo.jackson.CodecModuleConfigurator;
+import org.gecko.codec.configurator.CodecFactoryConfigurator;
+import org.gecko.codec.configurator.CodecModuleConfigurator;
+import org.gecko.codec.configurator.ObjectMapperConfigurator;
+import org.gecko.codec.constants.CodecModelInfoOptions;
 import org.gecko.codec.constants.CodecModuleOptions;
-import org.gecko.codec.demo.jackson.ObjectMapperConfigurator;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
-import org.gecko.codec.info.CodecAnnotations;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -64,13 +65,13 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @ExtendWith(ServiceExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
-@WithFactoryConfiguration(factoryPid = "CodecFactoryConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="{{CodecType}}")
 })
-@WithFactoryConfiguration(factoryPid = "ObjectMapperConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="{{CodecType}}")
 })
-@WithFactoryConfiguration(factoryPid = "CodecModuleConfigurator", location = "?", name = "test", properties = {
+@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="{{CodecType}}")
 })
 public class {{CodecName}}DeserializeWithCustomReaderTest extends CodecTestSetting{
@@ -139,7 +140,7 @@ public class {{CodecName}}DeserializeWithCustomReaderTest extends CodecTestSetti
 		addOptions.put(CodecAnnotations.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put("codec.options", classOptions);
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getAddress());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getAddress());
 		findResource.load(options);
 
 		// get the person
@@ -173,7 +174,7 @@ public class {{CodecName}}DeserializeWithCustomReaderTest extends CodecTestSetti
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(getPersonURI());
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 		personOptions.put(CodecAnnotations.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
 
 		findResource.load(options);
@@ -217,7 +218,7 @@ public class {{CodecName}}DeserializeWithCustomReaderTest extends CodecTestSetti
 		addOptions.put(CodecAnnotations.CODEC_TYPE_VALUE_READER, CodecTestHelper.TEST_TYPE_READER);
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put("codec.options", classOptions);
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getAddress());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getAddress());
 		findResource.load(options);
 
 		// get the person
@@ -253,7 +254,7 @@ public class {{CodecName}}DeserializeWithCustomReaderTest extends CodecTestSetti
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(getPersonURI());
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
 
@@ -289,7 +290,7 @@ public class {{CodecName}}DeserializeWithCustomReaderTest extends CodecTestSetti
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(getPersonURI());
-		options.put("ROOT_OBJECT", PersonPackage.eINSTANCE.getPerson());
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
 		findResource.load(options);
 

@@ -20,6 +20,10 @@ package org.gecko.codec.constants;
  */
 public interface CodecResourceOptions {
 	
+	/** CODEC_ROOT_OBJECT 
+	 * This option should be passed with {@link Resource#load} to specify the root object.
+	 * This is mandatory if the type information is not available in the serialized document.
+	 * */
 	String CODEC_ROOT_OBJECT = "codec.root.object";
 
 }

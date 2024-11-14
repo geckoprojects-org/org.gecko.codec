@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
+ * Codec Serailizer for FeatureInfo
  * 
  * @author ilenia
  * @since Aug 22, 2024
@@ -58,6 +59,10 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		this.featureCodecInfo = featureCodecInfo;
 	}
 	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.databind.ser.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
+	 */
 	@SuppressWarnings("unchecked")
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		if(featureCodecInfo.isIgnore()) return;
@@ -66,6 +71,8 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 			return;
 		}
 		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
+		
+		EObject parent = EMFContext.getParent(provider);
 		
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
@@ -86,7 +93,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		if (rootObj.eIsSet(feature)) {					
 			if(feature.isMany()) {
 				List<Object> values = (List<Object>) rootObj.eGet(feature);
-				serializeManyAttribute(rootObj, values, feature, gen, provider);
+				serializeManyAttribute(values, feature, gen, provider);
 			} else {
 				Object value = rootObj.eGet(feature);
 				serializeSingleAttribute(rootObj, value, feature, gen, provider);
@@ -94,7 +101,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		} else if(codecModule.isSerializeDefaultValue()) {
 			if(feature.isMany()) {
 				List<Object> values = (List<Object>) rootObj.eGet(feature);
-				serializeManyAttribute(rootObj, values, feature, gen, provider);
+				serializeManyAttribute(values, feature, gen, provider);
 			} else {
 				Object value = feature.getDefaultValue();
 				serializeSingleAttribute(rootObj, value, feature, gen, provider);
@@ -117,11 +124,11 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		} else {
 			gen.writeFieldName(feature.getName());
 		}
-		serializeSingleAttributeValue(rootObj, value, feature, gen, provider);
+		serializeSingleAttributeValue(value, feature, gen, provider);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void serializeSingleAttributeValue(EObject rootObj, Object value, EStructuralFeature feature, JsonGenerator gen,
+	private void serializeSingleAttributeValue(Object value, EStructuralFeature feature, JsonGenerator gen,
 			SerializerProvider provider) throws IOException {
 		
 		if(value == null) {
@@ -131,10 +138,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		else {
 			CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
 			CodecValueWriter<Object,?> writer = infoHolder.getWriterByName(featureCodecInfo.getValueWriterName());
-//			if(writer != null) gen.writeObject(writer.writeValue(value, provider));
-//			else gen.writeObject(value);
-			
-			
+
 			if(writer != null) serializer.serialize(writer.writeValue(value, provider), gen, provider);
 			else serializer.serialize(value, gen, provider);
 		}
@@ -142,7 +146,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 
 	
 	@SuppressWarnings("unchecked")
-	private void serializeManyAttribute(EObject rootObj, List<Object> values, EStructuralFeature feature,
+	private void serializeManyAttribute(List<Object> values, EStructuralFeature feature,
 			JsonGenerator gen, SerializerProvider provider) throws IOException {
 		if(values.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue())) return;
 		if(codecModule.isUseNamesFromExtendedMetaData()) {
@@ -150,23 +154,11 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		} else {
 			gen.writeFieldName(feature.getName());
 		}	
-		
-//		TODO: check serailized array batched here...?
-		
+				
 		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
 		CodecValueWriter<Object,?> writer = infoHolder.getWriterByName(featureCodecInfo.getValueWriterName());
-		
-//		gen.writeStartArray(values);
-		
+				
 		if(writer != null) serializer.serialize(writer.writeValue(values, provider), gen, provider);
 		else serializer.serialize(values, gen, provider);
-//		values.forEach(value -> {
-//			try {
-//				serializeSingleAttributeValue(rootObj, value, feature, gen, provider);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		});
-//		gen.writeEndArray();
 	}
 }

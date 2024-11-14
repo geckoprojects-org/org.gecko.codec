@@ -56,7 +56,4 @@ public interface CodecGenerator {
 	void doWriteBinary(int index, String fieldName, Base64Variant b64variant,
             byte[] values, int offset, int len) throws IOException;
 	void doWriteNull(int index, String fieldName) throws IOException;
-//	protected abstract void doWriteByte(int index, String fieldName, byte value) throws IOException;
-//	protected abstract void doWriteStringBytes(int index, String fieldName, byte[] values) throws IOException;
-
 }

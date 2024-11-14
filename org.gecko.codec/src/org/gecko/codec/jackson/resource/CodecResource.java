@@ -55,6 +55,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
 
 /**
+ * Codec specific Resource, where we overwrite the CodecModule, ObjectMapper and CodecModelInfo options, 
+ * based on what the user passes as options when saving/loading a resource
  * 
  * @author ilenia
  * @since Aug 12, 2024
@@ -84,14 +86,11 @@ public class CodecResource extends ResourceImpl {
 		return mapper;
 	}
 	
-	/**
-	 * 
-	 */
-	protected void doUnload() {
-//		TODO: here I have to clean up
-		System.out.println("Test");
-	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.emf.ecore.resource.impl.ResourceImpl#doSave(java.io.OutputStream, java.util.Map)
+	 */
 	@Override
 	protected void doSave(OutputStream outputStream, Map<?, ?> options) throws IOException {
 

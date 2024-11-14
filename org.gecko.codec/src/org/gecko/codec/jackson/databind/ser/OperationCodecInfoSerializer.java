@@ -15,7 +15,6 @@ package org.gecko.codec.jackson.databind.ser;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
@@ -29,24 +28,20 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
+ * Codec Serializer for EOperation 
  * 
  * @author ilenia
  * @since Aug 22, 2024
  */
 public class OperationCodecInfoSerializer implements CodecInfoSerializer {
 	
-	private final static Logger LOGGER = Logger.getLogger(OperationCodecInfoSerializer.class.getName());
 	
 	private CodecModule codecModule;
-	private CodecModelInfo codecModelInfoService;
-	private EClassCodecInfo eObjCodecInfo;
 	private FeatureCodecInfo featureCodecInfo;
 	
 	public OperationCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final FeatureCodecInfo featureCodecInfo) {
 		this.codecModule = codecMoule;
-		this.codecModelInfoService = codecModelInfoService;
-		this.eObjCodecInfo = eObjCodecInfo;
 		this.featureCodecInfo = featureCodecInfo;
 	}
 

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
 
 /**
- * 
+ * Extension of EMFSerializers to overwrite serializer for EObject so that it takes ours
  * @author ilenia
  * @since Aug 8, 2024
  */

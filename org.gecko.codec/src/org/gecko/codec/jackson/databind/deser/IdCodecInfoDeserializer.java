@@ -24,7 +24,6 @@ import org.gecko.codec.info.codecinfo.CodecInfoHolder;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
-import org.gecko.codec.jackson.databind.CodecParserBaseImpl;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -32,7 +31,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 
 /**
- * 
+ * Codec Deserializer for IdInfo
  * @author ilenia
  * @since Sep 26, 2024
  */
@@ -40,14 +39,12 @@ public class IdCodecInfoDeserializer implements CodecInfoDeserializer {
 	
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
-	private EClassCodecInfo eObjCodecInfo;
 	private IdentityInfo idCodecInfo;
 	
 	public IdCodecInfoDeserializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final IdentityInfo idCodecInfo) {
 		this.codecModule = codecMoule;
 		this.codecModelInfoService = codecModelInfoService;
-		this.eObjCodecInfo = eObjCodecInfo;
 		this.idCodecInfo = idCodecInfo;
 	}
 

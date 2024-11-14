@@ -43,54 +43,106 @@ public class CodecDataOutput<W> extends CodecWriterProvider<W> implements DataOu
 	public void write(int arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#write(byte[])
+	 */
 	@Override
 	public void write(byte[] arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#write(byte[], int, int)
+	 */
 	@Override
 	public void write(byte[] arg0, int arg1, int arg2) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeBoolean(boolean)
+	 */
 	@Override
 	public void writeBoolean(boolean arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeByte(int)
+	 */
 	@Override
 	public void writeByte(int arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeBytes(java.lang.String)
+	 */
 	@Override
 	public void writeBytes(String arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeChar(int)
+	 */
 	@Override
 	public void writeChar(int arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeChars(java.lang.String)
+	 */
 	@Override
 	public void writeChars(String arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeDouble(double)
+	 */
 	@Override
 	public void writeDouble(double arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeFloat(float)
+	 */
 	@Override
 	public void writeFloat(float arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeInt(int)
+	 */
 	@Override
 	public void writeInt(int arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeLong(long)
+	 */
 	@Override
 	public void writeLong(long arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeShort(int)
+	 */
 	@Override
 	public void writeShort(int arg0) throws IOException {
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see java.io.DataOutput#writeUTF(java.lang.String)
+	 */
 	@Override
 	public void writeUTF(String arg0) throws IOException {
 	}

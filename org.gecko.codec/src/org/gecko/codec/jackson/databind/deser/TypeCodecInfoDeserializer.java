@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
 
 /**
- * 
+ * Codec Deserializer for TypeInfo
  * @author ilenia
  * @since Sep 27, 2024
  */
@@ -42,16 +42,12 @@ public class TypeCodecInfoDeserializer implements CodecInfoDeserializer {
 	
 	private final JsonDeserializer<String> deserializer = StringDeserializer.instance;
 	
-	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
-	private EClassCodecInfo eObjCodecInfo;
 	private TypeInfo typeCodecInfo;
 	
 	public TypeCodecInfoDeserializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final TypeInfo typeCodecInfo) {
-		this.codecModule = codecMoule;
 		this.codecModelInfoService = codecModelInfoService;
-		this.eObjCodecInfo = eObjCodecInfo;
 		this.typeCodecInfo = typeCodecInfo;
 	}
 
