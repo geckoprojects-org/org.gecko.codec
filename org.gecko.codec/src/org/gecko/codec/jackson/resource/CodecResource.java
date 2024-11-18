@@ -339,8 +339,8 @@ public class CodecResource extends ResourceImpl {
 	@SuppressWarnings("unchecked")
 	private void updateCodecModelInfoFromOptions(PackageCodecInfo codecModelInfo, Map<?, ?> options) {
 
-		if(options.containsKey("codec.options")) {
-			Map<EClass, Map<String, Object>> codecOptions = (Map<EClass, Map<String, Object>>) options.get("codec.options");
+		if(options.containsKey(CodecResourceOptions.CODEC_OPTIONS)) {
+			Map<EClass, Map<String, Object>> codecOptions = (Map<EClass, Map<String, Object>>) options.get(CodecResourceOptions.CODEC_OPTIONS);
 			codecOptions.forEach((ec, opt) -> {
 				EClassCodecInfo eClassCodecInfo = codecModelInfo.getEClassCodecInfo().stream().filter(eci -> eci.getClassifier().getInstanceClassName().equals(ec.getInstanceClassName())).findFirst().get();
 				if(eClassCodecInfo == null) {

@@ -32,6 +32,7 @@ import org.gecko.codec.configurator.CodecFactoryConfigurator;
 import org.gecko.codec.configurator.CodecModuleConfigurator;
 import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.gecko.codec.constants.CodecAnnotations;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.constants.ObjectMapperOptions;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -122,7 +123,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		addOptions.put(CodecAnnotations.CODEC_TYPE_USE, "NAME");
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(addFileName))) {
@@ -152,7 +153,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		addOptions.put(CodecAnnotations.CODEC_TYPE_USE, "CLASS");
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(addFileName))) {
@@ -182,7 +183,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		addOptions.put(CodecAnnotations.CODEC_TYPE_USE, "URI");
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(addFileName))) {
@@ -212,7 +213,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		addOptions.put(CodecAnnotations.CODEC_TYPE_INCLUDE, false);
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(addFileName))) {

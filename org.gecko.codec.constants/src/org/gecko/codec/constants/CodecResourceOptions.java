@@ -25,5 +25,11 @@ public interface CodecResourceOptions {
 	 * This is mandatory if the type information is not available in the serialized document.
 	 * */
 	String CODEC_ROOT_OBJECT = "codec.root.object";
+	
+	/** CODEC_OPTIONS 
+	 * This accepts a {@link Map}, where keys are {@link EClass} and values are {@link Map} with
+	 * codec specific options for that {@link EClass}
+	 * */
+	String CODEC_OPTIONS = "codec.options";
 
 }

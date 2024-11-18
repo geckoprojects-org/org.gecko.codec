@@ -33,6 +33,7 @@ import org.gecko.codec.configurator.CodecFactoryConfigurator;
 import org.gecko.codec.configurator.CodecModuleConfigurator;
 import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.gecko.codec.constants.CodecModelInfoOptions;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.codec.info.codecinfo.EClassCodecInfo;
@@ -126,7 +127,7 @@ public class CodecModelInfoOverwriteTest {
 		Map<String, Object> personOptions = new HashMap<>();
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "TEST");
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
@@ -149,7 +150,7 @@ public class CodecModelInfoOverwriteTest {
 		Map<String, Object> personOptions = new HashMap<>();
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_LastName(), PersonPackage.eINSTANCE.getPerson_Name()));
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
@@ -174,7 +175,7 @@ public class CodecModelInfoOverwriteTest {
 		Map<String, Object> personOptions = new HashMap<>();
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_SEPARATOR, "/");
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
@@ -198,7 +199,7 @@ public class CodecModelInfoOverwriteTest {
 		addressOptions.put(CodecModelInfoOptions.CODEC_IGNORE_NOT_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getAddress_Zip()));
 		addressOptions.put(CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getAddress_Street()));
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addressOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
@@ -229,7 +230,7 @@ public class CodecModelInfoOverwriteTest {
 		Map<String, Object> personOptions = new HashMap<>();
 		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_INCLUDE, false);
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
@@ -252,7 +253,7 @@ public class CodecModelInfoOverwriteTest {
 		Map<String, Object> personOptions = new HashMap<>();
 		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_USE, "CLASS");
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
@@ -279,7 +280,7 @@ public class CodecModelInfoOverwriteTest {
 		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, 
 				Map.of(PersonPackage.eINSTANCE.getPerson_LastName(), CodecTestHelper.TEST_VALUE_WRITER));
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
@@ -305,7 +306,7 @@ public class CodecModelInfoOverwriteTest {
 		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP, 
 				Map.of(PersonPackage.eINSTANCE.getPerson_BirthDate(), CodecTestHelper.TEST_VALUE_READER));
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
@@ -331,7 +332,7 @@ public class CodecModelInfoOverwriteTest {
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "ID_FIELD");
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();

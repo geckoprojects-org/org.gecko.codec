@@ -16,6 +16,7 @@ package org.gecko.codec.mongo.emf.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.gecko.codec.configurator.CodecFactoryConfigurator;
 import org.gecko.codec.configurator.CodecModuleConfigurator;
 import org.gecko.codec.configurator.ObjectMapperConfigurator;
+import org.gecko.codec.constants.CodecModuleOptions;
 import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
@@ -171,6 +173,70 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 
 		geoCollection.drop();
 	}
+	
+	@Test
+	public void testSimpleNullArraySerNullYES() throws IOException, InvalidSyntaxException, InterruptedException {
+
+		ResourceSet resourceSet = rsAware.waitForService(2000l);
+
+		System.out.println("Dropping DB");
+		MongoCollection<Document> geoCollection = client.getDatabase("test").getCollection("Geometry");
+		geoCollection.drop();
+
+		assertEquals(0, geoCollection.countDocuments());
+		Resource resource = resourceSet
+				.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Geometry/"));
+
+//		Create the Geometry object
+		Geometry geometry = BasicFactory.eINSTANCE.createGeometry();
+		Double[] coord1 = new Double[2];
+		Double[] coord2 = new Double[2];
+
+		geometry.getCoordinates().add(coord1);
+		geometry.getCoordinates().add(coord2);
+		String geoId = UUID.randomUUID().toString();
+		geometry.setId(geoId);
+
+//		save the Geometry object
+		resource.getContents().add(geometry);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, Boolean.TRUE);
+		resource.save(options);
+
+		resource.getContents().clear();
+		resource.unload();
+
+		// load the Geometry object from the db
+		Resource findResource = resourceSet
+				.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Geometry/" + geometry.getId()));
+		options = new HashMap<>();
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getGeometry());
+		findResource.load(options);
+		assertNotNull(findResource);
+		assertFalse(findResource.getContents().isEmpty());
+		assertEquals(1, findResource.getContents().size());
+
+		assertTrue(findResource.getContents().get(0) instanceof Geometry);
+		Geometry retrievedGeometry = (Geometry) findResource.getContents().get(0);
+		assertEquals(geoId, retrievedGeometry.getId());
+		assertNotNull(retrievedGeometry.getCoordinates());
+		assertFalse(retrievedGeometry.getCoordinates().isEmpty());
+		assertEquals(2, retrievedGeometry.getCoordinates().size());
+		assertTrue(retrievedGeometry.getCoordinates().get(0) instanceof Double[]);
+		Double[] retrievedCoord1 = retrievedGeometry.getCoordinates().get(0);
+		assertEquals(2, retrievedCoord1.length);
+		assertNull(retrievedCoord1[0]);
+		assertNull(retrievedCoord1[1]);
+
+		assertTrue(retrievedGeometry.getCoordinates().get(1) instanceof Double[]);
+		Double[] retrievedCoord2 = retrievedGeometry.getCoordinates().get(1);
+		assertEquals(2, retrievedCoord2.length);
+		assertNull(retrievedCoord2[0]);
+		assertNull(retrievedCoord2[1]);
+
+		geoCollection.drop();
+	}
+
 	
 	@Test
 	public void testMultiDimensionalArray() throws IOException, InvalidSyntaxException, InterruptedException {

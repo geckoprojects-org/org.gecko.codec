@@ -139,11 +139,6 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 					current.eSet(feature, newObjs);
 				}
 			}  else {
-//				System.out.println(jp.getParsingContext().getCurrentIndex() + " " 
-//						+ jp.getParsingContext().getCurrentName() + " "
-//						+ jp.getParsingContext().getCurrentValue());
-				
-				
 				if(feature.getEType() instanceof EEnum eDataType) {
 					EEnumLiteral literal = null;
 					if(codecModule.isWriteEnumLiterals()) {

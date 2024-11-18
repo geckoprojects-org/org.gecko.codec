@@ -22,24 +22,55 @@ package org.gecko.codec.constants;
  */
 public interface ObjectMapperOptions {
 	
+	/** OBJ_MAPPER_DATE_FORMAT 
+	 * to overwrite the "dateFormat" property of {@link org.gecko.codec.configurator.ObjectMapperConfigurator}
+	 * */
 	String OBJ_MAPPER_DATE_FORMAT = "obj.mapper.date.format";
 	
+	/** OBJ_MAPPER_LOCALE 
+	 * to overwrite the "locale" property of {@link org.gecko.codec.configurator.ObjectMapperConfigurator}
+	 * */
 	String OBJ_MAPPER_LOCALE = "obj.mapper.locale";
 	
+	/** OBJ_MAPPER_TIME_ZONE 
+	 * to overwrite the "timeZone" property of {@link org.gecko.codec.configurator.ObjectMapperConfigurator}
+	 * */
 	String OBJ_MAPPER_TIME_ZONE = "obj.mapper.time.zone";
-	
-	String OBJ_MAPPER_INDENT_OUTPUT = "obj.mapper.indent.output";
-	
+		
+	/** OBJ_MAPPER_SERIALIZATION_FEATURES_WITH 
+	 * to specify a {@link List} of {@link com.fasterxml.jackson.databind.SerializationFeature} 
+	 * that should be enabled;
+	 * */
 	String OBJ_MAPPER_SERIALIZATION_FEATURES_WITH = "obj.mapper.serialization.features.with";
 	
+	/** OBJ_MAPPER_SERIALIZATION_FEATURES_WITHOUT 
+	 * to specify a {@link List} of {@link com.fasterxml.jackson.databind.SerializationFeature} 
+	 * that should be disabled;
+	 * */
 	String OBJ_MAPPER_SERIALIZATION_FEATURES_WITHOUT = "obj.mapper.serialization.features.without";
 	
+	/** OBJ_MAPPER_DESERIALIZATION_FEATURES_WITH 
+	 * to specify a {@link List} of {@link com.fasterxml.jackson.databind.DeserializationFeature} 
+	 * that should be enabled;
+	 * */
 	String OBJ_MAPPER_DESERIALIZATION_FEATURES_WITH = "obj.mapper.deserialization.features.with";
 	
+	/** OBJ_MAPPER_DESERIALIZATION_FEATURES_WITHOUT 
+	 * to specify a {@link List} of {@link com.fasterxml.jackson.databind.DeserializationFeature} 
+	 * that should be disabled;
+	 * */
 	String OBJ_MAPPER_DESERIALIZATION_FEATURES_WITHOUT = "obj.mapper.deserialization.features.without";
 	
+	/** OBJ_MAPPER_FEATURES_WITH 
+	 * to specify a {@link List} of {@link com.fasterxml.jackson.databind.MapperFeature} 
+	 * that should be enabled;
+	 * */
 	String OBJ_MAPPER_FEATURES_WITH = "obj.mapper.features.with";
 	
+	/** OBJ_MAPPER_FEATURES_WITHOUT 
+	 * to specify a {@link List} of {@link com.fasterxml.jackson.databind.MapperFeature} 
+	 * that should be disabled;
+	 * */
 	String OBJ_MAPPER_FEATURES_WITHOUT = "obj.mapper.features.without";
 
 }

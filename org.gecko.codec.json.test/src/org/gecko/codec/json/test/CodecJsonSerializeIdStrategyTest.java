@@ -32,6 +32,7 @@ import org.gecko.codec.configurator.CodecModuleConfigurator;
 import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.gecko.codec.constants.CodecAnnotations;
 import org.gecko.codec.constants.CodecModelInfoOptions;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.constants.ObjectMapperOptions;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -122,7 +123,7 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "ID_FIELD");
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -153,7 +154,7 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 		personOptions.put(CodecAnnotations.CODEC_ID_STRATEGY, "COMBINED");
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -187,7 +188,7 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 				PersonPackage.eINSTANCE.getPerson_Age()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -221,7 +222,7 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 				PersonPackage.eINSTANCE.getPerson_Name()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -255,7 +256,7 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_SEPARATOR, "test");
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

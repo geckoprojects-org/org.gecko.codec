@@ -71,9 +71,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 			return;
 		}
 		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
-		
-		EObject parent = EMFContext.getParent(provider);
-		
+				
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
 		
@@ -86,6 +84,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		if(gen.getOutputContext() instanceof CodecWriteContext cwt) {
 			cwt.setFeature(feature);
 		}
+		
 		EcoreTypeFactory factory = EMFContext.getTypeFactory(provider);
 		JavaType javaType = factory.typeOf(provider, feature.eClass(), feature);
 		serializer = provider.findValueSerializer(javaType);
@@ -149,6 +148,14 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 	private void serializeManyAttribute(List<Object> values, EStructuralFeature feature,
 			JsonGenerator gen, SerializerProvider provider) throws IOException {
 		if(values.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue())) return;
+		
+//		We need to check weather there is some null value inside the list and decide weather to serialize it or not
+		List<Object> valuesToSerialize = values;
+		if(!codecModule.isSerializeNullValue()) {
+			valuesToSerialize = values.stream().filter(v -> v != null).toList();
+		}
+		if(valuesToSerialize.isEmpty()) return;
+		
 		if(codecModule.isUseNamesFromExtendedMetaData()) {
 			gen.writeFieldName(featureCodecInfo.getKey());
 		} else {
@@ -158,7 +165,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
 		CodecValueWriter<Object,?> writer = infoHolder.getWriterByName(featureCodecInfo.getValueWriterName());
 				
-		if(writer != null) serializer.serialize(writer.writeValue(values, provider), gen, provider);
-		else serializer.serialize(values, gen, provider);
+		if(writer != null) serializer.serialize(writer.writeValue(valuesToSerialize, provider), gen, provider);
+		else serializer.serialize(valuesToSerialize, gen, provider);
 	}
 }

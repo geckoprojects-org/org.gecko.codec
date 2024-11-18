@@ -32,6 +32,7 @@ import org.gecko.codec.configurator.CodecFactoryConfigurator;
 import org.gecko.codec.configurator.CodecModuleConfigurator;
 import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.gecko.codec.constants.CodecModelInfoOptions;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.constants.ObjectMapperOptions;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
@@ -144,7 +145,7 @@ public class CodecMongoSerializeFeatureListTest extends MongoEMFSetting {
 				PersonPackage.eINSTANCE.getPerson_BirthDate()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		assertEquals(1, bpCollection.countDocuments());
@@ -169,7 +170,7 @@ public class CodecMongoSerializeFeatureListTest extends MongoEMFSetting {
 		addOptions.put(CodecModelInfoOptions.CODEC_IGNORE_NOT_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getAddress_Zip()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		assertEquals(1, addCollection.countDocuments());
@@ -194,7 +195,7 @@ public class CodecMongoSerializeFeatureListTest extends MongoEMFSetting {
 		personOptions.put(CodecModelInfoOptions.CODEC_IGNORE_NOT_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_TransientAtt()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 	
 		assertEquals(1, bpCollection.countDocuments());

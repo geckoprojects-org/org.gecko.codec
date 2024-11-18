@@ -57,51 +57,67 @@ public interface CodecAnnotations {
 	String CODEC_ID_FIELD = "codec.id.field";
 	
 	/** CODEC_ID_ORDER 
-	 * When the {@link CODEC_ID_STRATEGY} consists of combining multiple fields to build the object
-	 * id, every field should have an order, in such away the serialization process knows how to 
-	 * properly build the id
+	 * to specify the order of the annotated field when constructing the id. 
+	 * This is ignored if the id strategy is not set to COMBINED or the same feature is not 
+	 * marked with the {@link CODEC_ID_FIELD} annotation
 	 * */
 	String CODEC_ID_ORDER = "codec.id.order";
 	
 	/** CODEC_ID_SEPARATOR 
-	 * When the {@link CODEC_ID_STRATEGY} consists of combining multiple fields to build the object
-	 * id, we would need to specify a separator between the different fields values that build the id
+	 * annotation at the {@link EClassifier} level, to specify the separator to be used when constructing the id 
+	 * with the COMBINED strategy. The default separator value is "-". This option is ignored if the id strategy 
+	 * is different from COMBINED.
 	 * */
 	String CODEC_ID_SEPARATOR = "codec.id.separator";
 	
-	/** CODEC_ID_VALUE_READER_NAME 
-	 * Annotation for specifying a ValueReader name to be used when deserializing the object 
-	 * marked like this
-	 * */
-	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
-	
 	/** CODEC_ID_VALUE_WRITER_NAME 
-	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
+	 * annotation at the {@link EClassifier} level, to specify a {@link CodecValueWriter} name to be used 
+	 * when serializing the id field. The actual {@link CodecValueWriter} object should then be one
+	 * of the automatically registered ones or should be passed through the options when saving a {@link Resource}. 
 	 * */
 	String CODEC_ID_VALUE_WRITER_NAME = "codec.id.value.writer.name";
 	
-	/** CODEC_TYPE_VALUE_READER_NAME 
-	 * Annotation for specifying a ValueReader name to be used when deserializing the type 
+	/** CODEC_ID_VALUE_READER_NAME 
+	 * annotation at the {@link EClassifier} level, to specify a {@link CodecValueReader} name to be used 
+	 * when deserializing the id field. The actual {@link CodecValueReader} object should then be one
+	 * of the automatically registered ones or should be passed through the options when loading a {@link Resource}. 
 	 * */
-	String CODEC_TYPE_VALUE_READER_NAME = "codec.type.value.reader.name";
+	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
 	
 	/** CODEC_TYPE_VALUE_WRITER_NAME 
-	 * Annotation for specifying a ValueWriter name to be used when serializing the type
+	* annotation at the {@link EClassifier} level, to specify a {@link CodecValueWriter} name to be used 
+	 * when serializing the type information. The actual {@link CodecValueWriter} object should then be one
+	 * of the automatically registered ones or should be passed through the options when saving a {@link Resource}. 
 	 * */
 	String CODEC_TYPE_VALUE_WRITER_NAME = "codec.type.value.writer.name";
 	
-	/** CODEC_VALUE_READER_NAME 
-	 * Annotation for specifying a ValueReader name to be used when deserializing the object marked like this
+	/** CODEC_TYPE_VALUE_READER_NAME 
+	* annotation at the {@link EClassifier} level, to specify a {@link CodecValueReader} name to be used 
+	 * when deserializing the type information. The actual {@link CodecValueReader} object should then be one
+	 * of the automatically registered ones or should be passed through the options when loading a {@link Resource}. 
 	 * */
-	String CODEC_VALUE_READER_NAME = "codec.value.reader.name";
+	String CODEC_TYPE_VALUE_READER_NAME = "codec.type.value.reader.name";
 	
 	/** CODEC_VALUE_WRITER_NAME 
-	 * Annotation for specifying a ValueWriter name to be used when serializing the object marked like this
+	 * annotation at the {@link EStructuralFeature} level, to specify a {@link CodecValueWriter} name to be used 
+	 * when serializing the annotated {@link EStructuralFeature}. The actual {@link CodecValueWriter} object should 
+	 * then be one of the automatically registered ones or should be passed through the options when saving a {@link Resource}. 
 	 * */
 	String CODEC_VALUE_WRITER_NAME = "codec.value.writer.name";
 	
+	/** CODEC_VALUE_READER_NAME 
+	 * annotation at the {@link EStructuralFeature} level, to specify a {@link CodecValueReader} name to be used 
+	 * when deserializing the annotated {@link EStructuralFeature}. The actual {@link CodecValueReader} object should 
+	 * then be one of the automatically registered ones or should be passed through the options when loading a {@link Resource}. 
+	 * */
+	String CODEC_VALUE_READER_NAME = "codec.value.reader.name";
+	
 	/** CODEC_TYPE_USE 
-	 * Annotation used for specifying a strategy to serialize the type of the object (class name, uri, etc)
+	 * Annotation used for specifying a strategy to serialize the type of the object
+	 * Currently supported values are:
+  	 * CLASS: the class name will be used (e.g. org.gecko.codec.demo.model.person.Person) 
+  	 * NAME: the class name will be used (e.g. Person)
+  	 * URI: the URI will be used (e.g. http://example.de/person/1.0#//Person) 
 	 * */
 	String CODEC_TYPE_USE = "codec.type.use";
 	

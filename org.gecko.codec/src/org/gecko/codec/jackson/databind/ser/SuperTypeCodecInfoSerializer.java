@@ -104,16 +104,4 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 			}
 		}
 	}
-	
-//	private boolean shouldSaveType(final EClass objectType, final EClass featureType, final EStructuralFeature feature) {
-//		return objectType != featureType && objectType != EcorePackage.Literals.EOBJECT;
-//	}
-//	
-//	private boolean isRoot(final EObject bean) {
-//		EObject container = bean.eContainer();
-//		Resource.Internal resource = ((InternalEObject) bean).eDirectResource();
-//
-//		return container == null || resource != null && resource != ((InternalEObject) container).eDirectResource();
-//	}
-
 }

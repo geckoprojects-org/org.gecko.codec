@@ -33,6 +33,7 @@ import org.gecko.codec.configurator.CodecModuleConfigurator;
 import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.gecko.codec.constants.CodecModelInfoOptions;
 import org.gecko.codec.constants.CodecModuleOptions;
+import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.constants.ObjectMapperOptions;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
@@ -147,7 +148,7 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		resource.getContents().clear();
@@ -180,7 +181,7 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		resource.getContents().clear();
@@ -211,7 +212,7 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		assertEquals(1, bpCollection.countDocuments());
@@ -238,7 +239,7 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Name(), PersonPackage.eINSTANCE.getPerson_LastName()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 		assertEquals(1, bpCollection.countDocuments());
@@ -262,7 +263,7 @@ public class CodecMongoCustomWriterTest extends MongoEMFSetting {
 		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER, CodecTestHelper.TEST_TYPE_WRITER);
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
 	}

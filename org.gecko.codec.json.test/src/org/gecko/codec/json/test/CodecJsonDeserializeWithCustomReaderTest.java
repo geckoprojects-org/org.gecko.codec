@@ -120,7 +120,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		resource.getContents().clear();
@@ -133,7 +133,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 
 		addOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getAddress());
 		findResource.load(options);
 
@@ -161,7 +161,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		resource.getContents().clear();
@@ -198,7 +198,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER, CodecTestHelper.TEST_TYPE_WRITER);
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		resource.getContents().clear();
@@ -211,7 +211,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 
 		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER, CodecTestHelper.TEST_TYPE_READER);
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getAddress());
 		findResource.load(options);
 
@@ -241,7 +241,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_READER));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		resource.getContents().clear();
@@ -277,7 +277,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_VALUE_READER));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		resource.getContents().clear();

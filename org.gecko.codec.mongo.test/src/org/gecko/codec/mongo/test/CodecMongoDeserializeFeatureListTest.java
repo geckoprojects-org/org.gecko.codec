@@ -143,7 +143,7 @@ public class CodecMongoDeserializeFeatureListTest extends MongoEMFSetting {
 		personOptions.put(CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST, 
 				List.of(PersonPackage.eINSTANCE.getPerson_Age()));
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 
 		findResource.load(options);
 
@@ -175,7 +175,7 @@ public class CodecMongoDeserializeFeatureListTest extends MongoEMFSetting {
 				List.of(PersonPackage.eINSTANCE.getPerson_Age(), 
 						PersonPackage.eINSTANCE.getPerson_TransientAtt()));
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put("codec.options", classOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 
 		resource.getContents().clear();

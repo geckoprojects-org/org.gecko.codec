@@ -28,8 +28,8 @@ import com.fasterxml.jackson.databind.DeserializationContext;
  */
 public interface CodecInfoDeserializer {
 	
-	public abstract EObject deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException;
+	public EObject deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException;
 
-	public abstract void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) throws IOException;
+	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) throws IOException;
 
 }

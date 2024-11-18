@@ -155,11 +155,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 					new IdCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, idInfo)
 					.deserializeAndSet(jp, current, ctxt, resource);
 				} 
-				else if(featureCodecInfo instanceof SuperTypeInfo superTypeInfo) {
-					new SuperTypeCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, superTypeInfo)
-					.deserialize(jp, ctxt);
-				} 	
-				else if(featureCodecInfo != null && !(featureCodecInfo instanceof TypeInfo)) {
+				else if(featureCodecInfo != null && !(featureCodecInfo instanceof TypeInfo) && !(featureCodecInfo instanceof SuperTypeInfo)) {
 					new FeatureCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, featureCodecInfo, eObjCodecInfo.getTypeInfo())
 					.deserializeAndSet(jp, current, ctxt, resource);
 

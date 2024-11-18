@@ -108,10 +108,7 @@ public @interface CodecModuleConfig {
 	boolean useNamesFromExtendedMetaData() default true;
 	
 	/**
-	 * Option used to indicate the module to serialize a special id field, which 
-	 * might coincide with the ID field of the EObject or might be constructed 
-	 * differently, depending on the strategy specified in the model or in the 
-	 * serialization options.
+	 * Option used to indicate the module to serialize the id information.
 	 * 
      * Default is Boolean.TRUE
 	 * @return
@@ -137,16 +134,20 @@ public @interface CodecModuleConfig {
 	boolean serializeIdField() default false;
 	
 	/**
-	 * If it is set to Boolean.TRUE and the ID was not specified in the URI, the value of the ID
-	 * attribute will be used as the primary key if it exists.
+	 * If it is set to Boolean.TRUE the value of the ID information will
+	 * be used as the primary key if it exists.
 	 * Default is Boolean.TRUE
 	 * @return
 	 */
 	boolean idFeatureAsPrimaryKey() default true;
 	
 	/**
-	 * Option to indicate weather the literals of enumerators should be 
-	 * serialized. Default is FALSE, so enumerator will be written by name.
+	 * option to specify weather `Enumerator` values should be serialized by 
+	 * literals or by name. When deserializing the option should be consistent 
+	 * with what was used during serialization (as it should always be the case).
+	 * If, for whatever reason, it is not, then the deserialization mechanism 
+	 * will fall back and try to deserialize in both ways.  
+	 * Default is `FALSE`, namely enumerators are serialized by name.
 	 * @return
 	 */
 	boolean writeEnumLiterals() default false;
@@ -170,7 +171,10 @@ public @interface CodecModuleConfig {
 	boolean serializeSuperTypes() default false;
 	
 	/**
-	 * Option used to indicate the module to serialize the whole chain of inheritance.
+	 * Option used to indicate the module to serialize the whole chain of 
+	 * inheritance.
+	 * This option is ignored if either `serializeSuperTypes` or `serializeType` 
+	 * is set to `FALSE`. 
 	 * Default is Boolean.FALSE
 	 * @return
 	 */

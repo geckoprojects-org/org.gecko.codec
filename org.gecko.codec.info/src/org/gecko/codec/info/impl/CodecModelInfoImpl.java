@@ -206,6 +206,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 
 		eClassCodecInfo.setTypeInfo(typeInfo);
 		
+//		This is not really used at the moment.
+//		It's just pre set for maybe future needs to customize the supertype serialization process
 		SuperTypeInfo superTypeInfo = CodecInfoFactory.eINSTANCE.createSuperTypeInfo();
 		superTypeInfo.setId(UUID.randomUUID().toString());
 		superTypeInfo.setType(InfoType.SUPER_TYPE);		
@@ -301,7 +303,6 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		if(annotation != null) return annotation.getDetails().get(annotationKey);
 		if(deriveFromParent && element instanceof EClass ec) {
 			for(EClass parent : ec.getESuperTypes()) {
-
 				if(getAnnotationDetails(element, "codec", "inherit") == null || "false".equalsIgnoreCase(getAnnotationDetails(element, "codec", "inherit"))) {
 					if(!parent.getEPackage().getNsURI().equals(ec.getEPackage().getNsURI())) {
 						continue;

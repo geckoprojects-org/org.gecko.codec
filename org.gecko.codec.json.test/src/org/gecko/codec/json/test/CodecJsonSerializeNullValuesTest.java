@@ -134,6 +134,62 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		 }
 	}
 	
+	@Test
+	public void testSerializationNullMultiValueYESDefYES() throws InterruptedException, IOException {
+	
+		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+		
+		Person person = CodecTestHelper.getTestPerson();
+		person.getTitles().add(null);
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true); //lastName = null is the default, so we need also this option
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		resource.save(options);
+		
+		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			 String line = reader.readLine();
+			 boolean found = false;
+			 while(line != null) {
+				 if(line.contains("\"title\" : [ \"Mrs\", \"Dr\", null ]")) {
+					 found = true;
+				 }
+				 line = reader.readLine();
+			 }
+			 assertTrue(found);
+		 }
+	}
+	
+	@Test
+	public void testSerializationNullMultiValueNODefYES() throws InterruptedException, IOException {
+	
+		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+		
+		Person person = CodecTestHelper.getTestPerson();
+		person.getTitles().add(null);
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, false);
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true); //lastName = null is the default, so we need also this option
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		resource.save(options);
+		
+		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			 String line = reader.readLine();
+			 boolean found = false;
+			 while(line != null) {
+				 if(line.contains("\"title\" : [ \"Mrs\", \"Dr\" ]")) {
+					 found = true;
+				 }
+				 line = reader.readLine();
+			 }
+			 assertTrue(found);
+		 }
+	}
+	
 	
 	@Test
 	public void testSerializationNullSingleValueNODefYES() throws InterruptedException, IOException {
