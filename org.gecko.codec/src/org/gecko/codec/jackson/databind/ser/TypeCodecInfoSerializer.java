@@ -56,8 +56,6 @@ public class TypeCodecInfoSerializer implements CodecInfoSerializer {
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		EMFContext.setParent(provider, rootObj);
 		if(!typeCodecInfo.isIgnoreType()) {
-//			EClass objectType = rootObj.eClass();
-//			EReference containment = rootObj.eContainmentFeature();
 			if (codecModule.isSerializeType()) {
 				CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
 				CodecValueWriter<EClass, String> writer = holder.getWriterByName(typeCodecInfo.getValueWriterName());
@@ -71,16 +69,4 @@ public class TypeCodecInfoSerializer implements CodecInfoSerializer {
 			}
 		}
 	}
-	
-//	private boolean shouldSaveType(final EClass objectType, final EClass featureType, final EStructuralFeature feature) {
-//		return objectType != featureType && objectType != EcorePackage.Literals.EOBJECT;
-//	}
-//	
-//	private boolean isRoot(final EObject bean) {
-//		EObject container = bean.eContainer();
-//		Resource.Internal resource = ((InternalEObject) bean).eDirectResource();
-//
-//		return container == null || resource != null && resource != ((InternalEObject) container).eDirectResource();
-//	}
-
 }
