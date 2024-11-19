@@ -62,7 +62,7 @@ The service provider is defined in `org.gecko.codec.configurator.CodecFactoryCon
 
 ### `ObjectMapperConfigurator`
 
-Through this service is possible to configure properties that belong to the `Object Mapper`: 
+Through this service is possible to configure properties that belong to the `ObjectMapper`: 
 
 + `MapperFeature`
 + `SerializationFeature`
@@ -91,6 +91,18 @@ When using our default implementations, the `CodecFactoryConfigurator` is inject
 + `codecFactoryConfigurator.target` (takes a filter, e. g. ` (type = XXXX)`).
 
 The service provider is defined in `org.gecko.codec.configurator.ObjectMapperConfigurator`, while our default implementation is in `org.gecko.codec.jackson.DefaultObjectMapperConfigurator`.
+
+> [!WARNING]
+>
+> In `jackson < 3.` calling `ObjectMapper.Builder.build`  does **NOT** return a new `ObjectMapper`, we added an intermediate `ObjectMapperBuilderFactory` 
+>
+> ```java
+> public interface ObjectMapperBuilderFactory {
+> 	Builder createObjectMapperBuilder();
+> }
+> ```
+>
+> which is called from our `DefaultObjectMapperConfigurator`. In this way we are getting a new `ObjectMapper.Builder` when we want to configure the `ObjectMapper` and so a new instance of the `ObjectMapper` itself when loading/saving a Resource.
 
 ### `CodecModuleConfigurator`
 
@@ -138,6 +150,8 @@ This service is responsible for setting up the `CodecModule.Builder`. Through th
 
   
 
+Our `CodecModule`, which is then built through the `CodecModule.Builder`, is an extension of the `org.eclipse.emfcloud.jackson.module.EMFModule`, which allows to set the additional configured properties and to overwrite the `com.fasterxml.jackson.databind.module.SimpleModule#setupModule` method, which is where we add our serializers/deserializers. 
+
 ### The `CodecModelInfo`
 
 Another key ingredient is the `org.gecko.codec.info.CodecModelInfo` service. This is responsible for creating the `PackageCodecInfo` whenever a new `EPackage` is registered. The `PackageCodeInfo` is defined in the `org.gecko.codec.info.model`. For every `Eclassifier`, it contains info about codec annotations that might have been used (e.g, to specify the id strategy on to mark a feature as transient). This info will be them used and merged with the options passed to save/load a resource. 
@@ -170,7 +184,9 @@ The automatically registered `CodecValueWriter` and `CodecValueReader` are defin
 + For the TYPE field: `CodecIOHelper.DEFAULT_ECLASS_READER`, `CodecIOHelper.READ_BY_NAME`, `CodecIOHelper.READ_BY_CLASS`, `CodecIOHelper.URI_WRITER`, `CodecIOHelper.WRITE_BY_NAME`, `CodecIOHelper.WRITE_BY_CLASS_NAME`;
 + For the SUPERTYPE: `CodecIOHelper.ALL_SUPERTYPE_WRITER`, `CodecIOHelper.SINGLE_SUPERTYPE_WRITER`.
 
-**P.A. For the supertype there is currently no possibility to set a different `CodecValueWriter` or `CodecValueReader`.**
+> [!WARNING]
+>
+> For the supertype there is currently **NO** possibility to set a different `CodecValueWriter` or `CodecValueReader`.
 
 ### The `CodecResource`
 
@@ -339,11 +355,14 @@ We currently have implemented the codec for:
 
 For the `json` implementation we are relying on the `JsonGenerator`s and `JsonParser`s already available in jackson, while for the `mongo` implementation we are providing `org.gecko.condec.mongo.MongoCodecGenerator` and `org.gecko.condec.mongo.MongoCodecParser`, which are then constructed in the corresponding `MongoGeneratorFactory` and `MongoParserFactory`, injected in the `CodecFactoryConfigurator`.
 
-### Missing or Not Tested Features
-
-+ `proxyKey` and `timestampKey` are available options in the `CodecModuleConfig` but they are not currently used in the implementations of the serialization/deserialization process;
-+ currently it is only possible to save the supertypes as an array or a comma separated String of URIs; it might be useful to have a strategy like we have for the type information, so one can save the supertypes also as class names or simply as names. It might also be useful to serialize them with another separator rather than a comma separated String (?)
-+ serialization/deserialization of Maps has not been tested and nothing special has been implemented for them, so not sure if it works out of the box with the "standard" jackson serializers or not.
+> [!IMPORTANT]
+>
+> **Missing or Not Tested Features**
+>
+> + `proxyKey` and `timestampKey` are available options in the `CodecModuleConfig` but they are not currently used in the implementations of the serialization/deserialization process;
+> + currently it is only possible to save the supertypes as an array or a comma separated String of URIs; it might be useful to have a strategy like we have for the type information, so one can save the supertypes also as class names or simply as names. It might also be useful to serialize them with another separator rather than a comma separated String (?)
+> + serialization/deserialization of Maps has not been tested and nothing special has been implemented for them, so not sure if it works out of the box with the "standard" jackson serializers or not;
+> + Our `CodecInfoSerializer` and `CodecInfoDeserializer`, from which all our "special" serializers/deserializers inherit, are **NOT** extension of `JsonSerializer` and `JsonParser`. Maybe they could be in the future and be registered like the others. 
 
 
 
