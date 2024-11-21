@@ -1,0 +1,14 @@
+# Run all integration tests which are named xyzTest
+Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.annotation.Testable;CONCRETE}
+
+-library: enableOSGi-Test,\
+	enable-emf
+
+Private-Package: org.gecko.codec.jpa.test
+
+Bundle-Version: 1.0.0.SNAPSHOT
+-buildpath: \
+	org.osgi.test.junit5.cm,\
+	org.gecko.codec,\
+	org.gecko.codec.test.helper,\
+	org.gecko.codec.demo.model

@@ -1,0 +1,5 @@
+-buildpath: \
+	org.osgi.service.jdbc;version=latest,\
+	derby;version='10.14',\
+	org.osgi.annotation.bundle,\
+	org.osgi.service.component.annotations

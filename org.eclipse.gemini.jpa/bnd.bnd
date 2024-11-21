@@ -1,0 +1,18 @@
+-buildpath: \
+	jakarta.persistence-api;version=latest,\
+	org.osgi.framework;version=latest,\
+	org.osgi.resource;version=latest,\
+	org.osgi.util.tracker;version=latest,\
+	org.osgi.service.cm;version=latest,\
+	org.osgi.service.jpa;version=latest,\
+	org.osgi.service.jdbc;version=latest,\
+	org.osgi.service.packageadmin;version=latest,\
+	org.eclipse.persistence.asm;version=latest,\
+	org.eclipse.persistence.core;version=latest,\
+	org.eclipse.persistence.jpa;version=latest
+	
+Import-Package: \
+	org.osgi.service.jpa;version='[3.1,4)',\
+	org.eclipse.persistence.dynamic;version='[4.0.0,5.0.0)',\
+	org.eclipse.persistence.internal.dynamic;version='[4.0.0,5.0.0)',\
+	*

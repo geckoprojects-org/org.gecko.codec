@@ -1,0 +1,13 @@
+-library: enable-emf
+-buildpath: \
+	org.gecko.codec;version=latest,\
+	org.gecko.codec.constants;version=latest,\
+	org.gecko.codec.info;version=latest,\
+	jakarta.persistence-api,\
+	org.osgi.service.jpa,\
+	com.fasterxml.jackson.core.jackson-annotations,\
+	com.fasterxml.jackson.core.jackson-core,\
+	com.fasterxml.jackson.core.jackson-databind,\
+	org.gecko.codec.emfjson,\
+	org.eclipse.persistence.core,\
+	org.eclipse.persistence.jpa

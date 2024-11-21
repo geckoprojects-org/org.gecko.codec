@@ -1,0 +1,11 @@
+-library: \
+	enable-emf
+-buildpath: \
+	jakarta.persistence-api,\
+	osgi.cmpn
+	
+-includeresource: \
+	META-INF/MANIFEST.MF=Manifest_,\
+	OSGI-INF/configurator/=config/
+	
+Require-Capability: osgi.extender;filter:='(osgi.extender=osgi.configurator)'

@@ -51,6 +51,10 @@ public final class CodecMongoResource extends CodecResource {
 		this.provider = provider;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.resource.CodecResource#doSave(java.io.OutputStream, java.util.Map)
+	 */
 	@Override
 	protected void doSave(OutputStream outputStream, Map<?, ?> options) throws IOException {
 		super.doSave(outputStream, options);
@@ -84,6 +88,10 @@ public final class CodecMongoResource extends CodecResource {
 		
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.jackson.resource.CodecResource#doLoad(java.io.InputStream, java.util.Map)
+	 */
 	@Override
 	protected void doLoad(InputStream inputStream, Map<?, ?> options) throws IOException {
 		super.doLoad(inputStream, options);

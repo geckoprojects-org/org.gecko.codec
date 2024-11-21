@@ -11,35 +11,42 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.gecko.codec.mongo.resource;
+package org.gecko.codec.jpa.resource;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
-import org.gecko.codec.info.CodecModelInfo;
-import org.gecko.codec.configurator.ObjectMapperConfigurator;
 import org.gecko.codec.configurator.CodecModuleConfigurator;
+import org.gecko.codec.configurator.ObjectMapperConfigurator;
+import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
-import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.jpa.EntityManagerFactoryBuilder;
 
-@Component(name= "MongoRF", service = Resource.Factory.class, property = { EMFNamespaces.EMF_CONFIGURATOR_NAME + "=myMongo",
-		EMFNamespaces.EMF_MODEL_PROTOCOL + "=mongodb" })
-public class MongoResourceFactory extends ResourceFactoryImpl {
+import jakarta.persistence.EntityManagerFactory;
+
+/**
+ * 
+ * @author ilenia
+ * @since Nov 21, 2024
+ */
+@Component(name= "JPARF", service = Resource.Factory.class, property = { 
+		EMFNamespaces.EMF_CONFIGURATOR_NAME + "=myJPA",
+		EMFNamespaces.EMF_MODEL_FILE_EXT + "=jpa" })
+public class CodecJPAResourceFactory extends ResourceFactoryImpl {
 	
-	@Reference
-	MongoDatabaseProvider provider;
+	@Reference(target = "(" + EntityManagerFactoryBuilder.JPA_UNIT_NAME + "=Codec)")
+	EntityManagerFactory emf;
 	
 	@Reference
 	private CodecModelInfo modelInfo;
 	
-	@Reference(target="(type=mongo)")
+	@Reference(target="(type=jpa)")
 	private ObjectMapperConfigurator objMapperConfigurator;
 	
-	@Reference(target="(type=mongo)")
+	@Reference(target="(type=jpa)")
 	private CodecModuleConfigurator codecModuleConfigurator;
-	
 	
 	/* 
 	 * (non-Javadoc)
@@ -47,7 +54,9 @@ public class MongoResourceFactory extends ResourceFactoryImpl {
 	 */
 	@Override
 	public Resource createResource(URI uri) {
-		return new CodecMongoResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilderFactory(), provider);
+		return new CodecJPAResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), 
+				objMapperConfigurator.getObjMapperBuilderFactory(), emf);
+
 	}
 
 }

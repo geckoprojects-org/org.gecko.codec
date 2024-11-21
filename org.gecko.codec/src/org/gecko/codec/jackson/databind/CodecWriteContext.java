@@ -16,6 +16,9 @@ package org.gecko.codec.jackson.databind;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,6 +34,7 @@ import com.fasterxml.jackson.core.json.JsonWriteContext;
 public class CodecWriteContext extends JsonWriteContext {
 	
 	private EStructuralFeature feature;
+	private Map<String, Object> dataMap = new HashMap<>();
 
 	/**
 	 * Creates a new instance.
@@ -88,6 +92,10 @@ public class CodecWriteContext extends JsonWriteContext {
 	 */
 	public EStructuralFeature getFeature() {
 		return feature;
+	}
+	
+	public Map<String, Object> getDataMap() {
+		return dataMap;
 	}
 	
 	public int writeFeatureAndFieldName(EStructuralFeature feature, String name) throws JsonProcessingException {

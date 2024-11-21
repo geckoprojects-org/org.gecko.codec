@@ -21,4 +21,5 @@ import com.fasterxml.jackson.core.ObjectCodec;
 public interface ObjectCodecProvider {
 
 	ObjectCodec getObjectCodec();
+
 }

@@ -172,3 +172,18 @@ org.geckoprojects.emf.persistence:org.gecko.emf.repository.api:9.3.0.20240125200
 
 org.mongodb:mongo-java-driver:3.12.14
 
+#Eclipselink
+org.eclipse.persistence:org.eclipse.persistence.moxy:4.0.2
+org.eclipse.persistence:org.eclipse.persistence.jpa:4.0.2
+org.eclipse.persistence:org.eclipse.persistence.jpa.jpql:4.0.2
+org.eclipse.persistence:org.eclipse.persistence.core:4.0.2
+org.eclipse.persistence:org.eclipse.persistence.asm:9.6.0
+jakarta.persistence:jakarta.persistence-api:3.1.0
+
+org.osgi:org.osgi.service.jpa:1.1.1
+
+# Derby
+org.apache.derby:derby:10.14.2.0
+org.ops4j.pax.jdbc:pax-jdbc-derby:1.5.5
+
+
