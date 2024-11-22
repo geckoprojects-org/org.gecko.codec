@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.persistence.dynamic.DynamicClassLoader;
 import org.eclipse.persistence.dynamic.DynamicEntity;
 import org.eclipse.persistence.dynamic.DynamicTypeBuilder;
 import org.gecko.codec.jackson.databind.CodecWriteContext;
@@ -54,7 +55,8 @@ public class JPACodecGenerator extends CodecGeneratorBaseImpl {
 		ClassLoader classLoader = objectClass.getClassLoader();
 		DynamicTypeBuilder objBuilder = 
 				new DynamicTypeBuilder(objectClass, null /*no parent type*/, object.eClass().getName().toUpperCase());
-		
+		DynamicClassLoader dcl = new DynamicClassLoader(getClass().getClassLoader());
+		Class<?> dynamicClass= dcl.createDynamicClass(objectClass.getName());
 		DynamicEntity rootEntity = objBuilder.getType().newDynamicEntity();
 		((CodecWriteContext)_writeContext).getDataMap().put("ROOT_ENTITY", rootEntity);
 		((CodecWriteContext)_writeContext).getDataMap().put("ROOT_BUILDER", objBuilder);

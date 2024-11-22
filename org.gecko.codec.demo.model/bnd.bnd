@@ -16,5 +16,8 @@
 # Bundle Annotations		
 -includeresource.model: model=model
 
+-includeresource: \
+	META-INF/MANIFEST.MF=Manifest_,\
+
 Bundle-Version: 1.0.0.SNAPSHOT
 

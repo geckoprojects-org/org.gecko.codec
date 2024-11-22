@@ -15,20 +15,25 @@ package org.gecko.codec.jpa.punit.configurator.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.gecko.codec.jpa.punit.configurator.EntityManagerFactoryConfigurator;
 import org.gecko.emf.osgi.configurator.EPackageConfigurator;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Activate;
@@ -108,7 +113,10 @@ public class EntityManagerFactoryConfiguratorImpl extends HashMap<String, Object
 		}
 	}
 	
-	@Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
+	@Reference(cardinality = ReferenceCardinality.MULTIPLE, 
+			policy = ReferencePolicy.DYNAMIC, 
+			policyOption = ReferencePolicyOption.GREEDY, bind = "bindEntityManagerFactory",
+			unbind = "unbindEntityManagerFactory")
 	public void bindEntityManagerFactory(EntityManagerFactory entityManagerFactory, Dictionary<String, Object> properties) {
 		entityManagerFactoryLock.writeLock().lock();
 		try {
@@ -142,17 +150,17 @@ public class EntityManagerFactoryConfiguratorImpl extends HashMap<String, Object
 		try {
 			Configuration config = configAdmin.getFactoryConfiguration("gemini.jpa.punit", ePackage.getName(), "?");
 			Dictionary<String, Object> properties = new Hashtable<>();
-			properties.put("gemini.jpa.punit.name", ePackage.getName());
-			String ePackagePackage = ePackage.getClass().getPackageName();
-			if(ePackagePackage.endsWith(".impl")) {
-				ePackagePackage = ePackagePackage.replace(".impl", "");
+			properties.put("gemini.jpa.punit.name", ePackage.getName());			
+			properties.put("gemini.jpa.punit.bsn", FrameworkUtil.getBundle(ePackage.getClass()).getSymbolicName());
+			Collection<String> classNames = new LinkedList<>();
+			for(EClassifier cl : ePackage.getEClassifiers()) {
+				if(cl instanceof EClass eClass) {					
+					classNames.add(eClass.getInstanceClassName());
+				}
 			}
-//			if(ePackagePackage.endsWith(ePackage.getName())) {
-//				ePackagePackage = ePackagePackage.replace("." + ePackage.getName(), "");
-//			}
-			properties.put("gemini.jpa.punit.bsn", ePackagePackage);
+			properties.put("gemini.jpa.punit.classes", classNames);
 			properties.put("jakarta.persistence.jdbc.driver", "org.apache.derby.jdbc.EmbeddedDriver");
-			properties.put("jakarta.persistence.jdbc.url", "jdbc:derby:Employee;create=true");
+			properties.put("jakarta.persistence.jdbc.url", "jdbc:derby:Codec;create=true");
 			properties.put("jakarta.persistence.jdbc.user", "app");
 			properties.put("jakarta.persistence.jdbc.password", "app");
 			properties.put("eclipselink.target-database", "Derby");

@@ -31,6 +31,9 @@ public class TestComponent {
 	@Reference(target = "(" + EntityManagerFactoryBuilder.JPA_UNIT_NAME + "=Codec)")
 	EntityManagerFactory emf;
 	
+//	@Reference(target = "(" + EntityManagerFactoryBuilder.JPA_UNIT_NAME + "=person)")
+//	EntityManagerFactory emf2;
+	
 	@Activate
 	public void activate() {
 		System.out.println("Test!");
