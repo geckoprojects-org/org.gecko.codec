@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.sensinact.gateway.core.geo-json.model/src"
+    modelPluginID="org.eclipse.sensinact.gateway.core.geo-json.model" modelName="GeoJson"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="8.0" suppressGenModelAnnotations="false" copyrightFields="false"
+    publicConstructors="true" operationReflection="true" importOrganizing="true" oSGiCompatible="true">
+  <foreignModel>geojson.ecore</foreignModel>
+  <genPackages prefix="GeoJson" basePackage="org.eclipse.fennec.models" disposableProviderFactory="true"
+      adapterFactory="false" dataTypeConverters="true" contentTypeIdentifier="application/geo+json"
+      ecorePackage="geojson.ecore#/">
+    <genDataTypes ecoreDataType="geojson.ecore#//DoubleArray1D"/>
+    <genDataTypes ecoreDataType="geojson.ecore#//DoubleArray2D"/>
+    <genDataTypes ecoreDataType="geojson.ecore#//DoubleArray3D"/>
+    <genDataTypes ecoreDataType="geojson.ecore#//DoubleArray4D"/>
+    <genClasses ecoreClass="geojson.ecore#//Coordinates">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//Coordinates/longitude"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//Coordinates/latitude"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//Coordinates/elevation"/>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//Point">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//Point/data"
+          get="return org.eclipse.fennec.models.geojson.util.GeoJsonHelper.convertCoordinates(getCoordinates());"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//Point/coordinates"/>
+      <genOperations ecoreOperation="geojson.ecore#//Point/setData" body="setCoordinates(org.eclipse.fennec.models.geojson.util.GeoJsonHelper.toCoordinates(data));">
+        <genParameters ecoreParameter="geojson.ecore#//Point/setData/data"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//GeoJsonObject">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//GeoJsonObject/bbox"
+          get="return new org.eclipse.fennec.models.geojson.util.GenericConvertingList&lt;double[], Coordinates>(getBoundingBox(), org.eclipse.fennec.models.geojson.util.GeoJsonHelper::toCoordinates, org.eclipse.fennec.models.geojson.util.GeoJsonHelper::convertCoordinates);"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference geojson.ecore#//GeoJsonObject/boundingBox"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="geojson.ecore#//Geometry"/>
+    <genClasses ecoreClass="geojson.ecore#//LineString"/>
+    <genClasses ecoreClass="geojson.ecore#//SimpleLineString">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//SimpleLineString/data"
+          get="return new org.eclipse.fennec.models.geojson.util.GenericConvertingList&lt;double[], Coordinates>(getCoordinates(), org.eclipse.fennec.models.geojson.util.GeoJsonHelper::toCoordinates, org.eclipse.fennec.models.geojson.util.GeoJsonHelper::convertCoordinates);"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//SimpleLineString/coordinates"/>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//Feature">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//Feature/id"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//Feature/geometry"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//Feature/properties"/>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//FeatureCollection">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//FeatureCollection/features"/>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//GeometryCollection">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//GeometryCollection/geometries"/>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//MultiPoint">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//MultiPoint/data"
+          get="return new org.eclipse.fennec.models.geojson.util.GenericConvertingList&lt;double[], Coordinates>(getCoordinates(), org.eclipse.fennec.models.geojson.util.GeoJsonHelper::toCoordinates, org.eclipse.fennec.models.geojson.util.GeoJsonHelper::convertCoordinates);"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//MultiPoint/coordinates"/>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//Polygon"/>
+    <genClasses ecoreClass="geojson.ecore#//Ring">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//Ring/coordinates"/>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//Hole"/>
+    <genClasses ecoreClass="geojson.ecore#//MultiPolygon">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//MultiPolygon/data"
+          get="return org.eclipse.fennec.models.geojson.util.GeoJsonHelper.getMultiPolygonData(this);"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//MultiPolygon/polygons"/>
+      <genOperations ecoreOperation="geojson.ecore#//MultiPolygon/setData" body="org.eclipse.fennec.models.geojson.util.GeoJsonHelper.setMultiPolygonData(this, data);">
+        <genParameters ecoreParameter="geojson.ecore#//MultiPolygon/setData/data"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//SimplePolygon">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//SimplePolygon/data"
+          get="return org.eclipse.fennec.models.geojson.util.GeoJsonHelper.getSimplePolygonData(this);"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//SimplePolygon/exteriorRing"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//SimplePolygon/interiorHoles"/>
+      <genOperations ecoreOperation="geojson.ecore#//SimplePolygon/setData" body="org.eclipse.fennec.models.geojson.util.GeoJsonHelper.setSimplePolygonData(this, data);">
+        <genParameters ecoreParameter="geojson.ecore#//SimplePolygon/setData/data"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="geojson.ecore#//MultiLineString">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute geojson.ecore#//MultiLineString/data"
+          get="return org.eclipse.fennec.models.geojson.util.GeoJsonHelper.getMultiLineStringData(this);"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference geojson.ecore#//MultiLineString/linesStrings"/>
+      <genOperations ecoreOperation="geojson.ecore#//MultiLineString/setData" body="org.eclipse.fennec.models.geojson.util.GeoJsonHelper.setMultiLineStringData(this, data);">
+        <genParameters ecoreParameter="geojson.ecore#//MultiLineString/setData/data"/>
+      </genOperations>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

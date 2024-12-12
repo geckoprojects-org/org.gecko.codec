@@ -1,0 +1,14 @@
+{
+  "_id" : "John-Doe",
+  "_type" : "Person",
+  "birthDate" : "1990-06-20T00:00:00",
+  "age" : 42,
+  "married" : false,
+  "id" : "2a99bb4a-57e8-43a6-b0f0-53766c186b97",
+  "height" : 1.77,
+  "weight" : 78.3,
+  "addresses" : [ ],
+  "nonContainedAdds" : [ ],
+  "getFullName" : "John Doe",
+  "gender" : "MALE"
+}

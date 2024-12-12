@@ -132,7 +132,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
 			final String field = jp.getCurrentName();
 			//			If it was not possible to determine the type from the conditions before then we look for the _type in the serialized document
-			if(field.equals(codecModule.getTypeKey()) && current == null) {
+			if(field.equals(codecModule.getTypeKey()) && (current == null || eObjCodecInfo == null)) {
 				jp.nextToken();
 				for(CodecValueReader<String, EClass> reader : infoHolder.getReaders()) {
 					try {

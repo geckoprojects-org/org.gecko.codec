@@ -91,7 +91,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 				LOGGER.severe(String.format("ID strategy is ID_FIELD but id features are %d. There should be exactly 1!", idFeatures.size()));
 				break;
 			}
-			gen.writeFieldName(codecModule.getIdKey());
+//			gen.writeFieldName(codecModule.getIdKey());
 			EStructuralFeature idFeature = idFeatures.get(0);
 			Object featureValue = rootObj.eGet(idFeature);
 			//TODO: We have to specify in the documentation that we are expecting a writer which takes the id field as input
@@ -99,21 +99,38 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 			if(writer != null) {
 				String value = writer.writeValue(featureValue, provider);
 				if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
+					gen.writeFieldName(codecModule.getIdKey());
 					gen.writeObjectId(value);
+					if(value == null) {
+						rootObj.eSet(idFeature, gen.getCurrentValue().toString()); //if the id feature is null, the generator takes care of creating a new one and then we have to set it to the EObject
+					}
 				} else {
-					gen.writeString(value);
+					if(value == null && !codecModule.isSerializeNullValue()) {
+						return;
+					} else if(value == null) {
+						gen.writeFieldName(codecModule.getIdKey());
+						gen.writeNull();
+					} else {
+						gen.writeFieldName(codecModule.getIdKey());
+						gen.writeString(value);
+					}				
 				}
 			}
 			else {
 				if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
+					gen.writeFieldName(codecModule.getIdKey());
 					gen.writeObjectId(featureValue);
 					if(featureValue == null) {
 						rootObj.eSet(idFeature, gen.getCurrentValue().toString()); //if the id feature is null, the generator takes care of creating a new one and then we have to set it to the EObject
 					}
 				} else {
-					if(featureValue == null) {
+					if(featureValue == null && !codecModule.isSerializeNullValue()) {
+						return;
+					} else if(featureValue == null) {
+						gen.writeFieldName(codecModule.getIdKey());
 						gen.writeNull();
 					} else {
+						gen.writeFieldName(codecModule.getIdKey());
 						gen.writeString(featureValue.toString());
 					}	
 				}

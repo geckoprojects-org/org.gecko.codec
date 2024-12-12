@@ -1,0 +1,16 @@
+-library: enableOSGi-Test
+
+-resolve.effective: active
+
+-runrequires: bnd.identity;id='org.eclipse.sensinact.gateway.core.geo-json.model.test'
+	
+-runbundles.test: \
+	org.eclipse.sensinact.gateway.core.geo-json.model.test;version=snapshot
+
+-runfw: org.apache.felix.framework
+
+-runee: JavaSE-17
+
+-runtrace: true
+
+-runbundles: org.eclipse.sensinact.gateway.core.geo-json.model.test;version=snapshot

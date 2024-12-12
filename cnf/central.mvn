@@ -126,13 +126,14 @@ org.osgi:osgi.cmpn:7.0.0
 
 org.apiguardian:apiguardian-api:1.1.2
 
-com.fasterxml.jackson.core:jackson-core:2.16.1
-com.fasterxml.jackson.core:jackson-databind:2.16.1
-com.fasterxml.jackson.core:jackson-annotations:2.16.1
-com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.13.2
-com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2
+com.fasterxml.jackson.core:jackson-core:2.18.2
+com.fasterxml.jackson.core:jackson-databind:2.18.2
+com.fasterxml.jackson.core:jackson-annotations:2.18.2
+com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.18.2
+com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2
+com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2
 de.undercouch:bson4jackson:2.13.1
-org.yaml:snakeyaml:2.0
+org.yaml:snakeyaml:2.3
 
 org.bouncycastle:bcpkix-jdk15on:1.70
 org.bouncycastle:bcprov-jdk15on:1.70
@@ -171,4 +172,8 @@ org.geckoprojects.emf.persistence:org.gecko.emf.mongo.component:6.1.0
 org.geckoprojects.emf.persistence:org.gecko.emf.repository.api:9.3.0.202401252002
 
 org.mongodb:mongo-java-driver:3.12.14
+
+org.geckoprojects.emf.utils:org.gecko.emf.json:1.5.1
+org.geckoprojects.emf.utils:org.gecko.emf.util.annotations:1.4.1
+org.eclipse.emfcloud:emfjson-jackson:2.2.0
 
