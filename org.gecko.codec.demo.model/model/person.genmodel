@@ -57,5 +57,19 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//BusinessAddress/companyName"/>
     </genClasses>
     <genClasses ecoreClass="person.ecore#//SpecificBusinessPerson"/>
+    <genClasses ecoreClass="person.ecore#//MapInMap">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//MapInMap/stringMapInMapValues"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//StringToSimpleValueMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//StringToSimpleValueMap/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//StringToSimpleValueMap/value"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//StringToStringMapInMap">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//StringToStringMapInMap/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//StringToStringMapInMap/value"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//SimpleValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//SimpleValue/value"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

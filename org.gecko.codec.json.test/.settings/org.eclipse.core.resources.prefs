@@ -18,6 +18,7 @@ encoding//src/org/gecko/codec/json/test/CodecJsonSerializeTypeStrategyTest.java=
 encoding//src/org/gecko/codec/json/test/CodecJsonSerializeTypeTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonSerializeWithCustomKeysTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonSerializeWithCustomWriterTest.java=UTF-8
+encoding//src/org/gecko/codec/json/test/OpenApiTest.java=UTF-8
 encoding/<project>=UTF-8
 encoding/bnd.bnd=UTF-8
 encoding/build.gradle=UTF-8

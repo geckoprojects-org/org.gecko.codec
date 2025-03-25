@@ -2,6 +2,8 @@
  */
 package org.gecko.codec.demo.model.person.impl;
 
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
@@ -15,9 +17,11 @@ import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.BusinessAddress;
 import org.gecko.codec.demo.model.person.BusinessPerson;
 import org.gecko.codec.demo.model.person.Contact;
+import org.gecko.codec.demo.model.person.MapInMap;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonFactory;
 import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.codec.demo.model.person.SimpleValue;
 import org.gecko.codec.demo.model.person.SpecificBusinessPerson;
 
 /**
@@ -68,6 +72,34 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	private EClass specificBusinessPersonEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass mapInMapEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass stringToSimpleValueMapEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass stringToStringMapInMapEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass simpleValueEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -432,6 +464,106 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EClass getMapInMap() {
+		return mapInMapEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getMapInMap_StringMapInMapValues() {
+		return (EReference)mapInMapEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getStringToSimpleValueMap() {
+		return stringToSimpleValueMapEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getStringToSimpleValueMap_Key() {
+		return (EAttribute)stringToSimpleValueMapEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getStringToSimpleValueMap_Value() {
+		return (EReference)stringToSimpleValueMapEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getStringToStringMapInMap() {
+		return stringToStringMapInMapEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getStringToStringMapInMap_Key() {
+		return (EAttribute)stringToStringMapInMapEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getStringToStringMapInMap_Value() {
+		return (EReference)stringToStringMapInMapEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getSimpleValue() {
+		return simpleValueEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getSimpleValue_Value() {
+		return (EAttribute)simpleValueEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getGENDER_TYPE() {
 		return gendeR_TYPEEEnum;
 	}
@@ -499,6 +631,20 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEAttribute(businessAddressEClass, BUSINESS_ADDRESS__COMPANY_NAME);
 
 		specificBusinessPersonEClass = createEClass(SPECIFIC_BUSINESS_PERSON);
+
+		mapInMapEClass = createEClass(MAP_IN_MAP);
+		createEReference(mapInMapEClass, MAP_IN_MAP__STRING_MAP_IN_MAP_VALUES);
+
+		stringToSimpleValueMapEClass = createEClass(STRING_TO_SIMPLE_VALUE_MAP);
+		createEAttribute(stringToSimpleValueMapEClass, STRING_TO_SIMPLE_VALUE_MAP__KEY);
+		createEReference(stringToSimpleValueMapEClass, STRING_TO_SIMPLE_VALUE_MAP__VALUE);
+
+		stringToStringMapInMapEClass = createEClass(STRING_TO_STRING_MAP_IN_MAP);
+		createEAttribute(stringToStringMapInMapEClass, STRING_TO_STRING_MAP_IN_MAP__KEY);
+		createEReference(stringToStringMapInMapEClass, STRING_TO_STRING_MAP_IN_MAP__VALUE);
+
+		simpleValueEClass = createEClass(SIMPLE_VALUE);
+		createEAttribute(simpleValueEClass, SIMPLE_VALUE__VALUE);
 
 		// Create enums
 		gendeR_TYPEEEnum = createEEnum(GENDER_TYPE);
@@ -572,6 +718,20 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEAttribute(getBusinessAddress_CompanyName(), ecorePackage.getEString(), "companyName", null, 0, 1, BusinessAddress.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(specificBusinessPersonEClass, SpecificBusinessPerson.class, "SpecificBusinessPerson", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(mapInMapEClass, MapInMap.class, "MapInMap", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getMapInMap_StringMapInMapValues(), this.getStringToStringMapInMap(), null, "stringMapInMapValues", null, 0, -1, MapInMap.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(stringToSimpleValueMapEClass, Map.Entry.class, "StringToSimpleValueMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getStringToSimpleValueMap_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStringToSimpleValueMap_Value(), this.getSimpleValue(), null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(stringToStringMapInMapEClass, Map.Entry.class, "StringToStringMapInMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getStringToStringMapInMap_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStringToStringMapInMap_Value(), this.getStringToSimpleValueMap(), null, "value", null, 0, -1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(simpleValueEClass, SimpleValue.class, "SimpleValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSimpleValue_Value(), ecorePackage.getEInt(), "value", null, 0, 1, SimpleValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.class, "GENDER_TYPE");
