@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.eclipse.emf.common.util.BasicEMap;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -54,7 +56,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 	private FeatureCodecInfo featureCodecInfo;
 	private BaseURIHandler handler = new BaseURIHandler();
 
-	public ReferenceCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
+	public ReferenceCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService,
 			final EClassCodecInfo eObjCodecInfo, final FeatureCodecInfo featureCodecInfo) {
 		this.codecModule = codecMoule;
 		this.codecModelInfoService = codecModelInfoService;
@@ -62,28 +64,33 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		this.featureCodecInfo = featureCodecInfo;
 	}
 
-	/* 
+	/*
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.demo.jackson.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
+	 * 
+	 * @see
+	 * org.gecko.codec.demo.jackson.CodecInfoSerializer#serialize(org.eclipse.emf.
+	 * ecore.EObject, com.fasterxml.jackson.core.JsonGenerator,
+	 * com.fasterxml.jackson.databind.SerializerProvider)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void serialize(EObject rootObj, JsonGenerator jg, SerializerProvider provider) throws IOException {
-		if(featureCodecInfo.isIgnore()) return;
-		if(featureCodecInfo.getFeatures().size() != 1) {
-			LOGGER.warning(String.format("Currently no support for multiple EStructuralFeature in CodecInfoObject which is not a CodecIdInfo"));
+		if (featureCodecInfo.isIgnore())
+			return;
+		if (featureCodecInfo.getFeatures().size() != 1) {
+			LOGGER.warning(String.format(
+					"Currently no support for multiple EStructuralFeature in CodecInfoObject which is not a CodecIdInfo"));
 			return;
 		}
 		EReference feature = (EReference) featureCodecInfo.getFeatures().get(0);
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
-		
-		
-		if(jg.getOutputContext() instanceof CodecWriteContext cwt) {
+
+		if (jg.getOutputContext() instanceof CodecWriteContext cwt) {
 			cwt.setFeature(feature);
 		}
 
-		if(feature.isMany()) {
+		if (feature.isMany()) {
 			List<EObject> values = (List<EObject>) rootObj.eGet(feature);
 			serializeManyReferences(rootObj, values, feature, jg, provider);
 		} else {
@@ -92,53 +99,89 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		}
 	}
 
-
 	private void serializeManyReferences(EObject rootObj, List<EObject> values, EReference feature, JsonGenerator jg,
 			SerializerProvider provider) throws IOException {
 
-		if(values.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue())) return;
-		if(codecModule.isUseNamesFromExtendedMetaData()) {
+		if (values.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue()))
+			return;
+		if (codecModule.isUseNamesFromExtendedMetaData()) {
 			jg.writeFieldName(featureCodecInfo.getKey());
 		} else {
 			jg.writeFieldName(feature.getName());
-		}	
-		jg.writeStartArray(values);
-		values.forEach(value -> {
+		}
+		if (values instanceof EMap eMap) {
+			serializeEMap(jg, provider, eMap);
+		} else {
+			jg.writeStartArray(values);
+			values.forEach(value -> {
+				try {
+					serializeSingleReferenceValue(rootObj, value, feature, jg, provider);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+			jg.writeEndArray();
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private void serializeEMap(JsonGenerator jg, SerializerProvider provider, EMap eMap) throws IOException {
+		jg.writeStartObject();
+		eMap.forEach(value -> {
 			try {
-				serializeSingleReferenceValue(rootObj, value, feature, jg, provider);
+				BasicEMap.Entry<String, Object> entry = (BasicEMap.Entry<String, Object>) value;
+				jg.writeFieldName(entry.getKey());
+				Object v = entry.getValue();
+				if (v == null) {
+					jg.writeNull();
+				} else if (v instanceof EObject eo) {
+					if (((EObject) entry).eContainmentFeature().isContainment()) {
+						new CodecEObjectSerializer(codecModule, codecModelInfoService).serialize(eo, jg, provider);
+					} else {
+						serializeNonContainment((EObject) entry, eo, jg, provider);
+					}
+				} else if (v instanceof EMap innerMap) {
+					serializeEMap(jg, provider, innerMap);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		});
-		jg.writeEndArray();
-
+		jg.writeEndObject();
 	}
 
-	private void serializeSingleReference(EObject rootObj, EObject value, EReference feature, JsonGenerator jg, SerializerProvider provider) throws IOException {
-		if(value == null && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeNullValue())) return;
+	private void serializeSingleReference(EObject rootObj, EObject value, EReference feature, JsonGenerator jg,
+			SerializerProvider provider) throws IOException {
+		if (value == null && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeNullValue()))
+			return;
 
-		if(codecModule.isUseNamesFromExtendedMetaData()) {
+		if (codecModule.isUseNamesFromExtendedMetaData()) {
 			jg.writeFieldName(featureCodecInfo.getKey());
 		} else {
 			jg.writeFieldName(feature.getName());
-		}	
+		}
 
 		serializeSingleReferenceValue(rootObj, value, feature, jg, provider);
 	}
 
-	private void serializeSingleReferenceValue(EObject rootObj, EObject value, EReference feature, JsonGenerator jg, SerializerProvider provider) throws IOException {
+	private void serializeSingleReferenceValue(EObject rootObj, EObject value, EReference feature, JsonGenerator jg,
+			SerializerProvider provider) throws IOException {
 
-		if(feature.isContainment()) {
-			if(value == null) jg.writeNull();
-			else new CodecEObjectSerializer(codecModule, codecModelInfoService).serialize(value, jg, provider);
+		if (feature.isContainment()) {
+			if (value == null)
+				jg.writeNull();
+			else
+				new CodecEObjectSerializer(codecModule, codecModelInfoService).serialize(value, jg, provider);
 		} else {
-			serializeNonContainment(rootObj, value, feature, jg, provider);
+			serializeNonContainment(rootObj, value, jg, provider);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void serializeNonContainment(EObject rootObj, EObject value, EReference feature, JsonGenerator jg, SerializerProvider provider) throws IOException {	
-		if(value == null) {
+	private void serializeNonContainment(EObject rootObj, EObject value, JsonGenerator jg, SerializerProvider provider)
+			throws IOException {
+		if (value == null) {
 			jg.writeNull();
 			return;
 		}
@@ -146,13 +189,14 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 
 		jg.writeStartObject(value);
 
-		if(codecModule.isSerializeType()) {
+		if (codecModule.isSerializeType()) {
 			EClassCodecInfo refClassCodecInfo = codecModule.getCodecModelInfo().getEClassCodecInfo().stream()
-					.filter(ecci -> ecci.getClassifier().getName().equals(value.eClass().getName()))
-					.findFirst().orElse(null);
+					.filter(ecci -> ecci.getClassifier().getName().equals(value.eClass().getName())).findFirst()
+					.orElse(null);
 			CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
-			CodecValueWriter<EClass, String> writer = holder.getWriterByName(refClassCodecInfo != null ? 
-					refClassCodecInfo.getTypeInfo().getValueWriterName() : eObjCodecInfo.getTypeInfo().getValueWriterName());
+			CodecValueWriter<EClass, String> writer = holder
+					.getWriterByName(refClassCodecInfo != null ? refClassCodecInfo.getTypeInfo().getValueWriterName()
+							: eObjCodecInfo.getTypeInfo().getValueWriterName());
 			String v = writer.writeValue(value.eClass(), provider);
 			jg.writeFieldName(codecModule.getTypeKey());
 			if (jg.canWriteTypeId()) {
@@ -195,8 +239,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		if (target.eIsProxy() && target instanceof InternalEObject) {
 			URI uri = ((InternalEObject) target).eProxyURI();
 
-			return sourceResource != null
-					&& sourceResource.getURI() != null
+			return sourceResource != null && sourceResource.getURI() != null
 					&& !sourceResource.getURI().equals(uri.trimFragment());
 		}
 

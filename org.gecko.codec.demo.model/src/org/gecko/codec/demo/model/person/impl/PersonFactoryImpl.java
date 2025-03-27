@@ -2,6 +2,10 @@
  */
 package org.gecko.codec.demo.model.person.impl;
 
+import java.util.Map;
+
+import org.eclipse.emf.common.util.EMap;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -63,6 +67,11 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 			case PersonPackage.CONTACT: return createContact();
 			case PersonPackage.BUSINESS_ADDRESS: return createBusinessAddress();
 			case PersonPackage.SPECIFIC_BUSINESS_PERSON: return createSpecificBusinessPerson();
+			case PersonPackage.MAP_IN_MAP: return createMapInMap();
+			case PersonPackage.STRING_TO_STRING_MAP_IN_MAP: return (EObject)createStringToStringMapInMap();
+			case PersonPackage.STRING_TO_SIMPLE_VALUE_MAP: return (EObject)createStringToSimpleValueMap();
+			case PersonPackage.SIMPLE_VALUE: return createSimpleValue();
+			case PersonPackage.SIMPLE_MAP: return createSimpleMap();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -162,6 +171,59 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 	public SpecificBusinessPerson createSpecificBusinessPerson() {
 		SpecificBusinessPersonImpl specificBusinessPerson = new SpecificBusinessPersonImpl();
 		return specificBusinessPerson;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public MapInMap createMapInMap() {
+		MapInMapImpl mapInMap = new MapInMapImpl();
+		return mapInMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, EMap<String, SimpleValue>> createStringToStringMapInMap() {
+		StringToStringMapInMapImpl stringToStringMapInMap = new StringToStringMapInMapImpl();
+		return stringToStringMapInMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, SimpleValue> createStringToSimpleValueMap() {
+		StringToSimpleValueMapImpl stringToSimpleValueMap = new StringToSimpleValueMapImpl();
+		return stringToSimpleValueMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public SimpleValue createSimpleValue() {
+		SimpleValueImpl simpleValue = new SimpleValueImpl();
+		return simpleValue;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public SimpleMap createSimpleMap() {
+		SimpleMapImpl simpleMap = new SimpleMapImpl();
+		return simpleMap;
 	}
 
 	/**

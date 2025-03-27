@@ -8,6 +8,11 @@
 		generate=geckoEMF;\
 		genmodel=model/person.genmodel;\
 		output=src
+#	model/map.genmodel;\
+#		generate=geckoEMF;\
+#		genmodel=model/map.genmodel;\
+#		output=src
+
 # Add this attribute to find some logging information
 #		logfile=test.log;\
 

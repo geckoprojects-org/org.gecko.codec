@@ -100,7 +100,7 @@ public class CodecResource extends ResourceImpl {
 			return;
 		}
 
-		PackageCodecInfo modelCodecInfo = modelInfoService.getCodecInfoForPackage(eObject.eClass().getEPackage().getNsURI()).get();	
+		PackageCodecInfo modelCodecInfo = modelInfoService.getCodecInfoForPackage(eObject.eClass().getEPackage()).get();	
 
 		if(modelCodecInfo == null) {
 			LOGGER.severe(String.format("No PackageCodecInfo associated with EObject %s has been found", eObject.eClass().getName()));
@@ -150,7 +150,7 @@ public class CodecResource extends ResourceImpl {
 		
 		PackageCodecInfo modelCodecInfo = null;
 		if(eClass != null) {
-			modelCodecInfo = modelInfoService.getCodecInfoForPackage(eClass.getEPackage().getNsURI()).get();	
+			modelCodecInfo = modelInfoService.getCodecInfoForPackage(eClass.getEPackage()).get();	
 			if(modelCodecInfo == null) {
 				LOGGER.warning(String.format("No PackageCodecInfo associated with EClass %s has been found", eClass.getName()));
 			}

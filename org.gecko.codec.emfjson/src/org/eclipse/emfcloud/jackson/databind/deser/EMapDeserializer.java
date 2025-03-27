@@ -13,6 +13,7 @@ package org.eclipse.emfcloud.jackson.databind.deser;
 import java.io.IOException;
 import java.util.Map;
 
+import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
@@ -20,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
+import org.eclipse.emfcloud.jackson.databind.type.FeatureKind;
 import org.eclipse.emfcloud.jackson.utils.EObjects;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -41,36 +43,47 @@ public class EMapDeserializer extends JsonDeserializer<EList<Map.Entry<?, ?>>> {
    public EList<Map.Entry<?, ?>> deserialize(final JsonParser jp, final DeserializationContext ctxt,
       final EList<Map.Entry<?, ?>> intoValue) throws IOException {
       EReference reference = EMFContext.getReference(ctxt);
-
+      EStructuralFeature valueFeature = null;
       if (reference != null) {
          EClass referenceType = reference.getEReferenceType();
-         EStructuralFeature valueFeature = referenceType.getEStructuralFeature("value");
+         valueFeature = referenceType.getEStructuralFeature("value");
 
-         if (valueFeature != null) {
-            EMFContext.setFeature(ctxt, valueFeature);
-         }
       }
 
+
       if (jp.getCurrentToken() == JsonToken.START_OBJECT) {
-         while (jp.nextToken() != JsonToken.END_OBJECT) {
-            String key = jp.getCurrentName();
-            jp.nextToken();
+    	  final EObject parent = EMFContext.getParent(ctxt);
+			while (jp.nextToken() != JsonToken.END_OBJECT) {
+				if (parent != null) {
+					EMFContext.setParent(ctxt, parent);
+				}
+				if (valueFeature != null) {
+					EMFContext.setFeature(ctxt, valueFeature);
+				}
+				String key = jp.getCurrentName();
+				jp.nextToken();
 
-            final Object value;
-            if (jp.getCurrentToken() == JsonToken.START_OBJECT) {
-               value = ctxt.readValue(jp, EObject.class);
-            } else {
-               value = ctxt.readValue(jp, Object.class);
-            }
+				final Object value;
+				if (jp.getCurrentToken() == JsonToken.START_OBJECT) {
+					if (valueFeature != null && FeatureKind.get(valueFeature) == FeatureKind.MAP) {
+						EMap eMap = new BasicEMap<>();
+						deserialize(jp, ctxt, eMap);
+						value = eMap;
+					} else {
+						value = ctxt.readValue(jp, EObject.class);
+					}
+				} else {
+					value = ctxt.readValue(jp, Object.class);
+				}
 
-            // Dynamic objects do not use the EMap interface
-            // but store entries in a DynamicEList instead.
-            if (intoValue instanceof EMap) {
-               ((EMap) intoValue).put(key, value);
-            } else if (reference != null) {
-               intoValue.add((Map.Entry<?, ?>) EObjects.createEntry(key, value, reference.getEReferenceType()));
-            }
-         }
+				// Dynamic objects do not use the EMap interface
+				// but store entries in a DynamicEList instead.
+//            if (intoValue instanceof EMap ) {
+//               ((EMap) intoValue).put(key, value);
+//            } else if (reference != null) {
+				intoValue.add((Map.Entry<?, ?>) EObjects.createEntry(key, value, reference.getEReferenceType()));
+//            }
+			}
       }
 
       return intoValue;

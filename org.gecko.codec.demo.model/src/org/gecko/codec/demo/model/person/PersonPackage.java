@@ -783,6 +783,209 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int SPECIFIC_BUSINESS_PERSON_OPERATION_COUNT = BUSINESS_PERSON_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.MapInMapImpl <em>Map In Map</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.MapInMapImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getMapInMap()
+	 * @generated
+	 */
+	int MAP_IN_MAP = 6;
+
+	/**
+	 * The feature id for the '<em><b>String Map In Map Values</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_IN_MAP__STRING_MAP_IN_MAP_VALUES = 0;
+
+	/**
+	 * The number of structural features of the '<em>Map In Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_IN_MAP_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Map In Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAP_IN_MAP_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.StringToStringMapInMapImpl <em>String To String Map In Map</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.StringToStringMapInMapImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getStringToStringMapInMap()
+	 * @generated
+	 */
+	int STRING_TO_STRING_MAP_IN_MAP = 7;
+
+	/**
+	 * The feature id for the '<em><b>Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_STRING_MAP_IN_MAP__KEY = 0;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_STRING_MAP_IN_MAP__VALUE = 1;
+
+	/**
+	 * The number of structural features of the '<em>String To String Map In Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_STRING_MAP_IN_MAP_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>String To String Map In Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_STRING_MAP_IN_MAP_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.StringToSimpleValueMapImpl <em>String To Simple Value Map</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.StringToSimpleValueMapImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getStringToSimpleValueMap()
+	 * @generated
+	 */
+	int STRING_TO_SIMPLE_VALUE_MAP = 8;
+
+	/**
+	 * The feature id for the '<em><b>Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_SIMPLE_VALUE_MAP__KEY = 0;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_SIMPLE_VALUE_MAP__VALUE = 1;
+
+	/**
+	 * The number of structural features of the '<em>String To Simple Value Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_SIMPLE_VALUE_MAP_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>String To Simple Value Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRING_TO_SIMPLE_VALUE_MAP_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.SimpleValueImpl <em>Simple Value</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.SimpleValueImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getSimpleValue()
+	 * @generated
+	 */
+	int SIMPLE_VALUE = 9;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE_VALUE__VALUE = 0;
+
+	/**
+	 * The number of structural features of the '<em>Simple Value</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE_VALUE_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Simple Value</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE_VALUE_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.SimpleMapImpl <em>Simple Map</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.SimpleMapImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getSimpleMap()
+	 * @generated
+	 */
+	int SIMPLE_MAP = 10;
+
+	/**
+	 * The feature id for the '<em><b>String Map Values</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE_MAP__STRING_MAP_VALUES = 0;
+
+	/**
+	 * The number of structural features of the '<em>Simple Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE_MAP_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Simple Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SIMPLE_MAP_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -790,7 +993,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getGENDER_TYPE()
 	 * @generated
 	 */
-	int GENDER_TYPE = 6;
+	int GENDER_TYPE = 11;
 
 
 	/**
@@ -1106,6 +1309,137 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EClass getSpecificBusinessPerson();
 
 	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.MapInMap <em>Map In Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Map In Map</em>'.
+	 * @see org.gecko.codec.demo.model.person.MapInMap
+	 * @generated
+	 */
+	EClass getMapInMap();
+
+	/**
+	 * Returns the meta object for the map '{@link org.gecko.codec.demo.model.person.MapInMap#getStringMapInMapValues <em>String Map In Map Values</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>String Map In Map Values</em>'.
+	 * @see org.gecko.codec.demo.model.person.MapInMap#getStringMapInMapValues()
+	 * @see #getMapInMap()
+	 * @generated
+	 */
+	EReference getMapInMap_StringMapInMapValues();
+
+	/**
+	 * Returns the meta object for class '{@link java.util.Map.Entry <em>String To String Map In Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>String To String Map In Map</em>'.
+	 * @see java.util.Map.Entry
+	 * @model keyUnique="false" keyDataType="org.eclipse.emf.ecore.EString"
+	 *        valueMapType="org.gecko.codec.demo.model.person.StringToSimpleValueMap&lt;org.eclipse.emf.ecore.EString, org.gecko.codec.demo.model.person.SimpleValue&gt;"
+	 * @generated
+	 */
+	EClass getStringToStringMapInMap();
+
+	/**
+	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Key</em>'.
+	 * @see java.util.Map.Entry
+	 * @see #getStringToStringMapInMap()
+	 * @generated
+	 */
+	EAttribute getStringToStringMapInMap_Key();
+
+	/**
+	 * Returns the meta object for the map '{@link java.util.Map.Entry <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>Value</em>'.
+	 * @see java.util.Map.Entry
+	 * @see #getStringToStringMapInMap()
+	 * @generated
+	 */
+	EReference getStringToStringMapInMap_Value();
+
+	/**
+	 * Returns the meta object for class '{@link java.util.Map.Entry <em>String To Simple Value Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>String To Simple Value Map</em>'.
+	 * @see java.util.Map.Entry
+	 * @model keyUnique="false" keyDataType="org.eclipse.emf.ecore.EString"
+	 *        valueType="org.gecko.codec.demo.model.person.SimpleValue" valueContainment="true"
+	 * @generated
+	 */
+	EClass getStringToSimpleValueMap();
+
+	/**
+	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Key</em>'.
+	 * @see java.util.Map.Entry
+	 * @see #getStringToSimpleValueMap()
+	 * @generated
+	 */
+	EAttribute getStringToSimpleValueMap_Key();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link java.util.Map.Entry <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Value</em>'.
+	 * @see java.util.Map.Entry
+	 * @see #getStringToSimpleValueMap()
+	 * @generated
+	 */
+	EReference getStringToSimpleValueMap_Value();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.SimpleValue <em>Simple Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Simple Value</em>'.
+	 * @see org.gecko.codec.demo.model.person.SimpleValue
+	 * @generated
+	 */
+	EClass getSimpleValue();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.demo.model.person.SimpleValue#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see org.gecko.codec.demo.model.person.SimpleValue#getValue()
+	 * @see #getSimpleValue()
+	 * @generated
+	 */
+	EAttribute getSimpleValue_Value();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.SimpleMap <em>Simple Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Simple Map</em>'.
+	 * @see org.gecko.codec.demo.model.person.SimpleMap
+	 * @generated
+	 */
+	EClass getSimpleMap();
+
+	/**
+	 * Returns the meta object for the map '{@link org.gecko.codec.demo.model.person.SimpleMap#getStringMapValues <em>String Map Values</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>String Map Values</em>'.
+	 * @see org.gecko.codec.demo.model.person.SimpleMap#getStringMapValues()
+	 * @see #getSimpleMap()
+	 * @generated
+	 */
+	EReference getSimpleMap_StringMapValues();
+
+	/**
 	 * Returns the meta object for enum '{@link org.gecko.codec.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1381,6 +1715,112 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EClass SPECIFIC_BUSINESS_PERSON = eINSTANCE.getSpecificBusinessPerson();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.MapInMapImpl <em>Map In Map</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.MapInMapImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getMapInMap()
+		 * @generated
+		 */
+		EClass MAP_IN_MAP = eINSTANCE.getMapInMap();
+
+		/**
+		 * The meta object literal for the '<em><b>String Map In Map Values</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MAP_IN_MAP__STRING_MAP_IN_MAP_VALUES = eINSTANCE.getMapInMap_StringMapInMapValues();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.StringToStringMapInMapImpl <em>String To String Map In Map</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.StringToStringMapInMapImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getStringToStringMapInMap()
+		 * @generated
+		 */
+		EClass STRING_TO_STRING_MAP_IN_MAP = eINSTANCE.getStringToStringMapInMap();
+
+		/**
+		 * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STRING_TO_STRING_MAP_IN_MAP__KEY = eINSTANCE.getStringToStringMapInMap_Key();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STRING_TO_STRING_MAP_IN_MAP__VALUE = eINSTANCE.getStringToStringMapInMap_Value();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.StringToSimpleValueMapImpl <em>String To Simple Value Map</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.StringToSimpleValueMapImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getStringToSimpleValueMap()
+		 * @generated
+		 */
+		EClass STRING_TO_SIMPLE_VALUE_MAP = eINSTANCE.getStringToSimpleValueMap();
+
+		/**
+		 * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STRING_TO_SIMPLE_VALUE_MAP__KEY = eINSTANCE.getStringToSimpleValueMap_Key();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STRING_TO_SIMPLE_VALUE_MAP__VALUE = eINSTANCE.getStringToSimpleValueMap_Value();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.SimpleValueImpl <em>Simple Value</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.SimpleValueImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getSimpleValue()
+		 * @generated
+		 */
+		EClass SIMPLE_VALUE = eINSTANCE.getSimpleValue();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SIMPLE_VALUE__VALUE = eINSTANCE.getSimpleValue_Value();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.SimpleMapImpl <em>Simple Map</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.SimpleMapImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getSimpleMap()
+		 * @generated
+		 */
+		EClass SIMPLE_MAP = eINSTANCE.getSimpleMap();
+
+		/**
+		 * The meta object literal for the '<em><b>String Map Values</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SIMPLE_MAP__STRING_MAP_VALUES = eINSTANCE.getSimpleMap_StringMapValues();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}' enum.

@@ -119,7 +119,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 		EClassCodecInfo eObjCodecInfo = null;
 		if(type != null) {
 			for(EClassCodecInfo eci : codecModelInfo.getEClassCodecInfo()) {
-				if(eci.getClassifier().getInstanceClassName().equals(type.getInstanceClassName())) {
+				if(eci.getClassifier().equals(type)) {
 					eObjCodecInfo = eci;
 					break;
 				}
@@ -145,7 +145,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 				EClass rootObj = type;
 				eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().
 						filter(eci -> 
-						eci.getClassifier().getInstanceClassName().equals(rootObj.getInstanceClassName()))
+						eci.getClassifier().equals(rootObj))
 						.findFirst().get();
 				current = EcoreUtil.create(type);
 			}

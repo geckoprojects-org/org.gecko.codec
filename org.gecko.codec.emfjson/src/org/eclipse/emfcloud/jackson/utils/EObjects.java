@@ -11,7 +11,11 @@
 package org.eclipse.emfcloud.jackson.utils;
 
 import java.util.Collection;
+import java.util.Map;
 
+import org.eclipse.emf.common.util.BasicEMap;
+import org.eclipse.emf.common.util.BasicEMap.Entry;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -90,12 +94,12 @@ public final class EObjects {
          return entry;
 
       }
-      final BasicEMapEntry<String, Object> entry = new BasicEMapEntry<>();
-      entry.eSetClass(type);
+      
+      BasicEMap.Entry entry = (Entry) EcoreUtil.create(type);
       entry.setKey(key);
       entry.setValue(value);
 
-      return entry;
+      return (EObject) entry;
    }
 
 }

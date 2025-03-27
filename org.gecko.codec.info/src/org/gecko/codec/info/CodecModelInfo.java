@@ -40,6 +40,13 @@ public interface CodecModelInfo extends EPackage.Registry {
 	
 	
 	/**
+	 * @param ePackage
+	 * @return
+	 */
+	Optional<PackageCodecInfo> getCodecInfoForPackage(EPackage ePackage);
+	
+	
+	/**
 	 * Retrieves the {@link EClassCodecInfo} for the given {@link EClass} 
 	 * @param eClass the EClass to look for
 	 * @return an {@link Optional} for the {@link EClassCodecInfo}

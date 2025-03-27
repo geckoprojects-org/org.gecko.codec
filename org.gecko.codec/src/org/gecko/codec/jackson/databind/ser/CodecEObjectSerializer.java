@@ -69,11 +69,11 @@ public class CodecEObjectSerializer extends JsonSerializer<EObject> implements C
 		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
 		EClassCodecInfo eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().
 				filter(eci -> 
-				eci.getClassifier().getInstanceClassName().equals(value.eClass().getInstanceClassName()))
+				eci.getClassifier().equals(value.eClass()))
 				.findFirst().get();
 
 		if(eObjCodecInfo == null) {
-			LOGGER.severe(String.format("No EClassCodecInfo found in CodecModule for EObject of class %s", value.eClass().getInstanceClassName()));
+			LOGGER.severe(String.format("No EClassCodecInfo found in CodecModule for EObject of class %s", value.eClass()));
 			return;
 		}
 		CodecInfoSerializer idInfoSerializer = new IdCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getIdentityInfo());

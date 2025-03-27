@@ -79,6 +79,33 @@ public interface PersonFactory extends EFactory {
 	SpecificBusinessPerson createSpecificBusinessPerson();
 
 	/**
+	 * Returns a new object of class '<em>Map In Map</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Map In Map</em>'.
+	 * @generated
+	 */
+	MapInMap createMapInMap();
+
+	/**
+	 * Returns a new object of class '<em>Simple Value</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Simple Value</em>'.
+	 * @generated
+	 */
+	SimpleValue createSimpleValue();
+
+	/**
+	 * Returns a new object of class '<em>Simple Map</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Simple Map</em>'.
+	 * @generated
+	 */
+	SimpleMap createSimpleMap();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

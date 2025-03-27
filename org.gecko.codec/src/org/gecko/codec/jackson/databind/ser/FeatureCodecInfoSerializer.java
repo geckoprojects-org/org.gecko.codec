@@ -147,14 +147,13 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 	@SuppressWarnings("unchecked")
 	private void serializeManyAttribute(List<Object> values, EStructuralFeature feature,
 			JsonGenerator gen, SerializerProvider provider) throws IOException {
-		if(values.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue())) return;
-		
 //		We need to check weather there is some null value inside the list and decide weather to serialize it or not
 		List<Object> valuesToSerialize = values;
 		if(!codecModule.isSerializeNullValue()) {
 			valuesToSerialize = values.stream().filter(v -> v != null).toList();
 		}
-		if(valuesToSerialize.isEmpty()) return;
+
+		if(valuesToSerialize.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue())) return;
 		
 		if(codecModule.isUseNamesFromExtendedMetaData()) {
 			gen.writeFieldName(featureCodecInfo.getKey());

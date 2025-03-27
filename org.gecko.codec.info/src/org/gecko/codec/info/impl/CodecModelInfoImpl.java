@@ -65,6 +65,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	public void activate() {
 		PackageCodecInfo packageInfo = doCreatePackageCodecInfo(EcorePackage.eINSTANCE);
 		ePackageCodecInfoMap.put(EcorePackage.eINSTANCE.getNsURI(), packageInfo);
+		createCodecInfoHolderMap();
 	}
 
 	@Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
@@ -102,18 +103,23 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	public Object put(String uri, Object value) {
 		if (value instanceof EPackage) {
 			EPackage ePackage = (EPackage) value;
-			createPackageCodecInfo(ePackage);
+			return createPackageCodecInfo(ePackage);
 		}
 		return null;
 	}
 
-	private synchronized void createPackageCodecInfo(EPackage ePackage) {
+	private synchronized PackageCodecInfo createPackageCodecInfo(EPackage ePackage) {
 
 		PackageCodecInfo packageInfo = doCreatePackageCodecInfo(ePackage);
-		ePackageCodecInfoMap.put(ePackage.getNsURI(), packageInfo);
-		createCodecInfoHolderMap();
+		return ePackageCodecInfoMap.put(ePackage.getNsURI(), packageInfo);
 	}
 
+	@Override
+	public Object remove(Object key) {
+		ePackageCodecInfoMap.remove(key);
+		return super.remove(key);
+	}
+	
 	private PackageCodecInfo doCreatePackageCodecInfo(EPackage ePackage) {
 		PackageCodecInfo ePackageCodecInfo = CodecInfoFactory.eINSTANCE.createPackageCodecInfo();
 		ePackageCodecInfo.setId(ePackage.getNsURI());
@@ -121,7 +127,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		for(EPackage subPackage : ePackage.getESubpackages()) {
 			ePackageCodecInfo.getSubPackageCodecInfo().add(doCreatePackageCodecInfo(subPackage));
 		}
-		ePackage.getEClassifiers().stream().filter(ec -> ec.getInstanceClass() != null).forEach(ec -> {
+		ePackage.getEClassifiers().stream().forEach(ec -> {
 			ePackageCodecInfo.getEClassCodecInfo().add(createCodecEClassInfo(ec));
 		});
 		return ePackageCodecInfo;
@@ -129,7 +135,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 
 	private EClassCodecInfo createCodecEClassInfo(EClassifier ec) {
 		EClassCodecInfo eClassCodecInfo = CodecInfoFactory.eINSTANCE.createEClassCodecInfo();
-		eClassCodecInfo.setId(ec.getInstanceClassName());
+		eClassCodecInfo.setId(ec.getInstanceClassName() == null ? EcoreUtil.getURI(ec).toString() : ec.getInstanceClassName());
 		eClassCodecInfo.setClassifier(ec);
 
 		IdentityInfo identityInfo = CodecInfoFactory.eINSTANCE.createIdentityInfo();
@@ -392,6 +398,14 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	public Optional<PackageCodecInfo> getCodecInfoForPackage(String uri) {
 		return Optional.ofNullable(ePackageCodecInfoMap.getOrDefault(uri, null))
 				.map(ci -> (PackageCodecInfo) EcoreUtil.copy((EObject) ci));	
+	}
+
+	@Override
+	public Optional<PackageCodecInfo> getCodecInfoForPackage(EPackage ePackage) {
+		return Optional.ofNullable(ePackageCodecInfoMap.getOrDefault(ePackage.getNsURI(), null))
+				.map(ci -> (PackageCodecInfo) EcoreUtil.copy((EObject) ci))
+				.or(() -> Optional.of(doCreatePackageCodecInfo(ePackage)))
+				;	
 	}
 
 

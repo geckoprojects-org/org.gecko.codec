@@ -2,6 +2,10 @@
  */
 package org.gecko.codec.demo.model.person.util;
 
+import java.util.Map;
+
+import org.eclipse.emf.common.util.EMap;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -106,6 +110,36 @@ public class PersonSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case PersonPackage.MAP_IN_MAP: {
+				MapInMap mapInMap = (MapInMap)theEObject;
+				T result = caseMapInMap(mapInMap);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case PersonPackage.STRING_TO_STRING_MAP_IN_MAP: {
+				@SuppressWarnings("unchecked") Map.Entry<String, EMap<String, SimpleValue>> stringToStringMapInMap = (Map.Entry<String, EMap<String, SimpleValue>>)theEObject;
+				T result = caseStringToStringMapInMap(stringToStringMapInMap);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case PersonPackage.STRING_TO_SIMPLE_VALUE_MAP: {
+				@SuppressWarnings("unchecked") Map.Entry<String, SimpleValue> stringToSimpleValueMap = (Map.Entry<String, SimpleValue>)theEObject;
+				T result = caseStringToSimpleValueMap(stringToSimpleValueMap);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case PersonPackage.SIMPLE_VALUE: {
+				SimpleValue simpleValue = (SimpleValue)theEObject;
+				T result = caseSimpleValue(simpleValue);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case PersonPackage.SIMPLE_MAP: {
+				SimpleMap simpleMap = (SimpleMap)theEObject;
+				T result = caseSimpleMap(simpleMap);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -197,6 +231,81 @@ public class PersonSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseSpecificBusinessPerson(SpecificBusinessPerson object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Map In Map</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Map In Map</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMapInMap(MapInMap object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>String To String Map In Map</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>String To String Map In Map</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseStringToStringMapInMap(Map.Entry<String, EMap<String, SimpleValue>> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>String To Simple Value Map</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>String To Simple Value Map</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseStringToSimpleValueMap(Map.Entry<String, SimpleValue> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Simple Value</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Simple Value</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSimpleValue(SimpleValue object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Simple Map</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Simple Map</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSimpleMap(SimpleMap object) {
 		return null;
 	}
 
