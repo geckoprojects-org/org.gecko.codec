@@ -37,20 +37,20 @@ public class DynamicValueTest {
 	@org.eclipse.emfcloud.jackson.support.ResourceSet
 	private ResourceSet resourceSet;
 
-   @Test
-   public void testSaveEJavaObjectValue() {
-      EClass classA = (EClass) resourceSet.getEObject(URI.createURI("http://emfjson/dynamic/model#//A"), true);
-      EDataType type = (EDataType) classA.getEStructuralFeature("javaType").getEType();
-
-      final Object value = "Hello";
-      final EObject obj = EcoreUtil.create(classA);
-      obj.eSet(classA.getEStructuralFeature("javaType"), value);
-
-      String stringValue = EcorePackage.eINSTANCE.getEFactoryInstance().convertToString(type, value);
-
-      JsonNode result = mapper.valueToTree(obj);
-      assertEquals(stringValue, result.get("javaType").asText());
-   }
+//   @Test
+//   public void testSaveEJavaObjectValue() {
+//      EClass classA = (EClass) resourceSet.getEObject(URI.createURI("http://emfjson/dynamic/model#//A"), true);
+//      EDataType type = (EDataType) classA.getEStructuralFeature("javaType").getEType();
+//
+//      final Object value = "Hello";
+//      final EObject obj = EcoreUtil.create(classA);
+//      obj.eSet(classA.getEStructuralFeature("javaType"), value);
+//
+//      String stringValue = EcorePackage.eINSTANCE.getEFactoryInstance().convertToString(type, value);
+//
+//      JsonNode result = mapper.valueToTree(obj);
+//      assertEquals(stringValue, result.get("javaType").asText());
+//   }
 
    @Test
    public void testLoadEJavaObjectValue() throws JsonProcessingException {

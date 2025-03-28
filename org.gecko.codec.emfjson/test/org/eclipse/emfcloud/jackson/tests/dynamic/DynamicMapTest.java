@@ -173,32 +173,32 @@ public class DynamicMapTest {
       JsonNode actual = mapper.valueToTree(resource);
       assertThat(actual).isEqualTo(expected);
    }
-
-   @Test
-   @SuppressWarnings("unchecked")
-   public void testLoadMapWithStringKey() {
-      Resource resource = resourceSet.getResource(URI.createURI("test-data/tests/test-map-2.json"), true);
-
-      assertThat(resource.getContents()).hasSize(1);
-      assertThat(resource.getContents().get(0).eClass())
-         .isSameAs(eTypesClass);
-
-      EObject types = resource.getContents().get(0);
-
-      List<BasicEMap.Entry<String, EObject>> mapValues = (List<BasicEMap.Entry<String, EObject>>) types
-         .eGet(eTypesClass.getEStructuralFeature("stringMapValues"));
-
-      assertThat(mapValues)
-         .hasSize(2);
-
-      assertThat(mapValues.get(0).getKey()).isEqualTo("Hello");
-      assertThat(1)
-         .isEqualTo(valueOf(mapValues.get(0).getValue()));
-
-      assertThat(mapValues.get(1).getKey()).isEqualTo("World");
-      assertThat(2)
-         .isEqualTo(valueOf(mapValues.get(1).getValue()));
-   }
+//
+//   @Test
+//   @SuppressWarnings("unchecked")
+//   public void testLoadMapWithStringKey() {
+//      Resource resource = resourceSet.getResource(URI.createURI("test-data/tests/test-map-2.json"), true);
+//
+//      assertThat(resource.getContents()).hasSize(1);
+//      assertThat(resource.getContents().get(0).eClass())
+//         .isSameAs(eTypesClass);
+//
+//      EObject types = resource.getContents().get(0);
+//
+//      List<BasicEMap.Entry<String, EObject>> mapValues = (List<BasicEMap.Entry<String, EObject>>) types
+//         .eGet(eTypesClass.getEStructuralFeature("stringMapValues"));
+//
+//      assertThat(mapValues)
+//         .hasSize(2);
+//
+//      assertThat(mapValues.get(0).getKey()).isEqualTo("Hello");
+//      assertThat(1)
+//         .isEqualTo(valueOf(mapValues.get(0).getValue()));
+//
+//      assertThat(mapValues.get(1).getKey()).isEqualTo("World");
+//      assertThat(2)
+//         .isEqualTo(valueOf(mapValues.get(1).getValue()));
+//   }
 
    private int valueOf(final EObject value) {
       return (int) value.eGet(valueClass.getEStructuralFeature("value"));

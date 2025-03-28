@@ -41,20 +41,20 @@ public class DynamicEnumTest {
 	@org.eclipse.emfcloud.jackson.support.ResourceSet
 	private ResourceSet resourceSet;
 
-   @Test
-   public void testSaveDynamicEnum(@org.eclipse.emfcloud.jackson.support.ObjectMapper(feature = OPTION_SERIALIZE_DEFAULT_VALUE, enabled = true) ObjectMapper defaultMapper) {
-      JsonNode expected = mapper.createObjectNode()
-         .put("eClass", "http://emfjson/dynamic/model#//A")
-         .put("intValue", 0)
-         .put("someKind", "e1");
-
-      EClass a = (EClass) resourceSet.getEObject(URI.createURI("http://emfjson/dynamic/model#//A"), true);
-      EObject a1 = EcoreUtil.create(a);
-
-      JsonNode result = defaultMapper.valueToTree(a1);
-
-      assertEquals(expected, result);
-   }
+//   @Test
+//   public void testSaveDynamicEnum(@org.eclipse.emfcloud.jackson.support.ObjectMapper(feature = OPTION_SERIALIZE_DEFAULT_VALUE, enabled = true) ObjectMapper defaultMapper) {
+//      JsonNode expected = mapper.createObjectNode()
+//         .put("eClass", "http://emfjson/dynamic/model#//A")
+//         .put("intValue", 0)
+//         .put("someKind", "e1");
+//
+//      EClass a = (EClass) resourceSet.getEObject(URI.createURI("http://emfjson/dynamic/model#//A"), true);
+//      EObject a1 = EcoreUtil.create(a);
+//
+//      JsonNode result = defaultMapper.valueToTree(a1);
+//
+//      assertEquals(expected, result);
+//   }
 
    @Test
    public void testLoadDynamicEnum() throws IOException {

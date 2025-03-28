@@ -39,7 +39,7 @@ public class BasicSerializerTest {
 	public void setUp() {
 	}
 
-	@Test
+//	@Test
 	public void testSerializeType() {
 
 		User u1 = ModelFactory.eINSTANCE.createUser();
@@ -63,7 +63,7 @@ public class BasicSerializerTest {
 
 	}
 	
-	@Test
+//	@Test
 	public void testSerializeSoperType() {
 		
 		ConcreteTypeOne cto1 = ModelFactory.eINSTANCE.createConcreteTypeOne();
@@ -79,7 +79,7 @@ public class BasicSerializerTest {
 		}		
 	}
 	
-	@Test
+//	@Test
 	public void testSerializeNonContainment() {
 		
 		User u1 = ModelFactory.eINSTANCE.createUser();

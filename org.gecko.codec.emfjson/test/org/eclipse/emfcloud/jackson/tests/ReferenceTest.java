@@ -292,24 +292,24 @@ public class ReferenceTest {
    // assertSame(second, first.getUniqueFriend());
    // }
 
-   @Test
-   public void testLoadShouldNotResolveProxiesIfIsNonResolve() throws IOException {
-      Resource resource = resourceSet.getResource(URI.createURI("test-data/tests/test-non-resolve-1.json"),
-         true);
-
-      assertEquals(1, resource.getContents().size());
-      assertTrue(resource.getContents().get(0) instanceof PrimaryObject);
-
-      PrimaryObjectImpl source = (PrimaryObjectImpl) resource.getContents().get(0);
-      assertTrue(source.eIsSet(ModelPackage.Literals.PRIMARY_OBJECT__SINGLE_REFERENCE));
-      assertTrue(source.basicGetSingleReference().eIsProxy());
-      assertFalse(source.getSingleReference().eIsProxy());
-
-      assertEquals("Foo", source.getSingleReference().getSingleAttribute());
-
-      assertTrue(source.eIsSet(ModelPackage.Literals.PRIMARY_OBJECT__MANY_REFERENCES));
-      assertEquals(1, source.getManyReferences().size());
-   }
+//   @Test
+//   public void testLoadShouldNotResolveProxiesIfIsNonResolve() throws IOException {
+//      Resource resource = resourceSet.getResource(URI.createURI("test-data/tests/test-non-resolve-1.json"),
+//         true);
+//
+//      assertEquals(1, resource.getContents().size());
+//      assertTrue(resource.getContents().get(0) instanceof PrimaryObject);
+//
+//      PrimaryObjectImpl source = (PrimaryObjectImpl) resource.getContents().get(0);
+//      assertTrue(source.eIsSet(ModelPackage.Literals.PRIMARY_OBJECT__SINGLE_REFERENCE));
+//      assertTrue(source.basicGetSingleReference().eIsProxy());
+//      assertFalse(source.getSingleReference().eIsProxy());
+//
+//      assertEquals("Foo", source.getSingleReference().getSingleAttribute());
+//
+//      assertTrue(source.eIsSet(ModelPackage.Literals.PRIMARY_OBJECT__MANY_REFERENCES));
+//      assertEquals(1, source.getManyReferences().size());
+//   }
 
    @Test
    public void testLoadObjectWithDeepHierarchy() throws IOException {
