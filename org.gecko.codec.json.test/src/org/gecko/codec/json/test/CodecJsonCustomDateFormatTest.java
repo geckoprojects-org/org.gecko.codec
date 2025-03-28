@@ -51,14 +51,10 @@ import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
- * See documentation here: 
- * 	https://github.com/osgi/osgi-test
- * 	https://github.com/osgi/osgi-test/wiki
- * Examples: https://github.com/osgi/osgi-test/tree/main/examples
+ * See documentation here: https://github.com/osgi/osgi-test
+ * https://github.com/osgi/osgi-test/wiki Examples:
+ * https://github.com/osgi/osgi-test/tree/main/examples
  */
 @RequireEMF
 @ExtendWith(BundleContextExtension.class)
@@ -66,95 +62,94 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
 @WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
-})
+		@Property(key = "type", value = "json") })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
-})
+		@Property(key = "type", value = "json") })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
-})
-public class CodecJsonCustomDateFormatTest extends JsonTestSetting{
-	
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+		@Property(key = "type", value = "json") })
+public class CodecJsonCustomDateFormatTest extends JsonTestSetting {
+
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_MODEL_NAME + "=person)")
 	ServiceAware<ResourceSet> rsAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<ObjectMapperConfigurator> mapperAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
-	
-	private ResourceSet resourceSet;	
-	
-	@BeforeEach() 
-	public void beforeEach() throws Exception{
+
+	private ResourceSet resourceSet;
+
+	@BeforeEach()
+	@Override
+	public void beforeEach() throws Exception {
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);
-		codecModuleAware.waitForService(2000l);	
+		codecModuleAware.waitForService(2000l);
 		resourceSet = rsAware.waitForService(2000l);
 		assertNotNull(resourceSet);
 	}
-	
-	@AfterEach() 
-	public void afterEach() {
+
+	@AfterEach()
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
-	
 
 	@Test
-	public void testSerializationDefaultDateFormat() throws InterruptedException, IOException {
-		
+	public void testSerializationDefaultDateFormat() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"birthDate\" : \"1990-06-20T00:00:00\",")) {
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertTrue(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"birthDate\" : \"1990-06-20T00:00:00\",")) {
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertTrue(found);
+		}
 	}
-	
-	
+
 	@Test
-	public void testSerializationCustomDateFormat() throws InterruptedException, IOException {
-	
+	public void testSerializationCustomDateFormat() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		options.put(ObjectMapperOptions.OBJ_MAPPER_DATE_FORMAT, new SimpleDateFormat("dd-MM-yyyy"));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"birthDate\" : \"20-06-1990\",")) {
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertTrue(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"birthDate\" : \"20-06-1990\",")) {
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertTrue(found);
+		}
 	}
 }

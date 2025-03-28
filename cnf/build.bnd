@@ -19,8 +19,8 @@ base-version: 1.0.0
 # For Geckoprojects the groupid must start with org.geckoprojects
 -groupid: org.geckoprojects.codec
 
-javac.source: 11
-javac.target: 11
+javac.source: 17
+javac.target: 17
 
 -require-bnd "(version>=6.3.1)"
 

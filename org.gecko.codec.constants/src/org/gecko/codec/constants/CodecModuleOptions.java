@@ -115,6 +115,6 @@ public interface CodecModuleOptions {
 	/** CODEC_MODULE_WIRTE_ENUM_LITERAL 
 	 * to overwrite the {@link org.gecko.codec.configurator.writeEnumLiteral} 
 	 * */
-	String CODEC_MODULE_WIRTE_ENUM_LITERAL = "codec.module.write.enum.literal";
+	String CODEC_MODULE_WRITE_ENUM_LITERAL = "codec.module.write.enum.literal";
 
 }

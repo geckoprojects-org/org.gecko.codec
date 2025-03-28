@@ -83,9 +83,9 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="companyName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="GENDER_TYPE">
-    <eLiterals name="MALE"/>
-    <eLiterals name="FEMALE" value="1" literal="Female"/>
     <eLiterals name="OTHER" value="2"/>
+    <eLiterals name="FEMALE" value="1" literal="Female"/>
+    <eLiterals name="MALE"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SpecificBusinessPerson" eSuperTypes="#//BusinessPerson"/>
   <eClassifiers xsi:type="ecore:EClass" name="MapInMap">

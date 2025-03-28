@@ -13,7 +13,10 @@
  */
 package org.gecko.codec.json.test;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
@@ -31,17 +34,17 @@ public abstract class JsonTestSetting {
 		addFileName = "add".concat(UUID.randomUUID().toString()).concat(".json");
 	}
 	
-	public void afterEach() {
+	public void afterEach() throws IOException {
 		if(personFileName != null) {
-			File f = new File(personFileName);
-			if(f.exists()) {
-				f.delete();
+			Path path = Paths.get(personFileName);
+			if (Files.exists(path)) {
+				Files.delete(path);
 			}
 		}
 		if(addFileName != null) {
-			File f = new File(addFileName);
-			if(f.exists()) {
-				f.delete();
+			Path path = Paths.get(addFileName);
+			if (Files.exists(path)) {
+				Files.delete(path);
 			}
 		}	
 	}

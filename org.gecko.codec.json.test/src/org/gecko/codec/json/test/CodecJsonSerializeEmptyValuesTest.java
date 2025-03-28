@@ -51,14 +51,10 @@ import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
- * See documentation here: 
- * 	https://github.com/osgi/osgi-test
- * 	https://github.com/osgi/osgi-test/wiki
- * Examples: https://github.com/osgi/osgi-test/tree/main/examples
+ * See documentation here: https://github.com/osgi/osgi-test
+ * https://github.com/osgi/osgi-test/wiki Examples:
+ * https://github.com/osgi/osgi-test/tree/main/examples
  */
 @RequireEMF
 @ExtendWith(BundleContextExtension.class)
@@ -66,321 +62,329 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
 @WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
-})
+		@Property(key = "type", value = "json") })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
-})
+		@Property(key = "type", value = "json") })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
-})
+		@Property(key = "type", value = "json") })
 public class CodecJsonSerializeEmptyValuesTest extends JsonTestSetting {
-	
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<ObjectMapperConfigurator> mapperAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
-	
-	private ResourceSet resourceSet;	
-	
-	@BeforeEach() 
-	public void beforeEach() throws Exception{
+
+	private ResourceSet resourceSet;
+
+	@BeforeEach()
+	@Override
+	public void beforeEach() throws Exception {
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);
-		codecModuleAware.waitForService(2000l);	
+		codecModuleAware.waitForService(2000l);
 		resourceSet = rsAware.waitForService(2000l);
 		assertNotNull(resourceSet);
 	}
-	
-	@AfterEach() 
-	public void afterEach() {
+
+	@AfterEach()
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
-	
-	
+
 	@Test
-	public void testSerializationEmptyManyValuesNODefYES() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptyManyValuesNODefYES() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.getTitles().clear();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"title\" : [ ]")) { //we need to check against "title" and not "titles" because use-name-from-extended-metadata is true by default
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertFalse(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"title\" : [ ]")) { // we need to check against "title" and not "titles" because
+														// use-name-from-extended-metadata is true by default
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertFalse(found);
+		}
 	}
-	
-	
+
 	@Test
-	public void testSerializationEmptyManyRefNODefYES() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptyManyRefNODefYES() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.getAddresses().clear();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"addresses\" : [ ]")) { 
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertFalse(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"addresses\" : [ ]")) {
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertFalse(found);
+		}
 	}
-	
-	
+
 	@Test
-	public void testSerializationEmptyManyRefNODefNO() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptyManyRefNODefNO() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.getAddresses().clear();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, false);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"addresses\" : [ ]")) { 
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertFalse(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"addresses\" : [ ]")) {
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertFalse(found);
+		}
 	}
-	
-	
+
 	@Test
-	public void testSerializationEmptyManyRefYESDefNO() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptyManyRefYESDefNO() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.getAddresses().clear();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, false);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"addresses\" : [ ]")) { 
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertFalse(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"addresses\" : [ ]")) {
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertFalse(found);
+		}
 	}
-	
-	
+
 	@Test
-	public void testSerializationEmptyManyRefYESDefYES() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptyManyRefYESDefYES() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.getAddresses().clear();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"addresses\" : [ ]")) { 
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertTrue(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"addresses\" : [ ]")) {
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertTrue(found);
+		}
 	}
-	
-	
+
 	@Test
-	public void testSerializationEmptyManyValuesYESDefNO() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptyManyValuesYESDefNO() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.getTitles().clear();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, false);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"title\" : [ ]")) {//we need to check against "title" and not "titles" because use-name-from-extended-metadata is true by default
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertFalse(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"title\" : [ ]")) {// we need to check against "title" and not "titles" because
+														// use-name-from-extended-metadata is true by default
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertFalse(found);
+		}
 	}
-	
-	
+
 	@Test
-	public void testSerializationEmptyManyValuesNODefNO() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptyManyValuesNODefNO() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.getTitles().clear();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, false);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"title\" : [ ]")) {//we need to check against "title" and not "titles" because use-name-from-extended-metadata is true by default
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertFalse(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"title\" : [ ]")) {// we need to check against "title" and not "titles" because
+														// use-name-from-extended-metadata is true by default
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertFalse(found);
+		}
 	}
-	
+
 	@Test
-	public void testSerializationEmptyManyValuesYESDefYES() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptyManyValuesYESDefYES() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.getTitles().clear();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"title\" : [ ]")) {//we need to check against "title" and not "titles" because use-name-from-extended-metadata is true by default
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertTrue(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"title\" : [ ]")) {// we need to check against "title" and not "titles" because
+														// use-name-from-extended-metadata is true by default
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertTrue(found);
+		}
 	}
-	
-	
+
 	@Test
-	public void testSerializationEmptySingleValueYES() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptySingleValueYES() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.setLastName("");
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); // lastName is part of the id in the
+																				// model so we need this option as well
+																				// to get it serialized
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"lastName\" : \"\",")) {
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertTrue(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"lastName\" : \"\",")) {
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertTrue(found);
+		}
 	}
-	
-	
+
 	@Test
-	public void testSerializationEmptySingleValueNO() throws InterruptedException, IOException {
-	
+	public void testSerializationEmptySingleValueNO() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		person.setLastName("");
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); // lastName is part of the id in the
+																				// model so we need this option as well
+																				// to get it serialized
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"lastName\" : \"\",")) {
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertFalse(found);
-		 }
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			String line = reader.readLine();
+			boolean found = false;
+			while (line != null) {
+				if (line.contains("\"lastName\" : \"\",")) {
+					found = true;
+				}
+				line = reader.readLine();
+			}
+			assertFalse(found);
+		}
 	}
 }

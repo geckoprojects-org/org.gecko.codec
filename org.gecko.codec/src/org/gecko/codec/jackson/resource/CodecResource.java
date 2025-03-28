@@ -414,7 +414,7 @@ public class CodecResource extends ResourceImpl {
 			case CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA:
 				moduleBuilder.withUseNamesFromExtendedMetaData((boolean) v);
 				break;			
-			case CodecModuleOptions.CODEC_MODULE_WIRTE_ENUM_LITERAL:
+			case CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL:
 				moduleBuilder.withWriteEnumLiterals((boolean) v);
 				break;
 			}

@@ -2,8 +2,6 @@
 
 -runrequires: \
 	bnd.identity;id='org.gecko.codec.test',\
-	bnd.identity;id='org.apache.felix.gogo.command',\
-	bnd.identity;id='org.apache.felix.gogo.shell',\
 	bnd.identity;id='org.gecko.codec.json'
 	
 -runbundles.test: \
@@ -24,9 +22,6 @@
 	net.bytebuddy.byte-buddy;version='[1.14.9,1.14.10)',\
 	net.bytebuddy.byte-buddy-agent;version='[1.14.9,1.14.10)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
-	org.apache.felix.gogo.command;version='[1.1.2,1.1.3)',\
-	org.apache.felix.gogo.runtime;version='[1.1.6,1.1.7)',\
-	org.apache.felix.gogo.shell;version='[1.1.4,1.1.5)',\
 	org.apache.felix.metatype;version='[1.2.4,1.2.5)',\
 	org.apache.felix.scr;version='[2.2.6,2.2.7)',\
 	org.eclipse.emf.common;version='[2.29.0,2.29.1)',\
@@ -52,4 +47,5 @@
 	org.osgi.util.function;version='[1.2.0,1.2.1)',\
 	org.osgi.util.promise;version='[1.3.0,1.3.1)',\
 	org.gecko.codec.demo.model;version=snapshot,\
-	org.gecko.codec.json;version=snapshot
+	org.gecko.codec.json;version=snapshot,\
+	org.osgi.service.cm;version='[1.6.1,1.6.2)'

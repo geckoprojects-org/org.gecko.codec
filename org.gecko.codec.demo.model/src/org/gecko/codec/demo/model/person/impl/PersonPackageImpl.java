@@ -769,9 +769,9 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 
 		// Initialize enums and add enum literals
 		initEEnum(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.class, "GENDER_TYPE");
-		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.MALE);
-		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.FEMALE);
 		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.OTHER);
+		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.FEMALE);
+		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.MALE);
 
 		// Create resource
 		createResource(eNS_URI);

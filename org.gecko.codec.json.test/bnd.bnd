@@ -24,3 +24,6 @@ Bundle-Version: 1.0.0.SNAPSHOT
 
 # Sometimes without DynamicImport Mockito will not find certain classes
 #DynamicImport-Package: *
+
+
+-includeresource: test-data=test-data/

@@ -49,9 +49,6 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -74,7 +71,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
 })
 public class CodecJsonDeserializeFeatureListTest extends JsonTestSetting{
 
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -89,6 +86,7 @@ public class CodecJsonDeserializeFeatureListTest extends JsonTestSetting{
 	private ResourceSet resourceSet;	
 	
 	@BeforeEach() 
+	@Override
 	public void beforeEach() throws Exception{
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
@@ -99,12 +97,13 @@ public class CodecJsonDeserializeFeatureListTest extends JsonTestSetting{
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
 	
 	@Test
-	public void testDeserializationIgnoreFeature() throws InterruptedException, IOException {
+	public void testDeserializationIgnoreFeature() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 
@@ -138,9 +137,7 @@ public class CodecJsonDeserializeFeatureListTest extends JsonTestSetting{
 	}
 
 	@Test
-	public void testDeserializationIgnoreNOTFeature() throws InterruptedException, IOException {
-
-
+	public void testDeserializationIgnoreNOTFeature() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 
 		Person person = CodecTestHelper.getTestPerson();

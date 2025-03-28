@@ -175,7 +175,7 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	}
 	
 	@Test
-	public void testSimpleNullArraySerNullYES() throws IOException, InvalidSyntaxException, InterruptedException {
+	public void testSimpleNullArraySerNullYES() throws IOException, InterruptedException {
 
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
 

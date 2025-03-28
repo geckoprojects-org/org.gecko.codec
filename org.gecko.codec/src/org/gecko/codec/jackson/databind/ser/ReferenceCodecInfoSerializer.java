@@ -15,6 +15,7 @@ package org.gecko.codec.jackson.databind.ser;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.BasicEMap;
@@ -48,7 +49,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  */
 public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 
-	private final static Logger LOGGER = Logger.getLogger(ReferenceCodecInfoSerializer.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(ReferenceCodecInfoSerializer.class.getName());
 
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
@@ -78,8 +79,8 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		if (featureCodecInfo.isIgnore())
 			return;
 		if (featureCodecInfo.getFeatures().size() != 1) {
-			LOGGER.warning(String.format(
-					"Currently no support for multiple EStructuralFeature in CodecInfoObject which is not a CodecIdInfo"));
+			LOGGER.warning(
+					"Currently no support for multiple EStructuralFeature in CodecInfoObject which is not a CodecIdInfo");
 			return;
 		}
 		EReference feature = (EReference) featureCodecInfo.getFeatures().get(0);
@@ -112,21 +113,12 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		if (values instanceof EMap eMap) {
 			serializeEMap(jg, provider, eMap);
 		} else {
-			jg.writeStartArray(values);
-			values.forEach(value -> {
-				try {
-					serializeSingleReferenceValue(rootObj, value, feature, jg, provider);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
-			jg.writeEndArray();
+			serializeArray(rootObj, values, feature, jg, provider);
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
-	private void serializeEMap(JsonGenerator jg, SerializerProvider provider, EMap eMap) throws IOException {
+	private void serializeEMap(JsonGenerator jg, SerializerProvider provider, EMap<?, ?> eMap) throws IOException {
 		jg.writeStartObject();
 		eMap.forEach(value -> {
 			try {
@@ -141,7 +133,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 					} else {
 						serializeNonContainment((EObject) entry, eo, jg, provider);
 					}
-				} else if (v instanceof EMap innerMap) {
+				} else if (v instanceof EMap<?,?> innerMap) {
 					serializeEMap(jg, provider, innerMap);
 				}
 			} catch (IOException e) {
@@ -149,6 +141,19 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 			}
 		});
 		jg.writeEndObject();
+	}
+
+	private void serializeArray(EObject rootObj, List<EObject> values, EReference feature, JsonGenerator jg,
+			SerializerProvider provider) throws IOException {
+		jg.writeStartArray(values);
+		values.forEach(value -> {
+			try {
+				serializeSingleReferenceValue(rootObj, value, feature, jg, provider);
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, "Error while serialization of single reference value.", e);
+			}
+		});
+		jg.writeEndArray();
 	}
 
 	private void serializeSingleReference(EObject rootObj, EObject value, EReference feature, JsonGenerator jg,
@@ -236,8 +241,8 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 	private boolean isExternal(final DatabindContext ctxt, final EObject source, final EObject target) {
 		Resource sourceResource = EMFContext.getResource(ctxt, source);
 
-		if (target.eIsProxy() && target instanceof InternalEObject) {
-			URI uri = ((InternalEObject) target).eProxyURI();
+		if (target.eIsProxy() && target instanceof InternalEObject internalEObject) {
+			URI uri = internalEObject.eProxyURI();
 
 			return sourceResource != null && sourceResource.getURI() != null
 					&& !sourceResource.getURI().equals(uri.trimFragment());

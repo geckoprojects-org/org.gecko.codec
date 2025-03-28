@@ -8,9 +8,9 @@
   <genPackages prefix="Person" basePackage="org.gecko.codec.demo.model" resource="XMI"
       disposableProviderFactory="true" ecorePackage="person.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="person.ecore#//GENDER_TYPE">
-      <genEnumLiterals ecoreEnumLiteral="person.ecore#//GENDER_TYPE/MALE"/>
-      <genEnumLiterals ecoreEnumLiteral="person.ecore#//GENDER_TYPE/FEMALE"/>
       <genEnumLiterals ecoreEnumLiteral="person.ecore#//GENDER_TYPE/OTHER"/>
+      <genEnumLiterals ecoreEnumLiteral="person.ecore#//GENDER_TYPE/FEMALE"/>
+      <genEnumLiterals ecoreEnumLiteral="person.ecore#//GENDER_TYPE/MALE"/>
     </genEnums>
     <genClasses ecoreClass="person.ecore#//Person">
       <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

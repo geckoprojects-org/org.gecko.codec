@@ -226,7 +226,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		person.getContact().add(c1);
 		resource.getContents().add(person);
 		Map<String, Object> sprops = new HashMap<String, Object>();
-		sprops.put(CodecModuleOptions.CODEC_MODULE_WIRTE_ENUM_LITERAL, Boolean.TRUE);
+		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.TRUE);
 		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
 		resource.save(sprops);
 
@@ -397,7 +397,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		resource.getContents().add(person);
 		Map<String, Object> sprops = new HashMap<String, Object>();
 		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
-		sprops.put(CodecModuleOptions.CODEC_MODULE_WIRTE_ENUM_LITERAL, Boolean.TRUE);
+		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.TRUE);
 		resource.save(sprops);
 
 		resource.getContents().clear();
@@ -410,7 +410,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 				URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
 		sprops.clear();
 		sprops.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
-		sprops.put(CodecModuleOptions.CODEC_MODULE_WIRTE_ENUM_LITERAL, Boolean.FALSE);
+		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.FALSE);
 		findResource.load(sprops);
 
 		// get the person
@@ -493,7 +493,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		Resource findResource = resourceSet.createResource(
 				URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
 		sprops = new HashMap<String, Object>();
-		sprops.put(CodecModuleOptions.CODEC_MODULE_WIRTE_ENUM_LITERAL, Boolean.TRUE);
+		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.TRUE);
 		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
 		sprops.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
 		findResource.load(sprops);

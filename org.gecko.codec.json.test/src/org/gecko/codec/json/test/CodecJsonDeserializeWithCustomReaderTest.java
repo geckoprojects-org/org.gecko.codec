@@ -51,9 +51,6 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -76,7 +73,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
 })
 public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -90,7 +87,8 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 	
 	private ResourceSet resourceSet;	
 	
-	@BeforeEach() 
+	@BeforeEach()
+	@Override
 	public void beforeEach() throws Exception{
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
@@ -101,13 +99,13 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
-	
 
 	@Test
-	public void testDeserializationIdCustomReader() throws InterruptedException, IOException {
+	public void testDeserializationIdCustomReader() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 
@@ -149,7 +147,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 	}
 	
 	@Test
-	public void testDeserializationIdCombinedCustomReader() throws InterruptedException, IOException {
+	public void testDeserializationIdCombinedCustomReader() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 
@@ -186,7 +184,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testDeserializationTypeCustomReader() throws InterruptedException, IOException {
+	public void testDeserializationTypeCustomReader() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 
@@ -226,7 +224,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 	}
 	
 	@Test
-	public void testDeserializationCustomReaderSingleAttribute() throws InterruptedException, IOException {
+	public void testDeserializationCustomReaderSingleAttribute() throws IOException {
 
 
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
@@ -263,7 +261,7 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 	}
 
 	@Test
-	public void testDeserializationCustomReaderManyAttribute() throws InterruptedException, IOException {
+	public void testDeserializationCustomReaderManyAttribute() throws IOException {
 
 
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));

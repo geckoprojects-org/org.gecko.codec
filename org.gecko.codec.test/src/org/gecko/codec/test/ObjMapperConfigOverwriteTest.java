@@ -94,7 +94,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 })
 public class ObjMapperConfigOverwriteTest {
 
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")

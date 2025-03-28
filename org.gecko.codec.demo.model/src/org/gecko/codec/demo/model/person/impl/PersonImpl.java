@@ -186,7 +186,7 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final GENDER_TYPE GENDER_EDEFAULT = GENDER_TYPE.MALE;
+	protected static final GENDER_TYPE GENDER_EDEFAULT = GENDER_TYPE.OTHER;
 
 	/**
 	 * The cached value of the '{@link #getGender() <em>Gender</em>}' attribute.

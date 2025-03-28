@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.CodecInfoHolder;
@@ -82,7 +83,7 @@ public class CodecModelInfoTest {
 			if(ec instanceof EClass eClass) {
 				assertFalse(codecModelInfo.getCodecInfoForEClass(eClass).isEmpty());
 				EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(eClass).get();
-				assertEquals(eClassCodecInfo.getId(), eClass.getInstanceClassName());
+				assertEquals(eClassCodecInfo.getId(), EcoreUtil.getURI(eClass).toString());
 				assertEquals(eClassCodecInfo.getClassifier(), eClass);				
 				
 				assertNotNull(eClassCodecInfo.getIdentityInfo());

@@ -100,6 +100,7 @@ public class CodecMongoDeserializeIdTest extends MongoEMFSetting {
 	private MongoCollection<Document> addCollection;
 
 	@BeforeEach
+	@Override
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
 		super.doBefore(ctx);
 		bpCollection = client.getDatabase("test").getCollection("Person");
@@ -114,6 +115,7 @@ public class CodecMongoDeserializeIdTest extends MongoEMFSetting {
 	}
 
 	@AfterEach
+	@Override
 	public void doAfter() {
 		cleanDBCollection(bpCollection);
 		cleanDBCollection(addCollection);
@@ -121,7 +123,7 @@ public class CodecMongoDeserializeIdTest extends MongoEMFSetting {
 	}
 
 	@Test
-	public void testDeserializationIdCombinedNoIdFieldSerialized() throws InterruptedException, IOException {
+	public void testDeserializationIdCombinedNoIdFieldSerialized() throws IOException {
 
 		Resource resource = resourceSet.createResource(getPersonURI());
 		Person person = CodecTestHelper.getTestPerson();

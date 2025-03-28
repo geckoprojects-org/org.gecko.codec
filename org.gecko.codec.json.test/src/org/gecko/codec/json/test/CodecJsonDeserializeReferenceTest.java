@@ -75,7 +75,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
 })
 public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -89,7 +89,8 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 	
 	private ResourceSet resourceSet;	
 	
-	@BeforeEach() 
+	@BeforeEach()
+	@Override
 	public void beforeEach() throws Exception{
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
@@ -100,12 +101,13 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
 
 	@Test
-	public void testDeserializationReference() throws InterruptedException, IOException {
+	public void testDeserializationReference() throws IOException {
 
 		Resource addRes = resourceSet.createResource(URI.createURI(addFileName));
 		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
@@ -149,7 +151,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 	
 
 	@Test
-	public void testDeserializationContainedReference() throws InterruptedException, IOException {
+	public void testDeserializationContainedReference() throws IOException {
 
 		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
 
@@ -187,7 +189,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 
 	
 	@Test
-	public void testDeserializationManyContainedReference() throws InterruptedException, IOException {
+	public void testDeserializationManyContainedReference() throws IOException {
 
 		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
 
@@ -229,7 +231,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 
 
 	@Test
-	public void testDeserializationMultipleReference( ) throws InterruptedException, IOException {
+	public void testDeserializationMultipleReference( ) throws IOException {
 
 		Resource addRes1 = resourceSet.createResource(URI.createURI(addFileName));
 		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));

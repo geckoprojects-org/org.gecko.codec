@@ -47,9 +47,6 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -71,7 +68,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
 })
 public class CodecJsonDeserializeIdTest extends JsonTestSetting{
 
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -85,7 +82,8 @@ public class CodecJsonDeserializeIdTest extends JsonTestSetting{
 	
 	private ResourceSet resourceSet;	
 	
-	@BeforeEach() 
+	@BeforeEach()
+	@Override
 	public void beforeEach() throws Exception{
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
@@ -96,16 +94,16 @@ public class CodecJsonDeserializeIdTest extends JsonTestSetting{
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
 	
 
 	@Test
-	public void testDeserializationIdCombinedNoIdFieldSerialized() throws InterruptedException, IOException {
+	public void testDeserializationIdCombinedNoIdFieldSerialized() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
@@ -132,7 +130,7 @@ public class CodecJsonDeserializeIdTest extends JsonTestSetting{
 	}
 
 	@Test
-	public void testDeserializationIdNoIdFieldSerialized() throws InterruptedException, IOException {
+	public void testDeserializationIdNoIdFieldSerialized() throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 

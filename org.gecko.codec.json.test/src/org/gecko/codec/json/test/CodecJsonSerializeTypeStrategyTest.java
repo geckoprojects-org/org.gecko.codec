@@ -54,9 +54,6 @@ import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -79,7 +76,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 })
 public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 	
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -94,7 +91,8 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 	private ResourceSet resourceSet;	
 	
 	@BeforeEach() 
-	public void beforeEach() throws Exception{
+	@Override
+	public void beforeEach() throws Exception  {
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);
@@ -104,13 +102,14 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
 	
 
 	@Test
-	public void testSerializationTypeUseNAME() throws InterruptedException, IOException {
+	public void testSerializationTypeUseNAME() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 
@@ -141,7 +140,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 
 	
 	@Test
-	public void testSerializationTypeUseCLASS() throws InterruptedException, IOException {
+	public void testSerializationTypeUseCLASS() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Address address = CodecTestHelper.getTestAddress();
@@ -171,7 +170,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 
 	
 	@Test
-	public void testSerializationTypeUseURI() throws InterruptedException, IOException {
+	public void testSerializationTypeUseURI() throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Address address = CodecTestHelper.getTestAddress();
@@ -201,7 +200,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 
 	
 	@Test
-	public void testSerializationTypeIgnore() throws InterruptedException, IOException {
+	public void testSerializationTypeIgnore() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Address address = CodecTestHelper.getTestAddress();

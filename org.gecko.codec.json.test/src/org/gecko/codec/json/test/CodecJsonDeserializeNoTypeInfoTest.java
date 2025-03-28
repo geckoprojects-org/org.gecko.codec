@@ -49,9 +49,6 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -74,7 +71,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
 })
 public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -88,7 +85,8 @@ public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 	
 	private ResourceSet resourceSet;	
 	
-	@BeforeEach() 
+	@BeforeEach()
+	@Override
 	public void beforeEach() throws Exception{
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
@@ -99,12 +97,13 @@ public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
-	
+		
 	@Test
-	public void testDeserializationRootObjWOType() throws InterruptedException, IOException {
+	public void testDeserializationRootObjWOType() throws IOException {
 
 	
 		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
@@ -134,7 +133,7 @@ public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 	}
 	
 	@Test
-	public void testDeserializationReferenceWOType() throws InterruptedException, IOException {
+	public void testDeserializationReferenceWOType() throws IOException {
 
 	
 		Resource addRes = resourceSet.createResource(URI.createURI(addFileName));
@@ -157,7 +156,6 @@ public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
-
 		findResource.load(options);
 
 		// get the person

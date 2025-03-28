@@ -147,30 +147,6 @@ public class MapTest {
    }
 
    @Test
-   public void testLoadMapWithStringKeyWithMapValue() {
-      Resource resource = resourceSet.getResource(URI.createURI("test-data/tests/test-map-3.json"), true);
-
-      assertThat(resource.getContents()).hasSize(1);
-      assertThat(resource.getContents().get(0)).isInstanceOf(ETypes.class);
-
-      ETypes types = (ETypes) resource.getContents().get(0);
-
-      assertThat(types.getStringMapInMapValues()).hasSize(2);
-
-      EMap<String, EMap<String, Value>> mapValues = types.getStringMapInMapValues();
-
-      EMap<String, Value> hello = mapValues.get("Hello");
-      assertThat(hello).hasSize(2);
-      assertThat(hello.get("1.1")).isEqualTo(11);
-      assertThat(hello.get("1.2")).isEqualTo(12);
-      
-      EMap<String, Value> world = mapValues.get("World");
-      assertThat(world).hasSize(2);
-      assertThat(world.get("2.1")).isEqualTo(21);
-      assertThat(world.get("2.2")).isEqualTo(22);
-   }
-   
-   @Test
    public void testSaveMapWithRefs() throws IOException {
       JsonNode expected = mapper.readTree(
          Paths.get("test-data/tests/test-map-with-refs.json").toFile());

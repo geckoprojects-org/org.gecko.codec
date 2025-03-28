@@ -51,9 +51,6 @@ import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -76,7 +73,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 })
 public class CodecJsonSerializeNameFromExtendedMetaDataTest extends JsonTestSetting{
 	
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -90,7 +87,8 @@ public class CodecJsonSerializeNameFromExtendedMetaDataTest extends JsonTestSett
 	
 	private ResourceSet resourceSet;	
 	
-	@BeforeEach() 
+	@BeforeEach()
+	@Override
 	public void beforeEach() throws Exception{
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
@@ -101,13 +99,13 @@ public class CodecJsonSerializeNameFromExtendedMetaDataTest extends JsonTestSett
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
-	}
-	
+	}	
 
 	@Test
-	public void testSerializationExtendedMetadataYES() throws InterruptedException, IOException {
+	public void testSerializationExtendedMetadataYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -133,7 +131,7 @@ public class CodecJsonSerializeNameFromExtendedMetaDataTest extends JsonTestSett
 	
 	
 	@Test
-	public void testSerializationExtendedMetadataNO() throws InterruptedException, IOException {
+	public void testSerializationExtendedMetadataNO() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		

@@ -52,9 +52,6 @@ import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -77,7 +74,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 })
 public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 	
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -91,7 +88,8 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 	
 	private ResourceSet resourceSet;	
 	
-	@BeforeEach() 
+	@BeforeEach()
+	@Override
 	public void beforeEach() throws Exception{
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
@@ -102,13 +100,14 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
 	
 	
 	@Test
-	public void testSerializationCustomIdKey() throws InterruptedException, IOException {
+	public void testSerializationCustomIdKey() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -133,7 +132,7 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 	}
 	
 	@Test
-	public void testSerializationCustomTypeKey() throws InterruptedException, IOException {
+	public void testSerializationCustomTypeKey() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -159,7 +158,7 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 	
 	
 	@Test
-	public void testSerializationCustomSuperTypeKey() throws InterruptedException, IOException {
+	public void testSerializationCustomSuperTypeKey() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -185,7 +184,7 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 	}
 
 	@Test
-	public void testSerializationCustomRefKey() throws InterruptedException, IOException {
+	public void testSerializationCustomRefKey() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Address add = CodecTestHelper.getTestAddress();

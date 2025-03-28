@@ -45,6 +45,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.osgi.framework.BundleContext;
+import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
@@ -77,8 +79,11 @@ public class CodecJsonMapInMapTest {
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 
-	private String mapFileName;
+	@InjectBundleContext
+	BundleContext ctx;
 
+	private String mapFileName;
+	
 	@BeforeEach()
 	public void beforeEach() throws InterruptedException {
 		mapFileName = "map_".concat(UUID.randomUUID().toString()).concat(".json");
@@ -101,7 +106,7 @@ public class CodecJsonMapInMapTest {
 	public void testDynamic() throws IOException {
 		
 		// load ecore
-		Resource ecoreResource = resourceSet.createResource(URI.createURI("test-data/map.ecore"));
+		Resource ecoreResource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/map.ecore").toString()));
 		ecoreResource.load(null);
 		EPackage epackage = (EPackage) ecoreResource.getContents().get(0);
 		EClass mapInMapClassifier = (EClass) epackage.getEClassifier("MapInMap");
@@ -109,7 +114,7 @@ public class CodecJsonMapInMapTest {
 		EStructuralFeature simpleValueFeature = simpleValueClassifier.getEStructuralFeature("value");
 		
 		// load dynamic eobjects from json with classifier from ecore
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/test-map-in-map.json"));
+		Resource resource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/test-map-in-map.json").toString()));
 
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, mapInMapClassifier);
@@ -142,7 +147,7 @@ public class CodecJsonMapInMapTest {
 
 	@Test
 	void testGeneratedClasses() throws IOException {
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/test-map-in-map.json"));
+		Resource resource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/test-map-in-map.json").toString()));
 
 		Map<String, Object> options = new HashMap<>();
 

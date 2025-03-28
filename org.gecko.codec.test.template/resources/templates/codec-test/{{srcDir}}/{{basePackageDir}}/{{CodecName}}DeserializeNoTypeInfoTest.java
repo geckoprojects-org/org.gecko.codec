@@ -74,7 +74,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
 })
 public class {{CodecName}}DeserializeNoTypeInfoTest extends CodecTestSetting{
 
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type={{CodecType}})")

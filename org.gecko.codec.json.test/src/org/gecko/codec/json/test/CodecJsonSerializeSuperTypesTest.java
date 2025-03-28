@@ -53,9 +53,6 @@ import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -78,7 +75,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 })
 public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 	
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -92,7 +89,8 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 	
 	private ResourceSet resourceSet;	
 	
-	@BeforeEach() 
+	@BeforeEach()
+	@Override
 	public void beforeEach() throws Exception{
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
@@ -103,13 +101,14 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
 	
 
 	@Test
-	public void testSerializationSuperTypesYES() throws InterruptedException, IOException {
+	public void testSerializationSuperTypesYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -136,7 +135,7 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 		
 	
 	@Test
-	public void testSerializationAllSuperTypesYES() throws InterruptedException, IOException {
+	public void testSerializationAllSuperTypesYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -164,7 +163,7 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationSuperTypesAsArrayYES() throws InterruptedException, IOException {
+	public void testSerializationSuperTypesAsArrayYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -193,7 +192,7 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationSuperTypesAsArrayNO() throws InterruptedException, IOException {
+	public void testSerializationSuperTypesAsArrayNO() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -222,7 +221,7 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationAllSuperTypesNO() throws InterruptedException, IOException {
+	public void testSerializationAllSuperTypesNO() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -250,7 +249,7 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationSuperTypesNO() throws InterruptedException, IOException {
+	public void testSerializationSuperTypesNO() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -277,7 +276,7 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationSuperTypesContainedRefYES() throws InterruptedException, IOException {
+	public void testSerializationSuperTypesContainedRefYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -304,7 +303,7 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationSuperTypesContainedRefNO() throws InterruptedException, IOException {
+	public void testSerializationSuperTypesContainedRefNO() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		

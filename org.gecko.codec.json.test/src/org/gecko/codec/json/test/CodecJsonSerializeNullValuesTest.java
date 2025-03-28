@@ -51,9 +51,6 @@ import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -76,7 +73,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 })
 public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	
-	@InjectService(cardinality = 0, filter = "("+ EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -90,7 +87,8 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	
 	private ResourceSet resourceSet;	
 	
-	@BeforeEach() 
+	@BeforeEach()
+	@Override
 	public void beforeEach() throws Exception{
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
@@ -101,13 +99,13 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	}
 	
 	@AfterEach() 
-	public void afterEach() {
+	@Override
+	public void afterEach() throws IOException {
 		super.afterEach();
 	}
 	
-
 	@Test
-	public void testSerializationNullSingleValueYESDefYES() throws InterruptedException, IOException {
+	public void testSerializationNullSingleValueYESDefYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -135,7 +133,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	}
 	
 	@Test
-	public void testSerializationNullMultiValueYESDefYES() throws InterruptedException, IOException {
+	public void testSerializationNullMultiValueYESDefYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -163,7 +161,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	}
 	
 	@Test
-	public void testSerializationNullMultiValueNODefYES() throws InterruptedException, IOException {
+	public void testSerializationNullMultiValueNODefYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -192,7 +190,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationNullSingleValueNODefYES() throws InterruptedException, IOException {
+	public void testSerializationNullSingleValueNODefYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -221,7 +219,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationNullSingleValueNODefNO() throws InterruptedException, IOException {
+	public void testSerializationNullSingleValueNODefNO() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -250,7 +248,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationNullSingleValueYESDefNO() throws InterruptedException, IOException {
+	public void testSerializationNullSingleValueYESDefNO() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -279,7 +277,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationNullRefValueYESDefYES() throws InterruptedException, IOException {
+	public void testSerializationNullRefValueYESDefYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -307,7 +305,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	
 
 	@Test
-	public void testSerializationNullRefValueNODefYES() throws InterruptedException, IOException {
+	public void testSerializationNullRefValueNODefYES() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -335,7 +333,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	
 
 	@Test
-	public void testSerializationNullRefValueNODefNO() throws InterruptedException, IOException {
+	public void testSerializationNullRefValueNODefNO() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		
@@ -363,7 +361,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 	
 	
 	@Test
-	public void testSerializationNullRefValueYESDefNO() throws InterruptedException, IOException {
+	public void testSerializationNullRefValueYESDefNO() throws IOException {
 	
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		

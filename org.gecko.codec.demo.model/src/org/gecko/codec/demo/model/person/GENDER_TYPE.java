@@ -22,14 +22,14 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public enum GENDER_TYPE implements Enumerator {
 	/**
-	 * The '<em><b>MALE</b></em>' literal object.
+	 * The '<em><b>OTHER</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #MALE_VALUE
+	 * @see #OTHER_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	MALE(0, "MALE", "MALE"),
+	OTHER(2, "OTHER", "OTHER"),
 
 	/**
 	 * The '<em><b>FEMALE</b></em>' literal object.
@@ -42,36 +42,14 @@ public enum GENDER_TYPE implements Enumerator {
 	FEMALE(1, "FEMALE", "Female"),
 
 	/**
-	 * The '<em><b>OTHER</b></em>' literal object.
+	 * The '<em><b>MALE</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #OTHER_VALUE
+	 * @see #MALE_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	OTHER(2, "OTHER", "OTHER");
-
-	/**
-	 * The '<em><b>MALE</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #MALE
-	 * @model
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MALE_VALUE = 0;
-
-	/**
-	 * The '<em><b>FEMALE</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #FEMALE
-	 * @model literal="Female"
-	 * @generated
-	 * @ordered
-	 */
-	public static final int FEMALE_VALUE = 1;
+	MALE(0, "MALE", "MALE");
 
 	/**
 	 * The '<em><b>OTHER</b></em>' literal value.
@@ -85,6 +63,28 @@ public enum GENDER_TYPE implements Enumerator {
 	public static final int OTHER_VALUE = 2;
 
 	/**
+	 * The '<em><b>FEMALE</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #FEMALE
+	 * @model literal="Female"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int FEMALE_VALUE = 1;
+
+	/**
+	 * The '<em><b>MALE</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #MALE
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MALE_VALUE = 0;
+
+	/**
 	 * An array of all the '<em><b>GENDER TYPE</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -92,9 +92,9 @@ public enum GENDER_TYPE implements Enumerator {
 	 */
 	private static final GENDER_TYPE[] VALUES_ARRAY =
 		new GENDER_TYPE[] {
-			MALE,
-			FEMALE,
 			OTHER,
+			FEMALE,
+			MALE,
 		};
 
 	/**
@@ -151,9 +151,9 @@ public enum GENDER_TYPE implements Enumerator {
 	 */
 	public static GENDER_TYPE get(int value) {
 		switch (value) {
-			case MALE_VALUE: return MALE;
-			case FEMALE_VALUE: return FEMALE;
 			case OTHER_VALUE: return OTHER;
+			case FEMALE_VALUE: return FEMALE;
+			case MALE_VALUE: return MALE;
 		}
 		return null;
 	}
