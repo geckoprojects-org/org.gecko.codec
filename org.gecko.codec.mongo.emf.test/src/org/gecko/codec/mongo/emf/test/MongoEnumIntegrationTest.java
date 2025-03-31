@@ -62,9 +62,6 @@ import org.osgi.test.junit5.service.ServiceExtension;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -106,6 +103,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 
 	@BeforeEach
+	@Override
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
 		super.doBefore(ctx);
 		mapperAware.waitForService(2000l);
@@ -113,6 +111,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	}
 
 	@AfterEach
+	@Override
 	public void doAfter() {
 		super.doAfter();
 	}
@@ -120,7 +119,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testSaveEnumName_Default()
-			throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
+			throws IOException {
 		ResourceSet resourceSet = rsAware.getService();
 
 		System.out.println("Dropping DB");
@@ -202,7 +201,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testSaveEnumLiteral()
-			throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
+			throws IOException {
 
 		ResourceSet resourceSet = rsAware.getService();
 

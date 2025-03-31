@@ -43,7 +43,8 @@ public class DynamicInstanceTest {
 
    @BeforeEach
    public void setUp() {
-      resourceSet = new ResourceSetImpl();
+	  EPackage.Registry.INSTANCE.remove("http://www.emfjson.org/jackson/model");
+	  resourceSet = new ResourceSetImpl();
       mapper.registerModule(new EMFModule());
 
       resourceSet.getResourceFactoryRegistry()

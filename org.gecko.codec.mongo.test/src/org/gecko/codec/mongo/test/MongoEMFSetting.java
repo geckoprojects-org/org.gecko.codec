@@ -21,6 +21,7 @@ import java.util.Hashtable;
 
 import org.bson.Document;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EPackage;
 import org.gecko.codec.test.helper.CodecTestSetting;
 import org.gecko.mongo.osgi.MongoClientProvider;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
@@ -47,6 +48,7 @@ public abstract class MongoEMFSetting extends CodecTestSetting{
 	protected MongoCollection<?> collection;
 	
 	public void doBefore(BundleContext ctx) throws Exception {
+		EPackage.Registry.INSTANCE.forEach((k,v)-> System.out.println("--- " +k));
 		MongoClientOptions options = MongoClientOptions.builder().build();
 		client = new MongoClient(mongoHost, options);
 	}

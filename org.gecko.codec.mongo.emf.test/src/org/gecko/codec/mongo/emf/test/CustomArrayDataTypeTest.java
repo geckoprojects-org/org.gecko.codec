@@ -46,7 +46,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
@@ -57,9 +56,6 @@ import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.mongodb.client.MongoCollection;
-
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * See documentation here: 
@@ -102,6 +98,7 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 
 	@BeforeEach
+	@Override
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
 		super.doBefore(ctx);
 		mapperAware.waitForService(2000l);
@@ -109,12 +106,13 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	}
 
 	@AfterEach
+	@Override
 	public void doAfter() {
 		super.doAfter();
 	}
 	
 	@Test
-	public void testSimpleArray() throws IOException, InvalidSyntaxException, InterruptedException {
+	public void testSimpleArray() throws IOException, InterruptedException {
 
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
 
@@ -239,7 +237,7 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 
 	
 	@Test
-	public void testMultiDimensionalArray() throws IOException, InvalidSyntaxException, InterruptedException {
+	public void testMultiDimensionalArray() throws IOException, InterruptedException {
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
 		
 		System.out.println("Dropping DB");
@@ -305,7 +303,7 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	}
 	
 	@Test
-	public void testExtendedGeometryOneCoordinate() throws IOException, InvalidSyntaxException, InterruptedException {
+	public void testExtendedGeometryOneCoordinate() throws IOException, InterruptedException {
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
 
 		System.out.println("Dropping DB");
@@ -355,7 +353,7 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	
 	@Test
 	public void testExtendedGeometryOneMultiDimensionalCoordinate()
-			throws IOException, InvalidSyntaxException, InterruptedException {
+			throws IOException, InterruptedException {
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
 
 		System.out.println("Dropping DB");

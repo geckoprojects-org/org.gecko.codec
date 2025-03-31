@@ -31,6 +31,5 @@ public class DynamicExtension extends StandardExtension {
 
 		resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
 	}
-
 }
 

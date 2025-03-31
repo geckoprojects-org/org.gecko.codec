@@ -4,33 +4,38 @@
 # sets the usually required buildpath using the bnd library, you can extend it with the normal -buildpath to your liking
 -library: enable-emf
 
+src= \
+	src-codec,\
+	src-annotations,\
+	src-generics,\
+	src-model,\
+	src-array,\
+	src-package-annotations
+
+
 # The code generation takes a bit of time and makes the build a bit slower.
 # It might be a good idea to put comments around it, when you don't need it
 -generate:\
 	model/codec-test.genmodel;\
 		generate=geckoEMF;\
 		genmodel=model/codec-test.genmodel;\
-		output=src,\
-	model/annotations.genmodel;\
-		generate=geckoEMF;\
-		genmodel=model/annotations.genmodel;\
-		output=src,\
+		output=src-codec,\
 	model/generics.genmodel;\
 		generate=geckoEMF;\
 		genmodel=model/generics.genmodel;\
-		output=src,\
+		output=src-generics,\
 	model/model.genmodel;\
 		generate=geckoEMF;\
 		genmodel=model/model.genmodel;\
-		output=src,\
+		output=src-model,\
 	model/array.genmodel;\
 		generate=geckoEMF;\
 		genmodel=model/array.genmodel;\
-		output=src,\
+		output=src-array,\
 	model/packageAnnotations.genmodel;\
 		generate=geckoEMF;\
 		genmodel=model/packageAnnotations.genmodel;\
-		output=src
+		output=src-package-annotations
 # Add this attribute to find some logging information
 #		logfile=test.log;\
 

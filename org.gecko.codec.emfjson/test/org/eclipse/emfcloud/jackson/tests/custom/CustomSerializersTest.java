@@ -49,6 +49,7 @@ public class CustomSerializersTest {
    public void setUp() {
       mapper = new ObjectMapper();
       resourceSet = new ResourceSetImpl();
+      resourceSet.getPackageRegistry().clear();
       resourceSet.getPackageRegistry().put(ModelPackage.eNS_URI, ModelPackage.eINSTANCE);
       resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put("*", new JsonResourceFactory(mapper));
    }

@@ -40,8 +40,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
@@ -85,10 +83,10 @@ import com.mongodb.client.MongoCollection;
 		@Property(key = "type", value="mongo")
 })
 public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
-
-	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
-			+ EMFNamespaces.EMF_MODEL_NAME + "=collection)("+ EMFNamespaces.EMF_MODEL_NAME + "=person))")
-	ServiceAware<ResourceSet> rsAware;
+	
+	@InjectService(filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
+			+ EMFNamespaces.EMF_MODEL_NAME + "=collection)("+ EMFNamespaces.EMF_MODEL_NAME + "=person))", timeout = 2000l)
+	ResourceSet resourceSet;
 	
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
@@ -99,10 +97,10 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 	
-	private ResourceSet resourceSet;
 	private MongoCollection<Document> bpCollection;
 	
 	@BeforeEach
+	@Override
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
 		super.doBefore(ctx);
 		bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
@@ -110,10 +108,10 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);
 		codecModuleAware.waitForService(2000l);	
-		resourceSet = rsAware.waitForService(2000l);
 		assertNotNull(resourceSet);
 	}
 
+	@Override
 	@AfterEach
 	public void doAfter() {
 		cleanDBCollection(bpCollection);
@@ -122,8 +120,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullSingleValueYESDefYES() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
+	public void testSaveNullSingleValueYESDefYES() throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
@@ -149,8 +146,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	}
 	
 	@Test
-	public void testSaveNullContainedRefYESDefYES() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
+	public void testSaveNullContainedRefYESDefYES() throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
@@ -177,9 +173,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullNonContainedRefYESDefYES() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullNonContainedRefYESDefYES() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
@@ -205,9 +199,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullSingleValueYESDefNO() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullSingleValueYESDefNO() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
@@ -232,9 +224,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullContainedRefYESDefNO() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullContainedRefYESDefNO() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
@@ -259,9 +249,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullNonContainedRefYESDefNO() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullNonContainedRefYESDefNO() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
@@ -286,9 +274,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullSingleValueNODefNO() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullSingleValueNODefNO() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
@@ -314,9 +300,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullContainedRefNODefNO() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullContainedRefNODefNO() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
@@ -340,9 +324,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullNonContainedRefNODefNO() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullNonContainedRefNODefNO() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
@@ -367,9 +349,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullSingleValueNODefYES() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullSingleValueNODefYES() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
@@ -394,9 +374,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullContainedRefNODefYES() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullContainedRefNODefYES() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
@@ -421,9 +399,7 @@ public class CodecMongoSerializeNullValuesTest extends MongoEMFSetting {
 	
 	
 	@Test
-	public void testSaveNullNonContainedRefNODefYES() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
+	public void testSaveNullNonContainedRefNODefYES() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/BusinessPerson/"));
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();

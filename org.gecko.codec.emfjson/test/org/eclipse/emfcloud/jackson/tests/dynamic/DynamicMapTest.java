@@ -16,9 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.List;
 
-import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -46,12 +44,12 @@ public class DynamicMapTest {
 
    @BeforeEach
    public void setUp() {
+	  EPackage.Registry.INSTANCE.remove("http://www.emfjson.org/jackson/model");
       URI modelURI = URI.createURI("http://www.emfjson.org/jackson/model");
 
       mapper.registerModule(new EMFModule());
 
       resourceSet = new ResourceSetImpl();
-
       resourceSet.getResourceFactoryRegistry()
          .getExtensionToFactoryMap()
          .put("*", new JsonResourceFactory(mapper));
@@ -200,8 +198,8 @@ public class DynamicMapTest {
 //         .isEqualTo(valueOf(mapValues.get(1).getValue()));
 //   }
 
-   private int valueOf(final EObject value) {
-      return (int) value.eGet(valueClass.getEStructuralFeature("value"));
-   }
+//   private int valueOf(final EObject value) {
+//      return (int) value.eGet(valueClass.getEStructuralFeature("value"));
+//   }
 
 }

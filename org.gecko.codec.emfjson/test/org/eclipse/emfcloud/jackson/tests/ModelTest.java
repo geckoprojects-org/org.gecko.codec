@@ -46,6 +46,7 @@ public class ModelTest {
 
    @BeforeEach
    public void setUp() {
+	  EPackage.Registry.INSTANCE.clear();
       URI baseURI = URI.createURI("http://eclipselabs.org/emfjson/tests/");
       EPackage.Registry.INSTANCE.put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
 
@@ -127,7 +128,7 @@ public class ModelTest {
       assertThat(b.getEStructuralFeatures()).isEmpty();
    }
 
-//   @Test
+   @Test
    public void testLoadModel2() {
       Resource model = resourceSet.getResource(URI.createURI("http://www.emfjson.org/jackson/model"), true);
 
