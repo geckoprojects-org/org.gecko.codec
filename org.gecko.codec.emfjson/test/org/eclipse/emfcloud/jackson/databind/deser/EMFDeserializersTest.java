@@ -1,0 +1,40 @@
+/*******************************************************************************
+ * Copyright (c) 2019-2021 Guillaume Hillairet and others.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0, or the MIT License which is
+ * available at https://opensource.org/licenses/MIT.
+ *
+ * SPDX-License-Identifier: EPL-2.0 OR MIT
+ *******************************************************************************/
+
+package org.eclipse.emfcloud.jackson.databind.deser;
+
+import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
+import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class EMFDeserializersTest {
+
+   ObjectMapper mapper;
+   EcoreTypeFactory factory = new EcoreTypeFactory();
+
+   @BeforeEach
+   public void setUp() {
+      mapper = new ObjectMapper();
+      mapper.registerModule(new EMFModule());
+   }
+
+   @Test
+   public void test() throws JsonMappingException {
+      // JavaType type = factory.typeOf(ModelPackage.Literals.USER__FRIENDS);
+      // JsonDeserializer<Object> deserializer = mapper.getDeserializationContext()
+      // .findRootValueDeserializer(type);
+   }
+
+}

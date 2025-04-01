@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="array" nsURI="http://www.emfjson.org/jackson/array" nsPrefix="array">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="modelDirectory" value="org.gecko.codec.test.models/src"/>
+    <details key="updateClasspath" value="false"/>
+    <details key="bundleManifest" value="false"/>
+    <details key="rootExtendsClass" value="org.eclipse.emf.ecore.impl.MinimalEObjectImpl"/>
+    <details key="complianceLevel" value="11.0"/>
+    <details key="basePackage" value="org.eclipse.emfcloud.jackson.junit"/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EClass" name="ArrayHost">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="d1" unique="false" eType="#//double1D"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="d2" unique="false" eType="#//double2D"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="d3" unique="false" eType="#//double3D"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="s2" unique="false" eType="#//string2D"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="b" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="double1D" instanceClassName="java.lang.Double[]"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="double2D" instanceClassName="java.lang.Double[][]"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="double3D" instanceClassName="java.lang.Double[][][]"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="string2D" instanceClassName="java.lang.String[][]"/>
+</ecore:EPackage>

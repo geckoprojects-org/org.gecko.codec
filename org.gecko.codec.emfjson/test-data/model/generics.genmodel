@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="org.gecko.code.emfjson/test-gen" modelPluginID="emfjson-jackson"
+    runtimeJar="true" modelName="Generics" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl"
+    testsDirectory="" booleanFlagsField="eFlags" booleanFlagsReservedBits="8" importerID="org.eclipse.emf.importer.ecore"
+    bundleManifest="false" containmentProxies="true" complianceLevel="11.0" language="en"
+    operationReflection="true" importOrganizing="true" decoration="Live" oSGiCompatible="true"
+    eclipsePlatformVersion="Juno" autoResizeProperties="true" autoExpandProperties="10"
+    findAction="true" expandAllAction="true" collapseAllAction="true" revertAction="true">
+  <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel/exporter/org.eclipse.xsd.ecore.exporter">
+    <genAnnotations source="selectedPackages">
+      <details key="http://www.eclipse.org/emf/2002/Ecore" value="Ecore.xsd"/>
+    </genAnnotations>
+    <details key="directoryURI" value="."/>
+  </genAnnotations>
+  <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel/exporter/org.eclipse.xsd.ecore.exporter.xmi">
+    <genAnnotations source="selectedPackages">
+      <details key="http://www.eclipse.org/emf/2002/Ecore" value="EcoreXMI.xsd"/>
+    </genAnnotations>
+    <details key="directoryURI" value="."/>
+  </genAnnotations>
+  <foreignModel>generics.ecore</foreignModel>
+  <modelPluginVariables>org.eclipse.xtext.xbase.lib</modelPluginVariables>
+  <modelPluginVariables>org.eclipse.emf.ecore.xcore.lib</modelPluginVariables>
+  <genPackages prefix="Generics" basePackage="org.eclipse.emfcloud.jackson.junit"
+      disposableProviderFactory="true" ecorePackage="generics.ecore#/">
+    <genClasses ecoreClass="generics.ecore#//GenericContainer">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference generics.ecore#//GenericContainer/values"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="generics.ecore#//GenericType">
+      <genTypeParameters ecoreTypeParameter="generics.ecore#//GenericType/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute generics.ecore#//GenericType/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute generics.ecore#//GenericType/values"/>
+    </genClasses>
+    <genClasses ecoreClass="generics.ecore#//SpecialTypeOne"/>
+    <genClasses ecoreClass="generics.ecore#//SpecialTypeTwo"/>
+    <genClasses image="false" ecoreClass="generics.ecore#//Base">
+      <genTypeParameters ecoreTypeParameter="generics.ecore#//Base/U"/>
+      <genTypeParameters ecoreTypeParameter="generics.ecore#//Base/T"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference generics.ecore#//Base/linkTo"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference generics.ecore#//Base/linkToMany"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference generics.ecore#//Base/containsOne"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference generics.ecore#//Base/containsMany"/>
+    </genClasses>
+    <genClasses ecoreClass="generics.ecore#//Some"/>
+    <genClasses ecoreClass="generics.ecore#//Any"/>
+    <genClasses ecoreClass="generics.ecore#//BaseOne"/>
+    <genClasses ecoreClass="generics.ecore#//OtherContainer">
+      <genTypeParameters ecoreTypeParameter="generics.ecore#//OtherContainer/ContentT"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute generics.ecore#//OtherContainer/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference generics.ecore#//OtherContainer/content"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="generics.ecore#//Content"/>
+    <genClasses ecoreClass="generics.ecore#//ContentA">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute generics.ecore#//ContentA/payload"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

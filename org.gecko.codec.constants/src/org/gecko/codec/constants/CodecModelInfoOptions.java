@@ -1,0 +1,122 @@
+/**
+ * Copyright (c) 2012 - 2024 Data In Motion and others.
+ * All rights reserved. 
+ * 
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ * 
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ */
+package org.gecko.codec.constants;
+
+/**
+ * These are the options that should be used with Resource#load/save in the options arguments
+ * to overwrite the properties set through model annotations and used to build the ModelInfo objects
+ * 
+ * @author ilenia
+ * @since Nov 11, 2024
+ */
+public interface CodecModelInfoOptions {
+	
+	/** CODEC_IGNORE_FEATURES_LIST 
+	 * to specify a {@link List} of {@link EStructuralFeature} that should be ignored 
+	 * during serialization or deserialization. If an {@link EStructuralFeature} is marked as 
+	 * transient in the model or has been annotated with the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TRANSIENT} 
+	 * annotation, it will still be ignored even is it is not present in this list.
+	 * */
+	String CODEC_IGNORE_FEATURES_LIST = "codec.ignore.features.list";
+	
+	/** CODEC_IGNORE_NOT_FEATURES_LIST 
+	 * to specify a {@link List} of {@link EStructuralFeature} that should NOT be ignored 
+	 * during serialization or deserialization. If an {@link EStructuralFeature} is marked as 
+	 * transient in the model or has been annotated with the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TRANSIENT} 
+	 * annotation, it will then be taken into account if present in this list.
+	 * */
+	String CODEC_IGNORE_NOT_FEATURES_LIST = "codec.ignore.not.feature.list";
+	
+	/** CODEC_ID_STRATEGY 
+	 *  to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_STRATEGY} annotation;
+	 * */
+	String CODEC_ID_STRATEGY = "codec.id.strategy";
+	
+	/** CODEC_ID_SEPARATOR 
+	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_SEPARATOR} annotation;
+	 * */
+	String CODEC_ID_SEPARATOR = "codec.id.separator";
+	
+	/** CODEC_ID_FEATURES_LIST 
+	 * to specify an ordered {@link List} of {@link EStructuralFeature} to be used when constructing the id, 
+	 * if the id strategy is set to COMBINED. Otherwise it will be ignored.
+	 * */
+	String CODEC_ID_FEATURES_LIST = "codec.id.features.list";
+	
+	/** CODEC_ID_VALUE_READER
+	 * to specify a {@link CodecValueReader} object to be used when deserializing the id information;
+	 * */
+	String CODEC_ID_VALUE_READER = "codec.id.value.reader";
+	
+	/** CODEC_ID_VALUE_WRITER 
+	 * to specify a {@link CodecValueWriter} object to be used when serializing the id information;
+	 * */
+	String CODEC_ID_VALUE_WRITER = "codec.id.value.writer";
+	
+	/** CODEC_TYPE_VALUE_READER
+	 * to specify a {@link CodecValueReader} object to be used when deserializing the type information;
+	 * */
+	String CODEC_TYPE_VALUE_READER = "codec.type.value.reader";
+	
+	/** CODEC_TYPE_VALUE_WRITER 
+	 * to specify a {@link CodecValueWriter} object to be used when serializing the type information;
+	 * */
+	String CODEC_TYPE_VALUE_WRITER = "codec.type.value.writer";
+	
+	/** CODEC_ID_VALUE_READER_NAME 
+	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_VALUE_READER_NAME} annotation;
+	 * */
+	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
+	
+	/** CODEC_ID_VALUE_WRITER_NAME 
+	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME} annotation;
+	 * */
+	String CODEC_ID_VALUE_WRITER_NAME = "codec.id.value.writer.name";
+	
+	/** CODEC_TYPE_VALUE_READER_NAME 
+	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_READER_NAME} annotation;
+	 * */
+	String CODEC_TYPE_VALUE_READER_NAME = "codec.type.value.reader.name";
+	
+	/** CODEC_TYPE_VALUE_WRITER_NAME 
+	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_WRITER_NAME} annotation;
+	 * */
+	String CODEC_TYPE_VALUE_WRITER_NAME = "codec.type.value.writer.name";
+	
+	/** CODEC_VALUE_READERS_MAP 
+	  * a {@link Map} where the keys are of type {@link EStructuralFeature} and the values 
+	 * are of type {@link CodecValueReader}, to specify the {@link CodecValueReader} to use 
+	 * when serializing the corresponding {@link EStructuralFeature}
+	 * */
+	String CODEC_VALUE_READERS_MAP = "codec.value.readers.map";
+	
+	
+	/** CODEC_VALUE_WRITERS_MAP 
+	 * a {@link Map} where the keys are of type {@link EStructuralFeature} and the values 
+	 * are of type {@link CodecValueWriter}, to specify the {@link CodecValueWriter} to use 
+	 * when serializing the corresponding {@link EStructuralFeature}
+	 *  */
+	String CODEC_VALUE_WRITERS_MAP = "codec.value.writers.map";
+	
+	/** CODEC_TYPE_USE 
+	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_USE} annotation;
+	 * */
+	String CODEC_TYPE_USE = "codec.type.use";
+	
+	/** CODEC_TYPE_INCLUDE
+	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_INCLUDE} annotation;
+	 * */
+	String CODEC_TYPE_INCLUDE = "codec.type.include";
+
+}

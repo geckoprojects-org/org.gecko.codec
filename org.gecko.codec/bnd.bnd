@@ -1,5 +1,16 @@
+-library: enable-emf
 Bundle-Name: Gecko Codec 
 Bundle-Description: Gecko Project Codec Framework
 
 -buildpath: \
-	org.osgi.util.promise
+	org.osgi.util.promise;version=latest,\
+	com.fasterxml.jackson.core.jackson-core;version=latest,\
+	com.fasterxml.jackson.core.jackson-databind;version=latest,\
+	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
+	org.gecko.codec.emfjson;version=project,\
+	org.gecko.codec.info.model,\
+	org.gecko.codec.info,\
+	org.gecko.codec.constants
+	
+-testpath: \
+	org.gecko.codec.test.models;version=project

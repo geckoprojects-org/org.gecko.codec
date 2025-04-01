@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="generics" nsURI="http://www.emfjson.org/jackson/generics" nsPrefix="generics">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="modelDirectory" value="org.gecko.code.emfjson/test-gen"/>
+    <details key="updateClasspath" value="false"/>
+    <details key="bundleManifest" value="false"/>
+    <details key="rootExtendsClass" value="org.eclipse.emf.ecore.impl.MinimalEObjectImpl"/>
+    <details key="complianceLevel" value="11.0"/>
+    <details key="basePackage" value="org.eclipse.emfcloud.jackson.junit"/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EClass" name="GenericContainer">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="#//GenericType">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GenericType" abstract="true">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" unique="false">
+      <eGenericType eTypeParameter="#//GenericType/T"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" unique="false"
+        upperBound="-1">
+      <eGenericType eTypeParameter="#//GenericType/T"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SpecialTypeOne">
+    <eGenericSuperTypes eClassifier="#//GenericType">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SpecialTypeTwo">
+    <eGenericSuperTypes eClassifier="#//GenericType">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Base" abstract="true">
+    <eTypeParameters name="U"/>
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="linkTo">
+      <eGenericType eTypeParameter="#//Base/U"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="linkToMany" upperBound="-1">
+      <eGenericType eTypeParameter="#//Base/U"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="containsOne" containment="true"
+        resolveProxies="false">
+      <eGenericType eTypeParameter="#//Base/T"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="containsMany" upperBound="-1"
+        containment="true" resolveProxies="false">
+      <eGenericType eTypeParameter="#//Base/T"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Some"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Any"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BaseOne">
+    <eGenericSuperTypes eClassifier="#//Base">
+      <eTypeArguments eClassifier="#//Some"/>
+      <eTypeArguments eClassifier="#//Any"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OtherContainer">
+    <eTypeParameters name="ContentT">
+      <eBounds eClassifier="#//Content"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="content" containment="true"
+        resolveProxies="false">
+      <eGenericType eTypeParameter="#//OtherContainer/ContentT"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Content" abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ContentA" eSuperTypes="#//Content">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="payload" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

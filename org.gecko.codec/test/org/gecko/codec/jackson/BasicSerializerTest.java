@@ -1,0 +1,109 @@
+/**
+ * Copyright (c) 2012 - 2024 Data In Motion and others.
+ * All rights reserved. 
+ * 
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ * 
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ */
+package org.gecko.codec.jackson;
+
+import java.io.IOException;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emfcloud.jackson.junit.model.Address;
+import org.eclipse.emfcloud.jackson.junit.model.ConcreteTypeOne;
+import org.eclipse.emfcloud.jackson.junit.model.ModelFactory;
+import org.eclipse.emfcloud.jackson.junit.model.Sex;
+import org.eclipse.emfcloud.jackson.junit.model.User;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+/**
+ * 
+ * @author mark
+ * @since 09.01.2024
+ */
+public class BasicSerializerTest {
+
+	private ResourceSet resourceSet;
+
+	@BeforeEach
+	public void setUp() {
+	}
+
+//	@Test
+	public void testSerializeType() {
+
+		User u1 = ModelFactory.eINSTANCE.createUser();
+		u1.setUserId("u1");
+		u1.setName("Mark");
+		u1.setSex(Sex.MALE);
+		Address a1 = ModelFactory.eINSTANCE.createAddress();
+		a1.setAddId("a1");
+		a1.setCity("Jena");
+		a1.setStreet("Kahlaische Strasse");
+		u1.setAddress(a1);
+
+		Resource resource = resourceSet.createResource(URI.createURI("mongo:test"));
+		resource.getContents().add(u1);
+		try {
+			resource.save(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+
+	}
+	
+//	@Test
+	public void testSerializeSoperType() {
+		
+		ConcreteTypeOne cto1 = ModelFactory.eINSTANCE.createConcreteTypeOne();
+		cto1.setName("test");
+		cto1.setPropTypeOne("testCTO");
+		
+		Resource resource = resourceSet.createResource(URI.createURI("mongo:test"));
+		resource.getContents().add(cto1);
+		try {
+			resource.save(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+//	@Test
+	public void testSerializeNonContainment() {
+		
+		User u1 = ModelFactory.eINSTANCE.createUser();
+		u1.setUserId("u1");
+		u1.setName("Mark");
+		User u2 = ModelFactory.eINSTANCE.createUser();
+		u2.setUserId("u2");
+		u2.setName("Guido");
+		u1.setUniqueFriend(u2);
+		
+		Address a1 = ModelFactory.eINSTANCE.createAddress();
+		a1.setAddId("a1");
+		a1.setCity("Jena");
+		a1.setStreet("Kahlaische Strasse");
+		u1.setAddress(a1);
+		
+		Resource resource = resourceSet.createResource(URI.createURI("mongo:test"));
+		resource.getContents().add(u2);
+		resource.getContents().add(u1);
+		try {
+			resource.save(null);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+
+}
