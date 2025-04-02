@@ -13,6 +13,7 @@
  */
 package org.gecko.codec.mongo.emf.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,13 +43,12 @@ import org.gecko.emf.osgi.example.model.basic.ContactContextType;
 import org.gecko.emf.osgi.example.model.basic.ContactType;
 import org.gecko.emf.osgi.example.model.basic.GenderType;
 import org.gecko.emf.osgi.example.model.basic.Person;
+import org.gecko.mongo.osgi.MongoClientProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
@@ -58,6 +58,7 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 
 //import org.mockito.Mock;
@@ -91,9 +92,9 @@ import com.mongodb.client.MongoCollection;
 })
 public class CollectionNameIntegrationTest extends MongoEMFSetting{
 	
-	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("+EMFNamespaces.EMF_MODEL_NAME+"=collection))")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)")
 	ServiceAware<ResourceSet> rsAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
 	
@@ -103,24 +104,33 @@ public class CollectionNameIntegrationTest extends MongoEMFSetting{
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 
+	@InjectService(cardinality = 0)
+	ServiceAware<MongoClientProvider> mongoClientAware;
+	
+	private ResourceSet resourceSet;
+
 	@BeforeEach
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
-		super.doBefore(ctx);
+		MongoClientProvider mongoClientProvider = mongoClientAware.waitForService(2000l);
+		MongoClient mongoClient = mongoClientProvider.getMongoClient();
+		super.doBefore(ctx, mongoClient);
 		mapperAware.waitForService(2000l);
 		codecModuleAware.waitForService(2000l);	
+		resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+		assertThat(resourceSet.getResources()).isEmpty();
 	}
 
 	@AfterEach
+	@Override
 	public void doAfter() {
 		super.doAfter();
 	}
 	
 	@Test
-	public void testWriteCollectionNameEClass() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.getService();
-		
+	public void testWriteCollectionNameEClass() throws IOException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> personCollection = client.getDatabase("test").getCollection("Person");
+		MongoCollection<Document> personCollection = getDatabase("test").getCollection("Person");
 		personCollection.drop();
 		
 		// create contacts
@@ -138,7 +148,7 @@ public class CollectionNameIntegrationTest extends MongoEMFSetting{
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
 		testResourceSet(resourceSet, resource, 1, 0);
 		
-		Map<String, Object> saveOptions = new HashMap<String, Object>();
+		Map<String, Object> saveOptions = new HashMap<>();
 		saveOptions.put(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME, BasicPackage.Literals.PERSON);
 		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.TRUE);
 		BusinessPerson person = BasicFactory.eINSTANCE.createBusinessPerson();
@@ -238,11 +248,9 @@ public class CollectionNameIntegrationTest extends MongoEMFSetting{
 	}
 	
 	@Test
-	public void testWriteCollectionNameString() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.getService();
-		
+	public void testWriteCollectionNameString() throws IOException, InterruptedException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> personCollection = client.getDatabase("test").getCollection("Person");
+		MongoCollection<Document> personCollection = getDatabase("test").getCollection("Person");
 		personCollection.drop();
 		
 		// create contacts
@@ -260,7 +268,7 @@ public class CollectionNameIntegrationTest extends MongoEMFSetting{
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
 		testResourceSet(resourceSet, resource, 1, 0);
 		
-		Map<String, Object> saveOptions = new HashMap<String, Object>();
+		Map<String, Object> saveOptions = new HashMap<>();
 		saveOptions.put(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME, "Person");
 		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.TRUE);
 		BusinessPerson person = BasicFactory.eINSTANCE.createBusinessPerson();
@@ -332,7 +340,7 @@ public class CollectionNameIntegrationTest extends MongoEMFSetting{
 		testResourceSet(resourceSet, resource, 1, 0);
 		resource.unload();
 		
-		saveOptions = new HashMap<String, Object>();
+		saveOptions = new HashMap<>();
 		saveOptions.put(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME, "Person");
 		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.FALSE);
 		

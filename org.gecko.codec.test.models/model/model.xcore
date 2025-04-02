@@ -1,4 +1,4 @@
-@Ecore(nsURI="http://www.emfjson.org/jackson/model")
+@Ecore(nsURI="http://www.eclipse.org/fennec/codec/testmodel")
 @GenModel(
     modelDirectory="emfjson-jackson/src/test/java-gen",
     updateClasspath="false",

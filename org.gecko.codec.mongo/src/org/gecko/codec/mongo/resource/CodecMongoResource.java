@@ -31,6 +31,7 @@ import org.gecko.codec.mongo.MongoCodecProvider;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
 
 import com.mongodb.MongoClient;
+import com.mongodb.WriteConcern;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -80,8 +81,13 @@ public final class CodecMongoResource extends CodecResource {
 		
 //		
 
-		collection.withCodecRegistry(codecRegistry).insertMany(getContents());
+		collection.withCodecRegistry(codecRegistry).withWriteConcern(WriteConcern.ACKNOWLEDGED).insertMany(getContents());
 		
+	}
+
+	@Override
+	protected boolean needOutputstream() {
+		return false;
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public interface PackageAnnotationsPackage extends org.eclipse.emf.ecore.EPackag
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "http://www.emfjson.org/jackson/annotations";
+	String eNS_URI = "http://www.eclipse.org/fennec/codec/packageannotations";
 
 	/**
 	 * The package namespace name.

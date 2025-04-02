@@ -34,6 +34,7 @@ import org.gecko.codec.demo.model.person.SpecificBusinessPerson;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
+import org.gecko.mongo.osgi.MongoClientProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,7 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
+import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
@@ -86,7 +88,7 @@ import com.mongodb.client.MongoCollection;
 public class CodecMongoSerializeSuperTypeTest extends MongoEMFSetting {
 
 	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
-			+ EMFNamespaces.EMF_MODEL_NAME + "=collection)("+ EMFNamespaces.EMF_MODEL_NAME + "=person))")
+			+ EMFNamespaces.EMF_MODEL_NAME + "=person))")
 	ServiceAware<ResourceSet> rsAware;
 
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
@@ -97,14 +99,19 @@ public class CodecMongoSerializeSuperTypeTest extends MongoEMFSetting {
 	
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
-	
+
+	@InjectService(cardinality = 0)
+	ServiceAware<MongoClientProvider> mongoClientAware;
+
 	private ResourceSet resourceSet;
 	private MongoCollection<Document> sbpCollection;
 	
 	@BeforeEach
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
-		super.doBefore(ctx);
-		sbpCollection = client.getDatabase("test").getCollection("SpecificBusinessPerson");
+		MongoClientProvider mongoClientProvider = mongoClientAware.waitForService(2000l);
+		MongoClient mongoClient = mongoClientProvider.getMongoClient();
+		super.doBefore(ctx, mongoClient);
+		sbpCollection = getDatabase("test").getCollection("SpecificBusinessPerson");
 		cleanDBCollection(sbpCollection);
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);

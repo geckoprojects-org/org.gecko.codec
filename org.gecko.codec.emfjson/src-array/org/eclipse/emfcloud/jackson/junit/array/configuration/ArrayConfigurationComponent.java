@@ -31,7 +31,7 @@ import org.osgi.service.condition.Condition;
  * @generated
  */
 @Component(name = "ArrayConfigurator")
-@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.eclipse.emfcloud.jackson.junit.array.util.ArrayResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource.Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.eclipse.emfcloud.jackson.junit.array.util\"" })
+@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.eclipse.emfcloud.jackson.junit.array.util.ArrayResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource$Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.eclipse.emfcloud.jackson.junit.array.util\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.eclipse.emfcloud.jackson.junit.array.ArrayFactory, org.eclipse.emf.ecore.EFactory\"" , "uses:=\"org.eclipse.emf.ecore,org.eclipse.emfcloud.jackson.junit.array\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.eclipse.emfcloud.jackson.junit.array.ArrayPackage, org.eclipse.emf.ecore.EPackage\"" , "uses:=\"org.eclipse.emf.ecore,org.eclipse.emfcloud.jackson.junit.array\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.emf.osgi.configurator.EPackageConfigurator\"" , "uses:=\"org.eclipse.emf.ecore,org.eclipse.emfcloud.jackson.junit.array\"" })
@@ -51,6 +51,7 @@ public class ArrayConfigurationComponent {
 	@Activate
 	public void activate(BundleContext ctx) {
 		ArrayPackage ePackage = ArrayPackageImpl.eINSTANCE;
+		
 		
 		ArrayEPackageConfigurator packageConfigurator = registerEPackageConfiguratorService(ePackage, ctx);
 		registerEPackageService(ePackage, packageConfigurator, ctx);

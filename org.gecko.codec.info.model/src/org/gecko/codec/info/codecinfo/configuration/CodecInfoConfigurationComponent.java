@@ -35,7 +35,7 @@ import org.osgi.service.condition.Condition;
  * @generated
  */
 @Component(name = "CodecInfoConfigurator")
-@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.codec.info.codecinfo.util.CodecInfoResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource.Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.gecko.codec.info.codecinfo.util\"" })
+@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.codec.info.codecinfo.util.CodecInfoResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource$Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.gecko.codec.info.codecinfo.util\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.codec.info.codecinfo.CodecInfoFactory, org.eclipse.emf.ecore.EFactory\"" , "uses:=\"org.eclipse.emf.ecore,org.gecko.codec.info.codecinfo\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.codec.info.codecinfo.CodecInfoPackage, org.eclipse.emf.ecore.EPackage\"" , "uses:=\"org.eclipse.emf.ecore,org.gecko.codec.info.codecinfo\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.emf.osgi.configurator.EPackageConfigurator\"" , "uses:=\"org.eclipse.emf.ecore,org.gecko.codec.info.codecinfo\"" })
@@ -56,6 +56,7 @@ public class CodecInfoConfigurationComponent {
 	@Activate
 	public void activate(BundleContext ctx) {
 		CodecInfoPackage ePackage = CodecInfoPackageImpl.eINSTANCE;
+		
 		
 		CodecInfoEPackageConfigurator packageConfigurator = registerEPackageConfiguratorService(ePackage, ctx);
 		registerResourceFactoryService(ctx);

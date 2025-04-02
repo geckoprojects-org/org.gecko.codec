@@ -146,7 +146,7 @@ com.google.guava:guava:33.0.0-jre
 org.geckoprojects.bnd:org.gecko.bnd.dimc.library:1.4.1
 org.geckoprojects.bnd:org.gecko.bnd.jacoco.library:1.4.1
 org.geckoprojects.bnd:org.gecko.bnd.osgitest.library:1.4.1
-org.geckoprojects.emf:org.gecko.emf.osgi.bnd.library.workspace:6.0.0
+org.geckoprojects.emf:org.gecko.emf.osgi.bnd.library.workspace:6.3.0
 org.geckoprojects.emf:org.gecko.emf.osgi.example.model.basic:6.2.0
 org.geckoprojects.emf:org.gecko.emf.osgi.example.model.extended:6.2.0
 
@@ -162,12 +162,12 @@ org.geckoprojects.mongo:org.gecko.emf.mongo.component:6.0.0
 org.geckoprojects.mongo:org.gecko.mongo.osgi.api:6.0.0
 
 
-org.geckoprojects.emf.persistence:org.gecko.emf.repository.mongo:3.2.0.202401252002
-org.geckoprojects.emf.persistence:org.gecko.emf.mongo.pushstream:6.1.0
+#org.geckoprojects.emf.persistence:org.gecko.emf.repository.mongo:3.2.0.202401252002
+#org.geckoprojects.emf.persistence:org.gecko.emf.mongo.pushstream:6.1.0
 org.geckoprojects.emf.persistence:org.gecko.mongo.osgi.api:6.1.0
 org.geckoprojects.emf.persistence:org.gecko.mongo.osgi.component:6.1.0
-org.geckoprojects.emf.persistence:org.gecko.emf.mongo.api:6.1.0
-org.geckoprojects.emf.persistence:org.gecko.emf.mongo.component:6.1.0
+#org.geckoprojects.emf.persistence:org.gecko.emf.mongo.api:6.1.0
+#org.geckoprojects.emf.persistence:org.gecko.emf.mongo.component:6.1.0
 org.geckoprojects.emf.persistence:org.gecko.emf.repository.api:9.3.0.202401252002
 
 org.mongodb:mongo-java-driver:3.12.14

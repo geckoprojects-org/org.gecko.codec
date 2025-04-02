@@ -16,8 +16,10 @@ package org.gecko.codec.mongo.emf.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.bson.Document;
 import org.gecko.mongo.osgi.MongoClientProvider;
@@ -29,8 +31,8 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
 /**
  * 
@@ -42,20 +44,22 @@ public abstract class MongoEMFSetting{
 	static protected String mongoHost = System.getProperty("mongo.host", "localhost");
 
 	protected MongoClient client;
-	protected MongoCollection<?> collection;
+	private List<MongoDatabase> dbs = new ArrayList<>();
 	
-	public void doBefore(BundleContext ctx) throws Exception {
-		MongoClientOptions options = MongoClientOptions.builder().build();
-		client = new MongoClient(mongoHost, options);
+	public void doBefore(BundleContext ctx, MongoClient mongoClient) throws Exception {
+		client = mongoClient;
+//		MongoClientOptions options = MongoClientOptions.builder().build();
+//		client = new MongoClient(mongoHost, options);
 	}
 
 	public void doAfter() {
-		if (collection != null) {
-			collection.drop();
-		}
-		if (client != null) {
-			client.close();
-		}
+		dbs.forEach(db-> db.drop());
+		dbs.clear();
+		client.getDatabase("test").drop();
+		
+//		if (client != null) {
+//			client.close();
+//		}
 	}
 	
 	protected void cleanDBCollection(MongoCollection<Document> collection ) {
@@ -84,6 +88,16 @@ public abstract class MongoEMFSetting{
 		dbp.put(MongoDatabaseProvider.PROP_DATABASE, db);
 		Configuration databaseConfig = ca.createFactoryConfiguration(ConfigurationProperties.DATABASE_PID, "?");
 		databaseConfig.update(dbp);
+	}
+
+	/**
+	 * @param dbname TODO
+	 * @return
+	 */
+	protected MongoDatabase getDatabase(String dbname) {
+		MongoDatabase database = client.getDatabase(dbname);
+		dbs.add(database);
+		return database;
 	}
 	
 }

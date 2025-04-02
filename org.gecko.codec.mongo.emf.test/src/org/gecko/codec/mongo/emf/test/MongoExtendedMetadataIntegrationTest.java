@@ -13,6 +13,7 @@
  */
 package org.gecko.codec.mongo.emf.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,13 +41,12 @@ import org.gecko.emf.osgi.example.model.basic.BasicPackage;
 import org.gecko.emf.osgi.example.model.basic.BusinessPerson;
 import org.gecko.emf.osgi.example.model.basic.EmployeeInfo;
 import org.gecko.emf.osgi.example.model.basic.GenderType;
+import org.gecko.mongo.osgi.MongoClientProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
@@ -56,11 +56,10 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
+import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * See documentation here: 
@@ -90,7 +89,7 @@ import com.mongodb.client.MongoCollection;
 })
 public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 	
-	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("+EMFNamespaces.EMF_MODEL_NAME+"=collection))")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
@@ -102,11 +101,21 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 
+	@InjectService(cardinality = 0)
+	ServiceAware<MongoClientProvider> mongoClientAware;
+	
+	private ResourceSet resourceSet;
+	
 	@BeforeEach
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
-		super.doBefore(ctx);
+		MongoClientProvider mongoClientProvider = mongoClientAware.waitForService(2000l);
+		MongoClient mongoClient = mongoClientProvider.getMongoClient();
+		super.doBefore(ctx, mongoClient);
 		mapperAware.waitForService(2000l);
 		codecModuleAware.waitForService(2000l);	
+		resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+		assertThat(resourceSet.getResources()).isEmpty();
 	}
 
 	@AfterEach
@@ -115,11 +124,9 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 	}
 	
 	@Test
-	public void testSaveNoExtendedMetadataAttribute() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.getService();
-		
+	public void testSaveNoExtendedMetadataAttribute() throws IOException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		MongoCollection<Document> bpCollection = getDatabase("test").getCollection("BusinessPerson");
 		bpCollection.drop();
 		
 		assertEquals(0, bpCollection.countDocuments());
@@ -173,16 +180,11 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 	/**
 	 * Test creation of object and returning results
 	 * @throws IOException 
-	 * @throws BundleException 
-	 * @throws InvalidSyntaxException 
-	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testSaveExtendedMetadataAttribute() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.getService();
-		
+	public void testSaveExtendedMetadataAttribute() throws IOException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		MongoCollection<Document> bpCollection = getDatabase("test").getCollection("BusinessPerson");
 		bpCollection.drop();
 		
 		assertEquals(0, bpCollection.countDocuments());
@@ -236,17 +238,12 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 	/**
 	 * Test creation of object and returning results
 	 * @throws IOException 
-	 * @throws BundleException 
-	 * @throws InvalidSyntaxException 
-	 * @throws InterruptedException 
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testSaveNoExtendedMetadataReferences() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.getService();
-
+	public void testSaveNoExtendedMetadataReferences() throws IOException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		MongoCollection<Document> bpCollection = getDatabase("test").getCollection("BusinessPerson");
 		bpCollection.drop();
 		
 		assertEquals(0, bpCollection.countDocuments());
@@ -315,17 +312,12 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 	/**
 	 * Test creation of object and returning results
 	 * @throws IOException 
-	 * @throws BundleException 
-	 * @throws InvalidSyntaxException 
-	 * @throws InterruptedException 
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testSaveExtendedMetadataReference() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.getService();
-		
+	public void testSaveExtendedMetadataReference() throws IOException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		MongoCollection<Document> bpCollection = getDatabase("test").getCollection("BusinessPerson");
 		bpCollection.drop();
 		
 		assertEquals(0, bpCollection.countDocuments());

@@ -44,7 +44,7 @@ public interface GenericsPackage extends org.eclipse.emf.ecore.EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "http://www.emfjson.org/jackson/generics";
+	String eNS_URI = "http://www.eclipse.org/fennec/codec/testgenerics";
 
 	/**
 	 * The package namespace name.

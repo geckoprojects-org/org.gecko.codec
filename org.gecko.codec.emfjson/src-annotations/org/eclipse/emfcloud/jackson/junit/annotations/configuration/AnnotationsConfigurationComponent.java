@@ -31,7 +31,7 @@ import org.osgi.service.condition.Condition;
  * @generated
  */
 @Component(name = "AnnotationsConfigurator")
-@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.eclipse.emfcloud.jackson.junit.annotations.util.AnnotationsResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource.Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.eclipse.emfcloud.jackson.junit.annotations.util\"" })
+@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.eclipse.emfcloud.jackson.junit.annotations.util.AnnotationsResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource$Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.eclipse.emfcloud.jackson.junit.annotations.util\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.eclipse.emfcloud.jackson.junit.annotations.AnnotationsFactory, org.eclipse.emf.ecore.EFactory\"" , "uses:=\"org.eclipse.emf.ecore,org.eclipse.emfcloud.jackson.junit.annotations\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.eclipse.emfcloud.jackson.junit.annotations.AnnotationsPackage, org.eclipse.emf.ecore.EPackage\"" , "uses:=\"org.eclipse.emf.ecore,org.eclipse.emfcloud.jackson.junit.annotations\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.emf.osgi.configurator.EPackageConfigurator\"" , "uses:=\"org.eclipse.emf.ecore,org.eclipse.emfcloud.jackson.junit.annotations\"" })
@@ -51,6 +51,7 @@ public class AnnotationsConfigurationComponent {
 	@Activate
 	public void activate(BundleContext ctx) {
 		AnnotationsPackage ePackage = AnnotationsPackageImpl.eINSTANCE;
+		
 		
 		AnnotationsEPackageConfigurator packageConfigurator = registerEPackageConfiguratorService(ePackage, ctx);
 		registerEPackageService(ePackage, packageConfigurator, ctx);

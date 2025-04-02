@@ -14,8 +14,6 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.gecko.emf.collections,\
 	org.gecko.mongo.osgi.api;version=latest,\
 	org.gecko.mongo.osgi.component;version=latest,\
-	org.gecko.emf.mongo.component;version=latest,\
-	org.gecko.emf.mongo.pushstream;version=latest,\
 	org.osgi.util.promise,\
 	org.osgi.util.pushstream,\
 	org.osgi.service.component,\

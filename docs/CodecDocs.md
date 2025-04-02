@@ -361,12 +361,18 @@ For the `json` implementation we are relying on the `JsonGenerator`s and `JsonPa
 >
 > + `proxyKey` and `timestampKey` are available options in the `CodecModuleConfig` but they are not currently used in the implementations of the serialization/deserialization process;
 > + currently it is only possible to save the supertypes as an array or a comma separated String of URIs; it might be useful to have a strategy like we have for the type information, so one can save the supertypes also as class names or simply as names. It might also be useful to serialize them with another separator rather than a comma separated String (?)
-> + serialization/deserialization of Maps has not been tested and nothing special has been implemented for them, so not sure if it works out of the box with the "standard" jackson serializers or not;
+> + ~~serialization/deserialization of Maps has not been tested and nothing special has been implemented for them, so not sure if it works out of the box with the "standard" jackson serializers or not;~~ Works for EMap
 > + Our `CodecInfoSerializer` and `CodecInfoDeserializer`, from which all our "special" serializers/deserializers inherit, are **NOT** extension of `JsonSerializer` and `JsonParser`. Maybe they could be in the future and be registered like the others. 
 
 
 
+### TODO
+* Cleanup Code:
 
+  * Error handling
+  * Java and Sonar Warnings
 
-
-
+* Tests in org.gecko.codec/test/ remove?
+* Moving gecko EMFUtil features to codec.
+* License header
+* CDO

@@ -35,7 +35,7 @@ import org.osgi.service.condition.Condition;
  * @generated
  */
 @Component(name = "PersonConfigurator")
-@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.codec.demo.model.person.util.PersonResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource.Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.gecko.codec.demo.model.person.util\"" })
+@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.codec.demo.model.person.util.PersonResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource$Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.gecko.codec.demo.model.person.util\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.codec.demo.model.person.PersonFactory, org.eclipse.emf.ecore.EFactory\"" , "uses:=\"org.eclipse.emf.ecore,org.gecko.codec.demo.model.person\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.codec.demo.model.person.PersonPackage, org.eclipse.emf.ecore.EPackage\"" , "uses:=\"org.eclipse.emf.ecore,org.gecko.codec.demo.model.person\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.emf.osgi.configurator.EPackageConfigurator\"" , "uses:=\"org.eclipse.emf.ecore,org.gecko.codec.demo.model.person\"" })
@@ -56,6 +56,7 @@ public class PersonConfigurationComponent {
 	@Activate
 	public void activate(BundleContext ctx) {
 		PersonPackage ePackage = PersonPackageImpl.eINSTANCE;
+		
 		
 		PersonEPackageConfigurator packageConfigurator = registerEPackageConfiguratorService(ePackage, ctx);
 		registerResourceFactoryService(ctx);

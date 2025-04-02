@@ -31,7 +31,7 @@ import org.osgi.service.condition.Condition;
  * @generated
  */
 @Component(name = "FoobarConfigurator")
-@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.emf.codec.test.model.codectest.foobar.util.FoobarResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource.Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.gecko.emf.codec.test.model.codectest.foobar.util\"" })
+@Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.emf.codec.test.model.codectest.foobar.util.FoobarResourceFactoryImpl, org.eclipse.emf.ecore.resource.Resource$Factory\"" , "uses:=\"org.eclipse.emf.ecore.resource,org.gecko.emf.codec.test.model.codectest.foobar.util\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.emf.codec.test.model.codectest.foobar.FoobarFactory, org.eclipse.emf.ecore.EFactory\"" , "uses:=\"org.eclipse.emf.ecore,org.gecko.emf.codec.test.model.codectest.foobar\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.emf.codec.test.model.codectest.foobar.FoobarPackage, org.eclipse.emf.ecore.EPackage\"" , "uses:=\"org.eclipse.emf.ecore,org.gecko.emf.codec.test.model.codectest.foobar\"" })
 @Capability( namespace = "osgi.service", attribute = { "objectClass:List<String>=\"org.gecko.emf.osgi.configurator.EPackageConfigurator\"" , "uses:=\"org.eclipse.emf.ecore,org.gecko.emf.codec.test.model.codectest.foobar\"" })
@@ -51,6 +51,7 @@ public class FoobarConfigurationComponent {
 	@Activate
 	public void activate(BundleContext ctx) {
 		FoobarPackage ePackage = FoobarPackageImpl.eINSTANCE;
+		
 		
 		FoobarEPackageConfigurator packageConfigurator = registerEPackageConfiguratorService(ePackage, ctx);
 		registerEPackageService(ePackage, packageConfigurator, ctx);

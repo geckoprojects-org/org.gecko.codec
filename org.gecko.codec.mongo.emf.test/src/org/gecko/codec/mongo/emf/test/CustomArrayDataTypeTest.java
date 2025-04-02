@@ -13,6 +13,7 @@
  */
 package org.gecko.codec.mongo.emf.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,6 +42,7 @@ import org.gecko.emf.osgi.example.model.basic.Geometry;
 import org.gecko.emf.osgi.example.model.extended.ExtendedFactory;
 import org.gecko.emf.osgi.example.model.extended.ExtendedGeometry;
 import org.gecko.emf.osgi.example.model.extended.ExtendedPackage;
+import org.gecko.mongo.osgi.MongoClientProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,6 +57,7 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 
 /**
@@ -85,7 +88,7 @@ import com.mongodb.client.MongoCollection;
 })
 public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	
-	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("+EMFNamespaces.EMF_MODEL_NAME+"=collection))")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
@@ -97,12 +100,21 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 
+	@InjectService(cardinality = 0)
+	ServiceAware<MongoClientProvider> mongoClientAware;
+	
+	private ResourceSet resourceSet;
+	
 	@BeforeEach
-	@Override
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
-		super.doBefore(ctx);
+		MongoClientProvider mongoClientProvider = mongoClientAware.waitForService(2000l);
+		MongoClient mongoClient = mongoClientProvider.getMongoClient();
+		super.doBefore(ctx, mongoClient);
 		mapperAware.waitForService(2000l);
 		codecModuleAware.waitForService(2000l);	
+		resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+		assertThat(resourceSet.getResources()).isEmpty();
 	}
 
 	@AfterEach
@@ -113,11 +125,8 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	
 	@Test
 	public void testSimpleArray() throws IOException, InterruptedException {
-
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-
 		System.out.println("Dropping DB");
-		MongoCollection<Document> geoCollection = client.getDatabase("test").getCollection("Geometry");
+		MongoCollection<Document> geoCollection = getDatabase("test").getCollection("Geometry");
 		geoCollection.drop();
 
 		assertEquals(0, geoCollection.countDocuments());
@@ -174,11 +183,8 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	
 	@Test
 	public void testSimpleNullArraySerNullYES() throws IOException, InterruptedException {
-
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-
 		System.out.println("Dropping DB");
-		MongoCollection<Document> geoCollection = client.getDatabase("test").getCollection("Geometry");
+		MongoCollection<Document> geoCollection = getDatabase("test").getCollection("Geometry");
 		geoCollection.drop();
 
 		assertEquals(0, geoCollection.countDocuments());
@@ -238,10 +244,8 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	
 	@Test
 	public void testMultiDimensionalArray() throws IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-		
 		System.out.println("Dropping DB");
-		MongoCollection<Document> geoCollection = client.getDatabase("test").getCollection("Geometry");
+		MongoCollection<Document> geoCollection = getDatabase("test").getCollection("Geometry");
 		geoCollection.drop();
 
 		assertEquals(0, geoCollection.countDocuments());
@@ -304,10 +308,8 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	
 	@Test
 	public void testExtendedGeometryOneCoordinate() throws IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-
 		System.out.println("Dropping DB");
-		MongoCollection<Document> geoCollection = client.getDatabase("test").getCollection("ExtendedGeometry");
+		MongoCollection<Document> geoCollection = getDatabase("test").getCollection("ExtendedGeometry");
 		geoCollection.drop();
 
 		assertEquals(0, geoCollection.countDocuments());
@@ -354,10 +356,8 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 	@Test
 	public void testExtendedGeometryOneMultiDimensionalCoordinate()
 			throws IOException, InterruptedException {
-		ResourceSet resourceSet = rsAware.waitForService(2000l);
-
 		System.out.println("Dropping DB");
-		MongoCollection<Document> geoCollection = client.getDatabase("test").getCollection("ExtendedGeometry");
+		MongoCollection<Document> geoCollection = getDatabase("test").getCollection("ExtendedGeometry");
 		geoCollection.drop();
 
 		assertEquals(0, geoCollection.countDocuments());

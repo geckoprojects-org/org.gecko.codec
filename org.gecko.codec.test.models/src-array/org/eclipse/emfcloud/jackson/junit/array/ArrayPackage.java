@@ -44,7 +44,7 @@ public interface ArrayPackage extends org.eclipse.emf.ecore.EPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	String eNS_URI = "http://www.emfjson.org/jackson/array";
+	String eNS_URI = "http://www.eclipse.org/fennec/codec/testarray";
 
 	/**
 	 * The package namespace name.

@@ -13,6 +13,7 @@
  */
 package org.gecko.codec.mongo.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,9 +37,11 @@ import org.gecko.codec.constants.CodecResourceOptions;
 import org.gecko.codec.constants.ObjectMapperOptions;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.codec.jackson.resource.CodecResource;
 import org.gecko.codec.test.helper.CodecTestHelper;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
+import org.gecko.mongo.osgi.MongoClientProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,18 +57,17 @@ import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * See documentation here: 
- * 	https://github.com/osgi/osgi-test
- * 	https://github.com/osgi/osgi-test/wiki
- * Examples: https://github.com/osgi/osgi-test/tree/main/examples
+ * See documentation here: https://github.com/osgi/osgi-test
+ * https://github.com/osgi/osgi-test/wiki Examples:
+ * https://github.com/osgi/osgi-test/tree/main/examples
  */
 @RequireEMF
 @ExtendWith(BundleContextExtension.class)
@@ -76,62 +78,63 @@ import com.mongodb.client.MongoCollection;
 @WithFactoryConfiguration(name = "mongoDatabase", location = "?", factoryPid = "MongoDatabaseProvider", properties = {
 		@Property(key = "alias", value = "TestDB"), @Property(key = "database", value = "test") })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="mongo"),
-		@Property(key = "genFactory.target", value="(type=mongo)"), 
-		@Property(key = "parserFactory.target", value="(type=mongo)")
-})
+		@Property(key = "type", value = "mongo"), @Property(key = "genFactory.target", value = "(type=mongo)"),
+		@Property(key = "parserFactory.target", value = "(type=mongo)") })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "codecFactoryConfigurator.target", value="(type=mongo)"),
-		@Property(key = "type", value="mongo")
-})
+		@Property(key = "codecFactoryConfigurator.target", value = "(type=mongo)"),
+		@Property(key = "type", value = "mongo") })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="mongo")
-})
+		@Property(key = "type", value = "mongo") })
 public class CodecMongoSerializeIdStrategyTest extends MongoEMFSetting {
 
-	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
-			+ EMFNamespaces.EMF_MODEL_NAME + "=collection)("+ EMFNamespaces.EMF_MODEL_NAME + "=person))")
-	ServiceAware<ResourceSet> rsAware;
-	
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<ObjectMapperConfigurator> mapperAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
-	
-	private ResourceSet resourceSet;
+
+	@InjectService(cardinality = 0)
+	ServiceAware<MongoClientProvider> mongoClientAware;
+
 	private MongoCollection<Document> bpCollection;
 	private MongoCollection<Document> addCollection;
-	
+
 	@BeforeEach
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
-		super.doBefore(ctx);
-		bpCollection = client.getDatabase("test").getCollection("Person");
+		MongoClientProvider mongoClientProvider = mongoClientAware.waitForService(2000l);
+		MongoClient mongoClient = mongoClientProvider.getMongoClient();
+		super.doBefore(ctx, mongoClient);
+		bpCollection = getDatabase("test").getCollection("Person");
 		cleanDBCollection(bpCollection);
-		addCollection = client.getDatabase("test").getCollection("Address");
+		addCollection = getDatabase("test").getCollection("Address");
 		cleanDBCollection(addCollection);
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);
-		codecModuleAware.waitForService(2000l);	
-		resourceSet = rsAware.waitForService(2000l);
-		assertNotNull(resourceSet);
+		codecModuleAware.waitForService(2000l);
 	}
 
 	@AfterEach
+	@Override
 	public void doAfter() {
 		cleanDBCollection(bpCollection);
 		cleanDBCollection(addCollection);
-		super.doAfter();		
+		super.doAfter();
 	}
-	
-	
-	@Test
-	public void testSerializationIdFieldStrategy() throws InterruptedException, IOException {
 
-		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
+	@Test
+//	@RepeatedTest(value = 50)
+	public void testSerializationIdFieldStrategy(@InjectService(cardinality = 0, filter = "(&("
+			+ EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
+			+ EMFNamespaces.EMF_MODEL_NAME + "=person))") ServiceAware<ResourceSet> rsAware)
+			throws InterruptedException, IOException {
+		ResourceSet resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+//		Thread.sleep(500);
+		Resource resource = resourceSet.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Person/"));
+		assertThat(resource).isInstanceOf(CodecResource.class);
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
@@ -143,18 +146,26 @@ public class CodecMongoSerializeIdStrategyTest extends MongoEMFSetting {
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
-		
+
+		resource.getContents().clear();
+		resource.unload();
+
 		assertEquals(1, bpCollection.countDocuments());
 		FindIterable<Document> docIterable = bpCollection.find();
 		Document first = docIterable.first();
 		assertTrue(first.containsKey("_id"));
 		assertEquals(person.getId(), first.get("_id"));
 	}
-	
-	@Test
-	public void testSerializationIdCombinedDefaultStrategy() throws InterruptedException, IOException {
 
-		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
+	@Test
+	public void testSerializationIdCombinedDefaultStrategy(@InjectService(cardinality = 0, filter = "(&("
+			+ EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
+			+ EMFNamespaces.EMF_MODEL_NAME + "=person))") ServiceAware<ResourceSet> rsAware)
+			throws IOException, InterruptedException {
+		ResourceSet resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+
+		Resource resource = resourceSet.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Person/"));
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
@@ -166,19 +177,26 @@ public class CodecMongoSerializeIdStrategyTest extends MongoEMFSetting {
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
-		
+
+		resource.getContents().clear();
+		resource.unload();
+
 		assertEquals(1, bpCollection.countDocuments());
 		FindIterable<Document> docIterable = bpCollection.find();
 		Document first = docIterable.first();
 		assertTrue(first.containsKey("_id"));
 		assertEquals(person.getName().concat("-").concat(person.getLastName()), first.get("_id"));
 	}
-		
-	
-	@Test
-	public void testSerializationIdCombinedStrategyDiffFeatures() throws InterruptedException, IOException {
 
-		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
+	@Test
+	public void testSerializationIdCombinedStrategyDiffFeatures(@InjectService(cardinality = 0, filter = "(&("
+			+ EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
+			+ EMFNamespaces.EMF_MODEL_NAME + "=person))") ServiceAware<ResourceSet> rsAware)
+			throws InterruptedException, IOException {
+		ResourceSet resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+
+		Resource resource = resourceSet.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Person/"));
 
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAge(42);
@@ -186,26 +204,35 @@ public class CodecMongoSerializeIdStrategyTest extends MongoEMFSetting {
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Name(), 
-				PersonPackage.eINSTANCE.getPerson_Age()));
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST,
+				List.of(PersonPackage.eINSTANCE.getPerson_Name(), PersonPackage.eINSTANCE.getPerson_Age()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
-	
+
+		resource.getContents().clear();
+		resource.unload();
+
 		assertEquals(1, bpCollection.countDocuments());
 		FindIterable<Document> docIterable = bpCollection.find();
 		Document first = docIterable.first();
 		assertTrue(first.containsKey("_id"));
-		assertEquals(person.getName().concat("-").concat(""+person.getAge()), first.get("_id"));
+		assertEquals(person.getName().concat("-").concat("" + person.getAge()), first.get("_id"));
 	}
-	
-	@Test
-	public void testSerializationIdCombinedStrategyDiffFeaturesOrder() throws InterruptedException, IOException {
 
-		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
+	@Test
+	public void testSerializationIdCombinedStrategyDiffFeaturesOrder(@InjectService(cardinality = 0, filter = "(&("
+			+ EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
+			+ EMFNamespaces.EMF_MODEL_NAME + "=person))") ServiceAware<ResourceSet> rsAware)
+			throws InterruptedException, IOException {
+		ResourceSet resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+
+		Resource resource = resourceSet.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Person/"));
 
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAge(42);
@@ -213,27 +240,36 @@ public class CodecMongoSerializeIdStrategyTest extends MongoEMFSetting {
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Age(), 
-				PersonPackage.eINSTANCE.getPerson_Name()));
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST,
+				List.of(PersonPackage.eINSTANCE.getPerson_Age(), PersonPackage.eINSTANCE.getPerson_Name()));
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
-		
+
+		resource.getContents().clear();
+		resource.unload();
+
 		assertEquals(1, bpCollection.countDocuments());
 		FindIterable<Document> docIterable = bpCollection.find();
 		Document first = docIterable.first();
 		assertTrue(first.containsKey("_id"));
-		assertEquals((""+person.getAge()).concat("-").concat(person.getName()), first.get("_id"));
-		
-	}
-	
-	@Test
-	public void testSerializationIdCombinedStrategyDiffSeparator() throws InterruptedException, IOException {
+		assertEquals(("" + person.getAge()).concat("-").concat(person.getName()), first.get("_id"));
 
-		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
+	}
+
+	@Test
+	public void testSerializationIdCombinedStrategyDiffSeparator(@InjectService(cardinality = 0, filter = "(&("
+			+ EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("
+			+ EMFNamespaces.EMF_MODEL_NAME + "=person))") ServiceAware<ResourceSet> rsAware)
+			throws InterruptedException, IOException {
+		ResourceSet resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+
+		Resource resource = resourceSet.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Person/"));
 
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAge(42);
@@ -241,19 +277,23 @@ public class CodecMongoSerializeIdStrategyTest extends MongoEMFSetting {
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
+				List.of(SerializationFeature.INDENT_OUTPUT));
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
 		personOptions.put(CodecModelInfoOptions.CODEC_ID_SEPARATOR, "test");
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
-		
+
+		resource.getContents().clear();
+		resource.unload();
+
 		assertEquals(1, bpCollection.countDocuments());
 		FindIterable<Document> docIterable = bpCollection.find();
 		Document first = docIterable.first();
 		assertTrue(first.containsKey("_id"));
 		assertEquals(person.getName().concat("test").concat(person.getLastName()), first.get("_id"));
-		
+
 	}
 }

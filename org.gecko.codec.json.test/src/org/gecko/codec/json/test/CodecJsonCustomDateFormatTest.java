@@ -13,12 +13,15 @@
  */
 package org.gecko.codec.json.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +72,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 		@Property(key = "type", value = "json") })
 public class CodecJsonCustomDateFormatTest extends JsonTestSetting {
 
-	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_MODEL_NAME + "=person)")
+	@InjectService(cardinality = 0,filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
 
 	@InjectService(cardinality = 0, filter = "(type=json)")
@@ -140,16 +143,7 @@ public class CodecJsonCustomDateFormatTest extends JsonTestSetting {
 		options.put(ObjectMapperOptions.OBJ_MAPPER_DATE_FORMAT, new SimpleDateFormat("dd-MM-yyyy"));
 		resource.save(options);
 
-		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			String line = reader.readLine();
-			boolean found = false;
-			while (line != null) {
-				if (line.contains("\"birthDate\" : \"20-06-1990\",")) {
-					found = true;
-				}
-				line = reader.readLine();
-			}
-			assertTrue(found);
-		}
+		assertThat(Files.readString(Paths.get(personFileName))).contains("\"birthDate\" : \"20-06-1990\",");
+		
 	}
 }

@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -33,6 +34,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.gecko.codec.configurator.ObjectMapperBuilderFactory;
 import org.gecko.codec.constants.CodecModelInfoOptions;
@@ -86,14 +89,41 @@ public class CodecResource extends ResourceImpl {
 		return mapper;
 	}
 	
-
-	/* 
+	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.emf.ecore.resource.impl.ResourceImpl#doSave(java.io.OutputStream, java.util.Map)
+	 * 
+	 * @see org.eclipse.emf.ecore.resource.impl.ResourceImpl#save(java.util.Map)
 	 */
 	@Override
-	protected void doSave(OutputStream outputStream, Map<?, ?> options) throws IOException {
+	public void save(Map<?, ?> options) throws IOException {
+//		Object saveOnlyIfChanged = options != null && options.containsKey(OPTION_SAVE_ONLY_IF_CHANGED)
+//				? options.get(OPTION_SAVE_ONLY_IF_CHANGED)
+//				: defaultSaveOptions != null ? defaultSaveOptions.get(OPTION_SAVE_ONLY_IF_CHANGED) : null;
+		try {
+			super.save(options);
+		} catch (Exception e) {
+			if (needOutputstream()) {
+				throw e;
+			} else {
+				Map<?, ?> response = options == null ? null : (Map<?, ?>) options.get(URIConverter.OPTION_RESPONSE);
+				if (response == null) {
+					response = new HashMap<>();
+				}
+				try {
+					doSave(null, options);
+				} finally {
+					handleSaveResponse(response, options);
+				}
+			}
+		}
+	}
 
+	protected boolean needOutputstream() {
+		return true;
+	}
+	
+	@Override
+	protected void doSave(OutputStream outputStream, Map<?, ?> options) throws IOException {
 		EObject eObject = this.getContents().isEmpty() ? null : this.getContents().get(0);
 		if(eObject == null) {
 			LOGGER.severe(String.format("No content for Resource %s", this.getURI()));
@@ -130,10 +160,39 @@ public class CodecResource extends ResourceImpl {
 		mapper.registerModule(moduleBuilder.build());		
 	}
 	
-	/* 
-	 * (non-Javadoc)
-	 * @see org.eclipse.emf.ecore.resource.impl.ResourceImpl#doLoad(java.io.InputStream, java.util.Map)
-	 */
+	@Override
+	public void load(Map<?, ?> options) throws IOException {
+		try {
+			super.load(options);
+		} catch (Exception e) {
+			if (needOutputstream()) {
+				throw e;
+			} else {
+				Map<?, ?> response = options == null ? null : (Map<?, ?>) options.get(URIConverter.OPTION_RESPONSE);
+				if (response == null) {
+					response = new HashMap<>();
+				}
+				try {
+					doLoad(null, options);
+				} finally {
+					handleLoadResponse(response, options);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void delete(Map<?, ?> options) throws IOException {
+		try {
+			super.delete(options);
+		} catch (Exception e) {
+			ResourceSet resourceSet = getResourceSet();
+			if (resourceSet != null) {
+				resourceSet.getResources().remove(this);
+			}
+		}
+	}
+	
 	@Override
 	protected void doLoad(InputStream inputStream, Map<?, ?> options) throws IOException {
 		

@@ -13,6 +13,7 @@
  */
 package org.gecko.codec.mongo.emf.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -43,6 +44,7 @@ import org.gecko.emf.osgi.example.model.basic.Contact;
 import org.gecko.emf.osgi.example.model.basic.ContactContextType;
 import org.gecko.emf.osgi.example.model.basic.ContactType;
 import org.gecko.emf.osgi.example.model.basic.GenderType;
+import org.gecko.mongo.osgi.MongoClientProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,6 +61,7 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
+import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 
@@ -90,7 +93,7 @@ import com.mongodb.client.MongoCollection;
 })
 public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	
-	@InjectService(cardinality = 0, filter = "(&(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)("+EMFNamespaces.EMF_MODEL_NAME+"=collection))")
+	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo)")
 	ServiceAware<ResourceSet> rsAware;
 	
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
@@ -102,12 +105,21 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	@InjectService(cardinality = 0, filter = "(type=mongo)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 
+	@InjectService(cardinality = 0)
+	ServiceAware<MongoClientProvider> mongoClientAware;
+	
+	private ResourceSet resourceSet;
+	
 	@BeforeEach
-	@Override
 	public void doBefore(@InjectBundleContext BundleContext ctx) throws Exception {
-		super.doBefore(ctx);
+		MongoClientProvider mongoClientProvider = mongoClientAware.waitForService(2000l);
+		MongoClient mongoClient = mongoClientProvider.getMongoClient();
+		super.doBefore(ctx, mongoClient);
 		mapperAware.waitForService(2000l);
 		codecModuleAware.waitForService(2000l);	
+		resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+		assertThat(resourceSet.getResources()).isEmpty();
 	}
 
 	@AfterEach
@@ -120,10 +132,8 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	@Test
 	public void testSaveEnumName_Default()
 			throws IOException {
-		ResourceSet resourceSet = rsAware.getService();
-
 		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		MongoCollection<Document> bpCollection = getDatabase("test").getCollection("BusinessPerson");
 		bpCollection.drop();
 
 		assertEquals(0, bpCollection.countDocuments());
@@ -201,12 +211,9 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testSaveEnumLiteral()
-			throws IOException {
-
-		ResourceSet resourceSet = rsAware.getService();
-
+			throws IOException, InterruptedException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		MongoCollection<Document> bpCollection = getDatabase("test").getCollection("BusinessPerson");
 		bpCollection.drop();
 
 		assertEquals(0, bpCollection.countDocuments());
@@ -284,12 +291,9 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testSaveEnumUnderScoreBug()
-			throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-
-		ResourceSet resourceSet = rsAware.getService();
-
+			throws IOException, InterruptedException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		MongoCollection<Document> bpCollection = getDatabase("test").getCollection("BusinessPerson");
 		bpCollection.drop();
 
 		assertEquals(0, bpCollection.countDocuments());
@@ -371,12 +375,9 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testSaveEnumLiteralLoadName()
-			throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-
-		ResourceSet resourceSet = rsAware.getService();
-
+			throws IOException, InterruptedException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		MongoCollection<Document> bpCollection = getDatabase("test").getCollection("BusinessPerson");
 		bpCollection.drop();
 
 		assertEquals(0, bpCollection.countDocuments());
@@ -456,12 +457,9 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void testSaveEnumNameLoadLiteral()
-			throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
-
-		ResourceSet resourceSet = rsAware.getService();
-
+			throws IOException, InterruptedException {
 		System.out.println("Dropping DB");
-		MongoCollection<Document> bpCollection = client.getDatabase("test").getCollection("BusinessPerson");
+		MongoCollection<Document> bpCollection = getDatabase("test").getCollection("BusinessPerson");
 		bpCollection.drop();
 
 		assertEquals(0, bpCollection.countDocuments());

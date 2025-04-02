@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="org.gecko.code.emfjson/test-gen" modelPluginID="emfjson-jackson"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="org.gecko.codec.test.models/src" modelPluginID="emfjson-jackson"
     runtimeJar="true" modelName="Generics" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl"
     testsDirectory="" booleanFlagsField="eFlags" booleanFlagsReservedBits="8" importerID="org.eclipse.emf.importer.ecore"
     bundleManifest="false" containmentProxies="true" complianceLevel="11.0" language="en"

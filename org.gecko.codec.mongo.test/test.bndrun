@@ -1,7 +1,6 @@
 -library: enableOSGi-Test
 
 -runrequires: \
-	bnd.identity;id='org.gecko.emf.mongo.component',\
 	bnd.identity;id='org.gecko.codec.mongo',\
 	bnd.identity;id='org.gecko.codec.mongo.test'
 	
@@ -15,8 +14,6 @@
 -runbundles: \
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
 	org.apache.felix.scr;version='[2.2.6,2.2.7)',\
-	org.gecko.emf.collections;version='[2.2.2,2.2.3)',\
-	org.gecko.emf.mongo.component;version='[6.1.0,6.1.1)',\
 	org.gecko.mongo.osgi.component;version='[6.1.0,6.1.1)',\
 	org.mongodb.mongo-java-driver;version='[3.12.14,3.12.15)',\
 	org.osgi.service.component;version='[1.5.1,1.5.2)',\
@@ -43,11 +40,10 @@
 	org.eclipse.emf.common;version='[2.29.0,2.29.1)',\
 	org.eclipse.emf.ecore;version='[2.35.0,2.35.1)',\
 	org.eclipse.emf.ecore.xmi;version='[2.36.0,2.36.1)',\
-	org.apache.felix.metatype;version='[1.2.4,1.2.5)',\
-	org.gecko.emf.osgi.component;version='[6.0.0,6.0.1)',\
 	assertj-core;version='[3.24.2,3.24.3)',\
 	net.bytebuddy.byte-buddy;version='[1.14.9,1.14.10)',\
 	org.gecko.codec.test.helper;version=snapshot,\
 	org.gecko.codec.demo.model;version=snapshot,\
 	org.gecko.codec.mongo;version=snapshot,\
-	org.osgi.service.cm;version='[1.6.1,1.6.2)'
+	org.osgi.service.cm;version='[1.6.1,1.6.2)',\
+	org.gecko.emf.osgi.component.minimal;version='[6.3.0,6.3.1)'
