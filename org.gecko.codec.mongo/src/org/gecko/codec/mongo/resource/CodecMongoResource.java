@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bson.codecs.configuration.CodecRegistries;
@@ -22,20 +23,24 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.gecko.codec.info.CodecModelInfo;
+import org.eclipse.emf.ecore.resource.URIConverter;
 import org.gecko.codec.configurator.ObjectMapperBuilderFactory;
+import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 import org.gecko.codec.jackson.resource.CodecResource;
 import org.gecko.codec.mongo.CodecMongoOptions;
 import org.gecko.codec.mongo.MongoCodecProvider;
+import org.gecko.codec.mongo.helper.MongoUtils;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.DeleteResult;
 
 public final class CodecMongoResource extends CodecResource {
 
@@ -86,6 +91,62 @@ public final class CodecMongoResource extends CodecResource {
 	}
 
 	@Override
+	public void delete(Map<?, ?> options) throws IOException {
+		super.delete(options);
+		MongoCollection<EObject> collection = getCollection(options);
+		CodecRegistry eobjectRegistry = CodecRegistries.fromProviders(new MongoCodecProvider(mapper, this, options));
+		CodecRegistry defaultRegistry = MongoClient.getDefaultCodecRegistry();
+		CodecRegistry codecRegistry = CodecRegistries.fromRegistries(eobjectRegistry, defaultRegistry);
+
+		boolean countResults = false;
+		long elementCount;
+		DeleteResult deleteResult;
+
+		Map<Object, Object> response = options == null ? null
+				: (Map<Object, Object>) options.get(URIConverter.OPTION_RESPONSE);
+		if(options != null) {
+			Object optionCountResult = options.get(CodecMongoOptions.OPTION_COUNT_RESULT);
+			countResults = optionCountResult != null && Boolean.TRUE.equals(optionCountResult);
+		}
+		if (response == null) {
+			response = new HashMap<Object, Object>();
+		}
+		if (uri.query() != null) {
+//			if (queryEngine == null) {
+//				throw new IOException("The query engine was not found");
+//			}
+//
+//			EMongoQuery mongoQuery = queryEngine.buildMongoQuery(uri, options);
+//
+//			Document filter = mongoQuery.getFilter();
+//
+//			if (filter != null) {
+//				deleteResult = collection.deleteMany(filter);
+//				if (countResults) {
+//					elementCount = deleteResult.getDeletedCount();
+//				}
+//			} else {
+//				deleteResult = collection.deleteOne(new BasicDBObject(Keywords.ID_KEY, MongoUtils.getID(uri)));
+//				if (countResults) {
+//					elementCount = deleteResult.getDeletedCount();
+//				}
+//			}
+//			if (countResults) {
+//				response.put(Options.OPTION_COUNT_RESPONSE, Long.valueOf(elementCount));
+//			}
+
+		} else {
+
+			deleteResult = collection.withCodecRegistry(codecRegistry)
+					.deleteOne(new BasicDBObject(CodecMongoOptions.ID_KEY, MongoUtils.getID(uri)));
+			if (countResults) {
+				elementCount = deleteResult.getDeletedCount();
+				response.put(CodecMongoOptions.OPTION_COUNT_RESPONSE, Long.valueOf(elementCount));
+			}
+		}
+	}
+
+	@Override
 	protected boolean needOutputstream() {
 		return false;
 	}
@@ -116,7 +177,7 @@ public final class CodecMongoResource extends CodecResource {
 
 	private MongoCollection<EObject> getCollection(Map<?, ?> options) {
 		MongoDatabase database = provider.getDatabase();
-		if(options.containsKey(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME)) {
+		if(options != null && options.containsKey(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME)) {
 			if(options.get(CodecMongoOptions.CODEC_MONGO_COLLECTION_NAME) instanceof EClass collEClass) {
 				return database.getCollection(collEClass.getName(), EObject.class);
 			}

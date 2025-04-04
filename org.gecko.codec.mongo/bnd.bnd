@@ -7,10 +7,7 @@
 	org.gecko.codec.emfjson;version=project,\
 	org.gecko.codec,\
 	org.mongodb.mongo-java-driver,\
-	org.gecko.emf.mongo.api,\
-	org.gecko.emf.mongo.component,\
 	org.gecko.mongo.osgi.api,\
 	org.gecko.emf.collections,\
 	org.gecko.codec.info;version=latest,\
 	org.gecko.codec.info.model;version=latest
-	

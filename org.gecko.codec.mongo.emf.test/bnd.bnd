@@ -25,7 +25,7 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.gecko.codec.info.model;version=latest,\
 	org.gecko.codec.constants;version=latest,\
 	org.gecko.emf.osgi.example.model.extended,\
-	org.gecko.codec.mongo
+	org.gecko.codec.mongo;version=latest
 	
 Private-Package: org.gecko.codec.mongo.emf.test
 
