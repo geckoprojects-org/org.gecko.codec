@@ -37,6 +37,8 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
+import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
+import org.gecko.codec.CodecProxyFactory;
 import org.gecko.codec.configurator.ObjectMapperBuilderFactory;
 import org.gecko.codec.constants.CodecModelInfoOptions;
 import org.gecko.codec.constants.CodecModuleOptions;
@@ -52,6 +54,7 @@ import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -153,7 +156,6 @@ public class CodecResource extends ResourceImpl {
 //		This is necessary otherwise asking the ModelInfoService we would get a new instance every time
 //		instead we need the same one here since it's the one we updated based on the options
 		moduleBuilder.bindCodecModelInfo(modelCodecInfo);
-
 //		Register the module with the mapper
 		
 		mapper = objMapperBuilder.build();
@@ -416,6 +418,7 @@ public class CodecResource extends ResourceImpl {
 	 * This updates the {@link CodecModule} based on the options passed when saving/loading the resource
 	 * @param options the options passed in the {@link Resource} save/load methods.
 	 */
+	@SuppressWarnings("unchecked")
 	private void updateCodecModuleFromOptions(Map<?, ?> options) {
 		options.forEach((k,v) -> {
 			switch((String)k) {
@@ -475,6 +478,20 @@ public class CodecResource extends ResourceImpl {
 				break;			
 			case CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL:
 				moduleBuilder.withWriteEnumLiterals((boolean) v);
+				break;
+			case CodecModuleOptions.CODEC_MODULE_REFERENCE_DESERIALIZER:
+				if(v instanceof JsonDeserializer) {
+					moduleBuilder.bindReferenceDeserializer((JsonDeserializer<ReferenceEntry> ) v);
+				} else {
+					LOGGER.warning(() -> CodecModuleOptions.CODEC_MODULE_REFERENCE_DESERIALIZER +" must be an instance of JsonDeserializer for.");
+				}
+				break;
+			case CodecModuleOptions.CODEC_PROXY_FACTORY:
+				if(v instanceof CodecProxyFactory pf) {
+					moduleBuilder.bindCodecProxyFactory(pf);
+				} else {
+					LOGGER.warning(() -> CodecModuleOptions.CODEC_PROXY_FACTORY +" must be an instance of CodecProxyFactory for.");
+				}
 				break;
 			}
 		});

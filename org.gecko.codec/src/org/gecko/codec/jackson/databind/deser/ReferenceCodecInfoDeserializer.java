@@ -19,9 +19,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntries;
 import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
@@ -103,22 +101,13 @@ public class ReferenceCodecInfoDeserializer implements CodecInfoDeserializer {
 			eClass = refEClass;
 		}
 		if (id != null && eClass != null) {
-			EObject ref = createProxy(eClass, URI.createURI(id));
+			EObject ref = codecModule.getProxyFactory().createProxy(eClass, URI.createURI(id));
 			current.eSet(reference, ref);
 		}
 		ReferenceEntries entries = EMFContext.getEntries(ctxt);
 		Object value = id != null ? new ReferenceEntry.Base(parent, reference, id, eClass.getInstanceClassName()) : null;
-		if (entries != null && value instanceof ReferenceEntry) {
-			entries.entries().add((ReferenceEntry) value);
+		if (entries != null && value instanceof ReferenceEntry entry) {
+			entries.entries().add(entry);
 		}	
 	}
-
-	private EObject createProxy(EClass eClass, URI uri) {
-		EObject object = EcoreUtil.create(eClass);
-		if (object instanceof InternalEObject) {
-			((InternalEObject) object).eSetProxyURI(uri);
-		}
-		return object;
-	}
-
 }

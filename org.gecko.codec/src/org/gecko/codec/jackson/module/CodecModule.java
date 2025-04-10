@@ -13,13 +13,21 @@
  */
 package org.gecko.codec.jackson.module;
 
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.gecko.codec.CodecProxyFactory;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.jackson.databind.deser.CodecDeserializers;
 import org.gecko.codec.jackson.databind.ser.CodecSerializers;
 
 import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
  * Extension of EMFModule which allows to set codec specific options
@@ -56,6 +64,8 @@ public class CodecModule extends EMFModule {
 
 	private PackageCodecInfo codecModelInfo;
 	private CodecModelInfo codecModelInfoService;
+
+	private CodecProxyFactory codecProxyFactory;
 
 	public String getCodecType() {
 		return codecType;
@@ -149,6 +159,11 @@ public class CodecModule extends EMFModule {
 		return codecModelInfoService;
 	}
 
+	public CodecProxyFactory getProxyFactory() {
+		return codecProxyFactory;
+	}
+
+
 	public CodecModule(Builder builder) {
 		this.codecType = builder.codecType;
 		this.codecModuleName = builder.codecModuleName;
@@ -173,6 +188,8 @@ public class CodecModule extends EMFModule {
 		this.codecModelInfo = builder.codecModelInfo;
 		this.codecModelInfoService = builder.codecModelInfoService;
 		this.writeEnumLiterals = builder.writeEnumLiterals;
+		this.codecProxyFactory = builder.codecProxyFactory;
+		this.setReferenceDeserializer(builder.referenceDeserializer);
 	}
 
 	
@@ -208,10 +225,23 @@ public class CodecModule extends EMFModule {
 		
 		CodecDeserializers deserializers = new CodecDeserializers(this);
 		context.addDeserializers(deserializers);
+		
+		if(codecProxyFactory == null) {
+			codecProxyFactory = new CodecProxyFactory() {
+				public EObject createProxy(EClass eClass, URI uri) {
+					EObject object = EcoreUtil.create(eClass);
+					if (object instanceof InternalEObject) {
+						((InternalEObject) object).eSetProxyURI(uri);
+					}
+					return object;
+				}
+			};
+		}
 	}
 
 	public static class Builder {
 
+		private CodecProxyFactory codecProxyFactory;
 		private PackageCodecInfo codecModelInfo;
 		private CodecModelInfo codecModelInfoService;
 
@@ -236,6 +266,7 @@ public class CodecModule extends EMFModule {
 		private String proxyKey = "_proxy";
 		private String timestampKey = "_timestamp";
 		private boolean writeEnumLiterals = false;
+		private JsonDeserializer<ReferenceEntry> referenceDeserializer;
 
 		public Builder() {
 
@@ -354,10 +385,20 @@ public class CodecModule extends EMFModule {
 			return this;
 		}
 	
+		public Builder bindCodecProxyFactory(CodecProxyFactory codecProxyFactory) {
+			this.codecProxyFactory = codecProxyFactory;
+			return this;
+		}
+		public Builder bindReferenceDeserializer(JsonDeserializer<ReferenceEntry> referenceDeserializer) {
+			this.referenceDeserializer = referenceDeserializer;
+			return this;
+			
+		}
 
 		public CodecModule build() {
 			return new CodecModule(this);
 		}
+
 	}
 
 }

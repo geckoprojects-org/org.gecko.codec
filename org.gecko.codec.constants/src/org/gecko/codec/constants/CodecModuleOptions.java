@@ -117,4 +117,7 @@ public interface CodecModuleOptions {
 	 * */
 	String CODEC_MODULE_WRITE_ENUM_LITERAL = "codec.module.write.enum.literal";
 
+	String CODEC_MODULE_REFERENCE_DESERIALIZER = "codec.module.reference.deserializer";
+	String CODEC_PROXY_FACTORY = "codec.proxy.factory";
+
 }
