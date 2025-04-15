@@ -11,7 +11,7 @@
  */
 package org.gecko.codec;
 
-import com.fasterxml.jackson.core.ObjectCodec;
+import tools.jackson.core.TreeCodec;
 
 /**
  * 
@@ -20,5 +20,5 @@ import com.fasterxml.jackson.core.ObjectCodec;
  */
 public interface ObjectCodecProvider {
 
-	ObjectCodec getObjectCodec();
+	TreeCodec getObjectCodec();
 }

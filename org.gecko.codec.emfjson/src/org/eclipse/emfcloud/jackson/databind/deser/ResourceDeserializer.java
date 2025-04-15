@@ -12,8 +12,6 @@ package org.eclipse.emfcloud.jackson.databind.deser;
 
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.Attributes.RESOURCE_SET;
 
-import java.io.IOException;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -22,12 +20,12 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.emfcloud.jackson.handlers.URIHandler;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-public class ResourceDeserializer extends JsonDeserializer<Resource> {
+public class ResourceDeserializer extends ValueDeserializer<Resource> {
 
    private final URIHandler uriHandler;
 
@@ -39,14 +37,12 @@ public class ResourceDeserializer extends JsonDeserializer<Resource> {
    public boolean isCachable() { return true; }
 
    @Override
-   public Resource deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
+   public Resource deserialize(final JsonParser jp, final DeserializationContext ctxt)  {
       return deserialize(jp, ctxt, null);
    }
 
    @Override
-   @SuppressWarnings("checkstyle:cyclomaticComplexity")
-   public Resource deserialize(final JsonParser jp, final DeserializationContext ctxt, final Resource intoValue)
-      throws IOException {
+   public Resource deserialize(final JsonParser jp, final DeserializationContext ctxt, final Resource intoValue){
       final Resource resource = getResource(ctxt, intoValue);
       if (resource == null) {
          throw new IllegalArgumentException("Invalid resource");
@@ -58,9 +54,9 @@ public class ResourceDeserializer extends JsonDeserializer<Resource> {
          jp.nextToken();
       }
 
-      JsonDeserializer<Object> deserializer = ctxt.findRootValueDeserializer(ctxt.constructType(EObject.class));
+      ValueDeserializer<Object> deserializer = ctxt.findRootValueDeserializer(ctxt.constructType(EObject.class));
 
-      if (jp.getCurrentToken() == JsonToken.START_ARRAY) {
+      if (jp.currentToken() == JsonToken.START_ARRAY) {
 
          while (jp.nextToken() != JsonToken.END_ARRAY) {
 
@@ -71,7 +67,7 @@ public class ResourceDeserializer extends JsonDeserializer<Resource> {
             EMFContext.setParent(ctxt, null);
          }
 
-      } else if (jp.getCurrentToken() == JsonToken.START_OBJECT) {
+      } else if (jp.currentToken() == JsonToken.START_OBJECT) {
          EObject value = (EObject) deserializer.deserialize(jp, ctxt);
          if (value != null) {
             resource.getContents().add(value);

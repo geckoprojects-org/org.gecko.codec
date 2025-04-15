@@ -18,23 +18,21 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class DynamicPackageTest {
 
-   private final ObjectMapper mapper = new ObjectMapper();
+   private final ObjectMapper mapper = Utils.createDefaultMapper();
 
    @BeforeEach
    public void setUp() {
       EPackage.Registry.INSTANCE.put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
-      mapper.registerModule(new EMFModule());
    }
 
    @AfterEach
@@ -72,7 +70,7 @@ public class DynamicPackageTest {
    }
 
    @Test
-   public void testLoadPackageWithTwoClasses() throws JsonProcessingException {
+   public void testLoadPackageWithTwoClasses() {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", "http://www.eclipse.org/emf/2002/Ecore#//EPackage")
          .put("name", "p")

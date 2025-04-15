@@ -13,7 +13,6 @@
  */
 package org.gecko.codec.jackson.databind.ser;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -30,10 +29,10 @@ import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.jackson.databind.CodecWriteContext;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 /**
  * Codec Serailizer for FeatureInfo
@@ -49,7 +48,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 	private CodecModelInfo codecModelInfoService;
 	private EClassCodecInfo eObjCodecInfo;
 	private FeatureCodecInfo featureCodecInfo;
-	private JsonSerializer<Object> serializer;
+	private ValueSerializer<Object> serializer;
 	
 	public FeatureCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
 			final EClassCodecInfo eObjCodecInfo, final FeatureCodecInfo featureCodecInfo) {
@@ -64,7 +63,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 	 * @see org.gecko.codec.jackson.databind.ser.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
 	 */
 	@SuppressWarnings("unchecked")
-	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
+	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		if(featureCodecInfo.isIgnore()) return;
 		if(featureCodecInfo.getFeatures().size() != 1) {
 			LOGGER.warning(String.format("Currently no support for multiple EStructuralFeature in CodecInfoObject which is not a CodecIdInfo"));
@@ -81,7 +80,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 			}
 		}
 		
-		if(gen.getOutputContext() instanceof CodecWriteContext cwt) {
+		if(gen.streamWriteContext() instanceof CodecWriteContext cwt) {
 			cwt.setFeature(feature);
 		}
 		
@@ -110,7 +109,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 
 	
 	private void serializeSingleAttribute(EObject rootObj, Object value, EStructuralFeature feature, JsonGenerator gen,
-			SerializerProvider provider) throws IOException {
+			SerializationContext provider) {
 		
 		if(value == null && !codecModule.isSerializeNullValue()) {
 			return;
@@ -119,16 +118,16 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 			return;
 		}
 		if(codecModule.isUseNamesFromExtendedMetaData()) {
-			gen.writeFieldName(featureCodecInfo.getKey());
+			gen.writeName(featureCodecInfo.getKey());
 		} else {
-			gen.writeFieldName(feature.getName());
+			gen.writeName(feature.getName());
 		}
 		serializeSingleAttributeValue(value, feature, gen, provider);
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void serializeSingleAttributeValue(Object value, EStructuralFeature feature, JsonGenerator gen,
-			SerializerProvider provider) throws IOException {
+			SerializationContext provider) {
 		
 		if(value == null) {
 			gen.writeNull();
@@ -146,7 +145,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 	
 	@SuppressWarnings("unchecked")
 	private void serializeManyAttribute(List<Object> values, EStructuralFeature feature,
-			JsonGenerator gen, SerializerProvider provider) throws IOException {
+			JsonGenerator gen, SerializationContext provider) {
 //		We need to check weather there is some null value inside the list and decide weather to serialize it or not
 		List<Object> valuesToSerialize = values;
 		if(!codecModule.isSerializeNullValue()) {
@@ -156,9 +155,9 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		if(valuesToSerialize.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue())) return;
 		
 		if(codecModule.isUseNamesFromExtendedMetaData()) {
-			gen.writeFieldName(featureCodecInfo.getKey());
+			gen.writeName(featureCodecInfo.getKey());
 		} else {
-			gen.writeFieldName(feature.getName());
+			gen.writeName(feature.getName());
 		}	
 				
 		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);

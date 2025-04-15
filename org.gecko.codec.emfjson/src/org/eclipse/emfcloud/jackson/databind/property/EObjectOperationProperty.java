@@ -18,11 +18,12 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
+
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
 
 public class EObjectOperationProperty extends EObjectProperty {
 
@@ -35,8 +36,7 @@ public class EObjectOperationProperty extends EObjectProperty {
    }
 
    @Override
-   public void serialize(final EObject bean, final JsonGenerator jg, final SerializerProvider provider)
-      throws IOException {
+   public void serialize(final EObject bean, final JsonGenerator jg, final SerializationContext provider) {
       Object value;
       try {
          value = bean.eInvoke(operation, null);
@@ -46,21 +46,20 @@ public class EObjectOperationProperty extends EObjectProperty {
       }
 
       if (value != null) {
-         jg.writeFieldName(getFieldName());
-         JsonSerializer<Object> serializer = provider.findValueSerializer(value.getClass());
+         jg.writeName(getFieldName());
+         ValueSerializer<Object> serializer = provider.findValueSerializer(value.getClass());
          serializer.serialize(value, jg, provider);
       }
    }
 
    @Override
-   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
+   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) {
       return null;
    }
 
    @Override
    public void deserializeAndSet(final JsonParser jp, final EObject current, final DeserializationContext ctxt,
-      final Resource resource)
-      throws IOException {
+      final Resource resource) {
       // do nothing
    }
 

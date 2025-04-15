@@ -10,9 +10,9 @@
  ********************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.ser;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 /**
  * Serializes a null key in an EMap.
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 public class NullKeySerializer extends StdSerializer<Object> {
 
    /** Default serial UID. */
-   private static final long serialVersionUID = 1L;
+//   private static final long serialVersionUID = 1L;
 
    /**
     * Constructs a new Null key serializer.
@@ -32,8 +32,7 @@ public class NullKeySerializer extends StdSerializer<Object> {
    }
 
    @Override
-   public void serialize(final Object nullKey, final JsonGenerator gen, final SerializerProvider serializers)
-      throws java.io.IOException {
-      gen.writeFieldName("");
+   public void serialize(final Object nullKey, final JsonGenerator gen, final SerializationContext serializers) {
+      gen.writeName("");
    }
 }

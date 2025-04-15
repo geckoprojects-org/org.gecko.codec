@@ -18,10 +18,10 @@ import static java.util.Objects.nonNull;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonStreamContext;
-import com.fasterxml.jackson.core.json.DupDetector;
-import com.fasterxml.jackson.core.json.JsonWriteContext;
+import tools.jackson.core.TokenStreamContext;
+
+import tools.jackson.core.json.DupDetector;
+import tools.jackson.core.json.JsonWriteContext;
 
 /**
  * Write context that provides codec information. We want to give information about the underlying structure
@@ -31,33 +31,23 @@ import com.fasterxml.jackson.core.json.JsonWriteContext;
 public class CodecWriteContext extends JsonWriteContext {
 	
 	private EStructuralFeature feature;
-
-	/**
-	 * Creates a new instance.
-	 * @param type
-	 * @param parent
-	 * @param dups
-	 */
-	protected CodecWriteContext(int type, CodecWriteContext parent, DupDetector dups) {
-		super(type, parent, dups);
-	}
 	
 	protected CodecWriteContext(int type, CodecWriteContext parent, DupDetector dups, Object currentObject) {
 		super(type, parent, dups, currentObject);
 	}
 	
     public static CodecWriteContext createRootCodecContext(DupDetector dd) {
-        return new CodecWriteContext(TYPE_ROOT, null, dd);
+        return new CodecWriteContext(TYPE_ROOT, null, dd, null);
     }
     
-    public static boolean isCodecContext(JsonStreamContext ctx) {
+    public static boolean isCodecContext(TokenStreamContext ctx) {
     	return ctx == null ? false : ctx instanceof CodecWriteContext;
     }
     
-    public static int writeFeatureAndFieldName(JsonStreamContext ctx, EStructuralFeature feature, String fieldName) throws JsonProcessingException {
+    public static int writeFeatureAndFieldName(TokenStreamContext ctx, EStructuralFeature feature, String fieldName)  {
     	if (isNull(ctx) || !isCodecContext(ctx)) {
     		if (ctx instanceof JsonWriteContext) {
-    			return ((JsonWriteContext)ctx).writeFieldName(fieldName);
+    			return ((JsonWriteContext)ctx).writeName(fieldName);
     		}
     		throw new IllegalArgumentException("A non null CodecGeneratorWriteContext must be provided");
     	}
@@ -68,7 +58,7 @@ public class CodecWriteContext extends JsonWriteContext {
     	}
     }
     
-    public static void resetFeature(JsonStreamContext ctx) {
+    public static void resetFeature(TokenStreamContext ctx) {
     	if (isCodecContext(ctx)) {
     		((CodecWriteContext)ctx).setFeature(null);
     	}
@@ -90,8 +80,8 @@ public class CodecWriteContext extends JsonWriteContext {
 		return feature;
 	}
 	
-	public int writeFeatureAndFieldName(EStructuralFeature feature, String name) throws JsonProcessingException {
-		int r = super.writeFieldName(name);
+	public int writeFeatureAndFieldName(EStructuralFeature feature, String name) {
+		int r = super.writeName(name);
 		if (r == STATUS_OK_AS_IS || r == STATUS_OK_AFTER_COMMA) {
 			this.feature = feature;
 		}
@@ -102,10 +92,10 @@ public class CodecWriteContext extends JsonWriteContext {
 		CodecWriteContext ctxt = (CodecWriteContext) _child;
         if (ctxt == null) {
             _child = ctxt = new CodecWriteContext(TYPE_ARRAY, this,
-                    (_dups == null) ? null : _dups.child());
+                    (_dups == null) ? null : _dups.child(), null);
             return ctxt;
         }
-        return (CodecWriteContext) ctxt.reset(TYPE_ARRAY);
+        return (CodecWriteContext) ctxt.reset(TYPE_ARRAY, null);
     }
 
     /* @since 2.10 */
@@ -120,18 +110,18 @@ public class CodecWriteContext extends JsonWriteContext {
     }
 
     public CodecWriteContext createChildObjectContext() {
-        JsonWriteContext ctxt = _child;
+    	CodecWriteContext ctxt = (CodecWriteContext) _child;
         if (ctxt == null) {
             _child = ctxt = new CodecWriteContext(TYPE_OBJECT, this,
-                    (_dups == null) ? null : _dups.child());
+                    (_dups == null) ? null : _dups.child(), null);
             return (CodecWriteContext) ctxt;
         }
-        return (CodecWriteContext) ctxt.reset(TYPE_OBJECT);
+        return (CodecWriteContext) ctxt.reset(TYPE_OBJECT, null);
     }
 
     /* @since 2.10 */
     public CodecWriteContext createChildObjectContext(Object currValue) {
-        JsonWriteContext ctxt = _child;
+    	CodecWriteContext ctxt = (CodecWriteContext) _child;
         if (ctxt == null) {
             _child = ctxt = new CodecWriteContext(TYPE_OBJECT, this,
                     (_dups == null) ? null : _dups.child(), currValue);

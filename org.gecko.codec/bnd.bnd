@@ -4,13 +4,13 @@ Bundle-Description: Gecko Project Codec Framework
 
 -buildpath: \
 	org.osgi.util.promise;version=latest,\
-	com.fasterxml.jackson.core.jackson-core;version=latest,\
-	com.fasterxml.jackson.core.jackson-databind;version=latest,\
-	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
 	org.gecko.codec.emfjson;version=project,\
 	org.gecko.codec.info.model,\
 	org.gecko.codec.info,\
-	org.gecko.codec.constants
+	org.gecko.codec.constants,\
+	com.fasterxml.jackson.core.jackson-annotations;version='3.0',\
+	tools.jackson.core.jackson-core,\
+	tools.jackson.core.jackson-databind
 	
 -testpath: \
 	org.gecko.codec.test.models;version=project

@@ -57,18 +57,19 @@ import org.eclipse.emfcloud.jackson.junit.annotations.impl.TestTypeClassImpl;
 import org.eclipse.emfcloud.jackson.junit.annotations.impl.TestTypeNameImpl;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.eclipse.emfcloud.jackson.utils.ValueReader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.CaseFormat;
+
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 public class JsonTypeInfoTest {
 
@@ -80,8 +81,7 @@ public class JsonTypeInfoTest {
       EPackage.Registry.INSTANCE.put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
       EPackage.Registry.INSTANCE.put(AnnotationsPackage.eNS_URI, AnnotationsPackage.eINSTANCE);
 
-      mapper = new ObjectMapper();
-      mapper.registerModule(new EMFModule());
+      mapper = Utils.createDefaultMapper();
 
       resourceSet = new ResourceSetImpl();
       resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
@@ -286,7 +286,7 @@ public class JsonTypeInfoTest {
    }
 
    @Test
-   public void testReadClassByName() throws JsonProcessingException {
+   public void testReadClassByName()  {
       JsonNode data = mapper.createObjectNode()
          .put("@type", TEST_TYPE_NAME.getName())
          .put("value", "foo");
@@ -301,7 +301,7 @@ public class JsonTypeInfoTest {
    }
 
    @Test
-   public void testReadClassByNameAgain() throws JsonProcessingException {
+   public void testReadClassByNameAgain() {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", uriOf(CONTAINER))
          .set("typedByNames", mapper.createArrayNode()
@@ -333,7 +333,7 @@ public class JsonTypeInfoTest {
    }
 
    @Test
-   public void testReadClassByQualifiedClassName() throws JsonProcessingException {
+   public void testReadClassByQualifiedClassName()  {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", uriOf(CONTAINER))
          .set("typedByClasses", mapper.createArrayNode()
@@ -398,7 +398,7 @@ public class JsonTypeInfoTest {
       };
       final EMFModule module = new EMFModule();
       module.setTypeInfo(new EcoreTypeInfo(EcoreTypeInfo.PROPERTY, classReader));
-      final ObjectMapper mapper = new ObjectMapper().registerModule(module);
+      final ObjectMapper mapper = Utils.createMapper(module);
 
       final String value = "foo";
       final JsonNode data = mapper.createObjectNode()
@@ -406,7 +406,7 @@ public class JsonTypeInfoTest {
             .put("value", value);
       final EObject read = mapper.reader()
             .withAttribute(RESOURCE_SET, resourceSet)
-            .readValue(data, EObject.class);
+            .readValue(data);
 
       assertThat(read).isInstanceOf(TestG.class);
       final TestG testG = (TestG) read;

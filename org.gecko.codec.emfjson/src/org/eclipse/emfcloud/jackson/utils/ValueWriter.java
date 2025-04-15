@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.utils;
 
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
 
 public interface ValueWriter<T, V> {
-   V writeValue(T value, SerializerProvider context);
+   V writeValue(T value, SerializationContext context);
 }

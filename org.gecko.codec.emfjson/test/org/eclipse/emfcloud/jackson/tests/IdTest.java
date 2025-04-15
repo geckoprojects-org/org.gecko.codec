@@ -24,9 +24,9 @@ import org.eclipse.emfcloud.jackson.support.StandardExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(StandardExtension.class)
 public class IdTest {
@@ -53,7 +53,7 @@ public class IdTest {
    }
 
    @Test
-   public void testReadId(@org.eclipse.emfcloud.jackson.support.ObjectMapper(feature = OPTION_USE_ID, enabled = true) ObjectMapper idMapper) throws JsonProcessingException {
+   public void testReadId(@org.eclipse.emfcloud.jackson.support.ObjectMapper(feature = OPTION_USE_ID, enabled = true) ObjectMapper idMapper) {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", "http://www.emfjson.org/jackson/model#//User")
          .put("@id", "1")
@@ -70,7 +70,7 @@ public class IdTest {
    }
 
    @Test
-   public void testReadId_WhenIdBeforeTypeField(@org.eclipse.emfcloud.jackson.support.ObjectMapper(feature = OPTION_USE_ID, enabled = true) ObjectMapper idMapper) throws JsonProcessingException {
+   public void testReadId_WhenIdBeforeTypeField(@org.eclipse.emfcloud.jackson.support.ObjectMapper(feature = OPTION_USE_ID, enabled = true) ObjectMapper idMapper) {
       JsonNode data = mapper.createObjectNode()
          .put("@id", "1")
          .put("eClass", "http://www.emfjson.org/jackson/model#//User")

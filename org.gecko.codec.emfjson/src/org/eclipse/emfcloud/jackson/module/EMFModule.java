@@ -27,13 +27,14 @@ import org.eclipse.emfcloud.jackson.databind.ser.NullKeySerializer;
 import org.eclipse.emfcloud.jackson.handlers.BaseURIHandler;
 import org.eclipse.emfcloud.jackson.handlers.URIHandler;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.core.Version;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * Module implementation that allows serialization and deserialization of
@@ -47,8 +48,8 @@ public class EMFModule extends SimpleModule {
    private EcoreTypeInfo typeInfo;
    private EcoreIdentityInfo identityInfo;
 
-   private JsonSerializer<EObject> referenceSerializer;
-   private JsonDeserializer<ReferenceEntry> referenceDeserializer;
+   private ValueSerializer<EObject> referenceSerializer;
+   private ValueDeserializer<ReferenceEntry> referenceDeserializer;
 
    public void setTypeInfo(final EcoreTypeInfo info) { this.typeInfo = info; }
 
@@ -56,17 +57,17 @@ public class EMFModule extends SimpleModule {
 
    public void setReferenceInfo(final EcoreReferenceInfo referenceInfo) { this.referenceInfo = referenceInfo; }
 
-   public void setReferenceSerializer(final JsonSerializer<EObject> serializer) {
+   public void setReferenceSerializer(final ValueSerializer<EObject> serializer) {
       this.referenceSerializer = serializer;
    }
 
-   public JsonSerializer<EObject> getReferenceSerializer() { return referenceSerializer; }
+   public ValueSerializer<EObject> getReferenceSerializer() { return referenceSerializer; }
 
-   public void setReferenceDeserializer(final JsonDeserializer<ReferenceEntry> deserializer) {
+   public void setReferenceDeserializer(final ValueDeserializer<ReferenceEntry> deserializer) {
       this.referenceDeserializer = deserializer;
    }
 
-   public JsonDeserializer<ReferenceEntry> getReferenceDeserializer() { return referenceDeserializer; }
+   public ValueDeserializer<ReferenceEntry> getReferenceDeserializer() { return referenceDeserializer; }
 
    /**
     * Enumeration that defines all possible options that can be used
@@ -148,20 +149,43 @@ public class EMFModule extends SimpleModule {
     * @param factory Jackson factory
     * @return mapper
     */
+//   public static ObjectMapper setupDefaultMapper(final TokenStreamFactory factory) {
+//      final ObjectMapper mapper;
+//      // same as emf
+//      final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+//      dateFormat.setTimeZone(TimeZone.getDefault());
+//
+//      mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+//      mapper.serializationConfig().getDateFormat() setDateFormat(dateFormat);
+//      mapper.setTimeZone(TimeZone.getDefault());
+//      mapper.  registerModule(new EMFModule());
+//      // add default serializer for null EMap key
+//      this.setDefaultNullKeySerializer(new NullKeySerializer());
+//
+//      
+//      JsonFactory f3 = JsonFactory.builder() 
+//    		    .enable(JsonReadFeature.ALLOW_JAVA_COMMENTS)
+//    		    .build();
+//    		ObjectMapper mapper3 = JsonMapper.builder(f3)
+//    		   .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES)
+//    		   .addMixIn(MyValue.class, MixinOverrides.class)
+//    		   .build();
+//      
+//      return mapper;
+//   }
+   
    public static ObjectMapper setupDefaultMapper(final JsonFactory factory) {
-      final ObjectMapper mapper = new ObjectMapper(factory);
-      // same as emf
-      final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
-      dateFormat.setTimeZone(TimeZone.getDefault());
-
-      mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-      mapper.setDateFormat(dateFormat);
-      mapper.setTimeZone(TimeZone.getDefault());
-      mapper.registerModule(new EMFModule());
-      // add default serializer for null EMap key
-      mapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
-
-      return mapper;
+	   
+	   final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+       dateFormat.setTimeZone(TimeZone.getDefault());
+	   JsonMapper.Builder mapperBuilder = JsonMapper.builder(factory);
+	   mapperBuilder.enable(SerializationFeature.INDENT_OUTPUT);
+	   EMFModule module = new EMFModule();
+	   module.setDefaultNullKeySerializer(new NullKeySerializer());
+	   mapperBuilder.addModule(module);
+	   mapperBuilder.defaultDateFormat(dateFormat);
+	   mapperBuilder.defaultTimeZone(TimeZone.getDefault());	   
+	   return mapperBuilder.build();
    }
 
    protected int moduleFeatures = DEFAULT_FEATURES;

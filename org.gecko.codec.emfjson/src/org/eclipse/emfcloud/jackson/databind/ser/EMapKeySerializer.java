@@ -21,20 +21,19 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 /**
  * Serializes keys of an {@link EMap}.
  *
  * @author vhemery
  */
-public class EMapKeySerializer extends JsonSerializer<Object> {
+public class EMapKeySerializer extends ValueSerializer<Object> {
 
    @Override
-   public void serialize(final Object value, final JsonGenerator gen, final SerializerProvider serializers)
-      throws java.io.IOException {
+   public void serialize(final Object value, final JsonGenerator gen, final SerializationContext serializers) {
       EStructuralFeature feature = EMFContext.getFeature(serializers);
       Optional<EReference> mapRef = Optional.ofNullable(feature).filter(EReference.class::isInstance)
          .map(EReference.class::cast);
@@ -43,10 +42,10 @@ public class EMapKeySerializer extends JsonSerializer<Object> {
       Optional<EDataType> keyType = keyFeature.filter(EAttribute.class::isInstance).map(EAttribute.class::cast)
          .map(EAttribute::getEAttributeType);
       if (keyType.isPresent()) {
-         gen.writeFieldName(EcoreUtil.convertToString(keyType.get(), value));
+         gen.writeName(EcoreUtil.convertToString(keyType.get(), value));
       } else {
          // the metamodel is probably incorrect...
-         gen.writeFieldName(value.toString());
+         gen.writeName(value.toString());
       }
    }
 }

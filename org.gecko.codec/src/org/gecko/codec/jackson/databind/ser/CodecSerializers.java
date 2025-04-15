@@ -18,10 +18,13 @@ import org.eclipse.emfcloud.jackson.databind.ser.EMFSerializers;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import tools.jackson.databind.ValueSerializer;
+
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.SerializationConfig;
 
 /**
  * Extension of EMFSerializers to overwrite serializer for EObject so that it takes ours
@@ -43,16 +46,17 @@ public class CodecSerializers extends EMFSerializers {
 		this.codecModelInfoService = module.getCodecModelInfoService();
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.eclipse.emfcloud.jackson.databind.ser.EMFSerializers#findSerializer(com.fasterxml.jackson.databind.SerializationConfig, com.fasterxml.jackson.databind.JavaType, com.fasterxml.jackson.databind.BeanDescription)
+	 * @see org.eclipse.emfcloud.jackson.databind.ser.EMFSerializers#findSerializer(tools.jackson.databind.SerializationConfig, tools.jackson.databind.JavaType, tools.jackson.databind.BeanDescription, com.fasterxml.jackson.annotation.JsonFormat.Value)
 	 */
 	@Override
-	public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc) {
+	public ValueSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc, JsonFormat.Value formatOverrides) {
 		
 		if (type.isTypeOrSubTypeOf(EObject.class)) {
 			return new CodecEObjectSerializer(codecModule, codecModelInfoService);
 		}
-		return super.findSerializer(config, type, beanDesc);
+		return super.findSerializer(config, type, beanDesc, formatOverrides);
 	}
 }

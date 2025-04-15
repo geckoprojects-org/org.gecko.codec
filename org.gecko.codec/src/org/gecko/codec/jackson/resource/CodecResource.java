@@ -53,12 +53,13 @@ import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
+import tools.jackson.databind.ValueDeserializer;
+
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper.Builder;
 
 /**
  * Codec specific Resource, where we overwrite the CodecModule, ObjectMapper and CodecModelInfo options, 
@@ -156,10 +157,9 @@ public class CodecResource extends ResourceImpl {
 //		This is necessary otherwise asking the ModelInfoService we would get a new instance every time
 //		instead we need the same one here since it's the one we updated based on the options
 		moduleBuilder.bindCodecModelInfo(modelCodecInfo);
-//		Register the module with the mapper
 		
-		mapper = objMapperBuilder.build();
-		mapper.registerModule(moduleBuilder.build());		
+//		Register the module with the mapper		
+		mapper = objMapperBuilder.addModule(moduleBuilder.build()).build();
 	}
 	
 	@Override
@@ -237,8 +237,7 @@ public class CodecResource extends ResourceImpl {
 //			
 
 //			Register the module with the mapper
-			mapper = objMapperBuilder.build();
-			mapper.registerModule(moduleBuilder.build());	
+			mapper = objMapperBuilder.addModule(moduleBuilder.build()).build();
 		} catch(Exception e) {
 			throw e;
 		}
@@ -480,8 +479,8 @@ public class CodecResource extends ResourceImpl {
 				moduleBuilder.withWriteEnumLiterals((boolean) v);
 				break;
 			case CodecModuleOptions.CODEC_MODULE_REFERENCE_DESERIALIZER:
-				if(v instanceof JsonDeserializer) {
-					moduleBuilder.bindReferenceDeserializer((JsonDeserializer<ReferenceEntry> ) v);
+				if(v instanceof ValueDeserializer) {
+					moduleBuilder.bindReferenceDeserializer((ValueDeserializer<ReferenceEntry> ) v);
 				} else {
 					LOGGER.warning(() -> CodecModuleOptions.CODEC_MODULE_REFERENCE_DESERIALIZER +" must be an instance of JsonDeserializer for.");
 				}

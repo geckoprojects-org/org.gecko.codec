@@ -14,8 +14,8 @@ package org.gecko.codec;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.TreeCodec;
+import tools.jackson.databind.ObjectWriter;
 
 /**
  * Dummy DataOutput for the {@link ObjectWriter#writeValue(DataOutput)} method
@@ -31,7 +31,7 @@ public class CodecDataOutput<W> extends CodecWriterProvider<W> implements DataOu
 	 * 
 	 * @param writer
 	 */
-	public CodecDataOutput(W writer, ObjectCodec mapper) {
+	public CodecDataOutput(W writer, TreeCodec mapper) {
 		super(writer, mapper);
 	}
 

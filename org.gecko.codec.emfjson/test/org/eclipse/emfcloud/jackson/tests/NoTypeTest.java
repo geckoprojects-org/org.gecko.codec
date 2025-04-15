@@ -27,12 +27,13 @@ import org.eclipse.emfcloud.jackson.junit.model.User;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class NoTypeTest {
 
@@ -46,7 +47,7 @@ public class NoTypeTest {
 
       EMFModule module = new EMFModule();
       module.configure(OPTION_SERIALIZE_TYPE, false);
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       resourceSet.getResourceFactoryRegistry()
          .getExtensionToFactoryMap()
@@ -98,7 +99,7 @@ public class NoTypeTest {
    }
 
    @Test
-   public void testLoadSingleObjectWithNoType() throws JsonProcessingException {
+   public void testLoadSingleObjectWithNoType() {
       JsonNode data = mapper.createObjectNode()
          .put("userId", "1")
          .put("name", "Paul");
@@ -116,7 +117,7 @@ public class NoTypeTest {
    }
 
    @Test
-   public void testLoadTwoRootObjectsWithNoType() throws JsonProcessingException {
+   public void testLoadTwoRootObjectsWithNoType() {
       JsonNode data = mapper.createArrayNode()
          .add(mapper.createObjectNode()
             .put("userId", "1")
@@ -173,7 +174,7 @@ public class NoTypeTest {
    }
 
    @Test
-   public void testLoadSingleObjectWithNoTypeAndOneContainment() throws JsonProcessingException {
+   public void testLoadSingleObjectWithNoTypeAndOneContainment() {
       JsonNode data = mapper.createObjectNode()
          .put("userId", "1")
          .put("name", "Paul")

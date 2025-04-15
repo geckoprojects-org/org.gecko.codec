@@ -91,7 +91,6 @@ public final class JsonAnnotations {
     * @param valueWriter the reader to use for serializing type info
     * @return the type information property
     */
-   @SuppressWarnings("checkstyle:cyclomaticComplexity")
    public static EcoreTypeInfo getTypeProperty(final EClassifier classifier,
                                                ValueReader<String, EClass> valueReader,
                                                ValueWriter<EClass, String> valueWriter) {

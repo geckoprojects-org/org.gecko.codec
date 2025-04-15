@@ -19,13 +19,13 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.junit.annotations.AnnotationsPackage;
 import org.eclipse.emfcloud.jackson.junit.annotations.RawJson;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class JsonRawValueTest {
 
@@ -36,8 +36,7 @@ public class JsonRawValueTest {
       EPackage.Registry.INSTANCE.put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
       EPackage.Registry.INSTANCE.put(AnnotationsPackage.eNS_URI, AnnotationsPackage.eINSTANCE);
 
-      mapper = new ObjectMapper();
-      mapper.registerModule(new EMFModule());
+      mapper = Utils.createDefaultMapper();
    }
 
    @AfterEach

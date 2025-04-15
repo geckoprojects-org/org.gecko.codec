@@ -10,20 +10,18 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.deser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emfcloud.jackson.annotations.EcoreReferenceInfo;
 import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-public class EcoreReferenceDeserializer extends JsonDeserializer<ReferenceEntry> {
+public class EcoreReferenceDeserializer extends ValueDeserializer<ReferenceEntry> {
 
    private final EcoreReferenceInfo info;
    private final EcoreTypeInfo typeInfo;
@@ -34,7 +32,7 @@ public class EcoreReferenceDeserializer extends JsonDeserializer<ReferenceEntry>
    }
 
    @Override
-   public ReferenceEntry deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
+   public ReferenceEntry deserialize(final JsonParser jp, final DeserializationContext ctxt) {
       EObject parent = EMFContext.getParent(ctxt);
       EReference reference = EMFContext.getReference(ctxt);
 
@@ -42,12 +40,12 @@ public class EcoreReferenceDeserializer extends JsonDeserializer<ReferenceEntry>
       String type = null;
 
       while (jp.nextToken() != JsonToken.END_OBJECT) {
-         final String field = jp.getCurrentName();
+         final String field = jp.currentName();
 
          if (field.equalsIgnoreCase(info.getProperty())) {
-            id = jp.nextTextValue();
+            id = jp.nextStringValue();
          } else if (field.equalsIgnoreCase(typeInfo.getProperty())) {
-            type = jp.nextTextValue();
+            type = jp.nextStringValue();
          }
       }
 

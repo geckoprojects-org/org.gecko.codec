@@ -13,13 +13,11 @@
  */
 package org.gecko.codec.jackson.databind.deser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * 
@@ -28,8 +26,8 @@ import com.fasterxml.jackson.databind.DeserializationContext;
  */
 public interface CodecInfoDeserializer {
 	
-	public EObject deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException;
+	public EObject deserialize(JsonParser jp, DeserializationContext ctxt);
 
-	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) throws IOException;
+	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource);
 
 }

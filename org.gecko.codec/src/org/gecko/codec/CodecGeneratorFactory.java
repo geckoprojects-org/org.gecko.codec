@@ -11,7 +11,7 @@
  */
 package org.gecko.codec;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonGenerator;
 
 /**
  * Factory for codec specific {@link JsonGenerator}.

@@ -11,7 +11,7 @@
  */
 package org.gecko.codec;
 
-import com.fasterxml.jackson.core.ObjectCodec;
+import tools.jackson.core.TreeCodec;
 
 /**
  * Simple provider for the writer and ObjectCodec used for generating.
@@ -22,12 +22,12 @@ import com.fasterxml.jackson.core.ObjectCodec;
 public class CodecWriterProvider<W> implements ObjectCodecProvider{
 	
 	private final W writer;
-	private ObjectCodec objectCodec;
+	private TreeCodec objectCodec;
 
 	/**
 	 * Creates a new instance.
 	 */
-	public CodecWriterProvider(W writer, ObjectCodec objectCodec) {
+	public CodecWriterProvider(W writer, TreeCodec objectCodec) {
 		this.writer = writer;
 		this.objectCodec = objectCodec;
 	}
@@ -41,7 +41,7 @@ public class CodecWriterProvider<W> implements ObjectCodecProvider{
 	 * @see org.gecko.codec.ObjectCodecProvider#getObjectCodec()
 	 */
 	@Override
-	public ObjectCodec getObjectCodec() {
+	public TreeCodec getObjectCodec() {
 		return objectCodec;
 	}
 	

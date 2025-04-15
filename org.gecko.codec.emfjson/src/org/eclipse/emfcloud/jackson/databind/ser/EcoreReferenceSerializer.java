@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.ser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -21,12 +19,12 @@ import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.emfcloud.jackson.handlers.URIHandler;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.DatabindContext;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.DatabindContext;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-public class EcoreReferenceSerializer extends JsonSerializer<EObject> {
+public class EcoreReferenceSerializer extends ValueSerializer<EObject> {
 
    private final EcoreReferenceInfo info;
    private final EcoreTypeInfo typeInfo;
@@ -39,17 +37,16 @@ public class EcoreReferenceSerializer extends JsonSerializer<EObject> {
    }
 
    @Override
-   public void serialize(final EObject value, final JsonGenerator jg, final SerializerProvider serializers)
-      throws IOException {
+   public void serialize(final EObject value, final JsonGenerator jg, final SerializationContext serializers) {
       final EObject parent = EMFContext.getParent(serializers);
       final String href = getHRef(serializers, parent, value);
 
       jg.writeStartObject();
-      jg.writeStringField(typeInfo.getProperty(), typeInfo.getValueWriter().writeValue(value.eClass(), serializers));
+      jg.writeStringProperty(typeInfo.getProperty(), typeInfo.getValueWriter().writeValue(value.eClass(), serializers));
       if (href == null) {
-         jg.writeNullField(info.getProperty());
+         jg.writeNullProperty(info.getProperty());
       } else {
-         jg.writeStringField(info.getProperty(), href);
+         jg.writeStringProperty(info.getProperty(), href);
       }
       jg.writeEndObject();
    }
@@ -68,7 +65,7 @@ public class EcoreReferenceSerializer extends JsonSerializer<EObject> {
       return sourceResource == null || sourceResource != EMFContext.getResource(ctxt, target);
    }
 
-   private String getHRef(final SerializerProvider ctxt, final EObject parent, final EObject value) {
+   private String getHRef(final SerializationContext ctxt, final EObject parent, final EObject value) {
       if (isExternal(ctxt, parent, value)) {
 
          URI targetURI = EMFContext.getURI(ctxt, value);

@@ -13,7 +13,6 @@
  */
 package org.gecko.codec.jackson.databind.ser;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -28,8 +27,8 @@ import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Codec Serializer for IdInfo
@@ -52,7 +51,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 	}
 
 	@SuppressWarnings("unchecked")
-	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
+	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		EMFContext.setParent(provider, rootObj);
 		
 		String idStrategy = idCodecInfo.getIdStrategy() != null ? idCodecInfo.getIdStrategy() : "";
@@ -74,7 +73,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 			if(w != null) {
 				id = w.writeValue(id, provider);
 			}
-			gen.writeFieldName(codecModule.getIdKey());
+			gen.writeName(codecModule.getIdKey());
 			
 			if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
 				gen.writeObjectId(id);
@@ -91,7 +90,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 				LOGGER.severe(String.format("ID strategy is ID_FIELD but id features are %d. There should be exactly 1!", idFeatures.size()));
 				break;
 			}
-			gen.writeFieldName(codecModule.getIdKey());
+			gen.writeName(codecModule.getIdKey());
 			EStructuralFeature idFeature = idFeatures.get(0);
 			Object featureValue = rootObj.eGet(idFeature);
 			//TODO: We have to specify in the documentation that we are expecting a writer which takes the id field as input
@@ -108,7 +107,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 				if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
 					gen.writeObjectId(featureValue);
 					if(featureValue == null) {
-						rootObj.eSet(idFeature, gen.getCurrentValue().toString()); //if the id feature is null, the generator takes care of creating a new one and then we have to set it to the EObject
+						rootObj.eSet(idFeature, gen.currentValue().toString()); //if the id feature is null, the generator takes care of creating a new one and then we have to set it to the EObject
 					}
 				} else {
 					if(featureValue == null) {

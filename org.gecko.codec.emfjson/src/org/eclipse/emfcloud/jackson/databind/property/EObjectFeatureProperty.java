@@ -15,8 +15,6 @@ import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.getElemen
 import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.isRawValue;
 import static org.eclipse.emfcloud.jackson.module.EMFModule.Feature.OPTION_SERIALIZE_DEFAULT_VALUE;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -27,17 +25,17 @@ import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntries;
 import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
 import org.eclipse.emfcloud.jackson.databind.type.FeatureKind;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.impl.UnknownSerializer;
-import com.fasterxml.jackson.databind.ser.std.RawSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.ser.impl.UnknownSerializer;
+import tools.jackson.databind.ser.jackson.RawSerializer;
 
 public class EObjectFeatureProperty extends EObjectProperty {
 
@@ -45,8 +43,8 @@ public class EObjectFeatureProperty extends EObjectProperty {
    private final JavaType javaType;
    private final boolean defaultValues;
 
-   private JsonSerializer<Object> serializer;
-   private JsonDeserializer<Object> deserializer;
+   private ValueSerializer<Object> serializer;
+   private ValueDeserializer<Object> deserializer;
 
    public EObjectFeatureProperty(final EStructuralFeature feature, final JavaType type, final int features) {
       super(getElementName(feature, features));
@@ -62,20 +60,18 @@ public class EObjectFeatureProperty extends EObjectProperty {
    }
 
    @Override
-   @SuppressWarnings({ "checkstyle:cyclomaticComplexity", "checkstyle:fallThrough" })
    public void deserializeAndSet(final JsonParser jp, final EObject current, final DeserializationContext ctxt,
-      final Resource resource)
-      throws IOException {
+      final Resource resource) {
       if (deserializer == null) {
          deserializer = ctxt.findContextualValueDeserializer(javaType, null);
       }
       JsonToken token = null;
 
-      if (jp.getCurrentToken() == JsonToken.FIELD_NAME) {
+      if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
          token = jp.nextToken();
       }
 
-      if (jp.getCurrentToken() == JsonToken.VALUE_NULL) {
+      if (jp.currentToken() == JsonToken.VALUE_NULL) {
          return;
       }
 
@@ -98,7 +94,7 @@ public class EObjectFeatureProperty extends EObjectProperty {
 
             if (feature.isMany()) {
                if (token != JsonToken.START_ARRAY && !isMap) {
-                  throw new JsonParseException(jp, "Expected START_ARRAY token, got " + token);
+                  throw new StreamReadException(jp, "Expected START_ARRAY token, got " + token);
                }
 
                deserializer.deserialize(jp, ctxt, current.eGet(feature));
@@ -133,8 +129,7 @@ public class EObjectFeatureProperty extends EObjectProperty {
    }
 
    @Override
-   public void serialize(final EObject bean, final JsonGenerator jg, final SerializerProvider provider)
-      throws IOException {
+   public void serialize(final EObject bean, final JsonGenerator jg, final SerializationContext provider) {
       if (serializer == null) {
          serializer = provider.findValueSerializer(javaType);
       }
@@ -145,10 +140,10 @@ public class EObjectFeatureProperty extends EObjectProperty {
       if (bean.eIsSet(feature)) {
          Object value = bean.eGet(feature, false);
 
-         jg.writeFieldName(getFieldName());
+         jg.writeName(getFieldName());
 
          if (serializer instanceof UnknownSerializer) {
-            JsonSerializer<Object> other = provider.findValueSerializer(value.getClass());
+            ValueSerializer<Object> other = provider.findValueSerializer(value.getClass());
             if (other != null) {
                other.serialize(value, jg, provider);
             }
@@ -159,14 +154,14 @@ public class EObjectFeatureProperty extends EObjectProperty {
          Object value = feature.getDefaultValue();
 
          if (value != null) {
-            jg.writeFieldName(getFieldName());
+            jg.writeName(getFieldName());
             serializer.serialize(value, jg, provider);
          }
       }
    }
 
    @Override
-   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
+   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) {
       return null;
    }
 }

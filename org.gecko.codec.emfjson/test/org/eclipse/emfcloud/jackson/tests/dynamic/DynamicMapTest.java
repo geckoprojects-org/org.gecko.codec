@@ -26,18 +26,18 @@ import org.eclipse.emf.ecore.impl.DynamicEObjectImpl.BasicEMapEntry;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @SuppressWarnings("rawtypes")
 public class DynamicMapTest {
 
-   private final ObjectMapper mapper = new ObjectMapper();
+   private final ObjectMapper mapper = Utils.createDefaultMapper();
 
    private EClass eTypesClass, typeClass, valueClass, tmapClass, stringMapClass;
    private ResourceSetImpl resourceSet;
@@ -47,7 +47,6 @@ public class DynamicMapTest {
 	  EPackage.Registry.INSTANCE.remove("http://www.emfjson.org/jackson/model");
       URI modelURI = URI.createURI("http://www.emfjson.org/jackson/model");
 
-      mapper.registerModule(new EMFModule());
 
       resourceSet = new ResourceSetImpl();
       resourceSet.getResourceFactoryRegistry()

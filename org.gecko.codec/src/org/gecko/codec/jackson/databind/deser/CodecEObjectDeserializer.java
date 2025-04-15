@@ -13,11 +13,10 @@
  */
 package org.gecko.codec.jackson.databind.deser;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.getFeature;
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.getResource;
+import static tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EClass;
@@ -42,20 +41,20 @@ import org.gecko.codec.info.codecinfo.SuperTypeInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DatabindContext;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
-import com.fasterxml.jackson.databind.util.TokenBuffer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DatabindContext;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.deser.jdk.StringDeserializer;
+import tools.jackson.databind.util.TokenBuffer;
 
 /**
  * 
  * @author ilenia
  * @since Sep 26, 2024
  */
-public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
+public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
 	private static final Logger LOGGER = Logger.getLogger(CodecEObjectDeserializer.class.getName());
 
@@ -86,7 +85,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
+	public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) {
 
 		EMFContext.prepare(ctxt);
 
@@ -130,7 +129,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 		JsonToken nextToken = jp.nextToken();
 		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
 		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
-			final String field = jp.getCurrentName();
+			final String field = jp.currentName();
 			//			If it was not possible to determine the type from the conditions before then we look for the _type in the serialized document
 			if(field.equals(codecModule.getTypeKey()) && current == null) {
 				jp.nextToken();
@@ -166,7 +165,7 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 				//				since current is not set, we are copying the structure and try with the next property 
 				//				(because we want to look for the type first so we know which object we have to build)
 				if (buffer == null) {
-					buffer = new TokenBuffer(jp);
+					buffer = TokenBuffer.forBuffering(jp, ctxt);
 				}
 				buffer.copyCurrentStructure(jp);
 			}
@@ -180,10 +179,9 @@ public class CodecEObjectDeserializer extends JsonDeserializer<EObject> {
 		return current;
 	}
 
-	private void handleUnknownProperty(final JsonParser jp, final Resource resource, final DeserializationContext ctxt,	EClass currentEClass) 
-			throws IOException {
+	private void handleUnknownProperty(final JsonParser jp, final Resource resource, final DeserializationContext ctxt,	EClass currentEClass)  {
 		if (resource != null && ctxt.getConfig().hasDeserializationFeatures(FAIL_ON_UNKNOWN_PROPERTIES.getMask())) {
-			resource.getErrors().add(new JSONException(String.format("Unknown feature '%s' for %s", jp.getCurrentName(), EcoreUtil.getURI(currentEClass)),jp.getCurrentLocation()));
+			resource.getErrors().add(new JSONException(String.format("Unknown feature '%s' for %s", jp.currentName(), EcoreUtil.getURI(currentEClass)),jp.currentLocation()));
 		}
 		// we didn't find a feature so consume
 		// the field and move on

@@ -32,10 +32,10 @@ import org.eclipse.emfcloud.jackson.support.StandardExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 @ExtendWith(StandardExtension.class)
 public class ReaderTest {
@@ -70,7 +70,7 @@ public class ReaderTest {
    }
 
    @Test
-   public void shouldReadObjectTreeWithEClassFieldNotFirst() throws JsonProcessingException {
+   public void shouldReadObjectTreeWithEClassFieldNotFirst()  {
       JsonNode data = ((ObjectNode) mapper.createObjectNode()
          .put("name", "A")
          .set("eStructuralFeatures", mapper.createArrayNode()
@@ -103,7 +103,7 @@ public class ReaderTest {
    }
 
    @Test
-   public void shouldReadObjectTreeWithEClassFieldNotFirstAndNonAbstractChildren() throws JsonProcessingException {
+   public void shouldReadObjectTreeWithEClassFieldNotFirstAndNonAbstractChildren() {
       JsonNode data = ((ObjectNode) mapper.createObjectNode()
          .put("name", "A")
          .set("eOperations", mapper.createArrayNode()
@@ -136,7 +136,7 @@ public class ReaderTest {
    }
 
    @Test
-   public void shouldReadObjectTreeWithEClassFieldRandomPosition() throws JsonProcessingException {
+   public void shouldReadObjectTreeWithEClassFieldRandomPosition() {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", "http://www.eclipse.org/emf/2002/Ecore#//EClass")
          .put("name", "A")

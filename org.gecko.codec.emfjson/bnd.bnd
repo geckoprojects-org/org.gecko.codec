@@ -1,10 +1,10 @@
 -library: enable-emf
 
 -buildpath: \
-	com.fasterxml.jackson.core.jackson-databind;version=latest,\
 	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
-	com.fasterxml.jackson.core.jackson-core;version=latest,\
-	org.gecko.codec.constants
+	org.gecko.codec.constants,\
+	tools.jackson.core.jackson-core,\
+	tools.jackson.core.jackson-databind
 	
 -testpath.guava: \
 	com.google.guava;version=latest

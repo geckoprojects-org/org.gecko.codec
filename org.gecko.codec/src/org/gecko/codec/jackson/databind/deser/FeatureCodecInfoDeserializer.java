@@ -13,7 +13,6 @@
  */
 package org.gecko.codec.jackson.databind.deser;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -37,12 +36,12 @@ import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ValueDeserializer;
 
 /**
  * Codec Deserializer for FeatureInfo
@@ -55,7 +54,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 	private CodecModelInfo codecModelInfoService;
 	private FeatureCodecInfo featureCodecInfo;
 	private TypeInfo typeCodecInfo;
-	private JsonDeserializer<Object> deserializer;
+	private ValueDeserializer<Object> deserializer;
 
 
 	public FeatureCodecInfoDeserializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService, 
@@ -71,7 +70,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 	 * @see org.gecko.codec.demo.jackson.deser.CodecInfoDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext)
 	 */
 	@Override
-	public EObject deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+	public EObject deserialize(JsonParser jp, DeserializationContext ctxt) {
 		return null;
 
 	}
@@ -82,8 +81,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource)
-			throws IOException {
+	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) {
 
 		if(featureCodecInfo.getFeatures().get(0) instanceof EOperation) return;
 		if(featureCodecInfo.isIgnore()) return;
@@ -91,11 +89,11 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 
 		JsonToken token = null;
 
-		if (jp.getCurrentToken() == JsonToken.FIELD_NAME) {
+		if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
 			token = jp.nextToken();
 		}
 
-		if (jp.getCurrentToken() == JsonToken.VALUE_NULL) {
+		if (jp.currentToken() == JsonToken.VALUE_NULL) {
 			return;
 		}
 		
@@ -125,7 +123,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 			CodecValueReader<Object, ?> reader =  infoHolder.getReaderByName(readerName);
 			if (feature.isMany()) {
 				if (token != JsonToken.START_ARRAY && !isMap) {
-					throw new JsonParseException(jp, "Expected START_ARRAY token, got " + token);
+					throw new StreamReadException(jp, "Expected START_ARRAY token, got " + token);
 				}
 				
 				Collection<Object> objs = (Collection<Object>) deserializer.deserialize(jp, ctxt, current.eGet(feature));
@@ -142,18 +140,18 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 				if(feature.getEType() instanceof EEnum eDataType) {
 					EEnumLiteral literal = null;
 					if(codecModule.isWriteEnumLiterals()) {
-						literal = ((EEnum) eDataType).getEEnumLiteralByLiteral(jp.getText());
+						literal = ((EEnum) eDataType).getEEnumLiteralByLiteral(jp.getString());
 					}
 					else {
-						literal = ((EEnum) eDataType).getEEnumLiteral(jp.getText());
+						literal = ((EEnum) eDataType).getEEnumLiteral(jp.getString());
 					}
 					if(literal == null) {
 //						fallback
 						if(codecModule.isWriteEnumLiterals()) {
-							literal = ((EEnum) eDataType).getEEnumLiteral(jp.getText());
+							literal = ((EEnum) eDataType).getEEnumLiteral(jp.getString());
 						}
 						else {
-							literal = ((EEnum) eDataType).getEEnumLiteralByLiteral(jp.getText());
+							literal = ((EEnum) eDataType).getEEnumLiteralByLiteral(jp.getString());
 						}
 					}
 					current.eSet(feature, literal.getInstance());

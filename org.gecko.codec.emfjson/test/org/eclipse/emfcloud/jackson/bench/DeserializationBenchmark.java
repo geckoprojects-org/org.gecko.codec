@@ -26,7 +26,8 @@ import org.eclipse.emfcloud.jackson.junit.model.ModelPackage;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.ObjectMapper;
 
 public class DeserializationBenchmark {
 
@@ -84,9 +85,8 @@ public class DeserializationBenchmark {
    }
 
    private ResourceSet json() {
-      ObjectMapper mapper = new ObjectMapper();
-      mapper.registerModule(new EMFModule());
-
+	  
+	  ObjectMapper mapper = EMFModule.setupDefaultMapper(JsonFactory.builder().build());
       ResourceSet resourceSet = new ResourceSetImpl();
       resourceSet.getResourceFactoryRegistry()
          .getExtensionToFactoryMap()

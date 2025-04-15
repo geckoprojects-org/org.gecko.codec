@@ -38,9 +38,9 @@ import org.eclipse.emfcloud.jackson.support.StandardExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(StandardExtension.class)
 public class GenericTest {
@@ -121,7 +121,7 @@ public class GenericTest {
    }
 
    @Test
-   public void testLoadObjectGeneric() throws JsonProcessingException {
+   public void testLoadObjectGeneric() {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", "http://www.emfjson.org/jackson/generics#//BaseOne")
          .set("containsOne", mapper.createObjectNode());

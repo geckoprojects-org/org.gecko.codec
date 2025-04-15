@@ -20,8 +20,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.eclipse.emfcloud.jackson.resource.JsonUuidResource;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public abstract class UuidSupport {
 
@@ -32,7 +32,7 @@ public abstract class UuidSupport {
    }
 
    protected String uuid(final JsonNode node) {
-      return node.get("@id").asText();
+      return node.get("@id").asString();
    }
 
    protected Resource createUuidResource(final String name, final ObjectMapper mapper) {

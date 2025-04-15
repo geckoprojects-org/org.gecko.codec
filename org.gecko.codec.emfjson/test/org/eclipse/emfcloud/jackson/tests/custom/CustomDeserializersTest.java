@@ -17,8 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
@@ -34,17 +32,17 @@ import org.eclipse.emfcloud.jackson.junit.model.Sex;
 import org.eclipse.emfcloud.jackson.junit.model.User;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.eclipse.emfcloud.jackson.utils.ValueReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ValueDeserializer;
 
 public class CustomDeserializersTest {
 
@@ -60,10 +58,10 @@ public class CustomDeserializersTest {
    }
 
    @Test
-   public void testDeserializeTypeValueWithOtherFieldName() throws JsonProcessingException {
+   public void testDeserializeTypeValueWithOtherFieldName() {
       EMFModule module = new EMFModule();
       module.setTypeInfo(new EcoreTypeInfo("type"));
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode data = mapper.createObjectNode()
          .put("type", "http://www.emfjson.org/jackson/model#//User")
@@ -86,10 +84,10 @@ public class CustomDeserializersTest {
    }
 
    @Test
-   public void testDeserializeTypeValue() throws JsonProcessingException {
+   public void testDeserializeTypeValue() {
       EMFModule module = new EMFModule();
       module.setTypeInfo(new EcoreTypeInfo("type", (ValueReader<String, EClass>) (value, context) -> (EClass) ModelPackage.eINSTANCE.getEClassifier(value)));
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode data = mapper.createObjectNode()
          .put("type", "User")
@@ -113,11 +111,11 @@ public class CustomDeserializersTest {
    }
 
    @Test
-   public void testDeserializeIdValueWithOtherFieldName() throws JsonProcessingException {
+   public void testDeserializeIdValueWithOtherFieldName() {
       EMFModule module = new EMFModule();
       module.configure(OPTION_USE_ID, true);
       module.setIdentityInfo(new EcoreIdentityInfo("_id"));
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode data = mapper.createObjectNode()
          .put("_id", "1")
@@ -139,11 +137,11 @@ public class CustomDeserializersTest {
    }
 
    @Test
-   public void testDeserializeIdValue() throws JsonProcessingException {
+   public void testDeserializeIdValue() {
       EMFModule module = new EMFModule();
       module.configure(OPTION_USE_ID, true);
       module.setIdentityInfo(new EcoreIdentityInfo("_id", (ValueReader<Object, String>) (value, context) -> value.toString()));
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode data = mapper.createObjectNode()
          .put("_id", 1)
@@ -165,27 +163,27 @@ public class CustomDeserializersTest {
    }
 
    @Test
-   public void testDeserializeReferenceAsStrings() throws JsonProcessingException {
+   public void testDeserializeReferenceAsStrings() {
       EMFModule module = new EMFModule();
       module.configure(EMFModule.Feature.OPTION_USE_ID, true);
       module.configure(EMFModule.Feature.OPTION_SERIALIZE_TYPE, false);
 
-      module.setReferenceDeserializer(new JsonDeserializer<ReferenceEntry>() {
+      module.setReferenceDeserializer(new ValueDeserializer<ReferenceEntry>() {
          @Override
-         public ReferenceEntry deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+         public ReferenceEntry deserialize(final JsonParser p, final DeserializationContext ctxt)  {
             final EObject parent = EMFContext.getParent(ctxt);
             final EReference reference = EMFContext.getReference(ctxt);
 
-            if (p.getCurrentToken() == JsonToken.FIELD_NAME) {
+            if (p.currentToken() == JsonToken.PROPERTY_NAME) {
                p.nextToken();
             }
 
-            return new ReferenceEntry.Base(parent, reference, p.getText());
+            return new ReferenceEntry.Base(parent, reference, p.getString());
          }
       });
 
-      mapper.registerModule(module);
-
+      mapper = Utils.createMapper(module);
+      
       JsonNode data = mapper.createArrayNode()
          .add(mapper.createObjectNode()
             .put("@id", "1")
@@ -210,11 +208,11 @@ public class CustomDeserializersTest {
    }
 
    @Test
-   public void testDeserializeReferenceWithOtherFieldNames() throws JsonProcessingException {
+   public void testDeserializeReferenceWithOtherFieldNames() {
       EMFModule module = new EMFModule();
       module.setTypeInfo(new EcoreTypeInfo("my_type"));
       module.setReferenceInfo(new EcoreReferenceInfo("my_ref"));
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode data = mapper.createArrayNode()
          .add(mapper.createObjectNode()

@@ -36,14 +36,13 @@ import org.eclipse.emfcloud.jackson.junit.model.ModelPackage;
 import org.eclipse.emfcloud.jackson.junit.model.PrimaryObject;
 import org.eclipse.emfcloud.jackson.junit.model.Sex;
 import org.eclipse.emfcloud.jackson.junit.model.User;
-import org.eclipse.emfcloud.jackson.junit.model.impl.PrimaryObjectImpl;
 import org.eclipse.emfcloud.jackson.support.StandardExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(StandardExtension.class)
 public class ReferenceTest {
@@ -415,7 +414,7 @@ public class ReferenceTest {
             URI.createURI("test-data/tests/object-instead-of-array.json"), true);
       } catch (final WrappedException e) {
          final Throwable cause = e.getCause();
-         assertThat(cause).isInstanceOf(JsonParseException.class);
+         assertThat(cause).isInstanceOf(JacksonException.class);
          assertThat(cause.getMessage()).contains("Expected START_ARRAY token");
       }
    }

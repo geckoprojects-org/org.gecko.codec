@@ -2,9 +2,6 @@
  */
 package org.gecko.codec.info.codecinfo.impl;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -31,6 +28,9 @@ import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.info.codecinfo.SampleValueReader;
 import org.gecko.codec.info.codecinfo.SuperTypeInfo;
 import org.gecko.codec.info.codecinfo.TypeInfo;
+
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -599,7 +599,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EOperation getCodecValueWriter__WriteValue__Object_SerializerProvider() {
+	public EOperation getCodecValueWriter__WriteValue__Object_SerializationContext() {
 		return codecValueWriterEClass.getEOperations().get(0);
 	}
 
@@ -799,7 +799,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 
 		codecValueWriterEClass = createEClass(CODEC_VALUE_WRITER);
 		createEAttribute(codecValueWriterEClass, CODEC_VALUE_WRITER__NAME);
-		createEOperation(codecValueWriterEClass, CODEC_VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZERPROVIDER);
+		createEOperation(codecValueWriterEClass, CODEC_VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZATIONCONTEXT);
 
 		codecInfoHolderEClass = createEClass(CODEC_INFO_HOLDER);
 		createEAttribute(codecInfoHolderEClass, CODEC_INFO_HOLDER__INFO_TYPE);
@@ -916,7 +916,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEClass(codecValueWriterEClass, CodecValueWriter.class, "CodecValueWriter", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCodecValueWriter_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecValueWriter.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		op = initEOperation(getCodecValueWriter__WriteValue__Object_SerializerProvider(), null, "writeValue", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getCodecValueWriter__WriteValue__Object_SerializationContext(), null, "writeValue", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(codecValueWriterEClass_T);
 		addEParameter(op, g1, "value", 1, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getSerializerProvider(), "provider", 1, 1, IS_UNIQUE, IS_ORDERED);
@@ -959,7 +959,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		addEEnumLiteral(infoTypeEEnum, InfoType.OTHER);
 
 		// Initialize data types
-		initEDataType(serializerProviderEDataType, SerializerProvider.class, "SerializerProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(serializerProviderEDataType, SerializationContext.class, "SerializerProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(deserializationContextEDataType, DeserializationContext.class, "DeserializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource

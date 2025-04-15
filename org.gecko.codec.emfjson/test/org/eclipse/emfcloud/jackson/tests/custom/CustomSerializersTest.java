@@ -13,8 +13,6 @@ package org.eclipse.emfcloud.jackson.tests.custom;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -30,15 +28,16 @@ import org.eclipse.emfcloud.jackson.junit.model.User;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.eclipse.emfcloud.jackson.utils.ValueWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 public class CustomSerializersTest {
 
@@ -58,7 +57,7 @@ public class CustomSerializersTest {
    public void testSerializeTypeWithOtherFieldName() {
       EMFModule module = new EMFModule();
       module.setTypeInfo(new EcoreTypeInfo("type"));
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode expected = mapper.createObjectNode()
          .put("type", "http://www.emfjson.org/jackson/model#//User")
@@ -79,7 +78,7 @@ public class CustomSerializersTest {
    public void testSerializeType() {
       EMFModule module = new EMFModule();
       module.setTypeInfo(new EcoreTypeInfo("type", (ValueWriter<EClass, String>) (value, context) -> value.getName()));
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode expected = mapper.createObjectNode()
          .put("type", "User")
@@ -103,7 +102,7 @@ public class CustomSerializersTest {
       module.configure(EMFModule.Feature.OPTION_SERIALIZE_TYPE, false);
 
       module.setIdentityInfo(new EcoreIdentityInfo("_id"));
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode expected = mapper.createObjectNode()
          .put("_id", "1")
@@ -128,7 +127,7 @@ public class CustomSerializersTest {
       module.configure(EMFModule.Feature.OPTION_SERIALIZE_TYPE, false);
 
       module.setIdentityInfo(new EcoreIdentityInfo("_id", (ValueWriter<EObject, Object>) (value, context) -> 1));
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode expected = mapper.createObjectNode()
          .put("_id", 1)
@@ -152,7 +151,7 @@ public class CustomSerializersTest {
       module.setTypeInfo(new EcoreTypeInfo("my_type"));
       module.setReferenceInfo(new EcoreReferenceInfo("my_ref"));
 
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode expected = mapper.createArrayNode()
          .add(mapper.createObjectNode()
@@ -186,15 +185,15 @@ public class CustomSerializersTest {
       module.configure(EMFModule.Feature.OPTION_USE_ID, true);
       module.configure(EMFModule.Feature.OPTION_SERIALIZE_TYPE, false);
 
-      module.setReferenceSerializer(new JsonSerializer<EObject>() {
+      module.setReferenceSerializer(new ValueSerializer<EObject>() {
          @Override
-         public void serialize(final EObject value, final JsonGenerator gen, final SerializerProvider serializers)
-            throws IOException {
+         public void serialize(final EObject value, final JsonGenerator gen, final SerializationContext serializers)
+         {
             gen.writeString(((JsonResource) value.eResource()).getID(value));
          }
       });
 
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
 
       JsonNode expected = mapper.createArrayNode()
          .add(mapper.createObjectNode()

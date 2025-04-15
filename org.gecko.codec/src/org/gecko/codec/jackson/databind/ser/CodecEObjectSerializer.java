@@ -13,7 +13,6 @@
  */
 package org.gecko.codec.jackson.databind.ser;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -24,16 +23,16 @@ import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 /**
  * Codec Serializer for EObject
  * @author ilenia
  * @since Aug 6, 2024
  */
-public class CodecEObjectSerializer extends JsonSerializer<EObject> implements CodecInfoSerializer {
+public class CodecEObjectSerializer extends ValueSerializer<EObject> implements CodecInfoSerializer {
 
 	private final static Logger LOGGER = Logger.getLogger(CodecEObjectSerializer.class.getName());
 
@@ -49,22 +48,17 @@ public class CodecEObjectSerializer extends JsonSerializer<EObject> implements C
 
 
 
-	/* 
-	 * (non-Javadoc)eObjCodecInfo.getIdentityInfo().getFeatures();
-	 * @see com.fasterxml.jackson.databind.JsonSerializer#handledType()
-	 */
+	
 	@Override
 	public Class<EObject> handledType() {
 		return EObject.class;
 	}
 
 
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
-	 */
+	
+	
 	@Override
-	public void serialize(EObject value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+	public void serialize(EObject value, JsonGenerator gen, SerializationContext provider) {
 
 		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
 		EClassCodecInfo eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().

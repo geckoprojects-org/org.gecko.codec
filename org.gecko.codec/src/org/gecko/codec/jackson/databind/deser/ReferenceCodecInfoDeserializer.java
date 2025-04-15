@@ -13,8 +13,6 @@
  */
 package org.gecko.codec.jackson.databind.deser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -31,9 +29,9 @@ import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * Codec Deserializer for References
@@ -57,7 +55,7 @@ public class ReferenceCodecInfoDeserializer implements CodecInfoDeserializer {
 	 * @see org.gecko.codec.demo.jackson.deser.CodecInfoDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext)
 	 */
 	@Override
-	public EObject deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+	public EObject deserialize(JsonParser jp, DeserializationContext ctxt) {
 		return null;
 	}
 
@@ -67,8 +65,7 @@ public class ReferenceCodecInfoDeserializer implements CodecInfoDeserializer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource)
-			throws IOException {
+	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) {
 			
 		EObject parent = EMFContext.getParent(ctxt);
 		EReference reference = EMFContext.getReference(ctxt);
@@ -77,13 +74,13 @@ public class ReferenceCodecInfoDeserializer implements CodecInfoDeserializer {
 		String type = null;
 
 		while (jp.nextToken() != JsonToken.END_OBJECT) {
-			final String field = jp.getCurrentName();
+			final String field = jp.currentName();
 
 			if (field.equalsIgnoreCase(codecModule.getRefKey())) {
-				id = jp.nextTextValue();
+				id = jp.nextStringValue();
 
 			} else if (field.equalsIgnoreCase(codecModule.getTypeKey())) {
-				type = jp.nextTextValue();
+				type = jp.nextStringValue();
 			}
 		}
 		EClass eClass = null;

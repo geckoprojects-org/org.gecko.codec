@@ -42,9 +42,9 @@ import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntries;
 import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
 import org.eclipse.emfcloud.jackson.handlers.URIHandler;
 
-import com.fasterxml.jackson.databind.DatabindContext;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.cfg.ContextAttributes;
+import tools.jackson.databind.DatabindContext;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.cfg.ContextAttributes;
 
 public final class EMFContext2 {
 

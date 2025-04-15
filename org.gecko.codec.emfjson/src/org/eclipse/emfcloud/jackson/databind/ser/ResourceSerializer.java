@@ -10,23 +10,20 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.ser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-public class ResourceSerializer extends JsonSerializer<Resource> {
+public class ResourceSerializer extends ValueSerializer<Resource> {
 
    // private final EcoreTypeFactory typeFactory = new EcoreTypeFactory();
 
    @Override
-   public void serialize(final Resource value, final JsonGenerator jg, final SerializerProvider provider)
-      throws IOException {
+   public void serialize(final Resource value, final JsonGenerator jg, final SerializationContext provider) {
       if (value.getContents().size() == 1) {
          serializeOne(value.getContents().get(0), jg, provider);
       } else {
@@ -38,10 +35,9 @@ public class ResourceSerializer extends JsonSerializer<Resource> {
       }
    }
 
-   private void serializeOne(final EObject object, final JsonGenerator jg, final SerializerProvider provider)
-      throws IOException {
+   private void serializeOne(final EObject object, final JsonGenerator jg, final SerializationContext provider) {
       final JavaType type = provider.constructType(object.getClass());
-      final JsonSerializer<Object> serializer = provider.findValueSerializer(type);
+      final ValueSerializer<Object> serializer = provider.findValueSerializer(type);
 
       if (serializer != null) {
          serializer.serialize(object, jg, provider);

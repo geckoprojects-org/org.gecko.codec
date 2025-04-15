@@ -13,8 +13,6 @@
  */
 package org.gecko.codec.jackson.databind.deser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -26,9 +24,9 @@ import org.gecko.codec.info.codecinfo.IdentityInfo;
 import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * Codec Deserializer for IdInfo
@@ -53,7 +51,7 @@ public class IdCodecInfoDeserializer implements CodecInfoDeserializer {
 	 * @see org.gecko.codec.demo.jackson.deser.CodecInfoDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext)
 	 */
 	@Override
-	public EObject deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+	public EObject deserialize(JsonParser jp, DeserializationContext ctxt)  {
 		return null;
 	}
 
@@ -63,15 +61,14 @@ public class IdCodecInfoDeserializer implements CodecInfoDeserializer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource)
-			throws IOException {
-		if (jp.getCurrentToken() == JsonToken.FIELD_NAME) {
+	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) {
+		if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
 			jp.nextToken();
 		}
 
 		
 		Object value;
-		switch (jp.getCurrentToken()) {
+		switch (jp.currentToken()) {
 		case VALUE_STRING:
 			value = jp.getValueAsString();
 			break;

@@ -36,212 +36,219 @@ import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class ModelTest {
 
-   private ResourceSetImpl resourceSet;
-   protected URI baseTestFilesFileDirectory = URI.createFileURI("test-data/tests/");
-   protected ObjectMapper mapper = new ObjectMapper();
+	private ResourceSetImpl resourceSet;
+	protected URI baseTestFilesFileDirectory = URI.createFileURI("test-data/tests/");
+	protected ObjectMapper mapper;
 
-   @BeforeEach
-   public void setUp() {
-	  EPackage.Registry.INSTANCE.clear();
-      URI baseURI = URI.createURI("http://eclipselabs.org/emfjson/tests/");
-      EPackage.Registry.INSTANCE.put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
+	@BeforeEach
+	public void setUp() {
+		EPackage.Registry.INSTANCE.clear();
+		URI baseURI = URI.createURI("http://eclipselabs.org/emfjson/tests/");
+		EPackage.Registry.INSTANCE.put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
 
-      Resource.Factory.Registry.INSTANCE
-         .getExtensionToFactoryMap().put("*", new JsonResourceFactory(mapper));
+		Resource.Factory.Registry.INSTANCE
+		.getExtensionToFactoryMap().put("*", new JsonResourceFactory(mapper));
 
-      resourceSet = new ResourceSetImpl();
-      resourceSet.getURIConverter().getURIMap().put(baseURI, baseTestFilesFileDirectory);
+		resourceSet = new ResourceSetImpl();
+		resourceSet.getURIConverter().getURIMap().put(baseURI, baseTestFilesFileDirectory);
 
-      mapper.registerModule(new EMFModule());
 
-      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-      dateFormat.setTimeZone(TimeZone.getDefault());
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+		dateFormat.setTimeZone(TimeZone.getDefault());
 
-      mapper.setDateFormat(dateFormat);
-      // add default serializer for null EMap key
-      mapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
+		JsonFactory factory = JsonFactory.builder().build();
+		JsonMapper.Builder mapperBuilder = JsonMapper.builder(factory);
 
-      resourceSet.getURIConverter()
-         .getURIMap()
-         .put(
-            URI.createURI("http://emfjson/dynamic/model"),
-            URI.createURI("test-data/model/dynamic/model.json"));
+		EMFModule module = new EMFModule();
+		module.setDefaultNullKeySerializer(new NullKeySerializer());
+		mapperBuilder.addModule(module);
+		mapperBuilder.defaultDateFormat(dateFormat);
+		mapperBuilder.defaultTimeZone(TimeZone.getDefault());
+		mapper = mapperBuilder.build();
 
-      resourceSet.getURIConverter()
-         .getURIMap()
-         .put(
-            URI.createURI("http://www.emfjson.org/jackson/model"),
-            URI.createURI("test-data/model/dynamic/model-2.json"));
+		resourceSet.getURIConverter()
+		.getURIMap()
+		.put(
+				URI.createURI("http://emfjson/dynamic/model"),
+				URI.createURI("test-data/model/dynamic/model.json"));
 
-      resourceSet.getURIConverter()
-         .getURIMap()
-         .put(
-            URI.createURI("http://foo.org/p"),
-            URI.createURI("test-data/model/dynamic/model-1.json"));
+		resourceSet.getURIConverter()
+		.getURIMap()
+		.put(
+				URI.createURI("http://www.emfjson.org/jackson/model"),
+				URI.createURI("test-data/model/dynamic/model-2.json"));
 
-      resourceSet.getURIConverter()
-         .getURIMap()
-         .put(
-            URI.createURI("http://foo.org/p2"),
-            URI.createURI("test-data/model/dynamic/model-3.json"));
-   }
+		resourceSet.getURIConverter()
+		.getURIMap()
+		.put(
+				URI.createURI("http://foo.org/p"),
+				URI.createURI("test-data/model/dynamic/model-1.json"));
 
-   @Test
-   public void testLoadModel() {
-      Resource model = resourceSet.getResource(URI.createURI("http://foo.org/p"), true);
+		resourceSet.getURIConverter()
+		.getURIMap()
+		.put(
+				URI.createURI("http://foo.org/p2"),
+				URI.createURI("test-data/model/dynamic/model-3.json"));
+	}
 
-      assertThat(model).isNotNull();
-      assertThat(model.getContents())
-         .hasSize(1)
-         .hasOnlyElementsOfType(EPackage.class);
+	@Test
+	public void testLoadModel() {
+		Resource model = resourceSet.getResource(URI.createURI("http://foo.org/p"), true);
 
-      EPackage p = (EPackage) model.getContents().get(0);
+		assertThat(model).isNotNull();
+		assertThat(model.getContents())
+		.hasSize(1)
+		.hasOnlyElementsOfType(EPackage.class);
 
-      assertThat(p.getName()).isEqualTo("p");
-      assertThat(p.getNsPrefix()).isEqualTo("p");
-      assertThat(p.getNsURI()).isEqualTo("http://foo.org/p");
+		EPackage p = (EPackage) model.getContents().get(0);
 
-      assertThat(p.getEClassifiers())
-         .hasSize(2)
-         .hasOnlyElementsOfType(EClass.class);
+		assertThat(p.getName()).isEqualTo("p");
+		assertThat(p.getNsPrefix()).isEqualTo("p");
+		assertThat(p.getNsURI()).isEqualTo("http://foo.org/p");
 
-      EClass a = (EClass) p.getEClassifiers().get(0);
-      EClass b = (EClass) p.getEClassifiers().get(1);
+		assertThat(p.getEClassifiers())
+		.hasSize(2)
+		.hasOnlyElementsOfType(EClass.class);
 
-      assertThat(a.getName()).isEqualTo("A");
-      assertThat(a.getEStructuralFeatures()).hasSize(2);
+		EClass a = (EClass) p.getEClassifiers().get(0);
+		EClass b = (EClass) p.getEClassifiers().get(1);
 
-      EStructuralFeature f1 = a.getEStructuralFeatures().get(0);
-      EStructuralFeature f2 = a.getEStructuralFeatures().get(1);
+		assertThat(a.getName()).isEqualTo("A");
+		assertThat(a.getEStructuralFeatures()).hasSize(2);
 
-      assertThat(f1.getName()).isEqualTo("label");
-      assertThat(f1.getEType()).isSameAs(EcorePackage.Literals.ESTRING);
+		EStructuralFeature f1 = a.getEStructuralFeatures().get(0);
+		EStructuralFeature f2 = a.getEStructuralFeatures().get(1);
 
-      assertThat(f2.getName()).isEqualTo("bs");
-      assertThat(f2.getEType()).isSameAs(b);
+		assertThat(f1.getName()).isEqualTo("label");
+		assertThat(f1.getEType()).isSameAs(EcorePackage.Literals.ESTRING);
 
-      assertThat(b.getName()).isEqualTo("B");
-      assertThat(b.getEStructuralFeatures()).isEmpty();
-   }
+		assertThat(f2.getName()).isEqualTo("bs");
+		assertThat(f2.getEType()).isSameAs(b);
 
-   @Test
-   public void testLoadModel2() {
-      Resource model = resourceSet.getResource(URI.createURI("http://www.emfjson.org/jackson/model"), true);
+		assertThat(b.getName()).isEqualTo("B");
+		assertThat(b.getEStructuralFeatures()).isEmpty();
+	}
 
-      assertThat(model).isNotNull();
-      assertThat(model.getContents())
-         .hasSize(1)
-         .hasOnlyElementsOfType(EPackage.class);
+	@Test
+	public void testLoadModel2() {
+		Resource model = resourceSet.getResource(URI.createURI("http://www.emfjson.org/jackson/model"), true);
 
-      EPackage p = (EPackage) model.getContents().get(0);
+		assertThat(model).isNotNull();
+		assertThat(model.getContents())
+		.hasSize(1)
+		.hasOnlyElementsOfType(EPackage.class);
 
-      assertThat(p.getName()).isEqualTo("model");
-      assertThat(p.getNsPrefix()).isEqualTo("model");
-      assertThat(p.getNsURI()).isEqualTo("http://www.emfjson.org/jackson/model");
-      assertThat(p.getEClassifiers())
-         .hasSize(5)
-         .hasOnlyElementsOfType(EClass.class);
+		EPackage p = (EPackage) model.getContents().get(0);
 
-      EClass c1 = (EClass) p.getEClassifiers().get(0);
-      EClass c2 = (EClass) p.getEClassifiers().get(1);
-      EClass c3 = (EClass) p.getEClassifiers().get(2);
-      EClass c4 = (EClass) p.getEClassifiers().get(3);
-      EClass c5 = (EClass) p.getEClassifiers().get(4);
+		assertThat(p.getName()).isEqualTo("model");
+		assertThat(p.getNsPrefix()).isEqualTo("model");
+		assertThat(p.getNsURI()).isEqualTo("http://www.emfjson.org/jackson/model");
+		assertThat(p.getEClassifiers())
+		.hasSize(5)
+		.hasOnlyElementsOfType(EClass.class);
 
-      assertThat(c1.getName()).isEqualTo("ETypes");
-      assertThat(c1.getEStructuralFeatures()).hasSize(2);
+		EClass c1 = (EClass) p.getEClassifiers().get(0);
+		EClass c2 = (EClass) p.getEClassifiers().get(1);
+		EClass c3 = (EClass) p.getEClassifiers().get(2);
+		EClass c4 = (EClass) p.getEClassifiers().get(3);
+		EClass c5 = (EClass) p.getEClassifiers().get(4);
 
-      // features
-      EStructuralFeature c1f1 = c1.getEStructuralFeatures().get(0);
-      assertThat(c1f1.getName()).isEqualTo("values");
-      assertThat(c1f1.getEType()).isSameAs(c2);
+		assertThat(c1.getName()).isEqualTo("ETypes");
+		assertThat(c1.getEStructuralFeatures()).hasSize(2);
 
-      EStructuralFeature c1f2 = c1.getEStructuralFeatures().get(1);
-      assertThat(c1f2.getName()).isEqualTo("stringMapValues");
-      assertThat(c1f2.getEType()).isSameAs(c3);
+		// features
+		EStructuralFeature c1f1 = c1.getEStructuralFeatures().get(0);
+		assertThat(c1f1.getName()).isEqualTo("values");
+		assertThat(c1f1.getEType()).isSameAs(c2);
 
-      // TMap
-      assertThat(c2.getName()).isEqualTo("TMap");
-      assertThat(c2.getInstanceClassName()).isEqualTo("java.util.Map.Entry");
-      assertThat(c2.getEStructuralFeatures()).hasSize(2);
+		EStructuralFeature c1f2 = c1.getEStructuralFeatures().get(1);
+		assertThat(c1f2.getName()).isEqualTo("stringMapValues");
+		assertThat(c1f2.getEType()).isSameAs(c3);
 
-      // features
-      EStructuralFeature c2f1 = c2.getEStructuralFeatures().get(0);
-      assertThat(c2f1.getName()).isEqualTo("key");
-      assertThat(c2f1.getEType()).isSameAs(c4);
+		// TMap
+		assertThat(c2.getName()).isEqualTo("TMap");
+		assertThat(c2.getInstanceClassName()).isEqualTo("java.util.Map.Entry");
+		assertThat(c2.getEStructuralFeatures()).hasSize(2);
 
-      EStructuralFeature c2f2 = c2.getEStructuralFeatures().get(1);
-      assertThat(c2f2.getName()).isEqualTo("value");
-      assertThat(c2f2.getEType()).isSameAs(c5);
+		// features
+		EStructuralFeature c2f1 = c2.getEStructuralFeatures().get(0);
+		assertThat(c2f1.getName()).isEqualTo("key");
+		assertThat(c2f1.getEType()).isSameAs(c4);
 
-      // StringMap
-      assertThat(c3.getName()).isEqualTo("StringMap");
-      assertThat(c3.getInstanceClassName()).isEqualTo("java.util.Map.Entry");
-      assertThat(c3.getEStructuralFeatures()).hasSize(2);
+		EStructuralFeature c2f2 = c2.getEStructuralFeatures().get(1);
+		assertThat(c2f2.getName()).isEqualTo("value");
+		assertThat(c2f2.getEType()).isSameAs(c5);
 
-      // features
-      EStructuralFeature c3f1 = c3.getEStructuralFeatures().get(0);
-      assertThat(c3f1.getName()).isEqualTo("key");
-      assertThat(c3f1.getEType()).isSameAs(EcorePackage.Literals.ESTRING);
+		// StringMap
+		assertThat(c3.getName()).isEqualTo("StringMap");
+		assertThat(c3.getInstanceClassName()).isEqualTo("java.util.Map.Entry");
+		assertThat(c3.getEStructuralFeatures()).hasSize(2);
 
-      EStructuralFeature c3f2 = c3.getEStructuralFeatures().get(1);
-      assertThat(c3f2.getName()).isEqualTo("value");
-      assertThat(c3f2.getEType()).isSameAs(c5);
+		// features
+		EStructuralFeature c3f1 = c3.getEStructuralFeatures().get(0);
+		assertThat(c3f1.getName()).isEqualTo("key");
+		assertThat(c3f1.getEType()).isSameAs(EcorePackage.Literals.ESTRING);
 
-      // Type
-      assertThat(c4.getName()).isEqualTo("Type");
-      assertThat(c4.getEStructuralFeatures()).hasSize(1);
+		EStructuralFeature c3f2 = c3.getEStructuralFeatures().get(1);
+		assertThat(c3f2.getName()).isEqualTo("value");
+		assertThat(c3f2.getEType()).isSameAs(c5);
 
-      // features
-      EStructuralFeature c4f1 = c4.getEStructuralFeatures().get(0);
-      assertThat(c4f1.getName()).isEqualTo("name");
-      assertThat(c4f1.getEType()).isSameAs(EcorePackage.Literals.ESTRING);
+		// Type
+		assertThat(c4.getName()).isEqualTo("Type");
+		assertThat(c4.getEStructuralFeatures()).hasSize(1);
 
-      // Value
-      assertThat(c5.getName()).isEqualTo("Value");
-      assertThat(c5.getEStructuralFeatures()).hasSize(1);
+		// features
+		EStructuralFeature c4f1 = c4.getEStructuralFeatures().get(0);
+		assertThat(c4f1.getName()).isEqualTo("name");
+		assertThat(c4f1.getEType()).isSameAs(EcorePackage.Literals.ESTRING);
 
-      // features
-      EStructuralFeature c5f1 = c5.getEStructuralFeatures().get(0);
-      assertThat(c5f1.getName()).isEqualTo("value");
-      assertThat(c5f1.getEType()).isSameAs(EcorePackage.Literals.EINT);
-   }
+		// Value
+		assertThat(c5.getName()).isEqualTo("Value");
+		assertThat(c5.getEStructuralFeatures()).hasSize(1);
 
-   @Test
-   public void testSaveEnums() {
+		// features
+		EStructuralFeature c5f1 = c5.getEStructuralFeatures().get(0);
+		assertThat(c5f1.getName()).isEqualTo("value");
+		assertThat(c5f1.getEType()).isSameAs(EcorePackage.Literals.EINT);
+	}
 
-   }
+	@Test
+	public void testSaveEnums() {
 
-   @Test
-   public void testLoadDynamicEnums() {
-      Resource model = resourceSet.getResource(URI.createURI("http://emfjson/dynamic/model"), true);
+	}
 
-      EPackage p = (EPackage) model.getContents().get(0);
-      EClassifier kind = p.getEClassifier("Kind");
+	@Test
+	public void testLoadDynamicEnums() {
+		Resource model = resourceSet.getResource(URI.createURI("http://emfjson/dynamic/model"), true);
 
-      assertThat(kind).isInstanceOf(EEnum.class);
+		EPackage p = (EPackage) model.getContents().get(0);
+		EClassifier kind = p.getEClassifier("Kind");
 
-      EEnum kindEnum = (EEnum) kind;
-      EList<EEnumLiteral> literals = kindEnum.getELiterals();
+		assertThat(kind).isInstanceOf(EEnum.class);
 
-      assertThat(literals)
-         .doesNotContainNull()
-         .hasSize(2)
-         .have(new Condition<EEnumLiteral>() {
-            @Override
-            public boolean matches(final EEnumLiteral value) {
-               return value.getName() != null;
-            }
-         });
+		EEnum kindEnum = (EEnum) kind;
+		EList<EEnumLiteral> literals = kindEnum.getELiterals();
 
-      assertThat(extractProperty("name").from(literals))
-         .containsExactly("e1", "e2");
+		assertThat(literals)
+		.doesNotContainNull()
+		.hasSize(2)
+		.have(new Condition<EEnumLiteral>() {
+			@Override
+			public boolean matches(final EEnumLiteral value) {
+				return value.getName() != null;
+			}
+		});
 
-      assertThat(extractProperty("literal").from(literals))
-         .containsExactly("e1", "E2");
-   }
+		assertThat(extractProperty("name").from(literals))
+		.containsExactly("e1", "e2");
+
+		assertThat(extractProperty("literal").from(literals))
+		.containsExactly("e1", "E2");
+	}
 }

@@ -13,7 +13,7 @@
  */
 package org.gecko.codec.configurator;
 
-import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
+import tools.jackson.databind.json.JsonMapper.Builder;
 
 /**
  * 

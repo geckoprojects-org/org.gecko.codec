@@ -21,9 +21,9 @@ import org.eclipse.emfcloud.jackson.junit.model.ModelPackage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.DatabindContext;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.DatabindContext;
+import tools.jackson.databind.type.CollectionType;
+import tools.jackson.databind.type.TypeFactory;
 
 public class EcoreTypeFactoryTest {
 
@@ -36,7 +36,7 @@ public class EcoreTypeFactoryTest {
 
    @Test
    public void testReferenceTypes() {
-      TypeFactory typeFactory = TypeFactory.defaultInstance();
+      TypeFactory typeFactory = TypeFactory.createDefaultInstance();
       DatabindContext context = mock(DatabindContext.class);
       when(context.getTypeFactory()).thenReturn(typeFactory);
 

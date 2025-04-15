@@ -24,12 +24,14 @@ import org.gecko.codec.CodecGenerator;
 import org.gecko.codec.CodecGeneratorBase;
 import org.gecko.codec.jackson.databind.CodecWriteContext;
 
-import com.fasterxml.jackson.core.Base64Variant;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.base.GeneratorBase;
-import com.fasterxml.jackson.core.io.IOContext;
-import com.fasterxml.jackson.core.json.DupDetector;
-import com.fasterxml.jackson.core.json.JsonWriteContext;
+import tools.jackson.core.Base64Variant;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.ObjectWriteContext;
+import tools.jackson.core.TokenStreamFactory.Feature;
+import tools.jackson.core.base.GeneratorBase;
+import tools.jackson.core.io.IOContext;
+import tools.jackson.core.json.DupDetector;
+import tools.jackson.core.json.JsonWriteContext;
 
 /**
  * A basic implementation of the Generator
@@ -46,22 +48,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @param codec
 	 * @param ctxt
 	 */
-	protected CodecGeneratorBaseImpl(int features, ObjectCodec codec, IOContext ctxt) {
-		super(features, codec, ctxt);
-		DupDetector dups = Feature.STRICT_DUPLICATE_DETECTION.enabledIn(features)
-                ? DupDetector.rootDetector(this) : null;
-		_writeContext = CodecWriteContext.createRootCodecContext(dups);
+	protected CodecGeneratorBaseImpl(ObjectWriteContext writeCtxt, IOContext ioCtxt,
+            int streamWriteFeatures) {
+		super(writeCtxt, ioCtxt, streamWriteFeatures);		
 	}
 	
-	/**
-	 * Creates a new instance.
-	 * @param features
-	 * @param codec
-	 * @param ctxt
-	 */
-	protected CodecGeneratorBaseImpl(int features, ObjectCodec codec, IOContext ctxt, CodecWriteContext writeContext) {
-		super(features, codec, ctxt, writeContext);
-	}
 	
 	/* 
 	 * (non-Javadoc)
@@ -69,15 +60,16 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	public CodecWriteContext getOutputContext() {
-		return (CodecWriteContext)super.getOutputContext();
+		return (CodecWriteContext)super.getOutputContext(); //TODO: which context is this????
 	}
 	
 	protected EObject getCurrentEObject() {
-		if ( _writeContext.inRoot()) {
-			return (EObject) _writeContext.getCurrentValue();
+		
+		if ( getOutputContext().inRoot()) {
+			return ((EObject) (getOutputContext().currentValue()));
 		}
-		if ( _writeContext.inObject() || _writeContext.inArray()) {
-			return (EObject) _writeContext.getParent().getCurrentValue();
+		if ( getOutputContext().inObject() || getOutputContext().inArray()) {
+			return (EObject) getOutputContext().getParent().currentValue();
 		}
 		return null;
 	}
@@ -87,8 +79,8 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.base.GeneratorBase#flush()
 	 */
 	@Override
-	public void flush() throws IOException {
-		_writeContext.reset(JsonWriteContext.TYPE_ROOT);
+	public void flush() {
+		getOutputContext().reset(JsonWriteContext.TYPE_ROOT, null);
 	}
 
 	/* 
@@ -105,7 +97,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.base.GeneratorBase#_verifyValueWrite(java.lang.String)
 	 */
 	@Override
-	final protected void _verifyValueWrite(String typeMsg) throws IOException {
+	final protected void _verifyValueWrite(String typeMsg)  {
 		// We have no use for this method. It does nothing
 	}
 
@@ -114,7 +106,8 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeStartArray()
 	 */
 	@Override
-	public void writeStartArray() throws IOException {
+	public JsonGenerator writeStartArray() {
+		return null;
 	}
 	
 	/* 
@@ -122,7 +115,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeStartArray(java.lang.Object, int)
 	 */
 	@Override
-	public void writeStartArray(Object forValue, int size) throws IOException {
+	public JsonGenerator writeStartArray(Object forValue, int size)  {
 		writeStartArray(forValue);
 	}
 	
@@ -131,15 +124,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeStartArray(java.lang.Object)
 	 */
 	@Override
-	public void writeStartArray(Object forValue) throws IOException {
-		setCurrentValue(forValue);
-		int index = _writeContext.getCurrentIndex();
-		String name = _writeContext.getCurrentName();
+	public JsonGenerator writeStartArray(Object forValue)  {
+		assignCurrentValue(forValue);
+		int index = getOutputContext().getCurrentIndex();
+		String name = getOutputContext().currentName();
 		
 		EStructuralFeature feature = getOutputContext().getFeature();
 		CodecWriteContext ctx = getOutputContext().createChildArrayContext(forValue);
 		ctx.setFeature(feature);
-		_writeContext = ctx;
 		
 		writeStartArray();
 		doStartWriteArray(index + 1, name, forValue);
@@ -150,20 +142,19 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeEndArray()
 	 */
 	@Override
-	public void writeEndArray() throws IOException {
-		if (_writeContext.inRoot()) {
-			return;
+	public JsonGenerator writeEndArray() {
+		if (getOutputContext().inRoot()) {
+			return null;
 		}
-		if (!_writeContext.inArray()) {
-            _reportError("Current context is not array but " + _writeContext.typeDesc());
+		if (!getOutputContext().inArray()) {
+            _reportError("Current context is not array but " + getOutputContext().typeDesc());
         }
-		_writeContext = _writeContext.clearAndGetParent();
-		Object result = _writeContext.getCurrentValue();
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		Object result = getOutputContext().currentValue();
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doEndWriteArray(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), result);
-		CodecWriteContext.resetFeature(_writeContext);
+		doEndWriteArray(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), result);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -171,7 +162,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeStartObject()
 	 */
 	@Override
-	public void writeStartObject() throws IOException {
+	public JsonGenerator writeStartObject()  {
 		// Here we still have the root context. It will become the parent after this call
 		_verifyValueWrite("Start a new EObject: " + getCurrentEObject());
 	}
@@ -181,28 +172,27 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeStartObject(java.lang.Object)
 	 */
 	@Override
-	public void writeStartObject(Object forValue) throws IOException {
+	public JsonGenerator writeStartObject(Object forValue)  {
 		/* 
 		 * We keep the original EObject in the parent context.
 		 * The field of the object are serialized in a child context.
 		 */
-		setCurrentValue(forValue);
+		assignCurrentValue(forValue);
 		/*
 		 * If we come from a EReference, we want to signal the start of reading an
 		 * EObject for a field. So, the name should already be set in the context vie setField.
 		 * So we are not in the state STATUS_EXPECT_NAME. If we start a new EObject, no field name 
 		 * has been set before  
 		 */
-		boolean inRoot = _writeContext.inRoot();
-		int index = _writeContext.getCurrentIndex();
-		String name = _writeContext.getCurrentName();
+		boolean inRoot = getOutputContext().inRoot();
+		int index = getOutputContext().getCurrentIndex();
+		String name = getOutputContext().currentName();
 		/*
 		 * We create the sub / child context for the fields of the EObject
 		 */
 		EStructuralFeature feature = getOutputContext().getFeature();
 		CodecWriteContext ctx = getOutputContext().createChildObjectContext(forValue);
 		ctx.setFeature(feature);
-		_writeContext = ctx;
 		writeStartObject();
 		if (inRoot) {
 			doStartWriteRootEObject(getCurrentEObject());
@@ -216,24 +206,23 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeEndObject()
 	 */
 	@Override
-	public void writeEndObject() throws IOException {
-		if (!_writeContext.inObject()) {
-            _reportError("Current context is not Object but " + _writeContext.typeDesc());
+	public JsonGenerator writeEndObject() {
+		if (!getOutputContext().inObject()) {
+            _reportError("Current context is not Object but " + getOutputContext().typeDesc());
         }
 		EObject result = getCurrentEObject();
-		_writeContext = _writeContext.clearAndGetParent();
 		/*
 		 * If we have a root object, the we have no field name
 		 */
-		if (_writeContext.inRoot()) {
+		if (getOutputContext().inRoot()) {
 			doEndWriteRootEObject(result);
 		} else {
-			if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+			if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 				_reportError("Expect a value to write, but a field name is expected");
 			}
-			doEndWriteEObject(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), result);
+			doEndWriteEObject(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), result);
 		}
-		CodecWriteContext.resetFeature(_writeContext);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -241,11 +230,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeFieldName(java.lang.String)
 	 */
 	@Override
-	public void writeFieldName(String name) throws IOException {
-		if (_writeContext.writeFieldName(name) == JsonWriteContext.STATUS_EXPECT_VALUE) {
+	public JsonGenerator writeFieldName(String name)  {
+		if (getOutputContext().writeName(name) == JsonWriteContext.STATUS_EXPECT_VALUE) {
 			_reportError("Expected to retrieve a value instead of setting a field name");
 		}
-		_writeContext.writeFieldName(name);
+		getOutputContext().writeName(name);
 	}
 
 	/* 
@@ -253,14 +242,15 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeString(java.lang.String)
 	 */
 	@Override
-	public void writeString(String text) throws IOException {
-		_writeContext.setCurrentValue(text);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeString(String text) {
+//		getOutputContext().setCurrentValue(text);
+		assignCurrentValue(text);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-//		the _writeContext has no currentName set because it is on the parent context and not on the array child context
-		doWriteString(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), text);
-		CodecWriteContext.resetFeature(_writeContext);
+//		the getOutputContext() has no currentName set because it is on the parent context and not on the array child context
+		doWriteString(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), text);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 	
 	/* 
@@ -268,9 +258,9 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeArray(java.lang.String[], int, int)
 	 */
 	@Override
-	public void writeArray(String[] array, int offset, int length) throws IOException {
+	public JsonGenerator writeArray(String[] array, int offset, int length)  {
 		super.writeArray(array, offset, length);
-		CodecWriteContext.resetFeature(_writeContext);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 	
 	/* 
@@ -278,7 +268,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeString(char[], int, int)
 	 */
 	@Override
-	public void writeString(char[] buffer, int offset, int len) throws IOException {
+	public JsonGenerator writeString(char[] buffer, int offset, int len) {
 		writeRaw(buffer, offset, len);
 	}
 	
@@ -287,7 +277,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeRawUTF8String(byte[], int, int)
 	 */
 	@Override
-	public void writeRawUTF8String(byte[] buffer, int offset, int len) throws IOException {
+	public JsonGenerator writeRawUTF8String(byte[] buffer, int offset, int len) {
 		writeRaw(new String(buffer, StandardCharsets.UTF_8));
 
 	}
@@ -297,7 +287,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeUTF8String(byte[], int, int)
 	 */
 	@Override
-	public void writeUTF8String(byte[] buffer, int offset, int len) throws IOException {
+	public JsonGenerator writeUTF8String(byte[] buffer, int offset, int len) {
 		writeString(new String(buffer, StandardCharsets.UTF_8));
 	}
 
@@ -306,7 +296,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeRaw(java.lang.String)
 	 */
 	@Override
-	public void writeRaw(String text) throws IOException {
+	public JsonGenerator writeRaw(String text)  {
 		writeString(text);
 	}
 
@@ -315,7 +305,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeRaw(java.lang.String, int, int)
 	 */
 	@Override
-	public void writeRaw(String text, int offset, int len) throws IOException {
+	public JsonGenerator writeRaw(String text, int offset, int len)  {
 		writeString(text);
 	}
 	
@@ -324,13 +314,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeRaw(char[], int, int)
 	 */
 	@Override
-	public void writeRaw(char[] text, int offset, int len) throws IOException {
-		_writeContext.setCurrentValue(text);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeRaw(char[] text, int offset, int len) {
+//		getOutputContext().setCurrentValue(text);
+		assignCurrentValue(text);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteChars(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), text);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteChars(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), text);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -338,13 +329,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeRaw(char)
 	 */
 	@Override
-	public void writeRaw(char c) throws IOException {
-		_writeContext.setCurrentValue(c);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeRaw(char c) {
+//		getOutputContext().setCurrentValue(c);
+		assignCurrentValue(c);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteChar(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), c);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteChar(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), c);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -352,13 +344,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeBinary(com.fasterxml.jackson.core.Base64Variant, byte[], int, int)
 	 */
 	@Override
-	public void writeBinary(Base64Variant bv, byte[] data, int offset, int len) throws IOException {
-		_writeContext.setCurrentValue(data);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeBinary(Base64Variant bv, byte[] data, int offset, int len)  {
+//		getOutputContext().setCurrentValue(data);
+		assignCurrentValue(data);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteBinary(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), bv, data, offset, len);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteBinary(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), bv, data, offset, len);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -366,13 +359,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeNumber(int)
 	 */
 	@Override
-	public void writeNumber(int v) throws IOException {
-		_writeContext.setCurrentValue(v);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeNumber(int v)  {
+//		getOutputContext().setCurrentValue(v);
+		assignCurrentValue(v);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteInt(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteInt(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -380,13 +374,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeNumber(long)
 	 */
 	@Override
-	public void writeNumber(long v) throws IOException {
-		_writeContext.setCurrentValue(v);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeNumber(long v)  {
+//		getOutputContext().setCurrentValue(v);
+		assignCurrentValue(v);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteLong(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteLong(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -394,13 +389,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeNumber(java.math.BigInteger)
 	 */
 	@Override
-	public void writeNumber(BigInteger v) throws IOException {
-		_writeContext.setCurrentValue(v);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeNumber(BigInteger v) {
+//		getOutputContext().setCurrentValue(v);
+		assignCurrentValue(v);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteBigInt(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteBigInt(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -408,13 +404,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeNumber(double)
 	 */
 	@Override
-	public void writeNumber(double v) throws IOException {
-		_writeContext.setCurrentValue(v);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeNumber(double v)  {
+//		getOutputContext().setCurrentValue(v);
+		assignCurrentValue(v);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteDouble(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteDouble(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -422,13 +419,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeNumber(float)
 	 */
 	@Override
-	public void writeNumber(float v) throws IOException {
-		_writeContext.setCurrentValue(v);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeNumber(float v) {
+//		getOutputContext().setCurrentValue(v);
+		assignCurrentValue(v);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteFloat(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteFloat(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -436,13 +434,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeNumber(java.math.BigDecimal)
 	 */
 	@Override
-	public void writeNumber(BigDecimal v) throws IOException {
-		_writeContext.setCurrentValue(v);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeNumber(BigDecimal v)  {
+//		getOutputContext().setCurrentValue(v);
+		assignCurrentValue(v);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteBigDecimal(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), v);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteBigDecimal(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -450,13 +449,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeNumber(java.lang.String)
 	 */
 	@Override
-	public void writeNumber(String encodedValue) throws IOException {
-		_writeContext.setCurrentValue(encodedValue);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeNumber(String encodedValue) {
+//		getOutputContext().setCurrentValue(encodedValue);
+		assignCurrentValue(encodedValue);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteStringNumber(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), encodedValue);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteStringNumber(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), encodedValue);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -464,13 +464,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeBoolean(boolean)
 	 */
 	@Override
-	public void writeBoolean(boolean state) throws IOException {
-		_writeContext.setCurrentValue(state);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeBoolean(boolean state) {
+//		getOutputContext().setCurrentValue(state);
+		assignCurrentValue(state);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteBoolean(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), state);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteBoolean(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), state);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 
 	/* 
@@ -478,13 +479,13 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeNull()
 	 */
 	@Override
-	public void writeNull() throws IOException {
-		_writeContext.setCurrentValue(null);
-		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeNull()  {
+		assignCurrentValue(null);
+		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteNull(_writeContext.getCurrentIndex(), _writeContext.getCurrentName());
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteNull(getOutputContext().getCurrentIndex(), getOutputContext().currentName());
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 	
 	/* 
@@ -501,13 +502,13 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeObjectId(java.lang.Object)
 	 */
 	@Override
-	public void writeObjectId(Object id) throws IOException {
-		setCurrentValue(id);
-		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeObjectId(Object id)  {
+		assignCurrentValue(id);
+		if(getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Error writing object id while expecting a value");
 		}
-		doWriteObjectId(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), id);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteObjectId(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), id);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 	
 	/* 
@@ -524,13 +525,13 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see com.fasterxml.jackson.core.JsonGenerator#writeTypeId(java.lang.Object)
 	 */
 	@Override
-	public void writeTypeId(Object id) throws IOException {
-		setCurrentValue(id);
-		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public JsonGenerator writeTypeId(Object id) {
+		assignCurrentValue(id);
+		if(getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Error writing type information while expecting a value");
 		}
-		doWriteType(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), id);
-		CodecWriteContext.resetFeature(_writeContext);
+		doWriteType(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), id);
+		CodecWriteContext.resetFeature(getOutputContext());
 	}
 	
 	/* 
@@ -547,12 +548,12 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 * @see org.gecko.codec.jackson.CodeGeneratorBase#writeSuperTypes(java.lang.String[])
 	 */
 	@Override
-	public void writeSuperTypes(String[] supertypes) throws IOException {
-		setCurrentValue(supertypes);
-		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+	public void writeSuperTypes(String[] supertypes)  {
+		assignCurrentValue(supertypes);
+		if(getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Error writing supertype information while expecting a value");
 		}
-		doWriteSuperTypes(_writeContext.getCurrentIndex(), _writeContext.getCurrentName(), supertypes);
+		doWriteSuperTypes(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), supertypes);
 	}
 
 }

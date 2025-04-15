@@ -24,13 +24,14 @@ import org.eclipse.emfcloud.jackson.databind.type.EcoreType;
 import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
-import com.fasterxml.jackson.databind.type.CollectionType;
+import tools.jackson.databind.DatabindException;
+
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.jsontype.TypeDeserializer;
+import tools.jackson.databind.type.CollectionType;
 
 /**
  * 
@@ -42,8 +43,8 @@ public class CodecDeserializers extends EMFDeserializers {
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
 	private final ResourceDeserializer resourceDeserializer;
-	private final JsonDeserializer<Object> dataTypeDeserializer;
-	private final JsonDeserializer<ReferenceEntry> referenceDeserializer;
+	private final ValueDeserializer<Object> dataTypeDeserializer;
+	private final ValueDeserializer<ReferenceEntry> referenceDeserializer;
 
 	/**
 	 * Creates a new instance.
@@ -63,14 +64,13 @@ public class CodecDeserializers extends EMFDeserializers {
 	 * @see org.eclipse.emfcloud.jackson.databind.deser.EMFDeserializers#findCollectionDeserializer(com.fasterxml.jackson.databind.type.CollectionType, com.fasterxml.jackson.databind.DeserializationConfig, com.fasterxml.jackson.databind.BeanDescription, com.fasterxml.jackson.databind.jsontype.TypeDeserializer, com.fasterxml.jackson.databind.JsonDeserializer)
 	 */
 	@Override
-	public JsonDeserializer<?> findCollectionDeserializer(CollectionType type, DeserializationConfig config,
-			BeanDescription beanDesc, TypeDeserializer elementTypeDeserializer, JsonDeserializer<?> elementDeserializer)
-					throws JsonMappingException {
+	public ValueDeserializer<?> findCollectionDeserializer(CollectionType type, DeserializationConfig config,
+			BeanDescription beanDesc, TypeDeserializer elementTypeDeserializer, ValueDeserializer<?> elementDeserializer) {
 		if (type.getContentType().isTypeOrSubTypeOf(EObject.class)) {
 			return new CollectionDeserializer(type, new CodecEObjectDeserializer(type.getContentType().getRawClass(), codecModule, codecModelInfoService),
 					referenceDeserializer);
 		}
-		return super.findCollectionDeserializer(type, config, beanDesc, elementTypeDeserializer, (JsonDeserializer<?>) elementDeserializer);
+		return super.findCollectionDeserializer(type, config, beanDesc, elementTypeDeserializer, (ValueDeserializer<?>) elementDeserializer);
 	}
 
 	/* 
@@ -78,8 +78,8 @@ public class CodecDeserializers extends EMFDeserializers {
 	 * @see org.eclipse.emfcloud.jackson.databind.deser.EMFDeserializers#findBeanDeserializer(com.fasterxml.jackson.databind.JavaType, com.fasterxml.jackson.databind.DeserializationConfig, com.fasterxml.jackson.databind.BeanDescription)
 	 */
 	@Override
-	public JsonDeserializer<?> findBeanDeserializer(JavaType type, DeserializationConfig config,
-			BeanDescription beanDesc) throws JsonMappingException {
+	public ValueDeserializer<?> findBeanDeserializer(JavaType type, DeserializationConfig config,
+			BeanDescription beanDesc) throws DatabindException {
 		if (type.isTypeOrSubTypeOf(Resource.class)) {
 			return resourceDeserializer;
 		}

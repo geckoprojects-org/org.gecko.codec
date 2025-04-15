@@ -11,15 +11,13 @@
 
 package org.eclipse.emfcloud.jackson.databind.property;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.SerializationContext;
 
 public abstract class EObjectProperty {
 
@@ -31,11 +29,11 @@ public abstract class EObjectProperty {
 
    public String getFieldName() { return fieldName; }
 
-   public abstract void serialize(EObject bean, JsonGenerator jg, SerializerProvider provider) throws IOException;
+   public abstract void serialize(EObject bean, JsonGenerator jg, SerializationContext provider) ;
 
-   public abstract EObject deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException;
+   public abstract EObject deserialize(JsonParser jp, DeserializationContext ctxt) ;
 
    public abstract void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt,
-      Resource resource) throws IOException;
+      Resource resource) ;
 
 }

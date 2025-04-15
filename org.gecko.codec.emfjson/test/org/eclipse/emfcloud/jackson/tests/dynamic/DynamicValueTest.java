@@ -25,9 +25,9 @@ import org.eclipse.emfcloud.jackson.support.DynamicExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(DynamicExtension.class)
 public class DynamicValueTest {
@@ -53,7 +53,7 @@ public class DynamicValueTest {
 //   }
 
    @Test
-   public void testLoadEJavaObjectValue() throws JsonProcessingException {
+   public void testLoadEJavaObjectValue() {
       EClass classA = (EClass) resourceSet.getEObject(URI.createURI("http://emfjson/dynamic/model#//A"), true);
       EDataType type = (EDataType) classA.getEStructuralFeature("javaType").getEType();
 
@@ -84,11 +84,11 @@ public class DynamicValueTest {
       String stringValue = EcorePackage.eINSTANCE.getEFactoryInstance().convertToString(type, value);
 
       JsonNode result = mapper.valueToTree(obj);
-      assertEquals(stringValue, result.get("javaClass").asText());
+      assertEquals(stringValue, result.get("javaClass").asString());
    }
 
    @Test
-   public void testLoadEJavaClassValue() throws JsonProcessingException {
+   public void testLoadEJavaClassValue()  {
       EClass classA = (EClass) resourceSet.getEObject(URI.createURI("http://emfjson/dynamic/model#//A"), true);
       EDataType type = (EDataType) classA.getEStructuralFeature("javaClass").getEType();
 

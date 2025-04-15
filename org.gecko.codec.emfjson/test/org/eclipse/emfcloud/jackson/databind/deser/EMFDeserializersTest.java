@@ -16,8 +16,10 @@ import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.DatabindException;
+
+import tools.jackson.databind.ObjectMapper;
 
 public class EMFDeserializersTest {
 
@@ -26,12 +28,11 @@ public class EMFDeserializersTest {
 
    @BeforeEach
    public void setUp() {
-      mapper = new ObjectMapper();
-      mapper.registerModule(new EMFModule());
+      mapper = EMFModule.setupDefaultMapper(JsonFactory.builder().build());
    }
 
    @Test
-   public void test() throws JsonMappingException {
+   public void test() throws DatabindException {
       // JavaType type = factory.typeOf(ModelPackage.Literals.USER__FRIENDS);
       // JsonDeserializer<Object> deserializer = mapper.getDeserializationContext()
       // .findRootValueDeserializer(type);

@@ -39,8 +39,8 @@ import org.eclipse.emfcloud.jackson.support.StandardExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(StandardExtension.class)
 public class ValueTest {
@@ -239,11 +239,11 @@ public class ValueTest {
       Calendar calendar = Calendar.getInstance();
       calendar.set(2020, Calendar.OCTOBER, 10);
 
-      assertNotNull(mapper.getDateFormat());
+      assertNotNull(mapper.serializationConfig().getDateFormat());
 
       JsonNode expected = mapper.createObjectNode()
          .put("eClass", "http://www.emfjson.org/jackson/model#//ETypes")
-         .put("eDate", mapper.getDateFormat().format(calendar.getTime()));
+         .put("eDate", mapper.serializationConfig().getDateFormat().format(calendar.getTime()));
 
       Resource resource = resourceSet.createResource(URI.createURI("tests/test.json"));
       ETypes valueObject = ModelFactory.eINSTANCE.createETypes();

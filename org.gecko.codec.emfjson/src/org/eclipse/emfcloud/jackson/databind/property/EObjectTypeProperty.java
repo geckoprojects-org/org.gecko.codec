@@ -27,20 +27,21 @@ import org.eclipse.emfcloud.jackson.annotations.EcoreTypeInfo;
 import org.eclipse.emfcloud.jackson.utils.ValueReader;
 import org.eclipse.emfcloud.jackson.utils.ValueWriter;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
-import com.fasterxml.jackson.databind.ser.std.StringSerializer;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
+
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.deser.jdk.StringDeserializer;
+import tools.jackson.databind.ser.jdk.StringSerializer;
 
 public class EObjectTypeProperty extends EObjectProperty {
 
-   private final JsonSerializer<Object> serializer = new StringSerializer();
-   private final JsonDeserializer<String> deserializer = StringDeserializer.instance;
+   private final ValueSerializer<Object> serializer = new StringSerializer();
+   private final ValueDeserializer<String> deserializer = StringDeserializer.instance;
 
    private final ValueReader<String, EClass> valueReader;
    private final ValueWriter<EClass, String> valueWriter;
@@ -55,8 +56,7 @@ public class EObjectTypeProperty extends EObjectProperty {
    }
 
    @Override
-   public void serialize(final EObject bean, final JsonGenerator jg, final SerializerProvider provider)
-      throws IOException {
+   public void serialize(final EObject bean, final JsonGenerator jg, final SerializationContext provider) {
       if (!OPTION_SERIALIZE_TYPE.enabledIn(features)) {
          return;
       }
@@ -67,7 +67,7 @@ public class EObjectTypeProperty extends EObjectProperty {
       if (isRoot(bean) || shouldSaveType(objectType, containment.getEReferenceType(), containment)) {
          String value = valueWriter.writeValue(bean.eClass(), provider);
 
-         jg.writeFieldName(getFieldName());
+         jg.writeName(getFieldName());
          serializer.serialize(value, jg, provider);
       }
    }
@@ -80,8 +80,8 @@ public class EObjectTypeProperty extends EObjectProperty {
    }
 
    @Override
-   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
-      if (jp.getCurrentToken() == JsonToken.FIELD_NAME) {
+   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) {
+      if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
          jp.nextToken();
       }
 
@@ -96,8 +96,7 @@ public class EObjectTypeProperty extends EObjectProperty {
 
    @Override
    public void deserializeAndSet(final JsonParser jp, final EObject current, final DeserializationContext ctxt,
-      final Resource resource)
-      throws IOException {
+      final Resource resource) {
       // do nothing
    }
 

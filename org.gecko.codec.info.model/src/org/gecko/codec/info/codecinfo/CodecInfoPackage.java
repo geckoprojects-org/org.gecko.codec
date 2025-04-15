@@ -766,7 +766,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CODEC_VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZERPROVIDER = 0;
+	int CODEC_VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZATIONCONTEXT = 0;
 
 	/**
 	 * The number of operations of the '<em>Codec Value Writer</em>' class.
@@ -910,7 +910,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * The meta object id for the '<em>Serializer Provider</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see com.fasterxml.jackson.databind.SerializerProvider
+	 * @see tools.jackson.databind.SerializationContext
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
 	 * @generated
 	 */
@@ -920,7 +920,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * The meta object id for the '<em>Deserialization Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see com.fasterxml.jackson.databind.DeserializationContext
+	 * @see tools.jackson.databind.DeserializationContext
 	 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 	 * @generated
 	 */
@@ -1328,11 +1328,11 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getCodecValueReader_Name();
 
 	/**
-	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.CodecValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext) <em>Read Value</em>}' operation.
+	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.CodecValueReader#readValue(java.lang.Object, tools.jackson.databind.DeserializationContext) <em>Read Value</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Read Value</em>' operation.
-	 * @see org.gecko.codec.info.codecinfo.CodecValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext)
+	 * @see org.gecko.codec.info.codecinfo.CodecValueReader#readValue(java.lang.Object, tools.jackson.databind.DeserializationContext)
 	 * @generated
 	 */
 	EOperation getCodecValueReader__ReadValue__Object_DeserializationContext();
@@ -1359,14 +1359,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getCodecValueWriter_Name();
 
 	/**
-	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.CodecValueWriter#writeValue(java.lang.Object, com.fasterxml.jackson.databind.SerializerProvider) <em>Write Value</em>}' operation.
+	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.CodecValueWriter#writeValue(java.lang.Object, tools.jackson.databind.SerializationContext) <em>Write Value</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Write Value</em>' operation.
-	 * @see org.gecko.codec.info.codecinfo.CodecValueWriter#writeValue(java.lang.Object, com.fasterxml.jackson.databind.SerializerProvider)
+	 * @see org.gecko.codec.info.codecinfo.CodecValueWriter#writeValue(java.lang.Object, tools.jackson.databind.SerializationContext)
 	 * @generated
 	 */
-	EOperation getCodecValueWriter__WriteValue__Object_SerializerProvider();
+	EOperation getCodecValueWriter__WriteValue__Object_SerializationContext();
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.info.codecinfo.CodecInfoHolder <em>Holder</em>}'.
@@ -1453,11 +1453,11 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getSampleValueReader_Name();
 
 	/**
-	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.SampleValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext) <em>Read Value</em>}' operation.
+	 * Returns the meta object for the '{@link org.gecko.codec.info.codecinfo.SampleValueReader#readValue(java.lang.Object, tools.jackson.databind.DeserializationContext) <em>Read Value</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Read Value</em>' operation.
-	 * @see org.gecko.codec.info.codecinfo.SampleValueReader#readValue(java.lang.Object, com.fasterxml.jackson.databind.DeserializationContext)
+	 * @see org.gecko.codec.info.codecinfo.SampleValueReader#readValue(java.lang.Object, tools.jackson.databind.DeserializationContext)
 	 * @generated
 	 */
 	EOperation getSampleValueReader__ReadValue__Object_DeserializationContext();
@@ -1473,23 +1473,23 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EEnum getInfoType();
 
 	/**
-	 * Returns the meta object for data type '{@link com.fasterxml.jackson.databind.SerializerProvider <em>Serializer Provider</em>}'.
+	 * Returns the meta object for data type '{@link tools.jackson.databind.SerializationContext <em>Serializer Provider</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Serializer Provider</em>'.
-	 * @see com.fasterxml.jackson.databind.SerializerProvider
-	 * @model instanceClass="com.fasterxml.jackson.databind.SerializerProvider"
+	 * @see tools.jackson.databind.SerializationContext
+	 * @model instanceClass="tools.jackson.databind.SerializationContext"
 	 * @generated
 	 */
 	EDataType getSerializerProvider();
 
 	/**
-	 * Returns the meta object for data type '{@link com.fasterxml.jackson.databind.DeserializationContext <em>Deserialization Context</em>}'.
+	 * Returns the meta object for data type '{@link tools.jackson.databind.DeserializationContext <em>Deserialization Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>Deserialization Context</em>'.
-	 * @see com.fasterxml.jackson.databind.DeserializationContext
-	 * @model instanceClass="com.fasterxml.jackson.databind.DeserializationContext"
+	 * @see tools.jackson.databind.DeserializationContext
+	 * @model instanceClass="tools.jackson.databind.DeserializationContext"
 	 * @generated
 	 */
 	EDataType getDeserializationContext();
@@ -1859,7 +1859,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation CODEC_VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZERPROVIDER = eINSTANCE.getCodecValueWriter__WriteValue__Object_SerializerProvider();
+		EOperation CODEC_VALUE_WRITER___WRITE_VALUE__OBJECT_SERIALIZATIONCONTEXT = eINSTANCE.getCodecValueWriter__WriteValue__Object_SerializationContext();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.info.codecinfo.impl.CodecInfoHolderImpl <em>Holder</em>}' class.
@@ -1951,7 +1951,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * The meta object literal for the '<em>Serializer Provider</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see com.fasterxml.jackson.databind.SerializerProvider
+		 * @see tools.jackson.databind.SerializationContext
 		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
 		 * @generated
 		 */
@@ -1961,7 +1961,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * The meta object literal for the '<em>Deserialization Context</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see com.fasterxml.jackson.databind.DeserializationContext
+		 * @see tools.jackson.databind.DeserializationContext
 		 * @see org.gecko.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 		 * @generated
 		 */

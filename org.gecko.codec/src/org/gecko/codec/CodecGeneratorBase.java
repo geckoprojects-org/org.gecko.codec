@@ -24,6 +24,6 @@ public interface CodecGeneratorBase {
 
 	boolean canWriteSuperTypes();
 
-	void writeSuperTypes(String[] supertypes) throws IOException;
+	void writeSuperTypes(String[] supertypes);
 	
 }
