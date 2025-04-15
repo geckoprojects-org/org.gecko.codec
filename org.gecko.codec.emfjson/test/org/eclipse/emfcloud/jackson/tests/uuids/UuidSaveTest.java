@@ -25,16 +25,17 @@ import org.eclipse.emfcloud.jackson.junit.model.Container;
 import org.eclipse.emfcloud.jackson.junit.model.ModelFactory;
 import org.eclipse.emfcloud.jackson.junit.model.ModelPackage;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
 
 public class UuidSaveTest extends UuidSupport {
 
-   private final ObjectMapper mapper = new ObjectMapper();
+   private ObjectMapper mapper;
 
    @BeforeEach
    public void setUp() {
@@ -42,7 +43,7 @@ public class UuidSaveTest extends UuidSupport {
 
       EMFModule module = new EMFModule();
       module.configure(EMFModule.Feature.OPTION_USE_ID, true);
-      mapper.registerModule(module);
+      mapper = Utils.createMapper(module);
    }
 
    @Test
@@ -109,7 +110,7 @@ public class UuidSaveTest extends UuidSupport {
       JsonNode ref = refProperty.get(0);
       assertNotNull(ref.get("$ref"));
 
-      assertEquals(uuid(two), ref.get("$ref").asText());
+      assertEquals(uuid(two), ref.get("$ref").asString());
    }
 
 }

@@ -27,9 +27,9 @@ import org.eclipse.emfcloud.jackson.utils.EObjects;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(DynamicExtension.class)
 public class DynamicContainmentTest {
@@ -56,7 +56,7 @@ public class DynamicContainmentTest {
    }
 
    @Test
-   public void testLoadContainmentWithOpposite() throws JsonProcessingException {
+   public void testLoadContainmentWithOpposite() {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", "http://emfjson/dynamic/model#//A")
          .put("someKind", "e1")

@@ -11,8 +11,6 @@
 
 package org.eclipse.emfcloud.jackson.databind.property;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.annotations.EcoreIdentityInfo;
@@ -20,11 +18,11 @@ import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.eclipse.emfcloud.jackson.utils.ValueReader;
 import org.eclipse.emfcloud.jackson.utils.ValueWriter;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.SerializationContext;
 
 public class EObjectIdentityProperty extends EObjectProperty {
 
@@ -39,27 +37,24 @@ public class EObjectIdentityProperty extends EObjectProperty {
    }
 
    @Override
-   public void serialize(final EObject bean, final JsonGenerator jg, final SerializerProvider provider)
-      throws IOException {
-      jg.writeObjectField(getFieldName(), valueWriter.writeValue(bean, provider));
+   public void serialize(final EObject bean, final JsonGenerator jg, final SerializationContext provider) {
+      jg.writePOJOProperty(getFieldName(), valueWriter.writeValue(bean, provider));
    }
 
    @Override
-   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
+   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) {
       return null;
    }
 
    @Override
-   @SuppressWarnings("checkstyle:cyclomaticComplexity")
    public void deserializeAndSet(final JsonParser jp, final EObject current, final DeserializationContext ctxt,
-      final Resource resource)
-      throws IOException {
-      if (jp.getCurrentToken() == JsonToken.FIELD_NAME) {
+      final Resource resource) {
+      if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
          jp.nextToken();
       }
 
       Object value;
-      switch (jp.getCurrentToken()) {
+      switch (jp.currentToken()) {
          case VALUE_STRING:
             value = jp.getValueAsString();
             break;

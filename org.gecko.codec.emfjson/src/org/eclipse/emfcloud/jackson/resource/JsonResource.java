@@ -30,8 +30,8 @@ import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.ContextAttributes;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.ContextAttributes;
 
 /**
  * A Resource implementation that read and write it's content in JSON.

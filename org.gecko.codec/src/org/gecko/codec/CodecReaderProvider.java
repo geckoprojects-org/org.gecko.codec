@@ -11,7 +11,7 @@
  */
 package org.gecko.codec;
 
-import com.fasterxml.jackson.core.ObjectCodec;
+import tools.jackson.core.TreeCodec;
 
 /**
  * Simple provider for the reader and ObjectCodec used for parsing.
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.core.ObjectCodec;
 public class CodecReaderProvider<R> implements ObjectCodecProvider {
 
 	private final R reader;
-	private ObjectCodec codec;
+	private TreeCodec codec;
 
 	/**
 	 * Creates a new instance.
@@ -34,7 +34,7 @@ public class CodecReaderProvider<R> implements ObjectCodecProvider {
 	/**
 	 * Creates a new instance.
 	 */
-	public CodecReaderProvider(R reader, ObjectCodec codec) {
+	public CodecReaderProvider(R reader, TreeCodec codec) {
 		this.reader = reader;
 		setCodec(codec);
 	}
@@ -48,7 +48,7 @@ public class CodecReaderProvider<R> implements ObjectCodecProvider {
 	 * @see org.gecko.codec.ObjectCodecProvider#getObjectCodec()
 	 */
 	@Override
-	public ObjectCodec getObjectCodec() {
+	public TreeCodec getObjectCodec() {
 		return codec;
 	}
 
@@ -57,7 +57,7 @@ public class CodecReaderProvider<R> implements ObjectCodecProvider {
 	 * 
 	 * @param codec the codec to set
 	 */
-	public void setCodec(ObjectCodec codec) {
+	public void setCodec(TreeCodec codec) {
 		this.codec = codec;
 	}
 

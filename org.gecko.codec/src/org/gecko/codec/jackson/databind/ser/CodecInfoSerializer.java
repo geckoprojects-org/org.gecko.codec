@@ -13,12 +13,10 @@
  */
 package org.gecko.codec.jackson.databind.ser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EObject;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * 
@@ -27,6 +25,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
  */
 public interface CodecInfoSerializer {
 	
-	void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException;
+	void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider);
 
 }

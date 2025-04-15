@@ -18,7 +18,7 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emfcloud.jackson.handlers.URIHandler;
 
-import com.fasterxml.jackson.databind.DatabindContext;
+import tools.jackson.databind.DatabindContext;
 
 public class ReferenceEntries {
 

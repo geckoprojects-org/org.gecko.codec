@@ -6,10 +6,11 @@ import org.eclipse.emfcloud.jackson.junit.model.Author;
 import org.eclipse.emfcloud.jackson.junit.model.Book;
 import org.eclipse.emfcloud.jackson.junit.model.ModelFactory;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class ExtendedMetaDataTest {
 
@@ -17,7 +18,7 @@ public class ExtendedMetaDataTest {
    public void testNoExtendedMetaDataNames() {
       final EMFModule emfModule = new EMFModule();
       emfModule.configure(EMFModule.Feature.OPTION_USE_NAMES_FROM_EXTENDED_META_DATA, false);
-      final ObjectMapper mapper = new ObjectMapper().registerModule(emfModule);
+      final ObjectMapper mapper = Utils.createDefaultMapper();
 
       final Book book = ModelFactory.eINSTANCE.createBook();
       book.setAuthorName("Friedrich Schiller");
@@ -28,9 +29,9 @@ public class ExtendedMetaDataTest {
       book.setAuthor(author);
 
       final JsonNode json = mapper.valueToTree(book);
-      assertEquals("Friedrich Schiller", json.get("authorName").asText());
-      assertEquals("Friedrich", json.get("author").get("firstName").asText());
-      assertEquals("Schiller", json.get("author").get("lastName").asText());
+      assertEquals("Friedrich Schiller", json.get("authorName").asString());
+      assertEquals("Friedrich", json.get("author").get("firstName").asString());
+      assertEquals("Schiller", json.get("author").get("lastName").asString());
    }
 
    @Test
@@ -41,19 +42,19 @@ public class ExtendedMetaDataTest {
       book.setAuthorName("Friedrich Schiller");
 
       final JsonNode json = mapper.valueToTree(book);
-      assertEquals("Friedrich Schiller", json.get("author").asText());
+      assertEquals("Friedrich Schiller", json.get("author").asString());
    }
 
    @Test
    public void testExtendedMetaDataNames() {
       final EMFModule emfModule = new EMFModule();
       emfModule.configure(EMFModule.Feature.OPTION_USE_NAMES_FROM_EXTENDED_META_DATA, true);
-      final ObjectMapper mapper = new ObjectMapper().registerModule(emfModule);
+      final ObjectMapper mapper = Utils.createDefaultMapper();
 
       final Book book = ModelFactory.eINSTANCE.createBook();
       book.setAuthorName("Friedrich Schiller");
 
       final JsonNode json = mapper.valueToTree(book);
-      assertEquals("Friedrich Schiller", json.get("author").asText());
+      assertEquals("Friedrich Schiller", json.get("author").asString());
    }
 }

@@ -12,7 +12,8 @@ package org.eclipse.emfcloud.jackson.errors;
 
 import org.eclipse.emf.ecore.resource.Resource;
 
-import com.fasterxml.jackson.core.JsonLocation;
+
+import tools.jackson.core.TokenStreamLocation;
 
 public class JSONException extends Exception implements Resource.Diagnostic {
 
@@ -21,14 +22,14 @@ public class JSONException extends Exception implements Resource.Diagnostic {
    private final int line;
    private final int column;
 
-   public JSONException(final String message, final JsonLocation location) {
+   public JSONException(final String message, final TokenStreamLocation location) {
       super(message);
       this.location = location.toString();
       this.line = location.getLineNr();
       this.column = location.getColumnNr();
    }
 
-   public JSONException(final Exception e, final JsonLocation location) {
+   public JSONException(final Exception e, final TokenStreamLocation location) {
       super(e);
       this.location = location.toString();
       this.line = location.getLineNr();

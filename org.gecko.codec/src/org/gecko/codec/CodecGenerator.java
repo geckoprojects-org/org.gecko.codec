@@ -13,13 +13,12 @@
  */
 package org.gecko.codec;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.fasterxml.jackson.core.Base64Variant;
+import tools.jackson.core.Base64Variant;
 
 /**
  * 
@@ -28,32 +27,32 @@ import com.fasterxml.jackson.core.Base64Variant;
  */
 public interface CodecGenerator {
 	
-	void doStartWriteRootEObject(EObject object) throws IOException;
-	void doEndWriteRootEObject(EObject object) throws IOException;
+	void doStartWriteRootEObject(EObject object) ;
+	void doEndWriteRootEObject(EObject object) ;
 
-	void doWriteType(int index, String fieldName, Object object) throws IOException;
-	void doWriteSuperTypes(int index, String fieldName, String[] superTypes) throws IOException;
-	void doWriteObjectId(int index, String fieldName, Object object) throws IOException;
+	void doWriteType(int index, String fieldName, Object object) ;
+	void doWriteSuperTypes(int index, String fieldName, String[] superTypes) ;
+	void doWriteObjectId(int index, String fieldName, Object object) ;
 
-	void doStartWriteEObject(int index, String fieldName, EObject object) throws IOException;
-	void doEndWriteEObject(int index, String fieldName, EObject object) throws IOException;
+	void doStartWriteEObject(int index, String fieldName, EObject object) ;
+	void doEndWriteEObject(int index, String fieldName, EObject object) ;
 
-	void doStartWriteArray(int index, String fieldName, Object object) throws IOException;
-	void doEndWriteArray(int index, String fieldName, Object object) throws IOException;
+	void doStartWriteArray(int index, String fieldName, Object object) ;
+	void doEndWriteArray(int index, String fieldName, Object object) ;
 	
-	void doWriteString(int index, String fieldName, String value) throws IOException;
-	void doWriteShort(int index, String fieldName, short value) throws IOException;
-	void doWriteLong(int index, String fieldName, long value) throws IOException;
-	void doWriteInt(int index, String fieldName, int value) throws IOException;
-	void doWriteBigInt(int index, String fieldName, BigInteger value) throws IOException;
-	void doWriteBigDecimal(int index, String fieldName, BigDecimal value) throws IOException;
-	void doWriteFloat(int index, String fieldName, float value) throws IOException;
-	void doWriteDouble(int index, String fieldName, double value) throws IOException;
-	void doWriteChar(int index, String fieldName, char value) throws IOException;
-	void doWriteChars(int index, String fieldName, char[] values) throws IOException;
-	void doWriteBoolean(int index, String fieldName, boolean value) throws IOException;
-	void doWriteStringNumber(int index, String fieldName, String value) throws IOException;
+	void doWriteString(int index, String fieldName, String value) ;
+	void doWriteShort(int index, String fieldName, short value) ;
+	void doWriteLong(int index, String fieldName, long value) ;
+	void doWriteInt(int index, String fieldName, int value) ;
+	void doWriteBigInt(int index, String fieldName, BigInteger value) ;
+	void doWriteBigDecimal(int index, String fieldName, BigDecimal value) ;
+	void doWriteFloat(int index, String fieldName, float value) ;
+	void doWriteDouble(int index, String fieldName, double value) ;
+	void doWriteChar(int index, String fieldName, char value) ;
+	void doWriteChars(int index, String fieldName, char[] values) ;
+	void doWriteBoolean(int index, String fieldName, boolean value) ;
+	void doWriteStringNumber(int index, String fieldName, String value) ;
 	void doWriteBinary(int index, String fieldName, Base64Variant b64variant,
-            byte[] values, int offset, int len) throws IOException;
-	void doWriteNull(int index, String fieldName) throws IOException;
+            byte[] values, int offset, int len) ;
+	void doWriteNull(int index, String fieldName) ;
 }

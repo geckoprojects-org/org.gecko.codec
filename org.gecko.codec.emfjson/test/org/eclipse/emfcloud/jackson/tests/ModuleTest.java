@@ -27,16 +27,15 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emfcloud.jackson.junit.model.ModelFactory;
 import org.eclipse.emfcloud.jackson.junit.model.ModelPackage;
 import org.eclipse.emfcloud.jackson.junit.model.User;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class ModuleTest {
 
@@ -48,8 +47,7 @@ public class ModuleTest {
       EPackage.Registry.INSTANCE.put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
       EPackage.Registry.INSTANCE.put(ModelPackage.eNS_URI, ModelPackage.eINSTANCE);
 
-      mapper = new ObjectMapper();
-      mapper.registerModule(new EMFModule());
+      mapper = Utils.createDefaultMapper();
 
       resourceSet = new ResourceSetImpl();
       resourceSet.getResourceFactoryRegistry()
@@ -64,7 +62,7 @@ public class ModuleTest {
    }
 
    @Test
-   public void testSaveWithModule() throws JsonProcessingException {
+   public void testSaveWithModule()  {
       JsonNode expected = mapper.createObjectNode()
          .put("eClass", "http://www.eclipse.org/emf/2002/Ecore#//EClass")
          .put("name", "A");
@@ -91,7 +89,7 @@ public class ModuleTest {
    }
 
    @Test
-   public void testSaveResourceWithModule() throws JsonProcessingException {
+   public void testSaveResourceWithModule()  {
       JsonNode expected = mapper.createObjectNode()
          .put("eClass", "http://www.eclipse.org/emf/2002/Ecore#//EClass")
          .put("name", "A");
@@ -134,7 +132,7 @@ public class ModuleTest {
    }
 
    @Test
-   public void testLoadIntoResource() throws JsonProcessingException {
+   public void testLoadIntoResource()  {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", "http://www.eclipse.org/emf/2002/Ecore#//EClass")
          .put("name", "A");

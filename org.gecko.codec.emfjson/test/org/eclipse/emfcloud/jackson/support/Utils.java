@@ -13,11 +13,29 @@ package org.eclipse.emfcloud.jackson.support;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emfcloud.jackson.module.EMFModule;
+
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class Utils {
 
-   public static String uriOf(final EObject object) {
-      return EcoreUtil.getURI(object).toString();
-   }
+	public static String uriOf(final EObject object) {
+		return EcoreUtil.getURI(object).toString();
+	}
+
+	public static ObjectMapper createDefaultMapper() {
+		JsonMapper.Builder mapperBuilder = JsonMapper.builder(JsonFactory.builder().build());
+		EMFModule module = new EMFModule();
+		mapperBuilder.addModule(module);
+		return mapperBuilder.build();
+	}
+	
+	public static ObjectMapper createMapper(EMFModule module) {
+		JsonMapper.Builder mapperBuilder = JsonMapper.builder(JsonFactory.builder().build());
+		mapperBuilder.addModule(module);
+		return mapperBuilder.build();
+	}
 
 }

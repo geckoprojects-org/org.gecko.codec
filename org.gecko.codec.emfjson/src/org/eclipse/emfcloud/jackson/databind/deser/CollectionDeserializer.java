@@ -20,27 +20,28 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.type.CollectionType;
+import tools.jackson.databind.ValueDeserializer;
 
-public class CollectionDeserializer extends JsonDeserializer<Collection<Object>> {
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.type.CollectionType;
+
+public class CollectionDeserializer extends ValueDeserializer<Collection<Object>> {
 
    private final CollectionType baseType;
-   private final JsonDeserializer<? extends EObject> deserializer;
-   private final JsonDeserializer<? extends ReferenceEntry> referenceDeserializer;
+   private final ValueDeserializer<? extends EObject> deserializer;
+   private final ValueDeserializer<? extends ReferenceEntry> referenceDeserializer;
 
-   public CollectionDeserializer(final CollectionType type, final JsonDeserializer<? extends EObject> deserializer,
-      final JsonDeserializer<ReferenceEntry> referenceDeserializer) {
+   public CollectionDeserializer(final CollectionType type, final ValueDeserializer<? extends EObject> deserializer,
+      final ValueDeserializer<ReferenceEntry> referenceDeserializer) {
       this.baseType = type;
       this.deserializer = deserializer;
       this.referenceDeserializer = referenceDeserializer;
    }
 
    @Override
-   public Collection<Object> deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+   public Collection<Object> deserialize(final JsonParser p, final DeserializationContext ctxt)  {
       Collection<Object> values = createCollection(ctxt);
       while (p.nextToken() != JsonToken.END_ARRAY) {
          EObject result = deserializer.deserialize(p, ctxt);
@@ -51,12 +52,12 @@ public class CollectionDeserializer extends JsonDeserializer<Collection<Object>>
       return values;
    }
 
-   @SuppressWarnings({ "unchecked", "checkstyle:illegalCatch" })
-   private Collection<Object> createCollection(final DeserializationContext ctxt) {
+   @SuppressWarnings("unchecked")
+private Collection<Object> createCollection(final DeserializationContext ctxt) {
       CollectionType type = baseType;
       try {
          if (baseType.isAbstract() && baseType.isCollectionLikeType()) {
-            type = (CollectionType) ctxt.getFactory().mapAbstractType(ctxt.getConfig(), type);
+            type = (CollectionType) ctxt.getTypeFactory().constructCollectionLikeType();// mapAbstractType(ctxt.getConfig(), type);
          }
          if (!type.isAbstract()) {
             return (Collection<Object>) type.getRawClass().getConstructor().newInstance();
@@ -72,8 +73,7 @@ public class CollectionDeserializer extends JsonDeserializer<Collection<Object>>
 
    @Override
    public Collection<Object> deserialize(final JsonParser p, final DeserializationContext ctxt,
-      final Collection<Object> intoValue)
-      throws IOException {
+      final Collection<Object> intoValue) {
       final EObject parent = EMFContext.getParent(ctxt);
       final EReference feature = EMFContext.getReference(ctxt);
 

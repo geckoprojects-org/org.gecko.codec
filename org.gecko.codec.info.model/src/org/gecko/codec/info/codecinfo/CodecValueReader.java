@@ -2,9 +2,9 @@
  */
 package org.gecko.codec.info.codecinfo;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
-
 import org.osgi.annotation.versioning.ProviderType;
+
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * <!-- begin-user-doc -->

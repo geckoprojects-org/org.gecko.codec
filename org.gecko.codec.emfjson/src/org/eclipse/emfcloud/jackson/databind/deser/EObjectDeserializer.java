@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.deser;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.getFeature;
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.getResource;
-
-import java.io.IOException;
+import static tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EGenericType;
@@ -29,197 +27,195 @@ import org.eclipse.emfcloud.jackson.databind.property.EObjectPropertyMap;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectTypeProperty;
 import org.eclipse.emfcloud.jackson.errors.JSONException;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.util.TokenBuffer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.util.TokenBuffer;
 
-public class EObjectDeserializer extends JsonDeserializer<EObject> {
+public class EObjectDeserializer extends ValueDeserializer<EObject> {
 
-   private final EObjectPropertyMap.Builder builder;
-   private final Class<?> currentType;
+	private final EObjectPropertyMap.Builder builder;
+	private final Class<?> currentType;
 
-   public EObjectDeserializer(final EObjectPropertyMap.Builder builder, final Class<?> currentType) {
-      this.builder = builder;
-      this.currentType = currentType;
-   }
+	public EObjectDeserializer(final EObjectPropertyMap.Builder builder, final Class<?> currentType) {
+		this.builder = builder;
+		this.currentType = currentType;
+	}
 
-   @Override
-   @SuppressWarnings({ "checkstyle:cyclomaticComplexity", "checkstyle:npathComplexity" })
-   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
-      EMFContext.prepare(ctxt);
+	@Override
+	public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt)  {
+		EMFContext.prepare(ctxt);
 
-      final Resource resource = getResource(ctxt);
-      final EStructuralFeature feature = getFeature(ctxt);
-      final EClass defaultType = getDefaultType(ctxt);
+		final Resource resource = getResource(ctxt);
+		final EStructuralFeature feature = getFeature(ctxt);
+		final EClass defaultType = getDefaultType(ctxt);
 
-      EObject current = null;
-      EObjectPropertyMap propertyMap;
+		EObject current = null;
+		EObjectPropertyMap propertyMap;
 
-      if (feature == null && defaultType != null) {
-         propertyMap = builder.construct(ctxt, defaultType);
-      } else if (feature instanceof EReference) {
-         final EObject parent = EMFContext.getParent(ctxt);
-         final EClass resolvedType;
-         if (parent == null) {
-            resolvedType = ((EReference) feature).getEReferenceType();
-         } else {
-            resolvedType = (EClass) EcoreUtil.getReifiedType(parent.eClass(), feature.getEGenericType()).getERawType();
-         }
+		if (feature == null && defaultType != null) {
+			propertyMap = builder.construct(ctxt, defaultType);
+		} else if (feature instanceof EReference) {
+			final EObject parent = EMFContext.getParent(ctxt);
+			final EClass resolvedType;
+			if (parent == null) {
+				resolvedType = ((EReference) feature).getEReferenceType();
+			} else {
+				resolvedType = (EClass) EcoreUtil.getReifiedType(parent.eClass(), feature.getEGenericType()).getERawType();
+			}
 
-         propertyMap = builder.construct(ctxt, resolvedType);
-      } else {
-         propertyMap = builder.constructDefault(ctxt);
-      }
+			propertyMap = builder.construct(ctxt, resolvedType);
+		} else {
+			propertyMap = builder.constructDefault(ctxt);
+		}
 
-      TokenBuffer buffer = null;
-      JsonToken nextToken = jp.nextToken();
-      while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
-         final String field = jp.getCurrentName();
-         final EObjectProperty property = propertyMap.findProperty(field);
+		TokenBuffer buffer = null;
+		JsonToken nextToken = jp.nextToken();
+		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
+			final String field = jp.currentName();
+			final EObjectProperty property = propertyMap.findProperty(field);
 
-         if (property instanceof EObjectTypeProperty) {
-            current = property.deserialize(jp, ctxt);
-            if (current != null) {
-               propertyMap = builder.construct(ctxt, current.eClass());
-            }
-         } else if (property != null && current != null) {
-            property.deserializeAndSet(jp, current, ctxt, resource);
-         } else if (property == null && current != null) {
-            handleUnknownProperty(jp, resource, ctxt, current.eClass());
-         } else {
-            if (buffer == null) {
-               buffer = new TokenBuffer(jp);
-            }
-            buffer.copyCurrentStructure(jp);
-         }
+			if (property instanceof EObjectTypeProperty) {
+				current = property.deserialize(jp, ctxt);
+				if (current != null) {
+					propertyMap = builder.construct(ctxt, current.eClass());
+				}
+			} else if (property != null && current != null) {
+				property.deserializeAndSet(jp, current, ctxt, resource);
+			} else if (property == null && current != null) {
 
-         nextToken = jp.nextToken();
-      }
+				handleUnknownProperty(jp, resource, ctxt, current.eClass());
 
-      // handle empty objects
-      if (buffer == null && current == null && defaultType != null) {
-         return EcoreUtil.create(defaultType);
-      }
+			} else {
+				if (buffer == null) {
+					buffer = TokenBuffer.forBuffering(jp, ctxt);
+				}
+				buffer.copyCurrentStructure(jp);
+			}
 
-      return buffer == null ? current : postDeserialize(buffer, current, defaultType, ctxt);
-   }
+			nextToken = jp.nextToken();
+		}
 
-   @Override
-   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt, final EObject intoValue)
-      throws IOException {
-      if (intoValue == null) {
-         return null;
-      }
+		// handle empty objects
+		if (buffer == null && current == null && defaultType != null) {
+			return EcoreUtil.create(defaultType);
+		}
 
-      EMFContext.prepare(ctxt);
-      EObjectPropertyMap propertyMap = builder.construct(ctxt, intoValue.eClass());
+		return buffer == null ? current : postDeserialize(buffer, current, defaultType, ctxt);
+	}
 
-      final Resource resource = getResource(ctxt);
+	@Override
+	public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt, final EObject intoValue) {
+		if (intoValue == null) {
+			return null;
+		}
 
-      while (jp.nextToken() != JsonToken.END_OBJECT) {
-         final String field = jp.getCurrentName();
-         final EObjectProperty property = propertyMap.findProperty(field);
-         if (property != null) {
-            property.deserializeAndSet(jp, intoValue, ctxt, resource);
-         } else {
-            handleUnknownProperty(jp, resource, ctxt, intoValue.eClass());
-         }
-      }
+		EMFContext.prepare(ctxt);
+		EObjectPropertyMap propertyMap = builder.construct(ctxt, intoValue.eClass());
 
-      return intoValue;
-   }
+		final Resource resource = getResource(ctxt);
 
-   @SuppressWarnings("checkstyle:cyclomaticComplexity")
-   private EObject postDeserialize(final TokenBuffer buffer, EObject object, final EClass defaultType,
-      final DeserializationContext ctxt)
-      throws IOException {
-      if (object == null && defaultType == null) {
-         return null;
-      }
+		while (jp.nextToken() != JsonToken.END_OBJECT) {
+			final String field = jp.currentName();
+			final EObjectProperty property = propertyMap.findProperty(field);
+			if (property != null) {
+				property.deserializeAndSet(jp, intoValue, ctxt, resource);
+			} else {
+				handleUnknownProperty(jp, resource, ctxt, intoValue.eClass());
+			}
+		}
 
-      Resource resource = getResource(ctxt);
-      JsonParser jp = buffer.asParser();
-      JsonNode tree = jp.readValueAsTree();
-      jp.close();
+		return intoValue;
+	}
 
-      EObjectPropertyMap propertyMap = builder.find(ctxt, defaultType, tree.fieldNames());
-      EObjectTypeProperty typeProperty = propertyMap.getTypeProperty();
+	private EObject postDeserialize(final TokenBuffer buffer, EObject object, final EClass defaultType,
+			final DeserializationContext ctxt) {
+		if (object == null && defaultType == null) {
+			return null;
+		}
 
-      if (typeProperty != null) {
-         JsonNode value = tree.get(typeProperty.getFieldName());
+		Resource resource = getResource(ctxt);
+		JsonParser jp = buffer.asParser();
+		JsonNode tree = jp.readValueAsTree();
+		jp.close();
 
-         if (value != null) {
-            object = typeProperty.create(value.asText(), ctxt);
-         }
-      }
+		EObjectPropertyMap propertyMap = builder.find(ctxt, defaultType, tree.propertyNames());
+		EObjectTypeProperty typeProperty = propertyMap.getTypeProperty();
 
-      if (object == null) {
-         object = EcoreUtil.create(defaultType);
-      }
+		if (typeProperty != null) {
+			JsonNode value = tree.get(typeProperty.getFieldName());
 
-      // TODO explain that
-      propertyMap = builder.construct(ctxt, object.eClass());
+			if (value != null) {
+				object = typeProperty.create(value.asString(), ctxt);
+			}
+		}
 
-      jp = buffer.asParser();
-      JsonToken nextToken = jp.nextToken();
-      while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
-         final String field = jp.getCurrentName();
-         final EObjectProperty property = propertyMap.findProperty(field);
+		if (object == null) {
+			object = EcoreUtil.create(defaultType);
+		}
 
-         if (property != null) {
-            property.deserializeAndSet(jp, object, ctxt, resource);
-         } else {
-            handleUnknownProperty(jp, resource, ctxt, object.eClass());
-         }
+		// TODO explain that
+		propertyMap = builder.construct(ctxt, object.eClass());
 
-         nextToken = jp.nextToken();
-      }
+		jp = buffer.asParser();
+		JsonToken nextToken = jp.nextToken();
+		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
+			final String field = jp.currentName();
+			final EObjectProperty property = propertyMap.findProperty(field);
 
-      jp.close();
-      buffer.close();
-      return object;
-   }
+			if (property != null) {
+				property.deserializeAndSet(jp, object, ctxt, resource);
+			} else {
+				handleUnknownProperty(jp, resource, ctxt, object.eClass());
+			}
 
-   private void handleUnknownProperty(final JsonParser jp, final Resource resource, final DeserializationContext ctxt, EClass currentEClass)
-      throws IOException {
-      if (resource != null && ctxt.getConfig().hasDeserializationFeatures(FAIL_ON_UNKNOWN_PROPERTIES.getMask())) {
-         resource.getErrors().add(new JSONException(String.format("Unknown feature '%s' for %s" , jp.getCurrentName(), EcoreUtil.getURI(currentEClass)), jp.getCurrentLocation()));
-      }
-      // we didn't find a feature so consume
-      // the field and move on
-      jp.nextToken();
-      jp.skipChildren();
-   }
+			nextToken = jp.nextToken();
+		}
 
-   @Override
-   public boolean isCachable() { return true; }
+		jp.close();
+		buffer.close();
+		return object;
+	}
 
-   @Override
-   public Class<?> handledType() {
-      return EObject.class;
-   }
+	private void handleUnknownProperty(final JsonParser jp, final Resource resource, final DeserializationContext ctxt, EClass currentEClass) {
+		if (resource != null && ctxt.getConfig().hasDeserializationFeatures(FAIL_ON_UNKNOWN_PROPERTIES.getMask())) {
+			
+			resource.getErrors().add(new JSONException(String.format("Unknown feature '%s' for %s" , jp.currentName(), EcoreUtil.getURI(currentEClass)), jp.currentLocation()));
+		}
+		// we didn't find a feature so consume
+		// the field and move on
+		jp.nextToken();
+		jp.skipChildren();
+	}
 
-   private EClass getDefaultType(final DeserializationContext ctxt) {
-      EClass type = null;
+	@Override
+	public boolean isCachable() { return true; }
 
-      EObject parent = EMFContext.getParent(ctxt);
-      if (parent == null) {
-         if (currentType != null && currentType != EObject.class) {
-            type = EMFContext.findEClassByQualifiedName(ctxt, currentType.getCanonicalName());
-         }
-         if (type == null) {
-            type = EMFContext.getRoot(ctxt);
-         }
-      } else {
-         final EReference reference = (EReference) getFeature(ctxt);
-         if (reference != null && !reference.getEReferenceType().isAbstract()) {
-            final EGenericType reifiedType = EcoreUtil.getReifiedType(parent.eClass(), reference.getEGenericType());
-            return (EClass) reifiedType.getERawType();
-         }
-      }
-      return type;
-   }
+	@Override
+	public Class<?> handledType() {
+		return EObject.class;
+	}
+
+	private EClass getDefaultType(final DeserializationContext ctxt) {
+		EClass type = null;
+
+		EObject parent = EMFContext.getParent(ctxt);
+		if (parent == null) {
+			if (currentType != null && currentType != EObject.class) {
+				type = EMFContext.findEClassByQualifiedName(ctxt, currentType.getCanonicalName());
+			}
+			if (type == null) {
+				type = EMFContext.getRoot(ctxt);
+			}
+		} else {
+			final EReference reference = (EReference) getFeature(ctxt);
+			if (reference != null && !reference.getEReferenceType().isAbstract()) {
+				final EGenericType reifiedType = EcoreUtil.getReifiedType(parent.eClass(), reference.getEGenericType());
+				return (EClass) reifiedType.getERawType();
+			}
+		}
+		return type;
+	}
 }

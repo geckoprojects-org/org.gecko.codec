@@ -21,24 +21,24 @@ import org.eclipse.emfcloud.jackson.databind.property.EObjectPropertyMap;
 import org.eclipse.emfcloud.jackson.databind.type.EcoreType;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.KeyDeserializer;
-import com.fasterxml.jackson.databind.deser.Deserializers;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.MapLikeType;
-import com.fasterxml.jackson.databind.type.ReferenceType;
+import tools.jackson.databind.ValueDeserializer;
+
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.KeyDeserializer;
+import tools.jackson.databind.deser.Deserializers;
+import tools.jackson.databind.jsontype.TypeDeserializer;
+import tools.jackson.databind.type.CollectionType;
+import tools.jackson.databind.type.MapLikeType;
+import tools.jackson.databind.type.ReferenceType;
 
 public class EMFDeserializers extends Deserializers.Base {
 
    private final ResourceDeserializer resourceDeserializer;
-   private final JsonDeserializer<EList<Map.Entry<?, ?>>> mapDeserializer;
-   private final JsonDeserializer<Object> dataTypeDeserializer;
-   private final JsonDeserializer<ReferenceEntry> referenceDeserializer;
+   private final ValueDeserializer<EList<Map.Entry<?, ?>>> mapDeserializer;
+   private final ValueDeserializer<Object> dataTypeDeserializer;
+   private final ValueDeserializer<ReferenceEntry> referenceDeserializer;
    private final EObjectPropertyMap.Builder builder;
 
    public EMFDeserializers(final EMFModule module) {
@@ -54,12 +54,12 @@ public class EMFDeserializers extends Deserializers.Base {
    }
 
    @Override
-   public JsonDeserializer<?> findMapLikeDeserializer(final MapLikeType type,
+   public ValueDeserializer<?> findMapLikeDeserializer(final MapLikeType type,
       final DeserializationConfig config,
       final BeanDescription beanDesc,
       final KeyDeserializer keyDeserializer,
       final TypeDeserializer elementTypeDeserializer,
-      final JsonDeserializer<?> elementDeserializer) throws JsonMappingException {
+      final ValueDeserializer<?> elementDeserializer) {
       if (type.isTypeOrSubTypeOf(EMap.class)) {
          return mapDeserializer;
       }
@@ -69,8 +69,8 @@ public class EMFDeserializers extends Deserializers.Base {
    }
 
    @Override
-   public JsonDeserializer<?> findEnumDeserializer(final Class<?> type, final DeserializationConfig config,
-      final BeanDescription beanDesc) throws JsonMappingException {
+   public ValueDeserializer<?> findEnumDeserializer(final Class<?> type, final DeserializationConfig config,
+      final BeanDescription beanDesc) {
       if (Enumerator.class.isAssignableFrom(type)) {
          return dataTypeDeserializer;
       }
@@ -79,11 +79,11 @@ public class EMFDeserializers extends Deserializers.Base {
    }
 
    @Override
-   public JsonDeserializer<?> findCollectionDeserializer(final CollectionType type,
+   public ValueDeserializer<?> findCollectionDeserializer(final CollectionType type,
       final DeserializationConfig config,
       final BeanDescription beanDesc,
       final TypeDeserializer elementTypeDeserializer,
-      final JsonDeserializer<?> elementDeserializer) throws JsonMappingException {
+      final ValueDeserializer<?> elementDeserializer) {
       if (type.getContentType().isTypeOrSubTypeOf(EObject.class)) {
          return new CollectionDeserializer(type, new EObjectDeserializer(builder, type.getContentType().getRawClass()),
             referenceDeserializer);
@@ -92,11 +92,11 @@ public class EMFDeserializers extends Deserializers.Base {
    }
 
    @Override
-   public JsonDeserializer<?> findReferenceDeserializer(final ReferenceType refType,
+   public ValueDeserializer<?> findReferenceDeserializer(final ReferenceType refType,
       final DeserializationConfig config,
       final BeanDescription beanDesc,
       final TypeDeserializer contentTypeDeserializer,
-      final JsonDeserializer<?> contentDeserializer) throws JsonMappingException {
+      final ValueDeserializer<?> contentDeserializer) {
       if (referenceDeserializer != null) {
          return referenceDeserializer;
       }
@@ -104,9 +104,9 @@ public class EMFDeserializers extends Deserializers.Base {
    }
 
    @Override
-   public JsonDeserializer<?> findBeanDeserializer(final JavaType type,
+   public ValueDeserializer<?> findBeanDeserializer(final JavaType type,
       final DeserializationConfig config,
-      final BeanDescription beanDesc) throws JsonMappingException {
+      final BeanDescription beanDesc) {
       if (type.isTypeOrSubTypeOf(Resource.class)) {
          return resourceDeserializer;
       }
@@ -125,4 +125,14 @@ public class EMFDeserializers extends Deserializers.Base {
 
       return super.findBeanDeserializer(type, config, beanDesc);
    }
+
+/* 
+ * (non-Javadoc)
+ * @see tools.jackson.databind.deser.Deserializers#hasDeserializerFor(tools.jackson.databind.DeserializationConfig, java.lang.Class)
+ */
+@Override
+public boolean hasDeserializerFor(DeserializationConfig config, Class<?> valueType) {
+	// TODO Auto-generated method stub
+	return false;
+}
 }

@@ -43,9 +43,9 @@ import org.eclipse.emfcloud.jackson.support.StandardExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(StandardExtension.class)
 public class ContainmentTest {
@@ -104,7 +104,7 @@ public class ContainmentTest {
    }
 
    @Test
-   public void testSaveOneObjectWithOneChild() throws JsonProcessingException {
+   public void testSaveOneObjectWithOneChild() {
       JsonNode expected = mapper.createObjectNode()
          .put("eClass", "http://www.emfjson.org/jackson/model#//User")
          .set("address", mapper.createObjectNode());
@@ -120,7 +120,7 @@ public class ContainmentTest {
    }
 
    @Test
-   public void testLoadOneObjectWithOneChild() throws JsonProcessingException {
+   public void testLoadOneObjectWithOneChild()  {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", "http://www.emfjson.org/jackson/model#//User")
          .set("address", mapper.createObjectNode()
@@ -139,7 +139,7 @@ public class ContainmentTest {
    }
 
    @Test
-   public void testSaveOneObjectWithManyChildren() throws JsonProcessingException {
+   public void testSaveOneObjectWithManyChildren()  {
       JsonNode expected = mapper.createObjectNode()
          .put("eClass", "http://www.emfjson.org/jackson/model#//Node")
          .set("child", mapper.createArrayNode()
@@ -158,7 +158,7 @@ public class ContainmentTest {
    }
 
    @Test
-   public void testLoadOneObjectWithManyChildren() throws JsonProcessingException {
+   public void testLoadOneObjectWithManyChildren() {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", "http://www.emfjson.org/jackson/model#//Node")
          .set("child", mapper.createArrayNode()

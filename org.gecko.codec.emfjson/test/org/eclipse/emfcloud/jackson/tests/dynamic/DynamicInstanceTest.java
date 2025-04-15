@@ -25,27 +25,25 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
+import org.eclipse.emfcloud.jackson.support.Utils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class DynamicInstanceTest {
 
    private EClass a;
    private EClass b;
    private ResourceSetImpl resourceSet;
-   private final ObjectMapper mapper = new ObjectMapper();
+   private final ObjectMapper mapper = Utils.createDefaultMapper();
 
    @BeforeEach
    public void setUp() {
 	  EPackage.Registry.INSTANCE.remove("http://www.emfjson.org/jackson/model");
 	  resourceSet = new ResourceSetImpl();
-      mapper.registerModule(new EMFModule());
 
       resourceSet.getResourceFactoryRegistry()
          .getExtensionToFactoryMap()
@@ -104,7 +102,7 @@ public class DynamicInstanceTest {
    }
 
    @Test
-   public void testLoadOneRootWithChildren() throws JsonProcessingException {
+   public void testLoadOneRootWithChildren()  {
       JsonNode data = mapper.createObjectNode()
          .put("eClass", "http://foo.org/p#//A")
          .put("label", "1")

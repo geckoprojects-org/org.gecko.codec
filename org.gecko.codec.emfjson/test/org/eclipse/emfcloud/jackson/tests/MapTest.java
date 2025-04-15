@@ -33,9 +33,9 @@ import org.eclipse.emfcloud.jackson.support.StandardExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.ContextAttributes;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.ContextAttributes;
 
 @ExtendWith(StandardExtension.class)
 public class MapTest {

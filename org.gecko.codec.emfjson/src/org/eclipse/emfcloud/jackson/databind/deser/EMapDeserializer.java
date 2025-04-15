@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.deser;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.BasicEMap;
@@ -24,24 +23,22 @@ import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.emfcloud.jackson.databind.type.FeatureKind;
 import org.eclipse.emfcloud.jackson.utils.EObjects;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-public class EMapDeserializer extends JsonDeserializer<EList<Map.Entry<?, ?>>> {
+public class EMapDeserializer extends ValueDeserializer<EList<Map.Entry<?, ?>>> {
 
    @Override
-   public EList<Map.Entry<?, ?>> deserialize(final JsonParser jp, final DeserializationContext ctxt)
-      throws IOException {
+   public EList<Map.Entry<?, ?>> deserialize(final JsonParser jp, final DeserializationContext ctxt) {
       return null;
    }
 
-   @Override
-
-   @SuppressWarnings({ "unchecked", "checkstyle:cyclomaticComplexity", "rawtypes" })
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+@Override
    public EList<Map.Entry<?, ?>> deserialize(final JsonParser jp, final DeserializationContext ctxt,
-      final EList<Map.Entry<?, ?>> intoValue) throws IOException {
+      final EList<Map.Entry<?, ?>> intoValue)  {
       EReference reference = EMFContext.getReference(ctxt);
       EStructuralFeature valueFeature = null;
       if (reference != null) {
@@ -51,7 +48,7 @@ public class EMapDeserializer extends JsonDeserializer<EList<Map.Entry<?, ?>>> {
       }
 
 
-      if (jp.getCurrentToken() == JsonToken.START_OBJECT) {
+      if (jp.currentToken() == JsonToken.START_OBJECT) {
     	  final EObject parent = EMFContext.getParent(ctxt);
 			while (jp.nextToken() != JsonToken.END_OBJECT) {
 				if (parent != null) {
@@ -60,11 +57,11 @@ public class EMapDeserializer extends JsonDeserializer<EList<Map.Entry<?, ?>>> {
 				if (valueFeature != null) {
 					EMFContext.setFeature(ctxt, valueFeature);
 				}
-				String key = jp.getCurrentName();
+				String key = jp.currentName();
 				jp.nextToken();
 
 				final Object value;
-				if (jp.getCurrentToken() == JsonToken.START_OBJECT) {
+				if (jp.currentToken() == JsonToken.START_OBJECT) {
 					if (valueFeature != null && FeatureKind.get(valueFeature) == FeatureKind.MAP) {
 						EMap eMap = new BasicEMap<>();
 						deserialize(jp, ctxt, eMap);

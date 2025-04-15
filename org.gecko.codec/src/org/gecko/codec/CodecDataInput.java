@@ -14,8 +14,8 @@ package org.gecko.codec;
 import java.io.DataInput;
 import java.io.IOException;
 
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.ObjectReader;
+import tools.jackson.core.TreeCodec;
+import tools.jackson.databind.ObjectReader;
 
 /**
  * Dummy DataInput for the {@link ObjectReader#readValue(DataInput)} method containing a reader and an {@link ObjectCodec}
@@ -33,7 +33,7 @@ public class CodecDataInput<R> extends CodecReaderProvider<R> implements DataInp
 	 * @param reader
 	 * @param mapper
 	 */
-	public CodecDataInput(R reader, ObjectCodec mapper) {
+	public CodecDataInput(R reader, TreeCodec mapper) {
 		super(reader, mapper);
 	}
 

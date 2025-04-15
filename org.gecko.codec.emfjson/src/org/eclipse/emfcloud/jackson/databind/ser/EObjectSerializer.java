@@ -12,23 +12,21 @@ package org.eclipse.emfcloud.jackson.databind.ser;
 
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.getParent;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectProperty;
 import org.eclipse.emfcloud.jackson.databind.property.EObjectPropertyMap;
 import org.eclipse.emfcloud.jackson.utils.EObjects;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-public class EObjectSerializer extends JsonSerializer<EObject> {
+public class EObjectSerializer extends ValueSerializer<EObject> {
 
-   private final JsonSerializer<EObject> refSerializer;
+   private final ValueSerializer<EObject> refSerializer;
    private final EObjectPropertyMap.Builder builder;
 
-   public EObjectSerializer(final EObjectPropertyMap.Builder builder, final JsonSerializer<EObject> serializer) {
+   public EObjectSerializer(final EObjectPropertyMap.Builder builder, final ValueSerializer<EObject> serializer) {
       this.builder = builder;
       this.refSerializer = serializer;
    }
@@ -39,8 +37,7 @@ public class EObjectSerializer extends JsonSerializer<EObject> {
    }
 
    @Override
-   public void serialize(final EObject object, final JsonGenerator jg, final SerializerProvider provider)
-      throws IOException {
+   public void serialize(final EObject object, final JsonGenerator jg, final SerializationContext provider) {
       EObjectPropertyMap properties = builder.construct(provider, object.eClass());
 
       final EObject parent = getParent(provider);

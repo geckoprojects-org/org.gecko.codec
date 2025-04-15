@@ -11,18 +11,16 @@
 package org.eclipse.emfcloud.jackson.databind.deser;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.emfcloud.jackson.handlers.URIHandler;
 import org.eclipse.emfcloud.jackson.utils.EObjects;
 
-import com.fasterxml.jackson.databind.DatabindContext;
+import tools.jackson.databind.DatabindContext;
 
 public interface ReferenceEntry {
 
@@ -47,7 +45,6 @@ public interface ReferenceEntry {
       }
 
       @Override
-      @SuppressWarnings("checkstyle:cyclomaticComplexity")
       public void resolve(final DatabindContext context, final URIHandler handler) {
          if (id == null) {
             return;
@@ -87,7 +84,6 @@ public interface ReferenceEntry {
          }
       }
 
-      @SuppressWarnings("checkstyle:illegalCatch")
       private EObject createProxy(final ResourceSet resourceSet, final URI uri) {
 //         EClass eClass;
 //         try {
@@ -114,7 +110,6 @@ public interface ReferenceEntry {
       }
 
       @Override
-      @SuppressWarnings("checkstyle:cyclomaticComplexity")
       public boolean equals(final Object o) {
          if (this == o) {
             return true;

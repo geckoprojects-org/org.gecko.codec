@@ -43,7 +43,9 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.ModifierSupport;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class StandardExtension implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
@@ -56,12 +58,12 @@ public class StandardExtension implements BeforeAllCallback, BeforeEachCallback,
 		URI baseURI = URI.createURI("http://eclipselabs.org/emfjson/tests/");
 
 		mapper = createMapper();
-		mapper.registerModule(new EMFModule());
+//		mapper.registerModule(new EMFModule());
 
 		resourceSet = new ResourceSetImpl();
 		resourceSet.getURIConverter()
-				.getURIMap()
-				.put(baseURI, baseTestFilesFileDirectory);
+		.getURIMap()
+		.put(baseURI, baseTestFilesFileDirectory);
 
 		resourceSet.getPackageRegistry().put(EcorePackage.eNS_URI, EcorePackage.eINSTANCE);
 		resourceSet.getPackageRegistry().put(XMLNamespacePackage.eNS_URI, XMLNamespacePackage.eINSTANCE);
@@ -70,12 +72,12 @@ public class StandardExtension implements BeforeAllCallback, BeforeEachCallback,
 		resourceSet.getPackageRegistry().put(GenericsPackage.eNS_URI, GenericsPackage.eINSTANCE);
 
 		resourceSet.getResourceFactoryRegistry()
-				.getExtensionToFactoryMap()
-				.put("*", new JsonResourceFactory(mapper));
+		.getExtensionToFactoryMap()
+		.put("*", new JsonResourceFactory(mapper));
 
 		resourceSet.getResourceFactoryRegistry()
-				.getExtensionToFactoryMap()
-				.put("xmi", new XMIResourceFactoryImpl());
+		.getExtensionToFactoryMap()
+		.put("xmi", new XMIResourceFactoryImpl());
 	}
 
 	protected void after() {
@@ -84,28 +86,40 @@ public class StandardExtension implements BeforeAllCallback, BeforeEachCallback,
 	}
 
 	private ObjectMapper createMapper() {
-		final ObjectMapper mapper = new ObjectMapper();
+		
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
 		dateFormat.setTimeZone(TimeZone.getDefault());
-
-		mapper.setDateFormat(dateFormat);
-		mapper.setTimeZone(TimeZone.getDefault());
 		
-		mapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
-
+		JsonFactory factory = JsonFactory.builder().build();
+		JsonMapper.Builder mapperBuilder = JsonMapper.builder(factory);
+		
+		EMFModule module = new EMFModule();
+		module.setDefaultNullKeySerializer(new NullKeySerializer());
+		mapperBuilder.addModule(module);
+		mapperBuilder.defaultDateFormat(dateFormat);
+		mapperBuilder.defaultTimeZone(TimeZone.getDefault());
+		mapper = mapperBuilder.build();
+		
 		return mapper;
 	}
 
 	public ObjectMapper mapper(EMFModule.Feature feature, Boolean value) {
-		final ObjectMapper mapper = createMapper();
+		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH);
+		dateFormat.setTimeZone(TimeZone.getDefault());
+		
+		JsonFactory factory = JsonFactory.builder().build();
+		JsonMapper.Builder mapperBuilder = JsonMapper.builder(factory);
 		final EMFModule module = new EMFModule();
 		module.configure(feature, value);
-		mapper.registerModule(module);
-
+		mapperBuilder.addModule(module);
+		mapperBuilder.defaultDateFormat(dateFormat);
+		mapperBuilder.defaultTimeZone(TimeZone.getDefault());
+		mapper = mapperBuilder.build();
+		
 		return mapper;
 	}
 
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.junit.jupiter.api.extension.BeforeEachCallback#beforeEach(org.junit.jupiter.api.extension.ExtensionContext)
@@ -114,8 +128,8 @@ public class StandardExtension implements BeforeAllCallback, BeforeEachCallback,
 	public void beforeEach(ExtensionContext context) throws Exception {
 		before();
 		Class<?> testClass = context.getRequiredTestClass();
-        Object testInstance = context.getRequiredTestInstance();
-        injectFields(testClass, testInstance, ModifierSupport::isNotStatic);
+		Object testInstance = context.getRequiredTestInstance();
+		injectFields(testClass, testInstance, ModifierSupport::isNotStatic);
 	}
 
 	/* 
@@ -136,11 +150,11 @@ public class StandardExtension implements BeforeAllCallback, BeforeEachCallback,
 			throws ParameterResolutionException {
 		return isResourceSet(pc) || isObjectMapper(pc);
 	}
-	
+
 	private boolean isResourceSet(ParameterContext pc) {
 		return pc.isAnnotated(ResourceSet.class) && pc.getParameter().getType() == org.eclipse.emf.ecore.resource.ResourceSet.class;
 	}
-	
+
 	private boolean isObjectMapper(ParameterContext pc) {
 		return pc.isAnnotated(org.eclipse.emfcloud.jackson.support.ObjectMapper.class) && pc.getParameter().getType() == ObjectMapper.class;
 	}
@@ -160,7 +174,7 @@ public class StandardExtension implements BeforeAllCallback, BeforeEachCallback,
 		}
 		return null;
 	}
-	
+
 	private ObjectMapper getMapper(org.eclipse.emfcloud.jackson.support.ObjectMapper oma) {
 		requireNonNull(oma);
 		if (EMFModule.Feature.NONE.equals(oma.feature())) {
@@ -169,12 +183,12 @@ public class StandardExtension implements BeforeAllCallback, BeforeEachCallback,
 			return mapper(oma.feature(), oma.enabled());
 		}
 	}
-	
+
 	private void injectObjectMapper(Object instance, Field field, org.eclipse.emfcloud.jackson.support.ObjectMapper oma) {
 		requireNonNull(oma);
 		inject(instance, field, getMapper(oma));
 	}
-	
+
 	private void inject(Object instance, Field field, Object value) {
 		requireNonNull(instance);
 		requireNonNull(field);
@@ -187,27 +201,27 @@ public class StandardExtension implements BeforeAllCallback, BeforeEachCallback,
 			throw new RuntimeException(ex);
 		}
 	}
-	
-	private void injectFields(Class<?> testClass, Object testInstance,
-            Predicate<Field> predicate) {
 
-        Arrays.asList(testClass.getDeclaredFields()).stream().
-        	filter(f->f.getType() == ObjectMapper.class).
-        	forEach(field->{
-        		org.eclipse.emfcloud.jackson.support.ObjectMapper oma = field.getAnnotation(org.eclipse.emfcloud.jackson.support.ObjectMapper.class);
-        		if (nonNull(oma)) {
-        			injectObjectMapper(testInstance, field, oma);
-        		}
-        	});
-        Arrays.asList(testClass.getDeclaredFields()).stream().
-    		filter(f->f.getType() == org.eclipse.emf.ecore.resource.ResourceSet.class).
-    		forEach(field->{
-    			ResourceSet rsa = field.getAnnotation(ResourceSet.class);
-    			if (nonNull(rsa)) {
-    				inject(testInstance, field, resourceSet);
-                }
-        	});
-    }
+	private void injectFields(Class<?> testClass, Object testInstance,
+			Predicate<Field> predicate) {
+
+		Arrays.asList(testClass.getDeclaredFields()).stream().
+		filter(f->f.getType() == ObjectMapper.class).
+		forEach(field->{
+			org.eclipse.emfcloud.jackson.support.ObjectMapper oma = field.getAnnotation(org.eclipse.emfcloud.jackson.support.ObjectMapper.class);
+			if (nonNull(oma)) {
+				injectObjectMapper(testInstance, field, oma);
+			}
+		});
+		Arrays.asList(testClass.getDeclaredFields()).stream().
+		filter(f->f.getType() == org.eclipse.emf.ecore.resource.ResourceSet.class).
+		forEach(field->{
+			ResourceSet rsa = field.getAnnotation(ResourceSet.class);
+			if (nonNull(rsa)) {
+				inject(testInstance, field, resourceSet);
+			}
+		});
+	}
 
 	/* 
 	 * (non-Javadoc)

@@ -10,26 +10,23 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.ser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-public class EDataTypeSerializer extends JsonSerializer<Object> {
+public class EDataTypeSerializer extends ValueSerializer<Object> {
 
    @Override
-   public void serialize(final Object value, final JsonGenerator gen, final SerializerProvider serializers)
-      throws IOException {
+   public void serialize(final Object value, final JsonGenerator gen, final SerializationContext serializers) {
       EAttribute feature = (EAttribute) EMFContext.getFeature(serializers);
       
       
       if (feature != null) {
     	  feature.getEAttributeType().getInstanceClassName();
-  		  JsonSerializer<Object> ser = serializers.findValueSerializer(feature.getEAttributeType().getInstanceClass());
+    	  ValueSerializer<Object> ser = serializers.findValueSerializer(feature.getEAttributeType().getInstanceClass());
   		  ser.serialize(value, gen, serializers);
       } else {
          gen.writeNull();

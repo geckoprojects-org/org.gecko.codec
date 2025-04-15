@@ -2,9 +2,9 @@
  */
 package org.gecko.codec.info.codecinfo;
 
-import com.fasterxml.jackson.databind.SerializerProvider;
-
 import org.osgi.annotation.versioning.ProviderType;
+
+import tools.jackson.databind.SerializationContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -41,6 +41,6 @@ public interface CodecValueWriter<T, V> {
 	 * @model valueRequired="true" providerDataType="org.gecko.codec.info.codecinfo.SerializerProvider" providerRequired="true"
 	 * @generated
 	 */
-	V writeValue(T value, SerializerProvider provider);
+	V writeValue(T value, SerializationContext provider);
 
 } // CodecValueWriter

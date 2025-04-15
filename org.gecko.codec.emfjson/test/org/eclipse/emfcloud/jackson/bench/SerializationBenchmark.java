@@ -22,10 +22,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emfcloud.jackson.junit.model.ModelPackage;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.emfcloud.jackson.resource.JsonResourceFactory;
+import org.eclipse.emfcloud.jackson.support.Utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 public class SerializationBenchmark {
 
@@ -99,13 +99,8 @@ public class SerializationBenchmark {
       System.out.println("Binary: " + average / 1000.);
    }
 
-   ObjectMapper mapper = new ObjectMapper();
-
-   {
-      EMFModule module = new EMFModule();
-      module.configure(EMFModule.Feature.OPTION_SERIALIZE_TYPE, false);
-      mapper.registerModule(module);
-   }
+   ObjectMapper mapper = Utils.createDefaultMapper();
+ 
 
    public void benchmarkSerializeJson(final EObject container) {
       long sum = 0;

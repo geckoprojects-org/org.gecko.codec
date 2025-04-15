@@ -13,8 +13,6 @@
  */
 package org.gecko.codec.jackson.databind.ser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
@@ -26,8 +24,8 @@ import org.gecko.codec.info.codecinfo.InfoType;
 import org.gecko.codec.info.codecinfo.TypeInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Codec Serializer for TypeInfo
@@ -53,14 +51,14 @@ public class TypeCodecInfoSerializer implements CodecInfoSerializer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
+	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		EMFContext.setParent(provider, rootObj);
 		if(!typeCodecInfo.isIgnoreType()) {
 			if (codecModule.isSerializeType()) {
 				CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
 				CodecValueWriter<EClass, String> writer = holder.getWriterByName(typeCodecInfo.getValueWriterName());
 				String v = writer.writeValue(rootObj.eClass(), provider);
-				gen.writeFieldName(codecModule.getTypeKey());
+				gen.writeName(codecModule.getTypeKey());
 				if (gen.canWriteTypeId()) {
 					gen.writeTypeId(v);
 				} else {

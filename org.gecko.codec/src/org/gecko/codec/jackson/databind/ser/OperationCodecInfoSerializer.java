@@ -13,7 +13,6 @@
  */
 package org.gecko.codec.jackson.databind.ser;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.emf.ecore.EObject;
@@ -23,9 +22,9 @@ import org.gecko.codec.info.codecinfo.EClassCodecInfo;
 import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 /**
  * Codec Serializer for EOperation 
@@ -50,7 +49,7 @@ public class OperationCodecInfoSerializer implements CodecInfoSerializer {
 	 * @see org.gecko.codec.demo.jackson.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
 	 */
 	@Override
-	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
+	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		if(featureCodecInfo.isIgnore()) return;
 		Object value;		
 		EOperation operation = (EOperation) featureCodecInfo.getFeatures().get(0);
@@ -63,11 +62,11 @@ public class OperationCodecInfoSerializer implements CodecInfoSerializer {
 
 		if (value != null) {
 			if(codecModule.isUseNamesFromExtendedMetaData()) {
-				gen.writeFieldName(featureCodecInfo.getKey() != null ? featureCodecInfo.getKey() : operation.getName());
+				gen.writeName(featureCodecInfo.getKey() != null ? featureCodecInfo.getKey() : operation.getName());
 			} else {
-				gen.writeFieldName(operation.getName());
+				gen.writeName(operation.getName());
 			}		
-			JsonSerializer<Object> serializer = provider.findValueSerializer(value.getClass());
+			ValueSerializer<Object> serializer = provider.findValueSerializer(value.getClass());
 			serializer.serialize(value, gen, provider);
 		}
 	}

@@ -13,7 +13,7 @@
  */
 package org.gecko.codec.configurator;
 
-import com.fasterxml.jackson.core.TSFBuilder;
+import tools.jackson.core.json.JsonFactoryBuilder;
 
 /**
  * 
@@ -24,5 +24,5 @@ import com.fasterxml.jackson.core.TSFBuilder;
 public interface CodecFactoryConfigurator {
 	
 	
-	public TSFBuilder<?,?> getFactoryBuilder();
+	public JsonFactoryBuilder getFactoryBuilder();
 }

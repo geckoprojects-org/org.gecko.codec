@@ -27,8 +27,8 @@ import org.eclipse.emfcloud.jackson.support.StandardExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 @ExtendWith(StandardExtension.class)
 public class FeatureMapTest {

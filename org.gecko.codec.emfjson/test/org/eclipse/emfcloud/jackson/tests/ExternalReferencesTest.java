@@ -27,9 +27,9 @@ import org.eclipse.emfcloud.jackson.support.StandardExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(StandardExtension.class)
 public class ExternalReferencesTest {
@@ -53,7 +53,7 @@ public class ExternalReferencesTest {
 
       JsonNode result = mapper.valueToTree(second);
 
-      assertEquals("first.json#/", result.get("target").get("$ref").asText());
+      assertEquals("first.json#/", result.get("target").get("$ref").asString());
    }
 
    @Test
@@ -70,11 +70,11 @@ public class ExternalReferencesTest {
 
       JsonNode result = mapper.valueToTree(second);
 
-      assertEquals("../first.json#/", result.get("target").get("$ref").asText());
+      assertEquals("../first.json#/", result.get("target").get("$ref").asString());
    }
 
    @Test
-   public void testLoadExternalReferenceOnSameBaseURI() throws JsonProcessingException {
+   public void testLoadExternalReferenceOnSameBaseURI() {
       JsonNode first = mapper.createObjectNode()
          .put("eClass", "http://www.emfjson.org/jackson/model#//Node");
 

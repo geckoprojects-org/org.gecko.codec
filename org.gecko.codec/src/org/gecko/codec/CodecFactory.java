@@ -12,19 +12,18 @@
 package org.gecko.codec;
 
 import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import com.fasterxml.jackson.core.ErrorReportConfiguration;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.io.ContentReference;
-import com.fasterxml.jackson.core.io.IOContext;
+import tools.jackson.core.ErrorReportConfiguration;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.ObjectReadContext;
+import tools.jackson.core.ObjectWriteContext;
+import tools.jackson.core.io.ContentReference;
+import tools.jackson.core.io.IOContext;
+import tools.jackson.core.json.JsonFactory;
 
 /**
  * Codec specific JsonFactory to create CodecGenerators and CodecParsers.
@@ -47,40 +46,53 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 		this.parserFactory = parserFactory;
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonFactory#createGenerator(java.io.DataOutput)
-	 */
-	@Override
-	public JsonGenerator createGenerator(DataOutput out) throws IOException {
-		return internalCreateGenerator(out);
-	}
+//	/* 
+//	 * (non-Javadoc)
+//	 * @see com.fasterxml.jackson.core.JsonFactory#createGenerator(java.io.DataOutput)
+//	 */
+//	@Override
+//	public JsonGenerator _createGenerator(DataOutput out)  {
+//		return internalCreateGenerator(out);
+//	}
 
 	/* 
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.core.JsonFactory#createGenerator(java.io.OutputStream)
 	 */
 	@Override
-	public JsonGenerator createGenerator(OutputStream out) throws IOException {
+	public JsonGenerator createGenerator(OutputStream out)  {
 		return internalCreateGenerator(out);
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonFactory#_createUTF8Generator(java.io.OutputStream, com.fasterxml.jackson.core.io.IOContext)
-	 */
+//	/* 
+//	 * (non-Javadoc)
+//	 * @see com.fasterxml.jackson.core.JsonFactory#_createUTF8Generator(java.io.OutputStream, com.fasterxml.jackson.core.io.IOContext)
+//	 */
+//	@Override
+//	protected JsonGenerator _createUTF8Generator(OutputStream out, IOContext ctxt)  {
+//		return internalCreateGenerator(out);
+//	}
+	
 	@Override
-	protected JsonGenerator _createUTF8Generator(OutputStream out, IOContext ctxt) throws IOException {
+    public JsonGenerator _createUTF8Generator(ObjectWriteContext writeCtxt,
+            IOContext ioCtxt, OutputStream out) {
+	
 		return internalCreateGenerator(out);
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.DataInput)
-	 */
+//	/* 
+//	 * (non-Javadoc)
+//	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.DataInput)
+//	 */
+//	@Override
+//	public JsonParser createParser(DataInput in)  {
+//		return internalCreateParser(in);
+//	}
+	
 	@Override
-	public JsonParser createParser(DataInput in) throws IOException {
-		return internalCreateParser(in);
+	public JsonParser _createParser(ObjectReadContext readCtxt, IOContext ioCtxt,
+            DataInput input) {
+		return internalCreateParser(input);
 	}
 
 	/* 
@@ -88,7 +100,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.net.URL)
 	 */
 	@Override
-	public JsonParser createParser(URL url) throws IOException, JsonParseException {
+	public JsonParser createParser(URL url)  {
 		return internalCreateParser(url);
 	}
 
@@ -97,7 +109,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.InputStream)
 	 */
 	@Override
-	public JsonParser createParser(InputStream in) throws IOException, JsonParseException {
+	public JsonParser createParser(InputStream in) {
 		return internalCreateParser(in);
 	}
 

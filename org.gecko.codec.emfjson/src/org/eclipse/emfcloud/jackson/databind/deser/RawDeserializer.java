@@ -10,20 +10,21 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.deser;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.io.IOException;
 import java.io.StringWriter;
 
-public class RawDeserializer extends JsonDeserializer<Object> {
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.ObjectWriteContext;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
+
+public class RawDeserializer extends ValueDeserializer<Object> {
    @Override
-   public Object deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
+   public Object deserialize(final JsonParser p, final DeserializationContext ctxt) {
       final StringWriter writer = new StringWriter();
-      final JsonGenerator generator = p.getCodec().getFactory().createGenerator(writer);
+      final JsonGenerator generator = ctxt.tokenStreamFactory().createGenerator(ObjectWriteContext.empty(), writer);
+//      getCodec().getFactory().createGenerator(writer);
       final JsonNode tree = p.readValueAsTree();
       generator.writeTree(tree);
 

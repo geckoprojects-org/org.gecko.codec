@@ -13,9 +13,7 @@
  */
 package org.gecko.codec.jackson.databind.ser;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.Enumerator;
@@ -26,8 +24,8 @@ import org.gecko.codec.info.codecinfo.FeatureCodecInfo;
 import org.gecko.codec.jackson.databind.CodecWriteContext;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * Codec Enumerator serializer
@@ -49,7 +47,7 @@ public class EnumeratorSerializer implements CodecInfoSerializer {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
+	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		if (featureCodecInfo.isIgnore())
 			return;
 		if (featureCodecInfo.getFeatures().size() != 1) {
@@ -62,7 +60,7 @@ public class EnumeratorSerializer implements CodecInfoSerializer {
 		EMFContext.setParent(provider, rootObj);
 		EMFContext.setFeature(provider, feature);
 
-		if (gen.getOutputContext() instanceof CodecWriteContext cwt) {
+		if (gen.streamWriteContext() instanceof CodecWriteContext cwt) {
 			cwt.setFeature(feature);
 		}
 
@@ -85,7 +83,7 @@ public class EnumeratorSerializer implements CodecInfoSerializer {
 		}
 	}
 
-	private void serializeSingleAttribute(Object value, EStructuralFeature feature, JsonGenerator gen) throws IOException {
+	private void serializeSingleAttribute(Object value, EStructuralFeature feature, JsonGenerator gen) {
 		if (value == null && !codecModule.isSerializeNullValue()) {
 			return;
 		}
@@ -93,14 +91,14 @@ public class EnumeratorSerializer implements CodecInfoSerializer {
 			return;
 		}
 		if (codecModule.isUseNamesFromExtendedMetaData()) {
-			gen.writeFieldName(featureCodecInfo.getKey());
+			gen.writeName(featureCodecInfo.getKey());
 		} else {
-			gen.writeFieldName(feature.getName());
+			gen.writeName(feature.getName());
 		}
 		serializeSingleAttributeValue(value, gen);
 	}
 
-	private void serializeSingleAttributeValue(Object value, JsonGenerator gen) throws IOException {
+	private void serializeSingleAttributeValue(Object value, JsonGenerator gen) {
 
 		if (codecModule.isWriteEnumLiterals()) {
 			gen.writeString(((Enumerator) value).getLiteral());
@@ -109,24 +107,19 @@ public class EnumeratorSerializer implements CodecInfoSerializer {
 		}
 	}
 
-	private void serializeManyAttribute(List<Object> values, EStructuralFeature feature, JsonGenerator gen) throws IOException {
+	private void serializeManyAttribute(List<Object> values, EStructuralFeature feature, JsonGenerator gen) {
 		if (values.isEmpty() && (!codecModule.isSerializeDefaultValue() || !codecModule.isSerializeEmptyValue()))
 			return;
 		if (codecModule.isUseNamesFromExtendedMetaData()) {
-			gen.writeFieldName(featureCodecInfo.getKey());
+			gen.writeName(featureCodecInfo.getKey());
 		} else {
-			gen.writeFieldName(feature.getName());
+			gen.writeName(feature.getName());
 		}
 
-//		TODO: check serailized array batched here...?
+		//		TODO: check serailized array batched here...?
 		gen.writeStartArray();
 		values.forEach(value -> {
-			try {
-				serializeSingleAttributeValue(value, gen);
-			} catch (IOException e) {
-				LOGGER.log(Level.SEVERE,
-						String.format("Error while serialization of single attribute value %s.", value), e);
-			}
+			serializeSingleAttributeValue(value, gen);
 		});
 		gen.writeEndArray();
 	}

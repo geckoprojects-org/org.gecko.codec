@@ -11,8 +11,8 @@
  */
 package org.gecko.codec;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.io.IOContext;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.io.IOContext;
 
 /**
  * Factory for codec specific {@link JsonParser}.

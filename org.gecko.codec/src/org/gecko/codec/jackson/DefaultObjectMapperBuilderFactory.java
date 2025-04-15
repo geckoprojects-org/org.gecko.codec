@@ -22,15 +22,15 @@ import java.util.logging.Logger;
 import org.gecko.codec.configurator.CodecFactoryConfigurator;
 import org.gecko.codec.configurator.ObjectMapperBuilderFactory;
 
-import com.fasterxml.jackson.core.StreamReadFeature;
-import com.fasterxml.jackson.core.StreamWriteFeature;
-import com.fasterxml.jackson.core.json.JsonReadFeature;
-import com.fasterxml.jackson.core.json.JsonWriteFeature;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper.Builder;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.StreamWriteFeature;
+import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.core.json.JsonWriteFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.json.JsonMapper.Builder;
 
 /**
  * Default implementation of {@link ObjectMapperBuilderFactory}
@@ -55,7 +55,7 @@ public class DefaultObjectMapperBuilderFactory implements ObjectMapperBuilderFac
 	 */
 	@Override
 	public Builder createObjectMapperBuilder() {
-		Builder objMapperBuilder = JsonMapper.builder(codecFactoryConfigurator.getFactoryBuilder().build());
+		Builder objMapperBuilder = JsonMapper.builder(codecFactoryConfigurator.getFactoryBuilder().build());		
 		return buildAndConfigureObjectMapper(objMapperBuilder);
 	}
 	
@@ -84,7 +84,8 @@ public class DefaultObjectMapperBuilderFactory implements ObjectMapperBuilderFac
 		objMapperBuilder.defaultTimeZone(tz);
 		
 //		This is needed otherwise subsequent calls to Resource#save() will use the same module even if we are changing options!
-		objMapperBuilder.disable(MapperFeature.IGNORE_DUPLICATE_MODULE_REGISTRATIONS);
+//		This should not be an issue anymore --> TODO: check!!
+//		objMapperBuilder.disable(MapperFeature.IGNORE_DUPLICATE_MODULE_REGISTRATIONS);
 		return objMapperBuilder;
 	}
 	

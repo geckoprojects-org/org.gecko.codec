@@ -12,7 +12,7 @@ package org.eclipse.emfcloud.jackson.resource;
 
 import org.eclipse.emf.common.util.URI;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 public class JsonUuidResource extends JsonResource {
 

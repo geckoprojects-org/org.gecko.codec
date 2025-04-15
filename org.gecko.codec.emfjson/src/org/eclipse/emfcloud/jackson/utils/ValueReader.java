@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.utils;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
+import tools.jackson.databind.DeserializationContext;
 
 public interface ValueReader<V, T> {
    T readValue(V value, DeserializationContext context);

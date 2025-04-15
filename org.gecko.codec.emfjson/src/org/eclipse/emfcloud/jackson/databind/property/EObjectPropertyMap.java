@@ -14,13 +14,12 @@ package org.eclipse.emfcloud.jackson.databind.property;
 import static java.util.Spliterator.ORDERED;
 import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.StreamSupport.stream;
-import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.getAliases;
 import static org.eclipse.emfcloud.jackson.annotations.JsonAnnotations.getElementName;
 import static org.eclipse.emfcloud.jackson.module.EMFModule.Feature.OPTION_USE_ID;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +48,9 @@ import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 
-import com.fasterxml.jackson.databind.DatabindContext;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JavaType;
+import tools.jackson.databind.DatabindContext;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JavaType;
 
 public final class EObjectPropertyMap {
 
@@ -105,7 +104,6 @@ public final class EObjectPropertyMap {
          types.forEach(type -> cache.put(type, construct(ctxt, type)));
       }
 
-      @SuppressWarnings("checkstyle:cyclomaticComplexity")
       private EObjectPropertyMap createPropertyMap(final DatabindContext ctxt, final EClass type) {
          EcoreTypeFactory factory = EMFContext.getTypeFactory(ctxt);
          HashMap<String, EObjectProperty> propertiesMap = new HashMap<>();
@@ -128,7 +126,7 @@ public final class EObjectPropertyMap {
                createFeatureProperty(ctxt, factory, type, feature).ifPresent(property -> {
                   add.accept(property);
 
-                  for (String alias : getAliases(feature)) {
+                  for (String alias : JsonAnnotations.getAliases(feature)) {
                      propertiesMap.put(alias, property);
                   }
                });
@@ -209,22 +207,19 @@ public final class EObjectPropertyMap {
       }
 
       public EObjectPropertyMap find(final DeserializationContext ctxt, final EClass defaultType,
-         final Iterator<String> fields) {
+         final Collection<String> fields) {
          List<EClass> types = EMFContext.allSubTypes(ctxt, defaultType);
          Map<String, EClass> properties = new HashMap<>();
          for (EClass type : types) {
             EObjectProperty p = getTypeProperty(type, features);
             properties.put(p.getFieldName(), type);
          }
-
-         while (fields.hasNext()) {
-            String field = fields.next();
-
-            if (properties.containsKey(field)) {
-               return construct(ctxt, properties.get(field));
-            }
+         
+         for(String field : fields) {
+        	 if (properties.containsKey(field)) {
+                 return construct(ctxt, properties.get(field));
+              }
          }
-
          return construct(ctxt, defaultType);
       }
 

@@ -23,20 +23,20 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.SerializationContext;
+
+import tools.jackson.core.JsonGenerator;
 
 /**
  * Serializes values of an {@link EMap}.
  *
  * @author vhemery
  */
-public class EMapValueSerializer extends JsonSerializer<Object> {
+public class EMapValueSerializer extends ValueSerializer<Object> {
 
    @Override
-   public void serialize(final Object value, final JsonGenerator gen, final SerializerProvider serializers)
-      throws java.io.IOException {
+   public void serialize(final Object value, final JsonGenerator gen, final SerializationContext serializers) {
       EStructuralFeature feature = EMFContext.getFeature(serializers);
       Optional<EReference> mapRef = Optional.ofNullable(feature).filter(EReference.class::isInstance)
          .map(EReference.class::cast);
@@ -49,7 +49,7 @@ public class EMapValueSerializer extends JsonSerializer<Object> {
       if (valueDataType.isPresent()) {
          gen.writeString(EcoreUtil.convertToString(valueDataType.get(), value));
       } else if (valueEClass.isPresent() && value instanceof EObject) {
-         gen.writeObject(value);
+    	  gen.writePOJO(value);
       } else {
          // the metamodel is probably incorrect...
          gen.writeString(value.toString());

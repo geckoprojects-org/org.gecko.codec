@@ -11,21 +11,18 @@
 package org.eclipse.emfcloud.jackson.utils;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.BasicEMap.Entry;
-import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.emf.ecore.impl.DynamicEObjectImpl.BasicEMapEntry;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 
-import com.fasterxml.jackson.databind.DatabindContext;
+import tools.jackson.databind.DatabindContext;
 
 /**
  * Utility class to facilitate access or modification of eObjects.

@@ -2,9 +2,6 @@
  */
 package org.gecko.codec.info.codecinfo.impl;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -15,6 +12,9 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 import org.gecko.codec.info.codecinfo.*;
+
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.SerializationContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -212,8 +212,8 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SerializerProvider createSerializerProviderFromString(EDataType eDataType, String initialValue) {
-		return (SerializerProvider)super.createFromString(eDataType, initialValue);
+	public SerializationContext createSerializerProviderFromString(EDataType eDataType, String initialValue) {
+		return (SerializationContext)super.createFromString(eDataType, initialValue);
 	}
 
 	/**

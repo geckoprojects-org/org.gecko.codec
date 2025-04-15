@@ -26,8 +26,9 @@ import org.gecko.codec.info.codecinfo.PackageCodecInfo;
 import org.gecko.codec.jackson.databind.deser.CodecDeserializers;
 import org.gecko.codec.jackson.databind.ser.CodecSerializers;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.databind.ValueDeserializer;
+
+import tools.jackson.core.Version;
 
 /**
  * Extension of EMFModule which allows to set codec specific options
@@ -266,7 +267,7 @@ public class CodecModule extends EMFModule {
 		private String proxyKey = "_proxy";
 		private String timestampKey = "_timestamp";
 		private boolean writeEnumLiterals = false;
-		private JsonDeserializer<ReferenceEntry> referenceDeserializer;
+		private ValueDeserializer<ReferenceEntry> referenceDeserializer;
 
 		public Builder() {
 
@@ -389,7 +390,7 @@ public class CodecModule extends EMFModule {
 			this.codecProxyFactory = codecProxyFactory;
 			return this;
 		}
-		public Builder bindReferenceDeserializer(JsonDeserializer<ReferenceEntry> referenceDeserializer) {
+		public Builder bindReferenceDeserializer(ValueDeserializer<ReferenceEntry> referenceDeserializer) {
 			this.referenceDeserializer = referenceDeserializer;
 			return this;
 			

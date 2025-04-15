@@ -10,19 +10,16 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.ser;
 
-import java.io.IOException;
-
 import org.eclipse.emf.common.util.Enumerator;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-public class EnumeratorSerializer extends JsonSerializer<Enumerator> {
+public class EnumeratorSerializer extends ValueSerializer<Enumerator> {
 
    @Override
-   public void serialize(final Enumerator value, final JsonGenerator jg, final SerializerProvider provider)
-      throws IOException {
+   public void serialize(final Enumerator value, final JsonGenerator jg, final SerializationContext provider) {
       jg.writeString(value.getLiteral());
    }
 

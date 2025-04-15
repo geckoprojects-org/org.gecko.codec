@@ -15,8 +15,6 @@ package org.gecko.codec.jackson.databind.ser;
 
 import static java.util.Objects.nonNull;
 
-import java.io.IOException;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
@@ -30,10 +28,10 @@ import org.gecko.codec.info.codecinfo.SuperTypeInfo;
 import org.gecko.codec.info.helper.CodecIOHelper;
 import org.gecko.codec.jackson.module.CodecModule;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.impl.StringArraySerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.ser.jdk.StringArraySerializer;
 
 /**
  * Codec Serializer for SuperType Info
@@ -42,7 +40,7 @@ import com.fasterxml.jackson.databind.ser.impl.StringArraySerializer;
  */
 public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 	
-	private final JsonSerializer<String[]> serializer = StringArraySerializer.instance;
+	private final ValueSerializer<String[]> serializer = StringArraySerializer.instance;
 	
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
@@ -61,7 +59,7 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException {
+	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		EMFContext.setParent(provider, rootObj);
 		if(superTypeCodecInfo.isIgnoreSuperType()) return;
 		
@@ -76,7 +74,7 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 				cgb = (CodecGeneratorBase) gen;
 			}
 			if (nonNull(values) && values.length > 0) {
-				gen.writeFieldName(codecModule.getSuperTypeKey());
+				gen.writeName(codecModule.getSuperTypeKey());
 				/*
 				 * We use our custom callback, if possible.
 				 */

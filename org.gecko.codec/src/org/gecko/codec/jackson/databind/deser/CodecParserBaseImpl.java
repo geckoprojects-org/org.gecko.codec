@@ -16,12 +16,12 @@ package org.gecko.codec.jackson.databind.deser;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import com.fasterxml.jackson.core.Base64Variant;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.base.ParserBase;
-import com.fasterxml.jackson.core.io.IOContext;
-import com.fasterxml.jackson.core.json.JsonReadContext;
+import tools.jackson.core.Base64Variant;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.ObjectReadContext;
+import tools.jackson.core.TreeCodec;
+import tools.jackson.core.base.ParserBase;
+import tools.jackson.core.io.IOContext;
 
 /**
  * This is the default basic impl of the Parser. 
@@ -30,15 +30,15 @@ import com.fasterxml.jackson.core.json.JsonReadContext;
  */
 public abstract class CodecParserBaseImpl extends ParserBase {
 
-	private ObjectCodec oc;
+	private TreeCodec oc;
 
 	/**
 	 * Creates a new instance.
 	 * @param ctxt
 	 * @param features
 	 */
-	protected CodecParserBaseImpl(IOContext ctxt, int features) {
-		super(ctxt, features);
+	protected CodecParserBaseImpl(ObjectReadContext readCtxt, IOContext ctxt, int features) {
+		super(readCtxt, ctxt, features);
 	}
 
 	/* 
@@ -74,28 +74,29 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	
 	public abstract Object doGetCurrentValue();
 
+
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.base.ParserMinimalBase#nextToken()
+	 * @see tools.jackson.core.JsonParser#nextToken()
 	 */
 	@Override
-	public JsonToken nextToken() throws IOException {
+	public JsonToken nextToken()  {
 		if (isEndDocument()) {
-			if (_parsingContext.inArray()) {
+			if (streamReadContext().inArray()) {
 				doEndArray();
 				_currToken = JsonToken.END_ARRAY;
 			} else {
 				doEndDocument();
 				_currToken = JsonToken.END_OBJECT;
 			}
-			_parsingContext = _parsingContext.clearAndGetParent();
-			if(!_parsingContext.inRoot()) {
+//			_parsingContext = _parsingContext.clearAndGetParent();
+			if(!streamReadContext().inRoot()) {
 				_nextToken = doGetNextToken();
 			}
-		} else if (_parsingContext.inObject() && _currToken != JsonToken.FIELD_NAME) {
+		} else if (streamReadContext().inObject() && _currToken != JsonToken.PROPERTY_NAME) {
 			String name = doReadName();
-			_parsingContext.setCurrentName(name);
-			_currToken = JsonToken.FIELD_NAME;
+//			_parsingContext.setCurrentName(name);
+			_currToken = JsonToken.PROPERTY_NAME;
 		} else if (isBeginDocument()) {
 			doBeginDocument();
 			_parsingContext = _parsingContext.createChildObjectContext(1, 0);
@@ -107,7 +108,7 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 			_currToken = JsonToken.START_ARRAY;
 			_nextToken = doGetNextToken();
 		} else {
-			setCurrentValue(doGetCurrentValue());
+			assignCurrentValue(doGetCurrentValue());
 			
 			// 17-Sep-2019, tatu: [core#563] Need to call this to update index 
 	        _parsingContext.expectComma();
@@ -123,8 +124,8 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 * @see com.fasterxml.jackson.core.base.ParserBase#getIntValue()
 	 */
 	@Override
-	public int getIntValue() throws IOException {
-		return (int)getCurrentValue();
+	public int getIntValue() {
+		return (int) currentValue();
 	}
 	
 	/* 
@@ -132,8 +133,8 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 * @see com.fasterxml.jackson.core.base.ParserBase#getDoubleValue()
 	 */
 	@Override
-	public double getDoubleValue() throws IOException {
-		return (double) getCurrentValue();
+	public double getDoubleValue() {
+		return (double) currentValue();
 	}
 	
 	/* 
@@ -141,8 +142,8 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 * @see com.fasterxml.jackson.core.base.ParserBase#getFloatValue()
 	 */
 	@Override
-	public float getFloatValue() throws IOException {
-		return (float) getCurrentValue();
+	public float getFloatValue() {
+		return (float) currentValue();
 	}
 	
 	/* 
@@ -150,8 +151,8 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 * @see com.fasterxml.jackson.core.base.ParserBase#getDecimalValue()
 	 */
 	@Override
-	public BigDecimal getDecimalValue() throws IOException {
-		return (BigDecimal) getCurrentValue();
+	public BigDecimal getDecimalValue()  {
+		return (BigDecimal) currentValue();
 	}
 	
 	/* 
@@ -159,22 +160,22 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 * @see com.fasterxml.jackson.core.base.ParserMinimalBase#getText()
 	 */
 	@Override
-	public String getText() throws IOException {
-		return (String)getCurrentValue();
+	public String getText() {
+		return (String) currentValue();
 	}
 	
 	@Override
-	public char[] getTextCharacters() throws IOException {
+	public char[] getTextCharacters() {
 		return getText().toCharArray();
 	}
 
 	@Override
-	public int getTextLength() throws IOException {
+	public int getTextLength() {
 		return getText().length();
 	}
 
 	@Override
-	public int getTextOffset() throws IOException {
+	public int getTextOffset() {
 		return 0;
 	}
 	
@@ -183,40 +184,32 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 * @see com.fasterxml.jackson.core.JsonParser#getBinaryValue()
 	 */
 	@Override
-	public byte[] getBinaryValue() throws IOException {
-		return (byte[]) getCurrentValue();
+	public byte[] getBinaryValue() {
+		return (byte[]) currentValue();
 	}
 	
 	@Override
-	public byte[] getBinaryValue(Base64Variant variant) throws IOException {
-		return (byte[]) getCurrentValue();
+	public byte[] getBinaryValue(Base64Variant variant){
+		return (byte[]) currentValue();
     }
 
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonParser#getCodec()
-	 */
-	@Override
-	public ObjectCodec getCodec() {
+
+	public TreeCodec getCodec(){
 		return oc;
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonParser#setCodec(com.fasterxml.jackson.core.ObjectCodec)
-	 */
-	@Override
-	public void setCodec(ObjectCodec oc) {
+
+	public void setCodec(TreeCodec oc) {
 		this.oc = oc;
 	}
 	
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.base.ParserBase#getParsingContext()
-	 */
-	@Override
-	public JsonReadContext getParsingContext() {
-		return super.getParsingContext();
-	}
+//	/* 
+//	 * (non-Javadoc)
+//	 * @see com.fasterxml.jackson.core.base.ParserBase#getParsingContext()
+//	 */
+//	@Override
+//	public JsonReadContext getParsingContext() {
+//		return super.getParsingContext();
+//	}
 
 }

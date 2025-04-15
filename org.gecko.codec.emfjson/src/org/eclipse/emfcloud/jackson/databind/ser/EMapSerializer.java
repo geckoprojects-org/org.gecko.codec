@@ -10,24 +10,23 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.ser;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.MapSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.ser.jdk.MapSerializer;
 
 /**
  * An serializer for {@link EMap}, which delegates to {@link MapSerializer} for configurability.
  *
  * @author vhemery
  */
-public class EMapSerializer extends JsonSerializer<EList<Map.Entry<?, ?>>> {
+public class EMapSerializer extends ValueSerializer<EList<Map.Entry<?, ?>>> {
 
    /** The Map serializer we delegate the job to. */
    private final MapSerializer delegate;
@@ -39,8 +38,7 @@ public class EMapSerializer extends JsonSerializer<EList<Map.Entry<?, ?>>> {
    @SuppressWarnings({ "rawtypes", "unchecked" })
    @Override
    public void serialize(final EList<Map.Entry<?, ?>> value, final JsonGenerator jg,
-      final SerializerProvider serializers)
-      throws IOException {
+      final SerializationContext serializers) {
       if (value == null || value.isEmpty()) {
          jg.writeNull();
       } else if (value instanceof EMap) {
@@ -50,9 +48,9 @@ public class EMapSerializer extends JsonSerializer<EList<Map.Entry<?, ?>>> {
          jg.writeStartObject();
          for (Map.Entry<?, ?> entry : value) {
             Object key = Optional.ofNullable((Object) entry.getKey()).orElse("");
-            ((JsonSerializer<Object>) delegate.getKeySerializer()).serialize(key, jg, serializers);
+            ((ValueSerializer<Object>) delegate.getKeySerializer()).serialize(key, jg, serializers);
             Object objectValue = entry.getValue();
-            ((JsonSerializer<Object>) delegate.getContentSerializer()).serialize(objectValue, jg, serializers);
+            ((ValueSerializer<Object>) delegate.getContentSerializer()).serialize(objectValue, jg, serializers);
          }
          jg.writeEndObject();
       }

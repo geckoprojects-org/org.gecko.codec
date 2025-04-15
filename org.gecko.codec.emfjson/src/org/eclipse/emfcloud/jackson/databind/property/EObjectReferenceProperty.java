@@ -11,18 +11,16 @@
 
 package org.eclipse.emfcloud.jackson.databind.property;
 
-import java.io.IOException;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.annotations.EcoreReferenceInfo;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.SerializationContext;
 
 public class EObjectReferenceProperty extends EObjectProperty {
 
@@ -31,21 +29,19 @@ public class EObjectReferenceProperty extends EObjectProperty {
    }
 
    @Override
-   public void serialize(final EObject bean, final JsonGenerator jg, final SerializerProvider provider)
-      throws IOException {
+   public void serialize(final EObject bean, final JsonGenerator jg, final SerializationContext provider) {
       // do nothing
    }
 
    @Override
-   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
+   public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) {
       return null;
    }
 
    @Override
    public void deserializeAndSet(final JsonParser jp, final EObject current, final DeserializationContext ctxt,
-      final Resource resource)
-      throws IOException {
-      String value = jp.nextTextValue();
+      final Resource resource) {
+      String value = jp.nextStringValue();
       if (value != null) {
          ((InternalEObject) current).eSetProxyURI(URI.createURI(value));
       }
