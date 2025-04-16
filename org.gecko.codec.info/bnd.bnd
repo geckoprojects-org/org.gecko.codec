@@ -4,6 +4,6 @@
 -buildpath: \
 	org.gecko.codec.info.model;version=snapshot,\
 	org.gecko.codec.emfjson,\
-	com.fasterxml.jackson.core.jackson-databind,\
-	org.gecko.codec.constants;version=latest
+	org.gecko.codec.constants;version=latest,\
+	tools.jackson.core.jackson-databind
 	

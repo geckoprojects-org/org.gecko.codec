@@ -26,12 +26,12 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.configurator.ObjectMapperBuilderFactory;
+import org.gecko.codec.info.CodecModelInfo;
 import org.gecko.codec.jackson.module.CodecModule;
 import org.gecko.codec.jackson.resource.CodecResource;
 
-import com.fasterxml.jackson.databind.cfg.ContextAttributes;
+import tools.jackson.databind.cfg.ContextAttributes;
 
 /**
  * 

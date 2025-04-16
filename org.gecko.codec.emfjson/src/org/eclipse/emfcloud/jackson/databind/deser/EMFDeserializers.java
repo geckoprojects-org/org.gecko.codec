@@ -78,7 +78,11 @@ public class EMFDeserializers extends Deserializers.Base {
       return super.findEnumDeserializer(type, config, beanDesc);
    }
 
-   @Override
+   /* 
+ * (non-Javadoc)
+ * @see tools.jackson.databind.deser.Deserializers.Base#findCollectionDeserializer(tools.jackson.databind.type.CollectionType, tools.jackson.databind.DeserializationConfig, tools.jackson.databind.BeanDescription, tools.jackson.databind.jsontype.TypeDeserializer, tools.jackson.databind.ValueDeserializer)
+ */
+@Override
    public ValueDeserializer<?> findCollectionDeserializer(final CollectionType type,
       final DeserializationConfig config,
       final BeanDescription beanDesc,

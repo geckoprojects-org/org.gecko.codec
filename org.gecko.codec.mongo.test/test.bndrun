@@ -30,9 +30,6 @@
 	org.osgi.test.common;version='[1.2.1,1.2.2)',\
 	org.osgi.test.junit5;version='[1.2.1,1.2.2)',\
 	org.osgi.test.junit5.cm;version='[1.2.1,1.2.2)',\
-	com.fasterxml.jackson.core.jackson-annotations;version='[2.16.1,2.16.2)',\
-	com.fasterxml.jackson.core.jackson-core;version='[2.16.1,2.16.2)',\
-	com.fasterxml.jackson.core.jackson-databind;version='[2.16.1,2.16.2)',\
 	org.gecko.codec.emfjson;version=snapshot,\
 	org.gecko.codec;version=snapshot,\
 	org.gecko.codec.info;version=snapshot,\
@@ -48,4 +45,7 @@
 	org.gecko.emf.osgi.component.minimal;version='[6.3.0,6.3.1)',\
 	org.gecko.emf.osgi.api;version='[6.3.0,6.3.1)',\
 	org.gecko.emf.osgi.component.config;version='[6.3.0,6.3.1)',\
-	org.gecko.mongo.osgi.api;version='[6.1.0,6.1.1)'
+	org.gecko.mongo.osgi.api;version='[6.1.0,6.1.1)',\
+	com.fasterxml.jackson.core.jackson-annotations;version='[3.0.0,3.0.1)',\
+	tools.jackson.core.jackson-core;version='[3.0.0,3.0.1)',\
+	tools.jackson.core.jackson-databind;version='[3.0.0,3.0.1)'

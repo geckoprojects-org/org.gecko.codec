@@ -31,8 +31,9 @@ import org.gecko.codec.demo.model.person.SpecificBusinessPerson;
 import org.gecko.codec.info.codecinfo.CodecValueReader;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
 
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
+
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * 
@@ -123,7 +124,7 @@ public class CodecTestHelper {
 		}
 
 		@Override
-		public String writeValue(String value, SerializerProvider provider) {
+		public String writeValue(String value, SerializationContext provider) {
 			if(value == null) return null;
 			return "Super".concat(value);
 		}
@@ -137,7 +138,7 @@ public class CodecTestHelper {
 		}
 
 		@Override
-		public List<String> writeValue(List<String> values, SerializerProvider provider) {
+		public List<String> writeValue(List<String> values, SerializationContext provider) {
 			if(values == null || values.isEmpty()) return null;
 			List<String> result = new LinkedList<>();
 			values.forEach(v -> {
@@ -155,7 +156,7 @@ public class CodecTestHelper {
 		}
 
 		@Override
-		public String writeValue(EClass value, SerializerProvider provider) {
+		public String writeValue(EClass value, SerializationContext provider) {
 			return "test.".concat(value.getName());
 		}
 	};

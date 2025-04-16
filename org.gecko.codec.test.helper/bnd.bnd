@@ -3,5 +3,5 @@
 -buildpath: \
 	org.gecko.codec.demo.model,\
 	org.gecko.codec.info.model,\
-	com.fasterxml.jackson.core.jackson-databind,\
-	org.gecko.codec.emfjson
+	org.gecko.codec.emfjson,\
+	tools.jackson.core.jackson-databind

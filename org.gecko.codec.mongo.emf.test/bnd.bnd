@@ -19,8 +19,6 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.osgi.service.component,\
 	org.gecko.codec,\
 	org.gecko.codec.info,\
-	com.fasterxml.jackson.core.jackson-databind,\
-	com.fasterxml.jackson.core.jackson-core,\
 	org.gecko.codec.test.helper;version=latest,\
 	org.gecko.codec.info.model;version=latest,\
 	org.gecko.codec.constants;version=latest,\

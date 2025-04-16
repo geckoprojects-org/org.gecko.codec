@@ -90,6 +90,7 @@ public final class CodecMongoResource extends CodecResource {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void delete(Map<?, ?> options) throws IOException {
 		super.delete(options);

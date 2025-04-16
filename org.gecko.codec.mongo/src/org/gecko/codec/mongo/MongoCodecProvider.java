@@ -19,7 +19,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.eclipse.emf.ecore.EObject;
 import org.gecko.codec.mongo.resource.CodecMongoResource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * 

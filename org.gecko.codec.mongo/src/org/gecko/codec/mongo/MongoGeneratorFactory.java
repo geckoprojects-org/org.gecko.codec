@@ -12,9 +12,12 @@
 package org.gecko.codec.mongo;
 
 import org.bson.BsonWriter;
+import org.gecko.codec.CodecDataOutput_old;
 import org.gecko.codec.CodecGeneratorFactory;
-import org.gecko.codec.CodecWriterProvider;
+import org.gecko.codec.CodecWriterProvider_old;
 import org.osgi.service.component.annotations.Component;
+
+import tools.jackson.core.io.IOContext;
 
 /**
  * 
@@ -29,8 +32,18 @@ public class MongoGeneratorFactory implements CodecGeneratorFactory<BsonWriter, 
 	 * @see org.gecko.codec.mongo.CodecGeneratorFactory#createGenerator(org.gecko.codec.mongo.CodecWriterProvider)
 	 */
 	@Override
-	public MongoCodecGenerator createGenerator(CodecWriterProvider<BsonWriter> provider) {
-		return new MongoCodecGenerator(provider.getWriter(), provider.getObjectCodec());
+	public MongoCodecGenerator createGenerator(CodecWriterProvider_old<BsonWriter> provider, IOContext ioCtxt) {
+//		return new MongoCodecGenerator(provider.getWriter(), provider.getObjectCodec());		
+		return new MongoCodecGenerator(provider.getWriter(), ioCtxt);
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.CodecGeneratorFactory#createGenerator(org.gecko.codec.CodecDataOutput)
+	 */
+	@Override
+	public MongoCodecGenerator createGenerator(CodecDataOutput_old<BsonWriter> dataOutput, IOContext ioCtxt) {
+		return new MongoCodecGenerator(dataOutput.getWriter(), ioCtxt);
 	}
 
 }

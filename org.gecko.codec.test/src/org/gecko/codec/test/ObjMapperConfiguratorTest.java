@@ -40,12 +40,12 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-import com.fasterxml.jackson.core.StreamReadFeature;
-import com.fasterxml.jackson.core.StreamWriteFeature;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.StreamWriteFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
@@ -71,8 +71,8 @@ public class ObjMapperConfiguratorTest {
 			@Property(key = "type", value="json"),
 			@Property(key = "enableFeatures", value={"PROPAGATE_TRANSIENT_MARKER", "REQUIRE_SETTERS_FOR_GETTERS", "USE_STATIC_TYPING", "SORT_PROPERTIES_ALPHABETICALLY",
 					"ACCEPT_CASE_INSENSITIVE_PROPERTIES", "ACCEPT_CASE_INSENSITIVE_ENUMS", "ACCEPT_CASE_INSENSITIVE_VALUES",
-					"USE_WRAPPER_NAME_AS_PROPERTY_NAME", "USE_STD_BEAN_NAMING", "ALLOW_EXPLICIT_PROPERTY_RENAMING", "ALLOW_IS_GETTERS_FOR_NON_BOOLEAN",
-					"BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES", "MapperFeature.ALLOW_VOID_VALUED_PROPERTIES", "USE_BASE_TYPE_AS_DEFAULT_IMPL", "USE_BIG_DECIMAL_FOR_FLOATS"}, type = Type.Array)
+					"USE_WRAPPER_NAME_AS_PROPERTY_NAME", "ALLOW_EXPLICIT_PROPERTY_RENAMING", "ALLOW_IS_GETTERS_FOR_NON_BOOLEAN",
+				    "MapperFeature.ALLOW_VOID_VALUED_PROPERTIES", "USE_BASE_TYPE_AS_DEFAULT_IMPL", "USE_BIG_DECIMAL_FOR_FLOATS"}, type = Type.Array)
 	})
 	@Test
 	public void testObjMapperConfigEnableMapperFeature(@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -93,10 +93,8 @@ public class ObjMapperConfiguratorTest {
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS));
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES));
 		assertTrue(mapper.isEnabled(MapperFeature.USE_WRAPPER_NAME_AS_PROPERTY_NAME));
-		assertTrue(mapper.isEnabled(MapperFeature.USE_STD_BEAN_NAMING));
 		assertTrue(mapper.isEnabled(MapperFeature.ALLOW_EXPLICIT_PROPERTY_RENAMING));
 		assertTrue(mapper.isEnabled(MapperFeature.ALLOW_IS_GETTERS_FOR_NON_BOOLEAN));
-		assertTrue(mapper.isEnabled(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES));
 		assertTrue(mapper.isEnabled(MapperFeature.ALLOW_VOID_VALUED_PROPERTIES));
 		assertTrue(mapper.isEnabled(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL));	
 	}
@@ -106,10 +104,9 @@ public class ObjMapperConfiguratorTest {
 	})
 	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
-			@Property(key = "disableFeatures", value={"USE_ANNOTATIONS", "USE_GETTERS_AS_SETTERS", "AUTO_DETECT_CREATORS", "AUTO_DETECT_FIELDS", "AUTO_DETECT_GETTERS", 
-					"AUTO_DETECT_IS_GETTERS", "AUTO_DETECT_SETTERS", "ALLOW_FINAL_FIELDS_AS_MUTATORS", "INFER_PROPERTY_MUTATORS", "INFER_CREATOR_FROM_CONSTRUCTOR_PROPERTIES", 
+			@Property(key = "disableFeatures", value={"USE_ANNOTATIONS", "USE_GETTERS_AS_SETTERS", "ALLOW_FINAL_FIELDS_AS_MUTATORS", "INFER_PROPERTY_MUTATORS", "INFER_CREATOR_FROM_CONSTRUCTOR_PROPERTIES", 
 					"CAN_OVERRIDE_ACCESS_MODIFIERS", "OVERRIDE_PUBLIC_ACCESS_MODIFIERS", "INFER_BUILDER_TYPE_BINDINGS", "REQUIRE_TYPE_ID_FOR_SUBTYPES", "DEFAULT_VIEW_INCLUSION", 
-					"SORT_CREATOR_PROPERTIES_FIRST", "ALLOW_COERCION_OF_SCALARS", "IGNORE_DUPLICATE_MODULE_REGISTRATIONS", "IGNORE_MERGE_FOR_UNMERGEABLE", "APPLY_DEFAULT_VALUES"}, type = Type.Array)
+					"SORT_CREATOR_PROPERTIES_FIRST", "ALLOW_COERCION_OF_SCALARS", "IGNORE_MERGE_FOR_UNMERGEABLE", "APPLY_DEFAULT_VALUES"}, type = Type.Array)
 	})
 	@Test
 	public void testObjMapperConfigDisableMapperFeature(@InjectService(timeout = 2000l) CodecFactoryConfigurator factoryConfigurator,
@@ -124,11 +121,6 @@ public class ObjMapperConfiguratorTest {
 		
 		assertFalse(mapper.isEnabled(MapperFeature.USE_ANNOTATIONS));
 		assertFalse(mapper.isEnabled(MapperFeature.USE_GETTERS_AS_SETTERS));
-		assertFalse(mapper.isEnabled(MapperFeature.AUTO_DETECT_CREATORS));
-		assertFalse(mapper.isEnabled(MapperFeature.AUTO_DETECT_FIELDS));
-		assertFalse(mapper.isEnabled(MapperFeature.AUTO_DETECT_GETTERS));
-		assertFalse(mapper.isEnabled(MapperFeature.AUTO_DETECT_IS_GETTERS));
-		assertFalse(mapper.isEnabled(MapperFeature.AUTO_DETECT_SETTERS));
 		assertFalse(mapper.isEnabled(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS));
 		assertFalse(mapper.isEnabled(MapperFeature.INFER_PROPERTY_MUTATORS));
 		assertFalse(mapper.isEnabled(MapperFeature.INFER_CREATOR_FROM_CONSTRUCTOR_PROPERTIES));
@@ -139,7 +131,6 @@ public class ObjMapperConfiguratorTest {
 		assertFalse(mapper.isEnabled(MapperFeature.DEFAULT_VIEW_INCLUSION));
 		assertFalse(mapper.isEnabled(MapperFeature.SORT_CREATOR_PROPERTIES_FIRST));
 		assertFalse(mapper.isEnabled(MapperFeature.ALLOW_COERCION_OF_SCALARS));
-		assertFalse(mapper.isEnabled(MapperFeature.IGNORE_DUPLICATE_MODULE_REGISTRATIONS));	
 		assertFalse(mapper.isEnabled(MapperFeature.IGNORE_MERGE_FOR_UNMERGEABLE));
 		assertFalse(mapper.isEnabled(MapperFeature.APPLY_DEFAULT_VALUES));	
 	}
@@ -396,7 +387,7 @@ public class ObjMapperConfiguratorTest {
 		assertNotNull(mapper);
 		
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		DateFormat mapperDF = mapper.getDateFormat();
+		DateFormat mapperDF = mapper.serializationConfig().getDateFormat();
 		assertEquals(df.format(Date.from(                     // Convert from modern java.time class to troublesome old legacy class.  DO NOT DO THIS unless you must, to inter operate with old code not yet updated for java.time.
 			    LocalDate.of(1990, 6, 20)                        // `LocalDate` class represents a date-only, without time-of-day and without time zone nor offset-from-UTC. 
 			    .atStartOfDay(                       // Let java.time determine the first moment of the day on that date in that zone. Never assume the day starts at 00:00:00.
@@ -412,12 +403,12 @@ public class ObjMapperConfiguratorTest {
 				)));
 		
 		Locale loc = new Locale.Builder().setLanguageTag("it-IT").build();
-		Locale mapperLoc = mapper.getSerializationConfig().getLocale();
+		Locale mapperLoc = mapper.serializationConfig().getLocale();
 		assertEquals(loc.getCountry(), mapperLoc.getCountry());
 		assertEquals(loc.getLanguage(), mapperLoc.getLanguage());
 		
 		TimeZone tz = TimeZone.getTimeZone("Europe/Amsterdam");
-		TimeZone mapperTZ = mapper.getSerializationConfig().getTimeZone();
+		TimeZone mapperTZ = mapper.serializationConfig().getTimeZone();
 		assertEquals(tz.getID(), mapperTZ.getID());
 	}	
 }

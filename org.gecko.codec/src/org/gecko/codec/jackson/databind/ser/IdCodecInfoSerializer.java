@@ -73,6 +73,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 			if(w != null) {
 				id = w.writeValue(id, provider);
 			}
+			
 			gen.writeName(codecModule.getIdKey());
 			
 			if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {

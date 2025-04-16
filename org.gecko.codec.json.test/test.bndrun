@@ -13,9 +13,6 @@
 
 -runbundles: \
 	assertj-core;version='[3.24.2,3.24.3)',\
-	com.fasterxml.jackson.core.jackson-annotations;version='[2.16.1,2.16.2)',\
-	com.fasterxml.jackson.core.jackson-core;version='[2.16.1,2.16.2)',\
-	com.fasterxml.jackson.core.jackson-databind;version='[2.16.1,2.16.2)',\
 	junit-jupiter-api;version='[5.10.1,5.10.2)',\
 	junit-jupiter-params;version='[5.10.1,5.10.2)',\
 	junit-platform-commons;version='[1.10.1,1.10.2)',\
@@ -47,4 +44,7 @@
 	org.gecko.codec.json;version=snapshot,\
 	org.gecko.emf.osgi.api;version='[6.3.0,6.3.1)',\
 	org.gecko.emf.osgi.component.config;version='[6.3.0,6.3.1)',\
-	org.gecko.emf.osgi.component.minimal;version='[6.3.0,6.3.1)'
+	org.gecko.emf.osgi.component.minimal;version='[6.3.0,6.3.1)',\
+	com.fasterxml.jackson.core.jackson-annotations;version='[3.0.0,3.0.1)',\
+	tools.jackson.core.jackson-core;version='[3.0.0,3.0.1)',\
+	tools.jackson.core.jackson-databind;version='[3.0.0,3.0.1)'

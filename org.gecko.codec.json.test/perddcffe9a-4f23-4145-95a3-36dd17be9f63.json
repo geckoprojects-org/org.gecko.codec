@@ -1,0 +1,10 @@
+{
+  "_id" : "d1f14a91-4571-4c56-824f-2c5e08099be7",
+  "_type" : "http:\/\/example.de\/person\/1.0#\/\/SpecificBusinessPerson",
+  "_supertype" : [ "http:\/\/example.de\/person\/1.0#\/\/Person", "http:\/\/example.de\/person\/1.0#\/\/BusinessPerson" ],
+  "name" : "John",
+  "lastName" : "Doe",
+  "birthDate" : "1990-06-20T00:00:00",
+  "title" : [ "Mrs", "Dr" ],
+  "getFullName" : "John Doe"
+}

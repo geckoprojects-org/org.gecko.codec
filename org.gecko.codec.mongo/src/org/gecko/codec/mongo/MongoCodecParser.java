@@ -13,7 +13,6 @@
  */
 package org.gecko.codec.mongo;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.bson.BsonReader;
@@ -21,10 +20,10 @@ import org.bson.BsonType;
 import org.gecko.codec.CodecReaderProvider;
 import org.gecko.codec.jackson.databind.deser.CodecParserBaseImpl;
 
-import com.fasterxml.jackson.core.Base64Variant;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.io.IOContext;
+import tools.jackson.core.Base64Variant;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.TreeCodec;
+import tools.jackson.core.io.IOContext;
 
 public class MongoCodecParser extends CodecParserBaseImpl {
 
@@ -38,9 +37,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 * @param objectCodec 
 	 */
 	public MongoCodecParser(IOContext context, CodecReaderProvider<BsonReader> reader) {
-		super(context, -1);
+		super(null, context, -1, -1, reader.getObjectCodec());
 		this.reader = reader.getReader();
-		setCodec(reader.getObjectCodec());
 	}
 
 	/**
@@ -50,10 +48,9 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 * @param reader
 	 * @param objectCodec 
 	 */
-	public MongoCodecParser(IOContext context, BsonReader reader, ObjectCodec objectCodec) {
-		super(context, -1);
+	public MongoCodecParser(IOContext context, BsonReader reader, TreeCodec objectCodec) {
+		super(null, context, -1, -1, objectCodec);
 		this.reader = reader;
-		setCodec(objectCodec);
 	}
 
 	/* 
@@ -184,8 +181,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 * @see com.fasterxml.jackson.core.JsonParser#getObjectId()
 	 */
 	@Override
-	public Object getObjectId() throws IOException {
-		return getCurrentValue();
+	public Object getObjectId()  {
+		return _parsingContext.currentValue();
 	}
 	
 	private Object getCurrentValue(BsonType bsonType) {
@@ -239,7 +236,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		case DECIMAL128:
 			return JsonToken.VALUE_NUMBER_FLOAT;
 		default:
-			return JsonToken.FIELD_NAME;
+			return JsonToken.PROPERTY_NAME;
 		}
 	}
 
@@ -248,11 +245,11 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 * @see com.fasterxml.jackson.core.base.ParserBase#getFloatValue()
 	 */
 	@Override
-	public float getFloatValue() throws IOException {
-		if(getCurrentValue() instanceof Double doubCurrentValue) {
+	public float getFloatValue()  {
+		if(_parsingContext.currentValue() instanceof Double doubCurrentValue) {
 			return (float)(double)doubCurrentValue;
 		}
-		return (float) getCurrentValue();
+		return (float) _parsingContext.currentValue();
 	}
 	
 	/* 
@@ -260,8 +257,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 * @see com.fasterxml.jackson.core.base.ParserBase#getDecimalValue()
 	 */
 	@Override
-	public BigDecimal getDecimalValue() throws IOException {
-		return ((org.bson.types.Decimal128) getCurrentValue()).bigDecimalValue();
+	public BigDecimal getDecimalValue() {
+		return ((org.bson.types.Decimal128) _parsingContext.currentValue()).bigDecimalValue();
 	}
 	
 	/* 
@@ -269,14 +266,13 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 * @see com.fasterxml.jackson.core.JsonParser#getBinaryValue()
 	 */
 	@Override
-	public byte[] getBinaryValue() throws IOException {
-		return ((org.bson.BsonBinary) getCurrentValue()).getData();
+	public byte[] getBinaryValue()  {
+		return ((org.bson.BsonBinary) _parsingContext.currentValue()).getData();
 	}
 	
 	@Override
-	public byte[] getBinaryValue(Base64Variant variant) throws IOException {
+	public byte[] getBinaryValue(Base64Variant variant)  {
 		
-		return((org.bson.BsonBinary) getCurrentValue()).getData();
+		return((org.bson.BsonBinary) _parsingContext.currentValue()).getData();
     }
-
 }
