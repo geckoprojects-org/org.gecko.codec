@@ -16,7 +16,7 @@ import org.gecko.codec.CodecParserFactory;
 import org.gecko.codec.CodecReaderProvider;
 import org.osgi.service.component.annotations.Component;
 
-import com.fasterxml.jackson.core.io.IOContext;
+import tools.jackson.core.io.IOContext;
 
 /**
  * 

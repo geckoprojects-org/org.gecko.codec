@@ -17,28 +17,37 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import tools.jackson.core.Base64Variant;
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.ObjectReadContext;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.TokenStreamLocation;
 import tools.jackson.core.TreeCodec;
-import tools.jackson.core.base.ParserBase;
 import tools.jackson.core.io.IOContext;
+import tools.jackson.core.json.DupDetector;
+import tools.jackson.core.json.JsonParserBase;
+import tools.jackson.core.json.JsonReadContext;
 
 /**
  * This is the default basic impl of the Parser. 
  * @author mark
  * @since 09.01.2024
  */
-public abstract class CodecParserBaseImpl extends ParserBase {
+public abstract class CodecParserBaseImpl extends JsonParserBase {
 
-	private TreeCodec oc;
+	protected JsonReadContext _parsingContext;
+	private TreeCodec codec;
 
-	/**
-	 * Creates a new instance.
-	 * @param ctxt
-	 * @param features
-	 */
-	protected CodecParserBaseImpl(ObjectReadContext readCtxt, IOContext ctxt, int features) {
-		super(readCtxt, ctxt, features);
+	protected CodecParserBaseImpl(ObjectReadContext readCtxt, IOContext ctxt, int streamReadFeatures, int formatReadFeatures, TreeCodec codec) {
+		this(readCtxt, ctxt, streamReadFeatures, formatReadFeatures);
+		this.codec = codec;
+	}
+	
+	protected CodecParserBaseImpl(ObjectReadContext readCtxt, IOContext ctxt, int streamReadFeatures, int formatReadFeatures) {
+		super(readCtxt, ctxt, streamReadFeatures, formatReadFeatures);
+		DupDetector dups = StreamReadFeature.STRICT_DUPLICATE_DETECTION.enabledIn(streamReadFeatures)
+                ? DupDetector.rootDetector(this) : null;
+        _parsingContext = JsonReadContext.createRootContext(dups);
 	}
 
 	/* 
@@ -89,13 +98,13 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 				doEndDocument();
 				_currToken = JsonToken.END_OBJECT;
 			}
-//			_parsingContext = _parsingContext.clearAndGetParent();
+			_parsingContext = _parsingContext.clearAndGetParent();
 			if(!streamReadContext().inRoot()) {
 				_nextToken = doGetNextToken();
 			}
 		} else if (streamReadContext().inObject() && _currToken != JsonToken.PROPERTY_NAME) {
 			String name = doReadName();
-//			_parsingContext.setCurrentName(name);
+			_parsingContext.setCurrentName(name);
 			_currToken = JsonToken.PROPERTY_NAME;
 		} else if (isBeginDocument()) {
 			doBeginDocument();
@@ -155,27 +164,82 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 		return (BigDecimal) currentValue();
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.base.ParserMinimalBase#getText()
+	 * @see tools.jackson.core.JsonParser#getText()
 	 */
 	@Override
 	public String getText() {
 		return (String) currentValue();
 	}
 	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#getTextCharacters()
+	 */
 	@Override
 	public char[] getTextCharacters() {
 		return getText().toCharArray();
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#getTextLength()
+	 */
 	@Override
 	public int getTextLength() {
 		return getText().length();
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#getTextOffset()
+	 */
 	@Override
 	public int getTextOffset() {
+		return 0;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#getString()
+	 */
+	@Override
+	public String getString() throws JacksonException {
+		if(_parsingContext.currentValue() instanceof String str) {
+			return str;
+		}
+		return null;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#getStringCharacters()
+	 */
+	@Override
+	public char[] getStringCharacters() throws JacksonException {
+		if(_parsingContext.currentValue() instanceof char[] ch) {
+			return ch;
+		}
+		return null;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#getStringLength()
+	 */
+	@Override
+	public int getStringLength() throws JacksonException {
+		return getString() != null ? getString().length() : 0;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#getStringOffset()
+	 */
+	@Override
+	public int getStringOffset() throws JacksonException {
 		return 0;
 	}
 	
@@ -193,23 +257,42 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 		return (byte[]) currentValue();
     }
 
-
-	public TreeCodec getCodec(){
-		return oc;
-	}
-
-
-	public void setCodec(TreeCodec oc) {
-		this.oc = oc;
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#currentTokenLocation()
+	 */
+	@Override
+	public TokenStreamLocation currentTokenLocation() {
+		return new TokenStreamLocation(_contentReference(),
+                -1L, getTokenCharacterOffset(), // bytes, chars
+                getTokenLineNr(),
+                getTokenColumnNr());
 	}
 	
-//	/* 
-//	 * (non-Javadoc)
-//	 * @see com.fasterxml.jackson.core.base.ParserBase#getParsingContext()
-//	 */
-//	@Override
-//	public JsonReadContext getParsingContext() {
-//		return super.getParsingContext();
-//	}
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#currentLocation()
+	 */
+	@Override
+	public TokenStreamLocation currentLocation() {
+		int col = _inputPtr - _currInputRowStart + 1; // 1-based
+        return new TokenStreamLocation(_contentReference(),
+                -1L, _currInputProcessed + _inputPtr, // bytes, chars
+                _currInputRow, col);
+	}
+	
 
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#streamReadInputSource()
+	 */
+	@Override
+	public Object streamReadInputSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public TreeCodec getCodec(){
+		return codec;
+	}
 }

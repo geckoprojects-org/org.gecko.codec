@@ -12,6 +12,7 @@
 package org.gecko.codec;
 
 import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.io.IOContext;
 
 /**
  * Factory for codec specific {@link JsonGenerator}.
@@ -20,6 +21,8 @@ import tools.jackson.core.JsonGenerator;
  * @since Apr 10, 2024
  */
 public interface CodecGeneratorFactory<W, G extends JsonGenerator> {
-	G createGenerator(CodecWriterProvider<W> provider);
+	G createGenerator(CodecWriterProvider_old<W> provider, IOContext ioCtxt);
+	
+	G createGenerator(CodecDataOutput_old<W> dataOutput, IOContext ioCtxt);
 
 }

@@ -31,9 +31,10 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.StreamReadFeature;
-import com.fasterxml.jackson.core.StreamWriteFeature;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.StreamWriteFeature;
+import tools.jackson.core.TokenStreamFactory;
+import tools.jackson.core.json.JsonFactory;
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
@@ -53,8 +54,8 @@ public class CodecFactoryConfiguratorTest {
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "type", value="json"),
-			@Property(key = "disableFeatures", value={"INTERN_FIELD_NAMES", "JsonFactory.Feature.CANONICALIZE_FIELD_NAMES", 
-					"FAIL_ON_SYMBOL_HASH_OVERFLOW", "JsonFactory.Feature.USE_THREAD_LOCAL_FOR_BUFFER_RECYCLING", "CHARSET_DETECTION"}, type = Type.Array)
+			@Property(key = "disableFeatures", value={"INTERN_PROPERTY_NAMES", "TokenStreamFactory.Feature.CANONICALIZE_PROPERTY_NAMES", 
+					"FAIL_ON_SYMBOL_HASH_OVERFLOW","CHARSET_DETECTION"}, type = Type.Array)
 	})
 	@Test
 	public void testFactoryConfigDisableJsonFactoryFeature(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
@@ -64,11 +65,10 @@ public class CodecFactoryConfiguratorTest {
 		
 		JsonFactory codecFactory = configurator.getFactoryBuilder().build();
 		assertNotNull(codecFactory);
-				
-		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.INTERN_FIELD_NAMES));
-		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.CANONICALIZE_FIELD_NAMES));
+		
+		assertFalse(codecFactory.isEnabled(TokenStreamFactory.Feature.INTERN_PROPERTY_NAMES));
+		assertFalse(codecFactory.isEnabled(TokenStreamFactory.Feature.CANONICALIZE_PROPERTY_NAMES));
 		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.FAIL_ON_SYMBOL_HASH_OVERFLOW));
-		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.USE_THREAD_LOCAL_FOR_BUFFER_RECYCLING));
 		assertFalse(codecFactory.isEnabled(JsonFactory.Feature.CHARSET_DETECTION));	
 	}
 	
@@ -86,7 +86,6 @@ public class CodecFactoryConfiguratorTest {
 		
 		JsonFactory codecFactory = configurator.getFactoryBuilder().build();
 		assertNotNull(codecFactory);
-				
 		assertTrue(codecFactory.isEnabled(StreamWriteFeature.IGNORE_UNKNOWN));
 		assertTrue(codecFactory.isEnabled(StreamWriteFeature.USE_FAST_DOUBLE_WRITER));
 		assertTrue(codecFactory.isEnabled(StreamWriteFeature.STRICT_DUPLICATE_DETECTION));

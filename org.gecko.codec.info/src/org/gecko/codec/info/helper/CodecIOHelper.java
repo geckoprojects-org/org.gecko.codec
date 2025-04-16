@@ -27,9 +27,10 @@ import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.gecko.codec.info.codecinfo.CodecValueReader;
 import org.gecko.codec.info.codecinfo.CodecValueWriter;
 
-import com.fasterxml.jackson.databind.DatabindContext;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import tools.jackson.databind.SerializationContext;
+
+import tools.jackson.databind.DatabindContext;
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * 
@@ -61,7 +62,7 @@ public class CodecIOHelper {
 		}
 
 		@Override
-		public Object writeValue(EObject value, SerializerProvider provider) {
+		public Object writeValue(EObject value, SerializationContext provider) {
 			Resource resource = EMFContext.getResource(provider, value);
 			Object id;
 			if (resource instanceof JsonResource) {
@@ -81,7 +82,7 @@ public class CodecIOHelper {
 		}
 
 		@Override
-		public Object writeValue(EObject value, SerializerProvider provider) {
+		public Object writeValue(EObject value, SerializationContext provider) {
 			return EcoreUtil.getID(value);
 		}
 	};
@@ -109,7 +110,7 @@ public class CodecIOHelper {
 		}
 
 		@Override
-		public String[] writeValue(EClass value, SerializerProvider provider) {
+		public String[] writeValue(EClass value, SerializationContext provider) {
 			return getAllSuperTypeURIs(provider, value);
 		}		
 	};
@@ -122,7 +123,7 @@ public class CodecIOHelper {
 		}
 
 		@Override
-		public String[] writeValue(EClass value, SerializerProvider provider) {
+		public String[] writeValue(EClass value, SerializationContext provider) {
 			String[] superTypesArr = getAllSuperTypeURIs(provider, value);
 			if(superTypesArr != null && superTypesArr.length > 0) return new String[] {superTypesArr[superTypesArr.length-1]}; 
 			return null;
@@ -139,7 +140,7 @@ public class CodecIOHelper {
 		}
 
 		@Override
-		public String writeValue(EClass value, SerializerProvider provider) {
+		public String writeValue(EClass value, SerializationContext provider) {
 			return getURI(provider, value).toString();
 		}		
 	};
@@ -166,7 +167,7 @@ public class CodecIOHelper {
 		}
 
 		@Override
-		public String writeValue(EClass value, SerializerProvider provider) {
+		public String writeValue(EClass value, SerializationContext provider) {
 			return value != null ? value.getName() : null;
 		}		
 	};
@@ -194,7 +195,7 @@ public class CodecIOHelper {
 		}
 
 		@Override
-		public String writeValue(EClass value, SerializerProvider provider) {
+		public String writeValue(EClass value, SerializationContext provider) {
 			return value != null ? value.getInstanceClassName() : null;
 		}
 		

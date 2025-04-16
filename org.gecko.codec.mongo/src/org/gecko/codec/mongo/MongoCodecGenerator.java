@@ -11,7 +11,6 @@
  */
 package org.gecko.codec.mongo;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -22,8 +21,10 @@ import org.bson.types.ObjectId;
 import org.eclipse.emf.ecore.EObject;
 import org.gecko.codec.jackson.databind.ser.CodecGeneratorBaseImpl;
 
-import com.fasterxml.jackson.core.Base64Variant;
-import com.fasterxml.jackson.core.ObjectCodec;
+import tools.jackson.core.Base64Variant;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.ObjectWriteContext;
+import tools.jackson.core.io.IOContext;
 
 /**
  * 
@@ -40,35 +41,44 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 	 * 
 	 * @param writer2
 	 */
-	public MongoCodecGenerator(BsonWriter writer, ObjectCodec objectCodec) {
-		super(-1, objectCodec, null);
+	public MongoCodecGenerator(BsonWriter writer, IOContext ioCtxt) {
+		super(null, ioCtxt, -1);
 		this.writer = writer;
 	}
-
-	@Override
-	public void doStartWriteRootEObject(EObject eObject) throws IOException {
-		doStartWriteEObject(0, "", eObject);
+	
+	public MongoCodecGenerator(ObjectWriteContext writeCtxt, IOContext ioCtxt,
+            int streamWriteFeatures) {
+		super(writeCtxt, ioCtxt, streamWriteFeatures);
 	}
 
 	@Override
-	public void doEndWriteRootEObject(EObject object) throws IOException {
+	public JsonGenerator doStartWriteRootEObject(EObject eObject) {
+		doStartWriteEObject(0, "", eObject);
+		return this;
+	}
+
+	@Override
+	public JsonGenerator doEndWriteRootEObject(EObject object) {
 		writer.writeEndDocument();
 		writer.flush();
+		return this;
 	}
 
 	@Override
-	public void doWriteType(int index, String fieldName, Object object) throws IOException {
+	public JsonGenerator doWriteType(int index, String fieldName, Object object) {
 		writer.writeString(fieldName, object.toString());
+		return this;
 	}
 
 	@Override
-	public void doWriteSuperTypes(int index, String fieldName, String[] superTypes) throws IOException {
+	public JsonGenerator doWriteSuperTypes(int index, String fieldName, String[] superTypes) {
 		String types = String.join(",", superTypes);
 		writer.writeString(fieldName, types);
+		return this;
 	}
 
 	@Override
-	public void doWriteObjectId(int index, String fieldName, Object object) throws IOException {
+	public JsonGenerator doWriteObjectId(int index, String fieldName, Object object) {
 		if (object instanceof ObjectId) {
 			writer.writeObjectId(fieldName, (ObjectId) object);
 		} else if (object instanceof String) {
@@ -80,12 +90,12 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 			}
 		} else if (object == null) {
 			ObjectId objectId = new ObjectId();
-			setCurrentValue(objectId);
+			getOutputContext().assignCurrentValue(objectId);
 			writer.writeObjectId(fieldName, objectId);
 		} else {
 			System.out.println("???" + object);
 		}
-
+		return this;
 	}
 
 	/* 
@@ -93,11 +103,12 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 	 * @see org.gecko.codec.jackson.CodecGenerator#doStartWriteEObject(int, java.lang.String, org.eclipse.emf.ecore.EObject)
 	 */
 	@Override
-	public void doStartWriteEObject(int index, String fieldName, EObject object) throws IOException {
+	public JsonGenerator doStartWriteEObject(int index, String fieldName, EObject object) {
 		if (fieldName != null && !fieldName.isEmpty()) {
 			writer.writeName(fieldName);
 		}
 		writer.writeStartDocument();
+		return this;
 	}
 
 	/* 
@@ -105,107 +116,134 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 	 * @see org.gecko.codec.CodecGenerator#doEndWriteEObject(int, java.lang.String, org.eclipse.emf.ecore.EObject)
 	 */
 	@Override
-	public void doEndWriteEObject(int index, String fieldName, EObject object) throws IOException {
+	public JsonGenerator doEndWriteEObject(int index, String fieldName, EObject object) {
 		writer.writeEndDocument();
+		return this;
 	}
 
 	@Override
-	public void doStartWriteArray(int index, String fieldName, Object object) throws IOException {
+	public JsonGenerator doStartWriteArray(int index, String fieldName, Object object) {
 		if(fieldName == null) writer.writeStartArray();
 		else writer.writeStartArray(fieldName);
+		return this;
 	}
 
 	@Override
-	public void doEndWriteArray(int index, String fieldName, Object object) throws IOException {
+	public JsonGenerator doEndWriteArray(int index, String fieldName, Object object) {
 		writer.writeEndArray();
+		return this;
 	}
 
 	@Override
-	public void doWriteString(int index, String fieldName, String value) throws IOException {
-		if(_writeContext.inArray()) writer.writeString(value);
+	public JsonGenerator doWriteString(int index, String fieldName, String value) {
+		if(getOutputContext().inArray()) writer.writeString(value);
 		else writer.writeString(fieldName, value);
+		return this;
 	}
 
 	@Override
-	public void doWriteShort(int index, String fieldName, short value) throws IOException {
+	public JsonGenerator doWriteShort(int index, String fieldName, short value) {
 		if(fieldName == null) writer.writeInt32(value);
 		else writer.writeInt32(fieldName, value);
+		return this;
 	}
 
 	@Override
-	public void doWriteLong(int index, String fieldName, long value) throws IOException {
+	public JsonGenerator doWriteLong(int index, String fieldName, long value) {
 		if(fieldName == null) writer.writeInt64(value);
 		else writer.writeInt64(fieldName, value);
+		return this;
 	}
 
 	@Override
-	public void doWriteInt(int index, String fieldName, int value) throws IOException {
+	public JsonGenerator doWriteInt(int index, String fieldName, int value) {
 		if(fieldName == null) writer.writeInt32(value);
 		else writer.writeInt32(fieldName, value);
+		return this;
 	}
 
 	@Override
-	public void doWriteBigInt(int index, String fieldName, BigInteger value) throws IOException {
+	public JsonGenerator doWriteBigInt(int index, String fieldName, BigInteger value) {
 		if(fieldName == null) writer.writeString(value.toString());
 		else writer.writeString(fieldName, value.toString());
+		return this;
 	}
 
 	@Override
-	public void doWriteBigDecimal(int index, String fieldName, BigDecimal value) throws IOException {
+	public JsonGenerator doWriteBigDecimal(int index, String fieldName, BigDecimal value) {
 		if(fieldName == null) writer.writeDecimal128(new Decimal128(value));
 		else writer.writeDecimal128(fieldName, new Decimal128(value));
+		return this;
 	}
 
 	@Override
-	public void doWriteFloat(int index, String fieldName, float value) throws IOException {
+	public JsonGenerator doWriteFloat(int index, String fieldName, float value) {
 		// https://stackoverflow.com/questions/7682714/does-mongodb-support-floating-point-types
 		if(fieldName == null) writer.writeDouble(value);
 		else writer.writeDouble(fieldName, value);
+		return this;
 	}
 
 	@Override
-	public void doWriteDouble(int index, String fieldName, double value) throws IOException {
+	public JsonGenerator doWriteDouble(int index, String fieldName, double value) {
 		if(fieldName == null) writer.writeDouble(value);
 		else writer.writeDouble(fieldName, value);
+		return this;
 	}
 
 	@Override
-	public void doWriteChar(int index, String fieldName, char value) throws IOException {
-		// TODO
+	public JsonGenerator doWriteChar(int index, String fieldName, char value) {
 		if(fieldName == null) writer.writeString(""+value);
 		else writer.writeString(fieldName, "" + value);
+		return this;
 	}
 
 	@Override
-	public void doWriteChars(int index, String fieldName, char[] values) throws IOException {
+	public JsonGenerator doWriteChars(int index, String fieldName, char[] values) {
 		if(fieldName == null) writer.writeString(new String(values));
 		else writer.writeString(fieldName, new String(values));
+		return this;
 	}
 
 	@Override
-	public void doWriteBoolean(int index, String fieldName, boolean value) throws IOException {
+	public JsonGenerator doWriteBoolean(int index, String fieldName, boolean value) {
 		if(fieldName == null) writer.writeBoolean(value);
 		else writer.writeBoolean(fieldName, value);
+		return this;
 	}
 
 	@Override
-	public void doWriteStringNumber(int index, String fieldName, String value) throws IOException {
+	public JsonGenerator doWriteStringNumber(int index, String fieldName, String value) {
 		if(fieldName == null) writer.writeString(value);
 		else writer.writeString(fieldName, value);
+		return this;
 	}
 
 	@Override
-	public void doWriteBinary(int index, String fieldName, Base64Variant b64variant, byte[] values, int offset, int len)
-			throws IOException {
+	public JsonGenerator doWriteBinary(int index, String fieldName, Base64Variant b64variant, byte[] values, int offset, int len) {
 		if(fieldName == null) writer.writeBinaryData(new BsonBinary(values));
 		else writer.writeBinaryData(fieldName, new BsonBinary(values));
+		return this;
 	}
 
 	@Override
-	public void doWriteNull(int index, String fieldName) throws IOException {
+	public JsonGenerator doWriteNull(int index, String fieldName) {
 		if(fieldName == null) writer.writeNull();
 		else writer.writeNull(fieldName);
+		return this;
 	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.gecko.codec.CodecGenerator#doWritePropertyId(int, java.lang.String, long)
+	 */
+	@Override
+	public JsonGenerator doWritePropertyId(int index, String fieldName, long value) {
+		// TODO: check this!!
+		return doWriteObjectId(index, fieldName, value);
+	}
+
+	
 	
 
 }

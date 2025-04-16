@@ -13,7 +13,7 @@
  */
 package org.gecko.codec;
 
-import java.io.IOException;
+import tools.jackson.core.JsonGenerator;
 
 /**
  * Codec generator extensions 
@@ -24,6 +24,6 @@ public interface CodecGeneratorBase {
 
 	boolean canWriteSuperTypes();
 
-	void writeSuperTypes(String[] supertypes);
+	JsonGenerator writeSuperTypes(String[] supertypes);
 	
 }

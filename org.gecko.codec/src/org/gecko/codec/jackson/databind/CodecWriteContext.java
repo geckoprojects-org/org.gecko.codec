@@ -64,6 +64,15 @@ public class CodecWriteContext extends JsonWriteContext {
     	}
     }
 	
+    /* 
+     * (non-Javadoc)
+     * @see tools.jackson.core.json.JsonWriteContext#reset(int, java.lang.Object)
+     */
+    @Override
+    public JsonWriteContext reset(int type, Object currValue) {
+    	return super.reset(type, currValue);
+    }
+    
 	/**
 	 * Sets the feature.
 	 * @param feature the feature to set

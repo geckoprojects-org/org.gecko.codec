@@ -1,7 +1,7 @@
 -library: enable-emf
 -buildpath: \
 	org.gecko.codec.info,\
-	com.fasterxml.jackson.core.jackson-core,\
 	org.gecko.codec.emfjson,\
-	com.fasterxml.jackson.core.jackson-databind,\
-	org.gecko.codec
+	org.gecko.codec,\
+	tools.jackson.core.jackson-core,\
+	tools.jackson.core.jackson-databind

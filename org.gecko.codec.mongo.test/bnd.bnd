@@ -21,11 +21,10 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.gecko.codec.demo.model;version=latest,\
 	org.gecko.codec,\
 	org.gecko.codec.info,\
-	com.fasterxml.jackson.core.jackson-databind,\
-	com.fasterxml.jackson.core.jackson-core,\
 	org.gecko.codec.test.helper;version=latest,\
 	org.gecko.codec.info.model;version=latest,\
-	org.gecko.codec.constants;version=latest
+	org.gecko.codec.constants;version=latest,\
+	tools.jackson.core.jackson-databind
 	
 Private-Package: org.gecko.codec.mongo.test
 

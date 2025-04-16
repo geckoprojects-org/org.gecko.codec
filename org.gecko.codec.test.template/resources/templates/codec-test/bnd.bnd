@@ -12,9 +12,7 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.gecko.code.demo.model;version=latest,\
 	org.osgi.test.junit5.cm,\
 	org.gecko.codec.demo,\
-	com.fasterxml.jackson.core.jackson-databind,\
 	org.gecko.codec.emfjson,\
-	com.fasterxml.jackson.core.jackson-core,\
 	org.gecko.codec.test.helper;version=latest,\
 	org.gecko.codec.constants;version=latest
 	

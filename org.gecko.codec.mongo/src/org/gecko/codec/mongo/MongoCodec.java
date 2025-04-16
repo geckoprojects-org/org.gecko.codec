@@ -14,7 +14,6 @@ package org.gecko.codec.mongo;
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.Attributes.RESOURCE;
 import static org.eclipse.emfcloud.jackson.databind.EMFContext.Attributes.RESOURCE_SET;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.bson.BsonReader;
@@ -26,19 +25,19 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.gecko.codec.CodecDataInput;
-import org.gecko.codec.CodecDataOutput;
+import org.gecko.codec.CodecDataOutput_old;
 import org.gecko.codec.mongo.resource.CodecMongoResource;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.cfg.ContextAttributes;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.ContextAttributes;
 
 
 final class MongoCodec implements Codec<EObject> {
-	
+
 	private final Map<?, ?> options;
 	private final ObjectMapper mapper;
 	private final CodecMongoResource resource;
-	
+
 	/**
 	 * Creates a new instance.
 	 * @param mapper 
@@ -50,23 +49,19 @@ final class MongoCodec implements Codec<EObject> {
 		this.resource = resource;
 		this.options = options;
 	}
-	
+
 	@Override
 	public void encode(BsonWriter writer, EObject value, EncoderContext encoderContext) {
-		try {
-			mapper.writer()
-			.with(EMFContext.from(options))
-			.writeValue(new CodecDataOutput<>(writer, mapper), value);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		mapper.writer()
+		.with(EMFContext.from(options))
+		.writeValue(new CodecDataOutput_old<>(writer, mapper), value);
 	}
-	
+
 	@Override
 	public Class<EObject> getEncoderClass() {
 		return EObject.class;
 	}
-	
+
 	@Override
 	public EObject decode(BsonReader reader, DecoderContext decoderContext) {
 		ContextAttributes attributes;
@@ -74,16 +69,12 @@ final class MongoCodec implements Codec<EObject> {
 				.from(options)
 				.withPerCallAttribute(RESOURCE_SET, resource.getResourceSet())
 				.withPerCallAttribute(RESOURCE, resource);
-		try {
-			Resource r = mapper.reader()
-					.with(attributes)
-					.forType(Resource.class)
-					.withValueToUpdate(resource)
-					.readValue(new CodecDataInput<>(reader, mapper));
-			return r.getContents().isEmpty() ? null : r.getContents().get(0);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new IllegalStateException(e);
-		}
+
+		Resource r = mapper.reader()
+				.with(attributes)
+				.forType(Resource.class)
+				.withValueToUpdate(resource)
+				.readValue(new CodecDataInput<>(reader, mapper));
+		return r.getContents().isEmpty() ? null : r.getContents().get(0);
 	}
 }

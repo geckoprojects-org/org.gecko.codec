@@ -12,6 +12,7 @@
 package org.gecko.codec;
 
 import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -55,13 +56,14 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 //		return internalCreateGenerator(out);
 //	}
 
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonFactory#createGenerator(java.io.OutputStream)
+	 * @see tools.jackson.core.TokenStreamFactory#createGenerator(java.io.OutputStream)
 	 */
 	@Override
 	public JsonGenerator createGenerator(OutputStream out)  {
-		return internalCreateGenerator(out);
+		return internalCreateGenerator(out, null);
 	}
 
 //	/* 
@@ -73,11 +75,15 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 //		return internalCreateGenerator(out);
 //	}
 	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.json.JsonFactory#_createUTF8Generator(tools.jackson.core.ObjectWriteContext, tools.jackson.core.io.IOContext, java.io.OutputStream)
+	 */
 	@Override
     public JsonGenerator _createUTF8Generator(ObjectWriteContext writeCtxt,
             IOContext ioCtxt, OutputStream out) {
 	
-		return internalCreateGenerator(out);
+		return internalCreateGenerator(out, ioCtxt);
 	}
 
 //	/* 
@@ -127,12 +133,26 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	}
 
 	@SuppressWarnings("unchecked")
-	private G internalCreateGenerator(Object in) {
-		if (in instanceof CodecWriterProvider) {
-			return genFactory.createGenerator((CodecWriterProvider<W>) in);
+	private G internalCreateGenerator(Object in, IOContext ioCtxt) {
+		if(in instanceof CodecDataOutputAsStream doas) {
+			return (G) genFactory.createGenerator(doas.getCodecDataOutput(), ioCtxt);
+		}
+		
+		if (in instanceof CodecWriterProvider_old) {
+			return genFactory.createGenerator((CodecWriterProvider_old<W>) in, ioCtxt);
 		} else {
 			throw new UnsupportedOperationException("The createGenerator call is only supported with a CodecWriterProvider as parameter.");
 		}
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.TokenStreamFactory#_createDataOutputWrapper(java.io.DataOutput)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	protected OutputStream _createDataOutputWrapper(DataOutput out) {
+		return new CodecDataOutputAsStream((CodecDataOutput_old<W>) out);
 	}
 
 }

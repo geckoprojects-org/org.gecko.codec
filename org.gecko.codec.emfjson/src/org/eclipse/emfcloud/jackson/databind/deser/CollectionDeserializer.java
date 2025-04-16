@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.emfcloud.jackson.databind.deser;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,11 +19,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 
-import tools.jackson.databind.ValueDeserializer;
-
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.type.CollectionType;
 
 public class CollectionDeserializer extends ValueDeserializer<Collection<Object>> {
@@ -57,7 +55,7 @@ private Collection<Object> createCollection(final DeserializationContext ctxt) {
       CollectionType type = baseType;
       try {
          if (baseType.isAbstract() && baseType.isCollectionLikeType()) {
-            type = (CollectionType) ctxt.getTypeFactory().constructCollectionLikeType();// mapAbstractType(ctxt.getConfig(), type);
+            type = (CollectionType) ctxt.getTypeFactory().constructCollectionLikeType(type.getRawClass(), type.getContentType().getRawClass());// mapAbstractType(ctxt.getConfig(), type);
          }
          if (!type.isAbstract()) {
             return (Collection<Object>) type.getRawClass().getConstructor().newInstance();

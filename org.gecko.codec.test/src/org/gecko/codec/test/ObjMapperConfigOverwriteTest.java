@@ -58,10 +58,10 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
@@ -145,7 +145,7 @@ public class ObjMapperConfigOverwriteTest {
 		ObjectMapper mapper = codecRes.getMapper();
 		assertNotNull(mapper);
 		
-		DateFormat mapperDF = mapper.getDateFormat();
+		DateFormat mapperDF = mapper.serializationConfig().getDateFormat();
 		assertEquals(df.format(Date.from(                     // Convert from modern java.time class to troublesome old legacy class.  DO NOT DO THIS unless you must, to inter operate with old code not yet updated for java.time.
 			    LocalDate.of(1990, 6, 20)                        // `LocalDate` class represents a date-only, without time-of-day and without time zone nor offset-from-UTC. 
 			    .atStartOfDay(                       // Let java.time determine the first moment of the day on that date in that zone. Never assume the day starts at 00:00:00.
@@ -179,7 +179,7 @@ public class ObjMapperConfigOverwriteTest {
 		ObjectMapper mapper = codecRes.getMapper();
 		assertNotNull(mapper);
 		
-		Locale mapperLoc = mapper.getSerializationConfig().getLocale();
+		Locale mapperLoc = mapper.serializationConfig().getLocale();
 		assertEquals(loc.getCountry(), mapperLoc.getCountry());
 		assertEquals(loc.getLanguage(), mapperLoc.getLanguage());
 	}
@@ -202,7 +202,7 @@ public class ObjMapperConfigOverwriteTest {
 		ObjectMapper mapper = codecRes.getMapper();
 		assertNotNull(mapper);
 		
-		TimeZone mapperTZ = mapper.getSerializationConfig().getTimeZone();
+		TimeZone mapperTZ = mapper.serializationConfig().getTimeZone();
 		assertEquals(tz.getID(), mapperTZ.getID());
 	}
 	
