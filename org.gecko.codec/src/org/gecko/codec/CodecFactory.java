@@ -98,7 +98,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	@Override
 	public JsonParser _createParser(ObjectReadContext readCtxt, IOContext ioCtxt,
             DataInput input) {
-		return internalCreateParser(input);
+		return internalCreateParser(input, ioCtxt);
 	}
 
 	/* 
@@ -107,7 +107,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	 */
 	@Override
 	public JsonParser createParser(URL url)  {
-		return internalCreateParser(url);
+		return internalCreateParser(url, null);
 	}
 
 	/* 
@@ -116,17 +116,19 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	 */
 	@Override
 	public JsonParser createParser(InputStream in) {
-		return internalCreateParser(in);
+		return internalCreateParser(in, null);
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private P internalCreateParser(Object in) {
+	private P internalCreateParser(Object in, IOContext ioCtxt) {
 		if (in instanceof CodecReaderProvider) {
 			CodecReaderProvider<R> readerProvider = (CodecReaderProvider<R>) in;
-			IOContext context = _createContext(
-					ContentReference.construct(false, readerProvider.getReader(), ErrorReportConfiguration.defaults()),
-					true);
-			return parserFactory.createParser(context, readerProvider);
+			if(ioCtxt == null) {
+				ioCtxt = _createContext(
+						ContentReference.construct(false, readerProvider.getReader(), ErrorReportConfiguration.defaults()),
+						true);
+			}			
+			return parserFactory.createParser(ioCtxt, readerProvider);
 		} else {
 			throw new UnsupportedOperationException("The createParser call is only supported with a CodecReaderProvider as parameter.");
 		}
@@ -134,12 +136,23 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 
 	@SuppressWarnings("unchecked")
 	private G internalCreateGenerator(Object in, IOContext ioCtxt) {
+		
 		if(in instanceof CodecDataOutputAsStream doas) {
+			if(ioCtxt == null) {
+				ioCtxt = _createContext(
+						ContentReference.construct(false, doas.getCodecDataOutput().getWriter(), ErrorReportConfiguration.defaults()),
+						true);
+			}
 			return (G) genFactory.createGenerator(doas.getCodecDataOutput(), ioCtxt);
 		}
 		
-		if (in instanceof CodecWriterProvider_old) {
-			return genFactory.createGenerator((CodecWriterProvider_old<W>) in, ioCtxt);
+		if (in instanceof CodecWriterProvider_old provider) {
+			if(ioCtxt == null) {
+				ioCtxt = _createContext(
+						ContentReference.construct(false, provider.getWriter(), ErrorReportConfiguration.defaults()),
+						true);
+			}
+			return (G) genFactory.createGenerator(provider, ioCtxt);
 		} else {
 			throw new UnsupportedOperationException("The createGenerator call is only supported with a CodecWriterProvider as parameter.");
 		}
