@@ -20,13 +20,10 @@ import tools.jackson.core.Base64Variant;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.ObjectReadContext;
-import tools.jackson.core.StreamReadFeature;
 import tools.jackson.core.TokenStreamLocation;
 import tools.jackson.core.TreeCodec;
 import tools.jackson.core.io.IOContext;
-import tools.jackson.core.json.DupDetector;
 import tools.jackson.core.json.JsonParserBase;
-import tools.jackson.core.json.JsonReadContext;
 
 /**
  * This is the default basic impl of the Parser. 
@@ -35,7 +32,6 @@ import tools.jackson.core.json.JsonReadContext;
  */
 public abstract class CodecParserBaseImpl extends JsonParserBase {
 
-	protected JsonReadContext _parsingContext;
 	private TreeCodec codec;
 
 	protected CodecParserBaseImpl(ObjectReadContext readCtxt, IOContext ctxt, int streamReadFeatures, int formatReadFeatures, TreeCodec codec) {
@@ -45,9 +41,6 @@ public abstract class CodecParserBaseImpl extends JsonParserBase {
 	
 	protected CodecParserBaseImpl(ObjectReadContext readCtxt, IOContext ctxt, int streamReadFeatures, int formatReadFeatures) {
 		super(readCtxt, ctxt, streamReadFeatures, formatReadFeatures);
-		DupDetector dups = StreamReadFeature.STRICT_DUPLICATE_DETECTION.enabledIn(streamReadFeatures)
-                ? DupDetector.rootDetector(this) : null;
-        _parsingContext = JsonReadContext.createRootContext(dups);
 	}
 
 	/* 
@@ -91,36 +84,36 @@ public abstract class CodecParserBaseImpl extends JsonParserBase {
 	@Override
 	public JsonToken nextToken()  {
 		if (isEndDocument()) {
-			if (streamReadContext().inArray()) {
+			if (_streamReadContext.inArray()) {
 				doEndArray();
 				_currToken = JsonToken.END_ARRAY;
 			} else {
 				doEndDocument();
 				_currToken = JsonToken.END_OBJECT;
 			}
-			_parsingContext = _parsingContext.clearAndGetParent();
-			if(!streamReadContext().inRoot()) {
+			_streamReadContext = _streamReadContext.clearAndGetParent();
+			if(!_streamReadContext.inRoot()) {
 				_nextToken = doGetNextToken();
 			}
-		} else if (streamReadContext().inObject() && _currToken != JsonToken.PROPERTY_NAME) {
+		} else if (_streamReadContext.inObject() && _currToken != JsonToken.PROPERTY_NAME) {
 			String name = doReadName();
-			_parsingContext.setCurrentName(name);
+			_streamReadContext.setCurrentName(name);
 			_currToken = JsonToken.PROPERTY_NAME;
 		} else if (isBeginDocument()) {
 			doBeginDocument();
-			_parsingContext = _parsingContext.createChildObjectContext(1, 0);
+			_streamReadContext = _streamReadContext.createChildObjectContext(1, 0);
 			_currToken = JsonToken.START_OBJECT;
 			_nextToken = doGetNextToken();
 		} else if (isBeginArray()) {
 			doBeginArray();
-			_parsingContext = _parsingContext.createChildArrayContext(1, 0);
+			_streamReadContext = _streamReadContext.createChildArrayContext(1, 0);
 			_currToken = JsonToken.START_ARRAY;
 			_nextToken = doGetNextToken();
 		} else {
 			assignCurrentValue(doGetCurrentValue());
 			
 			// 17-Sep-2019, tatu: [core#563] Need to call this to update index 
-	        _parsingContext.expectComma();
+	        _streamReadContext.expectComma();
 						
 			_currToken = doGetCurrentToken();
 			_nextToken = doGetNextToken();
@@ -207,7 +200,7 @@ public abstract class CodecParserBaseImpl extends JsonParserBase {
 	 */
 	@Override
 	public String getString() throws JacksonException {
-		if(_parsingContext.currentValue() instanceof String str) {
+		if(_streamReadContext.currentValue() instanceof String str) {
 			return str;
 		}
 		return null;
@@ -219,7 +212,7 @@ public abstract class CodecParserBaseImpl extends JsonParserBase {
 	 */
 	@Override
 	public char[] getStringCharacters() throws JacksonException {
-		if(_parsingContext.currentValue() instanceof char[] ch) {
+		if(_streamReadContext.currentValue() instanceof char[] ch) {
 			return ch;
 		}
 		return null;

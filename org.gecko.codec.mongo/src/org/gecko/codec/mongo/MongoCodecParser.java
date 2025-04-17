@@ -182,7 +182,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public Object getObjectId()  {
-		return _parsingContext.currentValue();
+		return _streamReadContext.currentValue();
 	}
 	
 	private Object getCurrentValue(BsonType bsonType) {
@@ -216,7 +216,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		case DOCUMENT:
 			return JsonToken.START_OBJECT;
 		case END_OF_DOCUMENT:
-			return _parsingContext.inArray() ? JsonToken.END_ARRAY : JsonToken.END_OBJECT;
+			return _streamReadContext.inArray() ? JsonToken.END_ARRAY : JsonToken.END_OBJECT;
 		case ARRAY:
 			return JsonToken.START_ARRAY;
 		case INT32:
@@ -246,10 +246,10 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public float getFloatValue()  {
-		if(_parsingContext.currentValue() instanceof Double doubCurrentValue) {
+		if(_streamReadContext.currentValue() instanceof Double doubCurrentValue) {
 			return (float)(double)doubCurrentValue;
 		}
-		return (float) _parsingContext.currentValue();
+		return (float) _streamReadContext.currentValue();
 	}
 	
 	/* 
@@ -258,7 +258,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public BigDecimal getDecimalValue() {
-		return ((org.bson.types.Decimal128) _parsingContext.currentValue()).bigDecimalValue();
+		return ((org.bson.types.Decimal128) _streamReadContext.currentValue()).bigDecimalValue();
 	}
 	
 	/* 
@@ -267,12 +267,12 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public byte[] getBinaryValue()  {
-		return ((org.bson.BsonBinary) _parsingContext.currentValue()).getData();
+		return ((org.bson.BsonBinary) _streamReadContext.currentValue()).getData();
 	}
 	
 	@Override
 	public byte[] getBinaryValue(Base64Variant variant)  {
 		
-		return((org.bson.BsonBinary) _parsingContext.currentValue()).getData();
+		return((org.bson.BsonBinary) _streamReadContext.currentValue()).getData();
     }
 }
