@@ -40,7 +40,6 @@ import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.mongo.osgi.MongoClientProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.osgi.framework.BundleContext;
@@ -49,6 +48,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
+import org.osgi.test.common.annotation.Property.Type;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
 import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
@@ -83,7 +83,8 @@ import com.mongodb.client.MongoCollection;
 })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "codecFactoryConfigurator.target", value="(type=mongo)"),
-		@Property(key = "type", value="mongo")
+		@Property(key = "type", value="mongo"),
+		@Property(key = "disableFeatures", value={"DeserializationFeature.FAIL_ON_TRAILING_TOKENS"}, type = Type.Array)
 })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="mongo")
