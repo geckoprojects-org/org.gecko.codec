@@ -1,7 +1,0 @@
--library: enable-emf
--buildpath: \
-	org.gecko.codec.info,\
-	org.gecko.codec.emfjson,\
-	org.gecko.codec,\
-	tools.jackson.core.jackson-core,\
-	tools.jackson.core.jackson-databind

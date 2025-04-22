@@ -1,0 +1,16 @@
+-library: enable-emf
+Bundle-Name: Gecko Codec 
+Bundle-Description: Gecko Project Codec Framework
+
+-buildpath: \
+	org.osgi.util.promise;version=latest,\
+	org.eclipse.fennec.codec.emfjson;version=project,\
+	org.eclipse.fennec.codec.info.model,\
+	org.eclipse.fennec.codec.info,\
+	org.eclipse.fennec.codec.constants,\
+	com.fasterxml.jackson.core.jackson-annotations;version='3.0',\
+	tools.jackson.core.jackson-core,\
+	tools.jackson.core.jackson-databind
+	
+-testpath: \
+	org.eclipse.fennec.codec.test.models;version=project
