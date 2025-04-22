@@ -159,6 +159,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 					.deserializeAndSet(jp, current, ctxt, resource);
 
 				} else if(featureCodecInfo == null && current != null) {
+					System.out.println("UNKNOWN PROPERTY");
 					handleUnknownProperty(jp, resource, ctxt, current.eClass());
 				} 
 			} else {

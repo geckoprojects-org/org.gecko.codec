@@ -97,6 +97,7 @@ public class CodecWriteContext extends JsonWriteContext {
 		return r;
 	}
 	
+	
 	public CodecWriteContext createChildArrayContext() {
 		CodecWriteContext ctxt = (CodecWriteContext) _child;
         if (ctxt == null) {

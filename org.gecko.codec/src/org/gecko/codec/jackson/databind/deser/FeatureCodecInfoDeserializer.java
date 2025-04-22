@@ -83,10 +83,13 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 	@Override
 	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) {
 
-		if(featureCodecInfo.getFeatures().get(0) instanceof EOperation) return;
-		if(featureCodecInfo.isIgnore()) return;
+		if(featureCodecInfo.getFeatures().get(0) instanceof EOperation || featureCodecInfo.isIgnore())  {
+			jp.nextToken();
+			jp.skipChildren();
+			return;
+		}
 		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
-
+		System.out.println("FEATURE " + feature.getName());
 		JsonToken token = null;
 
 		if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
@@ -161,11 +164,11 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 					//		                If a custom ValueReader is set we use it to convert the deserialized value
 					if (value != null && reader != null) {    	
 						Object v = reader.readValue(value, ctxt);
+						
 						current.eSet(feature, v);
 					}
 					else current.eSet(feature, value);
-				}
-				
+				}				
 			}
 		}
 		break;

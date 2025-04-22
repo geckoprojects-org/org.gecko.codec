@@ -75,6 +75,19 @@ public abstract class CodecParserBaseImpl extends JsonParserBase {
 	abstract public String doReadName();
 	
 	public abstract Object doGetCurrentValue();
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.base.ParserMinimalBase#getValueAsString()
+	 */
+	@Override
+	public String getValueAsString() {
+		JsonToken t = _currToken;
+		if(t == JsonToken.VALUE_STRING) {
+			return getString();
+		}
+		return super.getValueAsString();
+	}
 
 
 	/* 
@@ -139,14 +152,20 @@ public abstract class CodecParserBaseImpl extends JsonParserBase {
 		return (double) currentValue();
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.core.base.ParserBase#getFloatValue()
 	 */
 	@Override
-	public float getFloatValue() {
-		return (float) currentValue();
+	public float getFloatValue()  {
+		Object value = currentValue();
+		if(value instanceof Double doubCurrentValue) {
+			return (float)(double)doubCurrentValue;
+		}
+		return (float) value;
 	}
+	
 	
 	/* 
 	 * (non-Javadoc)
@@ -205,6 +224,8 @@ public abstract class CodecParserBaseImpl extends JsonParserBase {
 		}
 		return null;
 	}
+	
+
 
 	/* 
 	 * (non-Javadoc)

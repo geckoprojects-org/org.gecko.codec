@@ -240,17 +240,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		}
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.base.ParserBase#getFloatValue()
-	 */
-	@Override
-	public float getFloatValue()  {
-		if(_streamReadContext.currentValue() instanceof Double doubCurrentValue) {
-			return (float)(double)doubCurrentValue;
-		}
-		return (float) _streamReadContext.currentValue();
-	}
+	
 	
 	/* 
 	 * (non-Javadoc)
