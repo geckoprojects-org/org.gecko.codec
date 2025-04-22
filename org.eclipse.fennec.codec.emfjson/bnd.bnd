@@ -41,5 +41,5 @@ src= \
 		genmodel=test-data/model/packageAnnotations.genmodel;\
 		output=src-package-annotations
 
-Bundle-Name: Gecko Codec EMFJson Jackson
+Bundle-Name: Eclipse Fennec Codec EMFJson Jackson
 Bundle-Description: Fork of EMFJson Jackson

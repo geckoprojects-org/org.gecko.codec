@@ -30,7 +30,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-@EPackage(uri = PackageAnnotationsPackage.eNS_URI, genModel = "/model/packageAnnotations.genmodel", genModelSourceLocations = {"model/packageAnnotations.genmodel","org.gecko.codec.test.models/model/packageAnnotations.genmodel"}, ecore="/model/packageAnnotations.ecore", ecoreSourceLocations="/model/packageAnnotations.ecore")
+@EPackage(uri = PackageAnnotationsPackage.eNS_URI, genModel = "/model/packageAnnotations.genmodel", genModelSourceLocations = {"model/packageAnnotations.genmodel","org.eclipse.fennec.codec.test.models/model/packageAnnotations.genmodel"}, ecore="/model/packageAnnotations.ecore", ecoreSourceLocations="/model/packageAnnotations.ecore")
 public interface PackageAnnotationsPackage extends org.eclipse.emf.ecore.EPackage {
 	/**
 	 * The package name.
