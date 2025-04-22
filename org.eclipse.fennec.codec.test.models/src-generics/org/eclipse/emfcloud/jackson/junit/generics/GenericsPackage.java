@@ -28,7 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-@EPackage(uri = GenericsPackage.eNS_URI, genModel = "/model/generics.genmodel", genModelSourceLocations = {"model/generics.genmodel","org.gecko.codec.test.models/model/generics.genmodel"}, ecore="/model/generics.ecore", ecoreSourceLocations="/model/generics.ecore")
+@EPackage(uri = GenericsPackage.eNS_URI, genModel = "/model/generics.genmodel", genModelSourceLocations = {"model/generics.genmodel","org.eclipse.fennec.codec.test.models/model/generics.genmodel"}, ecore="/model/generics.ecore", ecoreSourceLocations="/model/generics.ecore")
 public interface GenericsPackage extends org.eclipse.emf.ecore.EPackage {
 	/**
 	 * The package name.

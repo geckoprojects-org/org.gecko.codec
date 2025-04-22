@@ -1,5 +1,5 @@
-Bundle-Name: Gecko Codec Test Templates
-Bundle-Description: Test templates for Gecko Codec 
+Bundle-Name: Eclipse Fennec Codec Test Templates
+Bundle-Description: Test templates for Eclipse Fennec Codec 
 
 -includeresource: resources
 -resourceonly: true
@@ -13,7 +13,7 @@ gecko-icon: ${dataurl},${base64;icons/gecko.ico}
  
 project-template-codec-test:\
 	org.bndtools.template; org.bndtools.template=project;\
-		name=Gecko Codec Tests;\
+		name=Eclipse Fennec Codec Tests;\
 		category=${category};\
 		ranking:Double=1001;\
 		dir=templates/codec-test;\

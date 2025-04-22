@@ -1,6 +1,6 @@
 -library: enable-emf
-Bundle-Name: Gecko Codec 
-Bundle-Description: Gecko Project Codec Framework
+Bundle-Name: Eclipse Fennec Codec 
+Bundle-Description: Eclipse Fennec Project Codec Framework
 
 -buildpath: \
 	org.osgi.util.promise;version=latest,\

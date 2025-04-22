@@ -6,7 +6,6 @@
 
 src= \
 	src-codec,\
-	src-annotations,\
 	src-generics,\
 	src-model,\
 	src-array,\
@@ -45,5 +44,5 @@ src= \
 -includeresource.model: model=model
 
 Bundle-Version: 1.0.0.SNAPSHOT
-Bundle-Name: Gecko Codec Test Models
+Bundle-Name: Eclipse Fennec Codec Test Models
 Bundle-Description: Test Ecore Models used for testing
