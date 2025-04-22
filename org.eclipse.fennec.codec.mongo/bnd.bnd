@@ -1,0 +1,13 @@
+-library: enable-emf
+
+-buildpath: \
+	org.eclipse.fennec.codec.emfjson;version=project,\
+	org.eclipse.fennec.codec,\
+	org.mongodb.mongo-java-driver,\
+	org.gecko.mongo.osgi.api,\
+	org.gecko.emf.collections,\
+	org.eclipse.fennec.codec.info;version=latest,\
+	org.eclipse.fennec.codec.info.model;version=latest,\
+	tools.jackson.core.jackson-core,\
+	tools.jackson.core.jackson-databind,\
+	com.fasterxml.jackson.core.jackson-annotations;version='3.0'
