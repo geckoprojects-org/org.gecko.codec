@@ -32,6 +32,127 @@
 + `JsonGenerator#wirteObject` --> `JsonGenerator#wirtePOJO`
 + `DeserializationContext#getCodec().getFactory().createGenerator(Writer)` --> `DeserializationContext#tokenStreamFactory().createGenerator(ObjectWriterContext.empty(), writer)`
 
+## Configuration Feature Changes
+
+There are a lot of features that can be configured, both at the level of the `TokenStreamFactory` and at the level of the `ObjectMapper`. There was a refactoring of those features in `jackson` 3; some changed names, some changed default value, etc. So here is a recap:
+
+### TokenStreamFactory.Feature
+
++ `tools.jackson.core.TokenStreamFactory.Feature` replaces now the `com.fasterxml.jackson.core.JsonFactory.Feature`
+
++ Some changed name and some changed default value;
+
+  |     jackson 2 (name + default)      |       jackson 3 (name + default)       |
+  | :---------------------------------: | :------------------------------------: |
+  |    `INTERN_FIELD_NAMES` (`true`)    |   `INTERN_PROPERTY_NAMES` (`false`)    |
+  | `CANONICALIZE_FIELD_NAMES` (`true`) | `CANONICALIZE_PROPERTY_NAMES` (`true`) |
+
++ The feature `USE_THREAD_LOCAL_FOR_BUFFER_RECYCLING` has been removed
+
+
+
+### StreamReadFeature
+
++ `tools.jackson.core.StreamReadFeature` were included in `jackson 2.x` `com.fasterxml.jackson.core.JsonParser.Feature`  
+
++ Now they are separated because they are not json-specific;
+
++ These are the features that changed default value:
+
+  
+
+|           Feature            | Default in jackson 2.x | Default in jackson 3 |
+| :--------------------------: | :--------------------: | :------------------: |
+|   `USE_FAST_DOUBLE_PARSER`   |        `false`         |        `true`        |
+| `USE_FAST_BIG_NUMBER_PARSER` |        `false`         |        `true`        |
+
+### JsonReadFeature
+
++ `tools.jackson.core.JsonReadFeature` were mixed in jackson 2.x with non json specific features within `com.fasterxml.jackson.core.JsonParser.Feature`
+
++ These features changed name or default value with respect to those defined in jackson 2.x `JsonParser.Feature`:
+
+  |       jackson 2.x (name + default)       |         jackson 3 (name + default)          |
+  | :--------------------------------------: | :-----------------------------------------: |
+  |        `ALLOW_COMMENTS` (`false`)        |       `ALLOW_JAVA_COMMENTS` (`false`)       |
+  |  `ALLOW_UNQUOTED_FIELD_NAMES` (`false`)  |  `ALLOW_UNQUOTED_PROPERTY_NAMES` (`false`)  |
+  | `ALLOW_NUMERIC_LEADING_ZEROS` (`false`)  | `ALLOW_LEADING_ZEROS_FOR_NUMBERS` (`false`) |
+  | `ALLOW_UNQUOTED_CONTROL_CHARS` (`false`) |  `ALLOW_UNESCAPED_CONTROL_CHARS` (`false)   |
+
+  
+
+### StreamWriteFeature
+
++ `tools.jackson.core.StreamWriteFeature` were included in `jackson 2.x` `com.fasterxml.jackson.core.JsonGenerator.Feature`;
++   Now they are separated because they are not json-specific;
++ No changes in default values for these features.
+
+### JsonWriteFeature
+
++ `tools.jackson.core.JsonWriteFeature` were mixed in jackson 2.x with non json specific features within `com.fasterxml.jackson.core.JsonGenerator.Feature`;
+
++ Some changed name or default value:
+
+  | jackson 2.x (name + default) |   jackson 3 (name + default)    |
+  | :--------------------------: | :-----------------------------: |
+  | `QUOTE_FIELD_NAMES` (`true`) | `QUOTE_PROPERTY_NAMES` (`true`) |
+
++ `ESCAPE_FORWARD_SLASHES` is new in `JsonWriteFeature` (`true`), but the comment says it was disabled in jackson 2.x. However, I could not find it in jackson 2.x 
+
+### SerializationFeature
+
++ `tools.jackson.databind.SerializationFeature` replaces the `com.fasterxml.jackson.databind.SerializationFeature`
+
++ Some changes in default values:
+
+  |      jackson 2.x (name + default)       |       jackson 3 (name + default)       |
+  | :-------------------------------------: | :------------------------------------: |
+  |  `WRITE_DATES_AS_TIMESTAMPS` (`true`)   | `WRITE_DATES_AS_TIMESTAMPS` (`false`)  |
+  |  `WRITE_DATES_AS_TIMESTAMPS` (`true`)   | `WRITE_DATES_AS_TIMESTAMPS` (`false`)  |
+  | `WRITE_ENUMS_USING_TO_STRING` (`false`) | `WRITE_ENUMS_USING_TO_STRING` (`true`) |
+
++ New properties are:
+
+  + `FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY` (`false`)
+
+### DeserializationFeature
+
++ `tools.jackson.databind.DeserializationFeature` replaces `com.fasterxml.jackson.databind.DeserializationFeature`
+
++ Some changes in default values:
+
+  |      jackson 2.x (name + default)       |       jackson 3 (name + default)       |
+  | :-------------------------------------: | :------------------------------------: |
+  |  `FAIL_ON_UNKNOWN_PROPERTIES` (`true`)  | `FAIL_ON_UNKNOWN_PROPERTIES` (`false`) |
+  | `FAIL_ON_NULL_FOR_PRIMITIVES` (`false`) | `FAIL_ON_NULL_FOR_PRIMITIVES` (`true`) |
+  |   `FAIL_ON_TRAILING_TOKENS` (`false`)   |   `FAIL_ON_TRAILING_TOKENS` (`true`)   |
+  | `READ_ENUMS_USING_TO_STRING` (`false`)  | `READ_ENUMS_USING_TO_STRING` (`true`)  |
+
++ New properties are:
+
+  + `FAIL_ON_UNEXPECTED_VIEW_PROPERTIES` (`true`)
+
+### MapperFeature
+
++ `tools.jackson.databind.MapperFeature` replaces `com.fasterxml.jackson.databind.MapperFeature`
+
++ Some changes in default values:
+
+  |        jackson 2.x (name + default)        |         jackson 3 (name + default)         |
+  | :----------------------------------------: | :----------------------------------------: |
+  |     `USE_GETTERS_AS_SETTERS` (`true`)      |     `USE_GETTERS_AS_SETTERS` (`false`)     |
+  | `ALLOW_FINAL_FIELDS_AS_MUTATORS` (`true`)  | `ALLOW_FINAL_FIELDS_AS_MUTATORS` (`false`) |
+  |  `ALLOW_VOID_VALUED_PROPERTIES` (`false`)  |  `ALLOW_VOID_VALUED_PROPERTIES` (`true`)   |
+  | `SORT_PROPERTIES_ALPHABETICALLY` (`false`) | `SORT_PROPERTIES_ALPHABETICALLY` (`true`)  |
+
++ Removed properties:
+
+  + `USE_STD_BEAN_NAMING`
+  + `IGNORE_DUPLICATE_MODULE_REGISTRATIONS`
+  + `BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES`
+
+
+
 ## Other Changes and Considerations
 
 + The new `JacksonException` extends `RuntimeException`, so we got rid of all the `throws IOException` not needed anymore
@@ -91,6 +212,33 @@
 
 + Our `org.gecko.codec.jackson.databind.deser.CodecParserBaseImpl` now inherits from `tools.jackson.core.json.JsonParserBase`
 
++ `JsonWriteFeature.ESCAPE_FORWARD_SLASHES` was disabled by default in jackson 2.x, but now it is enabled by default. This means that if we do not disable it the forward slashes are escaped, resulting, for instance, in things like:
+
+  ```json
+  {
+    "_id" : "d1f14a91-4571-4c56-824f-2c5e08099be7",
+    "_type" : "http:\/\/example.de\/person\/1.0#\/\/SpecificBusinessPerson",
+    "_supertype" : [ "http:\/\/example.de\/person\/1.0#\/\/Person", "http:\/\/example.de\/person\/1.0#\/\/BusinessPerson" ],
+    "name" : "John",
+    "lastName" : "Doe",
+    "birthDate" : "1990-06-20T00:00:00",
+    "title" : [ "Mrs", "Dr" ],
+    "getFullName" : "John Doe"
+  }
+  ```
+
+  This was making some tests of the json part fail. Disabling the property is possible at the level of the `ObjectMapperConfigurator`:
+
+  ```java
+  @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
+  		@Property(key = "type", value="json"),
+  		@Property(key = "disableFeatures", value={"JsonWriteFeature.ESCAPE_FORWARD_SLASHES"}, type = Type.Array)
+  })
+  ```
+
+  
+
+
 ## Changes to double check
 
 + Our `org.gecko.codec.jackson.DefaultCodecFactoryConfigurator.CodecFactoryBuilder` changed signature (**TO BE DOUBLE CHECKED IF IT MAKES SENSE**)
@@ -141,68 +289,6 @@
 
 ## Tests
 
-### Json
-
-+ Weird behaviour when serializing type and url strings. The `/` gets for some reasons escaped so the resulting string is something like 
-
-  ​	
-
-  ```json
-  {
-    "_id" : "d1f14a91-4571-4c56-824f-2c5e08099be7",
-    "_type" : "http:\/\/example.de\/person\/1.0#\/\/SpecificBusinessPerson",
-    "_supertype" : [ "http:\/\/example.de\/person\/1.0#\/\/Person", "http:\/\/example.de\/person\/1.0#\/\/BusinessPerson" ],
-    "name" : "John",
-    "lastName" : "Doe",
-    "birthDate" : "1990-06-20T00:00:00",
-    "title" : [ "Mrs", "Dr" ],
-    "getFullName" : "John Doe"
-  }
-  ```
-
-  While debugging, the method chain that gets called is something like that:
-
-  	+ `tools.jackson.core.json.UTF8JsonGenerator#writeString`
-  	+ `tools.jackson.core.json.UTF8JsonGenerator#_writeStringSegments`
-  	+ `tools.jackson.core.json.UTF8JsonGenerator#_writeStringSegment`
-
-  This last one looks like:
-
-  ```java
-  private final void _writeStringSegment(String text, int offset, int len) throws JacksonException
-      {
-          // note: caller MUST ensure (via flushing) there's room for ASCII only
-          // Fast+tight loop for ASCII-only, no-escaping-needed output
-          len += offset; // becomes end marker, then
-  
-          int outputPtr = _outputTail;
-          final byte[] outputBuffer = _outputBuffer;
-          final int[] escCodes = _outputEscapes;
-  
-          while (offset < len) {
-              int ch = text.charAt(offset);
-              // note: here we know that (ch > 0x7F) will cover case of escaping non-ASCII too:   <-- IMPORTANT PART!!!
-              if (ch > 0x7F || escCodes[ch] != 0) {
-                  break;
-              }
-              outputBuffer[outputPtr++] = (byte) ch;
-              ++offset;
-          }
-          _outputTail = outputPtr;
-          if (offset < len) {
-              if (_characterEscapes != null) {
-                  _writeCustomStringSegment2(text, offset, len);
-              } else if (_maximumNonEscapedChar == 0) {
-                  _writeStringSegment2(text, offset, len);
-              } else {
-                  _writeStringSegmentASCII2(text, offset, len);
-              }
-          }
-      }
-  ```
-
-  But it looked the same also in Jackson 2.x, so it's weird that we only get a problem now because of it...
-
 ### Mongo
 
 + Serialization tests work all fine;
@@ -237,6 +323,20 @@
   ```
 
   where the `getContext().getContextType()` returns `ARRAY`. 
+  
+  This ends up here from the `tools.jackson.databind.ObjectReader#bindAndClose` method, which called a `_verifyNoTrailingTokens` if the option `DeserializationFeature.FAIL_ON_TRAILING_TOKENS` is enabled. In jackson 2.x this was disabled by default, but now it is enabled. 
+  
+  To avoid the issue, we can disable the feature at the level of the `ObjectMapperConfigurator`:
+  
+  ```java
+  @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
+  		@Property(key = "codecFactoryConfigurator.target", value="(type=mongo)"),
+  		@Property(key = "type", value="mongo"),
+  		@Property(key = "disableFeatures", value={"DeserializationFeature.FAIL_ON_TRAILING_TOKENS"}, type = Type.Array)
+  })
+  ```
+  
+  But still, this should be checked, because if someone wants to enable it, it should not fail like this.
 
 
 
