@@ -111,8 +111,8 @@ public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator
 			String prefix = featureString.substring(0, featureString.lastIndexOf("."));
 			featureString = featureString.substring(featureString.lastIndexOf(".")+1);
 			switch(prefix) {
-			case "JsonFactory.Feature":
-				setJsonFactoryFeature(featureString, state);
+			case "TokenStreamFactory.Feature":
+				setTokenStreamFactoryFeature(featureString, state);
 				break;
 			case "StreamWriteFeature":
 				setStreamWriteFeature(featureString, state);
@@ -125,19 +125,16 @@ public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator
 				break;
 			case "JsonReadFeature":
 				setJsonReadFeature(featureString, state);
-				break;
-			case "TokenStreamFactory.Feature":
-				setTokenStreamFactoryFeature(featureString, state);
+				break;			
 			default:
 				LOGGER.warning(String.format("Feature prefix %s not supported", prefix));
 			}
 		} else {
-			setJsonFactoryFeature(featureString, state);
+			setTokenStreamFactoryFeature(featureString, state);
 			setStreamWriteFeature(featureString, state);
 			setJsonWriteFeature(featureString, state);
 			setStreamReadFeature(featureString, state);
-			setJsonReadFeature(featureString, state);
-			setTokenStreamFactoryFeature(featureString, state);
+			setJsonReadFeature(featureString, state);			
 		}
 	}
 	
@@ -154,15 +151,15 @@ public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator
 		
 	}
 
-	private void setJsonFactoryFeature(String featureString, boolean state) {
-		try {
-			if(state) factoryBuilder.enable(JsonFactory.Feature.valueOf(featureString));
-			else factoryBuilder.disable(JsonFactory.Feature.valueOf(featureString));
-			return;
-		} catch(Exception e) {
-			LOGGER.warning(String.format("No JsonFactoryFeature feature with name %s has been found", featureString));
-		} 
-	}
+//	private void setJsonFactoryFeature(String featureString, boolean state) {
+//		try {
+//			if(state) factoryBuilder.enable(JsonFactory.Feature.valueOf(featureString));
+//			else factoryBuilder.disable(JsonFactory.Feature.valueOf(featureString));
+//			return;
+//		} catch(Exception e) {
+//			LOGGER.warning(String.format("No JsonFactoryFeature feature with name %s has been found", featureString));
+//		} 
+//	}
 	
 	private void setStreamWriteFeature(String featureString, boolean state) {
 		try {
