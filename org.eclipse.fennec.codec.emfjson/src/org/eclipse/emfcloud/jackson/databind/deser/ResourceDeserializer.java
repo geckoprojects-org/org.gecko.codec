@@ -41,7 +41,11 @@ public class ResourceDeserializer extends ValueDeserializer<Resource> {
       return deserialize(jp, ctxt, null);
    }
 
-   @Override
+   /* 
+ * (non-Javadoc)
+ * @see tools.jackson.databind.ValueDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext, java.lang.Object)
+ */
+@Override
    public Resource deserialize(final JsonParser jp, final DeserializationContext ctxt, final Resource intoValue){
       final Resource resource = getResource(ctxt, intoValue);
       if (resource == null) {

@@ -27,13 +27,14 @@ import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
 /**
  * Codec Deserializer for IdInfo
  * @author ilenia
  * @since Sep 26, 2024
  */
-public class IdCodecInfoDeserializer implements CodecInfoDeserializer {
+public class IdCodecInfoDeserializer extends ValueDeserializer<String> {
 	
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
@@ -48,25 +49,66 @@ public class IdCodecInfoDeserializer implements CodecInfoDeserializer {
 
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.demo.jackson.deser.CodecInfoDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext)
-	 */
-	@Override
-	public EObject deserialize(JsonParser jp, DeserializationContext ctxt)  {
-		return null;
-	}
-
-	/* 
-	 * (non-Javadoc)
-	 * @see org.gecko.codec.demo.jackson.deser.CodecInfoDeserializer#deserializeAndSet(com.fasterxml.jackson.core.JsonParser, org.eclipse.emf.ecore.EObject, com.fasterxml.jackson.databind.DeserializationContext, org.eclipse.emf.ecore.resource.Resource)
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecInfoDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) {
+	public String deserialize(JsonParser jp, DeserializationContext ctxt)  {
 		if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
 			jp.nextToken();
 		}
-
 		
+		Object value;
+		switch (jp.currentToken()) {
+		case VALUE_STRING:
+			value = jp.getValueAsString();
+			break;
+		case VALUE_NUMBER_INT:
+			value = jp.getValueAsInt();
+			break;
+		case VALUE_NUMBER_FLOAT:
+			value = jp.getValueAsLong();
+			break;
+		default:
+			value = null;
+		}
+		
+		if(jp instanceof CodecParserBaseImpl codecParser) {
+			if(codecParser.canReadObjectId()) {
+				value = codecParser.getObjectId();
+			}
+		}
+		String id = null;
+		if (value != null) {
+			String readerName = idCodecInfo.getValueReaderName();
+			
+			if(readerName != null) {
+				CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY);
+				id = (String) infoHolder.getReaderByName(readerName).readValue(value, ctxt);
+			} else {
+				id = value.toString();
+			}
+//			If the serializedIdField is false then we need to retrieve the values from the _id
+//			TODO: when we can extract current from the streamReadContext then we can also uncomment here
+//			if(!codecModule.isSerializeIdField()) {
+//				setIdFields(current, id);
+//			}
+			
+			// TODO watch the ID handling in other resources?
+//			if (resource instanceof CodecJsonResource codecJsonRes && id != null) {
+//				((JsonResource) resource).setID(current, id);
+//			}
+		}
+		return id;
+
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) {
+		if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
+			jp.nextToken();
+		}		
 		Object value;
 		switch (jp.currentToken()) {
 		case VALUE_STRING:
