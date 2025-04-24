@@ -48,4 +48,5 @@
 	org.eclipse.fennec.codec.info.model;version=snapshot,\
 	org.eclipse.fennec.codec.mongo;version=snapshot,\
 	org.eclipse.fennec.codec.mongo.test;version=snapshot,\
-	org.eclipse.fennec.codec.test.helper;version=snapshot
+	org.eclipse.fennec.codec.test.helper;version=snapshot,\
+	org.eclipse.fennec.codec.constants;version=snapshot

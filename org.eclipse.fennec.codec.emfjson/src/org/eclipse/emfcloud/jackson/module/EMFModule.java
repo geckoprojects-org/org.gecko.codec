@@ -40,6 +40,7 @@ import tools.jackson.databind.module.SimpleModule;
  * Module implementation that allows serialization and deserialization of
  * EMF objects (EObject and Resource).
  */
+@Deprecated
 public class EMFModule extends SimpleModule {
 
    private static final long serialVersionUID = 1L;

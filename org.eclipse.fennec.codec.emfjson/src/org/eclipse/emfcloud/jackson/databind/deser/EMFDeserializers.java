@@ -53,7 +53,11 @@ public class EMFDeserializers extends Deserializers.Base {
       this.dataTypeDeserializer = new EDataTypeDeserializer();
    }
 
-   @Override
+   /* 
+ * (non-Javadoc)
+ * @see tools.jackson.databind.deser.Deserializers.Base#findMapLikeDeserializer(tools.jackson.databind.type.MapLikeType, tools.jackson.databind.DeserializationConfig, tools.jackson.databind.BeanDescription, tools.jackson.databind.KeyDeserializer, tools.jackson.databind.jsontype.TypeDeserializer, tools.jackson.databind.ValueDeserializer)
+ */
+@Override
    public ValueDeserializer<?> findMapLikeDeserializer(final MapLikeType type,
       final DeserializationConfig config,
       final BeanDescription beanDesc,

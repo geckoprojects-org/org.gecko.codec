@@ -19,15 +19,19 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
 import org.eclipse.fennec.codec.CodecProxyFactory;
+import org.eclipse.fennec.codec.constants.URIHandler;
+import org.eclipse.fennec.codec.constants.BaseURIHandler;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.jackson.databind.deser.CodecDeserializers;
+import org.eclipse.fennec.codec.jackson.databind.deser.EcoreReferenceDeserializer;
 import org.eclipse.fennec.codec.jackson.databind.ser.CodecSerializers;
 
 import tools.jackson.core.Version;
 import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * Extension of EMFModule which allows to set codec specific options
@@ -35,7 +39,7 @@ import tools.jackson.databind.ValueDeserializer;
  * @author mark
  * @since 02.08.2024
  */
-public class CodecModule extends EMFModule {
+public class CodecModule extends SimpleModule {
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 1L;
@@ -61,6 +65,10 @@ public class CodecModule extends EMFModule {
 	private String proxyKey;
 	private String timestampKey;
 	private boolean writeEnumLiterals;
+	
+	private ValueSerializer<EObject> referenceSerializer;
+	private ValueDeserializer<ReferenceEntry> referenceDeserializer;
+	private URIHandler handler;
 
 	private PackageCodecInfo codecModelInfo;
 	private CodecModelInfo codecModelInfoService;
@@ -190,6 +198,8 @@ public class CodecModule extends EMFModule {
 		this.writeEnumLiterals = builder.writeEnumLiterals;
 		this.codecProxyFactory = builder.codecProxyFactory;
 		this.setReferenceDeserializer(builder.referenceDeserializer);
+		this.setUriHandler(builder.handler);
+		this.setReferenceSerializer(builder.referenceSerializer);
 	}
 
 	
@@ -212,6 +222,25 @@ public class CodecModule extends EMFModule {
 		return new Version(1, 0, 0, "SNAPSHOT", "org.geckoprojects.codec", "org.gecko.codec");
 	}
 	
+	
+	public void setReferenceDeserializer(final ValueDeserializer<ReferenceEntry> deserializer) {
+	      this.referenceDeserializer = deserializer;
+	   }
+	
+	public ValueDeserializer<ReferenceEntry> getReferenceDeserializer() { return referenceDeserializer; }
+	
+	public void setUriHandler(final URIHandler handler) { this.handler = handler; }
+
+	public URIHandler getUriHandler() { return handler; }
+	
+	public ValueSerializer<EObject> getReferenceSerializer() {
+		return this.referenceSerializer;
+	}
+	
+	public void setReferenceSerializer(ValueSerializer<EObject> referenceSerializer) {
+		this.referenceSerializer = referenceSerializer;
+	}
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see com.fasterxml.jackson.databind.module.SimpleModule#setupModule(com.fasterxml.jackson.databind.Module.SetupContext)
@@ -219,6 +248,13 @@ public class CodecModule extends EMFModule {
 	@Override
 	public void setupModule(final SetupContext context) {
 		super.setupModule(context);
+		
+		if(referenceDeserializer == null) {
+			referenceDeserializer = new EcoreReferenceDeserializer(this);
+		}
+		if(handler == null) {
+	         handler = new BaseURIHandler();
+	      }
 
 		CodecSerializers serializers = new CodecSerializers(this);
 		context.addSerializers(serializers);
@@ -267,6 +303,8 @@ public class CodecModule extends EMFModule {
 		private String timestampKey = "_timestamp";
 		private boolean writeEnumLiterals = false;
 		private ValueDeserializer<ReferenceEntry> referenceDeserializer;
+		private URIHandler handler;
+		private ValueSerializer<EObject> referenceSerializer;
 
 		public Builder() {
 
@@ -391,8 +429,17 @@ public class CodecModule extends EMFModule {
 		}
 		public Builder bindReferenceDeserializer(ValueDeserializer<ReferenceEntry> referenceDeserializer) {
 			this.referenceDeserializer = referenceDeserializer;
+			return this;			
+		}
+		
+		public Builder bindURIHandler(URIHandler handler) {
+			this.handler = handler;
 			return this;
-			
+		}
+		
+		public Builder bindReferenceSerializer(ValueSerializer<EObject> referenceSerializer) {
+			this.referenceSerializer = referenceSerializer;
+			return this;
 		}
 
 		public CodecModule build() {

@@ -102,7 +102,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		//	      Use TypeFactory to create JavaType from Eclass
 		EcoreTypeFactory factory = EMFContext.getTypeFactory(ctxt);
 		JavaType javaType = factory.typeOf(ctxt, feature.eClass(), feature);
-		deserializer = ctxt.findContextualValueDeserializer(javaType, null);
+		
 
 		boolean isMap = false;
 		switch (FeatureKind.get(feature)) {
@@ -127,7 +127,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 				if (token != JsonToken.START_ARRAY && !isMap) {
 					throw new StreamReadException(jp, "Expected START_ARRAY token, got " + token);
 				}
-				
+				deserializer = ctxt.findContextualValueDeserializer(javaType, null);
 				Collection<Object> objs = (Collection<Object>) deserializer.deserialize(jp, ctxt, current.eGet(feature));
 				//	               If a custom ValueReader is set we use it to convert the deserialized value
 				if(objs != null && reader != null) {
@@ -159,6 +159,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 					current.eSet(feature, literal.getInstance());
 				}
 				else {
+					deserializer = ctxt.findContextualValueDeserializer(javaType, null);
 					Object value = deserializer.deserialize(jp, ctxt);
 					//		                If a custom ValueReader is set we use it to convert the deserialized value
 					if (value != null && reader != null) {    	
@@ -177,6 +178,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 			EMFContext.setParent(ctxt, current);
 			ReferenceEntries entries = EMFContext.getEntries(ctxt);
 			if (feature.isMany()) {
+				deserializer = ctxt.findContextualValueDeserializer(javaType, null);
 				deserializer.deserialize(jp, ctxt, entries.entries());
 			} else {
 				new ReferenceCodecInfoDeserializer(codecModule, codecModelInfoService, typeCodecInfo)

@@ -19,7 +19,7 @@ import org.eclipse.emfcloud.jackson.databind.deser.CollectionDeserializer;
 import org.eclipse.emfcloud.jackson.databind.deser.EDataTypeDeserializer;
 import org.eclipse.emfcloud.jackson.databind.deser.EMFDeserializers;
 import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
-import org.eclipse.emfcloud.jackson.databind.deser.ResourceDeserializer;
+import org.eclipse.fennec.codec.jackson.databind.deser.CodecResourceDeserializer;
 import org.eclipse.emfcloud.jackson.databind.type.EcoreType;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
@@ -37,11 +37,11 @@ import tools.jackson.databind.type.CollectionType;
  * @author ilenia
  * @since Sep 26, 2024
  */
-public class CodecDeserializers extends EMFDeserializers {
+public class CodecDeserializers extends CodecEMFDeserializers {
 
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
-	private final ResourceDeserializer resourceDeserializer;
+	private final CodecResourceDeserializer resourceDeserializer;
 	private final ValueDeserializer<Object> dataTypeDeserializer;
 	private final ValueDeserializer<ReferenceEntry> referenceDeserializer;
 
@@ -53,7 +53,7 @@ public class CodecDeserializers extends EMFDeserializers {
 		super(module);
 		this.codecModule = module;
 		this.codecModelInfoService = module.getCodecModelInfoService();
-		this.resourceDeserializer = new ResourceDeserializer(module.getUriHandler());
+		this.resourceDeserializer = new CodecResourceDeserializer(module.getUriHandler());
 		this.referenceDeserializer = module.getReferenceDeserializer();
 		this.dataTypeDeserializer = new EDataTypeDeserializer();
 	}
@@ -97,8 +97,4 @@ public class CodecDeserializers extends EMFDeserializers {
 
 		return super.findBeanDeserializer(type, config, beanDesc);
 	}
-
-
-
-
 }

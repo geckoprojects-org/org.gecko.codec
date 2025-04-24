@@ -37,6 +37,13 @@ public class ReferenceEntries {
       }
       mapOfObjects.clear();
    }
+   
+   public void resolve(final DatabindContext context, final org.eclipse.fennec.codec.constants.URIHandler handler) {
+	      for (ReferenceEntry entry : entries()) {
+	         entry.resolve(context, handler);
+	      }
+	      mapOfObjects.clear();
+	   }
 
    public Collection<ReferenceEntry> entries() {
       return entries;

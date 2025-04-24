@@ -39,4 +39,5 @@
 	org.eclipse.fennec.codec.emfjson;version=snapshot,\
 	org.eclipse.fennec.codec.info;version=snapshot,\
 	org.eclipse.fennec.codec.info.model;version=snapshot,\
-	org.eclipse.fennec.codec.info.test;version=snapshot
+	org.eclipse.fennec.codec.info.test;version=snapshot,\
+	org.eclipse.fennec.codec.constants;version=snapshot

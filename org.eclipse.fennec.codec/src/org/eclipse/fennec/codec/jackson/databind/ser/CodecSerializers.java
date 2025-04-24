@@ -14,7 +14,6 @@
 package org.eclipse.fennec.codec.jackson.databind.ser;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emfcloud.jackson.databind.ser.EMFSerializers;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
@@ -30,7 +29,7 @@ import tools.jackson.databind.ValueSerializer;
  * @author ilenia
  * @since Aug 8, 2024
  */
-public class CodecSerializers extends EMFSerializers {
+public class CodecSerializers extends CodecEMFSerializers {
 
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;

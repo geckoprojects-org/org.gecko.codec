@@ -1,14 +1,17 @@
-/*******************************************************************************
- * Copyright (c) 2019-2022 Guillaume Hillairet and others.
+/**
+ * Copyright (c) 2012 - 2025 Data In Motion and others.
+ * All rights reserved. 
+ * 
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
  *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v. 2.0 which is available at
- * https://www.eclipse.org/legal/epl-2.0, or the MIT License which is
- * available at https://opensource.org/licenses/MIT.
- *
- * SPDX-License-Identifier: EPL-2.0 OR MIT
- *******************************************************************************/
-package org.eclipse.emfcloud.jackson.databind.ser;
+ * SPDX-License-Identifier: EPL-2.0
+ * 
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ */
+package org.eclipse.fennec.codec.jackson.databind.ser;
 
 import java.util.Optional;
 import java.util.Set;
@@ -19,17 +22,21 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.EEnumLiteralImpl;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
-import org.eclipse.emfcloud.jackson.databind.property.EObjectPropertyMap;
+import org.eclipse.emfcloud.jackson.databind.ser.EDataTypeSerializer;
+import org.eclipse.emfcloud.jackson.databind.ser.EMapKeySerializer;
+import org.eclipse.emfcloud.jackson.databind.ser.EMapSerializer;
+import org.eclipse.emfcloud.jackson.databind.ser.EMapValueSerializer;
+import org.eclipse.emfcloud.jackson.databind.ser.EnumeratorSerializer;
+import org.eclipse.emfcloud.jackson.databind.ser.ResourceSerializer;
 import org.eclipse.emfcloud.jackson.databind.type.EcoreType;
-import org.eclipse.emfcloud.jackson.module.EMFModule;
+import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
-import tools.jackson.databind.ValueSerializer;
 
 import tools.jackson.databind.BeanDescription;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.SerializationConfig;
+import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.jsontype.TypeSerializer;
 import tools.jackson.databind.ser.Serializers;
 import tools.jackson.databind.ser.jdk.CollectionSerializer;
@@ -37,9 +44,13 @@ import tools.jackson.databind.ser.jdk.MapSerializer;
 import tools.jackson.databind.type.CollectionType;
 import tools.jackson.databind.type.MapLikeType;
 
-public class EMFSerializers extends Serializers.Base {
-
-	private final EObjectPropertyMap.Builder propertiesBuilder;
+/**
+ * 
+ * @author ilenia
+ * @since Apr 24, 2025
+ */
+public class CodecEMFSerializers extends Serializers.Base {
+	
 	private final ValueSerializer<EObject> referenceSerializer;
 	private final ValueSerializer<Resource> resourceSerializer = new ResourceSerializer();
 	private final ValueSerializer<?> dataTypeSerializer = new EDataTypeSerializer();
@@ -47,11 +58,40 @@ public class EMFSerializers extends Serializers.Base {
 	private final ValueSerializer<Object> mapValueSerializer = new EMapValueSerializer();
 	private final ValueSerializer<?> enumeratorSerializer = new EnumeratorSerializer();
 
-	public EMFSerializers(final EMFModule module) {
-		this.propertiesBuilder = EObjectPropertyMap.Builder.from(module, module.getFeatures());
+	
+	public CodecEMFSerializers(CodecModule module) {
 		this.referenceSerializer = module.getReferenceSerializer();
 	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ser.Serializers.Base#findSerializer(tools.jackson.databind.SerializationConfig, tools.jackson.databind.JavaType, tools.jackson.databind.BeanDescription, com.fasterxml.jackson.annotation.JsonFormat.Value)
+	 */
+	@Override
+	public ValueSerializer<?> findSerializer(final SerializationConfig config, final JavaType type,
+			final BeanDescription beanDesc, JsonFormat.Value formatOverrides) {
+		if (type.isTypeOrSubTypeOf(Resource.class)) {
+			return resourceSerializer;
+		}
 
+		if (type.isTypeOrSubTypeOf(Enumerator.class) && !type.isReferenceType()) {
+			if (type.getRawClass() != EEnumLiteralImpl.class) {
+				return enumeratorSerializer;
+			}
+		}
+
+		if (type.isReferenceType() || type.isTypeOrSubTypeOf(ReferenceEntry.class)) {
+			return referenceSerializer;
+		}
+		
+
+		if (type.isTypeOrSubTypeOf(EcoreType.DataType.class)) {
+			return dataTypeSerializer;
+		}
+
+		return super.findSerializer(config, type, beanDesc, formatOverrides);
+	}
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.databind.ser.Serializers.Base#findMapLikeSerializer(tools.jackson.databind.SerializationConfig, tools.jackson.databind.type.MapLikeType, tools.jackson.databind.BeanDescription, com.fasterxml.jackson.annotation.JsonFormat.Value, tools.jackson.databind.ValueSerializer, tools.jackson.databind.jsontype.TypeSerializer, tools.jackson.databind.ValueSerializer)
@@ -103,51 +143,6 @@ public class EMFSerializers extends Serializers.Base {
 			return new CollectionSerializer(type.getContentType(), false, null, (ValueSerializer) referenceSerializer);
 		}
 		return super.findCollectionSerializer(config, type, beanDesc, formatOverrides, elementTypeSerializer, elementValueSerializer);
-	}
-
-	@Override
-	public ValueSerializer<?> findSerializer(final SerializationConfig config, final JavaType type,
-			final BeanDescription beanDesc, JsonFormat.Value formatOverrides) {
-		if (type.isTypeOrSubTypeOf(Resource.class)) {
-			return resourceSerializer;
-		}
-
-		if (type.isTypeOrSubTypeOf(Enumerator.class) && !type.isReferenceType()) {
-			if (type.getRawClass() != EEnumLiteralImpl.class) {
-				return enumeratorSerializer;
-			}
-		}
-
-		if (type.isReferenceType() || type.isTypeOrSubTypeOf(ReferenceEntry.class)) {
-			return referenceSerializer;
-		}
-		
-
-		if (type.isTypeOrSubTypeOf(EcoreType.DataType.class)) {
-			return dataTypeSerializer;
-		}
-
-		if (type.isTypeOrSubTypeOf(EObject.class)) {
-			return new EObjectSerializer(propertiesBuilder, referenceSerializer);
-		}
-
-		return super.findSerializer(config, type, beanDesc, formatOverrides);
-	}
-
-	/**
-	 * Returns the propertiesBuilder.
-	 * @return the propertiesBuilder
-	 */
-	protected EObjectPropertyMap.Builder getPropertyBuilder() {
-		return propertiesBuilder;
-	}
-
-	/**
-	 * Returns the referenceSerializer.
-	 * @return the referenceSerializer
-	 */
-	public ValueSerializer<EObject> getReferenceSerializer() {
-		return referenceSerializer;
 	}
 
 }
