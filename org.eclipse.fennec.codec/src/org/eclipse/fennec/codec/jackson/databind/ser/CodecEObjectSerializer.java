@@ -86,6 +86,7 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 		
 		gen.writeStartObject(value);
 
+//		TODO: what if someone has set the SORT_PROPERTIES_ALPHABETICALLY
 		if(codecModule.isUseId()) {
 			if(codecModule.isIdOnTop()) {
 				idInfoSerializer.serialize(value, gen, provider);

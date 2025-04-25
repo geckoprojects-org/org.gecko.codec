@@ -12,6 +12,7 @@
       <genEnumLiterals ecoreEnumLiteral="person.ecore#//GENDER_TYPE/FEMALE"/>
       <genEnumLiterals ecoreEnumLiteral="person.ecore#//GENDER_TYPE/MALE"/>
     </genEnums>
+    <genDataTypes ecoreDataType="person.ecore#//CustomDataType"/>
     <genClasses ecoreClass="person.ecore#//Person">
       <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="codec.id.strategy" value="COMBINED"/>
@@ -40,6 +41,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//Person/businessAdd"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/height"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/weight"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Person/customDataType"/>
       <genOperations ecoreOperation="person.ecore#//Person/getFullName" body="return this.name + &quot; &quot; + this.lastName;"/>
     </genClasses>
     <genClasses ecoreClass="person.ecore#//Address">

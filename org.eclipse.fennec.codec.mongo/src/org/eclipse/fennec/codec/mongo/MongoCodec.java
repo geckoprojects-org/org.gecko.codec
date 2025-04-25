@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.CodecDataInput;
-import org.eclipse.fennec.codec.CodecDataOutput_old;
+import org.eclipse.fennec.codec.CodecDataOutput;
 import org.eclipse.fennec.codec.mongo.resource.CodecMongoResource;
 
 import tools.jackson.databind.ObjectMapper;
@@ -54,7 +54,7 @@ final class MongoCodec implements Codec<EObject> {
 	public void encode(BsonWriter writer, EObject value, EncoderContext encoderContext) {
 		mapper.writer()
 		.with(EMFContext.from(options))
-		.writeValue(new CodecDataOutput_old<>(writer, mapper), value);
+		.writeValue(new CodecDataOutput<>(writer, mapper), value);
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
@@ -115,6 +116,13 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	private EEnum gendeR_TYPEEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType customDataTypeEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -344,6 +352,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	@Override
 	public EAttribute getPerson_Weight() {
 		return (EAttribute)personEClass.getEStructuralFeatures().get(15);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getPerson_CustomDataType() {
+		return (EAttribute)personEClass.getEStructuralFeatures().get(16);
 	}
 
 	/**
@@ -602,6 +620,16 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EDataType getCustomDataType() {
+		return customDataTypeEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public PersonFactory getPersonFactory() {
 		return (PersonFactory)getEFactoryInstance();
 	}
@@ -642,6 +670,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		createEReference(personEClass, PERSON__BUSINESS_ADD);
 		createEAttribute(personEClass, PERSON__HEIGHT);
 		createEAttribute(personEClass, PERSON__WEIGHT);
+		createEAttribute(personEClass, PERSON__CUSTOM_DATA_TYPE);
 		createEOperation(personEClass, PERSON___GET_FULL_NAME);
 
 		addressEClass = createEClass(ADDRESS);
@@ -679,6 +708,9 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 
 		// Create enums
 		gendeR_TYPEEEnum = createEEnum(GENDER_TYPE);
+
+		// Create data types
+		customDataTypeEDataType = createEDataType(CUSTOM_DATA_TYPE);
 	}
 
 	/**
@@ -731,6 +763,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		initEReference(getPerson_BusinessAdd(), this.getBusinessAddress(), null, "businessAdd", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Height(), ecorePackage.getEDoubleObject(), "height", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_Weight(), ecorePackage.getEFloatObject(), "weight", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPerson_CustomDataType(), this.getCustomDataType(), "customDataType", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEOperation(getPerson__GetFullName(), ecorePackage.getEString(), "getFullName", 0, 1, IS_UNIQUE, IS_ORDERED);
 
@@ -772,6 +805,9 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.OTHER);
 		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.FEMALE);
 		addEEnumLiteral(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.MALE);
+
+		// Initialize data types
+		initEDataType(customDataTypeEDataType, String.class, "CustomDataType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

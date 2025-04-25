@@ -33,7 +33,7 @@ import tools.jackson.databind.SerializationContext;
  * @author ilenia
  * @since Oct 28, 2024
  */
-public class EnumeratorCodecInfoSerializer implements CodecInfoSerializer {
+public class EnumeratorCodecInfoSerializer implements CodecInfoSerializer  {
 
 	private static final Logger LOGGER = Logger.getLogger(EnumeratorCodecInfoSerializer.class.getName());
 
@@ -45,6 +45,11 @@ public class EnumeratorCodecInfoSerializer implements CodecInfoSerializer {
 		this.featureCodecInfo = featureCodecInfo;
 	}
 
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.ser.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, tools.jackson.core.JsonGenerator, tools.jackson.databind.SerializationContext)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
@@ -83,6 +88,7 @@ public class EnumeratorCodecInfoSerializer implements CodecInfoSerializer {
 			}
 		}
 	}
+	
 
 	private void serializeSingleAttribute(Object value, EStructuralFeature feature, JsonGenerator gen) {
 		if (value == null && !codecModule.isSerializeNullValue()) {

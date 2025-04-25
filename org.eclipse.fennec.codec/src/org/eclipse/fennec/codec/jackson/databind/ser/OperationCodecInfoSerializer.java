@@ -44,9 +44,10 @@ public class OperationCodecInfoSerializer implements CodecInfoSerializer {
 		this.featureCodecInfo = featureCodecInfo;
 	}
 
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.demo.jackson.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider)
+	 * @see org.eclipse.fennec.codec.jackson.databind.ser.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, tools.jackson.core.JsonGenerator, tools.jackson.databind.SerializationContext)
 	 */
 	@Override
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {

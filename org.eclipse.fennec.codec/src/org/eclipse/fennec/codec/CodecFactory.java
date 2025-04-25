@@ -146,7 +146,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 			return (G) genFactory.createGenerator(doas.getCodecDataOutput(), ioCtxt);
 		}
 		
-		if (in instanceof CodecWriterProvider_old provider) {
+		if (in instanceof CodecWriterProvider provider) {
 			if(ioCtxt == null) {
 				ioCtxt = _createContext(
 						ContentReference.construct(false, provider.getWriter(), ErrorReportConfiguration.defaults()),
@@ -165,7 +165,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	@SuppressWarnings("unchecked")
 	@Override
 	protected OutputStream _createDataOutputWrapper(DataOutput out) {
-		return new CodecDataOutputAsStream((CodecDataOutput_old<W>) out);
+		return new CodecDataOutputAsStream((CodecDataOutput<W>) out);
 	}
 
 }

@@ -17,8 +17,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -64,11 +62,10 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		this.typeCodecInfo = typeInfo;
 	}
 
-	
 
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.demo.jackson.deser.CodecInfoDeserializer#deserializeAndSet(com.fasterxml.jackson.core.JsonParser, org.eclipse.emf.ecore.EObject, com.fasterxml.jackson.databind.DeserializationContext, org.eclipse.emf.ecore.resource.Resource)
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecInfoDeserializer#deserializeAndSet(tools.jackson.core.JsonParser, org.eclipse.emf.ecore.EObject, tools.jackson.databind.DeserializationContext, org.eclipse.emf.ecore.resource.Resource)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -89,22 +86,21 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		if (jp.currentToken() == JsonToken.VALUE_NULL) {
 			return;
 		}
-	
-	    JavaType javaType = TypeConstructorHelper.constructJavaTypeFromFeature(feature, ctxt);	
 
+		JavaType javaType = TypeConstructorHelper.constructJavaTypeFromFeature(feature, ctxt);			
+		deserializer = ctxt.findContextualValueDeserializer(javaType, null);
+		
 		boolean isMap = false;
 		switch (FeatureKind.get(feature)) {
 		case MAP:
 			isMap = true;
 			//$FALL-THROUGH$
 		case MANY_CONTAINMENT:
-		case SINGLE_CONTAINMENT: {
-			EMFContext.setFeature(ctxt, feature);
-			EMFContext.setParent(ctxt, current);
-		}
-		//$FALL-THROUGH$
+		case SINGLE_CONTAINMENT: 
 		case SINGLE_ATTRIBUTE:
 		case MANY_ATTRIBUTE: {
+			EMFContext.setFeature(ctxt, feature);
+			EMFContext.setParent(ctxt, current);
 			if (feature.getEType() instanceof EDataType) {
 				EMFContext.setDataType(ctxt, feature.getEType());
 			}
@@ -115,7 +111,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 				if (token != JsonToken.START_ARRAY && !isMap) {
 					throw new StreamReadException(jp, "Expected START_ARRAY token, got " + token);
 				}
-				deserializer = ctxt.findContextualValueDeserializer(javaType, null);
+				
 				Collection<Object> objs = (Collection<Object>) deserializer.deserialize(jp, ctxt, current.eGet(feature));
 				//	               If a custom ValueReader is set we use it to convert the deserialized value
 				if(objs != null && reader != null) {
@@ -127,37 +123,14 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 					current.eSet(feature, newObjs);
 				}
 			}  else {
-				if(feature.getEType() instanceof EEnum eDataType) {
-					EEnumLiteral literal = null;
-					if(codecModule.isWriteEnumLiterals()) {
-						literal = ((EEnum) eDataType).getEEnumLiteralByLiteral(jp.getString());
-					}
-					else {
-						literal = ((EEnum) eDataType).getEEnumLiteral(jp.getString());
-					}
-					if(literal == null) {
-//						fallback
-						if(codecModule.isWriteEnumLiterals()) {
-							literal = ((EEnum) eDataType).getEEnumLiteral(jp.getString());
-						}
-						else {
-							literal = ((EEnum) eDataType).getEEnumLiteralByLiteral(jp.getString());
-						}
-					}
-					current.eSet(feature, literal.getInstance());
+				Object value = deserializer.deserialize(jp, ctxt);
+				//		                If a custom ValueReader is set we use it to convert the deserialized value
+				if (value != null && reader != null) {    	
+					Object v = reader.readValue(value, ctxt);
+					current.eSet(feature, v);
 				}
-				else {
-					deserializer = ctxt.findContextualValueDeserializer(javaType, null);
-					Object value = deserializer.deserialize(jp, ctxt);
-					//		                If a custom ValueReader is set we use it to convert the deserialized value
-					if (value != null && reader != null) {    	
-						Object v = reader.readValue(value, ctxt);
-						
-						current.eSet(feature, v);
-					}
-					else current.eSet(feature, value);
-				}				
-			}
+				else current.eSet(feature, value);
+			}				
 		}
 		break;
 		case MANY_REFERENCE:
@@ -165,9 +138,10 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 			EMFContext.setFeature(ctxt, feature);
 			EMFContext.setParent(ctxt, current);
 			if (feature.isMany()) {
-				deserializer = ctxt.findContextualValueDeserializer(javaType, null);				
 				deserializer.deserialize(jp, ctxt, current.eGet(feature));
 			} else {
+//				Object value = deserializer.deserialize(jp, ctxt, current.eGet(feature));
+//				current.eSet(feature, value);
 				new ReferenceCodecInfoDeserializer(codecModule, codecModelInfoService, typeCodecInfo)
 				.deserializeAndSet(jp, current, ctxt, resource);	  
 			}
@@ -178,5 +152,5 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		}
 	}
 
-	
+
 }

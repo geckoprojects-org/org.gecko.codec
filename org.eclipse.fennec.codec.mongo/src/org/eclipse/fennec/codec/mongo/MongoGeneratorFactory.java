@@ -12,9 +12,9 @@
 package org.eclipse.fennec.codec.mongo;
 
 import org.bson.BsonWriter;
-import org.eclipse.fennec.codec.CodecDataOutput_old;
+import org.eclipse.fennec.codec.CodecDataOutput;
 import org.eclipse.fennec.codec.CodecGeneratorFactory;
-import org.eclipse.fennec.codec.CodecWriterProvider_old;
+import org.eclipse.fennec.codec.CodecWriterProvider;
 import org.osgi.service.component.annotations.Component;
 
 import tools.jackson.core.io.IOContext;
@@ -27,22 +27,24 @@ import tools.jackson.core.io.IOContext;
 @Component(immediate=true, name = "MongoGeneratorFactory", service = CodecGeneratorFactory.class, property = {"type=mongo"})
 public class MongoGeneratorFactory implements CodecGeneratorFactory<BsonWriter, MongoCodecGenerator>{
 
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.mongo.CodecGeneratorFactory#createGenerator(org.gecko.codec.mongo.CodecWriterProvider)
+	 * @see org.eclipse.fennec.codec.CodecGeneratorFactory#createGenerator(org.eclipse.fennec.codec.CodecWriterProvider, tools.jackson.core.io.IOContext)
 	 */
 	@Override
-	public MongoCodecGenerator createGenerator(CodecWriterProvider_old<BsonWriter> provider, IOContext ioCtxt) {
+	public MongoCodecGenerator createGenerator(CodecWriterProvider<BsonWriter> provider, IOContext ioCtxt) {
 //		return new MongoCodecGenerator(provider.getWriter(), provider.getObjectCodec());		
 		return new MongoCodecGenerator(provider.getWriter(), ioCtxt);
 	}
 
+
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.CodecGeneratorFactory#createGenerator(org.gecko.codec.CodecDataOutput)
+	 * @see org.eclipse.fennec.codec.CodecGeneratorFactory#createGenerator(org.eclipse.fennec.codec.CodecDataOutput, tools.jackson.core.io.IOContext)
 	 */
 	@Override
-	public MongoCodecGenerator createGenerator(CodecDataOutput_old<BsonWriter> dataOutput, IOContext ioCtxt) {
+	public MongoCodecGenerator createGenerator(CodecDataOutput<BsonWriter> dataOutput, IOContext ioCtxt) {
 		return new MongoCodecGenerator(dataOutput.getWriter(), ioCtxt);
 	}
 

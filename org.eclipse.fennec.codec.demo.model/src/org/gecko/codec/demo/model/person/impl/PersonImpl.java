@@ -53,6 +53,7 @@ import org.gecko.codec.demo.model.person.PersonPackage;
  *   <li>{@link org.gecko.codec.demo.model.person.impl.PersonImpl#getBusinessAdd <em>Business Add</em>}</li>
  *   <li>{@link org.gecko.codec.demo.model.person.impl.PersonImpl#getHeight <em>Height</em>}</li>
  *   <li>{@link org.gecko.codec.demo.model.person.impl.PersonImpl#getWeight <em>Weight</em>}</li>
+ *   <li>{@link org.gecko.codec.demo.model.person.impl.PersonImpl#getCustomDataType <em>Custom Data Type</em>}</li>
  * </ul>
  *
  * @generated
@@ -317,6 +318,26 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @ordered
 	 */
 	protected Float weight = WEIGHT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getCustomDataType() <em>Custom Data Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCustomDataType()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CUSTOM_DATA_TYPE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCustomDataType() <em>Custom Data Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCustomDataType()
+	 * @generated
+	 * @ordered
+	 */
+	protected String customDataType = CUSTOM_DATA_TYPE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -742,6 +763,29 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * @generated
 	 */
 	@Override
+	public String getCustomDataType() {
+		return customDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setCustomDataType(String newCustomDataType) {
+		String oldCustomDataType = customDataType;
+		customDataType = newCustomDataType;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, PersonPackage.PERSON__CUSTOM_DATA_TYPE, oldCustomDataType, customDataType));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String getFullName() {
 		return this.name + " " + this.lastName;
 	}
@@ -805,6 +849,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return getHeight();
 			case PersonPackage.PERSON__WEIGHT:
 				return getWeight();
+			case PersonPackage.PERSON__CUSTOM_DATA_TYPE:
+				return getCustomDataType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -869,6 +915,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__WEIGHT:
 				setWeight((Float)newValue);
 				return;
+			case PersonPackage.PERSON__CUSTOM_DATA_TYPE:
+				setCustomDataType((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -929,6 +978,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 			case PersonPackage.PERSON__WEIGHT:
 				setWeight(WEIGHT_EDEFAULT);
 				return;
+			case PersonPackage.PERSON__CUSTOM_DATA_TYPE:
+				setCustomDataType(CUSTOM_DATA_TYPE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -973,6 +1025,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 				return HEIGHT_EDEFAULT == null ? height != null : !HEIGHT_EDEFAULT.equals(height);
 			case PersonPackage.PERSON__WEIGHT:
 				return WEIGHT_EDEFAULT == null ? weight != null : !WEIGHT_EDEFAULT.equals(weight);
+			case PersonPackage.PERSON__CUSTOM_DATA_TYPE:
+				return CUSTOM_DATA_TYPE_EDEFAULT == null ? customDataType != null : !CUSTOM_DATA_TYPE_EDEFAULT.equals(customDataType);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1023,6 +1077,8 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		result.append(height);
 		result.append(", weight: ");
 		result.append(weight);
+		result.append(", customDataType: ");
+		result.append(customDataType);
 		result.append(')');
 		return result.toString();
 	}
