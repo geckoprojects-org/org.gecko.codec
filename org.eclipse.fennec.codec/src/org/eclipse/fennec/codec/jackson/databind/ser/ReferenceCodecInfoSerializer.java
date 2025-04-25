@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.eclipse.emfcloud.jackson.handlers.BaseURIHandler;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
@@ -53,7 +52,6 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 	private CodecModelInfo codecModelInfoService;
 	private EClassCodecInfo eObjCodecInfo;
 	private FeatureCodecInfo featureCodecInfo;
-	private BaseURIHandler handler = new BaseURIHandler();
 
 	public ReferenceCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService,
 			final EClassCodecInfo eObjCodecInfo, final FeatureCodecInfo featureCodecInfo) {
@@ -217,7 +215,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 
 			URI targetURI = EMFContext.getURI(ctxt, value);
 			URI sourceURI = EMFContext.getURI(ctxt, parent);
-			URI deresolved = handler.deresolve(sourceURI, targetURI);
+			URI deresolved = codecModule.getUriHandler().deresolve(sourceURI, targetURI);
 
 			return deresolved == null ? null : deresolved.toString();
 

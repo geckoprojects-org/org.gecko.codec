@@ -17,18 +17,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.impl.EEnumLiteralImpl;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
-import org.eclipse.emfcloud.jackson.databind.ser.EDataTypeSerializer;
-import org.eclipse.emfcloud.jackson.databind.ser.EMapKeySerializer;
-import org.eclipse.emfcloud.jackson.databind.ser.EMapSerializer;
-import org.eclipse.emfcloud.jackson.databind.ser.EMapValueSerializer;
-import org.eclipse.emfcloud.jackson.databind.ser.EnumeratorSerializer;
-import org.eclipse.emfcloud.jackson.databind.ser.ResourceSerializer;
-import org.eclipse.emfcloud.jackson.databind.type.EcoreType;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -52,11 +42,10 @@ import tools.jackson.databind.type.MapLikeType;
 public class CodecEMFSerializers extends Serializers.Base {
 	
 	private final ValueSerializer<EObject> referenceSerializer;
-	private final ValueSerializer<Resource> resourceSerializer = new ResourceSerializer();
-	private final ValueSerializer<?> dataTypeSerializer = new EDataTypeSerializer();
+	private final ValueSerializer<Resource> resourceSerializer = new CodecResourceSerializer();
 	private final ValueSerializer<Object> mapKeySerializer = new EMapKeySerializer();
 	private final ValueSerializer<Object> mapValueSerializer = new EMapValueSerializer();
-	private final ValueSerializer<?> enumeratorSerializer = new EnumeratorSerializer();
+//	private final ValueSerializer<?> enumeratorSerializer = new EnumeratorSerializer();
 
 	
 	public CodecEMFSerializers(CodecModule module) {
@@ -74,21 +63,17 @@ public class CodecEMFSerializers extends Serializers.Base {
 			return resourceSerializer;
 		}
 
-		if (type.isTypeOrSubTypeOf(Enumerator.class) && !type.isReferenceType()) {
-			if (type.getRawClass() != EEnumLiteralImpl.class) {
-				return enumeratorSerializer;
-			}
-		}
+//		if (type.isTypeOrSubTypeOf(Enumerator.class) && !type.isReferenceType()) {
+//			if (type.getRawClass() != EEnumLiteralImpl.class) {
+//				return enumeratorSerializer;
+//			}
+//		}
 
-		if (type.isReferenceType() || type.isTypeOrSubTypeOf(ReferenceEntry.class)) {
+		if (type.isReferenceType()) {
 			return referenceSerializer;
 		}
+
 		
-
-		if (type.isTypeOrSubTypeOf(EcoreType.DataType.class)) {
-			return dataTypeSerializer;
-		}
-
 		return super.findSerializer(config, type, beanDesc, formatOverrides);
 	}
 	

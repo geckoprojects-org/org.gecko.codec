@@ -21,6 +21,7 @@ import tools.jackson.core.JsonToken;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 
+@Deprecated
 public class EcoreReferenceDeserializer extends ValueDeserializer<ReferenceEntry> {
 
    private final EcoreReferenceInfo info;

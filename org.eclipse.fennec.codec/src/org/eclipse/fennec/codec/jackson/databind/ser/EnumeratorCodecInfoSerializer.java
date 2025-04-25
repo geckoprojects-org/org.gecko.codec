@@ -33,14 +33,14 @@ import tools.jackson.databind.SerializationContext;
  * @author ilenia
  * @since Oct 28, 2024
  */
-public class EnumeratorSerializer implements CodecInfoSerializer {
+public class EnumeratorCodecInfoSerializer implements CodecInfoSerializer {
 
-	private static final Logger LOGGER = Logger.getLogger(EnumeratorSerializer.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(EnumeratorCodecInfoSerializer.class.getName());
 
 	private CodecModule codecModule;
 	private FeatureCodecInfo featureCodecInfo;
 
-	public EnumeratorSerializer(final CodecModule codecMoule, final FeatureCodecInfo featureCodecInfo) {
+	public EnumeratorCodecInfoSerializer(final CodecModule codecMoule, final FeatureCodecInfo featureCodecInfo) {
 		this.codecModule = codecMoule;
 		this.featureCodecInfo = featureCodecInfo;
 	}
@@ -62,6 +62,7 @@ public class EnumeratorSerializer implements CodecInfoSerializer {
 
 		if (gen.streamWriteContext() instanceof CodecWriteContext cwt) {
 			cwt.setFeature(feature);
+			
 		}
 
 		if (rootObj.eIsSet(feature)) {

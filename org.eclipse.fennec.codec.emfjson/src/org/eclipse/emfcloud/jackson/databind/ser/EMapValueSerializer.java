@@ -33,6 +33,7 @@ import tools.jackson.core.JsonGenerator;
  *
  * @author vhemery
  */
+@Deprecated
 public class EMapValueSerializer extends ValueSerializer<Object> {
 
    @Override

@@ -26,8 +26,6 @@ import tools.jackson.databind.DeserializationContext;
  */
 public interface CodecInfoDeserializer {
 	
-	public EObject deserialize(JsonParser jp, DeserializationContext ctxt);
-
 	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource);
 
 }

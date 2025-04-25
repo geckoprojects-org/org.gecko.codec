@@ -15,12 +15,6 @@ package org.eclipse.fennec.codec.jackson.databind.deser;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emfcloud.jackson.databind.deser.CollectionDeserializer;
-import org.eclipse.emfcloud.jackson.databind.deser.EDataTypeDeserializer;
-import org.eclipse.emfcloud.jackson.databind.deser.EMFDeserializers;
-import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
-import org.eclipse.fennec.codec.jackson.databind.deser.CodecResourceDeserializer;
-import org.eclipse.emfcloud.jackson.databind.type.EcoreType;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
@@ -42,8 +36,7 @@ public class CodecDeserializers extends CodecEMFDeserializers {
 	private CodecModule codecModule;
 	private CodecModelInfo codecModelInfoService;
 	private final CodecResourceDeserializer resourceDeserializer;
-	private final ValueDeserializer<Object> dataTypeDeserializer;
-	private final ValueDeserializer<ReferenceEntry> referenceDeserializer;
+	private final ValueDeserializer<EObject> referenceDeserializer;
 
 	/**
 	 * Creates a new instance.
@@ -55,7 +48,6 @@ public class CodecDeserializers extends CodecEMFDeserializers {
 		this.codecModelInfoService = module.getCodecModelInfoService();
 		this.resourceDeserializer = new CodecResourceDeserializer(module.getUriHandler());
 		this.referenceDeserializer = module.getReferenceDeserializer();
-		this.dataTypeDeserializer = new EDataTypeDeserializer();
 	}
 
 	/* 
@@ -66,7 +58,7 @@ public class CodecDeserializers extends CodecEMFDeserializers {
 	public ValueDeserializer<?> findCollectionDeserializer(CollectionType type, DeserializationConfig config,
 			BeanDescription beanDesc, TypeDeserializer elementTypeDeserializer, ValueDeserializer<?> elementDeserializer) {
 		if (type.getContentType().isTypeOrSubTypeOf(EObject.class)) {
-			return new CollectionDeserializer(type, new CodecEObjectDeserializer(type.getContentType().getRawClass(), codecModule, codecModelInfoService),
+			return new CodecCollectionDeserializer(type, new CodecEObjectDeserializer(type.getContentType().getRawClass(), codecModule, codecModelInfoService),
 					referenceDeserializer);
 		}
 		return super.findCollectionDeserializer(type, config, beanDesc, elementTypeDeserializer, (ValueDeserializer<?>) elementDeserializer);
@@ -87,9 +79,10 @@ public class CodecDeserializers extends CodecEMFDeserializers {
 			return referenceDeserializer;
 		}
 
-		if (type.isTypeOrSubTypeOf(EcoreType.DataType.class)) {
-			return dataTypeDeserializer;
-		}
+//		TODO: we should look if type is EDataType what happens...
+//		if (type.isTypeOrSubTypeOf(EcoreType.DataType.class)) {
+//			return dataTypeDeserializer;
+//		}
 
 		if (type.isTypeOrSubTypeOf(EObject.class)) {
 			return new CodecEObjectDeserializer(type.getRawClass(), codecModule, codecModelInfoService);

@@ -17,9 +17,6 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.common.util.Enumerator;
-import org.eclipse.emfcloud.jackson.databind.deser.EDataTypeDeserializer;
-import org.eclipse.emfcloud.jackson.databind.deser.EMapDeserializer;
 import org.eclipse.fennec.codec.constants.URIHandler;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
@@ -41,14 +38,12 @@ public class CodecEMFDeserializers extends Deserializers.Base {
 
 	private final ValueDeserializer<?> referenceDeserializer;
 	private final ValueDeserializer<EList<Map.Entry<?, ?>>> mapDeserializer;
-	private final ValueDeserializer<Object> dataTypeDeserializer;
 	protected final URIHandler handler;
 
 
 	public CodecEMFDeserializers(CodecModule module) {
 		this.referenceDeserializer = module.getReferenceDeserializer();
 		this.mapDeserializer = new EMapDeserializer();
-		this.dataTypeDeserializer = new EDataTypeDeserializer();
 		this.handler = module.getUriHandler();
 	}
 
@@ -79,9 +74,10 @@ public class CodecEMFDeserializers extends Deserializers.Base {
 	@Override
 	public ValueDeserializer<?> findEnumDeserializer(final Class<?> type, final DeserializationConfig config,
 			final BeanDescription beanDesc) {
-		if (Enumerator.class.isAssignableFrom(type)) {
-			return dataTypeDeserializer;
-		}
+//		if (Enumerator.class.isAssignableFrom(type)) {
+//			return dataTypeDeserializer;
+//		}
+//		TODO: we might think of moving our enum logic from the FeatureCodecInfoDeserializer to a separate deserializer and then call it here...
 		return super.findEnumDeserializer(type, config, beanDesc);
 	}
 	

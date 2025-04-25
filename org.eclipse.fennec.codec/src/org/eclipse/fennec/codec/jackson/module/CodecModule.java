@@ -18,14 +18,13 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
 import org.eclipse.fennec.codec.CodecProxyFactory;
-import org.eclipse.fennec.codec.constants.URIHandler;
 import org.eclipse.fennec.codec.constants.BaseURIHandler;
+import org.eclipse.fennec.codec.constants.URIHandler;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.jackson.databind.deser.CodecDeserializers;
-import org.eclipse.fennec.codec.jackson.databind.deser.EcoreReferenceDeserializer;
+import org.eclipse.fennec.codec.jackson.databind.deser.ReferenceCodecInfoDeserializer;
 import org.eclipse.fennec.codec.jackson.databind.ser.CodecSerializers;
 
 import tools.jackson.core.Version;
@@ -67,7 +66,7 @@ public class CodecModule extends SimpleModule {
 	private boolean writeEnumLiterals;
 	
 	private ValueSerializer<EObject> referenceSerializer;
-	private ValueDeserializer<ReferenceEntry> referenceDeserializer;
+	private ValueDeserializer<EObject> referenceDeserializer;
 	private URIHandler handler;
 
 	private PackageCodecInfo codecModelInfo;
@@ -223,11 +222,11 @@ public class CodecModule extends SimpleModule {
 	}
 	
 	
-	public void setReferenceDeserializer(final ValueDeserializer<ReferenceEntry> deserializer) {
+	public void setReferenceDeserializer(final ValueDeserializer<EObject> deserializer) {
 	      this.referenceDeserializer = deserializer;
 	   }
 	
-	public ValueDeserializer<ReferenceEntry> getReferenceDeserializer() { return referenceDeserializer; }
+	public ValueDeserializer<EObject> getReferenceDeserializer() { return referenceDeserializer; }
 	
 	public void setUriHandler(final URIHandler handler) { this.handler = handler; }
 
@@ -250,7 +249,7 @@ public class CodecModule extends SimpleModule {
 		super.setupModule(context);
 		
 		if(referenceDeserializer == null) {
-			referenceDeserializer = new EcoreReferenceDeserializer(this);
+			referenceDeserializer = new ReferenceCodecInfoDeserializer(this, codecModelInfoService, null);
 		}
 		if(handler == null) {
 	         handler = new BaseURIHandler();
@@ -266,6 +265,7 @@ public class CodecModule extends SimpleModule {
 			codecProxyFactory = new CodecProxyFactory() {
 				public EObject createProxy(EClass eClass, URI uri) {
 					EObject object = EcoreUtil.create(eClass);
+					
 					if (object instanceof InternalEObject) {
 						((InternalEObject) object).eSetProxyURI(uri);
 					}
@@ -302,7 +302,7 @@ public class CodecModule extends SimpleModule {
 		private String proxyKey = "_proxy";
 		private String timestampKey = "_timestamp";
 		private boolean writeEnumLiterals = false;
-		private ValueDeserializer<ReferenceEntry> referenceDeserializer;
+		private ValueDeserializer<EObject> referenceDeserializer;
 		private URIHandler handler;
 		private ValueSerializer<EObject> referenceSerializer;
 
@@ -427,7 +427,7 @@ public class CodecModule extends SimpleModule {
 			this.codecProxyFactory = codecProxyFactory;
 			return this;
 		}
-		public Builder bindReferenceDeserializer(ValueDeserializer<ReferenceEntry> referenceDeserializer) {
+		public Builder bindReferenceDeserializer(ValueDeserializer<EObject> referenceDeserializer) {
 			this.referenceDeserializer = referenceDeserializer;
 			return this;			
 		}

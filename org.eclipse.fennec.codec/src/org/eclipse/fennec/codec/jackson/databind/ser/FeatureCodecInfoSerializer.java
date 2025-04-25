@@ -19,7 +19,6 @@ import java.util.logging.Logger;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
@@ -28,6 +27,7 @@ import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.jackson.databind.CodecWriteContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.jackson.utils.TypeConstructorHelper;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.JavaType;
@@ -84,8 +84,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 			cwt.setFeature(feature);
 		}
 		
-		EcoreTypeFactory factory = EMFContext.getTypeFactory(provider);
-		JavaType javaType = factory.typeOf(provider, feature.eClass(), feature);
+		JavaType javaType = TypeConstructorHelper.constructJavaTypeFromFeature(feature, provider);
 		serializer = provider.findValueSerializer(javaType);
 		
 		if (rootObj.eIsSet(feature)) {					

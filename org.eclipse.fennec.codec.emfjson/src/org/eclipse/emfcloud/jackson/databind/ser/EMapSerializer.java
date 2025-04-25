@@ -26,6 +26,7 @@ import tools.jackson.databind.ser.jdk.MapSerializer;
  *
  * @author vhemery
  */
+@Deprecated
 public class EMapSerializer extends ValueSerializer<EList<Map.Entry<?, ?>>> {
 
    /** The Map serializer we delegate the job to. */

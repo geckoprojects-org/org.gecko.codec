@@ -33,6 +33,7 @@ import tools.jackson.databind.type.CollectionType;
 import tools.jackson.databind.type.MapLikeType;
 import tools.jackson.databind.type.ReferenceType;
 
+@Deprecated
 public class EMFDeserializers extends Deserializers.Base {
 
    private final ResourceDeserializer resourceDeserializer;
