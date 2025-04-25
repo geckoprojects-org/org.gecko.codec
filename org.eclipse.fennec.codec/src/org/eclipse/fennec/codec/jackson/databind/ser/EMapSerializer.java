@@ -31,32 +31,36 @@ import tools.jackson.databind.ser.jdk.MapSerializer;
  */
 public class EMapSerializer extends ValueSerializer<EList<Map.Entry<?, ?>>> {
 
-	   /** The Map serializer we delegate the job to. */
-	   private final MapSerializer delegate;
+	/** The Map serializer we delegate the job to. */
+	private final MapSerializer delegate;
 
-	   public EMapSerializer(final MapSerializer delegateMapSerialize) {
-	      this.delegate = delegateMapSerialize;
-	   }
+	public EMapSerializer(final MapSerializer delegateMapSerialize) {
+		this.delegate = delegateMapSerialize;
+	}
 
-	   @SuppressWarnings({ "rawtypes", "unchecked" })
-	   @Override
-	   public void serialize(final EList<Map.Entry<?, ?>> value, final JsonGenerator jg,
-	      final SerializationContext serializers) {
-	      if (value == null || value.isEmpty()) {
-	         jg.writeNull();
-	      } else if (value instanceof EMap) {
-	         delegate.serialize(((EMap) value).map(), jg, serializers);
-	      } else {
-	         // iterate on entries manually
-	         jg.writeStartObject();
-	         for (Map.Entry<?, ?> entry : value) {
-	            Object key = Optional.ofNullable((Object) entry.getKey()).orElse("");
-	            ((ValueSerializer<Object>) delegate.getKeySerializer()).serialize(key, jg, serializers);
-	            Object objectValue = entry.getValue();
-	            ((ValueSerializer<Object>) delegate.getContentSerializer()).serialize(objectValue, jg, serializers);
-	         }
-	         jg.writeEndObject();
-	      }
-	   }
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ValueSerializer#serialize(java.lang.Object, tools.jackson.core.JsonGenerator, tools.jackson.databind.SerializationContext)
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void serialize(final EList<Map.Entry<?, ?>> value, final JsonGenerator jg,
+			final SerializationContext serializers) {
+		if (value == null || value.isEmpty()) {
+			jg.writeNull();
+		} else if (value instanceof EMap) {
+			delegate.serialize(((EMap) value).map(), jg, serializers);
+		} else {
+			// iterate on entries manually
+			jg.writeStartObject();
+			for (Map.Entry<?, ?> entry : value) {
+				Object key = Optional.ofNullable((Object) entry.getKey()).orElse("");
+				((ValueSerializer<Object>) delegate.getKeySerializer()).serialize(key, jg, serializers);
+				Object objectValue = entry.getValue();
+				((ValueSerializer<Object>) delegate.getContentSerializer()).serialize(objectValue, jg, serializers);
+			}
+			jg.writeEndObject();
+		}
+	}
 
 }

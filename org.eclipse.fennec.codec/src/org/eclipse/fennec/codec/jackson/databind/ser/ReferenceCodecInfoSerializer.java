@@ -61,13 +61,10 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		this.featureCodecInfo = featureCodecInfo;
 	}
 
-	/*
+	
+	/* 
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.gecko.codec.demo.jackson.CodecInfoSerializer#serialize(org.eclipse.emf.
-	 * ecore.EObject, com.fasterxml.jackson.core.JsonGenerator,
-	 * com.fasterxml.jackson.databind.SerializerProvider)
+	 * @see org.eclipse.fennec.codec.jackson.databind.ser.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, tools.jackson.core.JsonGenerator, tools.jackson.databind.SerializationContext)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override

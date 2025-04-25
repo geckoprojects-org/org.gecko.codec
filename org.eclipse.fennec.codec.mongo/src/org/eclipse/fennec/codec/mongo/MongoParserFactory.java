@@ -26,9 +26,10 @@ import tools.jackson.core.io.IOContext;
 @Component(immediate=true, name = "MongoParserFactory", service = CodecParserFactory.class, property = {"type=mongo"})
 public class MongoParserFactory implements CodecParserFactory<BsonReader, MongoCodecParser>{
 
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.mongo.CodecParserFactory#createParser(com.fasterxml.jackson.core.io.IOContext, org.gecko.codec.mongo.CodecReaderProvider)
+	 * @see org.eclipse.fennec.codec.CodecParserFactory#createParser(tools.jackson.core.io.IOContext, org.eclipse.fennec.codec.CodecReaderProvider)
 	 */
 	@Override
 	public MongoCodecParser createParser(IOContext context, CodecReaderProvider<BsonReader> provider) {

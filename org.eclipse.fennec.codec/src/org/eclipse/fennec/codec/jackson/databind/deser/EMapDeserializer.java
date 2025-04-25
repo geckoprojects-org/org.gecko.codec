@@ -40,11 +40,19 @@ import tools.jackson.databind.ValueDeserializer;
  */
 public class EMapDeserializer extends ValueDeserializer<EList<Map.Entry<?, ?>>> {
 
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ValueDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext)
+	 */
 	@Override
 	public EList<Map.Entry<?, ?>> deserialize(final JsonParser jp, final DeserializationContext ctxt) {
 		return null;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ValueDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext, java.lang.Object)
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public EList<Map.Entry<?, ?>> deserialize(final JsonParser jp, final DeserializationContext ctxt,

@@ -50,6 +50,10 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 		this.idCodecInfo = idCodecInfo;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.ser.CodecInfoSerializer#serialize(org.eclipse.emf.ecore.EObject, tools.jackson.core.JsonGenerator, tools.jackson.databind.SerializationContext)
+	 */
 	@SuppressWarnings("unchecked")
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		EMFContext.setParent(provider, rootObj);

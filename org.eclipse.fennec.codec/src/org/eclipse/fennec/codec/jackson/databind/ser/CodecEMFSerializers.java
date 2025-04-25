@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -45,11 +46,14 @@ public class CodecEMFSerializers extends Serializers.Base {
 	private final ValueSerializer<Resource> resourceSerializer = new CodecResourceSerializer();
 	private final ValueSerializer<Object> mapKeySerializer = new EMapKeySerializer();
 	private final ValueSerializer<Object> mapValueSerializer = new EMapValueSerializer();
-//	private final ValueSerializer<?> enumeratorSerializer = new EnumeratorSerializer();
+	private CodecModule codecModule;
+	private CodecModelInfo codecModelInfoService;
 
 	
 	public CodecEMFSerializers(CodecModule module) {
 		this.referenceSerializer = module.getReferenceSerializer();
+		this.codecModule = module;
+		this.codecModelInfoService = module.getCodecModelInfoService();
 	}
 	
 	/* 
@@ -62,20 +66,13 @@ public class CodecEMFSerializers extends Serializers.Base {
 		if (type.isTypeOrSubTypeOf(Resource.class)) {
 			return resourceSerializer;
 		}
-
-//		if (type.isTypeOrSubTypeOf(Enumerator.class) && !type.isReferenceType()) {
-//			if (type.getRawClass() != EEnumLiteralImpl.class) {
-//				return enumeratorSerializer;
-//			}
-//		}
-
-		if (type.isReferenceType()) {
-			return referenceSerializer;
+		if (type.isTypeOrSubTypeOf(EObject.class)) {
+			return new CodecEObjectSerializer(codecModule, codecModelInfoService);
 		}
-
-		
 		return super.findSerializer(config, type, beanDesc, formatOverrides);
 	}
+	
+
 	
 	/* 
 	 * (non-Javadoc)
@@ -119,6 +116,10 @@ public class CodecEMFSerializers extends Serializers.Base {
 				elementValueSerializer);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ser.Serializers.Base#findCollectionSerializer(tools.jackson.databind.SerializationConfig, tools.jackson.databind.type.CollectionType, tools.jackson.databind.BeanDescription, com.fasterxml.jackson.annotation.JsonFormat.Value, tools.jackson.databind.jsontype.TypeSerializer, tools.jackson.databind.ValueSerializer)
+	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ValueSerializer<?> findCollectionSerializer(final SerializationConfig config, final CollectionType type,

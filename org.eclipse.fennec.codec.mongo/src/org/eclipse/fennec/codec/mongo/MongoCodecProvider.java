@@ -45,6 +45,10 @@ public final class MongoCodecProvider implements CodecProvider {
 		this.options = options;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.bson.codecs.configuration.CodecProvider#get(java.lang.Class, org.bson.codecs.configuration.CodecRegistry)
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {

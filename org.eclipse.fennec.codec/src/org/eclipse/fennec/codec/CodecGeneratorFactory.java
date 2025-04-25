@@ -21,8 +21,8 @@ import tools.jackson.core.io.IOContext;
  * @since Apr 10, 2024
  */
 public interface CodecGeneratorFactory<W, G extends JsonGenerator> {
-	G createGenerator(CodecWriterProvider_old<W> provider, IOContext ioCtxt);
+	G createGenerator(CodecWriterProvider<W> provider, IOContext ioCtxt);
 	
-	G createGenerator(CodecDataOutput_old<W> dataOutput, IOContext ioCtxt);
+	G createGenerator(CodecDataOutput<W> dataOutput, IOContext ioCtxt);
 
 }

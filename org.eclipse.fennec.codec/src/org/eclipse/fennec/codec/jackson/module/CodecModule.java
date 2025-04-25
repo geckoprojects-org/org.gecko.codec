@@ -23,9 +23,9 @@ import org.eclipse.fennec.codec.constants.BaseURIHandler;
 import org.eclipse.fennec.codec.constants.URIHandler;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
-import org.eclipse.fennec.codec.jackson.databind.deser.CodecDeserializers;
+import org.eclipse.fennec.codec.jackson.databind.deser.CodecEMFDeserializers;
 import org.eclipse.fennec.codec.jackson.databind.deser.ReferenceCodecInfoDeserializer;
-import org.eclipse.fennec.codec.jackson.databind.ser.CodecSerializers;
+import org.eclipse.fennec.codec.jackson.databind.ser.CodecEMFSerializers;
 
 import tools.jackson.core.Version;
 import tools.jackson.databind.ValueDeserializer;
@@ -255,10 +255,10 @@ public class CodecModule extends SimpleModule {
 	         handler = new BaseURIHandler();
 	      }
 
-		CodecSerializers serializers = new CodecSerializers(this);
+		CodecEMFSerializers serializers = new CodecEMFSerializers(this);
 		context.addSerializers(serializers);
 		
-		CodecDeserializers deserializers = new CodecDeserializers(this);
+		CodecEMFDeserializers deserializers = new CodecEMFDeserializers(this);
 		context.addDeserializers(deserializers);
 		
 		if(codecProxyFactory == null) {

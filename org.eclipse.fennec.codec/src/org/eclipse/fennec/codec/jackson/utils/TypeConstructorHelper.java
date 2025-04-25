@@ -56,6 +56,11 @@ public class TypeConstructorHelper {
 	    return javaType;
 	}
 	
+	 public static JavaType constructReferenceType(final TypeFactory factory, final EClassifier realType) {
+	      Class<?> rawType = rawType(realType);
+	      return factory.constructReferenceType(rawType, factory.constructType(rawType));
+	   }
+	
 	public static JavaType constructMapType(final TypeFactory factory, final EClass type) {
 	      EStructuralFeature key = type.getEStructuralFeature("key");
 	      EStructuralFeature value = type.getEStructuralFeature("value");

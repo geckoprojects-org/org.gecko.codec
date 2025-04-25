@@ -26,12 +26,11 @@ public class CodecDataOutputAsStream extends DataOutputAsStream {
 	 * Creates a new instance.
 	 * @param out
 	 */
-	public CodecDataOutputAsStream(CodecDataOutput_old out) {
+	public CodecDataOutputAsStream(CodecDataOutput out) {
 		super(out);
 	}
 
-	@SuppressWarnings("unchecked")
-	public CodecDataOutput_old getCodecDataOutput() {
-		return (CodecDataOutput_old)_output;
+	public CodecDataOutput getCodecDataOutput() {
+		return (CodecDataOutput)_output;
 	}
 }

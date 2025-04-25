@@ -87,6 +87,8 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 		switch (eDataType.getClassifierID()) {
 			case PersonPackage.GENDER_TYPE:
 				return createGENDER_TYPEFromString(eDataType, initialValue);
+			case PersonPackage.CUSTOM_DATA_TYPE:
+				return createCustomDataTypeFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -102,6 +104,8 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 		switch (eDataType.getClassifierID()) {
 			case PersonPackage.GENDER_TYPE:
 				return convertGENDER_TYPEToString(eDataType, instanceValue);
+			case PersonPackage.CUSTOM_DATA_TYPE:
+				return convertCustomDataTypeToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -244,6 +248,24 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 	 */
 	public String convertGENDER_TYPEToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String createCustomDataTypeFromString(EDataType eDataType, String initialValue) {
+		return (String)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertCustomDataTypeToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**

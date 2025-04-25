@@ -25,6 +25,11 @@ import tools.jackson.core.JsonToken;
 import tools.jackson.core.TreeCodec;
 import tools.jackson.core.io.IOContext;
 
+/**
+ * 
+ * @author ilenia
+ * @since Apr 25, 2025
+ */
 public class MongoCodecParser extends CodecParserBaseImpl {
 
 	private BsonReader reader;
@@ -53,9 +58,10 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		this.reader = reader;
 	}
 
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#closeInput()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#closeInput()
 	 */
 	@Override
 	public void closeInput() {
@@ -63,36 +69,40 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		// reader.close();
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#isEnddocument()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#isEndDocument()
 	 */
 	@Override
 	public boolean isEndDocument() {
 		return reader.getCurrentBsonType() == BsonType.END_OF_DOCUMENT;
 	}
 	
+
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#isBeginDocument()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#isBeginDocument()
 	 */
 	@Override
 	public boolean isBeginDocument() {
 		return reader.getCurrentBsonType() == BsonType.DOCUMENT;
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#isBeginArray()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#isBeginArray()
 	 */
 	@Override
 	public boolean isBeginArray() {
 		return reader.getCurrentBsonType() == BsonType.ARRAY;
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doBeginArray()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doBeginArray()
 	 */
 	@Override
 	public void doBeginArray() {
@@ -100,45 +110,50 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	}
 	
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doEndArray()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doEndArray()
 	 */
 	@Override
 	public void doEndArray() {
 		reader.readEndArray();
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doEndDocument()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doEndDocument()
 	 */
 	@Override
 	public void doEndDocument() {
 		reader.readEndDocument();
 	}
 	
+
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doReadName()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doReadName()
 	 */
 	@Override
 	public String doReadName() {
 		return reader.readName();
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doBeginDocument()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doBeginDocument()
 	 */
 	@Override
 	public void doBeginDocument() {
 		reader.readStartDocument();
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doGetCurrentToken()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doGetCurrentToken()
 	 */
 	@Override
 	public JsonToken doGetCurrentToken() {
@@ -146,9 +161,10 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		return map(currentType);
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doNextToken()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doGetNextToken()
 	 */
 	@Override
 	public JsonToken doGetNextToken() {
@@ -156,9 +172,10 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		return map(nextType);
 	}
 	
+
 	/* 
 	 * (non-Javadoc)
-	 * @see org.gecko.codec.jackson.databind.CodecParserBaseImpl#doGetCurrentValue()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doGetCurrentValue()
 	 */
 	@Override
 	public Object doGetCurrentValue() {
@@ -167,18 +184,20 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	
 	
 
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonParser#canReadObjectId()
+	 * @see tools.jackson.core.JsonParser#canReadObjectId()
 	 */
 	@Override
 	public boolean canReadObjectId() {
 		return true;
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonParser#getObjectId()
+	 * @see tools.jackson.core.JsonParser#getObjectId()
 	 */
 	@Override
 	public Object getObjectId()  {
@@ -242,27 +261,32 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 
 	
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.base.ParserBase#getDecimalValue()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#getDecimalValue()
 	 */
 	@Override
 	public BigDecimal getDecimalValue() {
 		return ((org.bson.types.Decimal128) _streamReadContext.currentValue()).bigDecimalValue();
 	}
 	
+
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonParser#getBinaryValue()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#getBinaryValue()
 	 */
 	@Override
 	public byte[] getBinaryValue()  {
 		return ((org.bson.BsonBinary) _streamReadContext.currentValue()).getData();
 	}
 	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#getBinaryValue(tools.jackson.core.Base64Variant)
+	 */
 	@Override
-	public byte[] getBinaryValue(Base64Variant variant)  {
-		
+	public byte[] getBinaryValue(Base64Variant variant)  {		
 		return((org.bson.BsonBinary) _streamReadContext.currentValue()).getData();
     }
 }

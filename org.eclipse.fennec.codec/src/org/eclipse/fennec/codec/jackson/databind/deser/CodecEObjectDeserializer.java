@@ -69,9 +69,10 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		this.codecModelInfoService = codecModelInfoService;
 	}
 
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.databind.JsonDeserializer#handledType()
+	 * @see tools.jackson.databind.ValueDeserializer#handledType()
 	 */
 	@Override
 	public Class<?> handledType() {
@@ -81,7 +82,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext)
+	 * @see tools.jackson.databind.ValueDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -159,7 +160,6 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 					.deserializeAndSet(jp, current, ctxt, resource);
 
 				} else if(featureCodecInfo == null && current != null) {
-					System.out.println("UNKNOWN PROPERTY");
 					handleUnknownProperty(jp, resource, ctxt, current.eClass());
 				} 
 			} else {

@@ -100,11 +100,6 @@ public class ReferenceCodecInfoDeserializer extends ValueDeserializer<EObject> i
 				parent.eSet(reference, ref);
 			}			
 		}
-//		ReferenceEntries entries = EMFContext.getEntries(ctxt);
-//		ReferenceEntry value = id != null ? new ReferenceEntry.Base(parent, reference, id, eClass.getInstanceClassName()) : null;
-//		if (entries != null && value != null) {
-//			entries.entries().add(value);
-//		}	
 		return ref;
 	}
 
@@ -112,54 +107,8 @@ public class ReferenceCodecInfoDeserializer extends ValueDeserializer<EObject> i
 	 * (non-Javadoc)
 	 * @see org.gecko.codec.demo.jackson.deser.CodecInfoDeserializer#deserializeAndSet(com.fasterxml.jackson.core.JsonParser, org.eclipse.emf.ecore.EObject, com.fasterxml.jackson.databind.DeserializationContext, org.eclipse.emf.ecore.resource.Resource)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) {
-			
-		EReference reference = EMFContext.getReference(ctxt);
-		
-		String id = null;
-		String type = null;
-
-		while (jp.nextToken() != JsonToken.END_OBJECT) {
-			final String field = jp.currentName();
-
-			if (field.equalsIgnoreCase(codecModule.getRefKey())) {
-				id = jp.nextStringValue();
-
-			} else if (field.equalsIgnoreCase(codecModule.getTypeKey())) {
-				type = jp.nextStringValue();
-			}
-		}
-		EClass eClass = null;
-		EClassCodecInfo refClassCodecInfo = codecModule.getCodecModelInfo().getEClassCodecInfo().stream()
-				.filter(ecci -> ecci.getClassifier().getName().equals(reference.getEType().getName()))
-				.findFirst().orElse(null);
-		
-		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
-		CodecValueReader<String, EClass> valueReader = infoHolder.getReaderByName(refClassCodecInfo != null ? refClassCodecInfo.getTypeInfo().getValueReaderName() : typeCodecInfo.getValueReaderName());
-		if(type != null) {
-			eClass = valueReader.readValue(type, ctxt);
-		}
-//		If there is no type info in the serialized document
-		if(type == null && reference.getEType() instanceof EClass refEClass) {
-			eClass = refEClass;
-		}
-		if (id != null && eClass != null) {
-			URI baseURI = resource.getURI().trimFragment();
-            URI uri = codecModule.getUriHandler().resolve(baseURI, URI.createURI(id));
-			EObject ref = codecModule.getProxyFactory().createProxy(eClass, uri);
-			if(reference.isMany()) {
-				Collection<EObject> objs = (Collection<EObject>) current.eGet(reference);
-				objs.add(ref);
-			} else {
-				current.eSet(reference, ref);
-			}
-		}
-//		ReferenceEntries entries = EMFContext.getEntries(ctxt);
-//		ReferenceEntry value = id != null ? new ReferenceEntry.Base(parent, reference, id, eClass.getInstanceClassName()) : null;
-//		if (entries != null && value != null) {
-//			entries.entries().add(value);
-//		}	
+		deserialize(jp, ctxt);
 	}
 }

@@ -35,6 +35,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.gecko.codec.demo.model.person.Person#getBusinessAdd <em>Business Add</em>}</li>
  *   <li>{@link org.gecko.codec.demo.model.person.Person#getHeight <em>Height</em>}</li>
  *   <li>{@link org.gecko.codec.demo.model.person.Person#getWeight <em>Weight</em>}</li>
+ *   <li>{@link org.gecko.codec.demo.model.person.Person#getCustomDataType <em>Custom Data Type</em>}</li>
  * </ul>
  *
  * @see org.gecko.codec.demo.model.person.PersonPackage#getPerson()
@@ -368,6 +369,28 @@ public interface Person extends EObject {
 	 * @generated
 	 */
 	void setWeight(Float value);
+
+	/**
+	 * Returns the value of the '<em><b>Custom Data Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Custom Data Type</em>' attribute.
+	 * @see #setCustomDataType(String)
+	 * @see org.gecko.codec.demo.model.person.PersonPackage#getPerson_CustomDataType()
+	 * @model dataType="org.gecko.codec.demo.model.person.CustomDataType"
+	 * @generated
+	 */
+	String getCustomDataType();
+
+	/**
+	 * Sets the value of the '{@link org.gecko.codec.demo.model.person.Person#getCustomDataType <em>Custom Data Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Custom Data Type</em>' attribute.
+	 * @see #getCustomDataType()
+	 * @generated
+	 */
+	void setCustomDataType(String value);
 
 	/**
 	 * <!-- begin-user-doc -->

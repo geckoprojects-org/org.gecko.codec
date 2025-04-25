@@ -5,6 +5,7 @@ package org.gecko.codec.demo.model.person;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
@@ -31,7 +32,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-@EPackage(uri = PersonPackage.eNS_URI, genModel = "/model/person.genmodel", genModelSourceLocations = {"model/person.genmodel","org.gecko.codec.demo.model/model/person.genmodel"}, ecore="/model/person.ecore", ecoreSourceLocations="/model/person.ecore")
+@EPackage(uri = PersonPackage.eNS_URI, genModel = "/model/person.genmodel", genModelSourceLocations = {"model/person.genmodel","org.eclipse.fennec.codec.demo.model/model/person.genmodel"}, ecore="/model/person.ecore", ecoreSourceLocations="/model/person.ecore")
 public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	/**
 	 * The package name.
@@ -220,13 +221,22 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int PERSON__WEIGHT = 15;
 
 	/**
+	 * The feature id for the '<em><b>Custom Data Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSON__CUSTOM_DATA_TYPE = 16;
+
+	/**
 	 * The number of structural features of the '<em>Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 16;
+	int PERSON_FEATURE_COUNT = 17;
 
 	/**
 	 * The operation id for the '<em>Get Full Name</em>' operation.
@@ -454,6 +464,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int BUSINESS_PERSON__WEIGHT = PERSON__WEIGHT;
+
+	/**
+	 * The feature id for the '<em><b>Custom Data Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BUSINESS_PERSON__CUSTOM_DATA_TYPE = PERSON__CUSTOM_DATA_TYPE;
 
 	/**
 	 * The feature id for the '<em><b>Company Id Card Number</b></em>' attribute.
@@ -747,6 +766,15 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int SPECIFIC_BUSINESS_PERSON__WEIGHT = BUSINESS_PERSON__WEIGHT;
 
 	/**
+	 * The feature id for the '<em><b>Custom Data Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SPECIFIC_BUSINESS_PERSON__CUSTOM_DATA_TYPE = BUSINESS_PERSON__CUSTOM_DATA_TYPE;
+
+	/**
 	 * The feature id for the '<em><b>Company Id Card Number</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -995,6 +1023,16 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 */
 	int GENDER_TYPE = 11;
 
+	/**
+	 * The meta object id for the '<em>Custom Data Type</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.lang.String
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getCustomDataType()
+	 * @generated
+	 */
+	int CUSTOM_DATA_TYPE = 12;
+
 
 	/**
 	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.Person <em>Person</em>}'.
@@ -1181,6 +1219,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getPerson_Weight();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.demo.model.person.Person#getCustomDataType <em>Custom Data Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Custom Data Type</em>'.
+	 * @see org.gecko.codec.demo.model.person.Person#getCustomDataType()
+	 * @see #getPerson()
+	 * @generated
+	 */
+	EAttribute getPerson_CustomDataType();
 
 	/**
 	 * Returns the meta object for the '{@link org.gecko.codec.demo.model.person.Person#getFullName() <em>Get Full Name</em>}' operation.
@@ -1450,6 +1499,17 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EEnum getGENDER_TYPE();
 
 	/**
+	 * Returns the meta object for data type '{@link java.lang.String <em>Custom Data Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Custom Data Type</em>'.
+	 * @see java.lang.String
+	 * @model instanceClass="java.lang.String"
+	 * @generated
+	 */
+	EDataType getCustomDataType();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1609,6 +1669,14 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute PERSON__WEIGHT = eINSTANCE.getPerson_Weight();
+
+		/**
+		 * The meta object literal for the '<em><b>Custom Data Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERSON__CUSTOM_DATA_TYPE = eINSTANCE.getPerson_CustomDataType();
 
 		/**
 		 * The meta object literal for the '<em><b>Get Full Name</b></em>' operation.
@@ -1831,6 +1899,16 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EEnum GENDER_TYPE = eINSTANCE.getGENDER_TYPE();
+
+		/**
+		 * The meta object literal for the '<em>Custom Data Type</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.lang.String
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getCustomDataType()
+		 * @generated
+		 */
+		EDataType CUSTOM_DATA_TYPE = eINSTANCE.getCustomDataType();
 
 	}
 
