@@ -35,10 +35,9 @@ import tools.jackson.databind.ValueDeserializer;
  */
 public class CodecResourceDeserializer extends ValueDeserializer<Resource> {
 
-	 private final URIHandler uriHandler;
+//	 private final URIHandler uriHandler;
 
 	   public CodecResourceDeserializer(final URIHandler uriHandler) {
-	      this.uriHandler = uriHandler;
 	   }
 
 	   @Override
@@ -86,7 +85,7 @@ public class CodecResourceDeserializer extends ValueDeserializer<Resource> {
 	         }
 	      }
 
-	      EMFContext.resolve(ctxt, uriHandler);
+//	      EMFContext.resolve(ctxt, uriHandler);
 
 	      return resource;
 	   }

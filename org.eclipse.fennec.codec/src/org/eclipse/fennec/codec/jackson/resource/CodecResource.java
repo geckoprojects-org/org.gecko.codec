@@ -37,7 +37,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
-import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntry;
 import org.eclipse.fennec.codec.CodecProxyFactory;
 import org.eclipse.fennec.codec.configurator.ObjectMapperBuilderFactory;
 import org.eclipse.fennec.codec.constants.CodecModelInfoOptions;
@@ -479,7 +478,7 @@ public class CodecResource extends ResourceImpl {
 				break;
 			case CodecModuleOptions.CODEC_MODULE_REFERENCE_DESERIALIZER:
 				if(v instanceof ValueDeserializer) {
-					moduleBuilder.bindReferenceDeserializer((ValueDeserializer<ReferenceEntry> ) v);
+					moduleBuilder.bindReferenceDeserializer((ValueDeserializer<EObject> ) v);
 				} else {
 					LOGGER.warning(() -> CodecModuleOptions.CODEC_MODULE_REFERENCE_DESERIALIZER +" must be an instance of JsonDeserializer for.");
 				}

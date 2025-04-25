@@ -27,7 +27,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.eclipse.emfcloud.jackson.errors.JSONException;
 import org.eclipse.fennec.codec.constants.CodecResourceOptions;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
@@ -40,6 +39,7 @@ import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.jackson.utils.CodecParserException;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -182,7 +182,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
 	private void handleUnknownProperty(final JsonParser jp, final Resource resource, final DeserializationContext ctxt,	EClass currentEClass)  {
 		if (resource != null && ctxt.getConfig().hasDeserializationFeatures(FAIL_ON_UNKNOWN_PROPERTIES.getMask())) {
-			resource.getErrors().add(new JSONException(String.format("Unknown feature '%s' for %s", jp.currentName(), EcoreUtil.getURI(currentEClass)),jp.currentLocation()));
+			resource.getErrors().add(new CodecParserException(String.format("Unknown feature '%s' for %s", jp.currentName(), EcoreUtil.getURI(currentEClass)),jp.currentLocation()));
 		}
 		// we didn't find a feature so consume
 		// the field and move on

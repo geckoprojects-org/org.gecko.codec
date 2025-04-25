@@ -45,18 +45,21 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 		this.codecModule = codecModule;
 		this.codecModelInfoService = codecModelInfoService;
 	}
-
-
-
 	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ValueSerializer#handledType()
+	 */
 	@Override
 	public Class<EObject> handledType() {
 		return EObject.class;
 	}
 
-
 	
-	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ValueSerializer#serialize(java.lang.Object, tools.jackson.core.JsonGenerator, tools.jackson.databind.SerializationContext)
+	 */
 	@Override
 	public void serialize(EObject value, JsonGenerator gen, SerializationContext provider) {
 
@@ -78,7 +81,7 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 		eObjCodecInfo.getAttributeCodecInfo().forEach(aci -> codecInfoSerializers.add(new FeatureCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
 		eObjCodecInfo.getReferenceCodecInfo().forEach(aci -> codecInfoSerializers.add(new ReferenceCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
 		eObjCodecInfo.getOperationCodecInfo().forEach(aci -> codecInfoSerializers.add(new OperationCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
-		eObjCodecInfo.getEnumeratorCodecInfo().forEach(aci -> codecInfoSerializers.add(new EnumeratorSerializer(codecModule, aci)));
+		eObjCodecInfo.getEnumeratorCodecInfo().forEach(aci -> codecInfoSerializers.add(new EnumeratorCodecInfoSerializer(codecModule, aci)));
 		
 		
 		gen.writeStartObject(value);

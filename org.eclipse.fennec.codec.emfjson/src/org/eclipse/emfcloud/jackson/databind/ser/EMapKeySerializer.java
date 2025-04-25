@@ -30,6 +30,7 @@ import tools.jackson.databind.ValueSerializer;
  *
  * @author vhemery
  */
+@Deprecated
 public class EMapKeySerializer extends ValueSerializer<Object> {
 
    @Override

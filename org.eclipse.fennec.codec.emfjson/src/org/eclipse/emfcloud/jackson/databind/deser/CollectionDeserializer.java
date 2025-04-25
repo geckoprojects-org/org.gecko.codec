@@ -25,6 +25,7 @@ import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.type.CollectionType;
 
+@Deprecated
 public class CollectionDeserializer extends ValueDeserializer<Collection<Object>> {
 
    private final CollectionType baseType;

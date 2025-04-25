@@ -18,6 +18,7 @@ import tools.jackson.databind.JavaType;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 
+@Deprecated
 public class ResourceSerializer extends ValueSerializer<Resource> {
 
    // private final EcoreTypeFactory typeFactory = new EcoreTypeFactory();

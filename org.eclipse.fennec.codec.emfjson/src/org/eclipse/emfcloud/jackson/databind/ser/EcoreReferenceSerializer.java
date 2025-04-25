@@ -24,6 +24,7 @@ import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 
+@Deprecated
 public class EcoreReferenceSerializer extends ValueSerializer<EObject> {
 
    private final EcoreReferenceInfo info;

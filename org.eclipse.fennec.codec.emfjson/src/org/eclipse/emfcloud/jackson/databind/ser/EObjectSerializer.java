@@ -21,6 +21,7 @@ import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 
+@Deprecated
 public class EObjectSerializer extends ValueSerializer<EObject> {
 
    private final ValueSerializer<EObject> refSerializer;

@@ -24,9 +24,6 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.eclipse.emfcloud.jackson.databind.deser.ReferenceEntries;
-import org.eclipse.emfcloud.jackson.databind.type.EcoreTypeFactory;
-import org.eclipse.emfcloud.jackson.databind.type.FeatureKind;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
@@ -35,6 +32,8 @@ import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.jackson.utils.FeatureKind;
+import org.eclipse.fennec.codec.jackson.utils.TypeConstructorHelper;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -65,15 +64,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		this.typeCodecInfo = typeInfo;
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see org.gecko.codec.demo.jackson.deser.CodecInfoDeserializer#deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext)
-	 */
-	@Override
-	public EObject deserialize(JsonParser jp, DeserializationContext ctxt) {
-		return null;
-
-	}
+	
 
 	/* 
 	 * (non-Javadoc)
@@ -98,11 +89,8 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		if (jp.currentToken() == JsonToken.VALUE_NULL) {
 			return;
 		}
-		
-		//	      Use TypeFactory to create JavaType from Eclass
-		EcoreTypeFactory factory = EMFContext.getTypeFactory(ctxt);
-		JavaType javaType = factory.typeOf(ctxt, feature.eClass(), feature);
-		
+	
+	    JavaType javaType = TypeConstructorHelper.constructJavaTypeFromFeature(feature, ctxt);	
 
 		boolean isMap = false;
 		switch (FeatureKind.get(feature)) {
@@ -176,10 +164,9 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		case SINGLE_REFERENCE: {
 			EMFContext.setFeature(ctxt, feature);
 			EMFContext.setParent(ctxt, current);
-			ReferenceEntries entries = EMFContext.getEntries(ctxt);
 			if (feature.isMany()) {
-				deserializer = ctxt.findContextualValueDeserializer(javaType, null);
-				deserializer.deserialize(jp, ctxt, entries.entries());
+				deserializer = ctxt.findContextualValueDeserializer(javaType, null);				
+				deserializer.deserialize(jp, ctxt, current.eGet(feature));
 			} else {
 				new ReferenceCodecInfoDeserializer(codecModule, codecModelInfoService, typeCodecInfo)
 				.deserializeAndSet(jp, current, ctxt, resource);	  
@@ -191,4 +178,5 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		}
 	}
 
+	
 }

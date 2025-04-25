@@ -22,6 +22,7 @@ import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 
+@Deprecated
 public class EDataTypeDeserializer extends ValueDeserializer<Object> {
 
    @Override

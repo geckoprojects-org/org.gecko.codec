@@ -21,16 +21,12 @@ public class EDataTypeSerializer extends ValueSerializer<Object> {
 
    @Override
    public void serialize(final Object value, final JsonGenerator gen, final SerializationContext serializers) {
-      EAttribute feature = (EAttribute) EMFContext.getFeature(serializers);
-      
-      
+      EAttribute feature = (EAttribute) EMFContext.getFeature(serializers); 
       if (feature != null) {
-    	  feature.getEAttributeType().getInstanceClassName();
     	  ValueSerializer<Object> ser = serializers.findValueSerializer(feature.getEAttributeType().getInstanceClass());
   		  ser.serialize(value, gen, serializers);
       } else {
          gen.writeNull();
       }
    }
-
 }

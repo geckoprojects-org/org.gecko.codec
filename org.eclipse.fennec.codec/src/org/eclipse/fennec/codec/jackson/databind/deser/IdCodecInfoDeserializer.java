@@ -93,11 +93,6 @@ public class IdCodecInfoDeserializer extends ValueDeserializer<String> {
 //			if(!codecModule.isSerializeIdField()) {
 //				setIdFields(current, id);
 //			}
-			
-			// TODO watch the ID handling in other resources?
-//			if (resource instanceof CodecJsonResource codecJsonRes && id != null) {
-//				((JsonResource) resource).setID(current, id);
-//			}
 		}
 		return id;
 
@@ -143,10 +138,6 @@ public class IdCodecInfoDeserializer extends ValueDeserializer<String> {
 			if(!codecModule.isSerializeIdField()) {
 				setIdFields(current, id);
 			}
-			// TODO watch the ID handling in other resources?
-//			if (resource instanceof CodecJsonResource codecJsonRes && id != null) {
-//				((JsonResource) resource).setID(current, id);
-//			}
 		}
 
 	}
