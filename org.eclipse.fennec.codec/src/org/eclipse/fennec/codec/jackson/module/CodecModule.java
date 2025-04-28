@@ -19,13 +19,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.CodecProxyFactory;
-import org.eclipse.fennec.codec.constants.BaseURIHandler;
-import org.eclipse.fennec.codec.constants.URIHandler;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.jackson.databind.deser.CodecEMFDeserializers;
 import org.eclipse.fennec.codec.jackson.databind.deser.ReferenceCodecInfoDeserializer;
 import org.eclipse.fennec.codec.jackson.databind.ser.CodecEMFSerializers;
+import org.eclipse.fennec.codec.jackson.utils.BaseURIHandler;
+import org.eclipse.fennec.codec.jackson.utils.URIHandler;
 
 import tools.jackson.core.Version;
 import tools.jackson.databind.ValueDeserializer;
@@ -265,7 +265,7 @@ public class CodecModule extends SimpleModule {
 			codecProxyFactory = new CodecProxyFactory() {
 				public EObject createProxy(EClass eClass, URI uri) {
 					EObject object = EcoreUtil.create(eClass);
-					
+				
 					if (object instanceof InternalEObject) {
 						((InternalEObject) object).eSetProxyURI(uri);
 					}

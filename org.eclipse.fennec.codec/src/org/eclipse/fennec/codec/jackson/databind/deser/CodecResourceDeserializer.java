@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.eclipse.fennec.codec.constants.URIHandler;
+import org.eclipse.fennec.codec.jackson.utils.URIHandler;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;

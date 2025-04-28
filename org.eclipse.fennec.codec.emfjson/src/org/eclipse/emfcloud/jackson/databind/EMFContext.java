@@ -127,12 +127,6 @@ public final class EMFContext {
       }
    }
    
-   public static void resolve(final DeserializationContext ctxt, final org.eclipse.fennec.codec.constants.URIHandler handler) {
-	      ReferenceEntries entries = getEntries(ctxt);
-	      if (entries != null) {
-	         entries.resolve(ctxt, handler);
-	      }
-	   }
 
    public static URI getURI(final DatabindContext ctxt, final EObject object) {
       if (object == null) {
