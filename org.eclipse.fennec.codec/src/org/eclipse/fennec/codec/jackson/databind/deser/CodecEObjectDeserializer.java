@@ -177,6 +177,42 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		if (buffer == null && current == null && defaultType != null) {
 			return EcoreUtil.create(defaultType);
 		}
+		return buffer == null ? current : postDeserialize(buffer, current, defaultType, ctxt, eObjCodecInfo);
+	}
+	
+	private EObject postDeserialize(final TokenBuffer buffer, EObject current, final EClass defaultType, final DeserializationContext ctxt, EClassCodecInfo eObjCodecInfo) {
+		if (current == null && defaultType == null) {
+			return null;
+		}
+
+		Resource resource = getResource(ctxt);
+
+		if (current == null) {
+			current = EcoreUtil.create(defaultType);
+		}
+	
+		JsonParser jp = buffer.asParser();
+		JsonToken nextToken = jp.nextToken();
+		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
+			final String field = jp.currentName();
+			FeatureCodecInfo featureCodecInfo = getFeatureCodecInfo(field, eObjCodecInfo);
+			if(featureCodecInfo instanceof IdentityInfo idInfo) {
+				new IdCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, idInfo)
+				.deserializeAndSet(jp, current, ctxt, resource);
+			} 
+			else if(featureCodecInfo != null && !(featureCodecInfo instanceof TypeInfo) && !(featureCodecInfo instanceof SuperTypeInfo)) {
+				new FeatureCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, featureCodecInfo, eObjCodecInfo.getTypeInfo())
+				.deserializeAndSet(jp, current, ctxt, resource);
+
+			} else if(featureCodecInfo == null && current != null) {
+				handleUnknownProperty(jp, resource, ctxt, current.eClass());
+			} 
+
+			nextToken = jp.nextToken();
+		}
+
+		jp.close();
+		buffer.close();
 		return current;
 	}
 

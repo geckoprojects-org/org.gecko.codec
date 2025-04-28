@@ -289,4 +289,14 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public byte[] getBinaryValue(Base64Variant variant)  {		
 		return((org.bson.BsonBinary) _streamReadContext.currentValue()).getData();
     }
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.json.JsonParserBase#hasStringCharacters()
+	 */
+	@Override
+	public boolean hasStringCharacters() {		
+//		Overridden to fix issue while resolving proxy for single non contained reference. See org.eclipse.fennec.codec.mongo.test.testDeserializationReference
+		return false;
+	}
 }
