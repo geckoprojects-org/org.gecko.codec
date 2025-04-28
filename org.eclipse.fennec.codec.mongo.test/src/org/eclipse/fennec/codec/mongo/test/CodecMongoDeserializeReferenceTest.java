@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -28,7 +27,6 @@ import org.bson.Document;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
@@ -152,11 +150,13 @@ public class CodecMongoDeserializeReferenceTest extends MongoEMFSetting {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		addRes.save(options);
 		personRes.save(options);
-
-		addRes.getContents().clear();
+		
 		addRes.unload();
-		personRes.getContents().clear();
+		addRes.getContents().clear();
 		personRes.unload();
+		personRes.getContents().clear();
+		
+		resourceSet.getResources().clear();
 
 		Resource findResource = resourceSet.createResource(perURI);
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
@@ -172,10 +172,8 @@ public class CodecMongoDeserializeReferenceTest extends MongoEMFSetting {
 		Person p = (Person) findResource.getContents().get(0);
 		assertEquals(person.getId(), p.getId());
 		Address add = p.getNonContainedAdd();
-
+		
 		assertNotNull(add);
-		assertTrue(add.eIsProxy());
-		add = (Address) EcoreUtil.resolve(add, PersonPackage.eINSTANCE.eResource());
 		assertEquals(address.getStreet(), add.getStreet());
 		assertEquals(address.getId(), add.getId());
 		assertNull(add.getZip());

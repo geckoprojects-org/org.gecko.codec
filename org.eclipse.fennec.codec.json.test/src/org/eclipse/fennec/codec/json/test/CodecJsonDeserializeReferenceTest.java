@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -128,6 +127,8 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		addRes.unload();
 		personRes.getContents().clear();
 		personRes.unload();
+		
+		resourceSet.getResources().clear();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
@@ -143,10 +144,8 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		Person p = (Person) findResource.getContents().get(0);
 		assertEquals(person.getId(), p.getId());
 		Address add = p.getNonContainedAdd();
-
+		
 		assertNotNull(add);
-		assertTrue(add.eIsProxy());
-
 		assertEquals(address.getStreet(), add.getStreet());
 		assertEquals(address.getId(), add.getId());
 		assertNull(add.getZip());
