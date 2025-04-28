@@ -29,6 +29,8 @@ import tools.jackson.core.json.JsonWriteFeature;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.json.JsonMapper.Builder;
 
@@ -83,9 +85,6 @@ public class DefaultObjectMapperBuilderFactory implements ObjectMapperBuilderFac
 		TimeZone tz = TimeZone.getTimeZone(tzStr);
 		objMapperBuilder.defaultTimeZone(tz);
 		
-//		This is needed otherwise subsequent calls to Resource#save() will use the same module even if we are changing options!
-//		This should not be an issue anymore --> TODO: check!!
-//		objMapperBuilder.disable(MapperFeature.IGNORE_DUPLICATE_MODULE_REGISTRATIONS);
 		return objMapperBuilder;
 	}
 	
@@ -115,6 +114,12 @@ public class DefaultObjectMapperBuilderFactory implements ObjectMapperBuilderFac
 			case "JsonReadFeature":
 				setJsonReadFeature(featureString, state, objMapperBuilder);
 				break;
+			case "DateTimeFeature":
+				setDateTimeFeature(featureString, state, objMapperBuilder);
+				break;
+			case "EnumFeature":
+				setEnumFeature(featureString, state, objMapperBuilder);
+				break;
 			default:
 				LOGGER.warning(String.format("Feature prefix %s not supported", prefix));
 			}
@@ -126,9 +131,33 @@ public class DefaultObjectMapperBuilderFactory implements ObjectMapperBuilderFac
 			setStreamWriteFeature(featureString, state, objMapperBuilder);
 			setJsonReadFeature(featureString, state, objMapperBuilder);
 			setJsonWriteFeature(featureString, state, objMapperBuilder);
+			setDateTimeFeature(featureString, state, objMapperBuilder);
+			setEnumFeature(featureString, state, objMapperBuilder);
 		}
 	}
 	
+	
+	private void setEnumFeature(String featureString, boolean state, Builder objMapperBuilder) {
+		try {
+			if(state) objMapperBuilder.enable(EnumFeature.valueOf(featureString));
+			else objMapperBuilder.disable(EnumFeature.valueOf(featureString));
+			return;
+		} catch(Exception e) {
+			LOGGER.warning(String.format("No EnumFeature with name %s has been found", featureString));
+		} 		
+	}
+
+	
+	private void setDateTimeFeature(String featureString, boolean state, Builder objMapperBuilder) {
+		try {
+			if(state) objMapperBuilder.enable(DateTimeFeature.valueOf(featureString));
+			else objMapperBuilder.disable(DateTimeFeature.valueOf(featureString));
+			return;
+		} catch(Exception e) {
+			LOGGER.warning(String.format("No DateTimeFeature with name %s has been found", featureString));
+		} 		
+	}
+
 	private void setMapperFeature(String featureString, boolean state, Builder objMapperBuilder) {
 		try {
 			if(state) objMapperBuilder.enable(MapperFeature.valueOf(featureString));

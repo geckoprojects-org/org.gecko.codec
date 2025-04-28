@@ -126,11 +126,11 @@ org.osgi:osgi.cmpn:7.0.0
 
 org.apiguardian:apiguardian-api:1.1.2
 
-tools.jackson.core:jackson-core:3.0.0-rc2
-tools.jackson.core:jackson-databind:3.0.0-rc2
-tools.jackson.dataformat:jackson-dataformat-properties:3.0.0-rc2
-tools.jackson.dataformat:jackson-dataformat-yaml:3.0.0-rc2
-com.fasterxml.jackson.core:jackson-annotations:3.0-rc2
+tools.jackson.core:jackson-core:3.0.0-rc4-SNAPSHOT
+tools.jackson.core:jackson-databind:3.0.0-rc4-SNAPSHOT
+tools.jackson.dataformat:jackson-dataformat-properties:3.0.0-rc4-SNAPSHOT
+tools.jackson.dataformat:jackson-dataformat-yaml:3.0.0-rc4-SNAPSHOT
+com.fasterxml.jackson.core:jackson-annotations:3.0-rc4-SNAPSHOT
 
 com.fasterxml.jackson.core:jackson-core:2.16.1
 com.fasterxml.jackson.core:jackson-databind:2.16.1

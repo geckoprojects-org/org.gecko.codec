@@ -46,6 +46,8 @@ import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
@@ -161,13 +163,13 @@ public class ObjMapperConfiguratorTest {
 		assertTrue(mapper.isEnabled(SerializationFeature.INDENT_OUTPUT));
 		assertTrue(mapper.isEnabled(SerializationFeature.WRITE_SELF_REFERENCES_AS_NULL));
 		assertTrue(mapper.isEnabled(SerializationFeature.CLOSE_CLOSEABLE));
-		assertTrue(mapper.isEnabled(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS));
-		assertTrue(mapper.isEnabled(SerializationFeature.WRITE_DATES_WITH_ZONE_ID));
+		assertTrue(mapper.isEnabled(DateTimeFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS));
+		assertTrue(mapper.isEnabled(DateTimeFeature.WRITE_DATES_WITH_ZONE_ID));
 		assertTrue(mapper.isEnabled(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID));
 		assertTrue(mapper.isEnabled(SerializationFeature.WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS));
-		assertTrue(mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING));
-		assertTrue(mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX));
-		assertTrue(mapper.isEnabled(SerializationFeature.WRITE_ENUM_KEYS_USING_INDEX));
+		assertTrue(mapper.isEnabled(EnumFeature.WRITE_ENUMS_USING_TO_STRING));
+		assertTrue(mapper.isEnabled(EnumFeature.WRITE_ENUMS_USING_INDEX));
+		assertTrue(mapper.isEnabled(EnumFeature.WRITE_ENUM_KEYS_USING_INDEX));
 		assertTrue(mapper.isEnabled(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED));
 		assertTrue(mapper.isEnabled(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS));
 	}
@@ -195,10 +197,10 @@ public class ObjMapperConfiguratorTest {
 		assertFalse(mapper.isEnabled(SerializationFeature.FAIL_ON_SELF_REFERENCES));
 		assertFalse(mapper.isEnabled(SerializationFeature.WRAP_EXCEPTIONS));
 		assertFalse(mapper.isEnabled(SerializationFeature.FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS));
-		assertFalse(mapper.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS));
-		assertFalse(mapper.isEnabled(SerializationFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE));
-		assertFalse(mapper.isEnabled(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS));
-		assertFalse(mapper.isEnabled(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS));
+		assertFalse(mapper.isEnabled(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS));
+		assertFalse(mapper.isEnabled(DateTimeFeature.WRITE_DATES_WITH_CONTEXT_TIME_ZONE));
+		assertFalse(mapper.isEnabled(DateTimeFeature.WRITE_DURATIONS_AS_TIMESTAMPS));
+		assertFalse(mapper.isEnabled(DateTimeFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS));
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
@@ -228,7 +230,7 @@ public class ObjMapperConfiguratorTest {
 		assertTrue(mapper.isEnabled(DeserializationFeature.USE_LONG_FOR_INTS));
 		assertTrue(mapper.isEnabled(DeserializationFeature.USE_JAVA_ARRAY_FOR_JSON_ARRAY));
 		assertTrue(mapper.isEnabled(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES));
-		assertTrue(mapper.isEnabled(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS));
+		assertTrue(mapper.isEnabled(EnumFeature.FAIL_ON_NUMBERS_FOR_ENUMS));
 		assertTrue(mapper.isEnabled(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY));
 		assertTrue(mapper.isEnabled(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES));
 		assertTrue(mapper.isEnabled(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES));
@@ -238,9 +240,9 @@ public class ObjMapperConfiguratorTest {
 		assertTrue(mapper.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS));		
 		assertTrue(mapper.isEnabled(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT));
 		assertTrue(mapper.isEnabled(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT));
-		assertTrue(mapper.isEnabled(DeserializationFeature.READ_ENUMS_USING_TO_STRING));
-		assertTrue(mapper.isEnabled(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL));
-		assertTrue(mapper.isEnabled(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE));
+		assertTrue(mapper.isEnabled(EnumFeature.READ_ENUMS_USING_TO_STRING));
+		assertTrue(mapper.isEnabled(EnumFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL));
+		assertTrue(mapper.isEnabled(EnumFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE));
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
@@ -268,8 +270,8 @@ public class ObjMapperConfiguratorTest {
 		assertFalse(mapper.isEnabled(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY));
 		assertFalse(mapper.isEnabled(DeserializationFeature.WRAP_EXCEPTIONS));
 		assertFalse(mapper.isEnabled(DeserializationFeature.ACCEPT_FLOAT_AS_INT));
-		assertFalse(mapper.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS));
-		assertFalse(mapper.isEnabled(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE));
+		assertFalse(mapper.isEnabled(DateTimeFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS));
+		assertFalse(mapper.isEnabled(DateTimeFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE));
 		assertFalse(mapper.isEnabled(DeserializationFeature.EAGER_DESERIALIZER_FETCH));
 
 	}
