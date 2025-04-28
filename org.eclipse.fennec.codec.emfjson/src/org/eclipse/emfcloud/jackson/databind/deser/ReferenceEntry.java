@@ -26,8 +26,6 @@ public interface ReferenceEntry {
 
    void resolve(DatabindContext context, URIHandler handler);
    
-   void resolve(final DatabindContext context, final org.eclipse.fennec.codec.constants.URIHandler handler);
-
    class Base implements ReferenceEntry {
 
       private final EObject owner;
@@ -85,45 +83,7 @@ public interface ReferenceEntry {
             EObjects.setOrAdd(owner, reference, target);
          }
       }
-      
-      public void resolve(final DatabindContext context, final org.eclipse.fennec.codec.constants.URIHandler handler) {
-          if (id == null) {
-             return;
-          }
 
-          ReferenceEntries entries = EMFContext.getEntries(context);
-          ResourceSet resourceSet = EMFContext.getResourceSet(context);
-          EObject target = entries.get(id);
-
-          if (target == null) {
-             Resource resource = EMFContext.getResource(context, owner);
-             target = resource.getEObject(id);
-
-             if (target == null) {
-
-                URI baseURI = resource.getURI().trimFragment();
-                URI uri = handler.resolve(baseURI, URI.createURI(id));
-
-//                I don't understand why we create a proxy if resolveProxy is true
-                if (reference.isResolveProxies() && type != null) {
-                   target = createProxy(resourceSet, uri);
-                } else {
-//             	   I need to modify here and add as load options the type of the reference!!
-//             	  Resource res = resourceSet.getResource(uri, true);
-//             	  res.load(null);
-                   target = resourceSet.getEObject(uri, true);
-                }
-             }
-
-             if (target != null) {
-                entries.store(id, target);
-             }
-          }
-
-          if (target != null) {
-             EObjects.setOrAdd(owner, reference, target);
-          }
-       }
 
       private EObject createProxy(final ResourceSet resourceSet, final URI uri) {
 //         EClass eClass;

@@ -2,9 +2,9 @@
 
 -buildpath: \
 	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
-	org.eclipse.fennec.codec.constants,\
 	tools.jackson.core.jackson-core,\
-	tools.jackson.core.jackson-databind
+	tools.jackson.core.jackson-databind,\
+	org.eclipse.fennec.codec.constants
 	
 -testpath.guava: \
 	com.google.guava;version=latest

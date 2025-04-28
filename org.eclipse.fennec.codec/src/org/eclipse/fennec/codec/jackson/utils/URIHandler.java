@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.constants;
+package org.eclipse.fennec.codec.jackson.utils;
 
 import org.eclipse.emf.common.util.URI;
 
