@@ -23,13 +23,12 @@ import org.eclipse.emfcloud.jackson.databind.property.EObjectPropertyMap;
 import org.eclipse.emfcloud.jackson.databind.type.EcoreType;
 import org.eclipse.emfcloud.jackson.module.EMFModule;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Value;
 
-import tools.jackson.databind.ValueSerializer;
-
-import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.BeanDescription.Supplier;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.SerializationConfig;
+import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.jsontype.TypeSerializer;
 import tools.jackson.databind.ser.Serializers;
 import tools.jackson.databind.ser.jdk.CollectionSerializer;
@@ -51,16 +50,15 @@ public class EMFSerializers extends Serializers.Base {
 		this.propertiesBuilder = EObjectPropertyMap.Builder.from(module, module.getFeatures());
 		this.referenceSerializer = module.getReferenceSerializer();
 	}
-
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see tools.jackson.databind.ser.Serializers.Base#findMapLikeSerializer(tools.jackson.databind.SerializationConfig, tools.jackson.databind.type.MapLikeType, tools.jackson.databind.BeanDescription, com.fasterxml.jackson.annotation.JsonFormat.Value, tools.jackson.databind.ValueSerializer, tools.jackson.databind.jsontype.TypeSerializer, tools.jackson.databind.ValueSerializer)
+	 * @see tools.jackson.databind.ser.Serializers.Base#findMapLikeSerializer(tools.jackson.databind.SerializationConfig, tools.jackson.databind.type.MapLikeType, tools.jackson.databind.BeanDescription.Supplier, com.fasterxml.jackson.annotation.JsonFormat.Value, tools.jackson.databind.ValueSerializer, tools.jackson.databind.jsontype.TypeSerializer, tools.jackson.databind.ValueSerializer)
 	 */
 	@Override
-	public ValueSerializer<?> findMapLikeSerializer(final SerializationConfig config, final MapLikeType type,
-			final BeanDescription beanDesc,  JsonFormat.Value formatOverrides, final ValueSerializer<Object> keySerializer,
-			final TypeSerializer elementTypeSerializer,
-			final ValueSerializer<Object> elementValueSerializer) {
+	public ValueSerializer<?> findMapLikeSerializer(SerializationConfig config, MapLikeType type, Supplier beanDescRef,
+			Value formatOverrides, ValueSerializer<Object> keySerializer, TypeSerializer elementTypeSerializer,
+			ValueSerializer<Object> elementValueSerializer) {
 		if (type.isTypeOrSubTypeOf(EMap.class)) {
 			// make a MapSerializer for configurability
 			ValueSerializer<Object> keySer = Optional.ofNullable(keySerializer).orElse(mapKeySerializer);
@@ -89,25 +87,33 @@ public class EMFSerializers extends Serializers.Base {
 			// and use a wrapping EMapSerializer for edge cases
 			return new EMapSerializer(mapSer);
 		}
-
-		return super.findMapLikeSerializer(config, type, beanDesc, formatOverrides, keySerializer, elementTypeSerializer,
+		return super.findMapLikeSerializer(config, type, beanDescRef, formatOverrides, keySerializer, elementTypeSerializer,
 				elementValueSerializer);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ser.Serializers.Base#findCollectionSerializer(tools.jackson.databind.SerializationConfig, tools.jackson.databind.type.CollectionType, tools.jackson.databind.BeanDescription.Supplier, com.fasterxml.jackson.annotation.JsonFormat.Value, tools.jackson.databind.jsontype.TypeSerializer, tools.jackson.databind.ValueSerializer)
+	 */
 	@Override
-	public ValueSerializer<?> findCollectionSerializer(final SerializationConfig config, final CollectionType type,
-			final BeanDescription beanDesc, JsonFormat.Value formatOverrides, final TypeSerializer elementTypeSerializer,
-			final ValueSerializer<Object> elementValueSerializer) {
+	public ValueSerializer<?> findCollectionSerializer(SerializationConfig config, CollectionType type,
+			Supplier beanDescRef, Value formatOverrides, TypeSerializer elementTypeSerializer,
+			ValueSerializer<Object> elementValueSerializer) {
 		if (type.getContentType().isReferenceType()) {
 			return new CollectionSerializer(type.getContentType(), false, null, (ValueSerializer) referenceSerializer);
 		}
-		return super.findCollectionSerializer(config, type, beanDesc, formatOverrides, elementTypeSerializer, elementValueSerializer);
+		return super.findCollectionSerializer(config, type, beanDescRef, formatOverrides, elementTypeSerializer,
+				elementValueSerializer);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ser.Serializers.Base#findSerializer(tools.jackson.databind.SerializationConfig, tools.jackson.databind.JavaType, tools.jackson.databind.BeanDescription.Supplier, com.fasterxml.jackson.annotation.JsonFormat.Value)
+	 */
 	@Override
-	public ValueSerializer<?> findSerializer(final SerializationConfig config, final JavaType type,
-			final BeanDescription beanDesc, JsonFormat.Value formatOverrides) {
+	public ValueSerializer<?> findSerializer(SerializationConfig config, JavaType type, Supplier beanDescRef,
+			Value formatOverrides) {
 		if (type.isTypeOrSubTypeOf(Resource.class)) {
 			return resourceSerializer;
 		}
@@ -131,8 +137,9 @@ public class EMFSerializers extends Serializers.Base {
 			return new EObjectSerializer(propertiesBuilder, referenceSerializer);
 		}
 
-		return super.findSerializer(config, type, beanDesc, formatOverrides);
+		return super.findSerializer(config, type, beanDescRef, formatOverrides);
 	}
+	
 
 	/**
 	 * Returns the propertiesBuilder.
