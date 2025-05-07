@@ -90,7 +90,7 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 			}
 		} else if (object == null) {
 			ObjectId objectId = new ObjectId();
-			getOutputContext().assignCurrentValue(objectId);
+			streamWriteContext().assignCurrentValue(objectId);
 			writer.writeObjectId(fieldName, objectId);
 		} else {
 			System.out.println("???" + object);
@@ -136,7 +136,7 @@ public class MongoCodecGenerator extends CodecGeneratorBaseImpl {
 
 	@Override
 	public JsonGenerator doWriteString(int index, String fieldName, String value) {
-		if(getOutputContext().inArray()) writer.writeString(value);
+		if(streamWriteContext().inArray()) writer.writeString(value);
 		else writer.writeString(fieldName, value);
 		return this;
 	}

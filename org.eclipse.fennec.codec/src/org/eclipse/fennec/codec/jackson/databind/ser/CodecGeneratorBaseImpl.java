@@ -30,7 +30,6 @@ import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.ObjectWriteContext;
 import tools.jackson.core.StreamWriteCapability;
 import tools.jackson.core.StreamWriteFeature;
-import tools.jackson.core.TokenStreamContext;
 import tools.jackson.core.Version;
 import tools.jackson.core.base.GeneratorBase;
 import tools.jackson.core.io.IOContext;
@@ -55,9 +54,14 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
                 ? DupDetector.rootDetector(this) : null;
 		_writeContext = CodecWriteContext.createRootCodecContext(dups);
 	}
+
 	
-	
-	public CodecWriteContext getOutputContext() {
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonGenerator#streamWriteContext
+	 */
+	@Override
+	public CodecWriteContext streamWriteContext() {
 		return _writeContext;
 	}
 	
@@ -88,22 +92,15 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 		return new Version(1, 0, 0, "rc1", "org.eclipse.fennec", "gecko-codec");
 	}
 	
-	/* 
-	 * (non-Javadoc)
-	 * @see tools.jackson.core.JsonGenerator#streamWriteContext()
-	 */
-	@Override
-	public TokenStreamContext streamWriteContext() {
-		return _writeContext;
-	}
+	
 	
 	protected EObject getCurrentEObject() {
 		
-		if ( getOutputContext().inRoot()) {
-			return ((EObject) (getOutputContext().currentValue()));
+		if (_writeContext.inRoot()) {
+			return ((EObject) (_writeContext.currentValue()));
 		}
-		if ( getOutputContext().inObject() || getOutputContext().inArray()) {
-			return (EObject) getOutputContext().getParent().currentValue();
+		if (_writeContext.inObject() || _writeContext.inArray()) {
+			return (EObject) _writeContext.getParent().currentValue();
 		}
 		return null;
 	}
@@ -115,7 +112,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	public void flush() {
-		getOutputContext().reset(JsonWriteContext.TYPE_ROOT, null);
+		_writeContext.reset(JsonWriteContext.TYPE_ROOT, null);
 	}
 
 	
@@ -168,12 +165,12 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeStartArray(Object forValue)  {
 		assignCurrentValue(forValue);
-		int index = getOutputContext().getCurrentIndex();
-		String name = getOutputContext().currentName();
+		int index = _writeContext.getCurrentIndex();
+		String name = _writeContext.currentName();
 		
-		EStructuralFeature feature = getOutputContext().getFeature();
-		CodecWriteContext ctx = getOutputContext().createChildArrayContext(forValue);
-		ctx.setFeature(feature);
+		EStructuralFeature feature = _writeContext.getCurrentFeature();
+		CodecWriteContext ctx = _writeContext.createChildArrayContext(forValue);
+		ctx.setCurrentFeature(feature);
 		_writeContext = ctx;
 		writeStartArray();
 		doStartWriteArray(index + 1, name, forValue);
@@ -187,21 +184,21 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	public JsonGenerator writeEndArray() {
-		if (getOutputContext().inRoot()) {
+		if (_writeContext.inRoot()) {
 			return null;
 		}
-		if (!getOutputContext().inArray()) {
-            _reportError("Current context is not array but " + getOutputContext().typeDesc());
+		if (!_writeContext.inArray()) {
+            _reportError("Current context is not array but " + _writeContext.typeDesc());
         }
-		_writeContext = (CodecWriteContext) _writeContext.clearAndGetParent();
-		Object result = getOutputContext().currentValue();
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		_writeContext = _writeContext.clearAndGetParent();
+		Object result = _writeContext.currentValue();
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		int currIndex = getOutputContext().getCurrentIndex();
-		String currName = getOutputContext().currentName();
+		int currIndex = _writeContext.getCurrentIndex();
+		String currName = _writeContext.currentName();
 		doEndWriteArray(currIndex, currName, result);
-		CodecWriteContext.resetFeature(getOutputContext());
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -235,15 +232,15 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 		 * So we are not in the state STATUS_EXPECT_NAME. If we start a new EObject, no field name 
 		 * has been set before  
 		 */
-		boolean inRoot = getOutputContext().inRoot();
-		int index = getOutputContext().getCurrentIndex();
-		String name = getOutputContext().currentName();
+		boolean inRoot = _writeContext.inRoot();
+		int index = _writeContext.getCurrentIndex();
+		String name = _writeContext.currentName();
 		/*
 		 * We create the sub / child context for the fields of the EObject
 		 */
-		EStructuralFeature feature = getOutputContext().getFeature();
-		CodecWriteContext ctx = getOutputContext().createChildObjectContext(forValue);
-		ctx.setFeature(feature);
+		EStructuralFeature feature = _writeContext.getCurrentFeature();
+		CodecWriteContext ctx = _writeContext.createChildObjectContext(forValue);
+		ctx.setCurrentFeature(feature);
 		_writeContext = ctx;
 		writeStartObject();
 		if (inRoot) {
@@ -261,26 +258,26 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	public JsonGenerator writeEndObject() {
-		if (!getOutputContext().inObject()) {
-            _reportError("Current context is not Object but " + getOutputContext().typeDesc());
+		if (!_writeContext.inObject()) {
+            _reportError("Current context is not Object but " + _writeContext.typeDesc());
         }
 		EObject result = getCurrentEObject();
 		_writeContext = (CodecWriteContext) _writeContext.clearAndGetParent();
 		/*
 		 * If we have a root object, the we have no field name
 		 */
-		int currIndex = getOutputContext().getCurrentIndex();
-		String currName = getOutputContext().currentName();
+		int currIndex = _writeContext.getCurrentIndex();
+		String currName = _writeContext.currentName();
 		
-		if (getOutputContext().inRoot()) {
+		if (_writeContext.inRoot()) {
 			doEndWriteRootEObject(result);
 		} else {
-			if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+			if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 				_reportError("Expect a value to write, but a field name is expected");
 			}
 			doEndWriteEObject(currIndex, currName, result);
 		}		
-		CodecWriteContext.resetFeature(getOutputContext());
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -291,10 +288,10 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	 */
 	@Override
 	public JsonGenerator writeName(String name)  {
-		if (getOutputContext().writeName(name) == JsonWriteContext.STATUS_EXPECT_VALUE) {
+		if (_writeContext.writeName(name) == JsonWriteContext.STATUS_EXPECT_VALUE) {
 			_reportError(String.format("Expected to retrieve a value instead of setting a field name for %s", name));
 		}
-		getOutputContext().writeName(name);
+		_writeContext.writeName(name);
 		return this;
 	}
 
@@ -306,12 +303,12 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeString(String text) {
 		assignCurrentValue(text);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-//		the getOutputContext() has no currentName set because it is on the parent context and not on the array child context
-		doWriteString(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), text);
-		CodecWriteContext.resetFeature(getOutputContext());
+//		the _writeContext has no currentName set because it is on the parent context and not on the array child context
+		doWriteString(_writeContext.getCurrentIndex(), _writeContext.currentName(), text);
+		_writeContext.resetFeature();
 		return this;
 	}
 	
@@ -323,7 +320,7 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeArray(String[] array, int offset, int length)  {
 		super.writeArray(array, offset, length);
-		CodecWriteContext.resetFeature(getOutputContext());
+		_writeContext.resetFeature();
 		return this;
 	}
 	
@@ -390,11 +387,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeRaw(char[] text, int offset, int len) {
 		assignCurrentValue(text);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteChars(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), text);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteChars(_writeContext.getCurrentIndex(), _writeContext.currentName(), text);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -406,11 +403,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeRaw(char c) {
 		assignCurrentValue(c);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}		
-		doWriteChar(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), c);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteChar(_writeContext.getCurrentIndex(), _writeContext.currentName(), c);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -422,11 +419,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeBinary(Base64Variant bv, byte[] data, int offset, int len)  {
 		assignCurrentValue(data);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}		
-		doWriteBinary(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), bv, data, offset, len);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteBinary(_writeContext.getCurrentIndex(), _writeContext.currentName(), bv, data, offset, len);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -438,11 +435,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeNumber(int v)  {
 		assignCurrentValue(v);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}		
-		doWriteInt(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteInt(_writeContext.getCurrentIndex(), _writeContext.currentName(), v);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -454,11 +451,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeNumber(long v)  {
 		assignCurrentValue(v);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}		
-		doWriteLong(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteLong(_writeContext.getCurrentIndex(), _writeContext.currentName(), v);
+		_writeContext.resetFeature();
 		return this;
 	}
 	
@@ -469,11 +466,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeNumber(short v) throws JacksonException {
 		assignCurrentValue(v);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}		
-		doWriteShort(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteShort(_writeContext.getCurrentIndex(), _writeContext.currentName(), v);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -485,11 +482,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeNumber(BigInteger v) {
 		assignCurrentValue(v);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}		
-		doWriteBigInt(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteBigInt(_writeContext.getCurrentIndex(), _writeContext.currentName(), v);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -501,11 +498,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeNumber(double v)  {
 		assignCurrentValue(v);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteDouble(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteDouble(_writeContext.getCurrentIndex(), _writeContext.currentName(), v);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -517,11 +514,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeNumber(float v) {
 		assignCurrentValue(v);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteFloat(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteFloat(_writeContext.getCurrentIndex(), _writeContext.currentName(), v);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -533,11 +530,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeNumber(BigDecimal v)  {
 		assignCurrentValue(v);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteBigDecimal(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), v);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteBigDecimal(_writeContext.getCurrentIndex(), _writeContext.currentName(), v);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -549,11 +546,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeNumber(String encodedValue) {
 		assignCurrentValue(encodedValue);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteStringNumber(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), encodedValue);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteStringNumber(_writeContext.getCurrentIndex(), _writeContext.currentName(), encodedValue);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -565,11 +562,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeBoolean(boolean state) {
 		assignCurrentValue(state);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteBoolean(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), state);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteBoolean(_writeContext.getCurrentIndex(), _writeContext.currentName(), state);
+		_writeContext.resetFeature();
 		return this;
 	}
 
@@ -581,11 +578,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeNull()  {
 		assignCurrentValue(null);
-		if (getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if (_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Expect a value to write, but a field name is expected");
 		}
-		doWriteNull(getOutputContext().getCurrentIndex(), getOutputContext().currentName());
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteNull(_writeContext.getCurrentIndex(), _writeContext.currentName());
+		_writeContext.resetFeature();
 		return this;
 	}
 	
@@ -607,11 +604,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeObjectId(Object id)  {
 		assignCurrentValue(id);
-		if(getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Error writing object id while expecting a value");
 		}
-		doWriteObjectId(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), id);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteObjectId(_writeContext.getCurrentIndex(), _writeContext.currentName(), id);
+		_writeContext.resetFeature();
 		return this;
 	}
 	
@@ -622,11 +619,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writePropertyId(long id) throws JacksonException {
 		assignCurrentValue(id);
-		if(getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Error writing property id while expecting a value");
 		}
-		doWritePropertyId(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), id);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWritePropertyId(_writeContext.getCurrentIndex(), _writeContext.currentName(), id);
+		_writeContext.resetFeature();
 		return this;
 	}
 	
@@ -648,11 +645,11 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeTypeId(Object id) {
 		assignCurrentValue(id);
-		if(getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Error writing type information while expecting a value");
 		}
-		doWriteType(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), id);
-		CodecWriteContext.resetFeature(getOutputContext());
+		doWriteType(_writeContext.getCurrentIndex(), _writeContext.currentName(), id);
+		_writeContext.resetFeature();
 		return this;		
 	}
 	
@@ -672,10 +669,10 @@ public abstract class CodecGeneratorBaseImpl extends GeneratorBase implements Co
 	@Override
 	public JsonGenerator writeSuperTypes(String[] supertypes)  {
 		assignCurrentValue(supertypes);
-		if(getOutputContext().writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
+		if(_writeContext.writeValue() == JsonWriteContext.STATUS_EXPECT_NAME) {
 			_reportError("Error writing supertype information while expecting a value");
 		}
-		doWriteSuperTypes(getOutputContext().getCurrentIndex(), getOutputContext().currentName(), supertypes);
+		doWriteSuperTypes(_writeContext.getCurrentIndex(), _writeContext.currentName(), supertypes);
 		return this;
 	}
 	

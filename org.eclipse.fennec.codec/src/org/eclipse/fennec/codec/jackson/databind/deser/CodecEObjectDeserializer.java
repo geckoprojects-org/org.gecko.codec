@@ -13,14 +13,11 @@
  */
 package org.eclipse.fennec.codec.jackson.databind.deser;
 
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.getFeature;
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.getResource;
 import static tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -38,11 +35,13 @@ import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.jackson.utils.CodecParserException;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.TokenStreamContext;
 import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
@@ -58,18 +57,16 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
 	private static final Logger LOGGER = Logger.getLogger(CodecEObjectDeserializer.class.getName());
 
-	private Class<?> currentType;
 	private final CodecModule codecModule;
 	private final CodecModelInfo codecModelInfoService;
 
 	public CodecEObjectDeserializer(final Class<?> currentType, final CodecModule codecModule, 
 			final CodecModelInfo codecModelInfoService) {
-		this.currentType = currentType;
 		this.codecModule = codecModule;
 		this.codecModelInfoService = codecModelInfoService;
 	}
 
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.databind.ValueDeserializer#handledType()
@@ -88,11 +85,18 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 	@Override
 	public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) {
 
-		EMFContext.prepare(ctxt);
+		//		EMFContext.prepare(ctxt);
+		EMFCodecReadContext codecReadCtxt = null;
+		if(jp.streamReadContext() instanceof EMFCodecReadContext crc) {
+			codecReadCtxt = crc;
+		}
+		//		final Resource resource = getResource(ctxt);
+		//		EStructuralFeature feature = getFeature(ctxt);
+		//		final EClass defaultType = getDefaultType(ctxt);
 
-		final Resource resource = getResource(ctxt);
-		EStructuralFeature feature = getFeature(ctxt);
-		final EClass defaultType = getDefaultType(ctxt);
+		final Resource resource = codecReadCtxt != null ? codecReadCtxt.getResource() : null;
+		EStructuralFeature feature = codecReadCtxt != null ? codecReadCtxt.getCurrentFeature() : null;
+		final EClass defaultType = codecReadCtxt != null ? getDefaultType((TokenStreamContext)codecReadCtxt) : null;
 
 
 		//		In case of contained ref, the defaultType is set and we can immediately construct everything. 
@@ -102,6 +106,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		EClass type = defaultType == null ? ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) == null ? null : (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) : defaultType;	
 		EObject current = type == null ? null : EcoreUtil.create(type);
 
+		if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
 
 		//		In case of non contained ref w/o type info we try to retrieve the root ctxt so we know which ref we are trying to deserialize
 		if(current == null) {
@@ -111,6 +116,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 				if(feature != null && feature.getEType() instanceof EClass eClass) {
 					type = eClass;
 					current = EcoreUtil.create(type);
+					if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
 				}
 			}
 		}
@@ -148,6 +154,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 						eci.getClassifier().equals(rootObj))
 						.findFirst().get();
 				current = EcoreUtil.create(type);
+				if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
 			}
 			else if(current != null) {
 				FeatureCodecInfo featureCodecInfo = getFeatureCodecInfo(field, eObjCodecInfo);
@@ -177,20 +184,21 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		if (buffer == null && current == null && defaultType != null) {
 			return EcoreUtil.create(defaultType);
 		}
-		return buffer == null ? current : postDeserialize(buffer, current, defaultType, ctxt, eObjCodecInfo);
+		return buffer == null ? current : postDeserialize(buffer, current, defaultType, ctxt, eObjCodecInfo, codecReadCtxt);
 	}
-	
-	private EObject postDeserialize(final TokenBuffer buffer, EObject current, final EClass defaultType, final DeserializationContext ctxt, EClassCodecInfo eObjCodecInfo) {
+
+	private EObject postDeserialize(final TokenBuffer buffer, EObject current, final EClass defaultType, final DeserializationContext ctxt, EClassCodecInfo eObjCodecInfo, EMFCodecReadContext codecReadCtxt) {
 		if (current == null && defaultType == null) {
 			return null;
 		}
 
-		Resource resource = getResource(ctxt);
+		//		Resource resource = getResource(ctxt);
+		Resource resource = codecReadCtxt.getResource();
 
 		if (current == null) {
 			current = EcoreUtil.create(defaultType);
 		}
-	
+
 		JsonParser jp = buffer.asParser();
 		JsonToken nextToken = jp.nextToken();
 		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
@@ -241,24 +249,26 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		return null;
 	}
 
-	private EClass getDefaultType(final DeserializationContext ctxt) {
+	private EClass getDefaultType(final TokenStreamContext ctxt) {
 		EClass type = null;
+		TokenStreamContext codecReadCtxt = null;
+		if(ctxt.getParent() != null) {
+			if(ctxt.getParent().inObject()) {
+				codecReadCtxt = ctxt.getParent();
+			} else if(ctxt.getParent().inArray()) {
+				codecReadCtxt = ctxt.getParent().getParent();
+			}
 
-		EObject parent = EMFContext.getParent(ctxt);
-		if (parent == null) {
-			if (currentType != null && currentType != EObject.class) {
-				type = EMFContext.findEClassByQualifiedName(ctxt, currentType.getCanonicalName());
-			}
-			if (type == null) {
-				type = EMFContext.getRoot(ctxt);
-			}
-		} else {
-			final EReference reference = (EReference) getFeature(ctxt);
-			if (reference != null && !reference.getEReferenceType().isAbstract()) {
-				final EGenericType reifiedType = EcoreUtil.getReifiedType(parent.eClass(), reference.getEGenericType());
-				return (EClass) reifiedType.getERawType();
-			}
 		}
+
+		if(codecReadCtxt != null) {
+			EReference reference = (EReference) (((EMFCodecReadContext) codecReadCtxt).getCurrentFeature());
+			if(reference != null) {
+				type = (EClass) reference.getEGenericType().getERawType();
+			}
+
+		}
+
 		return type;
 	}
 

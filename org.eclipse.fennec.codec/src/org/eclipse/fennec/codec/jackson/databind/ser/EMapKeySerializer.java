@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecWriteContext;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -40,7 +40,14 @@ public class EMapKeySerializer extends ValueSerializer<Object> {
 	 */
 	@Override
 	public void serialize(final Object value, final JsonGenerator gen, final SerializationContext serializers) {
-		EStructuralFeature feature = EMFContext.getFeature(serializers);
+		
+		EMFCodecWriteContext codecWriteCtxt = null;
+		if(gen.streamWriteContext() instanceof EMFCodecWriteContext cwc) {
+			codecWriteCtxt = cwc;
+		}
+		
+//		EStructuralFeature feature = EMFContext.getFeature(serializers);
+		EStructuralFeature feature = codecWriteCtxt != null ? codecWriteCtxt.getCurrentFeature() : null;
 		Optional<EReference> mapRef = Optional.ofNullable(feature).filter(EReference.class::isInstance)
 				.map(EReference.class::cast);
 		Optional<EStructuralFeature> keyFeature = mapRef.map(EReference::getEReferenceType)

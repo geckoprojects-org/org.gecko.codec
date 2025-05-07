@@ -25,7 +25,6 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.configurator.ObjectMapperBuilderFactory;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
@@ -60,7 +59,7 @@ public class CodecJsonResource extends CodecResource {
 		} else {
 
 			mapper.writer()
-			.with(EMFContext.from(options))
+			.with(from(options))
 			.writeValue(outputStream, this);
 
 		}		
@@ -80,8 +79,7 @@ public class CodecJsonResource extends CodecResource {
 
 	      } else {
 
-	         ContextAttributes attributes = EMFContext
-	            .from(options)
+	         ContextAttributes attributes = from(options)
 	            .withPerCallAttribute(RESOURCE_SET, getResourceSet())
 	            .withPerCallAttribute(RESOURCE, this);
 

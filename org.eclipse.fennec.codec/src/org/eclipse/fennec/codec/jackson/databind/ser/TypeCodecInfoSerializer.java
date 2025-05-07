@@ -15,13 +15,13 @@ package org.eclipse.fennec.codec.jackson.databind.ser;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecWriteContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.core.JsonGenerator;
@@ -53,9 +53,12 @@ public class TypeCodecInfoSerializer implements CodecInfoSerializer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
-		EMFContext.setParent(provider, rootObj);
+//		EMFContext.setParent(provider, rootObj);
 		if(!typeCodecInfo.isIgnoreType()) {
 			if (codecModule.isSerializeType()) {
+				if(gen.streamWriteContext() instanceof EMFCodecWriteContext cwt) {
+					cwt.setCurrentEObject(rootObj);
+				}
 				CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
 				CodecValueWriter<EClass, String> writer = holder.getWriterByName(typeCodecInfo.getValueWriterName());
 				String v = writer.writeValue(rootObj.eClass(), provider);

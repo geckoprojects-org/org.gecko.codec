@@ -13,14 +13,9 @@
  */
 package org.eclipse.fennec.codec.jackson.databind.deser;
 
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.Attributes.RESOURCE_SET;
-
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 import org.eclipse.fennec.codec.jackson.utils.URIHandler;
 
 import tools.jackson.core.JsonParser;
@@ -52,16 +47,18 @@ public class CodecResourceDeserializer extends ValueDeserializer<Resource> {
 	 * @see tools.jackson.databind.ValueDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext, java.lang.Object)
 	 */
 	@Override
-	   public Resource deserialize(final JsonParser jp, final DeserializationContext ctxt, final Resource intoValue){
-	      final Resource resource = getResource(ctxt, intoValue);
-	      if (resource == null) {
+	   public Resource deserialize(final JsonParser jp, final DeserializationContext ctxt, final Resource resource){
+//	      final Resource resource = getResource(ctxt, intoValue);
+	     
+		  if (resource == null) {
 	         throw new IllegalArgumentException("Invalid resource");
 	      }
-
-	      EMFContext.init(resource, ctxt);
+		  if(jp.streamReadContext() instanceof EMFCodecReadContext crc) {
+			 crc.setResource(resource);
+		  }
 
 	      if (!jp.hasCurrentToken()) {
-	         jp.nextToken();
+	    	  jp.nextToken();
 	      }
 
 	      ValueDeserializer<Object> deserializer = ctxt.findRootValueDeserializer(ctxt.constructType(EObject.class));
@@ -74,7 +71,7 @@ public class CodecResourceDeserializer extends ValueDeserializer<Resource> {
 	            if (value != null) {
 	               resource.getContents().add(value);
 	            }
-	            EMFContext.setParent(ctxt, null);
+//	            EMFContext.setParent(ctxt, null);
 	         }
 
 	      } else if (jp.currentToken() == JsonToken.START_OBJECT) {
@@ -87,50 +84,51 @@ public class CodecResourceDeserializer extends ValueDeserializer<Resource> {
 	      return resource;
 	   }
 
-	   private Resource getResource(final DeserializationContext context, Resource resource) {
-	      if (resource == null) {
-	         resource = EMFContext.getResource(context);
+//	   private Resource getResource(final DeserializationContext context, Resource resource) {
+//	      if (resource == null) {
+//	         resource = EMFContext.getResource(context);
+//
+//	         if (resource == null) {
+//	            ResourceSet resourceSet = getResourceSet(context);
+//	            URI uri = getURI(context);
+//	            resource = resourceSet.createResource(uri);
+//	            // no factory found for uri
+//	            if (resource == null) {
+//	               throw new RuntimeException("Cannot create resource for uri " + uri);
+//	            }
+//	         }
+//	      } else {
+//	         ResourceSet resourceSet = resource.getResourceSet();
+//	         if (resourceSet == null) {
+//	            resourceSet = getResourceSet(context);
+//	            resourceSet.getResources().add(resource);
+//	         }
+//
+//	         return resource;
+//	      }
+//
+//	      return resource;
+//	   }
+//
+//	   protected ResourceSet getResourceSet(final DeserializationContext context) {
+//		  
+//	      ResourceSet resourceSet = EMFContext.getResourceSet(context);
+//	      if (resourceSet == null) {
+//	         resourceSet = new ResourceSetImpl();
+//	         context.setAttribute(RESOURCE_SET, resourceSet);
+//	      }
+//
+//	      return resourceSet;
+//	   }
 
-	         if (resource == null) {
-	            ResourceSet resourceSet = getResourceSet(context);
-	            URI uri = getURI(context);
-	            resource = resourceSet.createResource(uri);
-	            // no factory found for uri
-	            if (resource == null) {
-	               throw new RuntimeException("Cannot create resource for uri " + uri);
-	            }
-	         }
-	      } else {
-	         ResourceSet resourceSet = resource.getResourceSet();
-	         if (resourceSet == null) {
-	            resourceSet = getResourceSet(context);
-	            resourceSet.getResources().add(resource);
-	         }
-
-	         return resource;
-	      }
-
-	      return resource;
-	   }
-
-	   protected ResourceSet getResourceSet(final DeserializationContext context) {
-	      ResourceSet resourceSet = EMFContext.getResourceSet(context);
-	      if (resourceSet == null) {
-	         resourceSet = new ResourceSetImpl();
-	         context.setAttribute(RESOURCE_SET, resourceSet);
-	      }
-
-	      return resourceSet;
-	   }
-
-	   private URI getURI(final DeserializationContext ctxt) {
-	      URI uri = EMFContext.getURI(ctxt);
-	      if (uri == null) {
-	         uri = URI.createURI("default");
-	      }
-
-	      return uri;
-	   }
+//	   private URI getURI(final DeserializationContext ctxt) {
+//	      URI uri = EMFContext.getURI(ctxt);
+//	      if (uri == null) {
+//	         uri = URI.createURI("default");
+//	      }
+//
+//	      return uri;
+//	   }
 
 	   @Override
 	   public Class<Resource> handledType() {

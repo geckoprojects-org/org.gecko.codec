@@ -72,7 +72,12 @@ public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator
 		@SuppressWarnings("unchecked")
 		@Override
 		public F build() {
-			return (F) new CodecFactory(genFactory, parserFactory);
+			if(genFactory == null || parserFactory == null) {
+				return (F) new DefaultCodecJsonFactory();
+			} else {
+				return (F) new CodecFactory(genFactory, parserFactory);
+			}
+			
 		}
 		
 	}
@@ -80,11 +85,12 @@ public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator
 
 	@Activate
 	public void activate(Map<String, Object> properties) {
-		if(genFactory == null || parserFactory == null ) {
-			factoryBuilder = JsonFactory.builder();
-		} else {
-			factoryBuilder = new CodecFactoryBuilder(JsonFactory.builder().build());
-		}
+//		if(genFactory == null || parserFactory == null ) {
+//			factoryBuilder = DefaultCodecJsonFactory.builder();
+//		} else {
+//			factoryBuilder = new CodecFactoryBuilder(JsonFactory.builder().build());
+//		}
+		factoryBuilder = new CodecFactoryBuilder(JsonFactory.builder().build());
 		buildAndConfigureCodecFactory(properties);
 	}
 	

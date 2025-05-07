@@ -21,9 +21,13 @@ import org.eclipse.fennec.codec.CodecReaderProvider;
 import org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl;
 
 import tools.jackson.core.Base64Variant;
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.TreeCodec;
+import tools.jackson.core.Version;
+import tools.jackson.core.exc.InputCoercionException;
 import tools.jackson.core.io.IOContext;
+import tools.jackson.core.util.VersionUtil;
 
 /**
  * 
@@ -201,7 +205,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public Object getObjectId()  {
-		return _streamReadContext.currentValue();
+		return currentValue();
 	}
 	
 	private Object getCurrentValue(BsonType bsonType) {
@@ -235,7 +239,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		case DOCUMENT:
 			return JsonToken.START_OBJECT;
 		case END_OF_DOCUMENT:
-			return _streamReadContext.inArray() ? JsonToken.END_ARRAY : JsonToken.END_OBJECT;
+			return streamReadContext().inArray() ? JsonToken.END_ARRAY : JsonToken.END_OBJECT;
 		case ARRAY:
 			return JsonToken.START_ARRAY;
 		case INT32:
@@ -268,7 +272,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public BigDecimal getDecimalValue() {
-		return ((org.bson.types.Decimal128) _streamReadContext.currentValue()).bigDecimalValue();
+		return ((org.bson.types.Decimal128) streamReadContext().currentValue()).bigDecimalValue();
 	}
 	
 
@@ -278,7 +282,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public byte[] getBinaryValue()  {
-		return ((org.bson.BsonBinary) _streamReadContext.currentValue()).getData();
+		return ((org.bson.BsonBinary) streamReadContext().currentValue()).getData();
 	}
 	
 	/* 
@@ -287,7 +291,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public byte[] getBinaryValue(Base64Variant variant)  {		
-		return((org.bson.BsonBinary) _streamReadContext.currentValue()).getData();
+		return((org.bson.BsonBinary) streamReadContext().currentValue()).getData();
     }
 	
 	/* 
@@ -298,5 +302,35 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public boolean hasStringCharacters() {		
 //		Overridden to fix issue while resolving proxy for single non contained reference. See org.eclipse.fennec.codec.mongo.test.testDeserializationReference
 		return false;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.base.ParserBase#_parseNumericValue(int)
+	 */
+	@Override
+	protected void _parseNumericValue(int expType) throws JacksonException, InputCoercionException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.base.ParserBase#_parseIntValue()
+	 */
+	@Override
+	protected int _parseIntValue() throws JacksonException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#version()
+	 */
+	@Override
+	public Version version() {
+		return VersionUtil.parseVersion(
+		        "1.0.0-SNAPSHOT", "org.eclipse.fennec.codec", "codec-mongo");
 	}
 }

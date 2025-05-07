@@ -17,12 +17,12 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.IdentityInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.core.JsonParser;
@@ -90,7 +90,8 @@ public class IdCodecInfoDeserializer extends ValueDeserializer<String> {
 			}
 //			If the serializedIdField is false then we need to retrieve the values from the _id
 //			TODO: when we can extract current from the streamReadContext then we can also uncomment here
-			EObject parent = EMFContext.getParent(ctxt);
+			EObject parent = jp.streamReadContext() instanceof EMFCodecReadContext ? ((EMFCodecReadContext) jp.streamReadContext()).getCurrentEObject() : null;
+//			EObject parent = EMFContext.getParent(ctxt);
 			if(!codecModule.isSerializeIdField()) {
 				setIdFields(parent, id);
 			}
