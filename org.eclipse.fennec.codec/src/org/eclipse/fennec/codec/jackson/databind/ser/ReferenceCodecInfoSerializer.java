@@ -24,18 +24,17 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
-import org.eclipse.fennec.codec.jackson.databind.CodecWriteContext;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecWriteContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.SerializationContext;
 
 /**
@@ -77,11 +76,12 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 			return;
 		}
 		EReference feature = (EReference) featureCodecInfo.getFeatures().get(0);
-		EMFContext.setParent(provider, rootObj);
-		EMFContext.setFeature(provider, feature);
+//		EMFContext.setParent(provider, rootObj);
+//		EMFContext.setFeature(provider, feature);
 
-		if (jg.streamWriteContext() instanceof CodecWriteContext cwt) {
-			cwt.setFeature(feature);
+		if (jg.streamWriteContext() instanceof EMFCodecWriteContext cwt) {
+			cwt.setCurrentFeature(feature);
+			cwt.setCurrentEObject(rootObj);
 		}
 
 		if (feature.isMany()) {
@@ -177,7 +177,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 			jg.writeNull();
 			return;
 		}
-		final String href = getHRef(provider, rootObj, value);
+		final String href = getHRef(jg, rootObj, value);
 
 		jg.writeStartObject(value);
 
@@ -207,17 +207,19 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 
 	}
 
-	private String getHRef(final SerializationContext ctxt, final EObject parent, final EObject value) {
-		if (isExternal(ctxt, parent, value)) {
+	private String getHRef(JsonGenerator jg, final EObject parent, final EObject value) {
+		if (isExternal(jg, parent, value)) {
 
-			URI targetURI = EMFContext.getURI(ctxt, value);
-			URI sourceURI = EMFContext.getURI(ctxt, parent);
+//			URI targetURI = EMFContext.getURI(ctxt, value);
+//			URI sourceURI = EMFContext.getURI(ctxt, parent);
+			URI targetURI = EcoreUtil.getURI(value);
+			URI sourceURI = EcoreUtil.getURI(parent);
 			URI deresolved = codecModule.getUriHandler().deresolve(sourceURI, targetURI);
 
 			return deresolved == null ? null : deresolved.toString();
 
 		}
-		Resource resource = EMFContext.getResource(ctxt, value);
+		Resource resource = ((EMFCodecWriteContext) jg.streamWriteContext()).getResource();
 		if (resource != null) {
 			return resource.getURIFragment(value);
 		}
@@ -225,8 +227,21 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		return null;
 	}
 
-	private boolean isExternal(final DatabindContext ctxt, final EObject source, final EObject target) {
-		Resource sourceResource = EMFContext.getResource(ctxt, source);
+//	private boolean isExternal(final SerializationContext ctxt, final EObject source, final EObject target) {
+//		Resource sourceResource = ((CodecWriteContext) ctxt.getGenerator().streamWriteContext()).getResource();
+//
+//		if (target.eIsProxy() && target instanceof InternalEObject internalEObject) {
+//			URI uri = internalEObject.eProxyURI();
+//
+//			return sourceResource != null && sourceResource.getURI() != null
+//					&& !sourceResource.getURI().equals(uri.trimFragment());
+//		}
+//
+//		return sourceResource == null || sourceResource != EMFContext.getResource(ctxt, target);
+//	}
+	
+	private boolean isExternal(JsonGenerator jg, final EObject source, final EObject target) {
+		Resource sourceResource = ((EMFCodecWriteContext) jg.streamWriteContext()).getResource();
 
 		if (target.eIsProxy() && target instanceof InternalEObject internalEObject) {
 			URI uri = internalEObject.eProxyURI();
@@ -235,6 +250,6 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 					&& !sourceResource.getURI().equals(uri.trimFragment());
 		}
 
-		return sourceResource == null || sourceResource != EMFContext.getResource(ctxt, target);
+		return sourceResource == null;
 	}
 }

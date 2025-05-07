@@ -16,12 +16,10 @@ package org.eclipse.fennec.codec.jackson.databind.deser;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
@@ -29,6 +27,7 @@ import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.jackson.utils.FeatureKind;
 import org.eclipse.fennec.codec.jackson.utils.TypeConstructorHelper;
@@ -77,6 +76,15 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 			return;
 		}
 		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
+		EMFCodecReadContext codecReadCtxt = null;
+		if(jp.streamReadContext() instanceof EMFCodecReadContext crc) {
+			codecReadCtxt = crc;
+		}
+		if(codecReadCtxt != null) {
+			codecReadCtxt.setCurrentFeature(feature);
+			if(codecReadCtxt.getCurrentEObject() == null) codecReadCtxt.setCurrentEObject(current);
+		}
+		
 		JsonToken token = null;
 
 		if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
@@ -99,11 +107,11 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		case SINGLE_CONTAINMENT: 
 		case SINGLE_ATTRIBUTE:
 		case MANY_ATTRIBUTE: {
-			EMFContext.setFeature(ctxt, feature);
-			EMFContext.setParent(ctxt, current);
-			if (feature.getEType() instanceof EDataType) {
-				EMFContext.setDataType(ctxt, feature.getEType());
-			}
+//			EMFContext.setFeature(ctxt, feature);
+//			EMFContext.setParent(ctxt, current);
+//			if (feature.getEType() instanceof EDataType) {
+//				EMFContext.setDataType(ctxt, feature.getEType());
+//			}
 			String readerName = featureCodecInfo.getValueReaderName();
 			CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
 			CodecValueReader<Object, ?> reader =  infoHolder.getReaderByName(readerName);
@@ -135,8 +143,8 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		break;
 		case MANY_REFERENCE:
 		case SINGLE_REFERENCE: {
-			EMFContext.setFeature(ctxt, feature);
-			EMFContext.setParent(ctxt, current);
+//			EMFContext.setFeature(ctxt, feature);
+//			EMFContext.setParent(ctxt, current);
 			if (feature.isMany()) {
 				deserializer.deserialize(jp, ctxt, current.eGet(feature));
 			} else {

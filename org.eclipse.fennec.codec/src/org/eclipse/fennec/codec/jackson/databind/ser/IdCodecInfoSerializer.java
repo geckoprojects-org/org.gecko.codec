@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.IdentityInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecWriteContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.core.JsonGenerator;
@@ -56,7 +56,10 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 	 */
 	@SuppressWarnings("unchecked")
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
-		EMFContext.setParent(provider, rootObj);
+//		EMFContext.setParent(provider, rootObj);
+		if(gen.streamWriteContext() instanceof EMFCodecWriteContext cwt) {
+			cwt.setCurrentEObject(rootObj);
+		}
 		
 		String idStrategy = idCodecInfo.getIdStrategy() != null ? idCodecInfo.getIdStrategy() : "";
 		List<EStructuralFeature> idFeatures = idCodecInfo.getFeatures().stream().filter(f -> f instanceof EStructuralFeature).map(EStructuralFeature.class::cast).collect(Collectors.toList());

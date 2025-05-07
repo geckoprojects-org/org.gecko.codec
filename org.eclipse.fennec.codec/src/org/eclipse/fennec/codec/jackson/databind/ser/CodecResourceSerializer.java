@@ -15,8 +15,10 @@ package org.eclipse.fennec.codec.jackson.databind.ser;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.jackson.databind.CodecJsonWriteContext;
 
 import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.base.GeneratorBase;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
@@ -34,15 +36,44 @@ public class CodecResourceSerializer extends ValueSerializer<Resource> {
 	 */
 	@Override
 	public void serialize(final Resource value, final JsonGenerator jg, final SerializationContext provider) {
-		if (value.getContents().size() == 1) {
-			serializeOne(value.getContents().get(0), jg, provider);
-		} else {
-			jg.writeStartArray();
-			for (EObject o : value.getContents()) {
-				serializeOne(o, jg, provider);
+		
+		if(jg instanceof CodecUTF8JsonGenerator codecJsonGen) {
+			((CodecJsonWriteContext)codecJsonGen.streamWriteContext()).setResource(value);
+			if (value.getContents().size() == 1) {
+				serializeOne(value.getContents().get(0), codecJsonGen, provider);
+			} else {
+				codecJsonGen.writeStartArray();
+				for (EObject o : value.getContents()) {
+					serializeOne(o, codecJsonGen, provider);
+				}
+				codecJsonGen.writeEndArray();
 			}
-			jg.writeEndArray();
+		} else {
+			CodecGeneratorBaseImpl codecGenerator = null;
+			if(jg instanceof CodecGeneratorBaseImpl) {
+				codecGenerator = (CodecGeneratorBaseImpl) jg;
+			} else if(jg instanceof GeneratorBase gb){
+				codecGenerator = new CodecGeneratorWrapper(gb);
+			} 
+			if(codecGenerator != null) {
+				codecGenerator.streamWriteContext().setResource(value);
+				
+				if (value.getContents().size() == 1) {
+					serializeOne(value.getContents().get(0), codecGenerator, provider);
+				} else {
+					codecGenerator.writeStartArray();
+					for (EObject o : value.getContents()) {
+						serializeOne(o, codecGenerator, provider);
+					}
+					codecGenerator.writeEndArray();
+				}
+			} else {
+				throw new IllegalArgumentException("Don't know what to do with the JsonGenerator I have here!");
+			}
 		}
+		
+		
+		
 	}	   
 
 	/* 

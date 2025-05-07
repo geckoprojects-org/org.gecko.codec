@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
+import org.eclipse.fennec.codec.jackson.databind.CodecWriteContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.core.JsonGenerator;
@@ -83,6 +84,9 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 		eObjCodecInfo.getOperationCodecInfo().forEach(aci -> codecInfoSerializers.add(new OperationCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
 		eObjCodecInfo.getEnumeratorCodecInfo().forEach(aci -> codecInfoSerializers.add(new EnumeratorCodecInfoSerializer(codecModule, aci)));
 		
+		if(gen.streamWriteContext() instanceof CodecWriteContext cwt) {
+			cwt.setCurrentEObject(value);
+		}
 		
 		gen.writeStartObject(value);
 

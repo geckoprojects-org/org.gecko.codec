@@ -17,7 +17,7 @@ import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.core.JacksonException;
@@ -44,7 +44,15 @@ public class EnumDeserializer extends ValueDeserializer<Enumerator>{
 	 */
 	@Override
 	public Enumerator deserialize(JsonParser jp, DeserializationContext ctxt) throws JacksonException {
-		EStructuralFeature feature = EMFContext.getFeature(ctxt);
+//		EStructuralFeature feature = EMFContext.getFeature(ctxt);
+		EStructuralFeature feature = null;
+		EMFCodecReadContext codecReadCtxt = null;
+		if(jp.streamReadContext() instanceof EMFCodecReadContext crc) {
+			codecReadCtxt = crc;
+		}
+		if(codecReadCtxt != null) {
+			feature = codecReadCtxt.getCurrentFeature();
+		}
 		EEnum eDataType = (EEnum) feature.getEType();
 		EEnumLiteral literal = null;
 		if(codecModule.isWriteEnumLiterals()) {

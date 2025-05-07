@@ -57,6 +57,7 @@ import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.cfg.ContextAttributes;
 import tools.jackson.databind.json.JsonMapper.Builder;
 
 /**
@@ -537,4 +538,10 @@ public class CodecResource extends ResourceImpl {
 			featureWithout.forEach(sf -> objMapperBuilder.disable(sf));
 		}
 	}
+	
+	protected static ContextAttributes from(final Map<?, ?> options) {
+	      return ContextAttributes
+	         .getEmpty()
+	         .withSharedAttributes(options == null ? new HashMap<>() : new HashMap<>(options));
+	   }
 }

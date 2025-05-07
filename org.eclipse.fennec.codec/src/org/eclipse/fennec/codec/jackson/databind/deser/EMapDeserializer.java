@@ -25,11 +25,12 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.emfcloud.jackson.databind.type.FeatureKind;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.TokenStreamContext;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 
@@ -57,7 +58,11 @@ public class EMapDeserializer extends ValueDeserializer<EList<Map.Entry<?, ?>>> 
 	@Override
 	public EList<Map.Entry<?, ?>> deserialize(final JsonParser jp, final DeserializationContext ctxt,
 			final EList<Map.Entry<?, ?>> intoValue)  {
-		EReference reference = EMFContext.getReference(ctxt);
+		EMFCodecReadContext codecReadCtxt = null;
+		if(jp.streamReadContext() instanceof EMFCodecReadContext crc) {
+			codecReadCtxt = crc;
+		}
+		EReference reference = codecReadCtxt != null ? (EReference) ((EMFCodecReadContext)((TokenStreamContext)codecReadCtxt).getParent()).getCurrentFeature() : null;
 		EStructuralFeature valueFeature = null;
 		if (reference != null) {
 			EClass referenceType = reference.getEReferenceType();
@@ -67,13 +72,15 @@ public class EMapDeserializer extends ValueDeserializer<EList<Map.Entry<?, ?>>> 
 
 
 		if (jp.currentToken() == JsonToken.START_OBJECT) {
-			final EObject parent = EMFContext.getParent(ctxt);
+			final EObject parent = codecReadCtxt != null ? ((EMFCodecReadContext)((TokenStreamContext)codecReadCtxt).getParent()).getCurrentEObject() : null;
 			while (jp.nextToken() != JsonToken.END_OBJECT) {
-				if (parent != null) {
-					EMFContext.setParent(ctxt, parent);
+				if (parent != null && codecReadCtxt != null) {
+//					EMFContext.setParent(ctxt, parent);
+					codecReadCtxt.setCurrentEObject(parent);
 				}
-				if (valueFeature != null) {
-					EMFContext.setFeature(ctxt, valueFeature);
+				if (valueFeature != null && codecReadCtxt != null) {
+//					EMFContext.setFeature(ctxt, valueFeature);
+					codecReadCtxt.setCurrentFeature(valueFeature);
 				}
 				String key = jp.currentName();
 				jp.nextToken();

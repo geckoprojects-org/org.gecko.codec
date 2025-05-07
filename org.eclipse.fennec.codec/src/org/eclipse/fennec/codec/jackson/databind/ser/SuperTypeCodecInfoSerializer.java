@@ -17,7 +17,6 @@ import static java.util.Objects.nonNull;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.CodecGeneratorBase;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
@@ -26,6 +25,7 @@ import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo;
 import org.eclipse.fennec.codec.info.helper.CodecIOHelper;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecWriteContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.core.JsonGenerator;
@@ -61,10 +61,13 @@ public class SuperTypeCodecInfoSerializer implements CodecInfoSerializer {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
-		EMFContext.setParent(provider, rootObj);
+//		EMFContext.setParent(provider, rootObj);
 		if(superTypeCodecInfo.isIgnoreSuperType()) return;
 		
 		if (codecModule.isSerializeType() && codecModule.isSerializeSuperTypes()) {
+			if(gen.streamWriteContext() instanceof EMFCodecWriteContext cwt) {
+				cwt.setCurrentEObject(rootObj);
+			}
 			CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.SUPER_TYPE);
 			CodecValueWriter<EClass, String[]> writer = holder
 					.getWriterByName(codecModule.isSerializeAllSuperTypes() ? CodecIOHelper.ALL_SUPERTYPE_WRITER.getName() 

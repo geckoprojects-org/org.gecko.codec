@@ -20,17 +20,18 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.TokenStreamContext;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 
@@ -55,9 +56,22 @@ public class ReferenceCodecInfoDeserializer extends ValueDeserializer<EObject> i
 	@SuppressWarnings("unchecked")
 	@Override
 	public EObject deserialize(JsonParser jp, DeserializationContext ctxt) {
-		EObject parent = EMFContext.getParent(ctxt);
-		EReference reference = EMFContext.getReference(ctxt);
-		Resource resource = EMFContext.getResource(ctxt);
+//		EObject parent = EMFContext.getParent(ctxt);
+//		EReference reference = EMFContext.getReference(ctxt);
+		
+		EMFCodecReadContext codecReadCtxt = null;
+		if(jp.streamReadContext() instanceof EMFCodecReadContext && jp.streamReadContext() instanceof TokenStreamContext crc && crc.getParent() != null) {
+			if(crc.getParent().inObject()) {
+				codecReadCtxt = (EMFCodecReadContext) crc.getParent();
+			} else if(crc.getParent().inArray()) {
+				codecReadCtxt = (EMFCodecReadContext) crc.getParent().getParent();
+			}
+			
+		}
+		
+		EObject parent = codecReadCtxt != null ? codecReadCtxt.getCurrentEObject() : null;
+		EReference reference = codecReadCtxt != null ? (EReference) codecReadCtxt.getCurrentFeature() : null;
+		Resource resource = codecReadCtxt != null ? codecReadCtxt.getResource() : null;
 		
 //		TODO: we could try to retrieve the typeCodecInfo from the context, because at this point we do not have it if we construct this deserializer from the module
 		

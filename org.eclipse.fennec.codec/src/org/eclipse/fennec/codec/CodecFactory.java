@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.net.URL;
 
 import tools.jackson.core.ErrorReportConfiguration;
+import tools.jackson.core.JsonEncoding;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.ObjectReadContext;
@@ -74,6 +75,16 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 //	protected JsonGenerator _createUTF8Generator(OutputStream out, IOContext ctxt)  {
 //		return internalCreateGenerator(out);
 //	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.base.TextualTSFactory#createGenerator(tools.jackson.core.ObjectWriteContext, java.io.OutputStream, tools.jackson.core.JsonEncoding)
+	 */
+	@Override
+	public JsonGenerator createGenerator(ObjectWriteContext writeCtxt,
+            OutputStream out, JsonEncoding enc) {
+		return internalCreateGenerator(out, null);
+	}
 	
 	/* 
 	 * (non-Javadoc)
