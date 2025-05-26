@@ -322,8 +322,11 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	}
 
 	private static final String EXTENDED_METADATA = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";
+	private static final String JSON_PROPERTY = "JsonProperty";
 	private String getElementName(final ENamedElement element) {
 		String value = getAnnotationDetails(element, EXTENDED_METADATA, "name");
+		if(value != null) return value;
+		value = getAnnotationDetails(element, JSON_PROPERTY, "value");
 		if(value != null) return value;
 		return element.getName();
 	}
