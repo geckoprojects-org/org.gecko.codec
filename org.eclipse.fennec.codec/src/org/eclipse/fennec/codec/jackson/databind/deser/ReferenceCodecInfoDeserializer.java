@@ -60,7 +60,8 @@ public class ReferenceCodecInfoDeserializer extends ValueDeserializer<EObject> i
 //		EReference reference = EMFContext.getReference(ctxt);
 		
 		EMFCodecReadContext codecReadCtxt = null;
-		if(jp.streamReadContext() instanceof EMFCodecReadContext && jp.streamReadContext() instanceof TokenStreamContext crc && crc.getParent() != null) {
+		TokenStreamContext crc = jp.streamReadContext();
+		if(crc instanceof EMFCodecReadContext && crc.getParent() != null) {
 			if(crc.getParent().inObject()) {
 				codecReadCtxt = (EMFCodecReadContext) crc.getParent();
 			} else if(crc.getParent().inArray()) {
