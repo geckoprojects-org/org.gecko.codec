@@ -276,7 +276,7 @@ There are a lot of features that can be configured, both at the level of the `To
   		@SuppressWarnings("unchecked")
   		@Override
   		public F build() {
-  			return (F) new CodecFactory(genFactory, parserFactory);
+  			return (F) new CodecFactory(this, genFactory, parserFactory);
   		}		
   	}
   ```
