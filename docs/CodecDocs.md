@@ -30,7 +30,7 @@ Let's have a look now at the details.
 
 Through this service one can set up the properties of the `JsonFactory`, such as:
 
-+ `JsonFactory.Feature`
++ `TokenStreamFactory.Feature`
 + `StreamWriteFeature`
 + `JsonWriteFeature`
 + `StreamReadFeature`
@@ -41,8 +41,8 @@ The configuration accepts the following properties:
 + `enableFeatures` 
 + `disableFeatures`
 
-whose values should be arrays of `String` with the names of the properties we want to enable a disable. One can
-specify the property either with the full name (e. g. `JsonFactory.Feature.CANONICALIZE_FIELD_NAMES`) or just with the simple name (e.g. `CANONIALIZE_FIELD_NAMES`). If the prefix was specified only that specific feature will be enabled/disabled, otherwise all features with the same name will be enabled/disabled (e.g. features common to both serialization and deserialization). The default values of all these properties are the ones reported in the `jackson` documentation.
+whose values should be arrays of `String` with the names of the properties we want to enable or disable. One can
+specify the property either with the full name (e. g. `TokenStreamFactory.Feature.CANONICALIZE_FIELD_NAMES`) or just with the simple name (e.g. `CANONIALIZE_FIELD_NAMES`). If the prefix was specified only that specific feature will be enabled/disabled, otherwise all features with the same name will be enabled/disabled (e.g. features common to both serialization and deserialization). The default values of all these properties are the ones reported in the `jackson` documentation.
 
 Another property to be set in the configuration is:
 
@@ -56,9 +56,9 @@ The other two options that can be set through configuration are:
 + `genFactory.target`
 + `parserFactory.target`
 
-These take as value a filter like `(type = XXXX)`, where you can specify the type of `CodecGeneratorFactory` and `CodecParserFactory` you want to inject. These are **optional** references; if none is found a default `JsonFactory` will be created, otherwise a `CodecFactory` with the injected generator/parser factories will be created.
+These take as value a filter like `(type = XXXX)`, where you can specify the type of `CodecGeneratorFactory` and `CodecParserFactory` you want to inject. These are **optional** references; if none is found a default `DefaultCodecJsonFactory` will be created, otherwise a `CodecFactory` with the injected generator/parser factories will be created.
 
-The service provider is defined in `org.gecko.codec.configurator.CodecFactoryConfigurator`, while our default implementation is in `org.gecko.codec.jackson.DefaultCodecFactoryConfigurator`.
+The service provider is defined in `org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator`, while our default implementation is in `org.eclipse.fennec.codec.jackson.DefaultCodecFactoryConfigurator`.
 
 ### `ObjectMapperConfigurator`
 
@@ -71,8 +71,10 @@ Through this service is possible to configure properties that belong to the `Obj
 + `JsonWriteFeature`
 + `StreamReadFeature`
 + `JsonReadFeature`
++ `DateTimeFeature`
++ `EnumFeature`
 
-One can enable/disable a feature via configuration, using the properties 
+One can enable/disable a feature via configuration, using the properties:
 
 + `enableFeatures` 
 + `disableFeatures`, 
@@ -90,7 +92,7 @@ When using our default implementations, the `CodecFactoryConfigurator` is inject
 
 + `codecFactoryConfigurator.target` (takes a filter, e. g. ` (type = XXXX)`).
 
-The service provider is defined in `org.gecko.codec.configurator.ObjectMapperConfigurator`, while our default implementation is in `org.gecko.codec.jackson.DefaultObjectMapperConfigurator`.
+The service provider is defined in `org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator`, while our default implementation is in `org.eclipse.fennec.codec.jackson.DefaultObjectMapperConfigurator`.
 
 > [!WARNING]
 >
@@ -106,9 +108,9 @@ The service provider is defined in `org.gecko.codec.configurator.ObjectMapperCon
 
 ### `CodecModuleConfigurator`
 
-The service provider is defined in `org.gecko.codec.configurator.CodecModuleConfigurator`, while our default implementation is in `org.gecko.codec.jackson.module.DefaultCodecModuleConfigurator`.
+The service provider is defined in `org.eclipse.fennec.codec.configurator.CodecModuleConfigurator`, while our default implementation is in `org.eclipse.fennec.codec.jackson.module.DefaultCodecModuleConfigurator`.
 
-This service is responsible for setting up the `CodecModule.Builder`. Through the configuration (`org.gecko.codec.configurator.CodecModuleConfig`) one can set:
+This service is responsible for setting up the `CodecModule.Builder`. Through the configuration (`org.eclipse.fennec.codec.configurator.CodecModuleConfig`) one can set:
 
 + `idKey`: to instruct which keyword to use when serializing the id. Default is `_id`;
 
@@ -150,13 +152,13 @@ This service is responsible for setting up the `CodecModule.Builder`. Through th
 
   
 
-Our `CodecModule`, which is then built through the `CodecModule.Builder`, is an extension of the `org.eclipse.emfcloud.jackson.module.EMFModule`, which allows to set the additional configured properties and to overwrite the `com.fasterxml.jackson.databind.module.SimpleModule#setupModule` method, which is where we add our serializers/deserializers. 
+Our `CodecModule`, which is then built through the `CodecModule.Builder`, is an extension of the `tools.jackson.databind.module.SimpleModule`, which allows to set the additional configured properties and to overwrite the `tools.jackson.databind.module.SimpleModule#setupModule` method, which is where we add our serializers/deserializers. 
 
 ### The `CodecModelInfo`
 
-Another key ingredient is the `org.gecko.codec.info.CodecModelInfo` service. This is responsible for creating the `PackageCodecInfo` whenever a new `EPackage` is registered. The `PackageCodeInfo` is defined in the `org.gecko.codec.info.model`. For every `Eclassifier`, it contains info about codec annotations that might have been used (e.g, to specify the id strategy on to mark a feature as transient). This info will be them used and merged with the options passed to save/load a resource. 
+Another key ingredient is the `org.eclipse.fennec.codec.info.CodecModelInfo` service. This is responsible for creating the `PackageCodecInfo` whenever a new `EPackage` is registered. The `PackageCodeInfo` is defined in the `org.eclipse.fennec.codec.info.model`. For every `Eclassifier`, it contains info about codec annotations that might have been used (e.g, to specify the id strategy on to mark a feature as transient). This info will be then used and merged with the options passed to save/load a resource. 
 
-There are several codec model annotations currently supported, which are defined in `org.gecko.codec.constants.CodecAnnotations`:
+There are several codec model annotations currently supported, which are defined in `org.eclipse.fennec.codec.constants.CodecAnnotations`:
 
 + `CODEC_INHERIT`: annotation at the `EClassifier` level for specifying that codec annotations on the direct parent should be inherited, even if the parent comes from another `EPackage`. By default only if the parent belongs to the same `EPackage` then the codec annotations are inherited.
 + `CODEC_TRANSIENT`: annotation at the `EStructuralFeature` level, for specifying that the feature should not be serialized. 
@@ -166,7 +168,7 @@ There are several codec model annotations currently supported, which are defined
 + `CODEC_ID_SEPARATOR`: annotation at the `EClassifier` level, to specify the separator to be used when constructing the id with the COMBINED strategy. The default separator value is `-`. This option is ignored if the id strategy is different from COMBINED.
 + `CODEC_TYPE_INCLUDE`: annotation at the `EClassifier` level, to specify weather the type information should be serialized or not.
 + `CODEC_TYPE_USE`: annotation at the `EClassifier` level, to specify a strategy for serializing the type information. Currently supported values are:
-  +  `CLASS`: the class name will be used (e.g. `org.gecko.codec.demo.model.person.Person`) 
+  +  `CLASS`: the class name will be used (e.g. `org.eclipse.fennec.codec.demo.model.person.Person`) 
   + `NAME`: the class name will be used (e.g. `Person`)
   + `URI`: the URI will be used (e.g. `http://example.de/person/1.0#//Person`) 
 + `CODEC_ID_VALUE_WRITER_NAME`: annotation at the `EClassifier` level, to specify a `CodecValueWriter` name to be used when serializing the id field. The actual `CodecValueWriter` object should then be one of the automatically registered ones (see the paragraph on `CodecValueWriter/Reader`) or should be passed through the options when saving a Resource. 
@@ -178,7 +180,7 @@ There are several codec model annotations currently supported, which are defined
 
 #### `CodecValueWriter` and `CodecValueReader`
 
-The automatically registered `CodecValueWriter` and `CodecValueReader` are defined in `org.gecko.codec.info.helper.CodecIOHelper`. They are registered based on the type of the `CodecModelInfo`, so not all of them are automatically available for all the `CodecModelInfo`. In particular: 
+The automatically registered `CodecValueWriter` and `CodecValueReader` are defined in `org.eclipse.fennec.codec.info.helper.CodecIOHelper`. They are registered based on the type of the `CodecModelInfo`, so not all of them are automatically available for all the `CodecModelInfo`. In particular: 
 
 + For the ID field: `CodecIOHelper.DEFAULT_ID_VALUE_READER`, `CodecIOHelper.IDFIELD_VALUE_WRITER`, `CodecIOHelper.DEFAULT_ID_VALUE_WRITER`;
 + For the TYPE field: `CodecIOHelper.DEFAULT_ECLASS_READER`, `CodecIOHelper.READ_BY_NAME`, `CodecIOHelper.READ_BY_CLASS`, `CodecIOHelper.URI_WRITER`, `CodecIOHelper.WRITE_BY_NAME`, `CodecIOHelper.WRITE_BY_CLASS_NAME`;
@@ -202,21 +204,21 @@ The options one can set when saving/loading a Resource so to overwrite the defau
 
 #### `ObjectMapperOptions`
 
-These are defined in `org.gecko.codec.constants.ObjectMapperOptions` and are:
+These are defined in `org.eclipse.fennec.codec.constants.ObjectMapperOptions` and are:
 
 + `OBJ_MAPPER_DATE_FORMAT`: to overwrite the `dateFormat` property of the `ObjectMapperConfigurator`;
 + `OBJ_MAPPER_LOCALE`: to overwrite the `locale` property of the `ObjectMapperConfigurator`;
 + `OBJ_MAPPER_TIME_ZONE`: to overwrite the `timeZone` property of the `ObjectMapperConfigurator`;
-+ `OBJ_MAPPER_SERIALIZATION_FEATURES_WITH`: to specify a `List` of `com.fasterxml.jackson.databind.SerializationFeature` that should be enabled;
-+ `OBJ_MAPPER_SERIALIZATION_FEATURES_WITHOUT`: to specify a `List` of `com.fasterxml.jackson.databind.SerializationFeature` that should be disabled;
-+ `OBJ_MAPPER_DESERIALIZATION_FEATURES_WITH`: to specify a `List` of `com.fasterxml.jackson.databind.DeserializationFeature` that should be enabled;
-+ `OBJ_MAPPER_DESERIALIZATION_FEATURES_WITHOUT`: to specify a `List` of `com.fasterxml.jackson.databind.DeserializationFeature` that should be disabled;
-+ `OBJ_MAPPER_FEATURES_WITH`: to specify a `List` of `com.fasterxml.jackson.databind.MapperFeature` that should be enabled;
-+ `OBJ_MAPPER_FEATURES_WITHOUT`: to specify a `List` of `com.fasterxml.jackson.databind.MapperFeature` that should be disabled;
++ `OBJ_MAPPER_SERIALIZATION_FEATURES_WITH`: to specify a `List` of `tools.jackson.databind.SerializationFeature` that should be enabled;
++ `OBJ_MAPPER_SERIALIZATION_FEATURES_WITHOUT`: to specify a `List` of `tools.jackson.databind.SerializationFeature` that should be disabled;
++ `OBJ_MAPPER_DESERIALIZATION_FEATURES_WITH`: to specify a `List` of `tools.jackson.databind.DeserializationFeature` that should be enabled;
++ `OBJ_MAPPER_DESERIALIZATION_FEATURES_WITHOUT`: to specify a `List` of `tools.jackson.databind.DeserializationFeature` that should be disabled;
++ `OBJ_MAPPER_FEATURES_WITH`: to specify a `List` of `tools.jackson.databind.MapperFeature` that should be enabled;
++ `OBJ_MAPPER_FEATURES_WITHOUT`: to specify a `List` of `tools.jackson.databind.MapperFeature` that should be disabled;
 
 #### `CodecModuleOptions`
 
-These are defined in `org.gecko.codec.constants.CodecModuleOptions` and are:
+These are defined in `org.eclipse.fennec.codec.constants.CodecModuleOptions` and are:
 
 + `CODEC_MODULE_SERIALIZE_DEFAULT_VALUE`: to overwrite the `serializeDefaultValue` property of the `CodecModuleConfigurator`;
 + `CODEC_MODULE_SERIALIZE_EMPTY_VALUE`: to overwrite the `serializeEmptyValue` property of the `CodecModuleConfigurator`;
@@ -240,27 +242,27 @@ These are defined in `org.gecko.codec.constants.CodecModuleOptions` and are:
 
 #### `CodecModelInfoOptions`
 
-These are defined in `org.gecko.codec.constants.CodecModelInfoOptions` and are:
+These are defined in `org.eclipse.fennec.codec.constants.CodecModelInfoOptions` and are:
 
 + `CODEC_IGNORE_FEATURE_LIST`: to specify a list of `EStructuralFeature` that should be ignored during serialization or deserialization. If an `EStructuralFeature` is marked as `transient` in the model or has been annotated with the `CODEC_TRANSIENT` annotation, it will still be ignored even is it is not present in this list;
 + `CODEC_IGNORE_NOT_FEATURE_LIST`:  to specify a list of `EStructuralFeature` that should **NOT** be ignored during serialization or deserialization. If an `EStructuralFeature` is marked as `transient` in the model or has been annotated with the `CODEC_TRANSIENT` annotation, it will then be taken into account if present in this list;
-+ `CODEC_ID_SRATEGY`: to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_ID_STRATEGY` annotation;
-+ `CODEC_ID_SEPARATOR`: to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_ID_SEPARATOR` annotation;
++ `CODEC_ID_SRATEGY`: to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_ID_STRATEGY` annotation;
++ `CODEC_ID_SEPARATOR`: to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_ID_SEPARATOR` annotation;
 + `CODEC_ID_FEATURES_LIST`: to specify an ordered list of `EStructuralFeature` to be used when constructing the id, if the id strategy is set to COMBINED. Otherwise it will be ignored.
-+ `CODEC_ID_VALUE_WRITER_NAME`:  to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME` annotation;
-+ `CODEC_ID_VALUE_READER_NAME`:  to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_ID_VALUE_READER_NAME` annotation;
-+ `CODEC_TYPE_VALUE_WRITER_NAME`:  to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_WRITER_NAME` annotation;
-+ `CODEC_TYPE_VALUE_READER_NAME`:  to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_READER_NAME` annotation;
++ `CODEC_ID_VALUE_WRITER_NAME`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME` annotation;
++ `CODEC_ID_VALUE_READER_NAME`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_ID_VALUE_READER_NAME` annotation;
++ `CODEC_TYPE_VALUE_WRITER_NAME`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_WRITER_NAME` annotation;
++ `CODEC_TYPE_VALUE_READER_NAME`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_READER_NAME` annotation;
 + `CODEC_ID_VALUE_WRITER`: to specify a `CodecValueWriter` object to be used when serializing the id information;
 + `CODEC_ID_VALUE_READER`: to specify a `CodecValueReader` object to be used when deserializing the id information;
 + `CODEC_TYPE_VALUE_WRITER`: to specify a `CodecValueWriter` object to be used when serializing the type information;
 + `CODEC_TYPE_VALUE_READER`: to specify a `CodecValueReader` object to be used when deserializing the type information;
 + `CODEC_VALUE_WRITERS_MAP`: a Map, where the keys are of type `EStructuralFeature` and the values are of type `CodecValueWriter`, to specify the `CodecValueWrtier` to use when serializing the corresponding `EStructuralFeautre`;
 + `CODEC_VALUE_READERS_MAP`: a Map, where the keys are of type `EStructuralFeature` and the values are of type `CodecValueReader`, to specify the `CodecValueReader` to use when deserializing the corresponding `EStructuralFeautre`;
-+ `CODEC_TYPE_USE`:  to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_USE` annotation;
-+ `CODEC_TYPE_INCLUDE`:  to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_INCLUDE` annotation. If the `CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE` is set to `FALSE` then this option is ignored, even if set to `TRUE`.
++ `CODEC_TYPE_USE`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_TYPE_USE` annotation;
++ `CODEC_TYPE_INCLUDE`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_TYPE_INCLUDE` annotation. If the `CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE` is set to `FALSE` then this option is ignored, even if set to `TRUE`.
 
-As these options can be different for different `EClass`, when saving/loading a Resource, one should actually create a Map, where the keys are the `EClass` and the values are the options for that `EClass`. The Map then should be passed via the saving/loading options with the key `org.gecko.codec.constants.CodecResourceOptions.CODEC_OPTIONS`.
+As these options can be different for different `EClass`, when saving/loading a Resource, one should actually create a Map, where the keys are the `EClass` and the values are the options for that `EClass`. The Map then should be passed via the saving/loading options with the key `org.eclipse.fennec.codec.constants.CodecResourceOptions.CODEC_OPTIONS`.
 
 ```java
 Map<String, Object> options = new HashMap<>();
@@ -273,19 +275,19 @@ options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 resource.save(options);
 ```
 
-In addition to all these options, when deserializing, the  `org.gecko.codec.constants.CodecResourceOptions.CODEC_ROOT_OBJECT` option should be passed. This accepts as value the `EClass` of the root object that has to be deserialized. This option is **MANDATORY** if there is no type information in the document to be read.  
+In addition to all these options, when deserializing, the  `org.eclipse.fennec.codec.constants.CodecResourceOptions.CODEC_ROOT_OBJECT` option should be passed. This accepts as value the `EClass` of the root object that has to be deserialized. This option is **MANDATORY** if there is no type information in the document to be read.  
 
 ### The Serialization/Deserialization Mechanism
 
 The actual serialization/deserialization process starts when the `CodecModule` and the `ObjectMapper` are created, after the saving/loading options have been taken into account and merged to the previously configured options.
 
-At this point the `CodecModule#setupModule` method is called. This inherits from `com.fasterxml.jackson.databind.module.SimpleModule#setupModule(com.fasterxml.jackson.databind.Module.SetupContext)`, and it is where the module registers the serializers and deserializers.
+At this point the `CodecModule#setupModule` method is called. This inherits from `tools.jackson.databind.module.SimpleModule#setupModule(tools.jackson.databind.Module.SetupContext)`, and it is where the module registers the serializers and deserializers.
 
-In particular, we are overwriting the `org.eclipse.emfcloud.jackson.databind.ser.EMFSerializers` and `org.eclipse.emfcloud.jackson.databind.deser.EMFDeserializers` behavior, in case an `EObject` is found to be saved/loaded. In such case, indeed, we are redirecting the flow to take our corresponding `CodecEObjectSerializer` and `CodecEObjectDeserializer`.
+In particular, we are overwriting the `tools.jackson.databind.ser.Serializers.Base` and `tools.jackson.databind.ser.Deserializers.Base` behavior, in case an `EObject` is found to be saved/loaded. In such case, indeed, we are redirecting the flow to take our corresponding `CodecEObjectSerializer` and `CodecEObjectDeserializer`.
 
 ### `CodecEObjectSerializer`
 
-The `CodecEObjectSerializer` is defined in `org.gecko.codec.jackson.databind.ser` and it extends the `com.fasterxml.jackson.databind.JsonSerializer`.
+The `CodecEObjectSerializer` is defined in `org.eclipse.fennec.codec.jackson.databind.ser` and it extends the `tools.jackson.databind.ValueSerializer`.
 
 When its `serialize` method is called, the first thing it does is retrieving the corresponding `PackageCodecInfo` from the `CodecModule` and extracting from that the `EClassCodecInfo` which corresponds to the `EObject` it wants to write.
 
@@ -293,58 +295,59 @@ Then the `JsonGenerator` starts writing the object, and, based on the `CodecModu
 
 The actual type of the `JsonGenerator` here depends on the `CodecGeneratorFactory` that has been used when constructing the `JsonFactory`. 
 
-The `CodecInfoSerializer` type is defined in  `org.gecko.codec.jackson.databind.ser.CodecInfoSerializer` and is just an interface which provide a 
+The `CodecInfoSerializer` type is defined in  `org.eclipse.fennec.codec.jackson.databind.ser.CodecInfoSerializer` and is just an interface which provide a 
 
 ```java
-void serialize(EObject rootObj, JsonGenerator gen, SerializerProvider provider) throws IOException;
+void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider);
 ```
 
 method.
 
 There are then several implementations for that:
 
-+ `IdCodecIngoSerializer`: responsible for writing the id information;
++ `IdCodecInfoSerializer`: responsible for writing the id information;
 + `TypeCodecInfoSerializer`: responsible for writing the type information;
 + `SuperTypeCodecInfoSerializer`: responsible for writing the supertype information;
 + `FeatureCodecInfoSerializer`: responsible for writing `EAttribute`;
 + `ReferenceCodecInfoSerializer`: responsible for writing containment and non containment `EReference`;
-+ `EnumeratorSerializer`: responsible for writing enumerators;
-+ `OperationCodecInfoSerializer`: responsible for writing `EOperation`
++ `EnumeratorCodecInfoSerializer`: responsible for writing enumerators;
++ `OperationCodecInfoSerializer`: responsible for writing `EOperation`.
 
 ### `CodecEObjectDeserializer`
 
-The `CodecEObjectDeserializer` is defined in `org.gecko.codec.jackson.databind.deser` and it extends the `com.fasterxml.jackson.databind.JsonDeserializer`.
+The `CodecEObjectDeserializer` is defined in `org.eclipse.fennec.codec.jackson.databind.deser` and it extends the `tools.jackson.databind.ValueDeserializer`.
 
 When an `EObject` has to be read, the first thing it tries to do is to get the type information from the document, so it can construct the right object. This is done in several ways:
 
-+ Look for the `org.gecko.codec.constants.CodecResourceOptions.CODEC_ROOT_OBJECT`: this is mandatory in case the type information is not present in the document to be read. In case of root object then we might get the information directly from here. 
++ Look for the `org.eclipse.fennec.codec.constants.CodecResourceOptions.CODEC_ROOT_OBJECT`: this is mandatory in case the type information is not present in the document to be read. In case of root object then we might get the information directly from here. 
 + Look for the type of the current attribute from the `DeserializationContext`: this is available in case of contained references;
 + Look for the type keyword in the document: if the type information has been serialized this should always bring to a result;
-+ Look for the root context and retrieve the type of the reference: this might be needed in case of non contained references which have been serialized without type information.
 
 Once the right object has been built, we can go through the other features and call the corresponding `CodecInfoDeserializer`.
 
-The `CodecInfoDeserializer` is defined in `org.gecko.codec.jackson.databind.deser` and is just an interface with two methods: 
+The `CodecInfoDeserializer` is defined in `org.eclipse.fennec.codec.jackson.databind.deser` and is just an interface with one method: 
 
 ```java
-public EObject deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException;
-
-public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) throws IOException;
+public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource);
 ```
 
 The implementations are:
 
-+ `IdCodecInfoDeserializer`: responsible for reading the id information and setting the id fields, if the `CodecModule` `serializeIdField` was set to `FALSE`;
 + `FeatureCodecInfoDeserializer`: responsible for reading attributes, containment and non containment references, enumerators;
 + `ReferenceCodecInfoDeserializer`: it is called from the `FeatureCodecInfoDeserializer` in order to perform the actual deserialization of non containment references.
 
 ### The Layer in Between
 
-What allows to use this general setup for multiple persistence mechanisms is a layer in between that is formed, on the serialization side, from the `org.gecko.codec.jackson.databind.ser.CodecGeneratorBaseImpl`, and, on the deserialization side, from the `org.gecko.codec.jackson.databind.deser.CodecParserBaseImpl`.
+What allows to use this general setup for multiple persistence mechanisms is a layer in between that is formed, on the serialization side, from the `org.eclipse.fennec.codec.jackson.databind.ser.CodecGeneratorBaseImpl`, and, on the deserialization side, from the `org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl`.
 
-These are `abstract` classes which inherit, respectively, from `com.fasterxml.jackson.core.base.GeneratorBase` and `com.fasterxml.jackson.core.base.ParserBase`. Extending these classes was necessary, from the serialization side, to allow the use of an extension of the `JsonWriteContext` with our `CodecWriteContext`, so that additional information, such as the current `EStructuralFeature`, can be recorded. In addition to that we provide default implementations for methods that write/read, which then further implementations can overwrite. 
+These are `abstract` classes which inherit, respectively, from `tools.jackson.core.base.GeneratorBase` and `tools.jackson.core.base.ParserBase`. Extending these classes was necessary to allow the use of an extension of the `tools.jackson.core.TokenStreamContext`. Here, due to inheritance issues, we had to proceed in two different ways, when considering pure json and when considering everything else:
 
-The idea is that specific codec implementations provide their own implementations of such classes, so that they can put all the logic which belongs to the specific persistence mechanism is there, while the general framework remains the same for every implementations.
++ for the `json` case we have implemented a `CodecJsonReadContext` and a `CodecJsonWriteContext`, which extend, respecitvely, the `tools.jackson.core.json.JsonReadContext` and `tools.jackson.core.json.JsonWriteContext`. 
++ for the other cases we have implemented a `CodecReadContext` and a `CodecWriteContext` which simply extend the `tools.jackson.core.TokenStreamContext`.
+
+In our custom contexts we can store additional information, such as the current `EStructuralFeature`. In addition to that we provide default implementations for methods that write/read, which then further implementations can overwrite. 
+
+The idea is that specific codec implementations provide their own implementations of such classes, so that they can put all the logic which belongs to the specific persistence mechanism in there, while the general framework remains the same for every implementations.
 
 ## Implementations
 
@@ -353,7 +356,7 @@ We currently have implemented the codec for:
 + `json`
 + `mongodb`
 
-For the `json` implementation we are relying on the `JsonGenerator`s and `JsonParser`s already available in jackson, while for the `mongo` implementation we are providing `org.gecko.condec.mongo.MongoCodecGenerator` and `org.gecko.condec.mongo.MongoCodecParser`, which are then constructed in the corresponding `MongoGeneratorFactory` and `MongoParserFactory`, injected in the `CodecFactoryConfigurator`.
+For the `json` implementation we are relying on the `JsonGenerator`s and `JsonParser`s already available in jackson, while for the `mongo` implementation we are providing `org.eclipse.fennec.codec.mongo.MongoCodecGenerator` and `org.eclipse.fennec.codec.mongo.MongoCodecParser`, which are then constructed in the corresponding `MongoGeneratorFactory` and `MongoParserFactory`, injected in the `CodecFactoryConfigurator`.
 
 > [!IMPORTANT]
 >
@@ -361,6 +364,8 @@ For the `json` implementation we are relying on the `JsonGenerator`s and `JsonPa
 >
 > + `proxyKey` and `timestampKey` are available options in the `CodecModuleConfig` but they are not currently used in the implementations of the serialization/deserialization process;
 > + currently it is only possible to save the supertypes as an array or a comma separated String of URIs; it might be useful to have a strategy like we have for the type information, so one can save the supertypes also as class names or simply as names. It might also be useful to serialize them with another separator rather than a comma separated String (?)
+> + We do not have any special support for jackson annotations, such as `@JsonAnyGetter`, and I do not know if this would work out of the box;
+> + Annotations like `@JsonProperty` have been introduced in emfjson, so we might want a similar behaviour in our codec annotations (this `JsonProperty` for instance allows to set an alternative name to be used for serialization without the limitation of the extended meta data on some special characters);
 > + ~~serialization/deserialization of Maps has not been tested and nothing special has been implemented for them, so not sure if it works out of the box with the "standard" jackson serializers or not;~~ Works for EMap
 > + Our `CodecInfoSerializer` and `CodecInfoDeserializer`, from which all our "special" serializers/deserializers inherit, are **NOT** extension of `JsonSerializer` and `JsonParser`. Maybe they could be in the future and be registered like the others. 
 
@@ -372,7 +377,7 @@ For the `json` implementation we are relying on the `JsonGenerator`s and `JsonPa
   * Error handling
   * Java and Sonar Warnings
 
-* Tests in org.gecko.codec/test/ remove?
+* Tests in org.eclipse.fennec.codec/test/ remove?
 * Moving gecko EMFUtil features to codec.
 * License header
 * CDO
