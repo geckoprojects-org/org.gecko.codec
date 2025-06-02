@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.constants.CodecResourceOptions;
@@ -41,7 +40,6 @@ import org.eclipse.fennec.codec.jackson.utils.CodecParserException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.TokenStreamContext;
-import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.deser.jdk.StringDeserializer;
@@ -94,7 +92,6 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		//		final EClass defaultType = getDefaultType(ctxt);
 
 		final Resource resource = codecReadCtxt != null ? codecReadCtxt.getResource() : null;
-		EStructuralFeature feature = codecReadCtxt != null ? codecReadCtxt.getCurrentFeature() : null;
 		final EClass defaultType = codecReadCtxt != null ? getDefaultType((TokenStreamContext)codecReadCtxt) : null;
 
 
@@ -102,9 +99,13 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		//		This fixes the issue when we don't have a _type property for contained ref, to retrieve the actual type
 		//		In case of root obj we have the ROOT_OBJECT option that is mandatory if the _type is not set so we 
 		//		can use that to construct everything		
-		EClass type = defaultType == null ? ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) == null ? null : (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) : defaultType;	
+		EClass type;
+		if (defaultType != null) {
+			type = defaultType;
+		} else {
+			type = (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT);
+		}
 		EObject current = type == null ? null : EcoreUtil.create(type);
-
 		if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
 
 		//		In case of non contained ref w/o type info we try to retrieve the root ctxt so we know which ref we are trying to deserialize
@@ -141,7 +142,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 				jp.nextToken();
 				for(CodecValueReader<String, EClass> reader : infoHolder.getReaders()) {
 					try {
-						type = (EClass) reader.readValue(StringDeserializer.instance.deserialize(jp, ctxt), ctxt);
+						type = reader.readValue(StringDeserializer.instance.deserialize(jp, ctxt), ctxt);
 					} catch(Exception e) {
 						type = null;
 					}
@@ -244,7 +245,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 				return featureCodecInfo;
 			}
 		}
-		LOGGER.warning(String.format("No CodecInfo found for field %s", fieldName));
+		LOGGER.warning(() -> "No CodecInfo found for field " + fieldName + " in " + eObjCodecInfo.getId());
 		return null;
 	}
 
