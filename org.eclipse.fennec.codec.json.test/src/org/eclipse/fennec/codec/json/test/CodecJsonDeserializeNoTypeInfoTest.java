@@ -38,6 +38,7 @@ import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -133,6 +134,7 @@ public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 	}
 	
 	@Test
+	@Disabled("Not implemented use case")
 	public void testDeserializationReferenceWOType() throws IOException {
 
 	

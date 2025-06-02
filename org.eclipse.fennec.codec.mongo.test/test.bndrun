@@ -35,9 +35,6 @@
 	assertj-core;version='[3.24.2,3.24.3)',\
 	net.bytebuddy.byte-buddy;version='[1.14.9,1.14.10)',\
 	org.gecko.emf.osgi.component.minimal;version='[6.3.0,6.3.1)',\
-	org.gecko.emf.osgi.api;version='[6.3.0,6.3.1)',\
-	org.gecko.emf.osgi.component.config;version='[6.3.0,6.3.1)',\
-	org.gecko.mongo.osgi.api;version='[6.1.0,6.1.1)',\
 	com.fasterxml.jackson.core.jackson-annotations;version='[3.0.0,3.0.1)',\
 	tools.jackson.core.jackson-core;version='[3.0.0,3.0.1)',\
 	tools.jackson.core.jackson-databind;version='[3.0.0,3.0.1)',\
@@ -47,4 +44,9 @@
 	org.eclipse.fennec.codec.info.model;version=snapshot,\
 	org.eclipse.fennec.codec.mongo;version=snapshot,\
 	org.eclipse.fennec.codec.mongo.test;version=snapshot,\
-	org.eclipse.fennec.codec.test.helper;version=snapshot
+	org.eclipse.fennec.codec.test.helper;version=snapshot,\
+	net.bytebuddy.byte-buddy-agent;version='[1.14.9,1.14.10)',\
+	org.mockito.junit-jupiter;version='[4.11.0,4.11.1)',\
+	org.mockito.mockito-core;version='[4.11.0,4.11.1)',\
+	org.objenesis;version='[3.3.0,3.3.1)',\
+	org.osgi.service.cm;version='[1.6.1,1.6.2)'
