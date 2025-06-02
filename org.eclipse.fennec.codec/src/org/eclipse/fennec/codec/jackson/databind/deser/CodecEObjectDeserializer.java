@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.constants.CodecResourceOptions;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
@@ -109,17 +108,17 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
 
 		//		In case of non contained ref w/o type info we try to retrieve the root ctxt so we know which ref we are trying to deserialize
-		if(current == null) {
-			DatabindContext rootCtxt = EMFContext.getRootContext();
-			if(rootCtxt != null) {
-				feature = EMFContext.getFeature(rootCtxt);
-				if(feature != null && feature.getEType() instanceof EClass eClass) {
-					type = eClass;
-					current = EcoreUtil.create(type);
-					if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
-				}
-			}
-		}
+//		if(current == null) {
+//			DatabindContext rootCtxt = EMFContext.getRootContext();
+//			if(rootCtxt != null) {
+//				feature = EMFContext.getFeature(rootCtxt);
+//				if(feature != null && feature.getEType() instanceof EClass eClass) {
+//					type = eClass;
+//					current = EcoreUtil.create(type);
+//					if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
+//				}
+//			}
+//		}
 
 		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
 		EClassCodecInfo eObjCodecInfo = null;

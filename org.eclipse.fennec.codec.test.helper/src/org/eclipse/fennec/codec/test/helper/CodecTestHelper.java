@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
+import org.eclipse.fennec.codec.info.helper.CodecIOHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.BusinessAddress;
 import org.gecko.codec.demo.model.person.BusinessPerson;
@@ -186,7 +186,7 @@ public class CodecTestHelper {
 		public EClass readValue(String value, DeserializationContext ctxt) {
 			if(value == null) return null;
 			if(value.startsWith("test.")) value = value.substring(5);
-			return EMFContext.findEClassByName(ctxt, value);
+			return CodecIOHelper.findEClassByName(value);
 		}
 	};
 }

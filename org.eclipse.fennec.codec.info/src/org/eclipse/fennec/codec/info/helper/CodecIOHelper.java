@@ -13,17 +13,23 @@
  */
 package org.eclipse.fennec.codec.info.helper;
 
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.findEClass;
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.getURI;
 
+import static java.util.Spliterator.ORDERED;
+import static java.util.Spliterators.spliteratorUnknownSize;
+import static java.util.stream.StreamSupport.stream;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
-import org.eclipse.emfcloud.jackson.resource.JsonResource;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 
@@ -37,9 +43,9 @@ import tools.jackson.databind.SerializationContext;
  * @since Aug 2, 2024
  */
 public class CodecIOHelper {
-	
-	
-	
+
+
+
 	public static final CodecValueReader<Object, String> DEFAULT_ID_VALUE_READER = new CodecValueReader<>() {
 
 		@Override
@@ -62,17 +68,10 @@ public class CodecIOHelper {
 
 		@Override
 		public Object writeValue(EObject value, SerializationContext provider) {
-			Resource resource = EMFContext.getResource(provider, value);
-			Object id;
-			if (resource instanceof JsonResource) {
-				id = ((JsonResource) resource).getID(value);
-			} else {
-				id = EMFContext.getURI(provider, value).fragment();
-			}
-			return id;
+			return EcoreUtil.getID(value);
 		}
 	};
-			
+
 
 	public static final CodecValueWriter<EObject, Object> IDFIELD_VALUE_WRITER = new CodecValueWriter<>() {
 		@Override
@@ -85,7 +84,7 @@ public class CodecIOHelper {
 			return EcoreUtil.getID(value);
 		}
 	};
-			
+
 
 	public static final CodecValueReader<String, EClass> DEFAULT_ECLASS_READER = new CodecValueReader<>() {
 
@@ -96,11 +95,12 @@ public class CodecIOHelper {
 
 		@Override
 		public EClass readValue(String value, DeserializationContext context) {
-			return findEClass(context, value);
+			Set<EClass> types = getAllTypes();			
+			return types.stream().filter(findByURI(value)).findFirst().orElse(null);
 		}
 	};
-	
-	
+
+
 	public static final CodecValueWriter<EClass, String[]> ALL_SUPERTYPE_WRITER = new CodecValueWriter<>() {
 
 		@Override
@@ -113,7 +113,7 @@ public class CodecIOHelper {
 			return getAllSuperTypeURIs(provider, value);
 		}		
 	};
-	
+
 	public static final CodecValueWriter<EClass, String[]> SINGLE_SUPERTYPE_WRITER = new CodecValueWriter<>() {
 
 		@Override
@@ -128,8 +128,8 @@ public class CodecIOHelper {
 			return null;
 		}		
 	};
-			
-			
+
+
 
 	public static final CodecValueWriter<EClass, String> URI_WRITER = new CodecValueWriter<>() {
 
@@ -140,10 +140,12 @@ public class CodecIOHelper {
 
 		@Override
 		public String writeValue(EClass value, SerializationContext provider) {
-			return getURI(provider, value).toString();
+			URI uri = EcoreUtil.getURI(value);
+			if(uri == null) return null;
+			return uri.toString();
 		}		
 	};
-			
+
 	public static final CodecValueReader<String, EClass> READ_BY_NAME = new CodecValueReader<>() {
 
 		@Override
@@ -153,10 +155,49 @@ public class CodecIOHelper {
 
 		@Override
 		public EClass readValue(String value, DeserializationContext context) {
-			return EMFContext.findEClassByName(context, value);
+			return findEClassByName(value);
 		}
 	};
-			
+	
+	private static Set<EClass> getAllTypes() {
+		EPackage.Registry global = EPackage.Registry.INSTANCE;
+		Map<String, Object> registry = new HashMap<>();
+		registry.putAll(global);
+
+		return registry.values().stream()
+				.map(e -> {
+					if (e instanceof EPackage.Descriptor) {
+						return ((EPackage.Descriptor) e).getEPackage();
+					} else if (e instanceof EPackage) {						
+						return (EPackage) e;
+					} else {
+						return null;
+					}
+				})
+				.filter(Objects::nonNull)
+				.flatMap(e -> stream(spliteratorUnknownSize(e.eAllContents(), ORDERED), false))
+				.filter(e -> e instanceof EClass)
+				.map(e -> (EClass) e)
+				.collect(Collectors.toSet());
+
+	}
+	
+	public static EClass findEClassByName(String name) {
+		Set<EClass> types = getAllTypes();
+		return types.stream().filter(findByName(name)).findFirst().orElse(null);
+	}
+	
+	private static Predicate<EObject> findByURI(final String value) {
+		return e -> value != null && e instanceof EClass && EcoreUtil.getURI(e) != null && value.equals(EcoreUtil.getURI(e).toString());
+	}
+
+	private static Predicate<EObject> findByName(final String value) {
+		return e -> value != null && e instanceof EClass && value.equals(((EClass) e).getName());
+	}
+
+	private static Predicate<EObject> findByQualifiedName(final String value) {
+		return e -> value != null && e instanceof EClass && value.equals(((EClass) e).getInstanceClassName());
+	}
 
 	public static final CodecValueWriter<EClass, String> WRITE_BY_NAME = new CodecValueWriter<>() {
 
@@ -170,8 +211,8 @@ public class CodecIOHelper {
 			return value != null ? value.getName() : null;
 		}		
 	};
-			
-	
+
+
 	public static final CodecValueReader<String, EClass> READ_BY_CLASS = new CodecValueReader<>() {
 
 		@Override
@@ -181,10 +222,11 @@ public class CodecIOHelper {
 
 		@Override
 		public EClass readValue(String value, DeserializationContext context) {
-			return EMFContext.findEClassByQualifiedName(context, value);
+			Set<EClass> types = getAllTypes();
+			return types.stream().filter(findByQualifiedName(value)).findFirst().orElse(null);
 		}
 	};
-			
+
 
 	public static final CodecValueWriter<EClass, String> WRITE_BY_CLASS_NAME = new CodecValueWriter<>() {
 
@@ -197,24 +239,24 @@ public class CodecIOHelper {
 		public String writeValue(EClass value, SerializationContext provider) {
 			return value != null ? value.getInstanceClassName() : null;
 		}
-		
-	};
-	
-	private static String[] getAllSuperTypeURIs(final DatabindContext ctxt, final EObject object) {
-	      if (object == null) {
-	         return null;
-	      }
 
-	      if (object instanceof EClass) {
-	    	  EClass eclass = (EClass) object;
-	    	  return eclass.getEAllSuperTypes().
-	    			  stream().
-	    			  map(EcoreUtil::getURI).
-	    			  map(Object::toString).
-	    			  collect(Collectors.toList()).
-	    			  toArray(new String[0]);
-	      }
-	      return new String[0];
-	   }
+	};
+
+	private static String[] getAllSuperTypeURIs(final DatabindContext ctxt, final EObject object) {
+		if (object == null) {
+			return null;
+		}
+
+		if (object instanceof EClass) {
+			EClass eclass = (EClass) object;
+			return eclass.getEAllSuperTypes().
+					stream().
+					map(EcoreUtil::getURI).
+					map(Object::toString).
+					collect(Collectors.toList()).
+					toArray(new String[0]);
+		}
+		return new String[0];
+	}
 
 }

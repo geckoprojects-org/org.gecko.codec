@@ -3,7 +3,6 @@
 	
 -buildpath: \
 	org.eclipse.fennec.codec.info.model;version=snapshot,\
-	org.eclipse.fennec.codec.emfjson,\
 	org.eclipse.fennec.codec.constants;version=latest,\
 	tools.jackson.core.jackson-databind
 	

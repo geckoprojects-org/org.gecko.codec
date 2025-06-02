@@ -25,8 +25,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.databind.type.FeatureKind;
 import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
+import org.eclipse.fennec.codec.jackson.utils.FeatureKind;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
