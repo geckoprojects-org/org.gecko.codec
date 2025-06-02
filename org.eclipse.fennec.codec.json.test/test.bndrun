@@ -47,4 +47,7 @@
 	org.eclipse.fennec.codec.info.model;version=snapshot,\
 	org.eclipse.fennec.codec.json;version=snapshot,\
 	org.eclipse.fennec.codec.json.test;version=snapshot,\
-	org.eclipse.fennec.codec.test.helper;version=snapshot
+	org.eclipse.fennec.codec.test.helper;version=snapshot,\
+	org.eclipse.fennec.ai.jsonschema.model;version='[1.0.0,1.0.1)',\
+	org.eclipse.fennec.ai.test.model;version='[1.0.0,1.0.1)',\
+	org.avatar.dataspace.asset.model;version='[1.0.0,1.0.1)'

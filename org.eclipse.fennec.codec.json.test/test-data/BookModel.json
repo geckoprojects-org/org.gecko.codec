@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "publicationYear": {
+      "type": "integer"
+    },
+    "pageCount": {
+      "type": "integer"
+    },
+    "summary": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "author"
+  ]
+}

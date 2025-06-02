@@ -1,0 +1,17 @@
+{
+  "@context" : {
+    "obj" : {
+      "properties" : {
+        "v2" : {
+          "value" : "http://schema.org/v2"
+        },
+        "v1" : {
+          "value" : "http://schema.org/v1"
+        }
+      }
+    },
+    "Person" : {
+      "value" : "http://xmlns.com/foaf/0.1/Person"
+    }
+  }
+}

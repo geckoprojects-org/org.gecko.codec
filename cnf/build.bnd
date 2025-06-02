@@ -7,7 +7,8 @@
 	geckoOSGi-Test,\
 	geckoJacoco,\
 	geckoEMF,\
-	geckoSearch
+	geckoSearch,\
+	geckoEMFUtil
 
 # Needed because we enabled library 'gecko-dimc'
 # Activate baselining
@@ -23,6 +24,7 @@ javac.source: 17
 javac.target: 17
 
 -require-bnd "(version>=7.0.0)"
+
 
 -plugin.3.Central: \
     aQute.bnd.repository.maven.provider.MavenBndRepository; \
