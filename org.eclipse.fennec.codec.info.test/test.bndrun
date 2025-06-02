@@ -36,8 +36,6 @@
 	tools.jackson.core.jackson-core;version='[3.0.0,3.0.1)',\
 	tools.jackson.core.jackson-databind;version='[3.0.0,3.0.1)',\
 	org.eclipse.fennec.codec.demo.model;version=snapshot,\
-	org.eclipse.fennec.codec.emfjson;version=snapshot,\
 	org.eclipse.fennec.codec.info;version=snapshot,\
 	org.eclipse.fennec.codec.info.model;version=snapshot,\
-	org.eclipse.fennec.codec.info.test;version=snapshot,\
-	org.eclipse.fennec.codec.constants;version=snapshot
+	org.eclipse.fennec.codec.info.test;version=snapshot

@@ -4,7 +4,6 @@ Bundle-Description: Eclipse Fennec Project Codec Framework
 
 -buildpath: \
 	org.osgi.util.promise;version=latest,\
-	org.eclipse.fennec.codec.emfjson;version=project,\
 	org.eclipse.fennec.codec.info.model,\
 	org.eclipse.fennec.codec.info,\
 	org.eclipse.fennec.codec.constants,\

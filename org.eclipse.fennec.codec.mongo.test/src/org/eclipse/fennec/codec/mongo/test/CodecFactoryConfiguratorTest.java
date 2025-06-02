@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.test;
+package org.eclipse.fennec.codec.mongo.test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -49,11 +49,17 @@ import tools.jackson.core.json.JsonFactory;
 @ExtendWith(ServiceExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
+@WithFactoryConfiguration(name = "mongoClient", location = "?", factoryPid = "MongoClientProvider", properties = {
+		@Property(key = "client_id", value = "test"), @Property(key = "uri", value = "mongodb://localhost:27017") })
+@WithFactoryConfiguration(name = "mongoDatabase", location = "?", factoryPid = "MongoDatabaseProvider", properties = {
+		@Property(key = "alias", value = "TestDB"), @Property(key = "database", value = "test") })
 public class CodecFactoryConfiguratorTest {
 
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="json"),
+			@Property(key = "type", value="mongo"),
+			@Property(key = "genFactory.target", value="(type=mongo)"), 
+			@Property(key = "parserFactory.target", value="(type=mongo)"),
 			@Property(key = "disableFeatures", value={"INTERN_PROPERTY_NAMES", "TokenStreamFactory.Feature.CANONICALIZE_PROPERTY_NAMES", 
 					"FAIL_ON_SYMBOL_HASH_OVERFLOW","CHARSET_DETECTION"}, type = Type.Array)
 	})
@@ -74,7 +80,9 @@ public class CodecFactoryConfiguratorTest {
 	
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="json"),
+			@Property(key = "type", value="mongo"),
+			@Property(key = "genFactory.target", value="(type=mongo)"), 
+			@Property(key = "parserFactory.target", value="(type=mongo)"),
 			@Property(key = "enableFeatures", value={"WRITE_BIGDECIMAL_AS_PLAIN", "StreamWriteFeature.IGNORE_UNKNOWN", 
 					"StreamWriteFeature.STRICT_DUPLICATE_DETECTION", "StreamWriteFeature.USE_FAST_DOUBLE_WRITER"}, type = Type.Array)
 	})
@@ -94,7 +102,9 @@ public class CodecFactoryConfiguratorTest {
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="json"),
+			@Property(key = "type", value="mongo"),
+			@Property(key = "genFactory.target", value="(type=mongo)"), 
+			@Property(key = "parserFactory.target", value="(type=mongo)"),
 			@Property(key = "disableFeatures", value={"AUTO_CLOSE_TARGET", "StreamWriteFeature.AUTO_CLOSE_CONTENT", 
 					"StreamWriteFeature.FLUSH_PASSED_TO_STREAM"}, type = Type.Array)
 	})
@@ -113,7 +123,9 @@ public class CodecFactoryConfiguratorTest {
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="json"),
+			@Property(key = "type", value="mongo"),
+			@Property(key = "genFactory.target", value="(type=mongo)"), 
+			@Property(key = "parserFactory.target", value="(type=mongo)"),
 			@Property(key = "enableFeatures", value={"STRICT_DUPLICATE_DETECTION", "IGNORE_UNDEFINED", 
 					"INCLUDE_SOURCE_IN_LOCATION", "USE_FAST_DOUBLE_PARSER", "USE_FAST_BIG_NUMBER_PARSER"}, type = Type.Array)
 	})
@@ -134,7 +146,9 @@ public class CodecFactoryConfiguratorTest {
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="json"),
+			@Property(key = "type", value="mongo"),
+			@Property(key = "genFactory.target", value="(type=mongo)"), 
+			@Property(key = "parserFactory.target", value="(type=mongo)"),
 			@Property(key = "disableFeatures", value={"AUTO_CLOSE_SOURCE"}, type = Type.Array)
 	})
 	@Test

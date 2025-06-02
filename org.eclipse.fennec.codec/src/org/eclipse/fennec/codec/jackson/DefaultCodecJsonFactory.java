@@ -28,6 +28,7 @@ import tools.jackson.core.SerializableString;
 import tools.jackson.core.io.CharacterEscapes;
 import tools.jackson.core.io.IOContext;
 import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.json.JsonFactoryBuilder;
 import tools.jackson.core.sym.ByteQuadsCanonicalizer;
 
 /**
@@ -39,6 +40,11 @@ public class DefaultCodecJsonFactory extends JsonFactory {
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 1L;
+	
+	public DefaultCodecJsonFactory(JsonFactoryBuilder builder) {
+		super(builder);
+	}
+	
 
 	/* 
 	 * (non-Javadoc)

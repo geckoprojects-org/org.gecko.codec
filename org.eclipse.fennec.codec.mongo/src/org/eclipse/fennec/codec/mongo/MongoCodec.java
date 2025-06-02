@@ -11,9 +11,7 @@
  */
 package org.eclipse.fennec.codec.mongo;
 
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.Attributes.RESOURCE;
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.Attributes.RESOURCE_SET;
-
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bson.BsonReader;
@@ -23,7 +21,6 @@ import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.CodecDataInput;
 import org.eclipse.fennec.codec.CodecDataOutput;
 import org.eclipse.fennec.codec.mongo.resource.CodecMongoResource;
@@ -52,8 +49,11 @@ final class MongoCodec implements Codec<EObject> {
 
 	@Override
 	public void encode(BsonWriter writer, EObject value, EncoderContext encoderContext) {
+	
 		mapper.writer()
-		.with(EMFContext.from(options))
+		.with(ContextAttributes
+		         .getEmpty()
+		         .withSharedAttributes(options == null ? new HashMap<>() : new HashMap<>(options)))
 		.writeValue(new CodecDataOutput<>(writer, mapper), value);
 	}
 
@@ -65,10 +65,11 @@ final class MongoCodec implements Codec<EObject> {
 	@Override
 	public EObject decode(BsonReader reader, DecoderContext decoderContext) {
 		ContextAttributes attributes;
-		attributes = EMFContext
-				.from(options)
-				.withPerCallAttribute(RESOURCE_SET, resource.getResourceSet())
-				.withPerCallAttribute(RESOURCE, resource);
+		attributes = ContextAttributes
+		         .getEmpty()
+		         .withSharedAttributes(options == null ? new HashMap<>() : new HashMap<>(options));
+//				.withPerCallAttribute(RESOURCE_SET, resource.getResourceSet())
+//				.withPerCallAttribute(RESOURCE, resource);
 
 		Resource r = mapper.reader()
 				.with(attributes)
