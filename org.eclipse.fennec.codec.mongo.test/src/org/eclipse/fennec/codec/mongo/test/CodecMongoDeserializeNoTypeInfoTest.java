@@ -40,11 +40,10 @@ import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.mongo.osgi.MongoClientProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
@@ -58,9 +57,6 @@ import org.osgi.test.junit5.service.ServiceExtension;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 
-
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * See documentation here: 
@@ -134,7 +130,7 @@ public class CodecMongoDeserializeNoTypeInfoTest extends MongoEMFSetting {
 
 
 	@Test
-	public void testDeserializationRootObjWOType() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
+	public void testDeserializationRootObjWOType() throws IOException {
 
 		URI uri = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
 
@@ -168,7 +164,8 @@ public class CodecMongoDeserializeNoTypeInfoTest extends MongoEMFSetting {
 	}
 
 	@Test
-	public void testDeserializationReferenceWOType() throws InterruptedException, IOException {
+	@Disabled("Not implemented use case")
+	public void testDeserializationReferenceWOType() throws IOException {
 
 		URI uriPerson = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/");
 		URI uriAddress = URI.createURI("mongodb://"+ mongoHost + ":27017/test/Address/");

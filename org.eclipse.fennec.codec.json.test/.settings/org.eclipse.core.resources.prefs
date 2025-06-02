@@ -9,6 +9,7 @@ encoding//src/org/gecko/codec/json/test/CodecJsonDeserializeWithCustomReaderTest
 encoding//src/org/gecko/codec/json/test/CodecJsonIdOptionsTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonMapInMapTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonMapTest.java=UTF-8
+encoding//src/org/gecko/codec/json/test/CodecJsonPetTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonSerializeDefaultValuesTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonSerializeEmptyValuesTest.java=UTF-8
 encoding//src/org/gecko/codec/json/test/CodecJsonSerializeFeatureListTest.java=UTF-8
