@@ -44,6 +44,8 @@ import org.eclipse.fennec.codec.constants.CodecModuleOptions;
 import org.eclipse.fennec.codec.constants.CodecResourceOptions;
 import org.eclipse.fennec.codec.constants.ObjectMapperOptions;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
+import org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer;
+import org.eclipse.fennec.codec.info.codecinfo.CodecSerializer;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
@@ -392,7 +394,25 @@ public class CodecResource extends ResourceImpl {
 					}
 				}
 			});
-		}		
+		}	
+		if(options.containsKey(CodecModelInfoOptions.CODEC_CUSTOM_SERIALIZERS_MAP)) {
+			Map<EClass, CodecSerializer<?>> serializerMap = (Map<EClass, CodecSerializer<?>>)options.get(CodecModelInfoOptions.CODEC_CUSTOM_SERIALIZERS_MAP);
+			serializerMap.forEach((element, serializer) -> {
+				if(element.getName().equals(codecInfo.getClassifier().getName())) {
+					codecInfo.setSerializerName(serializer.getName());
+					modelInfoService.addCodecSerializer(serializer);
+				}
+			});
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_CUSTOM_DESERIALIZERS_MAP)) {
+			Map<EClass, CodecDeserializer<?>> deserializerMap = (Map<EClass, CodecDeserializer<?>>)options.get(CodecModelInfoOptions.CODEC_CUSTOM_DESERIALIZERS_MAP);
+			deserializerMap.forEach((element, deserializer) -> {
+				if(element.getName().equals(codecInfo.getClassifier().getName())) {
+					codecInfo.setDeserializerName(deserializer.getName());
+					modelInfoService.addCodecDeserializer(deserializer);
+				}
+			});
+		}
 	}
 
 	@SuppressWarnings("unchecked")

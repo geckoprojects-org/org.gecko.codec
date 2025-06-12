@@ -356,5 +356,24 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
 					"Duplicate Object property \""+name+"\"");
 		}
 	}
-
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.TokenStreamContext#assignCurrentValue(java.lang.Object)
+	 */
+	@Override
+	public void assignCurrentValue(Object v) {
+		_currentValue = v;
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.TokenStreamContext#currentValue()
+	 */
+	@Override
+	public Object currentValue() {
+		return _currentValue;
+	}
+	
+	
 }

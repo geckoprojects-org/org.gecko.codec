@@ -34,15 +34,6 @@ public interface JsonLDFactory extends EFactory {
 	ContextStringValue createContextStringValue();
 
 	/**
-	 * Returns a new object of class '<em>Context Object Value</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Context Object Value</em>'.
-	 * @generated
-	 */
-	ContextObjectValue createContextObjectValue();
-
-	/**
 	 * Returns a new object of class '<em>Context Object</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -50,6 +41,15 @@ public interface JsonLDFactory extends EFactory {
 	 * @generated
 	 */
 	ContextObject createContextObject();
+
+	/**
+	 * Returns a new object of class '<em>Json LD</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Json LD</em>'.
+	 * @generated
+	 */
+	JsonLD createJsonLD();
 
 	/**
 	 * Returns the package supported by this factory.

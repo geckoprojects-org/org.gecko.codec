@@ -73,13 +73,11 @@ public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator
 		@Override
 		public F build() {
 			if(genFactory == null || parserFactory == null) {
-				return (F) new DefaultCodecJsonFactory();
+				return (F) new DefaultCodecJsonFactory(this);
 			} else {
-				return (F) new CodecFactory(genFactory, parserFactory);
-			}
-			
+				return (F) new CodecFactory(this, genFactory, parserFactory);
+			}	
 		}
-		
 	}
 	
 
@@ -92,6 +90,7 @@ public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator
 //		}
 		factoryBuilder = new CodecFactoryBuilder(JsonFactory.builder().build());
 		buildAndConfigureCodecFactory(properties);
+		
 	}
 	
 	public JsonFactoryBuilder getFactoryBuilder() {

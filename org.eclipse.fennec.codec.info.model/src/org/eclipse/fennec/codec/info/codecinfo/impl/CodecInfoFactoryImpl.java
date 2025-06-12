@@ -13,6 +13,9 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 import org.eclipse.fennec.codec.info.codecinfo.*;
 
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
+
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.SerializationContext;
 
@@ -82,10 +85,14 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 		switch (eDataType.getClassifierID()) {
 			case CodecInfoPackage.INFO_TYPE:
 				return createInfoTypeFromString(eDataType, initialValue);
-			case CodecInfoPackage.SERIALIZER_PROVIDER:
-				return createSerializerProviderFromString(eDataType, initialValue);
+			case CodecInfoPackage.SERIALIZATION_CONTEXT:
+				return createSerializationContextFromString(eDataType, initialValue);
 			case CodecInfoPackage.DESERIALIZATION_CONTEXT:
 				return createDeserializationContextFromString(eDataType, initialValue);
+			case CodecInfoPackage.JSON_GENERATOR:
+				return createJsonGeneratorFromString(eDataType, initialValue);
+			case CodecInfoPackage.JSON_PARSER:
+				return createJsonParserFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -101,10 +108,14 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 		switch (eDataType.getClassifierID()) {
 			case CodecInfoPackage.INFO_TYPE:
 				return convertInfoTypeToString(eDataType, instanceValue);
-			case CodecInfoPackage.SERIALIZER_PROVIDER:
-				return convertSerializerProviderToString(eDataType, instanceValue);
+			case CodecInfoPackage.SERIALIZATION_CONTEXT:
+				return convertSerializationContextToString(eDataType, instanceValue);
 			case CodecInfoPackage.DESERIALIZATION_CONTEXT:
 				return convertDeserializationContextToString(eDataType, instanceValue);
+			case CodecInfoPackage.JSON_GENERATOR:
+				return convertJsonGeneratorToString(eDataType, instanceValue);
+			case CodecInfoPackage.JSON_PARSER:
+				return convertJsonParserToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -212,7 +223,7 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SerializationContext createSerializerProviderFromString(EDataType eDataType, String initialValue) {
+	public SerializationContext createSerializationContextFromString(EDataType eDataType, String initialValue) {
 		return (SerializationContext)super.createFromString(eDataType, initialValue);
 	}
 
@@ -221,7 +232,7 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String convertSerializerProviderToString(EDataType eDataType, Object instanceValue) {
+	public String convertSerializationContextToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 
@@ -240,6 +251,42 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * @generated
 	 */
 	public String convertDeserializationContextToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public JsonGenerator createJsonGeneratorFromString(EDataType eDataType, String initialValue) {
+		return (JsonGenerator)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertJsonGeneratorToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public JsonParser createJsonParserFromString(EDataType eDataType, String initialValue) {
+		return (JsonParser)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertJsonParserToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

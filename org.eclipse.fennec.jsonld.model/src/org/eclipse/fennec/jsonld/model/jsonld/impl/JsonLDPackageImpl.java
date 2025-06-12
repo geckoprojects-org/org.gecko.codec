@@ -13,9 +13,9 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.eclipse.fennec.jsonld.model.jsonld.ContextObject;
-import org.eclipse.fennec.jsonld.model.jsonld.ContextObjectValue;
 import org.eclipse.fennec.jsonld.model.jsonld.ContextStringValue;
 import org.eclipse.fennec.jsonld.model.jsonld.ContextValue;
+import org.eclipse.fennec.jsonld.model.jsonld.JsonLD;
 import org.eclipse.fennec.jsonld.model.jsonld.JsonLDFactory;
 import org.eclipse.fennec.jsonld.model.jsonld.JsonLDPackage;
 
@@ -45,13 +45,6 @@ public class JsonLDPackageImpl extends EPackageImpl implements JsonLDPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass contextObjectValueEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass contextTermEClass = null;
 
 	/**
@@ -60,6 +53,13 @@ public class JsonLDPackageImpl extends EPackageImpl implements JsonLDPackage {
 	 * @generated
 	 */
 	private EClass contextObjectEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass jsonLDEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -160,26 +160,6 @@ public class JsonLDPackageImpl extends EPackageImpl implements JsonLDPackage {
 	 * @generated
 	 */
 	@Override
-	public EClass getContextObjectValue() {
-		return contextObjectValueEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EReference getContextObjectValue_Properties() {
-		return (EReference)contextObjectValueEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EClass getContextTerm() {
 		return contextTermEClass;
 	}
@@ -200,8 +180,8 @@ public class JsonLDPackageImpl extends EPackageImpl implements JsonLDPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getContextTerm_Value() {
-		return (EAttribute)contextTermEClass.getEStructuralFeatures().get(1);
+	public EReference getContextTerm_Value() {
+		return (EReference)contextTermEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -222,6 +202,26 @@ public class JsonLDPackageImpl extends EPackageImpl implements JsonLDPackage {
 	@Override
 	public EReference getContextObject_Context() {
 		return (EReference)contextObjectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getJsonLD() {
+		return jsonLDEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getJsonLD_Context() {
+		return (EReference)jsonLDEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -258,15 +258,15 @@ public class JsonLDPackageImpl extends EPackageImpl implements JsonLDPackage {
 		contextStringValueEClass = createEClass(CONTEXT_STRING_VALUE);
 		createEAttribute(contextStringValueEClass, CONTEXT_STRING_VALUE__VALUE);
 
-		contextObjectValueEClass = createEClass(CONTEXT_OBJECT_VALUE);
-		createEReference(contextObjectValueEClass, CONTEXT_OBJECT_VALUE__PROPERTIES);
-
 		contextTermEClass = createEClass(CONTEXT_TERM);
 		createEAttribute(contextTermEClass, CONTEXT_TERM__KEY);
-		createEAttribute(contextTermEClass, CONTEXT_TERM__VALUE);
+		createEReference(contextTermEClass, CONTEXT_TERM__VALUE);
 
 		contextObjectEClass = createEClass(CONTEXT_OBJECT);
 		createEReference(contextObjectEClass, CONTEXT_OBJECT__CONTEXT);
+
+		jsonLDEClass = createEClass(JSON_LD);
+		createEReference(jsonLDEClass, JSON_LD__CONTEXT);
 	}
 
 	/**
@@ -301,7 +301,7 @@ public class JsonLDPackageImpl extends EPackageImpl implements JsonLDPackage {
 
 		// Add supertypes to classes
 		contextStringValueEClass.getESuperTypes().add(this.getContextValue());
-		contextObjectValueEClass.getESuperTypes().add(this.getContextValue());
+		contextObjectEClass.getESuperTypes().add(this.getContextValue());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(contextValueEClass, ContextValue.class, "ContextValue", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -309,15 +309,15 @@ public class JsonLDPackageImpl extends EPackageImpl implements JsonLDPackage {
 		initEClass(contextStringValueEClass, ContextStringValue.class, "ContextStringValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getContextStringValue_Value(), theEcorePackage.getEString(), "value", null, 0, 1, ContextStringValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(contextObjectValueEClass, ContextObjectValue.class, "ContextObjectValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getContextObjectValue_Properties(), this.getContextTerm(), null, "properties", null, 0, -1, ContextObjectValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
 		initEClass(contextTermEClass, Map.Entry.class, "ContextTerm", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getContextTerm_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getContextTerm_Value(), theEcorePackage.getEString(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getContextTerm_Value(), this.getContextValue(), null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(contextObjectEClass, ContextObject.class, "ContextObject", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getContextObject_Context(), this.getContextTerm(), null, "context", null, 0, -1, ContextObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(jsonLDEClass, JsonLD.class, "JsonLD", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getJsonLD_Context(), this.getContextObject(), null, "context", null, 0, 1, JsonLD.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -336,7 +336,7 @@ public class JsonLDPackageImpl extends EPackageImpl implements JsonLDPackage {
 	protected void createJsonPropertyAnnotations() {
 		String source = "JsonProperty";
 		addAnnotation
-		  (getContextObject_Context(),
+		  (getJsonLD_Context(),
 		   source,
 		   new String[] {
 			   "value", "@context"

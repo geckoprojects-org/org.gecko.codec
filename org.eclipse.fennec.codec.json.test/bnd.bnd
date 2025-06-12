@@ -12,14 +12,12 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.eclipse.fennec.codec.demo.model;version=latest,\
 	org.osgi.test.junit5.cm,\
 	org.eclipse.fennec.codec,\
-	org.eclipse.fennec.codec.emfjson,\
 	org.eclipse.fennec.codec.test.helper;version=latest,\
 	org.eclipse.fennec.codec.constants;version=latest,\
 	tools.jackson.core.jackson-core,\
 	tools.jackson.core.jackson-databind,\
-	org.eclipse.fennec.ai.jsonschema.model,\
-	org.eclipse.fennec.ai.test.model,\
-	org.avatar.dataspace.asset.model
+	org.eclipse.fennec.jsonld.model;version=latest,\
+	com.fasterxml.jackson.core.jackson-annotations;version='3.0'
 	
 Private-Package: org.eclipse.fennec.codec.json.test
 

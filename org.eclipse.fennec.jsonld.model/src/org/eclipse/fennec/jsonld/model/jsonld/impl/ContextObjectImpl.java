@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.fennec.jsonld.model.jsonld.ContextObject;
+import org.eclipse.fennec.jsonld.model.jsonld.ContextValue;
 import org.eclipse.fennec.jsonld.model.jsonld.JsonLDPackage;
 
 /**
@@ -40,7 +41,7 @@ public class ContextObjectImpl extends MinimalEObjectImpl.Container implements C
 	 * @generated
 	 * @ordered
 	 */
-	protected EMap<String, String> context;
+	protected EMap<String, ContextValue> context;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -67,9 +68,9 @@ public class ContextObjectImpl extends MinimalEObjectImpl.Container implements C
 	 * @generated
 	 */
 	@Override
-	public EMap<String, String> getContext() {
+	public EMap<String, ContextValue> getContext() {
 		if (context == null) {
-			context = new EcoreEMap<String,String>(JsonLDPackage.Literals.CONTEXT_TERM, ContextTermImpl.class, this, JsonLDPackage.CONTEXT_OBJECT__CONTEXT);
+			context = new EcoreEMap<String,ContextValue>(JsonLDPackage.Literals.CONTEXT_TERM, ContextTermImpl.class, this, JsonLDPackage.CONTEXT_OBJECT__CONTEXT);
 		}
 		return context;
 	}

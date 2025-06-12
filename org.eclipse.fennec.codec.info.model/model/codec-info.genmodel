@@ -20,8 +20,10 @@
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/ENUMERATOR"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/OTHER"/>
     </genEnums>
-    <genDataTypes ecoreDataType="codec-info.ecore#//SerializerProvider"/>
+    <genDataTypes ecoreDataType="codec-info.ecore#//SerializationContext"/>
     <genDataTypes ecoreDataType="codec-info.ecore#//DeserializationContext"/>
+    <genDataTypes ecoreDataType="codec-info.ecore#//JsonGenerator"/>
+    <genDataTypes ecoreDataType="codec-info.ecore#//JsonParser"/>
     <genClasses ecoreClass="codec-info.ecore#//PackageCodecInfo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//PackageCodecInfo/id"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codec-info.ecore#//PackageCodecInfo/ePackage"/>
@@ -43,6 +45,8 @@
           get="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatureInfo().stream().filter(f->&lt;%org.eclipse.fennec.codec.info.codecinfo.InfoType%>.OPERATION.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codec-info.ecore#//EClassCodecInfo/enumeratorCodecInfo"
           get="return &lt;%org.eclipse.emf.common.util.ECollections%>.asEList(getFeatureInfo().stream().filter(f->&lt;%org.eclipse.fennec.codec.info.codecinfo.InfoType%>.ENUMERATOR.equals(f.getType())).collect(&lt;%java.util.stream.Collectors%>.toList()));"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//EClassCodecInfo/serializerName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//EClassCodecInfo/deserializerName"/>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//FeatureCodecInfo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//FeatureCodecInfo/id"/>
@@ -105,6 +109,23 @@
       <genOperations ecoreOperation="codec-info.ecore#//SampleValueReader/readValue">
         <genParameters ecoreParameter="codec-info.ecore#//SampleValueReader/readValue/value"/>
         <genParameters ecoreParameter="codec-info.ecore#//SampleValueReader/readValue/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="codec-info.ecore#//CodecSerializer">
+      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//CodecSerializer/T"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//CodecSerializer/name"/>
+      <genOperations ecoreOperation="codec-info.ecore#//CodecSerializer/serialize">
+        <genParameters ecoreParameter="codec-info.ecore#//CodecSerializer/serialize/value"/>
+        <genParameters ecoreParameter="codec-info.ecore#//CodecSerializer/serialize/generator"/>
+        <genParameters ecoreParameter="codec-info.ecore#//CodecSerializer/serialize/ctxt"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="codec-info.ecore#//CodecDeserializer">
+      <genTypeParameters ecoreTypeParameter="codec-info.ecore#//CodecDeserializer/V"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//CodecDeserializer/name"/>
+      <genOperations ecoreOperation="codec-info.ecore#//CodecDeserializer/deserialize">
+        <genParameters ecoreParameter="codec-info.ecore#//CodecDeserializer/deserialize/parser"/>
+        <genParameters ecoreParameter="codec-info.ecore#//CodecDeserializer/deserialize/ctxt"/>
       </genOperations>
     </genClasses>
   </genPackages>

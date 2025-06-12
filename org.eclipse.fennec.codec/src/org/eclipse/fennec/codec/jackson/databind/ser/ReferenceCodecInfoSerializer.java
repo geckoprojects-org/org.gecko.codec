@@ -110,6 +110,30 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		}
 	}
 
+//	@SuppressWarnings("unchecked")
+//	private void serializeEMap(JsonGenerator jg, SerializationContext provider, EMap<?, ?> eMap) {
+//		jg.writeStartObject();
+//		eMap.forEach(value -> {
+//
+//			BasicEMap.Entry<String, Object> entry = (BasicEMap.Entry<String, Object>) value;
+//			jg.writeName(entry.getKey());
+//			Object v = entry.getValue();
+//			if (v == null) {
+//				jg.writeNull();
+//			} else if (v instanceof EObject eo) {
+//				if (((EObject) entry).eContainmentFeature().isContainment()) {
+//					new CodecEObjectSerializer(codecModule, codecModelInfoService).serialize(eo, jg, provider);
+//				} else {
+//					serializeNonContainment((EObject) entry, eo, jg, provider);
+//				}
+//			} else if (v instanceof EMap<?,?> innerMap) {
+//				serializeEMap(jg, provider, innerMap);
+//			}
+//
+//		});
+//		jg.writeEndObject();
+//	}
+	
 	@SuppressWarnings("unchecked")
 	private void serializeEMap(JsonGenerator jg, SerializationContext provider, EMap<?, ?> eMap) {
 		jg.writeStartObject();

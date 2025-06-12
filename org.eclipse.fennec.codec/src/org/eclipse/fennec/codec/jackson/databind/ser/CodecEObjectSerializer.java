@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
+import org.eclipse.fennec.codec.info.codecinfo.CodecSerializer;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.jackson.databind.CodecWriteContext;
@@ -61,6 +62,7 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 	 * (non-Javadoc)
 	 * @see tools.jackson.databind.ValueSerializer#serialize(java.lang.Object, tools.jackson.core.JsonGenerator, tools.jackson.databind.SerializationContext)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void serialize(EObject value, JsonGenerator gen, SerializationContext provider) {
 
@@ -74,42 +76,52 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 			LOGGER.severe(String.format("No EClassCodecInfo found in CodecModule for EObject of class %s", value.eClass()));
 			return;
 		}
-		CodecInfoSerializer idInfoSerializer = new IdCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getIdentityInfo());
-		CodecInfoSerializer typeInfoSerializer = new TypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getTypeInfo());
-		CodecInfoSerializer superTypeInfoSerializer = new SuperTypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getSuperTypeInfo());
-
-		List<CodecInfoSerializer> codecInfoSerializers = new LinkedList<>();
-		eObjCodecInfo.getAttributeCodecInfo().forEach(aci -> codecInfoSerializers.add(new FeatureCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
-		eObjCodecInfo.getReferenceCodecInfo().forEach(aci -> codecInfoSerializers.add(new ReferenceCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
-		eObjCodecInfo.getOperationCodecInfo().forEach(aci -> codecInfoSerializers.add(new OperationCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
-		eObjCodecInfo.getEnumeratorCodecInfo().forEach(aci -> codecInfoSerializers.add(new EnumeratorCodecInfoSerializer(codecModule, aci)));
 		
-		if(gen.streamWriteContext() instanceof CodecWriteContext cwt) {
-			cwt.setCurrentEObject(value);
+		if(eObjCodecInfo.getSerializerName() != null) {
+			CodecSerializer<EObject> customSerializer = (CodecSerializer<EObject>) codecModelInfoService.getCodecSerializerByName(eObjCodecInfo.getSerializerName());
+			if(customSerializer != null) {
+				customSerializer.serialize(value, gen, provider);
+			}
+		} else {
+			CodecInfoSerializer idInfoSerializer = new IdCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getIdentityInfo());
+			CodecInfoSerializer typeInfoSerializer = new TypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getTypeInfo());
+			CodecInfoSerializer superTypeInfoSerializer = new SuperTypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getSuperTypeInfo());
+
+			List<CodecInfoSerializer> codecInfoSerializers = new LinkedList<>();
+			eObjCodecInfo.getAttributeCodecInfo().forEach(aci -> codecInfoSerializers.add(new FeatureCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
+			eObjCodecInfo.getReferenceCodecInfo().forEach(aci -> codecInfoSerializers.add(new ReferenceCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
+			eObjCodecInfo.getOperationCodecInfo().forEach(aci -> codecInfoSerializers.add(new OperationCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
+			eObjCodecInfo.getEnumeratorCodecInfo().forEach(aci -> codecInfoSerializers.add(new EnumeratorCodecInfoSerializer(codecModule, aci)));
+			
+			if(gen.streamWriteContext() instanceof CodecWriteContext cwt) {
+				cwt.setCurrentEObject(value);
+			}
+			
+			gen.writeStartObject(value);
+
+//			TODO: what if someone has set the SORT_PROPERTIES_ALPHABETICALLY
+			if(codecModule.isUseId()) {
+				if(codecModule.isIdOnTop()) {
+					idInfoSerializer.serialize(value, gen, provider);
+				}
+			}
+			if(codecModule.isSerializeType()) {
+				typeInfoSerializer.serialize(value, gen, provider);
+			}
+			if(codecModule.isSerializeSuperTypes()) {
+				superTypeInfoSerializer.serialize(value, gen, provider);
+			}
+			if(codecModule.isUseId()) {
+				if(!codecModule.isIdOnTop()) {
+					idInfoSerializer.serialize(value, gen, provider);
+				}
+			}
+			for(CodecInfoSerializer codecInfoSerializer : codecInfoSerializers) {
+				codecInfoSerializer.serialize(value, gen, provider);
+			}
+			gen.writeEndObject();
 		}
 		
-		gen.writeStartObject(value);
-
-//		TODO: what if someone has set the SORT_PROPERTIES_ALPHABETICALLY
-		if(codecModule.isUseId()) {
-			if(codecModule.isIdOnTop()) {
-				idInfoSerializer.serialize(value, gen, provider);
-			}
-		}
-		if(codecModule.isSerializeType()) {
-			typeInfoSerializer.serialize(value, gen, provider);
-		}
-		if(codecModule.isSerializeSuperTypes()) {
-			superTypeInfoSerializer.serialize(value, gen, provider);
-		}
-		if(codecModule.isUseId()) {
-			if(!codecModule.isIdOnTop()) {
-				idInfoSerializer.serialize(value, gen, provider);
-			}
-		}
-		for(CodecInfoSerializer codecInfoSerializer : codecInfoSerializers) {
-			codecInfoSerializer.serialize(value, gen, provider);
-		}
-		gen.writeEndObject();
+		
 	}
 }

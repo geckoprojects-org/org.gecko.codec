@@ -115,7 +115,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 				if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
 					gen.writeObjectId(featureValue);
 					if(featureValue == null) {
-						rootObj.eSet(idFeature, gen.currentValue().toString()); //if the id feature is null, the generator takes care of creating a new one and then we have to set it to the EObject
+						rootObj.eSet(idFeature, gen.streamWriteContext().currentValue().toString()); //if the id feature is null, the generator takes care of creating a new one and then we have to set it to the EObject
 					}
 				} else {
 					if(featureValue == null) {

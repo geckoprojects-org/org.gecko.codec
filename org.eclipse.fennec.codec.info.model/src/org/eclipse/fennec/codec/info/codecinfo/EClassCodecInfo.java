@@ -27,6 +27,8 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getAttributeCodecInfo <em>Attribute Codec Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getOperationCodecInfo <em>Operation Codec Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getEnumeratorCodecInfo <em>Enumerator Codec Info</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getSerializerName <em>Serializer Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getDeserializerName <em>Deserializer Name</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo()
@@ -208,5 +210,49 @@ public interface EClassCodecInfo {
 	 * @generated
 	 */
 	EList<FeatureCodecInfo> getEnumeratorCodecInfo();
+
+	/**
+	 * Returns the value of the '<em><b>Serializer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Serializer Name</em>' attribute.
+	 * @see #setSerializerName(String)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_SerializerName()
+	 * @model
+	 * @generated
+	 */
+	String getSerializerName();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getSerializerName <em>Serializer Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Serializer Name</em>' attribute.
+	 * @see #getSerializerName()
+	 * @generated
+	 */
+	void setSerializerName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Deserializer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Deserializer Name</em>' attribute.
+	 * @see #setDeserializerName(String)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_DeserializerName()
+	 * @model
+	 * @generated
+	 */
+	String getDeserializerName();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getDeserializerName <em>Deserializer Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Deserializer Name</em>' attribute.
+	 * @see #getDeserializerName()
+	 * @generated
+	 */
+	void setDeserializerName(String value);
 
 } // EClassCodecInfo

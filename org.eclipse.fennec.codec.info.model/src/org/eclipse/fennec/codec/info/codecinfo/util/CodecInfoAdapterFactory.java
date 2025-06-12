@@ -108,6 +108,14 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 				return createSampleValueReaderAdapter();
 			}
 			@Override
+			public <T> Adapter caseCodecSerializer(CodecSerializer<T> object) {
+				return createCodecSerializerAdapter();
+			}
+			@Override
+			public <V> Adapter caseCodecDeserializer(CodecDeserializer<V> object) {
+				return createCodecDeserializerAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -264,6 +272,34 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createSampleValueReaderAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.info.codecinfo.CodecSerializer <em>Codec Serializer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecSerializer
+	 * @generated
+	 */
+	public Adapter createCodecSerializerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer <em>Codec Deserializer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer
+	 * @generated
+	 */
+	public Adapter createCodecDeserializerAdapter() {
 		return null;
 	}
 

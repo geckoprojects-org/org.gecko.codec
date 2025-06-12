@@ -4,8 +4,6 @@ package org.eclipse.fennec.jsonld.model.jsonld;
 
 import org.eclipse.emf.common.util.EMap;
 
-import org.eclipse.emf.ecore.EObject;
-
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -25,19 +23,18 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface ContextObject extends EObject {
+public interface ContextObject extends ContextValue {
 	/**
 	 * Returns the value of the '<em><b>Context</b></em>' map.
 	 * The key is of type {@link java.lang.String},
-	 * and the value is of type {@link java.lang.String},
+	 * and the value is of type {@link org.eclipse.fennec.jsonld.model.jsonld.ContextValue},
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Context</em>' map.
 	 * @see org.eclipse.fennec.jsonld.model.jsonld.JsonLDPackage#getContextObject_Context()
-	 * @model mapType="org.eclipse.fennec.jsonld.model.jsonld.ContextTerm&lt;org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString&gt;"
-	 *        annotation="JsonProperty value='@context'"
+	 * @model mapType="org.eclipse.fennec.jsonld.model.jsonld.ContextTerm&lt;org.eclipse.emf.ecore.EString, org.eclipse.fennec.jsonld.model.jsonld.ContextValue&gt;"
 	 * @generated
 	 */
-	EMap<String, String> getContext();
+	EMap<String, ContextValue> getContext();
 
 } // ContextObject

@@ -1,0 +1,35 @@
+{
+  "@context" : {
+    "affiliation" : "http://schema.org/affiliation",
+    "Person" : "http://xmlns.com/foaf/0.1/Person",
+    "givenName" : "http://xmlns.com/foaf/0.1/givenName",
+    "knows" : {
+      "@type" : "@id",
+      "@id" : "http://xmlns.com/foaf/0.1/knows"
+    },
+    "xsd" : "http://www.w3.org/2001/XMLSchema#",
+    "born" : {
+      "@type" : "xsd:date",
+      "@id" : "http://schema.org/birthDate"
+    },
+    "name" : "http://xmlns.com/foaf/0.1/name",
+    "image" : {
+      "@type" : "@id",
+      "@id" : "http://xmlns.com/foaf/0.1/img"
+    },
+    "child" : {
+      "@type" : "@id",
+      "@id" : "http://schema.org/children"
+    },
+    "depiction" : {
+      "@type" : "@id",
+      "@id" : "http://xmlns.com/foaf/0.1/depiction"
+    },
+    "nickname" : "http://xmlns.com/foaf/0.1/nick",
+    "familyName" : "http://xmlns.com/foaf/0.1/familyName",
+    "colleague" : {
+      "@type" : "@id",
+      "@id" : "http://schema.org/colleagues"
+    }
+  }
+}

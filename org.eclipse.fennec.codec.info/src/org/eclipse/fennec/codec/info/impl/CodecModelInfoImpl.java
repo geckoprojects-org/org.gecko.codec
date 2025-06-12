@@ -28,8 +28,10 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.constants.CodecAnnotations;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
+import org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoFactory;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
+import org.eclipse.fennec.codec.info.codecinfo.CodecSerializer;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
@@ -58,6 +60,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 
 	private Map<String, PackageCodecInfo> ePackageCodecInfoMap = new ConcurrentHashMap<>();
 	private Map<InfoType, CodecInfoHolder> codecInfoHolderMap = new ConcurrentHashMap<>();
+	private Map<String, CodecSerializer<?>> customSerializersMap = new ConcurrentHashMap<>(); 
+	private Map<String, CodecDeserializer<?>> customDeserializersMap = new ConcurrentHashMap<>(); 
 
 	private final ReadWriteLock lock = new ReentrantReadWriteLock();
 	
@@ -456,5 +460,43 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		CodecInfoHolderHelper.addCodecReader(getCodecInfoHolderByType(infoType), reader);
 		codecInfoHolderMap.put(infoType, getCodecInfoHolderByType(infoType));	
 
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.info.CodecModelInfo#addCodecSerializer(org.eclipse.fennec.codec.info.codecinfo.CodecSerializer)
+	 */
+	@Override
+	public void addCodecSerializer(CodecSerializer<?> serializer) {
+		customSerializersMap.put(serializer.getName(), serializer);		
+	}
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.info.CodecModelInfo#getCodecSerializerByName(java.lang.String)
+	 */
+	@Override
+	public CodecSerializer<?> getCodecSerializerByName(String name) {
+		return customSerializersMap.getOrDefault(name, null);
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.info.CodecModelInfo#addCodecDeserializer(org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer)
+	 */
+	@Override
+	public void addCodecDeserializer(CodecDeserializer<?> deserializer) {
+		customDeserializersMap.put(deserializer.getName(), deserializer);
+		
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.info.CodecModelInfo#getCodecDeserializerByName(java.lang.String)
+	 */
+	@Override
+	public CodecDeserializer<?> getCodecDeserializerByName(String name) {
+		return customDeserializersMap.getOrDefault(name, null);
 	}
 }

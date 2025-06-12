@@ -48,6 +48,8 @@ import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getAttributeCodecInfo <em>Attribute Codec Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getOperationCodecInfo <em>Operation Codec Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getEnumeratorCodecInfo <em>Enumerator Codec Info</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getSerializerName <em>Serializer Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getDeserializerName <em>Deserializer Name</em>}</li>
  * </ul>
  *
  * @generated
@@ -122,6 +124,46 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @ordered
 	 */
 	protected EList<FeatureCodecInfo> featureInfo;
+
+	/**
+	 * The default value of the '{@link #getSerializerName() <em>Serializer Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSerializerName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String SERIALIZER_NAME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getSerializerName() <em>Serializer Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSerializerName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String serializerName = SERIALIZER_NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDeserializerName() <em>Deserializer Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDeserializerName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DESERIALIZER_NAME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDeserializerName() <em>Deserializer Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDeserializerName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String deserializerName = DESERIALIZER_NAME_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -399,6 +441,52 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
+	public String getSerializerName() {
+		return serializerName;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setSerializerName(String newSerializerName) {
+		String oldSerializerName = serializerName;
+		serializerName = newSerializerName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZER_NAME, oldSerializerName, serializerName));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getDeserializerName() {
+		return deserializerName;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setDeserializerName(String newDeserializerName) {
+		String oldDeserializerName = deserializerName;
+		deserializerName = newDeserializerName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__DESERIALIZER_NAME, oldDeserializerName, deserializerName));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
@@ -442,6 +530,10 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return getOperationCodecInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
 				return getEnumeratorCodecInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZER_NAME:
+				return getSerializerName();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__DESERIALIZER_NAME:
+				return getDeserializerName();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -490,6 +582,12 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				getEnumeratorCodecInfo().clear();
 				getEnumeratorCodecInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
 				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZER_NAME:
+				setSerializerName((String)newValue);
+				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__DESERIALIZER_NAME:
+				setDeserializerName((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -532,6 +630,12 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
 				getEnumeratorCodecInfo().clear();
 				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZER_NAME:
+				setSerializerName(SERIALIZER_NAME_EDEFAULT);
+				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__DESERIALIZER_NAME:
+				setDeserializerName(DESERIALIZER_NAME_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -564,6 +668,10 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return !getOperationCodecInfo().isEmpty();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
 				return !getEnumeratorCodecInfo().isEmpty();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__SERIALIZER_NAME:
+				return SERIALIZER_NAME_EDEFAULT == null ? serializerName != null : !SERIALIZER_NAME_EDEFAULT.equals(serializerName);
+			case CodecInfoPackage.ECLASS_CODEC_INFO__DESERIALIZER_NAME:
+				return DESERIALIZER_NAME_EDEFAULT == null ? deserializerName != null : !DESERIALIZER_NAME_EDEFAULT.equals(deserializerName);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -580,6 +688,10 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (id: ");
 		result.append(id);
+		result.append(", serializerName: ");
+		result.append(serializerName);
+		result.append(", deserializerName: ");
+		result.append(deserializerName);
 		result.append(')');
 		return result.toString();
 	}

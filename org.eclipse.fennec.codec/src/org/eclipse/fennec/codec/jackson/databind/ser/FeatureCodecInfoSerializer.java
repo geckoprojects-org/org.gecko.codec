@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
+import org.eclipse.fennec.codec.info.codecinfo.CodecSerializer;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
@@ -69,10 +70,7 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 			return;
 		}
 		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
-				
-//		EMFContext.setParent(provider, rootObj);
-//		EMFContext.setFeature(provider, feature);
-		
+	
 		if(!codecModule.isSerializeIdField()) {
 			if(eObjCodecInfo.getIdentityInfo().getFeatures().contains(feature)) {
 				return;
@@ -83,6 +81,13 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 			cwt.setCurrentFeature(feature);
 			cwt.setCurrentEObject(rootObj);
 		}
+		
+//		if(featureCodecInfo.getSerializerName() != null) {
+//			CodecSerializer serializer = codecModelInfoService.getCodecSerializerByName(featureCodecInfo.getSerializerName());
+//			if(serializer != null) {
+//				serializer.serialize(serializer, gen, provider)
+//			}
+//		}
 		
 		JavaType javaType = TypeConstructorHelper.constructJavaTypeFromFeature(feature, provider);
 		serializer = provider.findValueSerializer(javaType);

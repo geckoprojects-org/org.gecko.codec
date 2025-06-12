@@ -128,43 +128,6 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	int CONTEXT_STRING_VALUE_OPERATION_COUNT = CONTEXT_VALUE_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.fennec.jsonld.model.jsonld.impl.ContextObjectValueImpl <em>Context Object Value</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.ContextObjectValueImpl
-	 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDPackageImpl#getContextObjectValue()
-	 * @generated
-	 */
-	int CONTEXT_OBJECT_VALUE = 2;
-
-	/**
-	 * The feature id for the '<em><b>Properties</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONTEXT_OBJECT_VALUE__PROPERTIES = CONTEXT_VALUE_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Context Object Value</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONTEXT_OBJECT_VALUE_FEATURE_COUNT = CONTEXT_VALUE_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Context Object Value</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CONTEXT_OBJECT_VALUE_OPERATION_COUNT = CONTEXT_VALUE_OPERATION_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.jsonld.model.jsonld.impl.ContextTermImpl <em>Context Term</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -172,7 +135,7 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDPackageImpl#getContextTerm()
 	 * @generated
 	 */
-	int CONTEXT_TERM = 3;
+	int CONTEXT_TERM = 2;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -184,7 +147,7 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	int CONTEXT_TERM__KEY = 0;
 
 	/**
-	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * The feature id for the '<em><b>Value</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -218,7 +181,7 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDPackageImpl#getContextObject()
 	 * @generated
 	 */
-	int CONTEXT_OBJECT = 4;
+	int CONTEXT_OBJECT = 3;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' map.
@@ -227,7 +190,7 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTEXT_OBJECT__CONTEXT = 0;
+	int CONTEXT_OBJECT__CONTEXT = CONTEXT_VALUE_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Context Object</em>' class.
@@ -236,7 +199,7 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTEXT_OBJECT_FEATURE_COUNT = 1;
+	int CONTEXT_OBJECT_FEATURE_COUNT = CONTEXT_VALUE_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Context Object</em>' class.
@@ -245,7 +208,44 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CONTEXT_OBJECT_OPERATION_COUNT = 0;
+	int CONTEXT_OBJECT_OPERATION_COUNT = CONTEXT_VALUE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDImpl <em>Json LD</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDImpl
+	 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDPackageImpl#getJsonLD()
+	 * @generated
+	 */
+	int JSON_LD = 4;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JSON_LD__CONTEXT = 0;
+
+	/**
+	 * The number of structural features of the '<em>Json LD</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JSON_LD_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Json LD</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JSON_LD_OPERATION_COUNT = 0;
 
 
 	/**
@@ -280,34 +280,13 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getContextStringValue_Value();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.fennec.jsonld.model.jsonld.ContextObjectValue <em>Context Object Value</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Context Object Value</em>'.
-	 * @see org.eclipse.fennec.jsonld.model.jsonld.ContextObjectValue
-	 * @generated
-	 */
-	EClass getContextObjectValue();
-
-	/**
-	 * Returns the meta object for the map '{@link org.eclipse.fennec.jsonld.model.jsonld.ContextObjectValue#getProperties <em>Properties</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the map '<em>Properties</em>'.
-	 * @see org.eclipse.fennec.jsonld.model.jsonld.ContextObjectValue#getProperties()
-	 * @see #getContextObjectValue()
-	 * @generated
-	 */
-	EReference getContextObjectValue_Properties();
-
-	/**
 	 * Returns the meta object for class '{@link java.util.Map.Entry <em>Context Term</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>Context Term</em>'.
 	 * @see java.util.Map.Entry
 	 * @model keyDataType="org.eclipse.emf.ecore.EString"
-	 *        valueDataType="org.eclipse.emf.ecore.EString"
+	 *        valueType="org.eclipse.fennec.jsonld.model.jsonld.ContextValue" valueContainment="true"
 	 * @generated
 	 */
 	EClass getContextTerm();
@@ -324,15 +303,15 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getContextTerm_Key();
 
 	/**
-	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Value</em>}'.
+	 * Returns the meta object for the containment reference '{@link java.util.Map.Entry <em>Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @return the meta object for the containment reference '<em>Value</em>'.
 	 * @see java.util.Map.Entry
 	 * @see #getContextTerm()
 	 * @generated
 	 */
-	EAttribute getContextTerm_Value();
+	EReference getContextTerm_Value();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.jsonld.model.jsonld.ContextObject <em>Context Object</em>}'.
@@ -354,6 +333,27 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EReference getContextObject_Context();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.jsonld.model.jsonld.JsonLD <em>Json LD</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Json LD</em>'.
+	 * @see org.eclipse.fennec.jsonld.model.jsonld.JsonLD
+	 * @generated
+	 */
+	EClass getJsonLD();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.fennec.jsonld.model.jsonld.JsonLD#getContext <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Context</em>'.
+	 * @see org.eclipse.fennec.jsonld.model.jsonld.JsonLD#getContext()
+	 * @see #getJsonLD()
+	 * @generated
+	 */
+	EReference getJsonLD_Context();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -407,24 +407,6 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute CONTEXT_STRING_VALUE__VALUE = eINSTANCE.getContextStringValue_Value();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.fennec.jsonld.model.jsonld.impl.ContextObjectValueImpl <em>Context Object Value</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.ContextObjectValueImpl
-		 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDPackageImpl#getContextObjectValue()
-		 * @generated
-		 */
-		EClass CONTEXT_OBJECT_VALUE = eINSTANCE.getContextObjectValue();
-
-		/**
-		 * The meta object literal for the '<em><b>Properties</b></em>' map feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference CONTEXT_OBJECT_VALUE__PROPERTIES = eINSTANCE.getContextObjectValue_Properties();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.jsonld.model.jsonld.impl.ContextTermImpl <em>Context Term</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -443,12 +425,12 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute CONTEXT_TERM__KEY = eINSTANCE.getContextTerm_Key();
 
 		/**
-		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CONTEXT_TERM__VALUE = eINSTANCE.getContextTerm_Value();
+		EReference CONTEXT_TERM__VALUE = eINSTANCE.getContextTerm_Value();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.jsonld.model.jsonld.impl.ContextObjectImpl <em>Context Object</em>}' class.
@@ -467,6 +449,24 @@ public interface JsonLDPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference CONTEXT_OBJECT__CONTEXT = eINSTANCE.getContextObject_Context();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDImpl <em>Json LD</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDImpl
+		 * @see org.eclipse.fennec.jsonld.model.jsonld.impl.JsonLDPackageImpl#getJsonLD()
+		 * @generated
+		 */
+		EClass JSON_LD = eINSTANCE.getJsonLD();
+
+		/**
+		 * The meta object literal for the '<em><b>Context</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference JSON_LD__CONTEXT = eINSTANCE.getJsonLD_Context();
 
 	}
 

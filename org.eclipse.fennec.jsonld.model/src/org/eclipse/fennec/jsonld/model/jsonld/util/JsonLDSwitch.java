@@ -81,15 +81,8 @@ public class JsonLDSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case JsonLDPackage.CONTEXT_OBJECT_VALUE: {
-				ContextObjectValue contextObjectValue = (ContextObjectValue)theEObject;
-				T result = caseContextObjectValue(contextObjectValue);
-				if (result == null) result = caseContextValue(contextObjectValue);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case JsonLDPackage.CONTEXT_TERM: {
-				@SuppressWarnings("unchecked") Map.Entry<String, String> contextTerm = (Map.Entry<String, String>)theEObject;
+				@SuppressWarnings("unchecked") Map.Entry<String, ContextValue> contextTerm = (Map.Entry<String, ContextValue>)theEObject;
 				T result = caseContextTerm(contextTerm);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -97,6 +90,13 @@ public class JsonLDSwitch<T> extends Switch<T> {
 			case JsonLDPackage.CONTEXT_OBJECT: {
 				ContextObject contextObject = (ContextObject)theEObject;
 				T result = caseContextObject(contextObject);
+				if (result == null) result = caseContextValue(contextObject);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case JsonLDPackage.JSON_LD: {
+				JsonLD jsonLD = (JsonLD)theEObject;
+				T result = caseJsonLD(jsonLD);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -135,21 +135,6 @@ public class JsonLDSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Context Object Value</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Context Object Value</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseContextObjectValue(ContextObjectValue object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Context Term</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -160,7 +145,7 @@ public class JsonLDSwitch<T> extends Switch<T> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseContextTerm(Map.Entry<String, String> object) {
+	public T caseContextTerm(Map.Entry<String, ContextValue> object) {
 		return null;
 	}
 
@@ -176,6 +161,21 @@ public class JsonLDSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseContextObject(ContextObject object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Json LD</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Json LD</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseJsonLD(JsonLD object) {
 		return null;
 	}
 

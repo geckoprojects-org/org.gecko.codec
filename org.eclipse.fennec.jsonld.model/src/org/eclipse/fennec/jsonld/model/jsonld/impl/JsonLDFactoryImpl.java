@@ -59,9 +59,9 @@ public class JsonLDFactoryImpl extends EFactoryImpl implements JsonLDFactory {
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case JsonLDPackage.CONTEXT_STRING_VALUE: return createContextStringValue();
-			case JsonLDPackage.CONTEXT_OBJECT_VALUE: return createContextObjectValue();
 			case JsonLDPackage.CONTEXT_TERM: return (EObject)createContextTerm();
 			case JsonLDPackage.CONTEXT_OBJECT: return createContextObject();
+			case JsonLDPackage.JSON_LD: return createJsonLD();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -83,18 +83,7 @@ public class JsonLDFactoryImpl extends EFactoryImpl implements JsonLDFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public ContextObjectValue createContextObjectValue() {
-		ContextObjectValueImpl contextObjectValue = new ContextObjectValueImpl();
-		return contextObjectValue;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Map.Entry<String, String> createContextTerm() {
+	public Map.Entry<String, ContextValue> createContextTerm() {
 		ContextTermImpl contextTerm = new ContextTermImpl();
 		return contextTerm;
 	}
@@ -108,6 +97,17 @@ public class JsonLDFactoryImpl extends EFactoryImpl implements JsonLDFactory {
 	public ContextObject createContextObject() {
 		ContextObjectImpl contextObject = new ContextObjectImpl();
 		return contextObject;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public JsonLD createJsonLD() {
+		JsonLDImpl jsonLD = new JsonLDImpl();
+		return jsonLD;
 	}
 
 	/**

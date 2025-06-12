@@ -3,5 +3,5 @@
 -buildpath: \
 	org.eclipse.fennec.codec.demo.model,\
 	org.eclipse.fennec.codec.info.model,\
-	org.eclipse.fennec.codec.emfjson,\
-	tools.jackson.core.jackson-databind
+	tools.jackson.core.jackson-databind,\
+	org.eclipse.fennec.codec.info;version=latest

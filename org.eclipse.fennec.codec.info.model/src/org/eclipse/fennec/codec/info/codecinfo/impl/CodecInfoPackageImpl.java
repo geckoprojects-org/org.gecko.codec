@@ -15,9 +15,11 @@ import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
+import org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoFactory;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage;
+import org.eclipse.fennec.codec.info.codecinfo.CodecSerializer;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
@@ -28,6 +30,9 @@ import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.SampleValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.JsonParser;
 
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.SerializationContext;
@@ -114,6 +119,20 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass codecSerializerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass codecDeserializerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum infoTypeEEnum = null;
 
 	/**
@@ -121,7 +140,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType serializerProviderEDataType = null;
+	private EDataType serializationContextEDataType = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -129,6 +148,20 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	private EDataType deserializationContextEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType jsonGeneratorEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType jsonParserEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -351,6 +384,26 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	@Override
 	public EReference getEClassCodecInfo_EnumeratorCodecInfo() {
 		return (EReference)eClassCodecInfoEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getEClassCodecInfo_SerializerName() {
+		return (EAttribute)eClassCodecInfoEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getEClassCodecInfo_DeserializerName() {
+		return (EAttribute)eClassCodecInfoEClass.getEStructuralFeatures().get(11);
 	}
 
 	/**
@@ -699,6 +752,66 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
+	public EClass getCodecSerializer() {
+		return codecSerializerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecSerializer_Name() {
+		return (EAttribute)codecSerializerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getCodecSerializer__Serialize__Object_JsonGenerator_SerializationContext() {
+		return codecSerializerEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getCodecDeserializer() {
+		return codecDeserializerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecDeserializer_Name() {
+		return (EAttribute)codecDeserializerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getCodecDeserializer__Deserialize__JsonParser_DeserializationContext() {
+		return codecDeserializerEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getInfoType() {
 		return infoTypeEEnum;
 	}
@@ -709,8 +822,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EDataType getSerializerProvider() {
-		return serializerProviderEDataType;
+	public EDataType getSerializationContext() {
+		return serializationContextEDataType;
 	}
 
 	/**
@@ -721,6 +834,26 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	@Override
 	public EDataType getDeserializationContext() {
 		return deserializationContextEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EDataType getJsonGenerator() {
+		return jsonGeneratorEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EDataType getJsonParser() {
+		return jsonParserEDataType;
 	}
 
 	/**
@@ -769,6 +902,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__ATTRIBUTE_CODEC_INFO);
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__OPERATION_CODEC_INFO);
 		createEReference(eClassCodecInfoEClass, ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO);
+		createEAttribute(eClassCodecInfoEClass, ECLASS_CODEC_INFO__SERIALIZER_NAME);
+		createEAttribute(eClassCodecInfoEClass, ECLASS_CODEC_INFO__DESERIALIZER_NAME);
 
 		featureCodecInfoEClass = createEClass(FEATURE_CODEC_INFO);
 		createEAttribute(featureCodecInfoEClass, FEATURE_CODEC_INFO__ID);
@@ -812,12 +947,22 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		createEAttribute(sampleValueReaderEClass, SAMPLE_VALUE_READER__NAME);
 		createEOperation(sampleValueReaderEClass, SAMPLE_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT);
 
+		codecSerializerEClass = createEClass(CODEC_SERIALIZER);
+		createEAttribute(codecSerializerEClass, CODEC_SERIALIZER__NAME);
+		createEOperation(codecSerializerEClass, CODEC_SERIALIZER___SERIALIZE__OBJECT_JSONGENERATOR_SERIALIZATIONCONTEXT);
+
+		codecDeserializerEClass = createEClass(CODEC_DESERIALIZER);
+		createEAttribute(codecDeserializerEClass, CODEC_DESERIALIZER__NAME);
+		createEOperation(codecDeserializerEClass, CODEC_DESERIALIZER___DESERIALIZE__JSONPARSER_DESERIALIZATIONCONTEXT);
+
 		// Create enums
 		infoTypeEEnum = createEEnum(INFO_TYPE);
 
 		// Create data types
-		serializerProviderEDataType = createEDataType(SERIALIZER_PROVIDER);
+		serializationContextEDataType = createEDataType(SERIALIZATION_CONTEXT);
 		deserializationContextEDataType = createEDataType(DESERIALIZATION_CONTEXT);
+		jsonGeneratorEDataType = createEDataType(JSON_GENERATOR);
+		jsonParserEDataType = createEDataType(JSON_PARSER);
 	}
 
 	/**
@@ -853,6 +998,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		ETypeParameter codecValueWriterEClass_V = addETypeParameter(codecValueWriterEClass, "V");
 		ETypeParameter sampleValueReaderEClass_V = addETypeParameter(sampleValueReaderEClass, "V");
 		ETypeParameter sampleValueReaderEClass_T = addETypeParameter(sampleValueReaderEClass, "T");
+		ETypeParameter codecSerializerEClass_T = addETypeParameter(codecSerializerEClass, "T");
+		ETypeParameter codecDeserializerEClass_V = addETypeParameter(codecDeserializerEClass, "V");
 
 		// Set bounds for type parameters
 
@@ -879,6 +1026,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEReference(getEClassCodecInfo_AttributeCodecInfo(), this.getFeatureCodecInfo(), null, "attributeCodecInfo", null, 0, -1, EClassCodecInfo.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_OperationCodecInfo(), this.getFeatureCodecInfo(), null, "operationCodecInfo", null, 0, -1, EClassCodecInfo.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getEClassCodecInfo_EnumeratorCodecInfo(), this.getFeatureCodecInfo(), null, "enumeratorCodecInfo", null, 0, -1, EClassCodecInfo.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEClassCodecInfo_SerializerName(), ecorePackage.getEString(), "serializerName", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEClassCodecInfo_DeserializerName(), ecorePackage.getEString(), "deserializerName", null, 0, 1, EClassCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(featureCodecInfoEClass, FeatureCodecInfo.class, "FeatureCodecInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getFeatureCodecInfo_Id(), ecorePackage.getEString(), "id", null, 0, 1, FeatureCodecInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -919,7 +1068,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		op = initEOperation(getCodecValueWriter__WriteValue__Object_SerializationContext(), null, "writeValue", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(codecValueWriterEClass_T);
 		addEParameter(op, g1, "value", 1, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getSerializerProvider(), "provider", 1, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getSerializationContext(), "provider", 1, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(codecValueWriterEClass_V);
 		initEOperation(op, g1);
 
@@ -946,6 +1095,24 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		g1 = createEGenericType(sampleValueReaderEClass_T);
 		initEOperation(op, g1);
 
+		initEClass(codecSerializerEClass, CodecSerializer.class, "CodecSerializer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCodecSerializer_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecSerializer.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getCodecSerializer__Serialize__Object_JsonGenerator_SerializationContext(), null, "serialize", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(codecSerializerEClass_T);
+		addEParameter(op, g1, "value", 1, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getJsonGenerator(), "generator", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getSerializationContext(), "ctxt", 1, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(codecDeserializerEClass, CodecDeserializer.class, "CodecDeserializer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCodecDeserializer_Name(), theEcorePackage.getEString(), "name", null, 1, 1, CodecDeserializer.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getCodecDeserializer__Deserialize__JsonParser_DeserializationContext(), null, "deserialize", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getJsonParser(), "parser", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getDeserializationContext(), "ctxt", 1, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(codecDeserializerEClass_V);
+		initEOperation(op, g1);
+
 		// Initialize enums and add enum literals
 		initEEnum(infoTypeEEnum, InfoType.class, "InfoType");
 		addEEnumLiteral(infoTypeEEnum, InfoType.IDENTITY);
@@ -959,8 +1126,10 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		addEEnumLiteral(infoTypeEEnum, InfoType.OTHER);
 
 		// Initialize data types
-		initEDataType(serializerProviderEDataType, SerializationContext.class, "SerializerProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(serializationContextEDataType, SerializationContext.class, "SerializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(deserializationContextEDataType, DeserializationContext.class, "DeserializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(jsonGeneratorEDataType, JsonGenerator.class, "JsonGenerator", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(jsonParserEDataType, JsonParser.class, "JsonParser", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

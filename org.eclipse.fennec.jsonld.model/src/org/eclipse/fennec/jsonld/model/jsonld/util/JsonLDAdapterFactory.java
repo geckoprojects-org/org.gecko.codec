@@ -78,16 +78,16 @@ public class JsonLDAdapterFactory extends AdapterFactoryImpl {
 				return createContextStringValueAdapter();
 			}
 			@Override
-			public Adapter caseContextObjectValue(ContextObjectValue object) {
-				return createContextObjectValueAdapter();
-			}
-			@Override
-			public Adapter caseContextTerm(Map.Entry<String, String> object) {
+			public Adapter caseContextTerm(Map.Entry<String, ContextValue> object) {
 				return createContextTermAdapter();
 			}
 			@Override
 			public Adapter caseContextObject(ContextObject object) {
 				return createContextObjectAdapter();
+			}
+			@Override
+			public Adapter caseJsonLD(JsonLD object) {
+				return createJsonLDAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -138,20 +138,6 @@ public class JsonLDAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.jsonld.model.jsonld.ContextObjectValue <em>Context Object Value</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.fennec.jsonld.model.jsonld.ContextObjectValue
-	 * @generated
-	 */
-	public Adapter createContextObjectValueAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link java.util.Map.Entry <em>Context Term</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -176,6 +162,20 @@ public class JsonLDAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createContextObjectAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.jsonld.model.jsonld.JsonLD <em>Json LD</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.jsonld.model.jsonld.JsonLD
+	 * @generated
+	 */
+	public Adapter createJsonLDAdapter() {
 		return null;
 	}
 

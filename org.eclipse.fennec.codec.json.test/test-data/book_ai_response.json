@@ -1,7 +1,0 @@
-{
-	"title": "Machine Learning in Java",
-	"author": "Bostjan Kaluza",
-	"publicationYear": 2014,
-	"pageCount": 350,
-	"summary": "Machine Learning in Java is an accessible guide to help Java developers harness the power of machine learning to solve real-world problems. The book provides a comprehensive overview of machine learning concepts and algorithms, and it is supplemented with practical examples that demonstrate how to integrate these into Java applications. From basic techniques to more advanced topics like clustering, regression, and neural networks, this book equips developers with the tools and knowledge needed to implement machine learning solutions effectively using Java."
-}

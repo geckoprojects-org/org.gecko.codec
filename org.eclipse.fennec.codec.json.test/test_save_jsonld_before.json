@@ -1,0 +1,87 @@
+{
+  "@context" : {
+    "context" : {
+      "affiliation" : {
+        "value" : "http://schema.org/affiliation"
+      },
+      "familyName" : {
+        "value" : "http://xmlns.com/foaf/0.1/familyName"
+      },
+      "nickname" : {
+        "value" : "http://xmlns.com/foaf/0.1/nick"
+      },
+      "xsd" : {
+        "value" : "http://www.w3.org/2001/XMLSchema#"
+      },
+      "givenName" : {
+        "value" : "http://xmlns.com/foaf/0.1/givenName"
+      },
+      "Person" : {
+        "value" : "http://xmlns.com/foaf/0.1/Person"
+      },
+      "name" : {
+        "value" : "http://xmlns.com/foaf/0.1/name"
+      },
+      "knows" : {
+        "properties" : {
+          "@type" : {
+            "value" : "@id"
+          },
+          "@id" : {
+            "value" : "http://xmlns.com/foaf/0.1/knows"
+          }
+        }
+      },
+      "depiction" : {
+        "properties" : {
+          "@type" : {
+            "value" : "@id"
+          },
+          "@id" : {
+            "value" : "http://xmlns.com/foaf/0.1/depiction"
+          }
+        }
+      },
+      "colleague" : {
+        "properties" : {
+          "@type" : {
+            "value" : "@id"
+          },
+          "@id" : {
+            "value" : "http://schema.org/colleagues"
+          }
+        }
+      },
+      "image" : {
+        "properties" : {
+          "@type" : {
+            "value" : "@id"
+          },
+          "@id" : {
+            "value" : "http://xmlns.com/foaf/0.1/img"
+          }
+        }
+      },
+      "child" : {
+        "properties" : {
+          "@type" : {
+            "value" : "@id"
+          },
+          "@id" : {
+            "value" : "http://schema.org/children"
+          }
+        }
+      },
+      "born" : {
+        "properties" : {
+          "@type" : {
+            "value" : "xsd:date"
+          },
+          "@id" : {
+            "value" : "http://schema.org/birthDate"
+          }
+        }
+      }
+    }
+  }
+}

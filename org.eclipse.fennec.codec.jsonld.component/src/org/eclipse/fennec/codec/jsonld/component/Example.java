@@ -1,27 +1,37 @@
 package org.eclipse.fennec.codec.jsonld.component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.fennec.jsonld.model.jsonld.ContextObject;
-import org.eclipse.fennec.jsonld.model.jsonld.ContextObjectValue;
 import org.eclipse.fennec.jsonld.model.jsonld.ContextStringValue;
+import org.eclipse.fennec.jsonld.model.jsonld.ContextValue;
 import org.eclipse.fennec.jsonld.model.jsonld.JsonLDFactory;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import org.gecko.emf.json.constants.EMFJs;
+
+import com.fasterxml.jackson.annotation.JsonFormat.Value;
+
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.Version;
+import tools.jackson.core.json.JsonWriteFeature;
+import tools.jackson.databind.BeanDescription.Supplier;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.SerializationConfig;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.Serializers;
+import tools.jackson.databind.type.TypeFactory;
 
 
 
 @Component(immediate=true, name = "JsonLDTestComponent")
 public class Example {
 	
-	@Reference
-	ResourceSet resSet;
+//	@Reference
+//	ResourceSet resSet;
 	
 
 	@Activate
@@ -41,35 +51,40 @@ public class Example {
 //	        Map.Entry<String, ContextValue> nameTerm = Map.entry("name", nameValue);
 //	        nameTerm.setKey("name");
 
-	        
-
-	        contextObject.getContext().put("Person", "http://xmlns.com/foaf/0.1/Person");
-	        
-	        
-
-	        // === 2. Add a complex term: "person": { "@id": "http://schema.org/Person", "@type": "@id" }
-	        
-	        ContextObjectValue objValue = factory.createContextObjectValue();
 	        ContextStringValue v1 = factory.createContextStringValue();
-	        v1.setValue("http://schema.org/v1");
-//	        Map.Entry<String, ContextValue> t1 = Map.entry("v1", v1);
+	        v1.setValue("http://xmlns.com/foaf/0.1/Person");
+
+	        contextObject.getContext().put("@context", v1);
 	        
-	        ContextStringValue v2 = factory.createContextStringValue();
-	        v2.setValue("http://schema.org/v2");
-//	        Map.Entry<String, ContextValue> t2 = Map.entry("v2", v2);
+	        ContextObject v2 = factory.createContextObject();
+	        ContextStringValue v3 = factory.createContextStringValue();
+	        v3.setValue("blabla");
+	        v2.getContext().put("@id", v3);
 	        
-	        objValue.getProperties().put("v1", v1);
-	        objValue.getProperties().put("v2", v2);
+	        ContextObject v4 = factory.createContextObject();
+	        ContextStringValue v5 = factory.createContextStringValue();
+	        v5.setValue("etwas");
+	        v4.getContext().put("something", v5);
+	        v2.getContext().put("@type", v4);
+//	        contextObject.getContext().put("@context", v2);
 	        
-//	        Map.Entry<String, ContextValue> objTerm = Map.entry("obj", objValue);
-	        contextObject.getContext().put("obj", objValue);
-	        
-	        
-	        Resource res = resSet.createResource(URI.createURI("test.json"));
-	        res.getContents().add(contextObject);
-	        Map<String, Object> options = new HashMap<>();
-	        options.put(EMFJs.OPTION_SERIALIZE_TYPE, false);
-	        res.save(options);
+//	        JsonLD jsonLD = factory.createJsonLD();
+//	        jsonLD.setContext(contextObject);
+	        SimpleModule module = new SimpleModule();
+	        module.addSerializer(ContextObject.class, new MyObjectSerializer());
+
+	        JsonMapper mapper = JsonMapper.builder()
+	        		.disable(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
+	        	    .addModule(module)
+	        	    .build();
+
+	        String ser = mapper.writeValueAsString(contextObject);
+	        System.out.println(ser);
+//	        Resource res = resSet.createResource(URI.createURI("test.json"));
+//	        res.getContents().add(contextObject);
+//	        Map<String, Object> options = new HashMap<>();
+//	        options.put(EMFJs.OPTION_SERIALIZE_TYPE, false);
+//	        res.save(options);
 
 			
 //			
@@ -96,5 +111,104 @@ public class Example {
 //		
 		
 	}
+	
 
+public class EMapContextValueSerializers extends Serializers.Base {
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.databind.ser.Serializers.Base#findSerializer(tools.jackson.databind.SerializationConfig, tools.jackson.databind.JavaType, tools.jackson.databind.BeanDescription.Supplier, com.fasterxml.jackson.annotation.JsonFormat.Value)
+	 */
+	@Override
+	public ValueSerializer<?> findSerializer(SerializationConfig config, JavaType type, Supplier beanDescRef,
+			Value formatOverrides) {
+		TypeFactory tf = config.getTypeFactory();
+
+        JavaType expectedType = tf.constructParametricType(EMap.class, String.class, ContextValue.class);
+
+        if (type.equals(expectedType)) {
+            return new MyObjectSerializer(); // Your custom serializer here
+        }
+		return super.findSerializer(config, type, beanDescRef, formatOverrides);
+	}
+
+  
+}
+	
+	public class MyObjectSerializer3 extends ValueSerializer<EMap<String, ContextValue>> {
+
+	    @Override
+	    public void serialize(EMap<String, ContextValue> value, JsonGenerator gen, SerializationContext ctxt) {
+	        gen.writeStartObject();
+	        for (Entry<String, ContextValue> entry : value.entrySet()) {
+	        	 gen.writeName(entry.getKey());
+	        	 if(entry.getValue() instanceof ContextStringValue strValue) {
+	        		 ctxt.writeValue(gen, strValue.getValue());
+	        	 } else {
+	        		 ctxt.writeValue(gen, entry.getValue());
+	        	 }  	 
+	            
+	        }
+	        gen.writeEndObject();
+	    }
+
+		
+	}
+	
+	public class MyObjectSerializer extends ValueSerializer<ContextObject> {
+
+	    @Override
+	    public void serialize(ContextObject value, JsonGenerator gen, SerializationContext ctxt) {
+	    	
+	        gen.writeStartObject();
+	        for (Entry<String, ContextValue> entry : value.getContext().entrySet()) {
+	        	 gen.writeName(entry.getKey());
+	        	 if(entry.getValue() instanceof ContextStringValue strValue) {
+	        		 ctxt.writeValue(gen, strValue.getValue());
+	        	 } else {
+	        		 ctxt.writeValue(gen, entry.getValue());
+	        	 }  	 
+	            
+	        }
+	        gen.writeEndObject();
+	    }
+
+		
+	}
+	
+	public class EMapContextValueModule extends SimpleModule {
+
+	    /** serialVersionUID */
+	private static final long serialVersionUID = 1L;
+
+		@Override
+	    public String getModuleName() {
+	        return "EMapContextValueModule";
+	    }
+
+	    @Override
+	    public Version version() {
+	        return Version.unknownVersion();
+	    }
+
+	    @Override
+	    public void setupModule(SetupContext context) {
+	        context.addSerializers(new Serializers.Base() {
+	        	@Override
+	        	public ValueSerializer<?> findSerializer(SerializationConfig config, JavaType type, Supplier beanDescRef,
+	        			Value formatOverrides) {
+	        		TypeFactory tf = config.getTypeFactory();
+
+	                JavaType expectedType = tf.constructParametricType(EMap.class, String.class, ContextValue.class);
+
+	                if (type.equals(expectedType)) {
+	                    return new MyObjectSerializer3(); // Your custom serializer here
+	                }
+	        		return super.findSerializer(config, type, beanDescRef, formatOverrides);
+	        	}
+	        });
+	    }
+	}
+	
+	
 }

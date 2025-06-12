@@ -17,7 +17,9 @@ import java.util.Optional;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
+import org.eclipse.fennec.codec.info.codecinfo.CodecSerializer;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
@@ -72,5 +74,13 @@ public interface CodecModelInfo extends EPackage.Registry {
 	 * @param reader
 	 */
 	public void addCodecValueReaderForType(InfoType infoType, CodecValueReader<?,?> reader);
+	
+	public void addCodecSerializer(CodecSerializer<?> serializer);
+	
+	public CodecSerializer<?> getCodecSerializerByName(String name);
+	
+	public void addCodecDeserializer(CodecDeserializer<?> deserializer);
+	
+	public CodecDeserializer<?> getCodecDeserializerByName(String name);
 
 }

@@ -10,17 +10,17 @@
       disposableProviderFactory="true" ecorePackage="jsonld.ecore#/">
     <genClasses image="false" ecoreClass="jsonld.ecore#//ContextValue"/>
     <genClasses ecoreClass="jsonld.ecore#//ContextStringValue">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference jsonld.ecore#//ContextStringValue/value"/>
-    </genClasses>
-    <genClasses ecoreClass="jsonld.ecore#//ContextObjectValue">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference jsonld.ecore#//ContextObjectValue/properties"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute jsonld.ecore#//ContextStringValue/value"/>
     </genClasses>
     <genClasses ecoreClass="jsonld.ecore#//ContextTerm">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute jsonld.ecore#//ContextTerm/key"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute jsonld.ecore#//ContextTerm/value"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference jsonld.ecore#//ContextTerm/value"/>
     </genClasses>
     <genClasses ecoreClass="jsonld.ecore#//ContextObject">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference jsonld.ecore#//ContextObject/context"/>
+    </genClasses>
+    <genClasses ecoreClass="jsonld.ecore#//JsonLD">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference jsonld.ecore#//JsonLD/context"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

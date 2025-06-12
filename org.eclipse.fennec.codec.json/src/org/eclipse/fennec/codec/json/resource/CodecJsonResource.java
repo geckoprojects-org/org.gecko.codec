@@ -13,8 +13,6 @@
  */
 package org.eclipse.fennec.codec.json.resource;
 
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.Attributes.RESOURCE;
-import static org.eclipse.emfcloud.jackson.databind.EMFContext.Attributes.RESOURCE_SET;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,9 +77,9 @@ public class CodecJsonResource extends CodecResource {
 
 	      } else {
 
-	         ContextAttributes attributes = from(options)
-	            .withPerCallAttribute(RESOURCE_SET, getResourceSet())
-	            .withPerCallAttribute(RESOURCE, this);
+	         ContextAttributes attributes = from(options);
+//	            .withPerCallAttribute(RESOURCE_SET, getResourceSet())
+//	            .withPerCallAttribute(RESOURCE, this);
 
 	         mapper.reader()
 	            .with(attributes)

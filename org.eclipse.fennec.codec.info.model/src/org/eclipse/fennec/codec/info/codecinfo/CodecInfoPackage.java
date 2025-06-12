@@ -232,13 +232,31 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO = 9;
 
 	/**
+	 * The feature id for the '<em><b>Serializer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO__SERIALIZER_NAME = 10;
+
+	/**
+	 * The feature id for the '<em><b>Deserializer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO__DESERIALIZER_NAME = 11;
+
+	/**
 	 * The number of structural features of the '<em>EClass Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO_FEATURE_COUNT = 10;
+	int ECLASS_CODEC_INFO_FEATURE_COUNT = 12;
 
 	/**
 	 * The number of operations of the '<em>EClass Codec Info</em>' class.
@@ -897,6 +915,98 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int SAMPLE_VALUE_READER_OPERATION_COUNT = 1;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.codec.info.codecinfo.CodecSerializer <em>Codec Serializer</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecSerializer
+	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecSerializer()
+	 * @generated
+	 */
+	int CODEC_SERIALIZER = 10;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_SERIALIZER__NAME = 0;
+
+	/**
+	 * The number of structural features of the '<em>Codec Serializer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_SERIALIZER_FEATURE_COUNT = 1;
+
+	/**
+	 * The operation id for the '<em>Serialize</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_SERIALIZER___SERIALIZE__OBJECT_JSONGENERATOR_SERIALIZATIONCONTEXT = 0;
+
+	/**
+	 * The number of operations of the '<em>Codec Serializer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_SERIALIZER_OPERATION_COUNT = 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer <em>Codec Deserializer</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer
+	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecDeserializer()
+	 * @generated
+	 */
+	int CODEC_DESERIALIZER = 11;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_DESERIALIZER__NAME = 0;
+
+	/**
+	 * The number of structural features of the '<em>Codec Deserializer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_DESERIALIZER_FEATURE_COUNT = 1;
+
+	/**
+	 * The operation id for the '<em>Deserialize</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_DESERIALIZER___DESERIALIZE__JSONPARSER_DESERIALIZATIONCONTEXT = 0;
+
+	/**
+	 * The number of operations of the '<em>Codec Deserializer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_DESERIALIZER_OPERATION_COUNT = 1;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -904,17 +1014,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getInfoType()
 	 * @generated
 	 */
-	int INFO_TYPE = 10;
+	int INFO_TYPE = 12;
 
 	/**
-	 * The meta object id for the '<em>Serializer Provider</em>' data type.
+	 * The meta object id for the '<em>Serialization Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see tools.jackson.databind.SerializationContext
-	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
+	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializationContext()
 	 * @generated
 	 */
-	int SERIALIZER_PROVIDER = 11;
+	int SERIALIZATION_CONTEXT = 13;
 
 	/**
 	 * The meta object id for the '<em>Deserialization Context</em>' data type.
@@ -924,7 +1034,27 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 	 * @generated
 	 */
-	int DESERIALIZATION_CONTEXT = 12;
+	int DESERIALIZATION_CONTEXT = 14;
+
+	/**
+	 * The meta object id for the '<em>Json Generator</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see tools.jackson.core.JsonGenerator
+	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getJsonGenerator()
+	 * @generated
+	 */
+	int JSON_GENERATOR = 15;
+
+	/**
+	 * The meta object id for the '<em>Json Parser</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see tools.jackson.core.JsonParser
+	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getJsonParser()
+	 * @generated
+	 */
+	int JSON_PARSER = 16;
 
 
 	/**
@@ -1100,6 +1230,28 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EReference getEClassCodecInfo_EnumeratorCodecInfo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getSerializerName <em>Serializer Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Serializer Name</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getSerializerName()
+	 * @see #getEClassCodecInfo()
+	 * @generated
+	 */
+	EAttribute getEClassCodecInfo_SerializerName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getDeserializerName <em>Deserializer Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Deserializer Name</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getDeserializerName()
+	 * @see #getEClassCodecInfo()
+	 * @generated
+	 */
+	EAttribute getEClassCodecInfo_DeserializerName();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo <em>Feature Codec Info</em>}'.
@@ -1463,6 +1615,68 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getSampleValueReader__ReadValue__Object_DeserializationContext();
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.info.codecinfo.CodecSerializer <em>Codec Serializer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Codec Serializer</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecSerializer
+	 * @generated
+	 */
+	EClass getCodecSerializer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.CodecSerializer#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecSerializer#getName()
+	 * @see #getCodecSerializer()
+	 * @generated
+	 */
+	EAttribute getCodecSerializer_Name();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.codec.info.codecinfo.CodecSerializer#serialize(java.lang.Object, tools.jackson.core.JsonGenerator, tools.jackson.databind.SerializationContext) <em>Serialize</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Serialize</em>' operation.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecSerializer#serialize(java.lang.Object, tools.jackson.core.JsonGenerator, tools.jackson.databind.SerializationContext)
+	 * @generated
+	 */
+	EOperation getCodecSerializer__Serialize__Object_JsonGenerator_SerializationContext();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer <em>Codec Deserializer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Codec Deserializer</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer
+	 * @generated
+	 */
+	EClass getCodecDeserializer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer#getName()
+	 * @see #getCodecDeserializer()
+	 * @generated
+	 */
+	EAttribute getCodecDeserializer_Name();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext) <em>Deserialize</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Deserialize</em>' operation.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext)
+	 * @generated
+	 */
+	EOperation getCodecDeserializer__Deserialize__JsonParser_DeserializationContext();
+
+	/**
 	 * Returns the meta object for enum '{@link org.eclipse.fennec.codec.info.codecinfo.InfoType <em>Info Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1473,15 +1687,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EEnum getInfoType();
 
 	/**
-	 * Returns the meta object for data type '{@link tools.jackson.databind.SerializationContext <em>Serializer Provider</em>}'.
+	 * Returns the meta object for data type '{@link tools.jackson.databind.SerializationContext <em>Serialization Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Serializer Provider</em>'.
+	 * @return the meta object for data type '<em>Serialization Context</em>'.
 	 * @see tools.jackson.databind.SerializationContext
 	 * @model instanceClass="tools.jackson.databind.SerializationContext"
 	 * @generated
 	 */
-	EDataType getSerializerProvider();
+	EDataType getSerializationContext();
 
 	/**
 	 * Returns the meta object for data type '{@link tools.jackson.databind.DeserializationContext <em>Deserialization Context</em>}'.
@@ -1493,6 +1707,28 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EDataType getDeserializationContext();
+
+	/**
+	 * Returns the meta object for data type '{@link tools.jackson.core.JsonGenerator <em>Json Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Json Generator</em>'.
+	 * @see tools.jackson.core.JsonGenerator
+	 * @model instanceClass="tools.jackson.core.JsonGenerator"
+	 * @generated
+	 */
+	EDataType getJsonGenerator();
+
+	/**
+	 * Returns the meta object for data type '{@link tools.jackson.core.JsonParser <em>Json Parser</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Json Parser</em>'.
+	 * @see tools.jackson.core.JsonParser
+	 * @model instanceClass="tools.jackson.core.JsonParser"
+	 * @generated
+	 */
+	EDataType getJsonParser();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1648,6 +1884,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO = eINSTANCE.getEClassCodecInfo_EnumeratorCodecInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Serializer Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ECLASS_CODEC_INFO__SERIALIZER_NAME = eINSTANCE.getEClassCodecInfo_SerializerName();
+
+		/**
+		 * The meta object literal for the '<em><b>Deserializer Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ECLASS_CODEC_INFO__DESERIALIZER_NAME = eINSTANCE.getEClassCodecInfo_DeserializerName();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl <em>Feature Codec Info</em>}' class.
@@ -1938,6 +2190,58 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EOperation SAMPLE_VALUE_READER___READ_VALUE__OBJECT_DESERIALIZATIONCONTEXT = eINSTANCE.getSampleValueReader__ReadValue__Object_DeserializationContext();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.CodecSerializer <em>Codec Serializer</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.codec.info.codecinfo.CodecSerializer
+		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecSerializer()
+		 * @generated
+		 */
+		EClass CODEC_SERIALIZER = eINSTANCE.getCodecSerializer();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_SERIALIZER__NAME = eINSTANCE.getCodecSerializer_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Serialize</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation CODEC_SERIALIZER___SERIALIZE__OBJECT_JSONGENERATOR_SERIALIZATIONCONTEXT = eINSTANCE.getCodecSerializer__Serialize__Object_JsonGenerator_SerializationContext();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer <em>Codec Deserializer</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer
+		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getCodecDeserializer()
+		 * @generated
+		 */
+		EClass CODEC_DESERIALIZER = eINSTANCE.getCodecDeserializer();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_DESERIALIZER__NAME = eINSTANCE.getCodecDeserializer_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Deserialize</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation CODEC_DESERIALIZER___DESERIALIZE__JSONPARSER_DESERIALIZATIONCONTEXT = eINSTANCE.getCodecDeserializer__Deserialize__JsonParser_DeserializationContext();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1948,14 +2252,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EEnum INFO_TYPE = eINSTANCE.getInfoType();
 
 		/**
-		 * The meta object literal for the '<em>Serializer Provider</em>' data type.
+		 * The meta object literal for the '<em>Serialization Context</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see tools.jackson.databind.SerializationContext
-		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
+		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializationContext()
 		 * @generated
 		 */
-		EDataType SERIALIZER_PROVIDER = eINSTANCE.getSerializerProvider();
+		EDataType SERIALIZATION_CONTEXT = eINSTANCE.getSerializationContext();
 
 		/**
 		 * The meta object literal for the '<em>Deserialization Context</em>' data type.
@@ -1966,6 +2270,26 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EDataType DESERIALIZATION_CONTEXT = eINSTANCE.getDeserializationContext();
+
+		/**
+		 * The meta object literal for the '<em>Json Generator</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see tools.jackson.core.JsonGenerator
+		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getJsonGenerator()
+		 * @generated
+		 */
+		EDataType JSON_GENERATOR = eINSTANCE.getJsonGenerator();
+
+		/**
+		 * The meta object literal for the '<em>Json Parser</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see tools.jackson.core.JsonParser
+		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getJsonParser()
+		 * @generated
+		 */
+		EDataType JSON_PARSER = eINSTANCE.getJsonParser();
 
 	}
 

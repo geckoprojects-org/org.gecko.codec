@@ -121,5 +121,21 @@ public interface CodecModelInfoOptions {
 	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_INCLUDE} annotation;
 	 * */
 	String CODEC_TYPE_INCLUDE = "codec.type.include";
+	
+	/** CODEC_CUSTOM_SERIALIZERS_MAP 
+	 * a {@link Map} where the keys are of type {@link EClass} and the values 
+	 * are of type {@link CodecSerializer}, to specify the {@link CodecSerializer} to use 
+	 * when serializing the corresponding {@link EClass}
+	 * 
+	 * */
+	String CODEC_CUSTOM_SERIALIZERS_MAP = "codec.custom.serializers.map";
+	
+	/** CODEC_CUSTOM_DESERIALIZERS_MAP 
+	 * a {@link Map} where the keys are of type {@link EClass} and the values 
+	 * are of type {@link CodecDeserializer}, to specify the {@link CodecDeserializer} to use 
+	 * when serializing the corresponding {@link EClass}
+	 * 
+	 * */
+	String CODEC_CUSTOM_DESERIALIZERS_MAP = "codec.custom.deserializers.map";
 
 }

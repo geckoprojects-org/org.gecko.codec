@@ -3,16 +3,19 @@
 package org.eclipse.fennec.jsonld.model.jsonld.impl;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.fennec.jsonld.model.jsonld.ContextValue;
 import org.eclipse.fennec.jsonld.model.jsonld.JsonLDPackage;
 
 /**
@@ -29,7 +32,7 @@ import org.eclipse.fennec.jsonld.model.jsonld.JsonLDPackage;
  *
  * @generated
  */
-public class ContextTermImpl extends MinimalEObjectImpl.Container implements BasicEMap.Entry<String,String> {
+public class ContextTermImpl extends MinimalEObjectImpl.Container implements BasicEMap.Entry<String,ContextValue> {
 	/**
 	 * The default value of the '{@link #getTypedKey() <em>Key</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -51,24 +54,14 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 	protected String key = KEY_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getTypedValue() <em>Value</em>}' attribute.
+	 * The cached value of the '{@link #getTypedValue() <em>Value</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTypedValue()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String VALUE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getTypedValue() <em>Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTypedValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected String value = VALUE_EDEFAULT;
+	protected ContextValue value;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -115,7 +108,7 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getTypedValue() {
+	public ContextValue getTypedValue() {
 		return value;
 	}
 
@@ -124,11 +117,47 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setTypedValue(String newValue) {
-		String oldValue = value;
+	public NotificationChain basicSetTypedValue(ContextValue newValue, NotificationChain msgs) {
+		ContextValue oldValue = value;
 		value = newValue;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, JsonLDPackage.CONTEXT_TERM__VALUE, oldValue, value));
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, JsonLDPackage.CONTEXT_TERM__VALUE, oldValue, newValue);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTypedValue(ContextValue newValue) {
+		if (newValue != value) {
+			NotificationChain msgs = null;
+			if (value != null)
+				msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - JsonLDPackage.CONTEXT_TERM__VALUE, null, msgs);
+			if (newValue != null)
+				msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - JsonLDPackage.CONTEXT_TERM__VALUE, null, msgs);
+			msgs = basicSetTypedValue(newValue, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, JsonLDPackage.CONTEXT_TERM__VALUE, newValue, newValue));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case JsonLDPackage.CONTEXT_TERM__VALUE:
+				return basicSetTypedValue(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -159,7 +188,7 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 				setTypedKey((String)newValue);
 				return;
 			case JsonLDPackage.CONTEXT_TERM__VALUE:
-				setTypedValue((String)newValue);
+				setTypedValue((ContextValue)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -177,7 +206,7 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 				setTypedKey(KEY_EDEFAULT);
 				return;
 			case JsonLDPackage.CONTEXT_TERM__VALUE:
-				setTypedValue(VALUE_EDEFAULT);
+				setTypedValue((ContextValue)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -194,7 +223,7 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 			case JsonLDPackage.CONTEXT_TERM__KEY:
 				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
 			case JsonLDPackage.CONTEXT_TERM__VALUE:
-				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+				return value != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -211,8 +240,6 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (key: ");
 		result.append(key);
-		result.append(", value: ");
-		result.append(value);
 		result.append(')');
 		return result.toString();
 	}
@@ -274,7 +301,7 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 	 * @generated
 	 */
 	@Override
-	public String getValue() {
+	public ContextValue getValue() {
 		return getTypedValue();
 	}
 
@@ -284,8 +311,8 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 	 * @generated
 	 */
 	@Override
-	public String setValue(String value) {
-		String oldValue = getValue();
+	public ContextValue setValue(ContextValue value) {
+		ContextValue oldValue = getValue();
 		setTypedValue(value);
 		return oldValue;
 	}
@@ -296,9 +323,9 @@ public class ContextTermImpl extends MinimalEObjectImpl.Container implements Bas
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EMap<String, String> getEMap() {
+	public EMap<String, ContextValue> getEMap() {
 		EObject container = eContainer();
-		return container == null ? null : (EMap<String, String>)container.eGet(eContainmentFeature());
+		return container == null ? null : (EMap<String, ContextValue>)container.eGet(eContainmentFeature());
 	}
 
 } //ContextTermImpl

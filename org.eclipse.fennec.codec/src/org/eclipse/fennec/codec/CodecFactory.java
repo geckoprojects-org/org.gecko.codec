@@ -26,6 +26,7 @@ import tools.jackson.core.ObjectWriteContext;
 import tools.jackson.core.io.ContentReference;
 import tools.jackson.core.io.IOContext;
 import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.json.JsonFactoryBuilder;
 
 /**
  * Codec specific JsonFactory to create CodecGenerators and CodecParsers.
@@ -43,7 +44,8 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	/**
 	 * Creates a new instance.
 	 */
-	public CodecFactory(CodecGeneratorFactory<W, G> genFactory, CodecParserFactory<R, P> parserFactory) {
+	public CodecFactory(JsonFactoryBuilder builder, CodecGeneratorFactory<W, G> genFactory, CodecParserFactory<R, P> parserFactory) {
+		super(builder);
 		this.genFactory = genFactory;
 		this.parserFactory = parserFactory;
 	}

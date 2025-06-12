@@ -20,12 +20,11 @@ import java.util.logging.Logger;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emfcloud.jackson.databind.EMFContext;
 import org.eclipse.fennec.codec.constants.CodecResourceOptions;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
+import org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
@@ -42,7 +41,6 @@ import org.eclipse.fennec.codec.jackson.utils.CodecParserException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.TokenStreamContext;
-import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.deser.jdk.StringDeserializer;
@@ -81,7 +79,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 	 * (non-Javadoc)
 	 * @see tools.jackson.databind.ValueDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public EObject deserialize(final JsonParser jp, final DeserializationContext ctxt) {
 
@@ -95,7 +93,6 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		//		final EClass defaultType = getDefaultType(ctxt);
 
 		final Resource resource = codecReadCtxt != null ? codecReadCtxt.getResource() : null;
-		EStructuralFeature feature = codecReadCtxt != null ? codecReadCtxt.getCurrentFeature() : null;
 		final EClass defaultType = codecReadCtxt != null ? getDefaultType((TokenStreamContext)codecReadCtxt) : null;
 
 
@@ -103,23 +100,27 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		//		This fixes the issue when we don't have a _type property for contained ref, to retrieve the actual type
 		//		In case of root obj we have the ROOT_OBJECT option that is mandatory if the _type is not set so we 
 		//		can use that to construct everything		
-		EClass type = defaultType == null ? ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) == null ? null : (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) : defaultType;	
+		EClass type;
+		if (defaultType != null) {
+			type = defaultType;
+		} else {
+			type = (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT);
+		}
 		EObject current = type == null ? null : EcoreUtil.create(type);
-
 		if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
 
 		//		In case of non contained ref w/o type info we try to retrieve the root ctxt so we know which ref we are trying to deserialize
-		if(current == null) {
-			DatabindContext rootCtxt = EMFContext.getRootContext();
-			if(rootCtxt != null) {
-				feature = EMFContext.getFeature(rootCtxt);
-				if(feature != null && feature.getEType() instanceof EClass eClass) {
-					type = eClass;
-					current = EcoreUtil.create(type);
-					if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
-				}
-			}
-		}
+//		if(current == null) {
+//			DatabindContext rootCtxt = EMFContext.getRootContext();
+//			if(rootCtxt != null) {
+//				feature = EMFContext.getFeature(rootCtxt);
+//				if(feature != null && feature.getEType() instanceof EClass eClass) {
+//					type = eClass;
+//					current = EcoreUtil.create(type);
+//					if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
+//				}
+//			}
+//		}
 
 		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
 		EClassCodecInfo eObjCodecInfo = null;
@@ -131,59 +132,67 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 				}
 			}
 		}
-
 		TokenBuffer buffer = null;
-		JsonToken nextToken = jp.nextToken();
-		CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
-		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
-			final String field = jp.currentName();
-			//			If it was not possible to determine the type from the conditions before then we look for the _type in the serialized document
-			if(field.equals(codecModule.getTypeKey()) && current == null) {
-				jp.nextToken();
-				for(CodecValueReader<String, EClass> reader : infoHolder.getReaders()) {
-					try {
-						type = (EClass) reader.readValue(StringDeserializer.instance.deserialize(jp, ctxt), ctxt);
-					} catch(Exception e) {
-						type = null;
-					}
-					if(type != null) break;
-				}
-				EClass rootObj = type;
-				eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().
-						filter(eci -> 
-						eci.getClassifier().equals(rootObj))
-						.findFirst().get();
-				current = EcoreUtil.create(type);
-				if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
-			}
-			else if(current != null) {
-				FeatureCodecInfo featureCodecInfo = getFeatureCodecInfo(field, eObjCodecInfo);
-				if(featureCodecInfo instanceof IdentityInfo idInfo) {
-					new IdCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, idInfo)
-					.deserializeAndSet(jp, current, ctxt, resource);
-				} 
-				else if(featureCodecInfo != null && !(featureCodecInfo instanceof TypeInfo) && !(featureCodecInfo instanceof SuperTypeInfo)) {
-					new FeatureCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, featureCodecInfo, eObjCodecInfo.getTypeInfo())
-					.deserializeAndSet(jp, current, ctxt, resource);
-
-				} else if(featureCodecInfo == null && current != null) {
-					handleUnknownProperty(jp, resource, ctxt, current.eClass());
-				} 
+		if(eObjCodecInfo != null && eObjCodecInfo.getDeserializerName() != null) {
+			CodecDeserializer customDeserializer = codecModelInfoService.getCodecDeserializerByName(eObjCodecInfo.getDeserializerName());
+			if(customDeserializer != null) {
+				current = (EObject) customDeserializer.deserialize(jp, ctxt);
 			} else {
-				//				since current is not set, we are copying the structure and try with the next property 
-				//				(because we want to look for the type first so we know which object we have to build)
-				if (buffer == null) {
-					buffer = TokenBuffer.forBuffering(jp, ctxt);
-				}
-				buffer.copyCurrentStructure(jp);
+				throw new IllegalArgumentException(String.format("A custom deserializer name %s has been provided but no CodecDeserializer has been registered with such name.", eObjCodecInfo.getDeserializerName()));
 			}
-			nextToken = jp.nextToken();
-		}
+		} else {
+			JsonToken nextToken = jp.nextToken();
+			CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
+			while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
+				final String field = jp.currentName();
+				//			If it was not possible to determine the type from the conditions before then we look for the _type in the serialized document
+				if(field.equals(codecModule.getTypeKey()) && current == null) {
+					jp.nextToken();
+					for(CodecValueReader<String, EClass> reader : infoHolder.getReaders()) {
+						try {
+							type = reader.readValue(StringDeserializer.instance.deserialize(jp, ctxt), ctxt);
+						} catch(Exception e) {
+							type = null;
+						}
+						if(type != null) break;
+					}
+					EClass rootObj = type;
+					eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().
+							filter(eci -> 
+							eci.getClassifier().equals(rootObj))
+							.findFirst().get();
+					current = EcoreUtil.create(type);
+					if(codecReadCtxt != null) codecReadCtxt.setCurrentEObject(current);
+				}
+				else if(current != null) {
+					FeatureCodecInfo featureCodecInfo = getFeatureCodecInfo(field, eObjCodecInfo);
+					if(featureCodecInfo instanceof IdentityInfo idInfo) {
+						new IdCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, idInfo)
+						.deserializeAndSet(jp, current, ctxt, resource);
+					} 
+					else if(featureCodecInfo != null && !(featureCodecInfo instanceof TypeInfo) && !(featureCodecInfo instanceof SuperTypeInfo)) {
+						new FeatureCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, featureCodecInfo, eObjCodecInfo.getTypeInfo())
+						.deserializeAndSet(jp, current, ctxt, resource);
 
-		//		 handle empty objects
-		if (buffer == null && current == null && defaultType != null) {
-			return EcoreUtil.create(defaultType);
-		}
+					} else if(featureCodecInfo == null && current != null) {
+						handleUnknownProperty(jp, resource, ctxt, current.eClass());
+					} 
+				} else {
+					//				since current is not set, we are copying the structure and try with the next property 
+					//				(because we want to look for the type first so we know which object we have to build)
+					if (buffer == null) {
+						buffer = TokenBuffer.forBuffering(jp, ctxt);
+					}
+					buffer.copyCurrentStructure(jp);
+				}
+				nextToken = jp.nextToken();
+			}
+
+			//		 handle empty objects
+			if (buffer == null && current == null && defaultType != null) {
+				return EcoreUtil.create(defaultType);
+			}
+		}		
 		return buffer == null ? current : postDeserialize(buffer, current, defaultType, ctxt, eObjCodecInfo, codecReadCtxt);
 	}
 
@@ -245,7 +254,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 				return featureCodecInfo;
 			}
 		}
-		LOGGER.warning(String.format("No CodecInfo found for field %s", fieldName));
+		LOGGER.warning(() -> "No CodecInfo found for field " + fieldName + " in " + eObjCodecInfo.getId());
 		return null;
 	}
 

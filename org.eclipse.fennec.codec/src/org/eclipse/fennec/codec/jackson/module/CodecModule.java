@@ -13,6 +13,9 @@
  */
 package org.eclipse.fennec.codec.jackson.module;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -258,6 +261,7 @@ public class CodecModule extends SimpleModule {
 		CodecEMFSerializers serializers = new CodecEMFSerializers(this);
 		context.addSerializers(serializers);
 		
+		
 		CodecEMFDeserializers deserializers = new CodecEMFDeserializers(this);
 		context.addDeserializers(deserializers);
 		
@@ -305,7 +309,7 @@ public class CodecModule extends SimpleModule {
 		private ValueDeserializer<EObject> referenceDeserializer;
 		private URIHandler handler;
 		private ValueSerializer<EObject> referenceSerializer;
-
+		
 		public Builder() {
 
 		}
@@ -441,10 +445,12 @@ public class CodecModule extends SimpleModule {
 			this.referenceSerializer = referenceSerializer;
 			return this;
 		}
-
+		
 		public CodecModule build() {
 			return new CodecModule(this);
 		}
+		
+		
 
 	}
 

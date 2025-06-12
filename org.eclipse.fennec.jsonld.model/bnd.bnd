@@ -19,5 +19,6 @@
 Bundle-Version: 1.0.0.SNAPSHOT
 
 -buildpath: \
-	org.osgi.service.condition;version=latest
+	org.osgi.service.condition;version=latest,\
+	com.fasterxml.jackson.core.jackson-annotations;version='3.0'
 
