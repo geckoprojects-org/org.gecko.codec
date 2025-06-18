@@ -143,7 +143,7 @@ org.slf4j:slf4j-api:1.7.36
 org.freemarker:freemarker:2.3.32
 com.google.guava:guava:33.0.0-jre
 
-org.geckoprojects.bnd:org.gecko.bnd.dimc.library:1.4.1
+org.geckoprojects.bnd:org.gecko.bnd.dimc.library:2.0.0
 org.geckoprojects.bnd:org.gecko.bnd.jacoco.library:1.4.1
 org.geckoprojects.bnd:org.gecko.bnd.osgitest.library:1.4.1
 org.geckoprojects.emf:org.gecko.emf.osgi.bnd.library.workspace:6.3.0
