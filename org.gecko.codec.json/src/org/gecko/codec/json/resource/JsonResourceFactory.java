@@ -29,7 +29,7 @@ import org.osgi.service.component.annotations.Reference;
  * @since 02.08.2024
  */
 @Component(name = "JsonRF", service = {Resource.Factory.class, JsonResourceFactory.class}, 
-		property = {EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson", EMFNamespaces.EMF_MODEL_FILE_EXT + "=json", EMFNamespaces.EMF_MODEL_CONTENT_TYPE + "=application/json"})
+		property = {EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson", EMFNamespaces.EMF_MODEL_FILE_EXT + "=json", EMFNamespaces.EMF_MODEL_CONTENT_TYPE + "=application/codecjson"})
 public class JsonResourceFactory extends ResourceFactoryImpl {
 	
 	@Reference
