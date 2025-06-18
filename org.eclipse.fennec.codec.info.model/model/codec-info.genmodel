@@ -127,6 +127,11 @@
         <genParameters ecoreParameter="codec-info.ecore#//CodecDeserializer/deserialize/parser"/>
         <genParameters ecoreParameter="codec-info.ecore#//CodecDeserializer/deserialize/ctxt"/>
       </genOperations>
+      <genOperations ecoreOperation="codec-info.ecore#//CodecDeserializer/deserializeInto">
+        <genParameters ecoreParameter="codec-info.ecore#//CodecDeserializer/deserializeInto/parser"/>
+        <genParameters ecoreParameter="codec-info.ecore#//CodecDeserializer/deserializeInto/ctxt"/>
+        <genParameters ecoreParameter="codec-info.ecore#//CodecDeserializer/deserializeInto/value"/>
+      </genOperations>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

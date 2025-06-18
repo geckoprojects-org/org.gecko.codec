@@ -1,0 +1,74 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+       "ReadResourceResult": {
+            "description": "The server's response to a resources/read request from the client.",
+            "properties": {                
+                "contents": {
+                    "items": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/TextResourceContents"
+                            },
+                            {
+                                "$ref": "#/definitions/BlobResourceContents"
+                            }
+                        ]
+                    },
+                    "type": "array"
+                }
+            },
+            "required": [
+                "contents"
+            ],
+            "type": "object"
+        },
+           "TextResourceContents": {
+            "properties": {
+                "mimeType": {
+                    "description": "The MIME type of this resource, if known.",
+                    "type": "string"
+                },
+                "text": {
+                    "description": "The text of the item. This must only be set if the item can actually be represented as text (not binary data).",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "The URI of this resource.",
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "text",
+                "uri"
+            ],
+            "type": "object"
+        },
+           "BlobResourceContents": {
+            "properties": {
+                "blob": {
+                    "description": "A base64-encoded string representing the binary data of the item.",
+                    "format": "byte",
+                    "type": "string"
+                },
+                "mimeType": {
+                    "description": "The MIME type of this resource, if known.",
+                    "type": "string"
+                },
+                "uri": {
+                    "description": "The URI of this resource.",
+                    "format": "uri",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "blob",
+                "uri"
+            ],
+            "type": "object"
+        }
+    }
+}
+        
+        

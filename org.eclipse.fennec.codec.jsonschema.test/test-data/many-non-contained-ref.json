@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+    "CreateMessageResult": {
+            "description": "Optional annotations for the client. The client can use annotations to inform how objects are used or displayed",
+            "properties": {
+                "audience": {
+                    "description": "Describes who the intended customer of this object or data is.\n\nIt can include multiple entries to indicate content useful for multiple audiences (e.g., `[\"user\", \"assistant\"]`).",
+                    "items": {
+                        "$ref": "#/definitions/Role"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+       "Role": {
+            "description": "The sender or recipient of messages and data in a conversation.",
+            "enum": [
+                "assistant",
+                "user"
+            ],
+            "type": "string"
+        }
+    }
+}

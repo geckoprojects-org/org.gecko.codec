@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
@@ -344,8 +345,13 @@ public class CodecResource extends ResourceImpl {
 			});
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP)) {
-			Map<ETypedElement, CodecValueReader<?,?>> readersMap = (Map<ETypedElement, CodecValueReader<?,?>>)options.get(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP);
+			Map<ENamedElement, CodecValueReader<?,?>> readersMap = (Map<ENamedElement, CodecValueReader<?,?>>)options.get(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP);
 			readersMap.forEach((element, reader) -> {
+				if(element instanceof EClass cl && cl.getName().equals(codecInfo.getClassifier().getName())) {
+					codecInfo.getTypeInfo().setValueReaderName(reader.getName());
+					modelInfoService.addCodecValueReaderForType(InfoType.TYPE, reader);					
+				}
+				else 
 				if(element instanceof EAttribute) {
 					FeatureCodecInfo fci = codecInfo.getAttributeCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
 					if(fci != null) {
@@ -370,9 +376,13 @@ public class CodecResource extends ResourceImpl {
 			});
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP)) {
-			Map<ETypedElement, CodecValueWriter<?,?>> writersMap = (Map<ETypedElement, CodecValueWriter<?,?>>)options.get(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP);
+			Map<ENamedElement, CodecValueWriter<?,?>> writersMap = (Map<ENamedElement, CodecValueWriter<?,?>>)options.get(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP);
 			writersMap.forEach((element, writer) -> {
-				if(element instanceof EAttribute) {
+				if(element instanceof EClass cl && cl.getName().equals(codecInfo.getClassifier().getName())) {
+					codecInfo.getTypeInfo().setValueWriterName(writer.getName());
+					modelInfoService.addCodecValueWriterForType(InfoType.TYPE, writer);					
+				}
+				else if(element instanceof EAttribute) {
 					FeatureCodecInfo fci = codecInfo.getAttributeCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
 					if(fci != null) {
 						fci.setValueWriterName(writer.getName());

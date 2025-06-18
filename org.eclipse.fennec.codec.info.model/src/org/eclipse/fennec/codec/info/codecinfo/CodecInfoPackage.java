@@ -998,13 +998,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int CODEC_DESERIALIZER___DESERIALIZE__JSONPARSER_DESERIALIZATIONCONTEXT = 0;
 
 	/**
+	 * The operation id for the '<em>Deserialize Into</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_DESERIALIZER___DESERIALIZE_INTO__JSONPARSER_DESERIALIZATIONCONTEXT_OBJECT = 1;
+
+	/**
 	 * The number of operations of the '<em>Codec Deserializer</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CODEC_DESERIALIZER_OPERATION_COUNT = 1;
+	int CODEC_DESERIALIZER_OPERATION_COUNT = 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.
@@ -1677,6 +1686,16 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getCodecDeserializer__Deserialize__JsonParser_DeserializationContext();
 
 	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer#deserializeInto(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext, java.lang.Object) <em>Deserialize Into</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Deserialize Into</em>' operation.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecDeserializer#deserializeInto(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext, java.lang.Object)
+	 * @generated
+	 */
+	EOperation getCodecDeserializer__DeserializeInto__JsonParser_DeserializationContext_Object();
+
+	/**
 	 * Returns the meta object for enum '{@link org.eclipse.fennec.codec.info.codecinfo.InfoType <em>Info Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2240,6 +2259,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EOperation CODEC_DESERIALIZER___DESERIALIZE__JSONPARSER_DESERIALIZATIONCONTEXT = eINSTANCE.getCodecDeserializer__Deserialize__JsonParser_DeserializationContext();
+
+		/**
+		 * The meta object literal for the '<em><b>Deserialize Into</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation CODEC_DESERIALIZER___DESERIALIZE_INTO__JSONPARSER_DESERIALIZATIONCONTEXT_OBJECT = eINSTANCE.getCodecDeserializer__DeserializeInto__JsonParser_DeserializationContext_Object();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.

@@ -45,4 +45,12 @@ public interface CodecDeserializer<V> {
 	 */
 	V deserialize(JsonParser parser, DeserializationContext ctxt);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model parserDataType="org.eclipse.fennec.codec.info.codecinfo.JsonParser" ctxtDataType="org.eclipse.fennec.codec.info.codecinfo.DeserializationContext" ctxtRequired="true" valueRequired="true"
+	 * @generated
+	 */
+	void deserializeInto(JsonParser parser, DeserializationContext ctxt, V value);
+
 } // CodecDeserializer

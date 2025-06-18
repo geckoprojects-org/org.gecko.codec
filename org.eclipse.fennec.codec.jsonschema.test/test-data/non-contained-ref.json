@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+     "CreateMessageResult": {
+            "description": "The client's response to a sampling/create_message request from the server. The client should inform the user before returning the sampled message, to allow them to inspect the response (human in the loop) and decide whether to allow the server to see it.",
+            "properties": {
+                "role": {
+                    "$ref": "#/definitions/Role"
+                }
+            },
+            "required": [
+                "role"
+            ],
+            "type": "object"
+        },
+       "Role": {
+            "description": "The sender or recipient of messages and data in a conversation.",
+            "enum": [
+                "assistant",
+                "user"
+            ],
+            "type": "string"
+        }
+    }
+}

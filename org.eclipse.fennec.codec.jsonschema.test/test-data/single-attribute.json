@@ -1,0 +1,14 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+           "CompleteResult": {
+            "description": "The server's response to a completion/complete request",
+            "properties": {
+                "_meta": {            
+                     "type": "number"
+                     }
+                    },
+            "type": "object"
+        }
+     }
+ }

@@ -812,6 +812,16 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
+	public EOperation getCodecDeserializer__DeserializeInto__JsonParser_DeserializationContext_Object() {
+		return codecDeserializerEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getInfoType() {
 		return infoTypeEEnum;
 	}
@@ -954,6 +964,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		codecDeserializerEClass = createEClass(CODEC_DESERIALIZER);
 		createEAttribute(codecDeserializerEClass, CODEC_DESERIALIZER__NAME);
 		createEOperation(codecDeserializerEClass, CODEC_DESERIALIZER___DESERIALIZE__JSONPARSER_DESERIALIZATIONCONTEXT);
+		createEOperation(codecDeserializerEClass, CODEC_DESERIALIZER___DESERIALIZE_INTO__JSONPARSER_DESERIALIZATIONCONTEXT_OBJECT);
 
 		// Create enums
 		infoTypeEEnum = createEEnum(INFO_TYPE);
@@ -1112,6 +1123,12 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		addEParameter(op, this.getDeserializationContext(), "ctxt", 1, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(codecDeserializerEClass_V);
 		initEOperation(op, g1);
+
+		op = initEOperation(getCodecDeserializer__DeserializeInto__JsonParser_DeserializationContext_Object(), null, "deserializeInto", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getJsonParser(), "parser", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getDeserializationContext(), "ctxt", 1, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(codecDeserializerEClass_V);
+		addEParameter(op, g1, "value", 1, 1, IS_UNIQUE, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(infoTypeEEnum, InfoType.class, "InfoType");
