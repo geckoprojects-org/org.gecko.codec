@@ -98,7 +98,7 @@ import tools.jackson.databind.node.JsonNodeType;
 		@Property(key = "qvt.template.path", value = "org.eclipse.fennec.ai.ecore.jsonschema.mmt/transforms/JsonSchemaToEcore.qvto"),
 		@Property(key = "qvt.model.target", value = "(emf.name=jsonschema)")
 })
-public class CodecJsonSchemaTest {
+public class CodecJsonSchemaDeserializationTest {
 
 	@InjectService(filter="("+EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ResourceSet resourceSet;
@@ -258,7 +258,11 @@ public class CodecJsonSchemaTest {
 		EDataType eDataType = (EDataType) ePackage.getEClassifiers().get(0);
 		
 		assertThat(eDataType.getName()).isEqualTo("RequestId");
+		assertThat(eDataType.getEAnnotation(GEN_MODEL_ANNOTATION_SOURCE)).isNotNull();
 		assertThat(eDataType.getEAnnotation(GEN_MODEL_ANNOTATION_SOURCE).getDetails().get("documentation")).isNotNull();
+		
+		assertThat(eDataType.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(eDataType.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("dataType")).isEqualTo("string,integer");
 		
 		assertThat(eDataType.getInstanceClass()).isEqualTo(Object.class);
 		assertThat(eDataType.getInstanceClassName()).isEqualTo("java.lang.Object");
@@ -372,17 +376,54 @@ public class CodecJsonSchemaTest {
 		assertThat(att2.getLowerBound()).isEqualTo(1);		
 	}
 	
-	@Disabled
+	@Disabled("Use case not currently supported")
 	@Test
 	public void anyOfWithObj() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/anyOf-with-obj.json"));
+		resource.load(getLoadOptions());
+		EPackage ePackage = extractEPackageFromLoadedResource(resource);
+		
+		assertThat(ePackage.getEClassifiers()).hasSize(4);
+		EClass ec1 = null, ec2 = null, ec3 = null, ec4 = null;
+		for(EClassifier cl : ePackage.getEClassifiers()) {
+			if(cl instanceof EClass ec) {
+				if("ReadResourceResult".equals(ec.getName())) {
+					ec1 = ec;
+				} else if("ArtificialClassifier0".equals(ec.getName())) {
+					ec2 = ec;
+				} else if("ArtificialClassifier1".equals(ec.getName())) {
+					ec3 = ec;
+				} else if("ArtificialClassifier2".equals(ec.getName())) {
+					ec4 = ec;
+				} 
+			}
+		}
+		assertThat(ec1).isNotNull();
+		assertThat(ec2).isNotNull();
+		assertThat(ec3).isNotNull();
+		assertThat(ec4).isNotNull();
+		
+		assertThat(ec1.getEStructuralFeatures()).hasSize(1);
+		assertThat(ec1.getEStructuralFeatures().get(0)).isInstanceOf(EReference.class);
+		EReference ref = (EReference) ec1.getEStructuralFeatures().get(0);
+		assertThat(ref.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(ref.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("source")).isEqualTo("anyOf");
 		
 	}
 	
-	@Disabled
+	@Disabled("Use case not currently supported")
 	@Test 
 	public void anyOfMixed() throws IOException {
 		
 	}
+	
+	@Disabled("Use case not currently supported")
+	@Test 
+	public void allOf() throws IOException {
+		
+	}
+	
+	
 	
 	@Test
 	public void containedRef() throws IOException {
@@ -586,6 +627,84 @@ public class CodecJsonSchemaTest {
 	}
 	
 	@Test
+	public void singleAttributeEnum() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/single-attribute-enum.json"));
+		resource.load(getLoadOptions());
+		EPackage ePackage = extractEPackageFromLoadedResource(resource);
+		
+		assertThat(ePackage.getEClassifiers()).hasSize(2);
+		EClass eClass = null;
+		EEnum eEnum = null;
+		for(EClassifier cl : ePackage.getEClassifiers()) {
+			if(cl instanceof EClass ecl &&  "CompleteResult".equals(ecl.getName())) {
+				eClass = ecl;
+			} else if(cl instanceof EEnum e) eEnum = e; 
+		}
+		assertThat(eClass).isNotNull();
+		assertThat(eEnum).isNotNull();
+		
+		
+		assertThat(eClass.getEStructuralFeatures()).hasSize(1);
+		assertThat(eClass.getEStructuralFeatures().get(0)).isInstanceOf(EAttribute.class);
+		EAttribute att = (EAttribute) eClass.getEStructuralFeatures().get(0);
+		assertFalse(att.isMany());
+		assertThat(att.getEType()).isEqualTo(eEnum);
+		
+		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("artificial")).isEqualTo("true");
+	}
+	
+	@Test
+	public void singleAttributeEnumWOType() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/single-attribute-enum-wo-type.json"));
+		resource.load(getLoadOptions());
+		EPackage ePackage = extractEPackageFromLoadedResource(resource);
+		
+		assertThat(ePackage.getEClassifiers()).hasSize(2);
+		EClass eClass = null;
+		EEnum eEnum = null;
+		for(EClassifier cl : ePackage.getEClassifiers()) {
+			if(cl instanceof EClass ecl &&  "CompleteResult".equals(ecl.getName())) {
+				eClass = ecl;
+			} else if(cl instanceof EEnum e) eEnum = e; 
+		}
+		assertThat(eClass).isNotNull();
+		assertThat(eEnum).isNotNull();
+		
+		
+		assertThat(eClass.getEStructuralFeatures()).hasSize(1);
+		assertThat(eClass.getEStructuralFeatures().get(0)).isInstanceOf(EAttribute.class);
+		EAttribute att = (EAttribute) eClass.getEStructuralFeatures().get(0);
+		assertFalse(att.isMany());
+		assertThat(att.getEType()).isEqualTo(eEnum);
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("noTypeInfo")).isEqualTo("true");
+		
+		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("artificial")).isEqualTo("true");
+	}
+	
+	@Test
+	public void singleAttributeManyType() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/single-attribute-array-type.json"));
+		resource.load(getLoadOptions());
+		EPackage ePackage = extractEPackageFromLoadedResource(resource);
+		
+		assertThat(ePackage.getEClassifiers()).hasSize(1);
+		assertThat(ePackage.getEClassifiers().get(0)).isInstanceOf(EClass.class);
+		EClass eClass = (EClass) ePackage.getEClassifiers().get(0);
+		
+		assertThat(eClass.getEStructuralFeatures()).hasSize(1);
+		assertThat(eClass.getEStructuralFeatures().get(0)).isInstanceOf(EAttribute.class);
+		EAttribute att = (EAttribute) eClass.getEStructuralFeatures().get(0);
+		assertFalse(att.isMany());
+		assertThat(att.getEType()).isEqualTo(EcorePackage.Literals.EJAVA_OBJECT);
+		
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertTrue(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().containsKey("dataType"));
+	}
+	
+	@Test
 	public void manyAttribute() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI("test-data/many-attribute.json"));
 		resource.load(getLoadOptions());
@@ -600,11 +719,94 @@ public class CodecJsonSchemaTest {
 		EAttribute att = (EAttribute) eClass.getEStructuralFeatures().get(0);
 		assertTrue(att.isMany());
 		assertThat(att.getEType()).isEqualTo(EcorePackage.Literals.ESTRING);
+		
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("items")).isEqualTo("true");
 	}
 	
 	@Test
-	public void constProperty() throws IOException {
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/const-property.json"));
+	public void manyAttributeEnum() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/many-attribute-enum.json"));
+		resource.load(getLoadOptions());
+		EPackage ePackage = extractEPackageFromLoadedResource(resource);
+		
+		assertThat(ePackage.getEClassifiers()).hasSize(2);
+		EClass eClass = null;
+		EEnum eEnum = null;
+		for(EClassifier cl : ePackage.getEClassifiers()) {
+			if(cl instanceof EClass ecl &&  "CompleteResult".equals(ecl.getName())) {
+				eClass = ecl;
+			} else if(cl instanceof EEnum e) eEnum = e; 
+		}
+		assertThat(eClass).isNotNull();
+		assertThat(eEnum).isNotNull();
+		
+		
+		assertThat(eClass.getEStructuralFeatures()).hasSize(1);
+		assertThat(eClass.getEStructuralFeatures().get(0)).isInstanceOf(EAttribute.class);
+		EAttribute att = (EAttribute) eClass.getEStructuralFeatures().get(0);
+		assertTrue(att.isMany());
+		assertThat(att.getEType()).isEqualTo(eEnum);
+		
+		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("artificial")).isEqualTo("true");
+	}
+	
+	@Test
+	public void manyAttributeEnumWOType() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/many-attribute-enum-wo-type.json"));
+		resource.load(getLoadOptions());
+		EPackage ePackage = extractEPackageFromLoadedResource(resource);
+		
+		assertThat(ePackage.getEClassifiers()).hasSize(2);
+		EClass eClass = null;
+		EEnum eEnum = null;
+		for(EClassifier cl : ePackage.getEClassifiers()) {
+			if(cl instanceof EClass ecl &&  "CompleteResult".equals(ecl.getName())) {
+				eClass = ecl;
+			} else if(cl instanceof EEnum e) eEnum = e; 
+		}
+		assertThat(eClass).isNotNull();
+		assertThat(eEnum).isNotNull();
+		
+		
+		assertThat(eClass.getEStructuralFeatures()).hasSize(1);
+		assertThat(eClass.getEStructuralFeatures().get(0)).isInstanceOf(EAttribute.class);
+		EAttribute att = (EAttribute) eClass.getEStructuralFeatures().get(0);
+		assertTrue(att.isMany());
+		assertThat(att.getEType()).isEqualTo(eEnum);
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("noTypeInfo")).isEqualTo("true");
+		
+		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("artificial")).isEqualTo("true");
+	}
+	
+	@Test
+	public void manyAttributeConst() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/many-attribute-const.json"));
+		resource.load(getLoadOptions());
+		EPackage ePackage = extractEPackageFromLoadedResource(resource);
+		
+		assertThat(ePackage.getEClassifiers()).hasSize(1);
+		assertThat(ePackage.getEClassifiers().get(0)).isInstanceOf(EClass.class);
+		EClass eClass = (EClass) ePackage.getEClassifiers().get(0);
+		
+		assertThat(eClass.getEStructuralFeatures()).hasSize(1);
+		assertThat(eClass.getEStructuralFeatures().get(0)).isInstanceOf(EAttribute.class);
+		EAttribute att = (EAttribute) eClass.getEStructuralFeatures().get(0);
+		assertTrue(att.isMany());
+		assertThat(att.getEType()).isEqualTo(EcorePackage.Literals.EINT);
+		
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("const")).isEqualTo("[ 1, 2 ]");
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("constType")).isEqualTo("NUMBER");
+
+	}
+	
+	@Test
+	public void singleAttributeConst() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/single-attribute-const.json"));
 		resource.load(getLoadOptions());
 		EPackage ePackage = extractEPackageFromLoadedResource(resource);
 		
@@ -618,11 +820,12 @@ public class CodecJsonSchemaTest {
 		assertThat(att.getEType()).isEqualTo(EcorePackage.Literals.ESTRING);
 		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
 		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("const")).isEqualTo("ref/prompt");
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("constType")).isEqualTo("STRING");
 	}
 	
 	@Test
-	public void constWoTypeProperty() throws IOException {
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/const-wo-type-property.json"));
+	public void singleAttributeConstWOType() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/single-attribute-const-wo-type.json"));
 		resource.load(getLoadOptions());
 		EPackage ePackage = extractEPackageFromLoadedResource(resource);
 		
@@ -636,11 +839,13 @@ public class CodecJsonSchemaTest {
 		assertThat(att.getEType()).isEqualTo(EcorePackage.Literals.ESTRING);
 		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
 		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("const")).isEqualTo("ref/prompt");
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("constType")).isEqualTo("STRING");
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("noTypeInfo")).isEqualTo("true");
 	}
 	
 	@Test
-	public void constArray() throws IOException {
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/const-array.json"));
+	public void manyAttributeConstWOType() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/many-attribute-const-wo-type.json"));
 		resource.load(getLoadOptions());
 		EPackage ePackage = extractEPackageFromLoadedResource(resource);
 		
@@ -654,24 +859,7 @@ public class CodecJsonSchemaTest {
 		assertThat(att.getEType()).isEqualTo(EcorePackage.Literals.EINT);
 		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
 		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("const")).isEqualTo("[ 1, 2 ]");
-	}
-	
-	@Test
-	public void constArrayWOType() throws IOException {
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/const-wo-type-array.json"));
-		resource.load(getLoadOptions());
-		EPackage ePackage = extractEPackageFromLoadedResource(resource);
-		
-		assertThat(ePackage.getEClassifiers()).hasSize(1);
-		assertThat(ePackage.getEClassifiers().get(0)).isInstanceOf(EClass.class);
-		EClass eClass = (EClass) ePackage.getEClassifiers().get(0);
-		
-		assertThat(eClass.getEStructuralFeatures()).hasSize(1);
-		assertThat(eClass.getEStructuralFeatures().get(0)).isInstanceOf(EAttribute.class);
-		EAttribute att = (EAttribute) eClass.getEStructuralFeatures().get(0);
-		assertThat(att.getEType()).isEqualTo(EcorePackage.Literals.EINT);
-		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
-		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("const")).isEqualTo("[ 1, 2 ]");
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("noTypeInfo")).isEqualTo("true");
 	}
 
 	

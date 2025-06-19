@@ -82,6 +82,16 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			throw new IllegalArgumentException("Expecting \"definitions\" node to be an object node");
 		}
 		EPackage ePackage = ecoreFactory.createEPackage();
+		if(node.get("$schema") != null) {
+			ePackage.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "schema", node.get("$schema").asString()));
+		}
+		if(node.get("$id") != null) {
+			ePackage.setNsURI(node.get("$id").asString());
+		}
+		if(node.get("title") != null) {
+			ePackage.setName(node.get("title").asString());
+		}
+		
 		for(String property : defNode.propertyNames()) {
 			JsonNode classifierNode = defNode.get(property);
 			EClassifier eClassifier = null;
@@ -251,9 +261,25 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			}
 		} 
 		else if(propertyNode.get("type") != null) {
-			String type = propertyNode.get("type").asString();
-			feature = createEStructuralFeatureFromJsonType(type, name, propertyNode, rootNode);
+			if(propertyNode.get("type").isString()) {
+				String type = propertyNode.get("type").asString();
+				feature = createEStructuralFeatureFromJsonType(type, name, propertyNode, rootNode);
+			} else {
+				feature = createEStructuralFeatureFromJsonType("javaObject", name, propertyNode, rootNode);
+				StringBuilder sb = new StringBuilder();
+				for(int t = 0; t < propertyNode.get("type").size(); t++) {
+					sb.append(propertyNode.get("type").get(t).asString());
+					if(t < (propertyNode.get("type").size()-1)) {
+						sb.append(",");
+					}
+				}
+				feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "dataType", sb.toString()));
+			}			
 		} 
+		else if(propertyNode.get("enum") != null) {
+//			No type info but we know it should be string becuase it's an enum
+			feature = createEStructuralFeatureFromJsonType("string", name, propertyNode, rootNode);
+		}
 		else if(propertyNode.get("const") != null) {
 			//if there is no type info but a const we should be able to infer the type from the value of const
 			String inferredType = getJsonTypeFromConstNode(propertyNode.get("const"));
@@ -267,8 +293,7 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			feature = createMultiValueReference(propertyNode.get("oneOf"), name, rootNode);
 			feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "source", "oneOf"));
 		} else {
-			//			throw new IllegalArgumentException(String.format("Not supported case for property %s", name));
-			return null;
+			throw new IllegalArgumentException(String.format("Not supported case for property %s", name));
 		}
 		if(feature != null) {
 			if(propertyNode.get("description") != null) {
@@ -281,7 +306,16 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 				if(feature.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE) != null) {
 					feature.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().put("const", propertyNode.get("const").asString());
 				} else {
-					feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "const", propertyNode.get("const").isString() ? propertyNode.get("const").asString() : propertyNode.get("const").toPrettyString()));
+					feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, 
+							Map.of("const", propertyNode.get("const").isString() ? propertyNode.get("const").asString() : propertyNode.get("const").toPrettyString(),
+							"constType", propertyNode.get("const").isArray() ?  propertyNode.get("const").get(0).getNodeType().toString() : propertyNode.get("const").getNodeType().toString())));
+				}
+			}
+			if(propertyNode.get("type") == null) {
+				if(feature.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE) != null) {
+					feature.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().put("noTypeInfo", "true");
+				} else {
+					feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "noTypeInfo", "true"));
 				}
 			}
 		}
@@ -306,17 +340,8 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		case "array":
 			//				We have an items schema
 			if(propertyNode.get("items") != null) {
-				feature = createEStructuralFeature(propertyNode.get("items"), name, rootNode);
-				if(propertyNode.get("minItems") != null) {
-					feature.setLowerBound(propertyNode.get("minItems").asInt());
-				} else {
-					feature.setLowerBound(0);
-				}
-				if(propertyNode.get("maxItems") != null) {
-					feature.setUpperBound(propertyNode.get("maxItems").asInt());
-				} else {
-					feature.setUpperBound(-1);
-				}
+				feature = createEStructuralFeature(propertyNode.get("items"), name, rootNode);				
+				feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "items", "true"));
 			}
 			//				We have const wo items: so we need to infer the type of the items from const
 			else if(propertyNode.get("const") != null) {
@@ -330,6 +355,17 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			} else {
 				throw new IllegalArgumentException(String.format("Not supported case for property %s", name));
 			}
+			if(propertyNode.get("minItems") != null) {
+				feature.setLowerBound(propertyNode.get("minItems").asInt());
+			} else {
+				feature.setLowerBound(0);
+			}
+			if(propertyNode.get("maxItems") != null) {
+				feature.setUpperBound(propertyNode.get("maxItems").asInt());
+			} else {
+				feature.setUpperBound(-1);
+				
+			}
 			break;
 		case "string":
 			//				EAttribute of type Enum
@@ -337,7 +373,8 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 				System.out.println("Creating artificial class " + artificialClassifierCounter + " for property " + name);
 
 				EEnum eEnum = createEEnum(propertyNode, ARTIFICIAL_CLASSIFIER_PREFIX+(artificialClassifierCounter++));
-
+				eEnum.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "artificial", "true"));
+				
 				feature = ecoreFactory.createEAttribute();
 				feature.setName(name);
 				feature.setEType(eEnum);
@@ -366,47 +403,7 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		}
 		return feature;
 	}
-
-	//	private EReference createMultiValueReference(JsonNode jsonNode, String name) {
-	//		//		We have to create the super class for the types that are listed here
-	//		EClass eClass = null;
-	//		if(cachedClassifiers.containsKey(jsonNode.toString())) {
-	//			System.out.println("Found existing anyOf Class");
-	//			eClass = (EClass) cachedClassifiers.get(jsonNode.toString());
-	//		} else {
-	//			eClass = ecoreFactory.createEClass();
-	//			System.out.println("Creating artificial class " + artificialClassifierCounter + " for property " + name);
-	//
-	//			eClass.setName(ARTIFICIAL_CLASSIFIER_PREFIX+(artificialClassifierCounter++));
-	//			classifierMap.put(eClass.getName(), eClass);
-	//		}		
-	//		if(!anyOfRefMap.containsKey(eClass)) {
-	//			anyOfRefMap.put(eClass, new LinkedList<>());
-	//		}
-	//
-	//		for(int af = 0; af < jsonNode.size(); af++) {
-	//			JsonNode anyOfItemNode = jsonNode.get(af);
-	//			if(anyOfItemNode.get("$ref") != null) {
-	//				anyOfRefMap.get(eClass).add(anyOfItemNode.get("$ref").asString().replaceFirst("#/definitions/", ""));
-	//			} else if(anyOfItemNode.get("type") != null && "object".equals(anyOfItemNode.get("type").asString())) {
-	//				//				we need to create an EClass
-	//				System.out.println("Creating artificial class " + artificialClassifierCounter + " for property " + name);
-	//
-	//				EClass anyOfEclass = createEClass(anyOfItemNode, ARTIFICIAL_CLASSIFIER_PREFIX+(artificialClassifierCounter++));
-	//				classifierMap.put(anyOfEclass.getName(), anyOfEclass);
-	//				anyOfEclass.getESuperTypes().add(eClass);
-	//			} else {
-	//				//				Not Supported
-	//				throw new IllegalArgumentException("Not supported case for anyOf!");
-	//			}				
-	//		}
-	//		//		Now we create the actual EReference
-	//		EReference ref = ecoreFactory.createEReference();
-	//		ref.setName(name);
-	//		ref.setEType(eClass);
-	//		ref.setContainment(false);
-	//		return ref;
-	//	}
+	
 
 	private EReference createMultiValueReference(JsonNode jsonNode, String name, JsonNode rootNode) {
 
@@ -423,10 +420,11 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 				if(rootNode.get(refClassName) != null) {
 					refClassesNodes.put(refClassName, rootNode.get(refClassName));
 				} else {
-					System.out.println(String.format("Cannot find $ref class %s in root schema", refClassName));
+					throw new IllegalArgumentException(String.format("Cannot find $ref class %s in root schema", refClassName));
+
 				}
 			} else {
-				System.out.println(String.format("anyOf with no $ref element for property %s. Case not supported yet!", name));
+				throw new IllegalArgumentException(String.format("anyOf with no $ref element for property %s. Case not supported yet!", name));
 			}
 		}
 
@@ -653,6 +651,14 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			dt.getEAnnotations().add(createEAnnotation(GEN_MODEL_ANNOTATION_SOURCE, "documentation", dtNode.get("description").asString()));
 		}
 		if(dtNode.get("type").isArray()) {
+			StringBuilder sb = new StringBuilder();
+			for(int t = 0; t < dtNode.get("type").size(); t++) {
+				sb.append(dtNode.get("type").get(t).asString());
+				if(t < (dtNode.get("type").size()-1)) {
+					sb.append(",");
+				}
+			}
+			dt.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "dataType", sb.toString()));
 			dt.setInstanceClass(Object.class);
 			dt.setInstanceClassName("java.lang.Object");
 		} else {

@@ -1,0 +1,43 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+       "ReadResourceResult": {
+            "description": "The server's response to a resources/read request from the client.",
+            "properties": {                
+                "contents": {                    
+                        "anyOf": [
+                            {
+                                "type": "object",
+                                "properties" : {
+                                	"test": {
+                                		"type": "boolean"
+                                	},
+                                	"name":  {
+                                		"type": "string"
+                                	}
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties" : {
+                                	"test": {
+                                		"type": "boolean"
+                                	},
+                                	"age":  {
+                                		"type": "integer"
+                                	}
+                                }
+                            }
+                        ],                    
+                    "type": "object"
+                }
+            },
+            "required": [
+                "contents"
+            ],
+            "type": "object"
+        }
+    }
+}
+        
+        

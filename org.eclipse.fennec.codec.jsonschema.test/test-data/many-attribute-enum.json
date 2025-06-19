@@ -6,8 +6,11 @@
             "properties": {
                 "_meta": {
                     "description": "An array of completion values. Must not exceed 100 items.",
-                     "const": [1,2],
-                     "type": "array"             	  
+                    "items": {
+                         "type": "string",
+                         "enum": ["A", "B", "C"]
+                    	  },
+                     "type": "array"
                      }
                     },
             "type": "object"
