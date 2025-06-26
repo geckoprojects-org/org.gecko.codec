@@ -151,7 +151,7 @@ org.geckoprojects.emf:org.gecko.emf.osgi.bnd.library.workspace:6.3.0
 org.geckoprojects.emf:org.gecko.emf.osgi.example.model.basic:6.2.0
 org.geckoprojects.emf:org.gecko.emf.osgi.example.model.extended:6.2.0
 org.geckoprojects.emf.utils:org.gecko.emf.util.jakartars.bnd.library.workspace:2.3.0-SNAPSHOT
-
+org.geckoprojects.qvto:org.eclipse.fennec.qvt.bnd.library.workspace:2.1.0-SNAPSHOT
 
 org.geckoprojects.emf.utils:org.gecko.emf.collections:2.2.2
 org.geckoprojects.search:org.gecko.search.bnd.library:1.4.0

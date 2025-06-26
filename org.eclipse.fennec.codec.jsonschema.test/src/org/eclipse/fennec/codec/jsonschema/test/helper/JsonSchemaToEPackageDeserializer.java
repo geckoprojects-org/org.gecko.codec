@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
+import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -55,6 +57,7 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 	int artificialClassifierCounter = 0;
 	private static final String ARTIFICIAL_CLASSIFIER_PREFIX = "ArtificialClassifier";
 	private Map<EClassifier, List<String>> anyOfRefMap = new HashMap<>();
+	private Map<EClass, List<String>> allOfRefMap = new HashMap<>();
 	private Map<String, EClassifier> cachedClassifiers = new HashMap<>();
 	private Map<Map<String, JsonNode>, EClass> parentClassMaps = new HashMap<>(); 
 
@@ -83,7 +86,7 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		}
 		EPackage ePackage = ecoreFactory.createEPackage();
 		if(node.get("$schema") != null) {
-			ePackage.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "schema", node.get("$schema").asString()));
+			addEAnnotation(ePackage, JSONSCHEMA_ANNOTATION_SOURCE, "schema", node.get("$schema").asString());
 		}
 		if(node.get("$id") != null) {
 			ePackage.setNsURI(node.get("$id").asString());
@@ -99,12 +102,16 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			if(classifierNode.get("enum") != null) {
 				eClassifier = createEEnum(classifierNode, property);
 			} 
+			else if(classifierNode.get("allOf") != null) {
+//				2.0 EClass with inheritance
+				eClassifier = createEClass(classifierNode, property, defNode);
+			}
 			//			2. EClass/Array/EDataType
 			else if(classifierNode.get("type") != null) {
 				JsonNode typeNode = classifierNode.get("type");
 				//				2.1 EClass
 				if(typeNode.isString() && "object".equals(typeNode.asString())) {
-					eClassifier = createEClass(classifierNode, property, defNode, Collections.emptyList());
+					eClassifier = createEClass(classifierNode, property, defNode);
 				}
 				//				2.2. Array
 				else if(typeNode.isString() && "array".equals(typeNode.asString())) {
@@ -137,6 +144,17 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 				}
 			});
 		});
+		
+		allOfRefMap.forEach((eClass,superTypeNames) -> {
+			superTypeNames.forEach(superType -> {
+				if(classifierMap.containsKey(superType) && classifierMap.get(superType) instanceof EClass cl) {
+					eClass.getESuperTypes().add(cl);
+				} else {
+					System.out.println(String.format("No EClassifier Name for allOf %s and EClass %s", superType, eClass.getName()));
+
+				}
+			});
+		});
 
 		ePackage.getEClassifiers().addAll(classifierMap.values());
 		return ePackage;
@@ -149,15 +167,16 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		} 
 		EClass eClass = ecoreFactory.createEClass();
 		eClass.setName(name);
-		eClass.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, Map.of("source", "TopLevelArray", "artificial", "true")));
+		addEAnnotation(eClass, JSONSCHEMA_ANNOTATION_SOURCE, "source", "TopLevelArray");
+		addEAnnotation(eClass, JSONSCHEMA_ANNOTATION_SOURCE	, "artificial", "true");
 		if(classNode.get("description") != null) {
-			eClass.getEAnnotations().add(createEAnnotation(GEN_MODEL_ANNOTATION_SOURCE, "documentation", classNode.get("description").asString()));
+			addEAnnotation(eClass, GEN_MODEL_ANNOTATION_SOURCE, "documentation", classNode.get("description").asString());
 		}
 		if(classNode.get("const") != null) {
 			//			TODO: const as array
 
 		} else if(classNode.get("items") != null) {
-			EStructuralFeature feature = createEStructuralFeature(classNode, "items", rootNode);
+			EStructuralFeature feature = createEStructuralFeature(classNode.get("items"), "items", rootNode, true);
 			if(feature != null) {				
 				eClass.getEStructuralFeatures().add(feature);
 			}
@@ -173,47 +192,69 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		return eAnnotation;
 	}
 
-	private EAnnotation createEAnnotation(String source, Map<String, String> details) {
-		EAnnotation eAnnotation = ecoreFactory.createEAnnotation();
-		eAnnotation.setSource(source);
-		details.forEach((k,v)-> {
-			eAnnotation.getDetails().put(k, v);
-		});
-		return eAnnotation;
-	}
-
-	private EClass createEClass(JsonNode classNode, String name, JsonNode rootNode, List<EAnnotation> additionalAnnotations) {
+	private EClass createEClass(JsonNode classNode, String name, JsonNode rootNode) {
 		if(cachedClassifiers.containsKey(classNode.toString())) {
 			System.out.println("Found existing class");
 			return (EClass)cachedClassifiers.get(classNode.toString());
 		} 
-		EClass eClass = ecoreFactory.createEClass();
-		eClass.setName(name);
-		if(classNode.get("description") != null) {
-			eClass.getEAnnotations().add(createEAnnotation(GEN_MODEL_ANNOTATION_SOURCE, "documentation", classNode.get("description").asString()));
-		}
-		for(EAnnotation annotation : additionalAnnotations) {
-			eClass.getEAnnotations().add(annotation);
-		}
-		JsonNode requiredNode = classNode.get("required");
-		JsonNode propertiesNode = classNode.get("properties");
-		if(propertiesNode != null) {
-			for(String property : propertiesNode.propertyNames()) {
-				EStructuralFeature feature = createEStructuralFeature(propertiesNode.get(property), property, rootNode);
-				if(feature != null) {
-					if(requiredNode != null && arrayNodeContains(requiredNode, feature.getName())) {
-						feature.setLowerBound(1);
+		EClass eClass = null;
+		JsonNode allOfNode = classNode.get("allOf");
+		if(allOfNode != null) {
+			List<String> parentNames = new LinkedList<>();
+			if(allOfNode.isArray()) {				
+				for(int i = 0; i < allOfNode.size(); i++) {
+					JsonNode allOf = allOfNode.get(i);
+					if(allOf.get("$ref") != null) {
+						int indexOfSlash = allOf.get("$ref").asString().lastIndexOf("/");
+						parentNames.add(allOf.get("$ref").asString().substring(indexOfSlash+1));
+					} else {
+						if(eClass == null) {
+							eClass = createEClass(allOf, name, rootNode);
+						} else {
+							throw new IllegalArgumentException(String.format("allOf node with multiple inner objects. Case not supported for eClass %s", name));
+						}
 					}
-					eClass.getEStructuralFeatures().add(feature);
+				}
+			} else {
+				throw new IllegalArgumentException(String.format("allOf node is not an array. Case not supported for eClass %s", name));
+			}
+//			if only references were present in allOf we create an empty EClass
+			if(eClass == null) {
+				eClass = ecoreFactory.createEClass();
+				eClass.setName(name);
+			}
+			allOfRefMap.put(eClass, parentNames);			
+		} else {
+			eClass = ecoreFactory.createEClass();
+			eClass.setName(name);
+			if(classNode.get("description") != null) {
+				addEAnnotation(eClass, GEN_MODEL_ANNOTATION_SOURCE, "documentation", classNode.get("description").asString());
+			}
+			JsonNode requiredNode = classNode.get("required");
+			JsonNode propertiesNode = classNode.get("properties");
+			if(propertiesNode != null) {
+				for(String property : propertiesNode.propertyNames()) {
+					EStructuralFeature feature = createEStructuralFeature(propertiesNode.get(property), property, rootNode, false);
+					if(feature != null) {
+						if(requiredNode != null && arrayNodeContains(requiredNode, feature.getName())) {
+							feature.setLowerBound(1);
+						}
+						eClass.getEStructuralFeatures().add(feature);
+					}
 				}
 			}
+			if(classNode.get("additionalProperties") != null) {
+				addEAnnotation(eClass, JSONSCHEMA_ANNOTATION_SOURCE, "additionalProperties", classNode.get("additionalProperties").isBoolean() ? String.valueOf(classNode.get("additionalProperties")) : classNode.get("additionalProperties").toPrettyString());
+			}
 		}
+		
+		
 		cachedClassifiers.put(classNode.toString(), eClass);
 		classifierMap.put(eClass.getName(), eClass);			
 		return eClass;		
 	}
 
-	private EClass createEClass(JsonNode classNode, String name, JsonNode rootNode, List<String> ignorePropertiesList,  List<EAnnotation> additionalAnnotations) {
+	private EClass createEClass(JsonNode classNode, String name, JsonNode rootNode, List<String> ignorePropertiesList) {
 		if(cachedClassifiers.containsKey(classNode.toString())) {
 			System.out.println("Found existing class");
 			return (EClass)cachedClassifiers.get(classNode.toString());
@@ -222,17 +263,14 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		EClass eClass = ecoreFactory.createEClass();
 		eClass.setName(name);
 		if(classNode.get("description") != null) {
-			eClass.getEAnnotations().add(createEAnnotation(GEN_MODEL_ANNOTATION_SOURCE, "documentation", classNode.get("description").asString()));
-		}
-		for(EAnnotation annotation : additionalAnnotations) {
-			eClass.getEAnnotations().add(annotation);
+			addEAnnotation(eClass, GEN_MODEL_ANNOTATION_SOURCE, "documentation", classNode.get("description").asString());
 		}
 		JsonNode requiredNode = classNode.get("required");
 		JsonNode propertiesNode = classNode.get("properties");
 		if(propertiesNode != null) {
 			for(String property : propertiesNode.propertyNames()) {
 				if(ignorePropertiesList.contains(property)) continue;
-				EStructuralFeature feature = createEStructuralFeature(propertiesNode.get(property), property, rootNode);
+				EStructuralFeature feature = createEStructuralFeature(propertiesNode.get(property), property, rootNode, false);
 				if(feature != null) {
 					if(requiredNode != null && arrayNodeContains(requiredNode, feature.getName())) {
 						feature.setLowerBound(1);
@@ -241,19 +279,24 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 				}
 			}
 		}
+		if(classNode.get("additionalProperties") != null) {
+			addEAnnotation(eClass, JSONSCHEMA_ANNOTATION_SOURCE, "additionalProperties", classNode.get("additionalProperties").isBoolean() ? String.valueOf(classNode.get("additionalProperties")) : classNode.get("additionalProperties").toPrettyString());
+		}
 		cachedClassifiers.put(classNode.toString(), eClass);
 		classifierMap.put(eClass.getName(), eClass);			
 		return eClass;		
 	}
 
-	private EStructuralFeature createEStructuralFeature(JsonNode propertyNode, String name, JsonNode rootNode) {
+	private EStructuralFeature createEStructuralFeature(JsonNode propertyNode, String name, JsonNode rootNode, boolean isArrayItems) {
 		EStructuralFeature feature = null;
 		//		1. Non-contained EReference
 		if(propertyNode.get("$ref") != null) {
 			feature = ecoreFactory.createEReference();
 			feature.setName(name);
+			addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "ref", propertyNode.get("$ref").asString());
 			((EReference)feature).setContainment(false);
-			String refName = propertyNode.get("$ref").asString().replaceFirst("#/definitions/", "");
+			int lastIndexOfSlash = propertyNode.get("$ref").asString().lastIndexOf("/");
+			String refName = propertyNode.get("$ref").asString().substring(lastIndexOfSlash+1);
 			if(classifierMap.containsKey(refName.toUpperCase())) {
 				feature.setEType(classifierMap.get(refName));
 			} else {
@@ -273,7 +316,7 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 						sb.append(",");
 					}
 				}
-				feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "dataType", sb.toString()));
+				addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "dataType", sb.toString());
 			}			
 		} 
 		else if(propertyNode.get("enum") != null) {
@@ -287,37 +330,29 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		}
 		else if(propertyNode.get("anyOf") != null) {
 			feature = createMultiValueReference(propertyNode.get("anyOf"), name, rootNode);
-			feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "source", "anyOf"));
+			addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "source", "anyOf");
 		} 
 		else if(propertyNode.get("oneOf") != null) {
 			feature = createMultiValueReference(propertyNode.get("oneOf"), name, rootNode);
-			feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "source", "oneOf"));
+			addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "source", "oneOf");
 		} else {
 			throw new IllegalArgumentException(String.format("Not supported case for property %s", name));
 		}
 		if(feature != null) {
 			if(propertyNode.get("description") != null) {
-				feature.getEAnnotations().add(createEAnnotation(GEN_MODEL_ANNOTATION_SOURCE, "documentation", propertyNode.get("description").asString()));
+				addEAnnotation(feature, GEN_MODEL_ANNOTATION_SOURCE, "documentation", propertyNode.get("description").asString());
 			}
 			if(propertyNode.get("format") != null) {
-				feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "format", propertyNode.get("format").asString()));
+				addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "format", propertyNode.get("format").asString());
 			}
 			if(propertyNode.get("const") != null) {
-				if(feature.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE) != null) {
-					feature.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().put("const", propertyNode.get("const").asString());
-				} else {
-					feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, 
-							Map.of("const", propertyNode.get("const").isString() ? propertyNode.get("const").asString() : propertyNode.get("const").toPrettyString(),
-							"constType", propertyNode.get("const").isArray() ?  propertyNode.get("const").get(0).getNodeType().toString() : propertyNode.get("const").getNodeType().toString())));
-				}
+				addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "const", propertyNode.get("const").isString() ? propertyNode.get("const").asString() : propertyNode.get("const").toPrettyString());
+				addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "constType", propertyNode.get("const").isArray() ?  propertyNode.get("const").get(0).getNodeType().toString() : propertyNode.get("const").getNodeType().toString());
 			}
 			if(propertyNode.get("type") == null) {
-				if(feature.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE) != null) {
-					feature.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().put("noTypeInfo", "true");
-				} else {
-					feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "noTypeInfo", "true"));
-				}
+				addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, isArrayItems? "noArrayItemsTypeInfo" : "noTypeInfo", "true");
 			}
+		
 		}
 		return feature;
 	}
@@ -340,8 +375,8 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		case "array":
 			//				We have an items schema
 			if(propertyNode.get("items") != null) {
-				feature = createEStructuralFeature(propertyNode.get("items"), name, rootNode);				
-				feature.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "items", "true"));
+				feature = createEStructuralFeature(propertyNode.get("items"), name, rootNode, true);	
+				addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "items", "true");
 			}
 			//				We have const wo items: so we need to infer the type of the items from const
 			else if(propertyNode.get("const") != null) {
@@ -373,7 +408,7 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 				System.out.println("Creating artificial class " + artificialClassifierCounter + " for property " + name);
 
 				EEnum eEnum = createEEnum(propertyNode, ARTIFICIAL_CLASSIFIER_PREFIX+(artificialClassifierCounter++));
-				eEnum.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "artificial", "true"));
+				addEAnnotation(eEnum, JSONSCHEMA_ANNOTATION_SOURCE, "artificial", "true");
 				
 				feature = ecoreFactory.createEAttribute();
 				feature.setName(name);
@@ -382,13 +417,13 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 				//					EAttribute of type EString 
 				feature = ecoreFactory.createEAttribute();
 				feature.setName(name);
-				feature.setEType(getEcoreTypeForJsonType("string"));
+				feature.setEType(EcorePackage.Literals.ESTRING);
 			}
 			break;
 		case "object":
 			//				We have a contained EReference and we have to create the EClass for the EDataType of the reference
-			EClass eClass = createEClass(propertyNode, ARTIFICIAL_CLASSIFIER_PREFIX+(artificialClassifierCounter++), rootNode, 
-					List.of(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "artificial", "true")));									
+			EClass eClass = createEClass(propertyNode, ARTIFICIAL_CLASSIFIER_PREFIX+(artificialClassifierCounter++), rootNode);	
+			addEAnnotation(eClass, JSONSCHEMA_ANNOTATION_SOURCE, "artificial", "true");
 			feature = ecoreFactory.createEReference();
 			feature.setName(name);
 			feature.setEType(eClass);
@@ -404,18 +439,27 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		return feature;
 	}
 	
+	private void addEAnnotation(EModelElement element, String source, String detailKey, String detailValue) {
+		if(element.getEAnnotation(source) != null) {
+			element.getEAnnotation(source).getDetails().put(detailKey, detailValue);
+		} else {
+			element.getEAnnotations().add(createEAnnotation(source, detailKey, detailValue));
+		}
+	}
 
 	private EReference createMultiValueReference(JsonNode jsonNode, String name, JsonNode rootNode) {
 
 		//		jsonNode is the anyOf node -> we expect that to be an array
 		if(!jsonNode.isArray()) throw new IllegalArgumentException(String.format("anyOf node for property %s expected to be an ArrayNode. Instead is %s!", name, jsonNode.getNodeType().toString()));
 
-
+		EReference reference = ecoreFactory.createEReference();
+		String refAnnotation = "";
 		Map<String, JsonNode> refClassesNodes = new HashMap<>();
 		for(int i = 0; i < jsonNode.size(); i++) {
 			JsonNode subNode = jsonNode.get(i);
 			//			We have a reference to another class
 			if(subNode.get("$ref") != null) {
+				refAnnotation += subNode.get("$ref").asString() + ",";
 				String refClassName = subNode.get("$ref").asString().replace("#/definitions/", "");
 				if(rootNode.get(refClassName) != null) {
 					refClassesNodes.put(refClassName, rootNode.get(refClassName));
@@ -426,6 +470,10 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			} else {
 				throw new IllegalArgumentException(String.format("anyOf with no $ref element for property %s. Case not supported yet!", name));
 			}
+		}
+		if(!refAnnotation.isEmpty()) {
+			refAnnotation = refAnnotation.substring(0, refAnnotation.length()-1); //get rid of last ","
+			addEAnnotation(reference, JSONSCHEMA_ANNOTATION_SOURCE, "ref", refAnnotation);
 		}
 
 		//		Now we check if all the ref classes have a properties fields. If not we just create a marker interface
@@ -449,10 +497,10 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			String parentName = getCommonSuffix(refClassesNodes.keySet().toArray(new String[0]));
 			if(parentName == null) parentName = ARTIFICIAL_CLASSIFIER_PREFIX+(artificialClassifierCounter++);
 			newParent.setName(parentName);
-			newParent.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "artificial", "true"));
+			addEAnnotation(newParent, JSONSCHEMA_ANNOTATION_SOURCE, "artificial", "true");
 			if(!commonProperties.isEmpty()) {
 				commonProperties.forEach((k,v) -> {
-					EStructuralFeature feature = createEStructuralFeature(v, k, rootNode);
+					EStructuralFeature feature = createEStructuralFeature(v, k, rootNode, false);
 					if(feature != null) {
 						if(commonRequiredProperties.contains(feature.getName())) {
 							feature.setLowerBound(1);
@@ -474,14 +522,14 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			EClass p = parent;
 			List<String> commonPropertiesNames = commonProperties.keySet().stream().toList();
 			refClassesNodes.forEach((k,v) ->  {
-				EClass subClass = createEClass(v, k, rootNode, commonPropertiesNames, Collections.emptyList());
+				EClass subClass = createEClass(v, k, rootNode, commonPropertiesNames);
 				if(subClass != null) {
 					subClass.getESuperTypes().add(p);
 				}
 			});
 		}
 
-		EReference reference = ecoreFactory.createEReference();
+		
 		reference.setName(name);
 		reference.setEType(parent);
 		reference.setContainment(false);		
@@ -612,7 +660,7 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 			eEnum.getELiterals().add(literal);
 		}	
 		if(enumNode.get("description") != null) {
-			eEnum.getEAnnotations().add(createEAnnotation(GEN_MODEL_ANNOTATION_SOURCE, "documentation", enumNode.get("description").asString()));
+			addEAnnotation(eEnum, GEN_MODEL_ANNOTATION_SOURCE, "documentation", enumNode.get("description").asString());
 		}
 		cachedClassifiers.put(enumNode.toString(), eEnum);
 		classifierMap.put(eEnum.getName(), eEnum);
@@ -648,7 +696,7 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 		EDataType dt = ecoreFactory.createEDataType();
 		dt.setName(name);
 		if(dtNode.get("description") != null) {
-			dt.getEAnnotations().add(createEAnnotation(GEN_MODEL_ANNOTATION_SOURCE, "documentation", dtNode.get("description").asString()));
+			addEAnnotation(dt, GEN_MODEL_ANNOTATION_SOURCE, "documentation",  dtNode.get("description").asString());
 		}
 		if(dtNode.get("type").isArray()) {
 			StringBuilder sb = new StringBuilder();
@@ -658,7 +706,7 @@ public class JsonSchemaToEPackageDeserializer implements CodecDeserializer<EPack
 					sb.append(",");
 				}
 			}
-			dt.getEAnnotations().add(createEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE, "dataType", sb.toString()));
+			addEAnnotation(dt, JSONSCHEMA_ANNOTATION_SOURCE, "dataType", sb.toString());
 			dt.setInstanceClass(Object.class);
 			dt.setInstanceClassName("java.lang.Object");
 		} else {

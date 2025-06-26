@@ -19,7 +19,8 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.eclipse.fennec.jsonld.model;version=latest,\
 	com.fasterxml.jackson.core.jackson-annotations;version='3.0',\
 	org.eclipse.fennec.ai.jsonschema.model,\
-	org.eclipse.fennec.qvt.api
+	org.eclipse.fennec.qvt.api,\
+	org.eclipse.emf.compare
 	
 Private-Package: \
 	org.eclipse.fennec.codec.jsonschema.test,\

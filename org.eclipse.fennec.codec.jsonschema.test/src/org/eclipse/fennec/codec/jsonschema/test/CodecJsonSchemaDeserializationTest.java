@@ -306,7 +306,6 @@ public class CodecJsonSchemaDeserializationTest {
 		EAttribute att = (EAttribute) eClass.getEStructuralFeatures().get(0);
 		assertThat(att.getName()).isEqualTo("items");
 		assertThat(att.getEType()).isEqualTo(EcorePackage.Literals.ESTRING);
-		assertTrue(att.isMany());
 	}
 
 	@Test
@@ -340,6 +339,7 @@ public class CodecJsonSchemaDeserializationTest {
 		EReference ref = (EReference) ec1.getEStructuralFeatures().get(0);
 		assertThat(ref.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
 		assertThat(ref.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("source")).isEqualTo("anyOf");
+		assertThat(ref.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("ref")).isEqualTo("#/definitions/TextResourceContents,#/definitions/BlobResourceContents");
 		
 		assertThat(ref.getName()).isEqualTo("contents");
 		assertFalse(ref.isContainment());
@@ -458,6 +458,7 @@ public class CodecJsonSchemaDeserializationTest {
 		assertThat(ec2.getEAnnotation(GEN_MODEL_ANNOTATION_SOURCE).getDetails().get("documentation")).isNotNull();
 		assertThat(ec2.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
 		assertThat(ec2.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("artificial")).isEqualTo("true");
+		assertThat(ec2.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("additionalProperties")).isEqualTo("{ }");
 		assertThat(ec2.getEStructuralFeatures()).hasSize(0);
 	}
 	
@@ -575,6 +576,8 @@ public class CodecJsonSchemaDeserializationTest {
 		assertFalse(ref.isContainment());
 		assertFalse(ref.isMany());
 		assertThat(ref.getEType()).isEqualTo(ec2);
+		assertThat(ref.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
+		assertThat(ref.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("ref")).isEqualTo("#/definitions/Role");
 	}
 	
 	@Test
@@ -776,7 +779,9 @@ public class CodecJsonSchemaDeserializationTest {
 		assertTrue(att.isMany());
 		assertThat(att.getEType()).isEqualTo(eEnum);
 		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
-		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("noTypeInfo")).isEqualTo("true");
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("noArrayItemsTypeInfo")).isEqualTo("true");
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("noTypeInfo")).isNull();
+		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("items")).isEqualTo("true");
 		
 		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE)).isNotNull();
 		assertThat(eEnum.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("artificial")).isEqualTo("true");
@@ -861,6 +866,8 @@ public class CodecJsonSchemaDeserializationTest {
 		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("const")).isEqualTo("[ 1, 2 ]");
 		assertThat(att.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE).getDetails().get("noTypeInfo")).isEqualTo("true");
 	}
+	
+
 
 	
 	@Disabled

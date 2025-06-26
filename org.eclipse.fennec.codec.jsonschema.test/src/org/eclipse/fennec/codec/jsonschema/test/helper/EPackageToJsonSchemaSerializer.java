@@ -32,6 +32,8 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.fennec.codec.info.codecinfo.CodecSerializer;
 
 import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationContext;
 
 /**
@@ -44,6 +46,7 @@ public class EPackageToJsonSchemaSerializer implements CodecSerializer<EPackage>
 	private static final String GEN_MODEL_ANNOTATION_SOURCE = "http://www.eclipse.org/emf/2002/GenModel";
 	private static final String JSONSCHEMA_ANNOTATION_SOURCE = "http://fennec.eclipse.org/jsonschema";
 
+	private EPackage ePackage;
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecSerializer#getName()
@@ -59,6 +62,7 @@ public class EPackageToJsonSchemaSerializer implements CodecSerializer<EPackage>
 	 */
 	@Override
 	public void serialize(EPackage ePackage, JsonGenerator gen, SerializationContext ctxt) {
+		this.ePackage = ePackage;
 		gen.writeStartObject();
 		if(extractAnnotationDetail(ePackage, JSONSCHEMA_ANNOTATION_SOURCE, "schema") != null) {
 			gen.writeStringProperty("$schema", extractAnnotationDetail(ePackage, JSONSCHEMA_ANNOTATION_SOURCE, "schema"));
@@ -81,7 +85,9 @@ public class EPackageToJsonSchemaSerializer implements CodecSerializer<EPackage>
 	}
 
 	private void serializeEClassifier(EClassifier classifier, JsonGenerator gen, SerializationContext ctxt) {
-		if("true".equals(extractAnnotationDetail(classifier, JSONSCHEMA_ANNOTATION_SOURCE, "artificial"))) return;
+		String artificial = extractAnnotationDetail(classifier, JSONSCHEMA_ANNOTATION_SOURCE, "artificial");
+		String topLevelArray = extractAnnotationDetail(classifier, JSONSCHEMA_ANNOTATION_SOURCE, "source");
+		if("true".equals(artificial) && !"TopLevelArray".equals(topLevelArray)) return;
 		gen.writeName(classifier.getName()); // EClassifier name
 		if(classifier instanceof EClass eClass) {
 			serializeEClass(eClass, gen, ctxt);
@@ -94,88 +100,273 @@ public class EPackageToJsonSchemaSerializer implements CodecSerializer<EPackage>
 
 	private void serializeEClass(EClass eClass, JsonGenerator gen, SerializationContext ctxt) {
 		gen.writeStartObject();
-		if(extractAnnotationDetail(eClass, GEN_MODEL_ANNOTATION_SOURCE, "documentation") != null) {
-			gen.writeStringProperty("description", extractAnnotationDetail(eClass, GEN_MODEL_ANNOTATION_SOURCE, "documentation"));
-		}
-		gen.writeStringProperty("type", "object");
-
-		if(eClass.getEStructuralFeatures().isEmpty()) {
-			gen.writeEndObject();
-			return;
-		}
-		gen.writeObjectPropertyStart("properties");
-		List<String> requiredProperties = new LinkedList<>();
-		for(EStructuralFeature feature : eClass.getEStructuralFeatures()) {
-			String documentation = extractAnnotationDetail(feature, GEN_MODEL_ANNOTATION_SOURCE, "documentation");
-			String noTypeInfo = extractAnnotationDetail(feature, GEN_MODEL_ANNOTATION_SOURCE, "noTypeInfo");
-			if(feature.isRequired()) requiredProperties.add(feature.getName());
-			if(feature instanceof EAttribute eAttribute) {
-				EDataType type = eAttribute.getEAttributeType();
-				gen.writeName(eAttribute.getName());
-				if(eAttribute.isMany()) {
-					gen.writeStartObject();
-					if(documentation != null) {
-						gen.writeStringProperty("description", documentation);
-					}					
-					if(noTypeInfo != null && "true".equals(noTypeInfo)) gen.writeStringProperty("type", "array");
-					serializeConstValue(eAttribute, true, gen, ctxt);
-					String itemsAnnotation = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "items");
-					if(itemsAnnotation != null && "true".equals(itemsAnnotation)) {
-						serializeArrayItems(eAttribute, type, gen, ctxt);
-					}
-					gen.writeEndObject();
-				} else {
-					if(type instanceof EEnum eEnum) {
-						gen.writeStartObject();
-						if(documentation != null) {
-							gen.writeStringProperty("description", documentation);
-						}
-						serializeEEnumLiterals(eEnum.getELiterals(), gen, ctxt);
-						if(noTypeInfo != null && "true".equals(noTypeInfo)) gen.writeStringProperty("type", "string");
-						serializeConstValue(eAttribute, false, gen, ctxt);
-						gen.writeEndObject();
-					} else {
-						gen.writeStartObject();
-						if(documentation != null) {
-							gen.writeStringProperty("description", documentation);
-						}
-						serializeConstValue(eAttribute, false, gen, ctxt);
-						if(noTypeInfo != null && "true".equals(noTypeInfo)) {
-							String jsonType = getJsonTypeFromEDataType(type);
-							if("javaObject".equals(jsonType)) {
-								String dataTypeStr = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "dataType");
-								if(dataTypeStr != null) {
-									String[] dataTypeSplit = dataTypeStr.split(",");
-									gen.writeArrayPropertyStart("type");
-									for(String dt : dataTypeSplit) {
-										gen.writeString(dt);
-									}
-									gen.writeEndArray();
-								}						
-							} else {
-								gen.writeStringProperty("type", jsonType);
-							}
-						}
-					
-						gen.writeEndObject();
-					}
-				}
-
-
-
-			} else if(feature instanceof EReference eReference) {
-
+		String topLevelArray = extractAnnotationDetail(eClass, JSONSCHEMA_ANNOTATION_SOURCE, "source");
+		String additionalProperties = extractAnnotationDetail(eClass, JSONSCHEMA_ANNOTATION_SOURCE, "additionalProperties");
+		String description = extractAnnotationDetail(eClass, GEN_MODEL_ANNOTATION_SOURCE, "documentation");
+		
+		if(description != null) gen.writeStringProperty("description", description);
+		if(additionalProperties != null) {
+			if(additionalProperties.startsWith("{")) {
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode node = mapper.readTree(additionalProperties);
+				gen.writeName("additionalProperties");
+				gen.writeTree(node);
+			} else {
+				gen.writeBooleanProperty("additionalProperties", Boolean.valueOf(additionalProperties));
 			}
 		}
-		gen.writeEndObject();
-		if(!requiredProperties.isEmpty()) {
-			gen.writeArrayPropertyStart("required");
-			requiredProperties.forEach(r -> {
-				gen.writeString(r);
-			});
-			gen.writeEndArray();
+
+		if("TopLevelArray".equals(topLevelArray)) {
+			gen.writeStringProperty("type", "array");
+			EStructuralFeature items = eClass.getEStructuralFeature("items");
+			if(items != null) {
+				if(items instanceof EAttribute eAttribute) {
+					serializeEAttribute(eAttribute, gen, ctxt);
+				} else if(items instanceof EReference eReference) {
+					serializeEReference(eReference, gen, ctxt);
+				}
+			}
+		}
+		else {
+			
+			List<EClass> artificialParents = eClass.getESuperTypes().stream().filter(st -> extractAnnotationDetail(st, JSONSCHEMA_ANNOTATION_SOURCE, "artificial") != null).toList();
+			List<EClass> nonArtificialParents = eClass.getESuperTypes().stream().filter(st -> extractAnnotationDetail(st, JSONSCHEMA_ANNOTATION_SOURCE, "artificial") == null).toList();
+			
+			if(nonArtificialParents.isEmpty()) {
+				gen.writeStringProperty("type", "object");
+				boolean isPropertiesWritten = false;			
+				List<String> requiredProperties = new LinkedList<>();
+				for(EStructuralFeature feature : eClass.getEStructuralFeatures()) {			
+					if(!isPropertiesWritten) {
+						 gen.writeObjectPropertyStart("properties");
+						 isPropertiesWritten = true;
+					}
+					if(feature.isRequired()) requiredProperties.add(feature.getName());
+					if(feature instanceof EAttribute eAttribute) {
+						serializeEAttribute(eAttribute, gen, ctxt);
+					} else if(feature instanceof EReference eReference) {
+						serializeEReference(eReference, gen, ctxt);
+					}
+				}
+//				We check if the EClass inherits from an artificial EClass: if yes we write also the properties of the parent, 
+				for(EClass st : artificialParents) {
+					for(EStructuralFeature feature : st.getEStructuralFeatures()) {
+						if(!isPropertiesWritten) {
+							 gen.writeObjectPropertyStart("properties");
+							 isPropertiesWritten = true;
+						}
+						if(feature.isRequired()) requiredProperties.add(feature.getName());
+						if(feature instanceof EAttribute eAttribute) {
+							serializeEAttribute(eAttribute, gen, ctxt);
+						} else if(feature instanceof EReference eReference) {
+							serializeEReference(eReference, gen, ctxt);
+						}
+					}				 
+				};	
+				
+				if(isPropertiesWritten) gen.writeEndObject();
+				if(!requiredProperties.isEmpty()) {
+					gen.writeArrayPropertyStart("required");
+					requiredProperties.forEach(r -> {
+						gen.writeString(r);
+					});
+					gen.writeEndArray();
+				}
+			} else {
+//				if not we translate it into an allOf
+				gen.writeName("allOf");
+				gen.writeStartArray();
+				for(EClass st : nonArtificialParents) {
+					gen.writeStartObject();
+					gen.writeStringProperty("$ref", "#/definitions/"+st.getName());
+					gen.writeEndObject();
+				}
+				gen.writeStartObject();
+				gen.writeStringProperty("type", "object");
+				boolean isPropertiesWritten = false;			
+				List<String> requiredProperties = new LinkedList<>();
+				for(EStructuralFeature feature : eClass.getEStructuralFeatures()) {			
+					if(!isPropertiesWritten) {
+						 gen.writeObjectPropertyStart("properties");
+						 isPropertiesWritten = true;
+					}
+					if(feature.isRequired()) requiredProperties.add(feature.getName());
+					if(feature instanceof EAttribute eAttribute) {
+						serializeEAttribute(eAttribute, gen, ctxt);
+					} else if(feature instanceof EReference eReference) {
+						serializeEReference(eReference, gen, ctxt);
+					}
+				}
+//				We check if the EClass inherits from an artificial EClass: if yes we write also the properties of the parent, 
+				for(EClass st : artificialParents) {
+					for(EStructuralFeature feature : st.getEStructuralFeatures()) {
+						if(!isPropertiesWritten) {
+							 gen.writeObjectPropertyStart("properties");
+							 isPropertiesWritten = true;
+						}
+						if(feature.isRequired()) requiredProperties.add(feature.getName());
+						if(feature instanceof EAttribute eAttribute) {
+							serializeEAttribute(eAttribute, gen, ctxt);
+						} else if(feature instanceof EReference eReference) {
+							serializeEReference(eReference, gen, ctxt);
+						}
+					}				 
+				};	
+				
+				if(isPropertiesWritten) gen.writeEndObject();
+				if(!requiredProperties.isEmpty()) {
+					gen.writeArrayPropertyStart("required");
+					requiredProperties.forEach(r -> {
+						gen.writeString(r);
+					});
+					gen.writeEndArray();
+				}
+				
+				gen.writeEndObject();
+				gen.writeEndArray();
+				
+			}
+		
 		}
 		gen.writeEndObject();
+	}
+	
+
+	
+	private void serializeEAttribute(EAttribute eAttribute, JsonGenerator gen, SerializationContext ctxt) {
+		String documentation = extractAnnotationDetail(eAttribute, GEN_MODEL_ANNOTATION_SOURCE, "documentation");
+		String noTypeInfo = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "noTypeInfo");
+		String format = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "format");
+		EDataType type = eAttribute.getEAttributeType();
+		gen.writeName(eAttribute.getName());
+		if(eAttribute.isMany()) {
+			gen.writeStartObject();
+			if(documentation != null) {
+				gen.writeStringProperty("description", documentation);
+			}					
+			if(noTypeInfo == null || !("true".equals(noTypeInfo))) gen.writeStringProperty("type", "array");
+			if(format != null) gen.writeStringProperty("format", format);
+			serializeConstValue(eAttribute, true, gen, ctxt);
+			String itemsAnnotation = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "items");
+			if(itemsAnnotation != null && "true".equals(itemsAnnotation)) {
+				serializeArrayItems(eAttribute, type, gen, ctxt);
+			}
+			gen.writeEndObject();
+		} else {
+			if(type instanceof EEnum eEnum) {
+				gen.writeStartObject();
+				if(documentation != null) {
+					gen.writeStringProperty("description", documentation);
+				}
+				serializeEEnumLiterals(eEnum.getELiterals(), gen, ctxt);
+				if(noTypeInfo == null || !("true".equals(noTypeInfo)))  gen.writeStringProperty("type", "string");
+				serializeConstValue(eAttribute, false, gen, ctxt);
+				if(format != null) gen.writeStringProperty("format", format);
+				gen.writeEndObject();
+			} else {
+				gen.writeStartObject();
+				if(documentation != null) {
+					gen.writeStringProperty("description", documentation);
+				}
+				serializeConstValue(eAttribute, false, gen, ctxt);
+				if(format != null) gen.writeStringProperty("format", format);
+				if(noTypeInfo == null || !("true".equals(noTypeInfo)))  {
+					String jsonType = getJsonTypeFromEDataType(type);
+					if("javaObject".equals(jsonType)) {
+						String dataTypeStr = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "dataType");
+						if(dataTypeStr != null) {
+							String[] dataTypeSplit = dataTypeStr.split(",");
+							gen.writeArrayPropertyStart("type");
+							for(String dt : dataTypeSplit) {
+								gen.writeString(dt);
+							}
+							gen.writeEndArray();
+						}						
+					} else {
+						gen.writeStringProperty("type", jsonType);
+					}
+				}
+			
+				gen.writeEndObject();
+			}
+		}
+	}
+	
+	private void serializeEReference(EReference eReference, JsonGenerator gen, SerializationContext ctxt) {
+		String documentation = extractAnnotationDetail(eReference, GEN_MODEL_ANNOTATION_SOURCE, "documentation");
+		String noTypeInfo = extractAnnotationDetail(eReference, JSONSCHEMA_ANNOTATION_SOURCE, "noTypeInfo");
+		EClassifier type = eReference.getEType();	
+		gen.writeName(eReference.getName());
+		if(eReference.isMany()) {
+			gen.writeStartObject();
+			if(documentation != null) gen.writeStringProperty("description", documentation);
+			if(noTypeInfo == null || !("true".equals(noTypeInfo)))  gen.writeStringProperty("type", "array");
+			gen.writeName("items");
+			if(eReference.isContainment()) {				
+				serializeEClass((EClass) type, gen, ctxt);									
+			} else {			
+				gen.writeStartObject();
+				String source = extractAnnotationDetail(eReference, JSONSCHEMA_ANNOTATION_SOURCE, "source");
+				String refs = extractAnnotationDetail(eReference, JSONSCHEMA_ANNOTATION_SOURCE, "ref");
+				if(source != null) {					
+					gen.writeName(source);
+					gen.writeStartArray();
+					if(refs != null) {
+						String[] refSplit = refs.split(",");
+						for(String ref : refSplit) {
+							gen.writeStartObject();
+							gen.writeStringProperty("$ref", ref);
+							gen.writeEndObject();
+						}
+					} else {
+//						If we do not have any ref info, we put in the anyOf/oneOf block all the sub classes of the reference type
+						ePackage.getEClassifiers().stream().
+							filter(c -> c instanceof EClass).
+							map(c -> (EClass) c).
+							filter(c -> c.getESuperTypes().contains((EClass) type)).
+							forEach(c -> {
+								gen.writeStartObject();
+								gen.writeStringProperty("$ref", "#/definitions/"+c.getName());
+								gen.writeEndObject();
+							});						
+					}					
+					gen.writeEndArray();
+				} else {
+					if(refs != null) {
+						gen.writeStringProperty("$ref", refs);
+					} else {
+//						we do not have neither a source nor a ref annotations. So we serialize as an anyOf using all the sub classes of the reference type
+						gen.writeName("anyOf");
+						gen.writeStartArray();
+						ePackage.getEClassifiers().stream().
+						filter(c -> c instanceof EClass).
+						map(c -> (EClass) c).
+						filter(c -> c.getESuperTypes().contains((EClass) type)).
+						forEach(c -> {
+							gen.writeStartObject();
+							gen.writeStringProperty("$ref", "#/definitions/"+c.getName());
+							gen.writeEndObject();
+						});		
+						gen.writeEndArray();
+					}
+				}
+				gen.writeEndObject();
+			}
+			gen.writeEndObject();
+		} else {
+			if(eReference.isContainment()) {				
+				serializeEClass((EClass) type, gen, ctxt);
+			} else {
+				gen.writeStartObject();
+				String ref = extractAnnotationDetail(eReference, JSONSCHEMA_ANNOTATION_SOURCE, "ref");
+				if(ref != null) {
+					gen.writeStringProperty("$ref", ref);
+				} else {
+					gen.writeStringProperty("$ref", "#/definitions/"+type.getName());
+				}
+				gen.writeEndObject();
+			}
+		}
 	}
 	
 	private void serializeConstValue(ENamedElement element, boolean isInArray, JsonGenerator gen, SerializationContext ctxt) {
@@ -232,11 +423,12 @@ public class EPackageToJsonSchemaSerializer implements CodecSerializer<EPackage>
 	}
 	
 	private void serializeArrayItems(EStructuralFeature feature, EDataType type, JsonGenerator gen, SerializationContext ctxt) {
-		gen.writeName("items");
+		String noArrayItemsTypeInfo = extractAnnotationDetail(feature, JSONSCHEMA_ANNOTATION_SOURCE, "noArrayItemsTypeInfo");
+		gen.writeObjectPropertyStart("items");
 		if(type instanceof EEnum eEnum) {
 			serializeEEnumLiterals(eEnum.getELiterals(), gen, ctxt);
-		} else {
-			gen.writeStartObject();
+			if(noArrayItemsTypeInfo == null || !"true".equals(noArrayItemsTypeInfo)) gen.writeStringProperty("type", "string");
+		} else if(noArrayItemsTypeInfo == null || !"true".equals(noArrayItemsTypeInfo)){
 			String jsonType = getJsonTypeFromEDataType(type);
 			if("javaObject".equals(jsonType)) {
 				String dataTypeStr = extractAnnotationDetail(feature, JSONSCHEMA_ANNOTATION_SOURCE, "dataType");
@@ -262,8 +454,8 @@ public class EPackageToJsonSchemaSerializer implements CodecSerializer<EPackage>
 		if(EcorePackage.Literals.EINT.equals(eDataType) || EcorePackage.Literals.EINTEGER_OBJECT.equals(eDataType)) return "integer";
 		if(EcorePackage.Literals.EBIG_DECIMAL.equals(eDataType)) return "number";
 		if(EcorePackage.Literals.EBIG_INTEGER.equals(eDataType)) return "integer";
-		if(EcorePackage.Literals.EBYTE.equals(eDataType)) return "bynary";
-		if(EcorePackage.Literals.EBOOLEAN.equals(eDataType) || EcorePackage.Literals.EBOOLEAN_OBJECT.equals(eDataType)) return "bynary";
+		if(EcorePackage.Literals.EBYTE.equals(eDataType)) return "binary";
+		if(EcorePackage.Literals.EBOOLEAN.equals(eDataType) || EcorePackage.Literals.EBOOLEAN_OBJECT.equals(eDataType)) return "binary";
 		return "javaObject";
 	}
 
@@ -286,7 +478,32 @@ public class EPackageToJsonSchemaSerializer implements CodecSerializer<EPackage>
 	}
 
 	private void serializeEDataType(EDataType eDataType, JsonGenerator gen, SerializationContext ctxt) {
-
+		String documentation = extractAnnotationDetail(eDataType, GEN_MODEL_ANNOTATION_SOURCE, "documentation");
+		String dataType = extractAnnotationDetail(eDataType, JSONSCHEMA_ANNOTATION_SOURCE, "dataType");
+		gen.writeStartObject();
+		if(documentation != null) gen.writeStringProperty("description", documentation);
+		if(dataType != null) {
+			gen.writeName("type");
+			gen.writeStartArray();
+			String[] dataTypeSplit = dataType.split(",");
+			for(String dt : dataTypeSplit) {
+				gen.writeString(dt);
+			}
+			gen.writeEndArray();
+		} else {
+			gen.writeStringProperty("type", getJsonTypeFromEDataTypeInstanceClassName(eDataType.getInstanceClassName()));
+		}
+		gen.writeEndObject();
+	}
+	
+	private String getJsonTypeFromEDataTypeInstanceClassName(String instanceClassName) {
+		switch(instanceClassName) {
+			case "java.lang.String": return "string";
+			case "java.lang.Integer", "java.math.BigInteger": return "integer";
+			case "java.lang.Boolean": return "boolean";
+			case "java.lang.Double", "java.lang.Float", "java.math.BigDecimal": return "number";
+			default: throw new IllegalArgumentException(String.format("Case not supported for EDataType instanceClassName %s", instanceClassName));
+		}
 	}
 
 	private String extractAnnotationDetail(EModelElement modelElement, String source, String detailKey) {
