@@ -256,14 +256,15 @@ public class CodecJsonLDTest {
 		@Override
 		public ContextObject deserialize(JsonParser parser, DeserializationContext ctxt) {
 			ContextObject ctxtObj = JsonLDFactory.eINSTANCE.createContextObject();
-			if (parser.currentToken() != JsonToken.START_OBJECT) {
-	            throw new IllegalArgumentException("Expected JsonToken.StART_OBJECT instead got " + parser.currentToken());
-	        }
-			while (parser.nextToken() != JsonToken.END_OBJECT) {
+//			if (parser.currentToken() != JsonToken.START_OBJECT) {
+//	            throw new IllegalArgumentException("Expected JsonToken.START_OBJECT instead got " + parser.currentToken());
+//	        }
+			JsonToken next = parser.nextToken();
+			while (next != JsonToken.END_OBJECT && next != null) {
 	            String key = parser.currentName();
-	            parser.nextToken();
-
-	            JsonToken token = parser.currentToken();
+	            System.out.println(key);
+	            JsonToken token = parser.nextToken();
+	            System.out.println(token);
 	            switch (token) {
 	            case VALUE_STRING:
 	            	ContextStringValue ctxtStrValue = JsonLDFactory.eINSTANCE.createContextStringValue();
@@ -277,9 +278,37 @@ public class CodecJsonLDTest {
 	            default:
 	            	throw new IllegalArgumentException("Expected either VALUE_STRING or START_OBJECT but got " + token);
 	            }
+	            next = parser.nextToken();
+	            
 	            
 			}
 			return ctxtObj;
+		}
+
+		@Override
+		public void deserializeInto(JsonParser parser, DeserializationContext ctxt, ContextObject ctxtObj) {
+			JsonToken next = parser.nextToken();
+			while (next != JsonToken.END_OBJECT && next != null) {
+	            String key = parser.currentName();
+	            System.out.println(key);
+	            JsonToken token = parser.nextToken();
+	            System.out.println(token);
+	            switch (token) {
+	            case VALUE_STRING:
+	            	ContextStringValue ctxtStrValue = JsonLDFactory.eINSTANCE.createContextStringValue();
+	            	ctxtStrValue.setValue(parser.getString());
+	            	ctxtObj.getContext().put(key, ctxtStrValue);
+	            	break;
+	            case START_OBJECT:
+	            	ContextObject ctxtObjValue = this.deserialize(parser, ctxt);
+	            	ctxtObj.getContext().put(key, ctxtObjValue);
+	            	break;
+	            default:
+	            	throw new IllegalArgumentException("Expected either VALUE_STRING or START_OBJECT but got " + token);
+	            }
+	            next = parser.nextToken();	            
+			}
+			
 		}
 	};
 }
