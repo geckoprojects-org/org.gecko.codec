@@ -226,4 +226,22 @@ public class CodecReadContext extends TokenStreamContext implements EMFCodecRead
 		_currentValue = v;
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#hasParentContext()
+	 */
+	@Override
+	public boolean hasParentContext() {
+		return _parent != null;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#getParentContext()
+	 */
+	@Override
+	public TokenStreamContext getParentContext() {
+		return (CodecReadContext)_parent;
+	}
+
 }
