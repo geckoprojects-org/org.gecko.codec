@@ -31,6 +31,10 @@ public interface EMFCodecReadContext extends EMFCodecContext {
 	
 	TokenStreamContext clearAndGetParent();
 	
+	TokenStreamContext getParentContext();
+	
+	boolean hasParentContext();
+	
 	void setCurrentName(String name) throws StreamReadException;
 
 }
