@@ -1,0 +1,8 @@
+-library: enable-emf
+
+javac.source: 17
+javac.target: 17
+
+-buildpath: \
+	tools.jackson.core.jackson-databind,\
+	tools.jackson.core.jackson-core
