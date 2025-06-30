@@ -10,4 +10,14 @@
   <eClassifiers xsi:type="ecore:EClass" name="Child" eSuperTypes="#//Parent">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Parent2">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Child2" eSuperTypes="#//Parent2"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TestObject">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref1" eType="#//Child"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref2" eType="#//Child2"
+        containment="true"/>
+  </eClassifiers>
 </ecore:EPackage>
