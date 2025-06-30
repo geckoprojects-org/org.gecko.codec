@@ -54,6 +54,7 @@ public class CodecModule extends SimpleModule {
 	private boolean serializeIdField;
 	private boolean idFeatureAsPrimaryKey;
 	private String idKey;
+	private boolean deserializeType;
 	private boolean serializeType;
 	private boolean serializeSuperTypes;
 	private boolean serializeAllSuperTypes;
@@ -116,6 +117,10 @@ public class CodecModule extends SimpleModule {
 
 	public String getIdKey() {
 		return idKey;
+	}
+	
+	public boolean isDeserializeType() {
+		return deserializeType;
 	}
 
 	public boolean isSerializeType() {
@@ -181,6 +186,7 @@ public class CodecModule extends SimpleModule {
 		this.serializeSuperTypes = builder.serializeSuperTypes;
 		this.serializeAllSuperTypes = builder.serializeAllSuperTypes;
 		this.serializeType = builder.serializeType;
+		this.deserializeType = builder.deserializeType;
 		this.idFeatureAsPrimaryKey = builder.idFeatureAsPrimaryKey;
 		this.idKey = builder.idKey;
 		this.typeKey = builder.typeKey;
@@ -293,6 +299,7 @@ public class CodecModule extends SimpleModule {
 		private boolean idFeatureAsPrimaryKey = true;
 		private String idKey =  "_id";
 		private boolean serializeType = true;
+		private boolean deserializeType = false;
 		private boolean serializeSuperTypes = false;
 		private boolean serializeAllSuperTypes = false;
 		private boolean serializeSuperTypesAsArray = true;
@@ -388,6 +395,11 @@ public class CodecModule extends SimpleModule {
 			return this;
 		}
 
+		public Builder withDeserializeType(boolean deserializeType) {
+			this.deserializeType = deserializeType;
+			return this;
+		}
+		
 		public Builder withSerializeType(boolean serializeType) {
 			this.serializeType = serializeType;
 			return this;

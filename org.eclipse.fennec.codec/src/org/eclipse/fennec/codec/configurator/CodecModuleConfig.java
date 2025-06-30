@@ -32,7 +32,7 @@ public @interface CodecModuleConfig {
 	 * A name for the Module.
 	 * @return
 	 */
-	String codecModuleName() default "gecko-codec-module";
+	String codecModuleName() default "eclipse-fennec-codec-module";
 	
 	/**
 	 * Option to indicate the default key to be used for id 
@@ -151,6 +151,15 @@ public @interface CodecModuleConfig {
 	 * @return
 	 */
 	boolean writeEnumLiterals() default false;
+	
+	/**
+	 * Option used to indicate the module to deserialize the type information.
+	 * To be used when the type key is also a feature of the object to be 
+	 * deserialized.
+	 * Default is Boolean.FALSE
+	 * @return
+	 */
+	boolean deserializeType() default false;
 	
 	/**
 	 * Option used to indicate the module to serialize the type information.
