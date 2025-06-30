@@ -206,6 +206,8 @@ public class CodecResource extends ResourceImpl {
 //		We need to know which object has to be deserialized, otherwise we cannot access the right model info at this stage
 		if(options.containsKey(CodecResourceOptions.CODEC_ROOT_OBJECT)) {
 			eClass = (EClass) options.get(CodecResourceOptions.CODEC_ROOT_OBJECT);
+		} else {
+			throw new IllegalArgumentException(String.format("No CODEC_ROOT_OBJECT option found. Cannot continue without knowing the root object to deserialize!"));
 		}
 		
 		PackageCodecInfo modelCodecInfo = null;
