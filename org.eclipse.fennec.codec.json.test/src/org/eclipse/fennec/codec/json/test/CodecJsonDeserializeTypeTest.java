@@ -135,5 +135,35 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 		assertThat(loadClass.eGet(typeFeature)).isNotNull();		
 	}
 
-	
+	@Test
+	public void testDeserializationDifferentTypeKeys() throws IOException {
+
+		// load ecore
+		Resource ecoreResource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/type-as-feature.ecore").toString()));
+		ecoreResource.load(null);
+		EPackage epackage = (EPackage) ecoreResource.getContents().get(0);
+		EClass child1 = (EClass) epackage.getEClassifier("Child");
+		EClass child2 = (EClass) epackage.getEClassifier("Child2");
+		EClass testClass = (EClass) epackage.getEClassifier("TestObject");
+		
+		// load dynamic eobjects from json with classifier from ecore
+		Resource resource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/type-different-keys.json").toString()));
+
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, testClass);
+		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "type");
+		resource.load(options);
+
+		assertThat(resource.getContents()).hasSize(1);
+
+		EObject loadClass = resource.getContents().get(0);
+		
+		EStructuralFeature ref1Feature = loadClass.eClass().getEStructuralFeature("ref1");
+		assertThat(ref1Feature).isNotNull();
+		assertThat(loadClass.eGet(ref1Feature)).isInstanceOf(child1.eClass().getClass());
+		
+		EStructuralFeature ref2Feature = loadClass.eClass().getEStructuralFeature("ref2");
+		assertThat(ref2Feature).isNotNull();
+		assertThat(loadClass.eGet(ref2Feature)).isInstanceOf(child2.eClass().getClass());	
+	}
 }
