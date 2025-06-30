@@ -461,6 +461,9 @@ public class CodecResource extends ResourceImpl {
 			case CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE:
 				moduleBuilder.withSerializeType((boolean) v);
 				break;
+			case CodecModuleOptions.CODEC_MODULE_DESERIALIZE_TYPE:
+				moduleBuilder.withDeserializeType((boolean) v);
+				break;
 			case CodecModuleOptions.CODEC_MODULE_TIMESTAMP_KEY:
 				moduleBuilder.withTimestampKey((String) v);
 				break;

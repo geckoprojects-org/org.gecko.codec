@@ -119,6 +119,7 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, childClass);
 		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "type");
+		options.put(CodecModuleOptions.CODEC_MODULE_DESERIALIZE_TYPE, true);
 		resource.load(options);
 
 		assertThat(resource.getContents()).hasSize(1);
