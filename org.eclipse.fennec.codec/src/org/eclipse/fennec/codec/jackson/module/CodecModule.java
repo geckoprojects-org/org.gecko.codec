@@ -224,7 +224,7 @@ public class CodecModule extends SimpleModule {
 	 */
 	@Override
 	public Version version() {
-		return new Version(1, 0, 0, "SNAPSHOT", "org.geckoprojects.codec", "org.gecko.codec");
+		return new Version(1, 0, 0, "SNAPSHOT", "org.eclipse.fennec", "org.eclipse.fennec.codec");
 	}
 	
 	
