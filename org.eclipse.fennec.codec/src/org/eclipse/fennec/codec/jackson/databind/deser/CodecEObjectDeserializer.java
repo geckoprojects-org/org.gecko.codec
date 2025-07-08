@@ -34,6 +34,7 @@ import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.jackson.databind.CodecTokenBuffer;
 import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.jackson.utils.CodecParserException;
@@ -44,7 +45,6 @@ import tools.jackson.core.TokenStreamContext;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.deser.jdk.StringDeserializer;
-import tools.jackson.databind.util.TokenBuffer;
 
 /**
  * 
@@ -83,7 +83,11 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		if(jp.streamReadContext() instanceof EMFCodecReadContext crc) {
 			codecReadCtxt = crc;
 		}
-
+//		If we do not have a EMFCodecReadContext yet it might be we are trying to read the buffer
+		if(codecReadCtxt == null && jp instanceof CodecTokenBuffer.Parser ctbp) {
+			if(ctbp.streamReadContext() instanceof EMFCodecReadContext crc)
+			codecReadCtxt = crc;
+		}
 		return codecReadCtxt;
 	}
 
@@ -104,6 +108,10 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 				}
 			}
 		}
+//		we look in other packages
+		if(eObjCodecInfo == null) {
+			eObjCodecInfo = codecModelInfoService.getCodecInfoForEClass(type).orElse(null);
+		}
 		return eObjCodecInfo;
 	}
 
@@ -120,7 +128,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 			throw new IllegalArgumentException(String.format("StreamReadContext is not of type EMFCodecReadContext! Something went wrong!"));
 		}
 
-		TokenBuffer buffer = null;
+		CodecTokenBuffer buffer = null;
 		if(isRootObject((TokenStreamContext)codecReadCtxt)) { //also non contained ref end up here!!
 			if(ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) != null) {
 				type  = (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT);
@@ -183,8 +191,8 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private TokenBuffer determineType(JsonParser jp, DeserializationContext ctxt) {
-		TokenBuffer buffer = null;
+	private CodecTokenBuffer determineType(JsonParser jp, DeserializationContext ctxt) {
+		CodecTokenBuffer buffer = null;
 		JsonToken nextToken = jp.nextToken();
 
 		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
@@ -202,7 +210,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 				}				
 			}
 			if (buffer == null) {
-				buffer = TokenBuffer.forBuffering(jp, ctxt);
+				buffer = CodecTokenBuffer.forBuffering(jp, ctxt);
 			}
 			buffer.copyCurrentStructure(jp);
 			nextToken = jp.nextToken();
