@@ -157,4 +157,13 @@ public class CodecJsonReadContext extends JsonReadContext implements EMFCodecRea
 		holder.resetFeature();
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#hasParentContext()
+	 */
+	@Override
+	public boolean hasParentContext() {
+		return _parent != null;
+	}
+
 }
