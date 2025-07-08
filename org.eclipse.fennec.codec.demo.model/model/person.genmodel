@@ -13,6 +13,20 @@
       <genEnumLiterals ecoreEnumLiteral="person.ecore#//GENDER_TYPE/MALE"/>
     </genEnums>
     <genDataTypes ecoreDataType="person.ecore#//CustomDataType"/>
+    <genClasses ecoreClass="person.ecore#//Parent">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Parent/type"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//Child">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Child/name"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//Parent2">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Parent2/kind"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//Child2"/>
+    <genClasses ecoreClass="person.ecore#//TestObject">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//TestObject/ref1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//TestObject/ref2"/>
+    </genClasses>
     <genClasses ecoreClass="person.ecore#//Person">
       <genAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="codec.id.strategy" value="COMBINED"/>

@@ -95,6 +95,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 			return;
 		}
 
+		
 		JavaType javaType = TypeConstructorHelper.constructJavaTypeFromFeature(feature, ctxt);			
 		deserializer = ctxt.findContextualValueDeserializer(javaType, null);
 		

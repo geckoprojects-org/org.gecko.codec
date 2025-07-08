@@ -25,6 +25,51 @@ public interface PersonFactory extends EFactory {
 	PersonFactory eINSTANCE = org.gecko.codec.demo.model.person.impl.PersonFactoryImpl.init();
 
 	/**
+	 * Returns a new object of class '<em>Parent</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Parent</em>'.
+	 * @generated
+	 */
+	Parent createParent();
+
+	/**
+	 * Returns a new object of class '<em>Child</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Child</em>'.
+	 * @generated
+	 */
+	Child createChild();
+
+	/**
+	 * Returns a new object of class '<em>Parent2</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Parent2</em>'.
+	 * @generated
+	 */
+	Parent2 createParent2();
+
+	/**
+	 * Returns a new object of class '<em>Child2</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Child2</em>'.
+	 * @generated
+	 */
+	Child2 createChild2();
+
+	/**
+	 * Returns a new object of class '<em>Test Object</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Test Object</em>'.
+	 * @generated
+	 */
+	TestObject createTestObject();
+
+	/**
 	 * Returns a new object of class '<em>Person</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

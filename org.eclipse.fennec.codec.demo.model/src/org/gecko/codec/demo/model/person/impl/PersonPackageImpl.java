@@ -17,14 +17,19 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.BusinessAddress;
 import org.gecko.codec.demo.model.person.BusinessPerson;
+import org.gecko.codec.demo.model.person.Child;
+import org.gecko.codec.demo.model.person.Child2;
 import org.gecko.codec.demo.model.person.Contact;
 import org.gecko.codec.demo.model.person.MapInMap;
+import org.gecko.codec.demo.model.person.Parent;
+import org.gecko.codec.demo.model.person.Parent2;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonFactory;
 import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.codec.demo.model.person.SimpleMap;
 import org.gecko.codec.demo.model.person.SimpleValue;
 import org.gecko.codec.demo.model.person.SpecificBusinessPerson;
+import org.gecko.codec.demo.model.person.TestObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -33,6 +38,41 @@ import org.gecko.codec.demo.model.person.SpecificBusinessPerson;
  * @generated
  */
 public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass parentEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass childEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass parent2EClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass child2EClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass testObjectEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -182,6 +222,106 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(PersonPackage.eNS_URI, thePersonPackage);
 		return thePersonPackage;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getParent() {
+		return parentEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getParent_Type() {
+		return (EAttribute)parentEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getChild() {
+		return childEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getChild_Name() {
+		return (EAttribute)childEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getParent2() {
+		return parent2EClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getParent2_Kind() {
+		return (EAttribute)parent2EClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getChild2() {
+		return child2EClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getTestObject() {
+		return testObjectEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getTestObject_Ref1() {
+		return (EReference)testObjectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getTestObject_Ref2() {
+		return (EReference)testObjectEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -653,6 +793,21 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		isCreated = true;
 
 		// Create classes and their features
+		parentEClass = createEClass(PARENT);
+		createEAttribute(parentEClass, PARENT__TYPE);
+
+		childEClass = createEClass(CHILD);
+		createEAttribute(childEClass, CHILD__NAME);
+
+		parent2EClass = createEClass(PARENT2);
+		createEAttribute(parent2EClass, PARENT2__KIND);
+
+		child2EClass = createEClass(CHILD2);
+
+		testObjectEClass = createEClass(TEST_OBJECT);
+		createEReference(testObjectEClass, TEST_OBJECT__REF1);
+		createEReference(testObjectEClass, TEST_OBJECT__REF2);
+
 		personEClass = createEClass(PERSON);
 		createEAttribute(personEClass, PERSON__NAME);
 		createEAttribute(personEClass, PERSON__LAST_NAME);
@@ -741,11 +896,28 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		childEClass.getESuperTypes().add(this.getParent());
+		child2EClass.getESuperTypes().add(this.getParent2());
 		businessPersonEClass.getESuperTypes().add(this.getPerson());
 		businessAddressEClass.getESuperTypes().add(this.getAddress());
 		specificBusinessPersonEClass.getESuperTypes().add(this.getBusinessPerson());
 
 		// Initialize classes, features, and operations; add parameters
+		initEClass(parentEClass, Parent.class, "Parent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getParent_Type(), ecorePackage.getEString(), "type", null, 0, 1, Parent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(childEClass, Child.class, "Child", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getChild_Name(), ecorePackage.getEString(), "name", null, 0, 1, Child.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(parent2EClass, Parent2.class, "Parent2", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getParent2_Kind(), ecorePackage.getEString(), "kind", null, 0, 1, Parent2.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(child2EClass, Child2.class, "Child2", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(testObjectEClass, TestObject.class, "TestObject", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getTestObject_Ref1(), this.getParent(), null, "ref1", null, 0, 1, TestObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getTestObject_Ref2(), this.getParent2(), null, "ref2", null, 0, 1, TestObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(personEClass, Person.class, "Person", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPerson_Name(), ecorePackage.getEString(), "name", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPerson_LastName(), ecorePackage.getEString(), "lastName", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

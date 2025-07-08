@@ -50,6 +50,8 @@ import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
+import org.eclipse.fennec.codec.introspectors.DynamicTypeInfoIntrospector;
+import org.eclipse.fennec.codec.introspectors.FlexibleEClassTypeIdResolver;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.databind.DeserializationFeature;
@@ -59,6 +61,8 @@ import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.cfg.ContextAttributes;
 import tools.jackson.databind.json.JsonMapper.Builder;
+import tools.jackson.databind.jsontype.NamedType;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * Codec specific Resource, where we overwrite the CodecModule, ObjectMapper and CodecModelInfo options, 
@@ -238,7 +242,22 @@ public class CodecResource extends ResourceImpl {
 //			
 
 //			Register the module with the mapper
-			mapper = objMapperBuilder.addModule(moduleBuilder.build()).build();
+			SimpleModule module = moduleBuilder.build();
+			if(options.containsKey(CodecModuleOptions.CODEC_MODULE_NAMED_TYPES)) {
+				@SuppressWarnings("unchecked")
+				List<NamedType> namedTypes = (List<NamedType>) options.get(CodecModuleOptions.CODEC_MODULE_NAMED_TYPES);
+				module = module.registerSubtypes(namedTypes.toArray(new NamedType[0]));
+				
+			}
+			objMapperBuilder =  objMapperBuilder.addModule(module);
+			if(options.containsKey(CodecModuleOptions.CODEC_MODULE_TYPE_KEYS)) {
+				@SuppressWarnings("unchecked")
+				Map<Class<?>, String> typeKeys =  (Map<Class<?>, String>) options.get(CodecModuleOptions.CODEC_MODULE_TYPE_KEYS);
+				typeKeys.forEach((k,v) -> {
+					objMapperBuilder = objMapperBuilder.annotationIntrospector(new DynamicTypeInfoIntrospector(k, FlexibleEClassTypeIdResolver.class, v));
+				});
+			}
+			mapper = objMapperBuilder.build();
 		} catch(Exception e) {
 			throw e;
 		}
@@ -495,7 +514,7 @@ public class CodecResource extends ResourceImpl {
 				} else {
 					LOGGER.warning(() -> CodecModuleOptions.CODEC_PROXY_FACTORY +" must be an instance of CodecProxyFactory for.");
 				}
-				break;
+				break;				
 			}
 		});
 	}

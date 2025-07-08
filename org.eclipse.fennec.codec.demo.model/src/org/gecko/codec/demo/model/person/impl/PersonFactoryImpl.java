@@ -61,6 +61,11 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
+			case PersonPackage.PARENT: return createParent();
+			case PersonPackage.CHILD: return createChild();
+			case PersonPackage.PARENT2: return createParent2();
+			case PersonPackage.CHILD2: return createChild2();
+			case PersonPackage.TEST_OBJECT: return createTestObject();
 			case PersonPackage.PERSON: return createPerson();
 			case PersonPackage.ADDRESS: return createAddress();
 			case PersonPackage.BUSINESS_PERSON: return createBusinessPerson();
@@ -109,6 +114,61 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Parent createParent() {
+		ParentImpl parent = new ParentImpl();
+		return parent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Child createChild() {
+		ChildImpl child = new ChildImpl();
+		return child;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Parent2 createParent2() {
+		Parent2Impl parent2 = new Parent2Impl();
+		return parent2;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Child2 createChild2() {
+		Child2Impl child2 = new Child2Impl();
+		return child2;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public TestObject createTestObject() {
+		TestObjectImpl testObject = new TestObjectImpl();
+		return testObject;
 	}
 
 	/**

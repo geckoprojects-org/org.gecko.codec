@@ -16,8 +16,10 @@ package org.eclipse.fennec.codec.json.test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -32,6 +34,13 @@ import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.constants.CodecModuleOptions;
 import org.eclipse.fennec.codec.constants.CodecResourceOptions;
+import org.eclipse.fennec.codec.introspectors.DynamicTypeInfoIntrospector;
+import org.eclipse.fennec.codec.introspectors.FlexibleEClassTypeIdResolver;
+import org.gecko.codec.demo.model.person.Parent;
+import org.gecko.codec.demo.model.person.Parent2;
+import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.codec.demo.model.person.TestObject;
+import org.gecko.codec.demo.model.person.impl.TestObjectImpl;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.AfterEach;
@@ -47,6 +56,10 @@ import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
+
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.jsontype.NamedType;
 
 /**
  * See documentation here: 
@@ -139,20 +152,15 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationDifferentTypeKeys() throws IOException {
 
-		// load ecore
-		Resource ecoreResource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/type-as-feature.ecore").toString()));
-		ecoreResource.load(null);
-		EPackage epackage = (EPackage) ecoreResource.getContents().get(0);
-		EClass child1 = (EClass) epackage.getEClassifier("Child");
-		EClass child2 = (EClass) epackage.getEClassifier("Child2");
-		EClass testClass = (EClass) epackage.getEClassifier("TestObject");
 		
-		// load dynamic eobjects from json with classifier from ecore
 		Resource resource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/type-different-keys.json").toString()));
 
 		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, testClass);
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getTestObject());
 		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "type");
+		options.put(CodecModuleOptions.CODEC_MODULE_NAMED_TYPES, List.of(new NamedType(PersonPackage.eINSTANCE.getChild().getInstanceClass(), "Child"), 
+				new NamedType(PersonPackage.eINSTANCE.getChild2().getInstanceClass(), "Child2")));
+		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEYS, Map.of(PersonPackage.eINSTANCE.getParent().getInstanceClass(), "type", PersonPackage.eINSTANCE.getParent2().getInstanceClass(), "kind"));
 		resource.load(options);
 
 		assertThat(resource.getContents()).hasSize(1);
@@ -161,10 +169,38 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 		
 		EStructuralFeature ref1Feature = loadClass.eClass().getEStructuralFeature("ref1");
 		assertThat(ref1Feature).isNotNull();
-		assertThat(loadClass.eGet(ref1Feature)).isInstanceOf(child1.eClass().getClass());
+		assertThat(loadClass.eGet(ref1Feature)).isInstanceOf(PersonPackage.eINSTANCE.getChild().getInstanceClass());
 		
 		EStructuralFeature ref2Feature = loadClass.eClass().getEStructuralFeature("ref2");
 		assertThat(ref2Feature).isNotNull();
-		assertThat(loadClass.eGet(ref2Feature)).isInstanceOf(child2.eClass().getClass());	
+		assertThat(loadClass.eGet(ref2Feature)).isInstanceOf(PersonPackage.eINSTANCE.getChild2().getInstanceClass());	
+	}
+	
+	@Test
+	public void test() throws IOException {
+		
+		ObjectMapper mapper = JsonMapper.builder()
+			    .annotationIntrospector(new DynamicTypeInfoIntrospector(
+			        Parent.class,                   // base type to apply to
+			        FlexibleEClassTypeIdResolver.class,  // your TypeIdResolver
+			        "type"                           // name of the property to store the type
+			    )).annotationIntrospector(new DynamicTypeInfoIntrospector(
+				        Parent2.class,                   // base type to apply to
+				        FlexibleEClassTypeIdResolver.class,  // your TypeIdResolver
+				        "kind"                           // name of the property to store the type
+				    ))
+			    .registerSubtypes(new NamedType(PersonPackage.eINSTANCE.getChild().getInstanceClass(), "Child")).			    
+			    registerSubtypes(new NamedType(PersonPackage.eINSTANCE.getChild2().getInstanceClass(), "Child2")).
+			    build();
+		TestObject loadClass = mapper.readValue(new File("test-data/type-different-keys.json"), TestObjectImpl.class);
+		
+		EStructuralFeature ref1Feature = loadClass.eClass().getEStructuralFeature("ref1");
+		assertThat(ref1Feature).isNotNull();
+		assertThat(loadClass.eGet(ref1Feature)).isInstanceOf(PersonPackage.eINSTANCE.getChild().getInstanceClass());
+		
+		EStructuralFeature ref2Feature = loadClass.eClass().getEStructuralFeature("ref2");
+		assertThat(ref2Feature).isNotNull();
+		assertThat(loadClass.eGet(ref2Feature)).isInstanceOf(PersonPackage.eINSTANCE.getChild2().getInstanceClass());	
+	
 	}
 }

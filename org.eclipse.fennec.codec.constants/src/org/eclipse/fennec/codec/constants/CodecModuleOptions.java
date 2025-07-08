@@ -121,6 +121,12 @@ public interface CodecModuleOptions {
 	 * to overwrite the {@link org.eclipse.fennec.codec.configurator.writeEnumLiteral} 
 	 * */
 	String CODEC_MODULE_WRITE_ENUM_LITERAL = "codec.module.write.enum.literal";
+	
+	/** CODEC_MODULE_NAMED_TYPES 
+	 * Option to add NamedTypes to the CodecModule*/
+	String CODEC_MODULE_NAMED_TYPES = "codec.module.named.types";
+	
+	String CODEC_MODULE_TYPE_KEYS = "codec.module.type.keys";
 
 	String CODEC_MODULE_REFERENCE_DESERIALIZER = "codec.module.reference.deserializer";
 	String CODEC_PROXY_FACTORY = "codec.proxy.factory";
