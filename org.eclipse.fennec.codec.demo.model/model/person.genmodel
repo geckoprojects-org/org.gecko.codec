@@ -76,5 +76,24 @@
     <genClasses ecoreClass="person.ecore#//SimpleMap">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//SimpleMap/stringMapValues"/>
     </genClasses>
+    <genClasses ecoreClass="person.ecore#//TypeKeyEClass"/>
+    <genClasses ecoreClass="person.ecore#//SensorBook">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//SensorBook/sensors"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//Sensor"/>
+    <genClasses ecoreClass="person.ecore#//Parent">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Parent/type"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//Parent2">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Parent2/kind"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//Child">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute person.ecore#//Child/name"/>
+    </genClasses>
+    <genClasses ecoreClass="person.ecore#//Child2"/>
+    <genClasses ecoreClass="person.ecore#//TestObject">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//TestObject/ref1"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference person.ecore#//TestObject/ref2"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

@@ -11,10 +11,11 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.constants;
+package org.eclipse.fennec.codec.options;
 
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * These are the options that should be used with Resource#load/save in the options arguments
@@ -87,15 +88,7 @@ public interface CodecModelInfoOptions {
 	 * */
 	String CODEC_ID_VALUE_WRITER_NAME = "codec.id.value.writer.name";
 	
-	/** CODEC_TYPE_VALUE_READER_NAME 
-	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_READER_NAME} annotation;
-	 * */
-	String CODEC_TYPE_VALUE_READER_NAME = "codec.type.value.reader.name";
 	
-	/** CODEC_TYPE_VALUE_WRITER_NAME 
-	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_WRITER_NAME} annotation;
-	 * */
-	String CODEC_TYPE_VALUE_WRITER_NAME = "codec.type.value.writer.name";
 	
 	/** CODEC_VALUE_READERS_MAP 
 	  * a {@link Map} where the keys are of type {@link EStructuralFeature} and the values 
@@ -113,13 +106,40 @@ public interface CodecModelInfoOptions {
 	String CODEC_VALUE_WRITERS_MAP = "codec.value.writers.map";
 	
 	/** CODEC_TYPE_USE 
-	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_USE} annotation;
+	 * to overwrite the "strategy" detail of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
 	 * */
-	String CODEC_TYPE_USE = "codec.type.use";
+	String CODEC_TYPE_STRATEGY = "strategy";
 	
 	/** CODEC_TYPE_INCLUDE
-	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE_INCLUDE} annotation;
+	 * to overwrite the  "include" detail of {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
 	 * */
-	String CODEC_TYPE_INCLUDE = "codec.type.include";
+	String CODEC_TYPE_INCLUDE = "include";
+	
+	/** CODEC_TYPE_KEY 
+	 * to overwrite the "typeKey" detail of {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
+	 * */
+	String CODEC_TYPE_KEY = "typeKey";	
+	
+	/** CODEC_TYPE_MAP 
+	 * to overwrite the type mapping in the details of {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
+	 * */
+	String CODEC_TYPE_MAP = "typeMap";
+	
+	/** CODEC_TYPE_VALUE_READER_NAME 
+	 * to overwrite the "valueReader" detail of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
+	 * Setting this property will overwrite the ValueReader set through the {@link CODEC_TYPE_USE}
+	 * */
+	String CODEC_TYPE_VALUE_READER_NAME = "typeValueReaderName";
+	
+	/** CODEC_TYPE_VALUE_WRITER_NAME 
+	 * to overwrite the "valueWriter" detail of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
+	 * Setting this property will overwrite the ValueWriter set through the {@link CODEC_TYPE_USE}
+	 * */
+	String CODEC_TYPE_VALUE_WRITER_NAME = "typeValueWriterName";
+	
+	/** CODEC_TYPE_INFO 
+	 * to overwrite the entire typeInfo object that comes out of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
+	 * */
+	String CODEC_TYPE_INFO = "typeInfo";
 
 }

@@ -59,7 +59,6 @@ public class CodecModule extends SimpleModule {
 	private boolean serializeSuperTypes;
 	private boolean serializeAllSuperTypes;
 	private boolean serializeSuperTypesAsArray;
-	private String typeKey;
 	private String superTypeKey;
 	private String refKey;
 	private String proxyKey;
@@ -139,10 +138,6 @@ public class CodecModule extends SimpleModule {
 		return serializeSuperTypesAsArray;
 	}
 
-	public String getTypeKey() {
-		return typeKey;
-	}
-
 	public String getSuperTypeKey() {
 		return superTypeKey;
 	}
@@ -189,7 +184,6 @@ public class CodecModule extends SimpleModule {
 		this.deserializeType = builder.deserializeType;
 		this.idFeatureAsPrimaryKey = builder.idFeatureAsPrimaryKey;
 		this.idKey = builder.idKey;
-		this.typeKey = builder.typeKey;
 		this.superTypeKey = builder.superTypeKey;
 		this.timestampKey = builder.timestampKey;
 		this.proxyKey = builder.proxyKey;
@@ -303,7 +297,6 @@ public class CodecModule extends SimpleModule {
 		private boolean serializeSuperTypes = false;
 		private boolean serializeAllSuperTypes = false;
 		private boolean serializeSuperTypesAsArray = true;
-		private String typeKey = "_type";
 		private String superTypeKey = "_supertype";
 		private String refKey = "$ref";
 		private String proxyKey = "_proxy";
@@ -329,11 +322,6 @@ public class CodecModule extends SimpleModule {
 
 		public Builder withIdKey(String idKey) {
 			this.idKey = idKey;
-			return this;
-		}
-
-		public Builder withTypeKey(String typeKey) {
-			this.typeKey = typeKey;
 			return this;
 		}
 

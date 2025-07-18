@@ -2,6 +2,12 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="lorawan" nsURI="https://eclipse.org/fennec/lorawan" nsPrefix="lorawan">
   <eClassifiers xsi:type="ecore:EClass" name="UplinkMessage" abstract="true">
+    <eAnnotations source="codec.type">
+      <details key="strategy" value="NAME"/>
+      <details key="typeKey" value="deviceInfo.deviceProfileName"/>
+      <details key="Dragino_LSE01" value="DraginoLSE01Uplink"/>
+      <details key="EM310-UDL" value="EM310UDLUplink"/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="deduplicationId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="adr" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>

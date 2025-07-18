@@ -2,6 +2,8 @@
  */
 package org.eclipse.fennec.codec.info.codecinfo.util;
 
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -75,19 +77,20 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 			case CodecInfoPackage.ECLASS_CODEC_INFO: {
 				EClassCodecInfo eClassCodecInfo = (EClassCodecInfo)theEObject;
 				T1 result = caseEClassCodecInfo(eClassCodecInfo);
+				if (result == null) result = caseTypedCodecInfo(eClassCodecInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case CodecInfoPackage.FEATURE_CODEC_INFO: {
 				FeatureCodecInfo featureCodecInfo = (FeatureCodecInfo)theEObject;
 				T1 result = caseFeatureCodecInfo(featureCodecInfo);
+				if (result == null) result = caseTypedCodecInfo(featureCodecInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case CodecInfoPackage.TYPE_INFO: {
 				TypeInfo typeInfo = (TypeInfo)theEObject;
 				T1 result = caseTypeInfo(typeInfo);
-				if (result == null) result = caseFeatureCodecInfo(typeInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -95,6 +98,7 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 				SuperTypeInfo superTypeInfo = (SuperTypeInfo)theEObject;
 				T1 result = caseSuperTypeInfo(superTypeInfo);
 				if (result == null) result = caseFeatureCodecInfo(superTypeInfo);
+				if (result == null) result = caseTypedCodecInfo(superTypeInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -102,6 +106,7 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 				IdentityInfo identityInfo = (IdentityInfo)theEObject;
 				T1 result = caseIdentityInfo(identityInfo);
 				if (result == null) result = caseFeatureCodecInfo(identityInfo);
+				if (result == null) result = caseTypedCodecInfo(identityInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -126,6 +131,18 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 			case CodecInfoPackage.SAMPLE_VALUE_READER: {
 				SampleValueReader<?, ?> sampleValueReader = (SampleValueReader<?, ?>)theEObject;
 				T1 result = caseSampleValueReader(sampleValueReader);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecInfoPackage.STRING_TO_STRING_MAP: {
+				@SuppressWarnings("unchecked") Map.Entry<String, String> stringToStringMap = (Map.Entry<String, String>)theEObject;
+				T1 result = caseStringToStringMap(stringToStringMap);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecInfoPackage.TYPED_CODEC_INFO: {
+				TypedCodecInfo typedCodecInfo = (TypedCodecInfo)theEObject;
+				T1 result = caseTypedCodecInfo(typedCodecInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -280,6 +297,36 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public <V, T> T1 caseSampleValueReader(SampleValueReader<V, T> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>String To String Map</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>String To String Map</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseStringToStringMap(Map.Entry<String, String> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Typed Codec Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Typed Codec Info</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTypedCodecInfo(TypedCodecInfo object) {
 		return null;
 	}
 

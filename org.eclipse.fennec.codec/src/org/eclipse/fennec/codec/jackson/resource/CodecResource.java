@@ -39,10 +39,6 @@ import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.fennec.codec.CodecProxyFactory;
 import org.eclipse.fennec.codec.configurator.ObjectMapperBuilderFactory;
-import org.eclipse.fennec.codec.constants.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.constants.CodecModuleOptions;
-import org.eclipse.fennec.codec.constants.CodecResourceOptions;
-import org.eclipse.fennec.codec.constants.ObjectMapperOptions;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
@@ -50,7 +46,13 @@ import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
+import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.info.codecinfo.TypedCodecInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.ObjectMapperOptions;
 
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
@@ -288,47 +290,8 @@ public class CodecResource extends ResourceImpl {
 			codecInfo.getIdentityInfo().setValueWriterName(writer.getName());
 			modelInfoService.addCodecValueWriterForType(InfoType.IDENTITY, writer);
 		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_USE)) {
-			String typeUse = (String) options.get(CodecModelInfoOptions.CODEC_TYPE_USE);
-			switch(typeUse) {
-			case "NAME":
-				codecInfo.getTypeInfo().setValueWriterName("WRITE_BY_NAME");
-				codecInfo.getTypeInfo().setValueReaderName("READ_BY_NAME");
-				codecInfo.getTypeInfo().setTypeStrategy(typeUse);
-				break;
-			case "CLASS":
-				codecInfo.getTypeInfo().setValueWriterName("WRITE_BY_CLASS_NAME");
-				codecInfo.getTypeInfo().setValueReaderName("READ_BY_CLASS");
-				codecInfo.getTypeInfo().setTypeStrategy(typeUse);
-				break;
-			case "URI": 
-				codecInfo.getTypeInfo().setValueWriterName("URI_WRITER");
-				codecInfo.getTypeInfo().setValueReaderName("DEFAULT_ECLASS_READER");
-				codecInfo.getTypeInfo().setTypeStrategy(typeUse);
-				break;	
-			default:
-				LOGGER.warning(String.format("No Reader/Writer available for type use %s. Keeping the default ones.", typeUse));
-			}			
-		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME)) {
-			codecInfo.getTypeInfo().setValueReaderName((String) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME));
-		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME)) {
-			codecInfo.getTypeInfo().setValueWriterName((String) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME));
-		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER)) {
-			CodecValueReader<?,?> reader = (CodecValueReader<?,?>) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER);
-			codecInfo.getTypeInfo().setValueReaderName(reader.getName());
-			modelInfoService.addCodecValueReaderForType(InfoType.TYPE, reader);
-		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER)) {
-			CodecValueWriter<?,?> writer = (CodecValueWriter<?,?>) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER);
-			codecInfo.getTypeInfo().setValueWriterName(writer.getName());
-			modelInfoService.addCodecValueWriterForType(InfoType.TYPE, writer);
-		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_INCLUDE)) {
-			codecInfo.getTypeInfo().setIgnoreType(!((Boolean) options.get(CodecModelInfoOptions.CODEC_TYPE_INCLUDE)));
-		}
+		
+		
 		if(options.containsKey(CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST)) {
 			List<EStructuralFeature> ignoreFeatures = (List<EStructuralFeature>) options.get(CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST);
 			ignoreFeatures.forEach(ignoreFeature -> {
@@ -394,7 +357,81 @@ public class CodecResource extends ResourceImpl {
 					}
 				}
 			});
-		}		
+		}	
+//		Update the TypeInfo part
+		updateCodecModelInfoFromOptions((TypedCodecInfo) codecInfo, options);
+		
+//		Look for options specific to EReference of the EClass
+		if(options.containsKey(CodecResourceOptions.CODEC_OPTIONS)) {
+			Map<EReference, Map<String, Object>> codecOptions = (Map<EReference, Map<String, Object>>) options.get(CodecResourceOptions.CODEC_OPTIONS);
+			codecOptions.forEach((ec, opt) -> {
+				FeatureCodecInfo featureCodecInfo = codecInfo.getReferenceCodecInfo().stream().filter(eci -> eci.getFeatures().get(0).getName().equals(ec.getName())).findFirst().orElse(null);
+				if(featureCodecInfo == null) {
+					LOGGER.severe(String.format("No FeatureCodecInfo associated with EReference %s has been found", ec.getName()));
+				}
+				else {
+//					Update the TypeInfo part
+					updateCodecModelInfoFromOptions(featureCodecInfo, opt);
+				}
+			});
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateCodecModelInfoFromOptions(TypedCodecInfo codecInfo, Map<?, ?> options) {
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_STRATEGY)) {
+			String typeUse = (String) options.get(CodecModelInfoOptions.CODEC_TYPE_STRATEGY);
+			switch(typeUse) {
+			case "NAME":
+				codecInfo.getTypeInfo().setTypeValueWriterName("WRITE_BY_NAME");
+				codecInfo.getTypeInfo().setTypeValueReaderName("READ_BY_NAME");
+				codecInfo.getTypeInfo().setTypeStrategy(typeUse);
+				break;
+			case "CLASS":
+				codecInfo.getTypeInfo().setTypeValueWriterName("WRITE_BY_CLASS_NAME");
+				codecInfo.getTypeInfo().setTypeValueReaderName("READ_BY_CLASS");
+				codecInfo.getTypeInfo().setTypeStrategy(typeUse);
+				break;
+			case "URI": 
+				codecInfo.getTypeInfo().setTypeValueWriterName("URI_WRITER");
+				codecInfo.getTypeInfo().setTypeValueReaderName("DEFAULT_ECLASS_READER");
+				codecInfo.getTypeInfo().setTypeStrategy(typeUse);
+				break;	
+			default:
+				LOGGER.warning(String.format("No Reader/Writer available for type use %s. Keeping the default ones.", typeUse));
+			}			
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME)) {
+			codecInfo.getTypeInfo().setTypeValueReaderName((String) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME));
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME)) {
+			codecInfo.getTypeInfo().setTypeValueWriterName((String) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME));
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER)) {
+			CodecValueReader<?,?> reader = (CodecValueReader<?,?>) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER);
+			codecInfo.getTypeInfo().setTypeValueReaderName(reader.getName());
+			modelInfoService.addCodecValueReaderForType(InfoType.TYPE, reader);
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER)) {
+			CodecValueWriter<?,?> writer = (CodecValueWriter<?,?>) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER);
+			codecInfo.getTypeInfo().setTypeValueWriterName(writer.getName());
+			modelInfoService.addCodecValueWriterForType(InfoType.TYPE, writer);
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_INCLUDE)) {
+			codecInfo.getTypeInfo().setIgnoreType(!((Boolean) options.get(CodecModelInfoOptions.CODEC_TYPE_INCLUDE)));
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_KEY)) {
+			codecInfo.getTypeInfo().setTypeKey((String) options.get(CodecModelInfoOptions.CODEC_TYPE_KEY));
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_MAP)) {
+			Map<String, String> typeMap = (Map<String, String>) options.get(CodecModelInfoOptions.CODEC_TYPE_MAP);
+			codecInfo.getTypeInfo().getTypeMap().clear(); //overwrite what we have in the annotation
+			codecInfo.getTypeInfo().getTypeMap().putAll(typeMap);
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_INFO)) {
+			TypeInfo typeInfo = (TypeInfo) options.get(CodecModelInfoOptions.CODEC_TYPE_INFO);
+			codecInfo.setTypeInfo(typeInfo);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -403,7 +440,7 @@ public class CodecResource extends ResourceImpl {
 		if(options.containsKey(CodecResourceOptions.CODEC_OPTIONS)) {
 			Map<EClass, Map<String, Object>> codecOptions = (Map<EClass, Map<String, Object>>) options.get(CodecResourceOptions.CODEC_OPTIONS);
 			codecOptions.forEach((ec, opt) -> {
-				EClassCodecInfo eClassCodecInfo = codecModelInfo.getEClassCodecInfo().stream().filter(eci -> eci.getClassifier().getInstanceClassName().equals(ec.getInstanceClassName())).findFirst().get();
+				EClassCodecInfo eClassCodecInfo = codecModelInfo.getEClassCodecInfo().stream().filter(eci -> eci.getClassifier().getName().equals(ec.getName())).findFirst().orElse(null);
 				if(eClassCodecInfo == null) {
 					LOGGER.severe(String.format("No EClassCodecInfo associated with EClass %s has been found", ec.eClass().getName()));
 				}
@@ -467,9 +504,9 @@ public class CodecResource extends ResourceImpl {
 			case CodecModuleOptions.CODEC_MODULE_TIMESTAMP_KEY:
 				moduleBuilder.withTimestampKey((String) v);
 				break;
-			case CodecModuleOptions.CODEC_MODULE_TYPE_KEY:
-				moduleBuilder.withTypeKey((String) v);
-				break;
+//			case CodecModuleOptions.CODEC_MODULE_TYPE_KEY:
+//				moduleBuilder.withTypeKey((String) v);
+//				break;
 			case CodecModuleOptions.CODEC_MODULE_SUPERTYPE_KEY:
 				moduleBuilder.withSuperTypeKey((String) v);
 				break;

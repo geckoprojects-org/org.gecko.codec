@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.constants;
+package org.eclipse.fennec.codec.options;
 
 /**
  * 
@@ -28,7 +28,9 @@ public interface CodecResourceOptions {
 	
 	/** CODEC_OPTIONS 
 	 * This accepts a {@link Map}, where keys are {@link EClass} and values are {@link Map} with
-	 * codec specific options for that {@link EClass}
+	 * codec specific options for that {@link EClass}, if put at the root level.
+	 * If inside a class options itself, then it accepts a {@link Map}, where keys are {@link ERefenrence} and 
+	 * values are {@link Map} with codec specific options for that {@link ERefenrence}
 	 * */
 	String CODEC_OPTIONS = "codec.options";
 

@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.constants;
+package org.eclipse.fennec.codec.options;
 
 /**
  * These are the options that can be used when loading/saving a Resource, in order

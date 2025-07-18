@@ -14,7 +14,10 @@
 package org.eclipse.fennec.codec.json.test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,8 +33,14 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecModuleOptions;
-import org.eclipse.fennec.codec.constants.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
+import org.gecko.codec.demo.model.person.Child;
+import org.gecko.codec.demo.model.person.Child2;
+import org.gecko.codec.demo.model.person.Person;
+import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.codec.demo.model.person.TestObject;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.AfterEach;
@@ -103,41 +112,39 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 		super.afterEach();
 	}
 	
-
 	@Test
-	public void testDeserializationTypeAsFeature() throws IOException {
+	public void testDifferentTypeKey() throws IOException {
+		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 
-		// load ecore
-		Resource ecoreResource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/type-as-feature.ecore").toString()));
-		ecoreResource.load(null);
-		EPackage epackage = (EPackage) ecoreResource.getContents().get(0);
-		EClass childClass = (EClass) epackage.getEClassifier("Child");
-		
-		// load dynamic eobjects from json with classifier from ecore
-		Resource resource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/type-as-feature.json").toString()));
-
+		Person person = CodecTestHelper.getTestPerson();
+		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, childClass);
-		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "type");
-		options.put(CodecModuleOptions.CODEC_MODULE_DESERIALIZE_TYPE, true);
-		resource.load(options);
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON);
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "type");
+		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
+		resource.save(options);
 
-		assertThat(resource.getContents()).hasSize(1);
+		resource.getContents().clear();
+		resource.unload();
 
-		EObject loadClass = resource.getContents().get(0);
+		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
+		findResource.load(options);
 		
-		EStructuralFeature nameFeature = loadClass.eClass().getEStructuralFeature("name");
-		assertThat(nameFeature).isNotNull();
-		assertThat(loadClass.eGet(nameFeature)).isEqualTo("test");
-		
-		
-		EStructuralFeature typeFeature = loadClass.eClass().getEStructuralFeature("type");
-		assertThat(typeFeature).isNotNull();
-		assertThat(loadClass.eGet(typeFeature)).isNotNull();		
+		// get the person
+		assertNotNull(findResource);
+		assertFalse(findResource.getContents().isEmpty());
+		assertEquals(1, findResource.getContents().size());
+
+		// doing some object checks
+		Person p = (Person) findResource.getContents().get(0);
+		assertNotNull(p);
 	}
 
+
 	@Test
-	public void testDeserializationDifferentTypeKeys() throws IOException {
+	public void testDeserializationDifferentTypeKeysFeatureLevelDynamicModel() throws IOException {
 
 		// load ecore
 		Resource ecoreResource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/type-as-feature.ecore").toString()));
@@ -152,12 +159,27 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, testClass);
-		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "type");
+		Map<String, Object> classOptions = new HashMap<>();
+		
+		Map<String, Object> ref1Options = new HashMap<>();
+		ref1Options.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "type");
+		ref1Options.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
+		
+		Map<String, Object> ref2Options = new HashMap<>();
+		ref2Options.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
+		ref2Options.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
+		
+		classOptions.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(testClass.getEStructuralFeature("ref1"), ref1Options,
+				testClass.getEStructuralFeature("ref2"), ref2Options));
+		
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(testClass, classOptions));
+//		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "type");
 		resource.load(options);
 
 		assertThat(resource.getContents()).hasSize(1);
 
 		EObject loadClass = resource.getContents().get(0);
+		
 		
 		EStructuralFeature ref1Feature = loadClass.eClass().getEStructuralFeature("ref1");
 		assertThat(ref1Feature).isNotNull();
@@ -166,5 +188,41 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 		EStructuralFeature ref2Feature = loadClass.eClass().getEStructuralFeature("ref2");
 		assertThat(ref2Feature).isNotNull();
 		assertThat(loadClass.eGet(ref2Feature)).isInstanceOf(child2.eClass().getClass());	
+	}
+	
+	@Test
+	public void testDeserializationDifferentTypeKeysFeatureLevel() throws IOException {
+		
+		// load dynamic eobjects from json with classifier from ecore
+		Resource resource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/person-model-different-keys.json").toString()));
+
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.Literals.TEST_OBJECT);
+		Map<String, Object> classOptions = new HashMap<>();
+		
+		Map<String, Object> ref1Options = new HashMap<>();
+		ref1Options.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "type");
+		ref1Options.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
+		
+		Map<String, Object> ref2Options = new HashMap<>();
+		ref2Options.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
+		ref2Options.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
+		
+		classOptions.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.TEST_OBJECT__REF1, ref1Options,
+				PersonPackage.Literals.TEST_OBJECT__REF2, ref2Options));
+		
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.TEST_OBJECT, classOptions));
+//		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "type");
+		resource.load(options);
+
+		assertThat(resource.getContents()).hasSize(1);
+
+		EObject loadClass = resource.getContents().get(0);
+		assertTrue(loadClass instanceof TestObject);
+		TestObject testObj = (TestObject) resource.getContents().get(0);
+		assertNotNull(testObj.getRef1());
+		assertTrue(testObj.getRef1() instanceof Child);
+		assertNotNull(testObj.getRef2());
+		assertTrue(testObj.getRef2() instanceof Child2);
 	}
 }

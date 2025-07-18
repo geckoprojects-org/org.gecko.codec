@@ -17,14 +17,22 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.BusinessAddress;
 import org.gecko.codec.demo.model.person.BusinessPerson;
+import org.gecko.codec.demo.model.person.Child;
+import org.gecko.codec.demo.model.person.Child2;
 import org.gecko.codec.demo.model.person.Contact;
 import org.gecko.codec.demo.model.person.MapInMap;
+import org.gecko.codec.demo.model.person.Parent;
+import org.gecko.codec.demo.model.person.Parent2;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonFactory;
 import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.codec.demo.model.person.Sensor;
+import org.gecko.codec.demo.model.person.SensorBook;
 import org.gecko.codec.demo.model.person.SimpleMap;
 import org.gecko.codec.demo.model.person.SimpleValue;
 import org.gecko.codec.demo.model.person.SpecificBusinessPerson;
+import org.gecko.codec.demo.model.person.TestObject;
+import org.gecko.codec.demo.model.person.TypeKeyEClass;
 
 /**
  * <!-- begin-user-doc -->
@@ -109,6 +117,62 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	private EClass simpleMapEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass typeKeyEClassEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass sensorBookEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass sensorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass parentEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass parent2EClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass childEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass child2EClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass testObjectEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -610,6 +674,146 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 	 * @generated
 	 */
 	@Override
+	public EClass getTypeKeyEClass() {
+		return typeKeyEClassEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getSensorBook() {
+		return sensorBookEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getSensorBook_Sensors() {
+		return (EReference)sensorBookEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getSensor() {
+		return sensorEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getParent() {
+		return parentEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getParent_Type() {
+		return (EAttribute)parentEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getParent2() {
+		return parent2EClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getParent2_Kind() {
+		return (EAttribute)parent2EClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getChild() {
+		return childEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getChild_Name() {
+		return (EAttribute)childEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getChild2() {
+		return child2EClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getTestObject() {
+		return testObjectEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getTestObject_Ref1() {
+		return (EReference)testObjectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getTestObject_Ref2() {
+		return (EReference)testObjectEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getGENDER_TYPE() {
 		return gendeR_TYPEEEnum;
 	}
@@ -706,6 +910,28 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		simpleMapEClass = createEClass(SIMPLE_MAP);
 		createEReference(simpleMapEClass, SIMPLE_MAP__STRING_MAP_VALUES);
 
+		typeKeyEClassEClass = createEClass(TYPE_KEY_ECLASS);
+
+		sensorBookEClass = createEClass(SENSOR_BOOK);
+		createEReference(sensorBookEClass, SENSOR_BOOK__SENSORS);
+
+		sensorEClass = createEClass(SENSOR);
+
+		parentEClass = createEClass(PARENT);
+		createEAttribute(parentEClass, PARENT__TYPE);
+
+		parent2EClass = createEClass(PARENT2);
+		createEAttribute(parent2EClass, PARENT2__KIND);
+
+		childEClass = createEClass(CHILD);
+		createEAttribute(childEClass, CHILD__NAME);
+
+		child2EClass = createEClass(CHILD2);
+
+		testObjectEClass = createEClass(TEST_OBJECT);
+		createEReference(testObjectEClass, TEST_OBJECT__REF1);
+		createEReference(testObjectEClass, TEST_OBJECT__REF2);
+
 		// Create enums
 		gendeR_TYPEEEnum = createEEnum(GENDER_TYPE);
 
@@ -744,6 +970,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		businessPersonEClass.getESuperTypes().add(this.getPerson());
 		businessAddressEClass.getESuperTypes().add(this.getAddress());
 		specificBusinessPersonEClass.getESuperTypes().add(this.getBusinessPerson());
+		childEClass.getESuperTypes().add(this.getParent());
+		child2EClass.getESuperTypes().add(this.getParent2());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(personEClass, Person.class, "Person", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -799,6 +1027,28 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 
 		initEClass(simpleMapEClass, SimpleMap.class, "SimpleMap", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getSimpleMap_StringMapValues(), this.getStringToSimpleValueMap(), null, "stringMapValues", null, 0, -1, SimpleMap.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(typeKeyEClassEClass, TypeKeyEClass.class, "TypeKeyEClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(sensorBookEClass, SensorBook.class, "SensorBook", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getSensorBook_Sensors(), this.getSensor(), null, "sensors", null, 0, -1, SensorBook.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(sensorEClass, Sensor.class, "Sensor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(parentEClass, Parent.class, "Parent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getParent_Type(), ecorePackage.getEString(), "type", null, 0, 1, Parent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(parent2EClass, Parent2.class, "Parent2", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getParent2_Kind(), ecorePackage.getEString(), "kind", null, 0, 1, Parent2.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(childEClass, Child.class, "Child", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getChild_Name(), ecorePackage.getEString(), "name", null, 0, 1, Child.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(child2EClass, Child2.class, "Child2", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(testObjectEClass, TestObject.class, "TestObject", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getTestObject_Ref1(), this.getParent(), null, "ref1", null, 0, 1, TestObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getTestObject_Ref2(), this.getParent2(), null, "ref2", null, 0, 1, TestObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(gendeR_TYPEEEnum, org.gecko.codec.demo.model.person.GENDER_TYPE.class, "GENDER_TYPE");
@@ -857,6 +1107,26 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		   new String[] {
 			   "include", "true",
 			   "use", "NAME"
+		   });
+		addAnnotation
+		  (typeKeyEClassEClass,
+		   source,
+		   new String[] {
+			   "include", "true",
+			   "use", "NAME",
+			   "typeKey", "name",
+			   "dragino", "DraginoUplink",
+			   "em310", "EM310Uplink"
+		   });
+		addAnnotation
+		  (getSensorBook_Sensors(),
+		   source,
+		   new String[] {
+			   "include", "true",
+			   "use", "NAME",
+			   "typeKey", "name",
+			   "dragino", "DraginoUplink",
+			   "em310", "EM310Uplink"
 		   });
 	}
 

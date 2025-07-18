@@ -132,11 +132,11 @@ tools.jackson.dataformat:jackson-dataformat-properties:3.0.0-rc4-SNAPSHOT
 tools.jackson.dataformat:jackson-dataformat-yaml:3.0.0-rc4-SNAPSHOT
 com.fasterxml.jackson.core:jackson-annotations:3.0-rc4-SNAPSHOT
 
-com.fasterxml.jackson.core:jackson-core:2.16.1
-com.fasterxml.jackson.core:jackson-databind:2.16.1
-com.fasterxml.jackson.core:jackson-annotations:2.16.1
-com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.13.2
-com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2
+#com.fasterxml.jackson.core:jackson-core:2.16.1
+#com.fasterxml.jackson.core:jackson-databind:2.16.1
+#com.fasterxml.jackson.core:jackson-annotations:2.16.1
+#com.fasterxml.jackson.dataformat:jackson-dataformat-properties:2.13.2
+#com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.2
 de.undercouch:bson4jackson:2.13.1
 org.yaml:snakeyaml:2.0
 
@@ -150,11 +150,14 @@ org.freemarker:freemarker:2.3.32
 com.google.guava:guava:33.0.0-jre
 
 org.geckoprojects.bnd:org.gecko.bnd.dimc.library:2.0.0
-org.geckoprojects.bnd:org.gecko.bnd.jacoco.library:1.4.1
-org.geckoprojects.bnd:org.gecko.bnd.osgitest.library:1.4.1
+org.geckoprojects.bnd:org.gecko.bnd.jacoco.library:1.6.0
+org.geckoprojects.bnd:org.gecko.bnd.osgitest.library:1.6.0
+
 org.geckoprojects.emf:org.gecko.emf.osgi.bnd.library.workspace:6.3.0
 org.geckoprojects.emf:org.gecko.emf.osgi.example.model.basic:6.2.0
 org.geckoprojects.emf:org.gecko.emf.osgi.example.model.extended:6.2.0
+
+org.geckoprojects.emf.utils:org.gecko.emf.util.jakartars.bnd.library.workspace:2.3.0
 
 org.geckoprojects.emf.utils:org.gecko.emf.collections:2.2.2
 org.geckoprojects.search:org.gecko.search.bnd.library:1.4.0

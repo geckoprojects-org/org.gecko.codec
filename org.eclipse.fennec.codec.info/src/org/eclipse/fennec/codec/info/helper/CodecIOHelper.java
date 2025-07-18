@@ -29,9 +29,11 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
+import org.osgi.service.component.annotations.Component;
 
 import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.DeserializationContext;
@@ -42,9 +44,8 @@ import tools.jackson.databind.SerializationContext;
  * @author ilenia
  * @since Aug 2, 2024
  */
-public class CodecIOHelper {
-
-
+@Component(immediate = true, name = "CodecIOHelper")
+public class CodecIOHelper {	
 
 	public static final CodecValueReader<Object, String> DEFAULT_ID_VALUE_READER = new CodecValueReader<>() {
 
@@ -95,7 +96,8 @@ public class CodecIOHelper {
 
 		@Override
 		public EClass readValue(String value, DeserializationContext context) {
-			Set<EClass> types = getAllTypes();			
+			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
+			Set<EClass> types = getAllTypes(resSet);			
 			return types.stream().filter(findByURI(value)).findFirst().orElse(null);
 		}
 	};
@@ -155,12 +157,13 @@ public class CodecIOHelper {
 
 		@Override
 		public EClass readValue(String value, DeserializationContext context) {
-			return findEClassByName(value);
+			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
+			return findEClassByName(value, resSet);
 		}
 	};
 	
-	private static Set<EClass> getAllTypes() {
-		EPackage.Registry global = EPackage.Registry.INSTANCE;
+	private static Set<EClass> getAllTypes(ResourceSet resourceSet) {
+		EPackage.Registry global = resourceSet == null ? EPackage.Registry.INSTANCE : resourceSet.getPackageRegistry();
 		Map<String, Object> registry = new HashMap<>();
 		registry.putAll(global);
 
@@ -182,8 +185,8 @@ public class CodecIOHelper {
 
 	}
 	
-	public static EClass findEClassByName(String name) {
-		Set<EClass> types = getAllTypes();
+	public static EClass findEClassByName(String name, ResourceSet resourceSet) {
+		Set<EClass> types = getAllTypes(resourceSet);
 		return types.stream().filter(findByName(name)).findFirst().orElse(null);
 	}
 	
@@ -222,7 +225,8 @@ public class CodecIOHelper {
 
 		@Override
 		public EClass readValue(String value, DeserializationContext context) {
-			Set<EClass> types = getAllTypes();
+			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
+			Set<EClass> types = getAllTypes(resSet);
 			return types.stream().filter(findByQualifiedName(value)).findFirst().orElse(null);
 		}
 	};

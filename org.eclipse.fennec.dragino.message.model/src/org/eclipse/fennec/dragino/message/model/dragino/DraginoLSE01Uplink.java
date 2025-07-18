@@ -19,7 +19,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * </ul>
  *
  * @see org.eclipse.fennec.dragino.message.model.dragino.DraginoPackage#getDraginoLSE01Uplink()
- * @model
+ * @model annotation="codec inherit='true'"
  * @generated
  */
 @ProviderType

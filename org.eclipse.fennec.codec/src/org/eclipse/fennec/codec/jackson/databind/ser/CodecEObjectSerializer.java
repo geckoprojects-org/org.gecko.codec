@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
@@ -56,6 +57,23 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 		return EObject.class;
 	}
 
+	private EClassCodecInfo extractModelInfo(EClass type) {
+		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
+		EClassCodecInfo eObjCodecInfo = null;
+		if(type != null) {
+			for(EClassCodecInfo eci : codecModelInfo.getEClassCodecInfo()) {
+				if(eci.getClassifier().equals(type)) {
+					eObjCodecInfo = eci;
+					break;
+				}
+			}
+		}
+//		we look in other packages
+		if(eObjCodecInfo == null) {
+			eObjCodecInfo = codecModelInfoService.getCodecInfoForEClass(type).orElse(null);
+		}
+		return eObjCodecInfo;
+	}
 	
 	/* 
 	 * (non-Javadoc)
@@ -64,16 +82,13 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 	@Override
 	public void serialize(EObject value, JsonGenerator gen, SerializationContext provider) {
 
-		PackageCodecInfo codecModelInfo = codecModule.getCodecModelInfo();
-		EClassCodecInfo eObjCodecInfo = codecModelInfo.getEClassCodecInfo().stream().
-				filter(eci -> 
-				eci.getClassifier().equals(value.eClass()))
-				.findFirst().get();
+		EClassCodecInfo eObjCodecInfo = extractModelInfo(value.eClass());
 
 		if(eObjCodecInfo == null) {
 			LOGGER.severe(String.format("No EClassCodecInfo found in CodecModule for EObject of class %s", value.eClass()));
-			return;
+			throw new IllegalArgumentException(String.format("No EClassCodecInfo found in CodecModule for EObject of class %s", value.eClass()));
 		}
+		
 		CodecInfoSerializer idInfoSerializer = new IdCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getIdentityInfo());
 		CodecInfoSerializer typeInfoSerializer = new TypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getTypeInfo());
 		CodecInfoSerializer superTypeInfoSerializer = new SuperTypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getSuperTypeInfo());

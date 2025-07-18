@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.constants;
+package org.eclipse.fennec.codec.options;
 
 /**
  * These are the options that can be used when saving/loading a Resource, in order to 
@@ -91,11 +91,6 @@ public interface CodecModuleOptions {
 	 * to overwrite the {@link org.eclipse.fennec.codec.configurator.serializeTypesAsArray} 
 	 * */
 	String CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY = "codec.module.serialize.super.types.as.array";
-	
-	/** CODEC_MODULE_TYPE_KEY 
-	 * to overwrite the {@link org.eclipse.fennec.codec.configurator.typeKey} 
-	 * */
-	String CODEC_MODULE_TYPE_KEY = "codec.module.type.key";
 	
 	/** CODEC_MODULE_REFERENCE_KEY 
 	 * to overwrite the {@link org.eclipse.fennec.codec.configurator.refKey} 

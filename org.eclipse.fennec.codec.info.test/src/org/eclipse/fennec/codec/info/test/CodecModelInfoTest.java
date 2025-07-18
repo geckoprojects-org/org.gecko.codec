@@ -90,7 +90,6 @@ public class CodecModelInfoTest {
 				assertEquals(eClassCodecInfo.getIdentityInfo().getType(), InfoType.IDENTITY);
 				
 				assertNotNull(eClassCodecInfo.getTypeInfo());
-				assertEquals(eClassCodecInfo.getTypeInfo().getType(), InfoType.TYPE);
 			}
 		});
 	}
@@ -126,8 +125,57 @@ public class CodecModelInfoTest {
 		TypeInfo typeInfo = eClassCodecInfo.getTypeInfo();
 		assertNotNull(typeInfo);
 		assertEquals("NAME", typeInfo.getTypeStrategy());
-		assertEquals("READ_BY_NAME", typeInfo.getValueReaderName());
-		assertEquals("WRITE_BY_NAME", typeInfo.getValueWriterName());
+		assertEquals("READ_BY_NAME", typeInfo.getTypeValueReaderName());
+		assertEquals("WRITE_BY_NAME", typeInfo.getTypeValueWriterName());
+	}
+	
+	@Test
+	public void testTypeInfoEClassCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
+		
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		
+		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(demoModel.getTypeKeyEClass()).get();
+		assertNotNull(eClassCodecInfo);
+		
+		TypeInfo typeInfo = eClassCodecInfo.getTypeInfo();
+		assertNotNull(typeInfo);
+		assertEquals("NAME", typeInfo.getTypeStrategy());
+		assertEquals("READ_BY_NAME", typeInfo.getTypeValueReaderName());
+		assertEquals("WRITE_BY_NAME", typeInfo.getTypeValueWriterName());
+		assertEquals("name", typeInfo.getTypeKey());
+		assertThat(typeInfo.getTypeMap()).hasSize(2);
+		assertTrue(typeInfo.getTypeMap().containsKey("dragino"));
+		assertTrue(typeInfo.getTypeMap().containsKey("em310"));
+		assertEquals("DraginoUplink", typeInfo.getTypeMap().get("dragino"));
+		assertEquals("EM310Uplink", typeInfo.getTypeMap().get("em310"));
+	}
+	
+	@Test
+	public void testTypeInfoERefCreation(@InjectService(timeout = 2000l) PersonPackage demoModel,  
+			@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
+		
+		assertNotNull(demoModel);
+		assertNotNull(codecModelInfo);
+		
+		EClassCodecInfo eClassCodecInfo = codecModelInfo.getCodecInfoForEClass(demoModel.getSensorBook()).get();
+		assertNotNull(eClassCodecInfo);
+		
+		FeatureCodecInfo refCodecInfo = eClassCodecInfo.getReferenceCodecInfo().stream().filter(r -> "sensors".equals(r.getKey())).findFirst().orElse(null);
+		assertThat(refCodecInfo).isNotNull();
+		
+		TypeInfo typeInfo = refCodecInfo.getTypeInfo();
+		assertNotNull(typeInfo);
+		assertEquals("NAME", typeInfo.getTypeStrategy());
+		assertEquals("READ_BY_NAME", typeInfo.getTypeValueReaderName());
+		assertEquals("WRITE_BY_NAME", typeInfo.getTypeValueWriterName());
+		assertEquals("name", typeInfo.getTypeKey());
+		assertThat(typeInfo.getTypeMap()).hasSize(2);
+		assertTrue(typeInfo.getTypeMap().containsKey("dragino"));
+		assertTrue(typeInfo.getTypeMap().containsKey("em310"));
+		assertEquals("DraginoUplink", typeInfo.getTypeMap().get("dragino"));
+		assertEquals("EM310Uplink", typeInfo.getTypeMap().get("em310"));
 	}
 	
 	@Test

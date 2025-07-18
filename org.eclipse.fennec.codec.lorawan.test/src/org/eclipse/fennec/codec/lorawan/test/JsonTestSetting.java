@@ -25,28 +25,19 @@ import java.util.UUID;
  * @since Oct 18, 2024
  */
 public abstract class JsonTestSetting {
-	
-	protected String personFileName;
-	protected String addFileName;
-	
+
+	protected String fileName;
+
 	public void beforeEach() throws Exception {
-		personFileName = "per".concat(UUID.randomUUID().toString()).concat(".json");
-		addFileName = "add".concat(UUID.randomUUID().toString()).concat(".json");
+		fileName = UUID.randomUUID().toString().concat(".json");
 	}
-	
+
 	public void afterEach() throws IOException {
-		if(personFileName != null) {
-			Path path = Paths.get(personFileName);
+		if(fileName != null) {
+			Path path = Paths.get(fileName);
 			if (Files.exists(path)) {
 				Files.delete(path);
 			}
 		}
-		if(addFileName != null) {
-			Path path = Paths.get(addFileName);
-			if (Files.exists(path)) {
-				Files.delete(path);
-			}
-		}	
 	}
-
 }

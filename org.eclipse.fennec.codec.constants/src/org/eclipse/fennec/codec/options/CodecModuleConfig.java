@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.configurator;
+package org.eclipse.fennec.codec.options;
 
 /**
  * This is the CodecModule configuration, which should be used to configure 
@@ -41,12 +41,12 @@ public @interface CodecModuleConfig {
 	 */
 	String idKey() default "_id";
 	
-	/**
-	 * Option to indicate the default key to be used for type
-	 * Default is "_type"
-	 * @return
-	 */
-	String typeKey() default "_type";
+//	/**
+//	 * Option to indicate the default key to be used for type
+//	 * Default is "_type"
+//	 * @return
+//	 */
+//	String typeKey() default "_type";
 	
 	/**
 	 * Option to indicate the default key used for supertype

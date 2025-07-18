@@ -29,8 +29,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecModuleOptions;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.options.CodecModuleOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -126,24 +126,7 @@ public class CodecModuleConfigOverwriteTest {
 		module = codecModuleConfigurator.getCodecModuleBuilder().build();
 		assertEquals("test", module.getIdKey());		
 	}
-	
-	@Test
-	public void testCodecModuleOverwriteTypeKey() throws InterruptedException, IOException {
-	
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("_type", module.getTypeKey());		
-		
-		Resource resource = resourceSet.createResource(uri);
-		
-		Person person = CodecTestHelper.getTestPerson();		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "test");
-		resource.save(options);
-		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("test", module.getTypeKey());		
-	}
+
 	
 	@Test
 	public void testCodecModuleOverwriteProxyKey() throws InterruptedException, IOException {

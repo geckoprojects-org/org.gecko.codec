@@ -27,7 +27,7 @@ import tools.jackson.core.json.JsonReadContext;
  */
 public class CodecJsonReadContext extends JsonReadContext implements EMFCodecReadContext {
 
-	private final EMFContextHolder holder;
+	private EMFContextHolder holder;
 
 	public CodecJsonReadContext(JsonReadContext parent, int nestingDepth, DupDetector dups, int type, int lineNr,
 			int colNr) {
@@ -164,6 +164,24 @@ public class CodecJsonReadContext extends JsonReadContext implements EMFCodecRea
 	@Override
 	public boolean hasParentContext() {
 		return _parent != null;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#getEMFContextHolder()
+	 */
+	@Override
+	public EMFContextHolder getEMFContextHolder() {
+		return holder;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#setEMFContextHolder(org.eclipse.fennec.codec.jackson.databind.EMFContextHolder)
+	 */
+	@Override
+	public void setEMFContextHolder(EMFContextHolder holder) {
+		this.holder = holder;
 	}
 
 }

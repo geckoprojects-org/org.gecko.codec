@@ -843,6 +843,29 @@ public class LorawanPackageImpl extends EPackageImpl implements LorawanPackage {
 
 		// Create resource
 		createResource(eNS_URI);
+
+		// Create annotations
+		// codec.type
+		createCodecAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>codec.type</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createCodecAnnotations() {
+		String source = "codec.type";
+		addAnnotation
+		  (uplinkMessageEClass,
+		   source,
+		   new String[] {
+			   "strategy", "NAME",
+			   "typeKey", "deviceInfo.deviceProfileName",
+			   "Dragino_LSE01", "DraginoLSE01Uplink",
+			   "EM310-UDL", "EM310UDLUplink"
+		   });
 	}
 
 } //LorawanPackageImpl

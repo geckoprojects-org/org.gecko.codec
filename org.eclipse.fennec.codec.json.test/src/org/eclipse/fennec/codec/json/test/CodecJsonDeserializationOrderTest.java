@@ -27,7 +27,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.BusinessAddress;
 import org.gecko.codec.demo.model.person.Person;
@@ -122,6 +123,11 @@ public class CodecJsonDeserializationOrderTest extends JsonTestSetting{
 		
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+		Map<String, Object> personOptions = new HashMap<>();
+		Map<String, Object> refOptions = new HashMap<>();
+		refOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
+		personOptions.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON__ADDRESS, refOptions));
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, personOptions));
 		personRes.load(options);
 		
 		assertThat(personRes.getContents()).hasSize(1);
@@ -154,6 +160,11 @@ public class CodecJsonDeserializationOrderTest extends JsonTestSetting{
 		
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+		Map<String, Object> personOptions = new HashMap<>();
+		Map<String, Object> refOptions = new HashMap<>();
+		refOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
+		personOptions.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON__ADDRESS, refOptions));
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, personOptions));
 		personRes.load(options);
 		
 		assertThat(personRes.getContents()).hasSize(1);
