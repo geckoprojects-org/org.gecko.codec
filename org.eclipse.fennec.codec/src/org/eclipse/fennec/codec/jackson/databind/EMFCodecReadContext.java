@@ -35,6 +35,8 @@ public interface EMFCodecReadContext extends EMFCodecContext {
 	
 	boolean hasParentContext();
 	
+	
+	
 //	TokenStreamContext getParentContext();
 
 }

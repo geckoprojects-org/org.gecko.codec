@@ -29,7 +29,7 @@ import tools.jackson.databind.util.TokenBufferReadContext;
  */
 public class CodecTokenBufferReadContext extends TokenBufferReadContext implements EMFCodecReadContext {
 
-	private final EMFContextHolder holder;
+	private EMFContextHolder holder;
 
 
 	private TokenStreamContext _parent;
@@ -73,12 +73,18 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 		_parent = origContext.getParent();
 		_currentName = origContext.currentName();
 		_currentValue = origContext.currentValue();
+		
 		if (origContext instanceof CodecJsonReadContext rc) {
 			_startLocation = rc.startLocation(contentRef);
 		} else {
 			_startLocation = TokenStreamLocation.NA;
 		}
-		holder = new EMFContextHolder();
+		if(origContext instanceof EMFCodecReadContext codecReadCtxt) {
+			holder = codecReadCtxt.getEMFContextHolder();
+		} else {
+			holder = new EMFContextHolder();
+		}
+		
 	}
 
 
@@ -263,7 +269,6 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 	}
 
 
-
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#hasParentContext()
@@ -272,8 +277,6 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 	public boolean hasParentContext() {
 		return _parent != null;
 	}
-
-
 
 	/* 
 	 * (non-Javadoc)
@@ -284,4 +287,23 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 		return _parent;
 	}
 
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#getEMFContextHolder()
+	 */
+	@Override
+	public EMFContextHolder getEMFContextHolder() {
+		return holder;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#setEMFContextHolder(org.eclipse.fennec.codec.jackson.databind.EMFContextHolder)
+	 */
+	@Override
+	public void setEMFContextHolder(EMFContextHolder holder) {
+		this.holder = holder;		
+	}
+	
 }

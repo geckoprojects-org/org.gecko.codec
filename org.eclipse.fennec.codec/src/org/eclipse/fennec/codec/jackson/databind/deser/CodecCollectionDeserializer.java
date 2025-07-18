@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 
 import tools.jackson.core.JsonParser;
@@ -68,18 +69,16 @@ public class CodecCollectionDeserializer extends ValueDeserializer<Collection<Ob
 	 */
 	@Override
 	public Collection<Object> deserialize(final JsonParser p, final DeserializationContext ctxt, final Collection<Object> intoValue) {
-//		final EObject parent = EMFContext.getParent(ctxt);
-//		final EReference feature = EMFContext.getReference(ctxt);
 		
 		final EObject parent = ((EMFCodecReadContext) p.streamReadContext().getParent()).getCurrentEObject();
 		final EReference feature = (EReference) (((EMFCodecReadContext) p.streamReadContext().getParent()).getCurrentFeature());
+		final Resource resource = ((EMFCodecReadContext) p.streamReadContext().getParent()).getResource();
 
 		while (p.nextToken() != JsonToken.END_ARRAY) {
-//			EMFContext.setParent(ctxt, parent);
-//			EMFContext.setFeature(ctxt, feature);
 			
 			((EMFCodecReadContext) p.streamReadContext()).setCurrentEObject(parent);
 			((EMFCodecReadContext) p.streamReadContext()).setCurrentFeature(feature);
+			((EMFCodecReadContext) p.streamReadContext()).setResource(resource);
 
 			if (feature != null && feature.isContainment()) {
 				EObject result = deserializer.deserialize(p, ctxt);

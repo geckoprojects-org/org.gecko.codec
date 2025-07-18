@@ -50,7 +50,12 @@ public class TypeConstructorHelper {
 	    	javaType = constructMapType(ctxt.getTypeFactory(), (EClass) realType);
 	    	break;
 	    default:
-	    	javaType = ctxt.getTypeFactory().constructType(realType.getInstanceClass());
+	    	if(realType.getInstanceClass() == null) {
+	    		Class<?> rawType = rawType(realType);
+	    		javaType =  ctxt.getTypeFactory().constructType(rawType);
+	    	} else {
+	    		javaType = ctxt.getTypeFactory().constructType(realType.getInstanceClass());
+	    	}	    	
 	    	break;
 	    }  
 	    return javaType;

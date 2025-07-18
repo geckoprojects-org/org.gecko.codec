@@ -27,7 +27,7 @@ import tools.jackson.core.exc.StreamReadException;
  */
 public class CodecReadContext extends TokenStreamContext implements EMFCodecReadContext{
 
-	private final EMFContextHolder holder;
+	private EMFContextHolder holder;
 
 	protected CodecReadContext _child;
 	protected CodecReadContext _parent;
@@ -233,6 +233,25 @@ public class CodecReadContext extends TokenStreamContext implements EMFCodecRead
 	@Override
 	public boolean hasParentContext() {
 		return _parent != null;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#getEMFContextHolder()
+	 */
+	@Override
+	public EMFContextHolder getEMFContextHolder() {
+		return holder;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#setEMFContextHolder(org.eclipse.fennec.codec.jackson.databind.EMFContextHolder)
+	 */
+	@Override
+	public void setEMFContextHolder(EMFContextHolder holder) {
+		this.holder = holder;
+		
 	}
 
 	/* 

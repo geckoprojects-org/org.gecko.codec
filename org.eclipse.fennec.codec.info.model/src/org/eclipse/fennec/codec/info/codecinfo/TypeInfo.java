@@ -2,6 +2,8 @@
  */
 package org.eclipse.fennec.codec.info.codecinfo;
 
+import org.eclipse.emf.common.util.EMap;
+
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -15,6 +17,10 @@ import org.osgi.annotation.versioning.ProviderType;
  * <ul>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeStrategy <em>Type Strategy</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#isIgnoreType <em>Ignore Type</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeKey <em>Type Key</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeMap <em>Type Map</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeValueReaderName <em>Type Value Reader Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeValueWriterName <em>Type Value Writer Name</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getTypeInfo()
@@ -22,7 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface TypeInfo extends FeatureCodecInfo {
+public interface TypeInfo {
 	/**
 	 * Returns the value of the '<em><b>Type Strategy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -72,5 +78,90 @@ public interface TypeInfo extends FeatureCodecInfo {
 	 * @generated
 	 */
 	void setIgnoreType(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Type Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * This supports the possibility of specifying a type key, meaning the String that has to be looked for when deserializing the element marked like this.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Type Key</em>' attribute.
+	 * @see #setTypeKey(String)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_TypeKey()
+	 * @model
+	 * @generated
+	 */
+	String getTypeKey();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeKey <em>Type Key</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Type Key</em>' attribute.
+	 * @see #getTypeKey()
+	 * @generated
+	 */
+	void setTypeKey(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Type Map</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.String},
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * This supports the possibility of specifying a map for matching the type key with a certain type, based on its value. The keys are the value of the type key to be expected to found in the document to deserialize, while the value 
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Type Map</em>' map.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_TypeMap()
+	 * @model mapType="org.eclipse.fennec.codec.info.codecinfo.StringToStringMap&lt;org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString&gt;"
+	 * @generated
+	 */
+	EMap<String, String> getTypeMap();
+
+	/**
+	 * Returns the value of the '<em><b>Type Value Reader Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Type Value Reader Name</em>' attribute.
+	 * @see #setTypeValueReaderName(String)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_TypeValueReaderName()
+	 * @model
+	 * @generated
+	 */
+	String getTypeValueReaderName();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeValueReaderName <em>Type Value Reader Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Type Value Reader Name</em>' attribute.
+	 * @see #getTypeValueReaderName()
+	 * @generated
+	 */
+	void setTypeValueReaderName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Type Value Writer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Type Value Writer Name</em>' attribute.
+	 * @see #setTypeValueWriterName(String)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_TypeValueWriterName()
+	 * @model
+	 * @generated
+	 */
+	String getTypeValueWriterName();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeValueWriterName <em>Type Value Writer Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Type Value Writer Name</em>' attribute.
+	 * @see #getTypeValueWriterName()
+	 * @generated
+	 */
+	void setTypeValueWriterName(String value);
 
 } // TypeInfo

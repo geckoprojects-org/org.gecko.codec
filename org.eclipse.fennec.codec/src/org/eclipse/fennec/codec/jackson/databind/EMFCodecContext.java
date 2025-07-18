@@ -36,8 +36,9 @@ public interface EMFCodecContext {
 
 	Resource getResource();
 
-	
-
 	void resetFeature();
 
+	EMFContextHolder getEMFContextHolder();
+	
+	void setEMFContextHolder(EMFContextHolder holder);
 }

@@ -24,6 +24,9 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DraginoLSE01Uplink" eSuperTypes="../../org.eclipse.fennec.lorawan.uplink.model/model/lorawan-uplink.ecore#//UplinkMessage">
+    <eAnnotations source="codec">
+      <details key="inherit" value="true"/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="object" eType="#//DecodedObject"
         containment="true"/>
   </eClassifiers>

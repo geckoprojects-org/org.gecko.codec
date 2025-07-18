@@ -72,6 +72,14 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 			case PersonPackage.STRING_TO_SIMPLE_VALUE_MAP: return (EObject)createStringToSimpleValueMap();
 			case PersonPackage.SIMPLE_VALUE: return createSimpleValue();
 			case PersonPackage.SIMPLE_MAP: return createSimpleMap();
+			case PersonPackage.TYPE_KEY_ECLASS: return createTypeKeyEClass();
+			case PersonPackage.SENSOR_BOOK: return createSensorBook();
+			case PersonPackage.SENSOR: return createSensor();
+			case PersonPackage.PARENT: return createParent();
+			case PersonPackage.PARENT2: return createParent2();
+			case PersonPackage.CHILD: return createChild();
+			case PersonPackage.CHILD2: return createChild2();
+			case PersonPackage.TEST_OBJECT: return createTestObject();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -228,6 +236,94 @@ public class PersonFactoryImpl extends EFactoryImpl implements PersonFactory {
 	public SimpleMap createSimpleMap() {
 		SimpleMapImpl simpleMap = new SimpleMapImpl();
 		return simpleMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public TypeKeyEClass createTypeKeyEClass() {
+		TypeKeyEClassImpl typeKeyEClass = new TypeKeyEClassImpl();
+		return typeKeyEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public SensorBook createSensorBook() {
+		SensorBookImpl sensorBook = new SensorBookImpl();
+		return sensorBook;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Sensor createSensor() {
+		SensorImpl sensor = new SensorImpl();
+		return sensor;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Parent createParent() {
+		ParentImpl parent = new ParentImpl();
+		return parent;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Parent2 createParent2() {
+		Parent2Impl parent2 = new Parent2Impl();
+		return parent2;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Child createChild() {
+		ChildImpl child = new ChildImpl();
+		return child;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Child2 createChild2() {
+		Child2Impl child2 = new Child2Impl();
+		return child2;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public TestObject createTestObject() {
+		TestObjectImpl testObject = new TestObjectImpl();
+		return testObject;
 	}
 
 	/**

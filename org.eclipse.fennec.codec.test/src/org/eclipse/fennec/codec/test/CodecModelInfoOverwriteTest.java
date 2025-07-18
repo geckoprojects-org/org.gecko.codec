@@ -32,12 +32,12 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.constants.CodecResourceOptions;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -243,7 +243,7 @@ public class CodecModelInfoOverwriteTest {
 	}
 	
 	@Test
-	public void testCodecModelInfoOverwriteTypeUse() throws InterruptedException, IOException {
+	public void testCodecModelInfoOverwriteTypeStrategy() throws InterruptedException, IOException {
 	
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();		
@@ -251,7 +251,7 @@ public class CodecModelInfoOverwriteTest {
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_USE, "CLASS");
+		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "CLASS");
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
@@ -263,8 +263,58 @@ public class CodecModelInfoOverwriteTest {
 		assertNotNull(personCodecInfo);
 		assertNotNull(personCodecInfo.getTypeInfo());
 		assertEquals("CLASS", personCodecInfo.getTypeInfo().getTypeStrategy());
-		assertEquals("WRITE_BY_CLASS_NAME", personCodecInfo.getTypeInfo().getValueWriterName());
-		assertEquals("READ_BY_CLASS", personCodecInfo.getTypeInfo().getValueReaderName());
+		assertEquals("WRITE_BY_CLASS_NAME", personCodecInfo.getTypeInfo().getTypeValueWriterName());
+		assertEquals("READ_BY_CLASS", personCodecInfo.getTypeInfo().getTypeValueReaderName());
+	}
+	
+	@Test
+	public void testCodecModelInfoOverwriteTypeKey() throws InterruptedException, IOException {
+	
+		Resource resource = resourceSet.createResource(uri);
+		Person person = CodecTestHelper.getTestPerson();		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "eClass");
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		resource.save(options);
+		
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
+		assertNotNull(modelCodecInfo);
+		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
+		assertNotNull(personCodecInfo);
+		assertNotNull(personCodecInfo.getTypeInfo());
+		assertEquals("eClass", personCodecInfo.getTypeInfo().getTypeKey());
+	}
+	
+	@Test
+	public void testCodecModelInfoOverwriteTypeMap() throws InterruptedException, IOException {
+	
+		Resource resource = resourceSet.createResource(uri);
+		Person person = CodecTestHelper.getTestPerson();		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP, Map.of("person1", "Person"));
+		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP, Map.of("person2", "Person"));
+		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		resource.save(options);
+		
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
+		assertNotNull(modelCodecInfo);
+		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
+		assertNotNull(personCodecInfo);
+		assertNotNull(personCodecInfo.getTypeInfo());
+		assertNotNull(personCodecInfo.getTypeInfo().getTypeMap());
+		assertTrue(personCodecInfo.getTypeInfo().getTypeMap().containsKey("person1"));
+		assertTrue(personCodecInfo.getTypeInfo().getTypeMap().containsKey("person2"));
 	}
 	
 	

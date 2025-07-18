@@ -116,6 +116,38 @@ public class PersonAdapterFactory extends AdapterFactoryImpl {
 				return createSimpleMapAdapter();
 			}
 			@Override
+			public Adapter caseTypeKeyEClass(TypeKeyEClass object) {
+				return createTypeKeyEClassAdapter();
+			}
+			@Override
+			public Adapter caseSensorBook(SensorBook object) {
+				return createSensorBookAdapter();
+			}
+			@Override
+			public Adapter caseSensor(Sensor object) {
+				return createSensorAdapter();
+			}
+			@Override
+			public Adapter caseParent(Parent object) {
+				return createParentAdapter();
+			}
+			@Override
+			public Adapter caseParent2(Parent2 object) {
+				return createParent2Adapter();
+			}
+			@Override
+			public Adapter caseChild(Child object) {
+				return createChildAdapter();
+			}
+			@Override
+			public Adapter caseChild2(Child2 object) {
+				return createChild2Adapter();
+			}
+			@Override
+			public Adapter caseTestObject(TestObject object) {
+				return createTestObjectAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -286,6 +318,118 @@ public class PersonAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createSimpleMapAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.demo.model.person.TypeKeyEClass <em>Type Key EClass</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.demo.model.person.TypeKeyEClass
+	 * @generated
+	 */
+	public Adapter createTypeKeyEClassAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.demo.model.person.SensorBook <em>Sensor Book</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.demo.model.person.SensorBook
+	 * @generated
+	 */
+	public Adapter createSensorBookAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.demo.model.person.Sensor <em>Sensor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.demo.model.person.Sensor
+	 * @generated
+	 */
+	public Adapter createSensorAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.demo.model.person.Parent <em>Parent</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.demo.model.person.Parent
+	 * @generated
+	 */
+	public Adapter createParentAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.demo.model.person.Parent2 <em>Parent2</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.demo.model.person.Parent2
+	 * @generated
+	 */
+	public Adapter createParent2Adapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.demo.model.person.Child <em>Child</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.demo.model.person.Child
+	 * @generated
+	 */
+	public Adapter createChildAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.demo.model.person.Child2 <em>Child2</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.demo.model.person.Child2
+	 * @generated
+	 */
+	public Adapter createChild2Adapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.gecko.codec.demo.model.person.TestObject <em>Test Object</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.gecko.codec.demo.model.person.TestObject
+	 * @generated
+	 */
+	public Adapter createTestObjectAdapter() {
 		return null;
 	}
 

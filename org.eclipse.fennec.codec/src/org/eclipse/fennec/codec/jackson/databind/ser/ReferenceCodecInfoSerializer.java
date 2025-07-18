@@ -14,6 +14,7 @@
 package org.eclipse.fennec.codec.jackson.databind.ser;
 
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.BasicEMap;
@@ -22,6 +23,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -31,8 +33,11 @@ import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
+import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 import org.eclipse.fennec.codec.jackson.databind.EMFCodecWriteContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.gecko.emf.utilities.FeaturePath;
+import org.gecko.emf.utilities.UtilitiesFactory;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -51,6 +56,8 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 	private CodecModelInfo codecModelInfoService;
 	private EClassCodecInfo eObjCodecInfo;
 	private FeatureCodecInfo featureCodecInfo;
+	private TypeInfo typeInfo;
+	private CodecInfoHolder holder;
 
 	public ReferenceCodecInfoSerializer(final CodecModule codecMoule, final CodecModelInfo codecModelInfoService,
 			final EClassCodecInfo eObjCodecInfo, final FeatureCodecInfo featureCodecInfo) {
@@ -58,7 +65,10 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		this.codecModelInfoService = codecModelInfoService;
 		this.eObjCodecInfo = eObjCodecInfo;
 		this.featureCodecInfo = featureCodecInfo;
+		holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
 	}
+	
+
 
 	
 	/* 
@@ -76,6 +86,11 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 			return;
 		}
 		EReference feature = (EReference) featureCodecInfo.getFeatures().get(0);
+		FeatureCodecInfo featureCodecInfo = eObjCodecInfo.getReferenceCodecInfo().stream().filter(r -> r.getFeatures().get(0).getName().equals(feature.getName())).findFirst().orElse(null);
+		if(featureCodecInfo == null) {
+			throw new IllegalArgumentException(String.format("Cannot retrieve FeatureCodecInfo for current EStructuralFeature %s. Something went wrong!", feature.getName()));
+		}
+		typeInfo = featureCodecInfo.getTypeInfo();
 //		EMFContext.setParent(provider, rootObj);
 //		EMFContext.setFeature(provider, feature);
 
@@ -180,23 +195,56 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		final String href = getHRef(jg, rootObj, value);
 
 		jg.writeStartObject(value);
-
-		if (codecModule.isSerializeType()) {
-			EClassCodecInfo refClassCodecInfo = codecModule.getCodecModelInfo().getEClassCodecInfo().stream()
-					.filter(ecci -> ecci.getClassifier().getName().equals(value.eClass().getName())).findFirst()
-					.orElse(null);
-			CodecInfoHolder holder = codecModelInfoService.getCodecInfoHolderByType(InfoType.TYPE);
-			CodecValueWriter<EClass, String> writer = holder
-					.getWriterByName(refClassCodecInfo != null ? refClassCodecInfo.getTypeInfo().getValueWriterName()
-							: eObjCodecInfo.getTypeInfo().getValueWriterName());
-			String v = writer.writeValue(value.eClass(), provider);
-			jg.writeName(codecModule.getTypeKey());
-			if (jg.canWriteTypeId()) {
-				jg.writeTypeId(v);
-			} else {
-				jg.writeString(v);
+		
+		if(!typeInfo.isIgnoreType()) {
+			if(codecModule.isSerializeType()) {
+//				EClassCodecInfo refClassCodecInfo = codecModule.getCodecModelInfo().getEClassCodecInfo().stream()
+//						.filter(ecci -> ecci.getClassifier().getName().equals(value.eClass().getName())).findFirst()
+//						.orElse(null);
+//				If the typeKey is an EStructuralFeature of the EObject then we do not have to write anything
+//				because it will be written with that feature
+				String[] typeKeySplit = typeInfo.getTypeKey().split("\\.");
+				FeaturePath featurePath = UtilitiesFactory.eINSTANCE.createFeaturePath();				
+				EStructuralFeature feature = null;
+				boolean serializeType = false;
+				for(String typeKeySegment : typeKeySplit) {
+					if(feature != null && feature instanceof EReference ref) {
+						feature = ref.getEReferenceType().getEStructuralFeature(typeKeySegment);
+						if(feature != null) featurePath.getFeature().add(feature);
+						else {
+							LOGGER.warning(String.format("Feature %s not found in Object %s", typeKeySegment, ref.getName()));
+							serializeType = true;
+							break;
+						}
+					} else {
+						feature = value.eClass().getEStructuralFeature(typeKeySegment);
+						if(feature != null) featurePath.getFeature().add(feature);
+						else {
+							LOGGER.warning(String.format("Feature %s not found in Object %s", typeKeySegment, value.eClass().getName()));
+							serializeType = true;
+							break;
+						}
+					}					
+				}
+				if(serializeType) {
+					CodecValueWriter<EClass, String> writer = holder.getWriterByName(typeInfo.getTypeValueWriterName());
+					String v = writer.writeValue(value.eClass(), provider);
+					String valueToWrite = v;
+					if(typeInfo.getTypeMap().containsValue(v)) {
+						Entry<String, String> entry = typeInfo.getTypeMap().stream().filter(e -> e.getValue().equals(v)).findFirst().orElse(null);
+						if(entry != null) valueToWrite = entry.getKey();
+					}
+					
+					jg.writeName(typeInfo.getTypeKey());
+					if (jg.canWriteTypeId()) {
+						jg.writeTypeId(valueToWrite);
+					} else {
+						jg.writeString(valueToWrite);
+					}
+				}
 			}
 		}
+		
 
 		if (href == null) {
 			jg.writeNullProperty(codecModule.getRefKey());
@@ -206,6 +254,28 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		jg.writeEndObject();
 
 	}
+//	
+//	private Object resolveFeaturePath(EObject root, FeaturePath featurePath) {
+//		EObject current = root;
+//		Object value = null;
+//
+//		for (int i = 0; i < featurePath.getFeature().size(); i++) {
+//			EStructuralFeature feature = featurePath.getFeature().get(i);
+//			value = current.eGet(feature);
+//
+//			// If not at the end of the path, prepare for next step
+//			if (i < featurePath.getFeature().size() - 1) {
+//				if (value instanceof EObject) {
+//					current = (EObject) value;
+//				} else {
+//					// We expected an EObject to navigate further, but got something else
+//					LOGGER.severe(String.format("Error while navigating through FeaturePath at feature %s", feature.getName()));
+//					return null;
+//				}
+//			}
+//		}
+//		return value;
+//	}
 
 	private String getHRef(JsonGenerator jg, final EObject parent, final EObject value) {
 		if (isExternal(jg, parent, value)) {

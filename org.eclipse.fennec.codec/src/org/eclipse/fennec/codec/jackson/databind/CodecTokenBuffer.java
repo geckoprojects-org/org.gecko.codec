@@ -122,6 +122,8 @@ public class CodecTokenBuffer extends TokenBuffer {
         return p;
     }
     
+    
+    
     /*
     /**********************************************************************
     /* Supporting classes
@@ -699,7 +701,6 @@ public class CodecTokenBuffer extends TokenBuffer {
         }
 
         @Override
-        @SuppressWarnings("resource")
         public byte[] getBinaryValue(Base64Variant b64variant) throws JacksonException
         {
             // First: maybe we some special types?
@@ -784,5 +785,7 @@ public class CodecTokenBuffer extends TokenBuffer {
         protected void _handleEOF() {
             _throwInternal();
         }
+        
+  
     }
 }

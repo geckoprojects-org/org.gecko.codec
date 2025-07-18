@@ -1014,6 +1014,302 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	int SIMPLE_MAP_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.TypeKeyEClassImpl <em>Type Key EClass</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.TypeKeyEClassImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getTypeKeyEClass()
+	 * @generated
+	 */
+	int TYPE_KEY_ECLASS = 11;
+
+	/**
+	 * The number of structural features of the '<em>Type Key EClass</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_KEY_ECLASS_FEATURE_COUNT = 0;
+
+	/**
+	 * The number of operations of the '<em>Type Key EClass</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_KEY_ECLASS_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.SensorBookImpl <em>Sensor Book</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.SensorBookImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getSensorBook()
+	 * @generated
+	 */
+	int SENSOR_BOOK = 12;
+
+	/**
+	 * The feature id for the '<em><b>Sensors</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SENSOR_BOOK__SENSORS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Sensor Book</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SENSOR_BOOK_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Sensor Book</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SENSOR_BOOK_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.SensorImpl <em>Sensor</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.SensorImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getSensor()
+	 * @generated
+	 */
+	int SENSOR = 13;
+
+	/**
+	 * The number of structural features of the '<em>Sensor</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SENSOR_FEATURE_COUNT = 0;
+
+	/**
+	 * The number of operations of the '<em>Sensor</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SENSOR_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.ParentImpl <em>Parent</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.ParentImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getParent()
+	 * @generated
+	 */
+	int PARENT = 14;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARENT__TYPE = 0;
+
+	/**
+	 * The number of structural features of the '<em>Parent</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARENT_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Parent</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARENT_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.Parent2Impl <em>Parent2</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.Parent2Impl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getParent2()
+	 * @generated
+	 */
+	int PARENT2 = 15;
+
+	/**
+	 * The feature id for the '<em><b>Kind</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARENT2__KIND = 0;
+
+	/**
+	 * The number of structural features of the '<em>Parent2</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARENT2_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Parent2</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARENT2_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.ChildImpl <em>Child</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.ChildImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getChild()
+	 * @generated
+	 */
+	int CHILD = 16;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHILD__TYPE = PARENT__TYPE;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHILD__NAME = PARENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Child</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHILD_FEATURE_COUNT = PARENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Child</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHILD_OPERATION_COUNT = PARENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.Child2Impl <em>Child2</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.Child2Impl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getChild2()
+	 * @generated
+	 */
+	int CHILD2 = 17;
+
+	/**
+	 * The feature id for the '<em><b>Kind</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHILD2__KIND = PARENT2__KIND;
+
+	/**
+	 * The number of structural features of the '<em>Child2</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHILD2_FEATURE_COUNT = PARENT2_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Child2</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHILD2_OPERATION_COUNT = PARENT2_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.impl.TestObjectImpl <em>Test Object</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.gecko.codec.demo.model.person.impl.TestObjectImpl
+	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getTestObject()
+	 * @generated
+	 */
+	int TEST_OBJECT = 18;
+
+	/**
+	 * The feature id for the '<em><b>Ref1</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_OBJECT__REF1 = 0;
+
+	/**
+	 * The feature id for the '<em><b>Ref2</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_OBJECT__REF2 = 1;
+
+	/**
+	 * The number of structural features of the '<em>Test Object</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_OBJECT_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Test Object</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_OBJECT_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.gecko.codec.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1021,7 +1317,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getGENDER_TYPE()
 	 * @generated
 	 */
-	int GENDER_TYPE = 11;
+	int GENDER_TYPE = 19;
 
 	/**
 	 * The meta object id for the '<em>Custom Data Type</em>' data type.
@@ -1031,7 +1327,7 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getCustomDataType()
 	 * @generated
 	 */
-	int CUSTOM_DATA_TYPE = 12;
+	int CUSTOM_DATA_TYPE = 20;
 
 
 	/**
@@ -1489,6 +1785,152 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getSimpleMap_StringMapValues();
 
 	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.TypeKeyEClass <em>Type Key EClass</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Type Key EClass</em>'.
+	 * @see org.gecko.codec.demo.model.person.TypeKeyEClass
+	 * @generated
+	 */
+	EClass getTypeKeyEClass();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.SensorBook <em>Sensor Book</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Sensor Book</em>'.
+	 * @see org.gecko.codec.demo.model.person.SensorBook
+	 * @generated
+	 */
+	EClass getSensorBook();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.gecko.codec.demo.model.person.SensorBook#getSensors <em>Sensors</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Sensors</em>'.
+	 * @see org.gecko.codec.demo.model.person.SensorBook#getSensors()
+	 * @see #getSensorBook()
+	 * @generated
+	 */
+	EReference getSensorBook_Sensors();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.Sensor <em>Sensor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Sensor</em>'.
+	 * @see org.gecko.codec.demo.model.person.Sensor
+	 * @generated
+	 */
+	EClass getSensor();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.Parent <em>Parent</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Parent</em>'.
+	 * @see org.gecko.codec.demo.model.person.Parent
+	 * @generated
+	 */
+	EClass getParent();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.demo.model.person.Parent#getType <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type</em>'.
+	 * @see org.gecko.codec.demo.model.person.Parent#getType()
+	 * @see #getParent()
+	 * @generated
+	 */
+	EAttribute getParent_Type();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.Parent2 <em>Parent2</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Parent2</em>'.
+	 * @see org.gecko.codec.demo.model.person.Parent2
+	 * @generated
+	 */
+	EClass getParent2();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.demo.model.person.Parent2#getKind <em>Kind</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Kind</em>'.
+	 * @see org.gecko.codec.demo.model.person.Parent2#getKind()
+	 * @see #getParent2()
+	 * @generated
+	 */
+	EAttribute getParent2_Kind();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.Child <em>Child</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Child</em>'.
+	 * @see org.gecko.codec.demo.model.person.Child
+	 * @generated
+	 */
+	EClass getChild();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.gecko.codec.demo.model.person.Child#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.gecko.codec.demo.model.person.Child#getName()
+	 * @see #getChild()
+	 * @generated
+	 */
+	EAttribute getChild_Name();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.Child2 <em>Child2</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Child2</em>'.
+	 * @see org.gecko.codec.demo.model.person.Child2
+	 * @generated
+	 */
+	EClass getChild2();
+
+	/**
+	 * Returns the meta object for class '{@link org.gecko.codec.demo.model.person.TestObject <em>Test Object</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Test Object</em>'.
+	 * @see org.gecko.codec.demo.model.person.TestObject
+	 * @generated
+	 */
+	EClass getTestObject();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.gecko.codec.demo.model.person.TestObject#getRef1 <em>Ref1</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Ref1</em>'.
+	 * @see org.gecko.codec.demo.model.person.TestObject#getRef1()
+	 * @see #getTestObject()
+	 * @generated
+	 */
+	EReference getTestObject_Ref1();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.gecko.codec.demo.model.person.TestObject#getRef2 <em>Ref2</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Ref2</em>'.
+	 * @see org.gecko.codec.demo.model.person.TestObject#getRef2()
+	 * @see #getTestObject()
+	 * @generated
+	 */
+	EReference getTestObject_Ref2();
+
+	/**
 	 * Returns the meta object for enum '{@link org.gecko.codec.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1889,6 +2331,134 @@ public interface PersonPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference SIMPLE_MAP__STRING_MAP_VALUES = eINSTANCE.getSimpleMap_StringMapValues();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.TypeKeyEClassImpl <em>Type Key EClass</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.TypeKeyEClassImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getTypeKeyEClass()
+		 * @generated
+		 */
+		EClass TYPE_KEY_ECLASS = eINSTANCE.getTypeKeyEClass();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.SensorBookImpl <em>Sensor Book</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.SensorBookImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getSensorBook()
+		 * @generated
+		 */
+		EClass SENSOR_BOOK = eINSTANCE.getSensorBook();
+
+		/**
+		 * The meta object literal for the '<em><b>Sensors</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SENSOR_BOOK__SENSORS = eINSTANCE.getSensorBook_Sensors();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.SensorImpl <em>Sensor</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.SensorImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getSensor()
+		 * @generated
+		 */
+		EClass SENSOR = eINSTANCE.getSensor();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.ParentImpl <em>Parent</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.ParentImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getParent()
+		 * @generated
+		 */
+		EClass PARENT = eINSTANCE.getParent();
+
+		/**
+		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PARENT__TYPE = eINSTANCE.getParent_Type();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.Parent2Impl <em>Parent2</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.Parent2Impl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getParent2()
+		 * @generated
+		 */
+		EClass PARENT2 = eINSTANCE.getParent2();
+
+		/**
+		 * The meta object literal for the '<em><b>Kind</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PARENT2__KIND = eINSTANCE.getParent2_Kind();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.ChildImpl <em>Child</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.ChildImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getChild()
+		 * @generated
+		 */
+		EClass CHILD = eINSTANCE.getChild();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHILD__NAME = eINSTANCE.getChild_Name();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.Child2Impl <em>Child2</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.Child2Impl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getChild2()
+		 * @generated
+		 */
+		EClass CHILD2 = eINSTANCE.getChild2();
+
+		/**
+		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.impl.TestObjectImpl <em>Test Object</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.gecko.codec.demo.model.person.impl.TestObjectImpl
+		 * @see org.gecko.codec.demo.model.person.impl.PersonPackageImpl#getTestObject()
+		 * @generated
+		 */
+		EClass TEST_OBJECT = eINSTANCE.getTestObject();
+
+		/**
+		 * The meta object literal for the '<em><b>Ref1</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference TEST_OBJECT__REF1 = eINSTANCE.getTestObject_Ref1();
+
+		/**
+		 * The meta object literal for the '<em><b>Ref2</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference TEST_OBJECT__REF2 = eINSTANCE.getTestObject_Ref2();
 
 		/**
 		 * The meta object literal for the '{@link org.gecko.codec.demo.model.person.GENDER_TYPE <em>GENDER TYPE</em>}' enum.

@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.constants;
+package org.eclipse.fennec.codec.options;
 
 
 /**
@@ -85,20 +85,6 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
 	
-	/** CODEC_TYPE_VALUE_WRITER_NAME 
-	* annotation at the {@link EClassifier} level, to specify a {@link CodecValueWriter} name to be used 
-	 * when serializing the type information. The actual {@link CodecValueWriter} object should then be one
-	 * of the automatically registered ones or should be passed through the options when saving a {@link Resource}. 
-	 * */
-	String CODEC_TYPE_VALUE_WRITER_NAME = "codec.type.value.writer.name";
-	
-	/** CODEC_TYPE_VALUE_READER_NAME 
-	* annotation at the {@link EClassifier} level, to specify a {@link CodecValueReader} name to be used 
-	 * when deserializing the type information. The actual {@link CodecValueReader} object should then be one
-	 * of the automatically registered ones or should be passed through the options when loading a {@link Resource}. 
-	 * */
-	String CODEC_TYPE_VALUE_READER_NAME = "codec.type.value.reader.name";
-	
 	/** CODEC_VALUE_WRITER_NAME 
 	 * annotation at the {@link EStructuralFeature} level, to specify a {@link CodecValueWriter} name to be used 
 	 * when serializing the annotated {@link EStructuralFeature}. The actual {@link CodecValueWriter} object should 
@@ -113,18 +99,14 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_VALUE_READER_NAME = "codec.value.reader.name";
 	
-	/** CODEC_TYPE_USE 
-	 * Annotation used for specifying a strategy to serialize the type of the object
-	 * Currently supported values are:
-  	 * CLASS: the class name will be used (e.g. org.gecko.codec.demo.model.person.Person) 
-  	 * NAME: the class name will be used (e.g. Person)
-  	 * URI: the URI will be used (e.g. http://example.de/person/1.0#//Person) 
+	/** CODEC_TYPE 
+	 * Annotation used for specifying how to treat the type information of the object marked this way.
+	 * This annotation can be either put at the {@link EClass} level or at the {@link EReference} level.
+	 * The details map keys are:
+	 * - use: to specify a strategy for the type value reader/writer (supported are NAME, CLASS, URI)
+	 * - include: to specify weather the type information should be considered or not (default is true)
+	 * - typeKey: the String to be looked for retrieving the type of the object and the property name to be used when serializing the type (default is _type)
+	 * - additional <key, value> pairs in the details map should represent string to look for when deserializing the object, to decide which type of object it is
 	 * */
-	String CODEC_TYPE_USE = "codec.type.use";
-	
-	/** CODEC_TYPE_INCLUDE
-	 * Annotation used to specify weather the type information should be serialized or not.
-	 * */
-	String CODEC_TYPE_INCLUDE = "codec.type.include";
-
+	String CODEC_TYPE = "codec.type";
 }

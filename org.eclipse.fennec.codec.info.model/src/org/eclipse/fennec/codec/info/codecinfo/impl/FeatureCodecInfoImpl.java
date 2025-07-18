@@ -12,7 +12,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.ETypedElement;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
@@ -39,7 +38,7 @@ import org.eclipse.fennec.codec.info.codecinfo.InfoType;
  *
  * @generated
  */
-public class FeatureCodecInfoImpl extends MinimalEObjectImpl.Container implements FeatureCodecInfo {
+public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureCodecInfo {
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->

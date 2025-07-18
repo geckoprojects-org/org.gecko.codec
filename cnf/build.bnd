@@ -7,7 +7,7 @@
 	geckoOSGi-Test,\
 	geckoJacoco,\
 	geckoEMF,\
-	geckoSearch
+	geckoEMFUtil
 
 # Needed because we enabled library 'gecko-dimc'
 # Activate baselining

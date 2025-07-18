@@ -342,6 +342,8 @@ public class DraginoPackageImpl extends EPackageImpl implements DraginoPackage {
 		// Create annotations
 		// http:///org/eclipse/emf/ecore/util/ExtendedMetaData
 		createExtendedMetaDataAnnotations();
+		// codec
+		createCodecAnnotations();
 	}
 
 	/**
@@ -363,6 +365,22 @@ public class DraginoPackageImpl extends EPackageImpl implements DraginoPackage {
 		   source,
 		   new String[] {
 			   "name", "Mod"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>codec</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createCodecAnnotations() {
+		String source = "codec";
+		addAnnotation
+		  (draginoLSE01UplinkEClass,
+		   source,
+		   new String[] {
+			   "inherit", "true"
 		   });
 	}
 

@@ -33,6 +33,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *
  * @see org.eclipse.fennec.lorawan.uplink.model.lorawan.LorawanPackage#getUplinkMessage()
  * @model abstract="true"
+ *        annotation="codec.type strategy='NAME' typeKey='deviceInfo.deviceProfileName' Dragino_LSE01='DraginoLSE01Uplink' EM310-UDL='EM310UDLUplink'"
  * @generated
  */
 @ProviderType

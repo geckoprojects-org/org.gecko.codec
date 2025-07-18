@@ -76,14 +76,14 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 			return;
 		}
 		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
-		EMFCodecReadContext codecReadCtxt = null;
-		if(jp.streamReadContext() instanceof EMFCodecReadContext crc) {
-			codecReadCtxt = crc;
+		EMFCodecReadContext codecReadCtxt = jp.streamReadContext() instanceof EMFCodecReadContext ? (EMFCodecReadContext) jp.streamReadContext() : null;
+		if(codecReadCtxt == null) {
+			throw new IllegalArgumentException(String.format("No EMFCodecReadContext available. Something went wrong!"));
 		}
-		if(codecReadCtxt != null) {
-			codecReadCtxt.setCurrentFeature(feature);
-			if(codecReadCtxt.getCurrentEObject() == null) codecReadCtxt.setCurrentEObject(current);
-		}
+			
+		codecReadCtxt.setCurrentFeature(feature);
+		codecReadCtxt.setCurrentEObject(current);
+		codecReadCtxt.setResource(resource);
 		
 		JsonToken token = null;
 
@@ -107,11 +107,6 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		case SINGLE_CONTAINMENT: 
 		case SINGLE_ATTRIBUTE:
 		case MANY_ATTRIBUTE: {
-//			EMFContext.setFeature(ctxt, feature);
-//			EMFContext.setParent(ctxt, current);
-//			if (feature.getEType() instanceof EDataType) {
-//				EMFContext.setDataType(ctxt, feature.getEType());
-//			}
 			String readerName = featureCodecInfo.getValueReaderName();
 			CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.ATTRIBUTE);
 			CodecValueReader<Object, ?> reader =  infoHolder.getReaderByName(readerName);
@@ -143,13 +138,9 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		break;
 		case MANY_REFERENCE:
 		case SINGLE_REFERENCE: {
-//			EMFContext.setFeature(ctxt, feature);
-//			EMFContext.setParent(ctxt, current);
 			if (feature.isMany()) {
 				deserializer.deserialize(jp, ctxt, current.eGet(feature));
 			} else {
-//				Object value = deserializer.deserialize(jp, ctxt, current.eGet(feature));
-//				current.eSet(feature, value);
 				new ReferenceCodecInfoDeserializer(codecModule, codecModelInfoService, typeCodecInfo)
 				.deserializeAndSet(jp, current, ctxt, resource);	  
 			}

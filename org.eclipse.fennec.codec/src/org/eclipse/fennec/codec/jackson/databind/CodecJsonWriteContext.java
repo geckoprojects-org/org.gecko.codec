@@ -27,7 +27,7 @@ import tools.jackson.core.json.JsonWriteContext;
  */
 public class CodecJsonWriteContext extends JsonWriteContext implements EMFCodecWriteContext {
 
-	private final EMFContextHolder holder;
+	private EMFContextHolder holder;
 
 
 	protected CodecJsonWriteContext(int type, CodecJsonWriteContext parent, DupDetector dups, Object currValue) {
@@ -192,6 +192,24 @@ public class CodecJsonWriteContext extends JsonWriteContext implements EMFCodecW
 		_currentValue = currValue;
 		if (_dups != null) { _dups.reset(); }
 		return this;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#getEMFContextHolder()
+	 */
+	@Override
+	public EMFContextHolder getEMFContextHolder() {
+		return holder;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#setEMFContextHolder(org.eclipse.fennec.codec.jackson.databind.EMFContextHolder)
+	 */
+	@Override
+	public void setEMFContextHolder(EMFContextHolder holder) {
+		this.holder = holder;		
 	}
 
 
