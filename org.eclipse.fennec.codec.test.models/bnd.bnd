@@ -9,7 +9,8 @@ src= \
 	src-generics,\
 	src-model,\
 	src-array,\
-	src-package-annotations
+	src-package-annotations,\
+	src-metadata
 
 
 # The code generation takes a bit of time and makes the build a bit slower.
@@ -34,7 +35,11 @@ src= \
 	model/packageAnnotations.genmodel;\
 		generate=geckoEMF;\
 		genmodel=model/packageAnnotations.genmodel;\
-		output=src-package-annotations
+		output=src-package-annotations,\
+	model/metadata.genmodel;\
+		generate=geckoEMF;\
+		genmodel=model/metadata.genmodel;\
+		output=src-metadata
 # Add this attribute to find some logging information
 #		logfile=test.log;\
 

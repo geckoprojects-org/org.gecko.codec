@@ -154,4 +154,30 @@ public class CodecJsonSerializeNameFromExtendedMetaDataTest extends JsonTestSett
 			 assertFalse(found);
 		 }
 	}
+	
+	@Test
+	public void testSerializationExtendedMetadataYESTestModel() throws IOException {
+	
+		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+		org.eclipse.fennec.codec.test.models.metadata.Person person = org.eclipse.fennec.codec.test.models.metadata.MetadataFactory.eINSTANCE.createPerson();
+		person.setKind("Person");
+		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
+		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		resource.save(options);
+		
+		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			 String line = reader.readLine();
+			 boolean found = false;
+			 while(line != null) {
+				 if(line.contains("\"typeOfPerson\" :")) {//we need to check against "title" and not "titles" because use-name-from-extended-metadata is true by default
+					 found = true;
+				 }
+				 line = reader.readLine();
+			 }
+			 assertTrue(found);
+		 }
+	}
 }

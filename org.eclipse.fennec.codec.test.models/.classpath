@@ -11,5 +11,6 @@
 	<classpathentry kind="src" path="src-model"/>
 	<classpathentry kind="src" path="src-package-annotations"/>
 	<classpathentry kind="src" path="src-codec"/>
+	<classpathentry kind="src" path="src-metadata"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
