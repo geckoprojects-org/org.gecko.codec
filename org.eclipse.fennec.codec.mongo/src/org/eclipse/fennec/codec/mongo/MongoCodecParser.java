@@ -310,7 +310,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	protected void _parseNumericValue(int expType) throws JacksonException, InputCoercionException {
-		// TODO Auto-generated method stub
+		this._numTypesValid = NR_INT;
 		
 	}
 

@@ -122,6 +122,74 @@ public class CodecTokenBuffer extends TokenBuffer {
         return p;
     }
     
+    /* 
+     * (non-Javadoc)
+     * @see tools.jackson.databind.util.TokenBuffer#copyCurrentEvent(tools.jackson.core.JsonParser)
+     */
+    @Override
+    public void copyCurrentEvent(JsonParser p)
+    {
+    	if ((_typeId = p.getTypeId()) != null) {
+            _hasNativeId = true;
+        }
+        if ((_objectId = p.getObjectId()) != null) {
+            _hasNativeId = true;
+        }
+        switch (p.currentToken()) {
+        case START_OBJECT:
+            writeStartObject();
+            break;
+        case END_OBJECT:
+            writeEndObject();
+            break;
+        case START_ARRAY:
+            writeStartArray();
+            break;
+        case END_ARRAY:
+            writeEndArray();
+            break;
+        case PROPERTY_NAME:
+            writeName(p.currentName());
+            break;
+        case VALUE_STRING:
+            if (p.hasStringCharacters()) {
+                writeString(p.getStringCharacters(), p.getStringOffset(), p.getStringLength());
+            } else {
+                writeString(p.getString());
+            }
+            break;
+        case VALUE_NUMBER_INT:
+            switch (p.getNumberType()) {
+            case INT:
+                writeNumber(p.getIntValue());
+                break;
+            case BIG_INTEGER:
+            	writeNumber(p.getBigIntegerValue());
+                break;
+            default:
+                writeNumber(p.getLongValue());
+            }
+            break;
+        case VALUE_NUMBER_FLOAT:
+        	writeNumber(p.getDoubleValue());
+            break;
+        case VALUE_TRUE:
+            writeBoolean(true);
+            break;
+        case VALUE_FALSE:
+            writeBoolean(false);
+            break;
+        case VALUE_NULL:
+            writeNull();
+            break;
+        case VALUE_EMBEDDED_OBJECT:
+            writePOJO(p.getEmbeddedObject());
+            break;
+        default:
+            throw new RuntimeException("Internal error: unexpected token: "+p.currentToken());
+        }
+    }
+    
     
     
     /*
