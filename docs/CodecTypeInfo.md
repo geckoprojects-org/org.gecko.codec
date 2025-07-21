@@ -46,4 +46,30 @@ When deserializing an object, we will go over the deserialized document and look
 
 If no match is found in the `typeMap`, then we will try to directly deserialize the token value with the `CodecValueReader`.
 
- 
+## Annotations
+
+The TypeInfo can be set either through model annotations or through save/load options. 
+
+The type annotation can be placed either at the level of an `EClass` or at the level of an `EReference`. 
+
+The source of the `EAnnotation` is `codec.type`; The details entry keys are:
+
++ `typeKey`: to set the `typeKey` property
++ `strategy`: to set the `typeStrategy`
++ `include`: to set the `typeIgnore` property
++ `typeValueReaderName`: to set the name of the value reader;
++ `typeValueWriterName`: to set the name of the value writer;
++ additional key, value pairs will be interpret for the `typeMap` property.
+
+ ## Save/Load Options
+
+All the properties of the TypeInfo can be overwritten through load/save options. They have to be grouped by `EClass` or `EReference`, depending on which element the properties should apply. So, for an `EClass` using the `CodecResourceOptions.CODEC_OPTIONS`, which then accepts a Map whose keys are the `EClass` and the values are the map of options specific for that class. While, for an `EReference` the same, but the `CodecResourceOptions.CODEC_OPTIONS` should be then passed as key of the class options to which the reference belongs.
+
+The options to be used are the following:
+
++ `CodecModelInfoOptions.CODEC_TYPE_KEY`: to overwrite the `typeKey`;
++ `CodecModelInfoOptions.CODEC_TYPE_STRATEGY`: to overwrite the `typeStrategy`;
++ `CodecModelInfoOptions.CODEC_TYPE_INCLUDE`: to overwrite the include annotation;
++ `CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME`: to overwrite the value reader name;
++ `CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME`: to overwrite the value writer name;
++ `CodecModelInfoOptions.CODEC_TYPE_MAP`: to overwrite the `typeMap`.
