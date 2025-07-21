@@ -15,11 +15,17 @@ package org.eclipse.fennec.codec.info.helper;
 
 import java.util.logging.Logger;
 
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoFactory;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
+import org.eclipse.fennec.codec.info.value.readers.DefaultEClassReader;
+import org.eclipse.fennec.codec.info.value.readers.EClassReaderByName;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 
 /**
@@ -27,11 +33,20 @@ import org.eclipse.fennec.codec.info.codecinfo.InfoType;
  * @author ilenia
  * @since Jul 31, 2024
  */
+@Component(immediate = true, name = "CodecInfoHolderHelper", service = CodecInfoHolderHelper.class)
 public class CodecInfoHolderHelper {
 	
+	@Reference
+	ResourceSet resourceSet;
+	
 	private static final Logger LOGGER = Logger.getLogger(CodecInfoHolderHelper.class.getName());
+	
+	@Activate
+	public void activate() {
+		System.out.println("I am CodecInfoHolderHelper");
+	}
 
-	public static CodecInfoHolder createCodecInfoHolderForType(InfoType codecType) {
+	public CodecInfoHolder createCodecInfoHolderForType(InfoType codecType) {
 		CodecInfoHolder codecInfoHolder = CodecInfoFactory.eINSTANCE.createCodecInfoHolder();
 		codecInfoHolder.setInfoType(codecType);
 
@@ -48,8 +63,8 @@ public class CodecInfoHolderHelper {
 			codecInfoHolder.getWriters().add(CodecIOHelper.SINGLE_SUPERTYPE_WRITER);	
 			break;
 		case TYPE: 
-			codecInfoHolder.getReaders().add(CodecIOHelper.DEFAULT_ECLASS_READER);
-			codecInfoHolder.getReaders().add(CodecIOHelper.READ_BY_NAME);
+			codecInfoHolder.getReaders().add(new DefaultEClassReader(resourceSet));
+			codecInfoHolder.getReaders().add(new EClassReaderByName(resourceSet));
 			codecInfoHolder.getReaders().add(CodecIOHelper.READ_BY_CLASS);
 
 			codecInfoHolder.getWriters().add(CodecIOHelper.URI_WRITER);		
@@ -63,7 +78,7 @@ public class CodecInfoHolderHelper {
 		return codecInfoHolder;
 	}
 	
-	public static void addCodecReader(CodecInfoHolder infoHolder, CodecValueReader<?,?> reader) {
+	public void addCodecReader(CodecInfoHolder infoHolder, CodecValueReader<?,?> reader) {
 		boolean alreadyInThere = false;
 		for(CodecValueReader<?,?> r : infoHolder.getReaders()) {
 			if(r.getName().equals(reader.getName())) {
@@ -78,7 +93,7 @@ public class CodecInfoHolderHelper {
 		infoHolder.getReaders().add(reader);
 	}
 	
-	public static void addCodecWriter(CodecInfoHolder infoHolder, CodecValueWriter<?,?> writer) {
+	public void addCodecWriter(CodecInfoHolder infoHolder, CodecValueWriter<?,?> writer) {
 		boolean alreadyInThere = false;
 		for(CodecValueWriter<?,?> w : infoHolder.getWriters()) {
 			if(w.getName().equals(writer.getName())) {
