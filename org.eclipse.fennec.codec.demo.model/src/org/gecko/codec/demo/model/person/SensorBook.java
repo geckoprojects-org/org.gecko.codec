@@ -34,7 +34,7 @@ public interface SensorBook extends EObject {
 	 * @return the value of the '<em>Sensors</em>' containment reference list.
 	 * @see org.gecko.codec.demo.model.person.PersonPackage#getSensorBook_Sensors()
 	 * @model containment="true"
-	 *        annotation="codec.type include='true' use='NAME' typeKey='name' dragino='DraginoUplink' em310='EM310Uplink'"
+	 *        annotation="codec.type include='true' strategy='NAME' typeKey='name' dragino='DraginoUplink' em310='EM310Uplink'"
 	 * @generated
 	 */
 	EList<Sensor> getSensors();
