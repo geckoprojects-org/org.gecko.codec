@@ -87,20 +87,20 @@ public class CodecIOHelper {
 	};
 
 
-	public static final CodecValueReader<String, EClass> DEFAULT_ECLASS_READER = new CodecValueReader<>() {
-
-		@Override
-		public String getName() {
-			return "DEFAULT_ECLASS_READER";
-		}
-
-		@Override
-		public EClass readValue(String value, DeserializationContext context) {
-			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
-			Set<EClass> types = getAllTypes(resSet);			
-			return types.stream().filter(findByURI(value)).findFirst().orElse(null);
-		}
-	};
+//	public static final CodecValueReader<String, EClass> DEFAULT_ECLASS_READER = new CodecValueReader<>() {
+//
+//		@Override
+//		public String getName() {
+//			return "DEFAULT_ECLASS_READER";
+//		}
+//
+//		@Override
+//		public EClass readValue(String value, DeserializationContext context) {
+//			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
+//			Set<EClass> types = getAllTypes(resSet);			
+//			return types.stream().filter(findByURI(value)).findFirst().orElse(null);
+//		}
+//	};
 
 
 	public static final CodecValueWriter<EClass, String[]> ALL_SUPERTYPE_WRITER = new CodecValueWriter<>() {
@@ -148,21 +148,21 @@ public class CodecIOHelper {
 		}		
 	};
 
-	public static final CodecValueReader<String, EClass> READ_BY_NAME = new CodecValueReader<>() {
-
-		@Override
-		public String getName() {
-			return "READ_BY_NAME";
-		}
-
-		@Override
-		public EClass readValue(String value, DeserializationContext context) {
-			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
-			return findEClassByName(value, resSet);
-		}
-	};
+//	public static final CodecValueReader<String, EClass> READ_BY_NAME = new CodecValueReader<>() {
+//
+//		@Override
+//		public String getName() {
+//			return "READ_BY_NAME";
+//		}
+//
+//		@Override
+//		public EClass readValue(String value, DeserializationContext context) {
+//			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
+//			return findEClassByName(value, resSet);
+//		}
+//	};
 	
-	private static Set<EClass> getAllTypes(ResourceSet resourceSet) {
+	public static Set<EClass> getAllTypes(ResourceSet resourceSet) {
 		EPackage.Registry global = resourceSet == null ? EPackage.Registry.INSTANCE : resourceSet.getPackageRegistry();
 		Map<String, Object> registry = new HashMap<>();
 		registry.putAll(global);
@@ -190,7 +190,7 @@ public class CodecIOHelper {
 		return types.stream().filter(findByName(name)).findFirst().orElse(null);
 	}
 	
-	private static Predicate<EObject> findByURI(final String value) {
+	public static Predicate<EObject> findByURI(final String value) {
 		return e -> value != null && e instanceof EClass && EcoreUtil.getURI(e) != null && value.equals(EcoreUtil.getURI(e).toString());
 	}
 

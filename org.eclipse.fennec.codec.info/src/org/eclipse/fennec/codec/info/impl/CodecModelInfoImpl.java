@@ -52,6 +52,9 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 @Component(name = "CodecModelInfoService", service = CodecModelInfo.class)
 public class CodecModelInfoImpl extends HashMap<String, Object> implements CodecModelInfo {
+	
+	@Reference
+	CodecInfoHolderHelper codecInfoHolderHelper;
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 7749336016374647599L;
@@ -362,7 +365,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	private void createCodecInfoHolderMap() {
 		for(InfoType type : InfoType.values()) {
 			if(!codecInfoHolderMap.containsKey(type)) {
-				codecInfoHolderMap.put(type, CodecInfoHolderHelper.createCodecInfoHolderForType(type));
+				codecInfoHolderMap.put(type, codecInfoHolderHelper.createCodecInfoHolderForType(type));
 			}
 		}
 	}
@@ -470,7 +473,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	 */
 	@Override
 	public void addCodecValueWriterForType(InfoType infoType, CodecValueWriter<?, ?> writer) {
-		CodecInfoHolderHelper.addCodecWriter(getCodecInfoHolderByType(infoType), writer);
+		codecInfoHolderHelper.addCodecWriter(getCodecInfoHolderByType(infoType), writer);
 		codecInfoHolderMap.put(infoType, getCodecInfoHolderByType(infoType));		
 	}
 
@@ -481,7 +484,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	 */
 	@Override
 	public void addCodecValueReaderForType(InfoType infoType, CodecValueReader<?, ?> reader) {
-		CodecInfoHolderHelper.addCodecReader(getCodecInfoHolderByType(infoType), reader);
+		codecInfoHolderHelper.addCodecReader(getCodecInfoHolderByType(infoType), reader);
 		codecInfoHolderMap.put(infoType, getCodecInfoHolderByType(infoType));	
 
 	}
