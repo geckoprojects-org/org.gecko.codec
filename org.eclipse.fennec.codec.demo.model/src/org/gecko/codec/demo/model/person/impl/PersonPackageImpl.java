@@ -1106,7 +1106,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		   source,
 		   new String[] {
 			   "include", "true",
-			   "use", "NAME"
+			   "strategy", "NAME"
 		   });
 		addAnnotation
 		  (typeKeyEClassEClass,
@@ -1123,7 +1123,7 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		   source,
 		   new String[] {
 			   "include", "true",
-			   "use", "NAME",
+			   "strategy", "NAME",
 			   "typeKey", "name",
 			   "dragino", "DraginoUplink",
 			   "em310", "EM310Uplink"

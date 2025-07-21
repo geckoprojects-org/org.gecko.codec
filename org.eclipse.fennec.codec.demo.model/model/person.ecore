@@ -7,7 +7,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="Person">
     <eAnnotations source="codec.type">
       <details key="include" value="true"/>
-      <details key="use" value="NAME"/>
+      <details key="strategy" value="NAME"/>
     </eAnnotations>
     <eAnnotations source="codec.id">
       <details key="strategy" value="COMBINED"/>
@@ -125,7 +125,7 @@
         eType="#//Sensor" containment="true">
       <eAnnotations source="codec.type">
         <details key="include" value="true"/>
-        <details key="use" value="NAME"/>
+        <details key="strategy" value="NAME"/>
         <details key="typeKey" value="name"/>
         <details key="dragino" value="DraginoUplink"/>
         <details key="em310" value="EM310Uplink"/>

@@ -39,7 +39,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * </ul>
  *
  * @see org.gecko.codec.demo.model.person.PersonPackage#getPerson()
- * @model annotation="codec.type include='true' use='NAME'"
+ * @model annotation="codec.type include='true' strategy='NAME'"
  *        annotation="codec.id strategy='COMBINED' separator='-'"
  * @generated
  */
