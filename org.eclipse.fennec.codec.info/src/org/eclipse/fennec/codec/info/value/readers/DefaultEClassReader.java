@@ -13,13 +13,10 @@
  */
 package org.eclipse.fennec.codec.info.value.readers;
 
-import java.util.Set;
-
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
-import org.eclipse.fennec.codec.info.helper.CodecIOHelper;
 
 import tools.jackson.databind.DeserializationContext;
 
@@ -54,11 +51,8 @@ public class DefaultEClassReader implements CodecValueReader<String, EClass>{
 	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecValueReader#readValue(java.lang.Object, tools.jackson.databind.DeserializationContext)
 	 */
 	@Override
-	public EClass readValue(String value, DeserializationContext context) {
-		
-		EClass eClass =  (EClass) resourceSet.getEObject(URI.createURI(value), false);
-		
-		return (EClass) resourceSet.getEObject(URI.createURI(value), false);
+	public EClass readValue(String value, DeserializationContext context) {		
+		return (EClass) resourceSet.getEObject(URI.createURI(value), true);
 //		Set<EClass> types = CodecIOHelper.getAllTypes(resourceSet);			
 //		return types.stream().filter(CodecIOHelper.findByURI(value)).findFirst().orElse(null);
 	}
