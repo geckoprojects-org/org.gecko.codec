@@ -73,3 +73,246 @@ The options to be used are the following:
 + `CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME`: to overwrite the value reader name;
 + `CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME`: to overwrite the value writer name;
 + `CodecModelInfoOptions.CODEC_TYPE_MAP`: to overwrite the `typeMap`.
+
+## Examples
+
+### Example 1
+
+The easiest example is the default one, when no annotation nor option for the type info is provided. In this case, the `typeKey` is expected to be `_type`, and the strategy is `URI`. So, a deserializable document with the default option would be:
+
+```json
+{
+    "_type": "http://example.de/person/1.0#//Person",
+    "name": "Mario",
+    "address": {
+        "_type": "http://example.de/person/1.0#//Address",
+        "street": "Via Giuseppe Garibaldi"
+    }
+}
+```
+
+### Example 2
+
+If we want to change the `typeKey` during (de-)serialization, we have to overwrite that option for the relative `EClass` or `EReference` we want.
+
++ To change only the `EClass` `typeKey`, for instance:
+
+```java
+EClass personCl = PersonPackage.eINSTANCE.getPerson();
+Map<String, Object> options = new HashMap<>();
+Map<String, Object> classOpt = new HashMap<>();
+classOpt.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "eClass");
+options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(personCl, classOpt));
+options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, personCl);
+resource.load(options); //or resource.save(options);
+```
+
+```json
+{
+    "eClass": "http://example.de/person/1.0#//Person",
+    "name": "Mario",
+    "address": {
+        "_type": "http://example.de/person/1.0#//Address",
+        "street": "Via Giuseppe Garibaldi"
+    }
+}
+```
+
+
+
++ To change the `typeKey` only for the `EReference`, instead:
+
+```java
+EClass personCl = PersonPackage.eINSTANCE.getPerson();
+EReference addRef = PersonPackage.eINSTANCE.getPerson_Address();
+Map<String, Object> options = new HashMap<>();
+Map<String, Object> classOpt = new HashMap<>();
+Map<String, Object> refOpt = new HashMap<>();
+refOpt.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "eClass");
+classOpt.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(addRef, refOpt));
+options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(personCl, classOpt));
+options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, personCl);
+resource.load(options); //or resource.save(options);
+```
+
+```json
+{
+    "_type": "http://example.de/person/1.0#//Person",
+    "name": "Mario",
+    "address": {
+        "eClass": "http://example.de/person/1.0#//Address",
+        "street": "Via Giuseppe Garibaldi"
+    }
+}
+```
+
+
+
+### Example 3
+
+If we want to change the `strategy` during (de-)serialization, we have to overwrite that option for the relative `EClass` or `EReference` we want.
+
++ To change only the `EClass` `typeKey`, for instance:
+
+  ```java
+  EClass personCl = PersonPackage.eINSTANCE.getPerson();
+  Map<String, Object> options = new HashMap<>();
+  Map<String, Object> classOpt = new HashMap<>();
+  classOpt.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
+  options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(personCl, classOpt));
+  options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, personCl);
+  resource.load(options); //or resource.save(options);
+  ```
+
+  ```json
+  {
+      "_type": "Person",
+      "name": "Mario",
+      "address": {
+          "_type": "http://example.de/person/1.0#//Address",
+          "street": "Via Giuseppe Garibaldi"
+      }
+  }
+  ```
+
++ To change it only for the `ERefenrence`, follow the same path as **Example 2** but instead of using the `CodecModelInfoOptions.CODEC_TYPE_KEY options use the CodecModelInfoOptions.CODEC_TYPE_STRATEGY` options.
+
++ To change it for both, combine the options for the `EClass` and the one for the `EReference`.
+
+### Example 4
+
+If you want to add a `typeMap`, which by default is empty, you can also do that through the options. For instance, suppose you have multiple kinds of `Address` in your model, like a `CompanyAddress`, a `PersonalAddress` and a `HolidayAddress`. Then you can do something like:
+
+```java
+EClass personCl = PersonPackage.eINSTANCE.getPerson();
+EReference addRef = PersonPackage.eINSTANCE.getPerson_Address();
+Map<String, Object> options = new HashMap<>();
+Map<String, Object> classOpt = new HashMap<>();
+Map<String, Object> refOpt = new HashMap<>();
+refOpt.put(CodecModelInfoOptions.CODEC_TYPE_MAP, Map.of(
+"company", "http://example.de/person/1.0#//CompanyAddress",
+"personal", "http://example.de/person/1.0#//PersonalAddress",
+"holiday", "http://example.de/person/1.0#//HolidayAddress",
+));
+classOpt.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(addRef, refOpt));
+options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(personCl, classOpt));
+options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, personCl);
+resource.load(options); //or resource.save(options);
+```
+
+```json
+{
+    "_type": "Person",
+    "name": "Mario",
+    "addresses": [{
+        "_type": "personal",
+        "street": "Via Giuseppe Garibaldi"
+     }, 
+     {
+        "_type": "company",
+        "street": "Via dei Lavoratori"
+     }, 
+     {
+         "_type": "holiday",
+         "street": "Lungomare di Cervia"
+     }]
+}
+```
+
+So, if a `typeMap` is found, the (de-)serializer tries first to (de-)serialize, based on the `streatgy`, what it finds in the map values. If the `typeMap` is empty or no match has been found, then, the serializer serializes the object/reference type based on the `strategy` and the deserializer tries to deserialize the token it finds based on the `strategy`.
+
+### Example 5
+
+If you want to pass as a `typeKey` not a simple attribute name but an attribute of a reference, you can do that like this:
+
+```java
+EClass personCl = PersonPackage.eINSTANCE.getPerson();
+Map<String, Object> options = new HashMap<>();
+Map<String, Object> classOpt = new HashMap<>();
+classOpt.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "model.type");
+options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(personCl, classOpt));
+options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, personCl);
+resource.load(options); //or resource.save(options);
+```
+
+```json
+{
+  "name": "Mario",
+  "model": {
+      "type": "http://example.de/person/1.0#//Person"
+  }
+}
+```
+
+If no `typeMap` is provided, then the value of the `typeKey` must be a (de-)serializable value according to the `strategy`. So, in this case we are using the default `strategy`, which is `URI` and so a `URI` is provided.
+
+If a `typeMap` is provided instead, then the map key of the value which matches the result of the (de-)serialization according  to the `strategy` has to be used.
+
+```java
+EClass personCl = PersonPackage.eINSTANCE.getPerson();
+Map<String, Object> options = new HashMap<>();
+Map<String, Object> classOpt = new HashMap<>();
+classOpt.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "model.type");
+classOpt.put(CodecModelInfoOptions.CODEC_TYPE_MAP, Map.of(
+	"person", "http://example.de/person/1.0#//Person",
+    "business", "http://example.de/person/1.0#//BusinessPerson"
+));
+options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(personCl, classOpt));
+options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, personCl);
+resource.load(options); //or resource.save(options);
+```
+
+```json
+{
+  "name": "Mario",
+  "model": {
+      "type": "person"
+  }
+}
+```
+
+
+
+### Example 6
+
+You can also pass your own `CodecValueReader` or `CodecValueWriter`. This might be useful if you have to deserialize a document and it is somehow complicated to extract the type information. 
+
+```java
+public static final CodecValueReader<String, EClass> TEST_TYPE_READER = new CodecValueReader<>() {
+		@Override
+		public String getName() {
+			return "TEST_TYPE_READER";
+		}
+
+		@Override
+		public EClass readValue(String value, DeserializationContext ctxt) {
+			if(value == null) return null;
+			if(value.startsWith("test.")) value = value.substring(5);
+			return CodecIOHelper.findEClassByName(value, null);
+		}
+	};
+EClass personCl = PersonPackage.eINSTANCE.getPerson();
+Map<String, Object> options = new HashMap<>();
+Map<String, Object> classOpt = new HashMap<>();
+classOpt.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER, TEST_TYPE_READER);
+options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(personCl, classOpt));
+options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, personCl);
+resource.load(options); 
+
+```
+
+```json
+{
+    "_type": "test.Person",
+    "name": "Mario",
+    "address": {
+        "_type": "http://example.de/person/1.0#//Address",
+        "street": "Via Giuseppe Garibaldi"
+    }
+}
+```
+
+
+
+
+
