@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.jackson.databind;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 
 import tools.jackson.core.TokenStreamContext;
 import tools.jackson.core.TokenStreamLocation;
@@ -305,5 +306,25 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 	public void setEMFContextHolder(EMFContextHolder holder) {
 		this.holder = holder;		
 	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#setCurrentTypeInfo(org.eclipse.fennec.codec.info.codecinfo.TypeInfo)
+	 */
+	@Override
+	public void setCurrentTypeInfo(TypeInfo typeInfo) {
+		holder.setCurrentTypeInfo(typeInfo);
+		
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#getCurrentTypeInfo()
+	 */
+	@Override
+	public TypeInfo getCurrentTypeInfo() {
+		return holder.getCurrentTypeInfo();
+	}
+
 	
 }

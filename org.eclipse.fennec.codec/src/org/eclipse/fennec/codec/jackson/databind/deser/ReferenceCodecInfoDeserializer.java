@@ -112,7 +112,9 @@ public class ReferenceCodecInfoDeserializer extends ValueDeserializer<EObject> i
 		if(featureCodecInfo == null) {
 			throw new IllegalArgumentException(String.format("Cannot retrieve FeatureCodecInfo for current EStructuralFeature %s. Something went wrong!", reference.getName()));
 		}
+		
 		typeInfo = featureCodecInfo.getTypeInfo();
+		codecReadCtxt.setCurrentTypeInfo(typeInfo);
 		
 		String id = null;
 		String type = null;

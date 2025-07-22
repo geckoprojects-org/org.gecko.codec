@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.jackson.databind;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 
 /**
  * 
@@ -27,6 +28,7 @@ public class EMFContextHolder {
 	private EStructuralFeature _currentFeature;
 	private EObject _currentEObj;
 	private Resource _resource;
+	private TypeInfo _currentTypeInfo;
 	
 
 	public void setCurrentEObject(EObject eObj) {
@@ -60,5 +62,13 @@ public class EMFContextHolder {
 
 	public void resetFeature() {
 		_currentFeature = null;		
+	}
+	
+	public void setCurrentTypeInfo(TypeInfo currentTypeInfo) {
+		_currentTypeInfo = currentTypeInfo;
+	}
+	
+	public TypeInfo getCurrentTypeInfo() {
+		return _currentTypeInfo;
 	}
 }
