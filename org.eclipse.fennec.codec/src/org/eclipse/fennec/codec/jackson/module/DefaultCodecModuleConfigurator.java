@@ -28,10 +28,12 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
 	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
 public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 	
-	private CodecModule.Builder moduleBuilder; 
+	private CodecModule.Builder moduleBuilder;
+	private CodecModuleConfig codecConfig; 
 
 	@Activate
 	public void activate(CodecModuleConfig codecConfig) {
+		this.codecConfig = codecConfig;
 		moduleBuilder = new CodecModule.Builder();
 		configureModuleBuilder(codecConfig);
 	}
@@ -60,6 +62,8 @@ public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 	}
 	
 	public CodecModule.Builder getCodecModuleBuilder() {
+		moduleBuilder = new CodecModule.Builder();
+		configureModuleBuilder(codecConfig);
 		return moduleBuilder;
 	}
 	
