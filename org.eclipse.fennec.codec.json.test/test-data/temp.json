@@ -1,10 +1,10 @@
 {
 	"ref1": {
-"type": "bundle://767d4b82-5300-4985-960c-79b72f2dce46_23.0:0/test-data/type-as-feature.ecore#//Child",
+		"type": "test-data/type-as-feature.ecore#//Child",
 		"name": "child1"
 	},
 	"ref2": {
-"kind": "bundle://767d4b82-5300-4985-960c-79b72f2dce46_23.0:0/test-data/type-as-feature.ecore#//Child2"
+	    "kind": "test-data/type-as-feature.ecore#//Child2"
 	}
 	
 }

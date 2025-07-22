@@ -163,6 +163,7 @@ public class CodecMongoSerializePrimaryKeyTest extends MongoEMFSetting {
 	@Test
 	public void testSaveCombinedIdFeatureAsPrimaryKeyYES() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {
 		ResourceSet resourceSet = rsAware.waitForService(2000l);
+		resourceSet.getResources().clear();
 		
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
 		

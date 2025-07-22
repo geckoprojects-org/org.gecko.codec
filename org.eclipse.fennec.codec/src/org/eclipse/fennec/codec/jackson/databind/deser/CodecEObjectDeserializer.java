@@ -202,6 +202,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 	
 	@SuppressWarnings("unchecked")
 	private CodecTokenBuffer determineType(JsonParser jp, DeserializationContext ctxt, TypeInfo typeInfo) {
+		
 		String typeKey = typeInfo.getTypeKey();
 		if(typeKey == null) return null;
 		String typeReaderName = typeInfo.getTypeValueReaderName();

@@ -19,6 +19,7 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.StreamSupport.stream;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -183,6 +184,34 @@ public class CodecIOHelper {
 				.map(e -> (EClass) e)
 				.collect(Collectors.toSet());
 
+	}
+	
+	public static Set<EClass> getAllTypes(ResourceSet resourceSet, List<String> ePackageUris) {
+		EPackage.Registry global = resourceSet == null ? EPackage.Registry.INSTANCE : resourceSet.getPackageRegistry();
+		Map<String, Object> registry = new HashMap<>();
+		registry.putAll(global);
+
+		return registry.values().stream()
+				.map(e -> {
+					if (e instanceof EPackage.Descriptor) {
+						return ((EPackage.Descriptor) e).getEPackage();
+					} else if (e instanceof EPackage) {						
+						return (EPackage) e;
+					} else {
+						return null;
+					}
+				})
+				.filter(Objects::nonNull)
+				.flatMap(e -> stream(spliteratorUnknownSize(e.eAllContents(), ORDERED), false))
+				.filter(e -> e instanceof EClass && ePackageUris.contains(((EClass) e).getEPackage().getNsURI()))
+				.map(e -> (EClass) e)
+				.collect(Collectors.toSet());
+
+	}
+	
+	public static EClass findEClassByName(String name, ResourceSet resourceSet, List<String> ePackageUris) {
+		Set<EClass> types = getAllTypes(resourceSet, ePackageUris);
+		return types.stream().filter(findByName(name)).findFirst().orElse(null);
 	}
 	
 	public static EClass findEClassByName(String name, ResourceSet resourceSet) {

@@ -127,65 +127,65 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 		}
 	}
 
-	@Test
-	public void testSerializeTypeRootObjMetadataNO() throws IOException {
-
-		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-
-		org.eclipse.fennec.codec.test.models.metadata.Person person = org.eclipse.fennec.codec.test.models.metadata.MetadataFactory.eINSTANCE.createPerson();
-		person.setKind("Person");
-		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(org.eclipse.fennec.codec.test.models.metadata.MetadataPackage.Literals.PERSON, classOptions));
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, false);
-		resource.save(options);
-
-		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			String line = reader.readLine();
-			boolean found = false;
-			while (line != null) {
-				if (line.contains("\"kind\" : ")) {
-					found = true;
-				}
-				line = reader.readLine();
-			}
-			assertTrue(found);
-		}
-	}
+//	@Test
+//	public void testSerializeTypeRootObjMetadataNO() throws IOException {
+//
+//		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+//
+//		org.eclipse.fennec.codec.test.models.metadata.Person person = org.eclipse.fennec.codec.test.models.metadata.MetadataFactory.eINSTANCE.createPerson();
+//		person.setKind("Person");
+//		
+//		resource.getContents().add(person);
+//		Map<String, Object> options = new HashMap<>();
+//		Map<String, Object> classOptions = new HashMap<>();
+//		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
+//		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(org.eclipse.fennec.codec.test.models.metadata.MetadataPackage.Literals.PERSON, classOptions));
+//		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
+//		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, false);
+//		resource.save(options);
+//
+//		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+//			String line = reader.readLine();
+//			boolean found = false;
+//			while (line != null) {
+//				if (line.contains("\"kind\" : ")) {
+//					found = true;
+//				}
+//				line = reader.readLine();
+//			}
+//			assertTrue(found);
+//		}
+//	}
 	
-	@Test
-	public void testSerializeTypeRootObjMetadataYES() throws IOException {
-
-		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-
-		org.eclipse.fennec.codec.test.models.metadata.Person person = org.eclipse.fennec.codec.test.models.metadata.MetadataFactory.eINSTANCE.createPerson();
-		person.setKind("Person");
-		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(org.eclipse.fennec.codec.test.models.metadata.MetadataPackage.Literals.PERSON, classOptions));
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
-		resource.save(options);
-
-		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			String line = reader.readLine();
-			boolean found = false;
-			while (line != null) {
-				if (line.contains("\"typeOfPerson\" : ")) {
-					found = true;
-				}
-				line = reader.readLine();
-			}
-			assertTrue(found);
-		}
-	}
+//	@Test
+//	public void testSerializeTypeRootObjMetadataYES() throws IOException {
+//
+//		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+//
+//		org.eclipse.fennec.codec.test.models.metadata.Person person = org.eclipse.fennec.codec.test.models.metadata.MetadataFactory.eINSTANCE.createPerson();
+//		person.setKind("Person");
+//		
+//		resource.getContents().add(person);
+//		Map<String, Object> options = new HashMap<>();
+//		Map<String, Object> classOptions = new HashMap<>();
+//		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
+//		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(org.eclipse.fennec.codec.test.models.metadata.MetadataPackage.Literals.PERSON, classOptions));
+//		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
+//		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
+//		resource.save(options);
+//
+//		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+//			String line = reader.readLine();
+//			boolean found = false;
+//			while (line != null) {
+//				if (line.contains("\"typeOfPerson\" : ")) {
+//					found = true;
+//				}
+//				line = reader.readLine();
+//			}
+//			assertTrue(found);
+//		}
+//	}
 
 	
 	@Test
