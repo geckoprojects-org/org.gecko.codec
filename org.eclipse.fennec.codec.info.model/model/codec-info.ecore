@@ -23,12 +23,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="eClassCodecInfo" upperBound="-1"
         eType="#//EClassCodecInfo" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EClassCodecInfo" eSuperTypes="#//TypedCodecInfo">
+  <eClassifiers xsi:type="ecore:EClass" name="EClassCodecInfo" eSuperTypes="#//TypedCodecInfo #//IdentifiableCodecInfo">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"
         iD="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="classifier" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EClassifier"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="identityInfo" eType="#//IdentityInfo"
-        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="superTypeInfo" eType="#//SuperTypeInfo"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="featureInfo" upperBound="-1"
@@ -65,8 +63,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="FeatureCodecInfo" eSuperTypes="#//TypedCodecInfo">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         iD="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="features" upperBound="-1"
-        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ETypedElement"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="feature" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//ETypedElement"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="valueReaderName" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="valueWriterName" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//InfoType"/>
@@ -123,7 +120,12 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IdentityInfo" eSuperTypes="#//FeatureCodecInfo">
+  <eClassifiers xsi:type="ecore:EClass" name="IdentityInfo">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="idKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="This is the property name to be used for the id field."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="idStrategy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="This supports the possibility of setting a strategy for id field determination, based on model annotations. For instance, an id field could be the combination of two model fields, and this should be marked in the model."/>
@@ -135,11 +137,10 @@
         <details key="documentation" value="This supports the possibility of setting an id as a combination of multiple fields. The idSeparator property indicates the separator to be used when building the id field."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="idOrder" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="This supports the possibility of setting an id as a combination of multiple fields. The idOrder defines the position of the fields to be used when building the id."/>
-      </eAnnotations>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="idFeatures" upperBound="-1"
+        eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EStructuralFeature"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="idValueReaderName" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="idValueWriterName" eType="ecore:EDataType platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="InfoType">
     <eLiterals name="IDENTITY" literal="IDENTITY"/>
@@ -219,6 +220,10 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypedCodecInfo">
     <eStructuralFeatures xsi:type="ecore:EReference" name="typeInfo" eType="#//TypeInfo"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IdentifiableCodecInfo">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="identityInfo" eType="#//IdentityInfo"
         containment="true"/>
   </eClassifiers>
 </ecore:EPackage>

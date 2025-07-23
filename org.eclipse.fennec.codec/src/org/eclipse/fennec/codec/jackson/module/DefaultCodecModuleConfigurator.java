@@ -40,7 +40,6 @@ public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 	
 	private void configureModuleBuilder(CodecModuleConfig codecConfig) {
 		moduleBuilder
-			.withIdKey(codecConfig.idKey())
 			.withIdOnTop(codecConfig.idOnTop())
 			.withCodecModuleName(codecConfig.codecModuleName())
 			.withCodecType(codecConfig.type())

@@ -188,13 +188,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int ECLASS_CODEC_INFO__TYPE_INFO = TYPED_CODEC_INFO__TYPE_INFO;
 
 	/**
+	 * The feature id for the '<em><b>Identity Info</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO__IDENTITY_INFO = TYPED_CODEC_INFO_FEATURE_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO__ID = TYPED_CODEC_INFO_FEATURE_COUNT + 0;
+	int ECLASS_CODEC_INFO__ID = TYPED_CODEC_INFO_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Classifier</b></em>' reference.
@@ -203,16 +212,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO__CLASSIFIER = TYPED_CODEC_INFO_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Identity Info</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ECLASS_CODEC_INFO__IDENTITY_INFO = TYPED_CODEC_INFO_FEATURE_COUNT + 2;
+	int ECLASS_CODEC_INFO__CLASSIFIER = TYPED_CODEC_INFO_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Super Type Info</b></em>' containment reference.
@@ -315,13 +315,13 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_CODEC_INFO__ID = TYPED_CODEC_INFO_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Features</b></em>' reference list.
+	 * The feature id for the '<em><b>Feature</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_INFO__FEATURES = TYPED_CODEC_INFO_FEATURE_COUNT + 1;
+	int FEATURE_CODEC_INFO__FEATURE = TYPED_CODEC_INFO_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
@@ -497,13 +497,13 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int SUPER_TYPE_INFO__ID = FEATURE_CODEC_INFO__ID;
 
 	/**
-	 * The feature id for the '<em><b>Features</b></em>' reference list.
+	 * The feature id for the '<em><b>Feature</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SUPER_TYPE_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
+	int SUPER_TYPE_INFO__FEATURE = FEATURE_CODEC_INFO__FEATURE;
 
 	/**
 	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
@@ -606,76 +606,13 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int IDENTITY_INFO = 5;
 
 	/**
-	 * The feature id for the '<em><b>Type Info</b></em>' containment reference.
+	 * The feature id for the '<em><b>Id Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO__TYPE_INFO = FEATURE_CODEC_INFO__TYPE_INFO;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__ID = FEATURE_CODEC_INFO__ID;
-
-	/**
-	 * The feature id for the '<em><b>Features</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__FEATURES = FEATURE_CODEC_INFO__FEATURES;
-
-	/**
-	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__VALUE_READER_NAME = FEATURE_CODEC_INFO__VALUE_READER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__VALUE_WRITER_NAME = FEATURE_CODEC_INFO__VALUE_WRITER_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__TYPE = FEATURE_CODEC_INFO__TYPE;
-
-	/**
-	 * The feature id for the '<em><b>Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__KEY = FEATURE_CODEC_INFO__KEY;
-
-	/**
-	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDENTITY_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
+	int IDENTITY_INFO__ID_KEY = 0;
 
 	/**
 	 * The feature id for the '<em><b>Id Strategy</b></em>' attribute.
@@ -684,7 +621,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO__ID_STRATEGY = FEATURE_CODEC_INFO_FEATURE_COUNT + 0;
+	int IDENTITY_INFO__ID_STRATEGY = 1;
 
 	/**
 	 * The feature id for the '<em><b>Id Separator</b></em>' attribute.
@@ -693,16 +630,34 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO__ID_SEPARATOR = FEATURE_CODEC_INFO_FEATURE_COUNT + 1;
+	int IDENTITY_INFO__ID_SEPARATOR = 2;
 
 	/**
-	 * The feature id for the '<em><b>Id Order</b></em>' attribute.
+	 * The feature id for the '<em><b>Id Features</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO__ID_ORDER = FEATURE_CODEC_INFO_FEATURE_COUNT + 2;
+	int IDENTITY_INFO__ID_FEATURES = 3;
+
+	/**
+	 * The feature id for the '<em><b>Id Value Reader Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__ID_VALUE_READER_NAME = 4;
+
+	/**
+	 * The feature id for the '<em><b>Id Value Writer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTITY_INFO__ID_VALUE_WRITER_NAME = 5;
 
 	/**
 	 * The number of structural features of the '<em>Identity Info</em>' class.
@@ -711,7 +666,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO_FEATURE_COUNT = FEATURE_CODEC_INFO_FEATURE_COUNT + 3;
+	int IDENTITY_INFO_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Identity Info</em>' class.
@@ -720,7 +675,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDENTITY_INFO_OPERATION_COUNT = FEATURE_CODEC_INFO_OPERATION_COUNT + 0;
+	int IDENTITY_INFO_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}' class.
@@ -980,6 +935,43 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int STRING_TO_STRING_MAP_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.codec.info.codecinfo.impl.IdentifiableCodecInfoImpl <em>Identifiable Codec Info</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.IdentifiableCodecInfoImpl
+	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getIdentifiableCodecInfo()
+	 * @generated
+	 */
+	int IDENTIFIABLE_CODEC_INFO = 12;
+
+	/**
+	 * The feature id for the '<em><b>Identity Info</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTIFIABLE_CODEC_INFO__IDENTITY_INFO = 0;
+
+	/**
+	 * The number of structural features of the '<em>Identifiable Codec Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTIFIABLE_CODEC_INFO_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Identifiable Codec Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDENTIFIABLE_CODEC_INFO_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -987,7 +979,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getInfoType()
 	 * @generated
 	 */
-	int INFO_TYPE = 12;
+	int INFO_TYPE = 13;
 
 	/**
 	 * The meta object id for the '<em>Serializer Provider</em>' data type.
@@ -997,7 +989,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
 	 * @generated
 	 */
-	int SERIALIZER_PROVIDER = 13;
+	int SERIALIZER_PROVIDER = 14;
 
 	/**
 	 * The meta object id for the '<em>Deserialization Context</em>' data type.
@@ -1007,7 +999,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 	 * @generated
 	 */
-	int DESERIALIZATION_CONTEXT = 14;
+	int DESERIALIZATION_CONTEXT = 15;
 
 
 	/**
@@ -1097,17 +1089,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getEClassCodecInfo_Classifier();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getIdentityInfo <em>Identity Info</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Identity Info</em>'.
-	 * @see org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getIdentityInfo()
-	 * @see #getEClassCodecInfo()
-	 * @generated
-	 */
-	EReference getEClassCodecInfo_IdentityInfo();
-
-	/**
 	 * Returns the meta object for the containment reference '{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getSuperTypeInfo <em>Super Type Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1195,15 +1176,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getFeatureCodecInfo_Id();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getFeatures <em>Features</em>}'.
+	 * Returns the meta object for the reference '{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getFeature <em>Feature</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Features</em>'.
-	 * @see org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getFeatures()
+	 * @return the meta object for the reference '<em>Feature</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getFeature()
 	 * @see #getFeatureCodecInfo()
 	 * @generated
 	 */
-	EReference getFeatureCodecInfo_Features();
+	EReference getFeatureCodecInfo_Feature();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getValueReaderName <em>Value Reader Name</em>}'.
@@ -1390,6 +1371,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EClass getIdentityInfo();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdKey <em>Id Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id Key</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdKey()
+	 * @see #getIdentityInfo()
+	 * @generated
+	 */
+	EAttribute getIdentityInfo_IdKey();
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdStrategy <em>Id Strategy</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1412,15 +1404,37 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getIdentityInfo_IdSeparator();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdOrder <em>Id Order</em>}'.
+	 * Returns the meta object for the reference list '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdFeatures <em>Id Features</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Id Order</em>'.
-	 * @see org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdOrder()
+	 * @return the meta object for the reference list '<em>Id Features</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdFeatures()
 	 * @see #getIdentityInfo()
 	 * @generated
 	 */
-	EAttribute getIdentityInfo_IdOrder();
+	EReference getIdentityInfo_IdFeatures();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdValueReaderName <em>Id Value Reader Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id Value Reader Name</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdValueReaderName()
+	 * @see #getIdentityInfo()
+	 * @generated
+	 */
+	EAttribute getIdentityInfo_IdValueReaderName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdValueWriterName <em>Id Value Writer Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id Value Writer Name</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdValueWriterName()
+	 * @see #getIdentityInfo()
+	 * @generated
+	 */
+	EAttribute getIdentityInfo_IdValueWriterName();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}'.
@@ -1634,6 +1648,27 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getTypedCodecInfo_TypeInfo();
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.info.codecinfo.IdentifiableCodecInfo <em>Identifiable Codec Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Identifiable Codec Info</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.IdentifiableCodecInfo
+	 * @generated
+	 */
+	EClass getIdentifiableCodecInfo();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.fennec.codec.info.codecinfo.IdentifiableCodecInfo#getIdentityInfo <em>Identity Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Identity Info</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.IdentifiableCodecInfo#getIdentityInfo()
+	 * @see #getIdentifiableCodecInfo()
+	 * @generated
+	 */
+	EReference getIdentifiableCodecInfo_IdentityInfo();
+
+	/**
 	 * Returns the meta object for enum '{@link org.eclipse.fennec.codec.info.codecinfo.InfoType <em>Info Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1757,14 +1792,6 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EReference ECLASS_CODEC_INFO__CLASSIFIER = eINSTANCE.getEClassCodecInfo_Classifier();
 
 		/**
-		 * The meta object literal for the '<em><b>Identity Info</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ECLASS_CODEC_INFO__IDENTITY_INFO = eINSTANCE.getEClassCodecInfo_IdentityInfo();
-
-		/**
 		 * The meta object literal for the '<em><b>Super Type Info</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1831,12 +1858,12 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute FEATURE_CODEC_INFO__ID = eINSTANCE.getFeatureCodecInfo_Id();
 
 		/**
-		 * The meta object literal for the '<em><b>Features</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Feature</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference FEATURE_CODEC_INFO__FEATURES = eINSTANCE.getFeatureCodecInfo_Features();
+		EReference FEATURE_CODEC_INFO__FEATURE = eINSTANCE.getFeatureCodecInfo_Feature();
 
 		/**
 		 * The meta object literal for the '<em><b>Value Reader Name</b></em>' attribute feature.
@@ -1981,6 +2008,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EClass IDENTITY_INFO = eINSTANCE.getIdentityInfo();
 
 		/**
+		 * The meta object literal for the '<em><b>Id Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IDENTITY_INFO__ID_KEY = eINSTANCE.getIdentityInfo_IdKey();
+
+		/**
 		 * The meta object literal for the '<em><b>Id Strategy</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1997,12 +2032,28 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute IDENTITY_INFO__ID_SEPARATOR = eINSTANCE.getIdentityInfo_IdSeparator();
 
 		/**
-		 * The meta object literal for the '<em><b>Id Order</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Id Features</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute IDENTITY_INFO__ID_ORDER = eINSTANCE.getIdentityInfo_IdOrder();
+		EReference IDENTITY_INFO__ID_FEATURES = eINSTANCE.getIdentityInfo_IdFeatures();
+
+		/**
+		 * The meta object literal for the '<em><b>Id Value Reader Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IDENTITY_INFO__ID_VALUE_READER_NAME = eINSTANCE.getIdentityInfo_IdValueReaderName();
+
+		/**
+		 * The meta object literal for the '<em><b>Id Value Writer Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute IDENTITY_INFO__ID_VALUE_WRITER_NAME = eINSTANCE.getIdentityInfo_IdValueWriterName();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.CodecValueReader <em>Codec Value Reader</em>}' class.
@@ -2175,6 +2226,24 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference TYPED_CODEC_INFO__TYPE_INFO = eINSTANCE.getTypedCodecInfo_TypeInfo();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.impl.IdentifiableCodecInfoImpl <em>Identifiable Codec Info</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.IdentifiableCodecInfoImpl
+		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getIdentifiableCodecInfo()
+		 * @generated
+		 */
+		EClass IDENTIFIABLE_CODEC_INFO = eINSTANCE.getIdentifiableCodecInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Identity Info</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference IDENTIFIABLE_CODEC_INFO__IDENTITY_INFO = eINSTANCE.getIdentifiableCodecInfo_IdentityInfo();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.InfoType <em>Info Type</em>}' enum.

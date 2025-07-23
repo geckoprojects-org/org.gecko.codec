@@ -2,18 +2,13 @@
  */
 package org.eclipse.fennec.codec.info.codecinfo.impl;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.ETypedElement;
+import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
@@ -28,7 +23,7 @@ import org.eclipse.fennec.codec.info.codecinfo.InfoType;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getFeatures <em>Features</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getFeature <em>Feature</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getValueReaderName <em>Value Reader Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getValueWriterName <em>Value Writer Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getType <em>Type</em>}</li>
@@ -60,14 +55,14 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 	protected String id = ID_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getFeatures() <em>Features</em>}' reference list.
+	 * The cached value of the '{@link #getFeature() <em>Feature</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getFeatures()
+	 * @see #getFeature()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<ETypedElement> features;
+	protected ETypedElement feature;
 
 	/**
 	 * The default value of the '{@link #getValueReaderName() <em>Value Reader Name</em>}' attribute.
@@ -217,11 +212,38 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 	 * @generated
 	 */
 	@Override
-	public EList<ETypedElement> getFeatures() {
-		if (features == null) {
-			features = new EObjectResolvingEList<ETypedElement>(ETypedElement.class, this, CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES);
+	public ETypedElement getFeature() {
+		if (feature != null && feature.eIsProxy()) {
+			InternalEObject oldFeature = (InternalEObject)feature;
+			feature = (ETypedElement)eResolveProxy(oldFeature);
+			if (feature != oldFeature) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, CodecInfoPackage.FEATURE_CODEC_INFO__FEATURE, oldFeature, feature));
+			}
 		}
-		return features;
+		return feature;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ETypedElement basicGetFeature() {
+		return feature;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setFeature(ETypedElement newFeature) {
+		ETypedElement oldFeature = feature;
+		feature = newFeature;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.FEATURE_CODEC_INFO__FEATURE, oldFeature, feature));
 	}
 
 	/**
@@ -349,8 +371,9 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 		switch (featureID) {
 			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
 				return getId();
-			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
-				return getFeatures();
+			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURE:
+				if (resolve) return getFeature();
+				return basicGetFeature();
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				return getValueReaderName();
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_WRITER_NAME:
@@ -370,16 +393,14 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
 				setId((String)newValue);
 				return;
-			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
-				getFeatures().clear();
-				getFeatures().addAll((Collection<? extends ETypedElement>)newValue);
+			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURE:
+				setFeature((ETypedElement)newValue);
 				return;
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				setValueReaderName((String)newValue);
@@ -411,8 +432,8 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
-				getFeatures().clear();
+			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURE:
+				setFeature((ETypedElement)null);
 				return;
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				setValueReaderName(VALUE_READER_NAME_EDEFAULT);
@@ -443,8 +464,8 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 		switch (featureID) {
 			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURES:
-				return features != null && !features.isEmpty();
+			case CodecInfoPackage.FEATURE_CODEC_INFO__FEATURE:
+				return feature != null;
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_READER_NAME:
 				return VALUE_READER_NAME_EDEFAULT == null ? valueReaderName != null : !VALUE_READER_NAME_EDEFAULT.equals(valueReaderName);
 			case CodecInfoPackage.FEATURE_CODEC_INFO__VALUE_WRITER_NAME:

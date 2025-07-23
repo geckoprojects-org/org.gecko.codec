@@ -53,7 +53,7 @@ public class OperationCodecInfoSerializer implements CodecInfoSerializer {
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		if(featureCodecInfo.isIgnore()) return;
 		Object value;		
-		EOperation operation = (EOperation) featureCodecInfo.getFeatures().get(0);
+		EOperation operation = (EOperation) featureCodecInfo.getFeature();
 		try {
 			value = rootObj.eInvoke(operation, null);
 		} catch (InvocationTargetException | NullPointerException e) {

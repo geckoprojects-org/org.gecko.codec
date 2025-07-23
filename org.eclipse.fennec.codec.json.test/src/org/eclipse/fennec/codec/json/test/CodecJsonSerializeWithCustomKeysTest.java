@@ -116,7 +116,9 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_KEY, "_myId");
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "_myId");
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

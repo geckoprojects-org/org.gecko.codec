@@ -40,11 +40,23 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_TRANSIENT = "codec.transient";
 	
+	/** CODEC_ID 
+	 * Annotation to specify, at the level of an EClass how to treat the id field during (de-)serialization.
+	 * The details map may contain:
+	 * - key: the property name to be used when serializing the id info
+	 * - strategy: either ID_FIELD or COMBINED
+	 * - separator: when the strategy is COMBINED we can specify with this property the separator character to be used
+	 * - idValueReaderName: a name for a CodecValueReader to be used when deserializing the id info
+	 * - idValueWriterName: a name for a CodecValueWriter to be used when serializing the id info
+	 * - idFeatures: a comma separated String, with the uri of the features to be used as id 
+	 * */
+	String CODEC_ID = "codec.id";
+	
 	/** CODEC_ID_STRATEGY 
 	 *  Annotation for specifying a strategy to be followed when building the id 
 	 *  of the {@link EObject} when serializing it
 	 * */
-	String CODEC_ID_STRATEGY = "codec.id.strategy";
+//	String CODEC_ID_STRATEGY = "codec.id.strategy";
 	
 	
 	/** CODEC_ID_FIELD 
@@ -55,35 +67,35 @@ public interface CodecAnnotations {
 	 * use {@link CODEC_ID_FEATURES_LIST} and pass a list of {@link EStructuralFeauture} which should
 	 * form the id field.
 	 * */
-	String CODEC_ID_FIELD = "codec.id.field";
+//	String CODEC_ID_FIELD = "codec.id.field";
 	
 	/** CODEC_ID_ORDER 
 	 * to specify the order of the annotated field when constructing the id. 
 	 * This is ignored if the id strategy is not set to COMBINED or the same feature is not 
 	 * marked with the {@link CODEC_ID_FIELD} annotation
 	 * */
-	String CODEC_ID_ORDER = "codec.id.order";
+//	String CODEC_ID_ORDER = "codec.id.order";
 	
 	/** CODEC_ID_SEPARATOR 
 	 * annotation at the {@link EClassifier} level, to specify the separator to be used when constructing the id 
 	 * with the COMBINED strategy. The default separator value is "-". This option is ignored if the id strategy 
 	 * is different from COMBINED.
 	 * */
-	String CODEC_ID_SEPARATOR = "codec.id.separator";
+//	String CODEC_ID_SEPARATOR = "codec.id.separator";
 	
 	/** CODEC_ID_VALUE_WRITER_NAME 
 	 * annotation at the {@link EClassifier} level, to specify a {@link CodecValueWriter} name to be used 
 	 * when serializing the id field. The actual {@link CodecValueWriter} object should then be one
 	 * of the automatically registered ones or should be passed through the options when saving a {@link Resource}. 
 	 * */
-	String CODEC_ID_VALUE_WRITER_NAME = "codec.id.value.writer.name";
+//	String CODEC_ID_VALUE_WRITER_NAME = "codec.id.value.writer.name";
 	
 	/** CODEC_ID_VALUE_READER_NAME 
 	 * annotation at the {@link EClassifier} level, to specify a {@link CodecValueReader} name to be used 
 	 * when deserializing the id field. The actual {@link CodecValueReader} object should then be one
 	 * of the automatically registered ones or should be passed through the options when loading a {@link Resource}. 
 	 * */
-	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
+//	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
 	
 	/** CODEC_VALUE_WRITER_NAME 
 	 * annotation at the {@link EStructuralFeature} level, to specify a {@link CodecValueWriter} name to be used 
@@ -103,9 +115,11 @@ public interface CodecAnnotations {
 	 * Annotation used for specifying how to treat the type information of the object marked this way.
 	 * This annotation can be either put at the {@link EClass} level or at the {@link EReference} level.
 	 * The details map keys are:
-	 * - use: to specify a strategy for the type value reader/writer (supported are NAME, CLASS, URI)
+	 * - strategy: to specify a strategy for the type value reader/writer (supported are NAME, CLASS, URI)
 	 * - include: to specify weather the type information should be considered or not (default is true)
 	 * - typeKey: the String to be looked for retrieving the type of the object and the property name to be used when serializing the type (default is _type)
+	 * - typeValueWriterName: a name for a CodecValueWriter to serialize the type info
+	 * - typeValueReaderName: a name for a CodecValueReader to deserialize the type info
 	 * - additional <key, value> pairs in the details map should represent string to look for when deserializing the object, to decide which type of object it is
 	 * */
 	String CODEC_TYPE = "codec.type";

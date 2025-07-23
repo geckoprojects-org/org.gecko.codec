@@ -71,6 +71,7 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 			case CodecInfoPackage.CODEC_INFO_HOLDER: return (EObject)createCodecInfoHolder();
 			case CodecInfoPackage.STRING_TO_STRING_MAP: return (EObject)createStringToStringMap();
 			case CodecInfoPackage.TYPED_CODEC_INFO: return (EObject)createTypedCodecInfo();
+			case CodecInfoPackage.IDENTIFIABLE_CODEC_INFO: return (EObject)createIdentifiableCodecInfo();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -210,6 +211,17 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	public TypedCodecInfo createTypedCodecInfo() {
 		TypedCodecInfoImpl typedCodecInfo = new TypedCodecInfoImpl();
 		return typedCodecInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public IdentifiableCodecInfo createIdentifiableCodecInfo() {
+		IdentifiableCodecInfoImpl identifiableCodecInfo = new IdentifiableCodecInfoImpl();
+		return identifiableCodecInfo;
 	}
 
 	/**

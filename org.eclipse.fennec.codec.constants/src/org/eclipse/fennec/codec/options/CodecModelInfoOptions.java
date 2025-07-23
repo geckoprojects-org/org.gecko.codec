@@ -42,21 +42,26 @@ public interface CodecModelInfoOptions {
 	 * */
 	String CODEC_IGNORE_NOT_FEATURES_LIST = "codec.ignore.not.feature.list";
 	
-	/** CODEC_ID_STRATEGY 
-	 *  to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_STRATEGY} annotation;
+	/** CODEC_ID_KEY 
+	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID} key detail annotation;
 	 * */
-	String CODEC_ID_STRATEGY = "codec.id.strategy";
+	String CODEC_ID_KEY = "key";
+	
+	/** CODEC_ID_STRATEGY 
+	 *  to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID} strategy detail annotation;
+	 * */
+	String CODEC_ID_STRATEGY = "strategy";
 	
 	/** CODEC_ID_SEPARATOR 
-	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_SEPARATOR} annotation;
+	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID} separator detail annotation;
 	 * */
-	String CODEC_ID_SEPARATOR = "codec.id.separator";
+	String CODEC_ID_SEPARATOR = "separator";
 	
 	/** CODEC_ID_FEATURES_LIST 
 	 * to specify an ordered {@link List} of {@link EStructuralFeature} to be used when constructing the id, 
 	 * if the id strategy is set to COMBINED. Otherwise it will be ignored.
 	 * */
-	String CODEC_ID_FEATURES_LIST = "codec.id.features.list";
+	String CODEC_ID_FEATURES_LIST = "idFeatures";
 	
 	/** CODEC_ID_VALUE_READER
 	 * to specify a {@link CodecValueReader} object to be used when deserializing the id information;
@@ -81,12 +86,12 @@ public interface CodecModelInfoOptions {
 	/** CODEC_ID_VALUE_READER_NAME 
 	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_VALUE_READER_NAME} annotation;
 	 * */
-	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
+	String CODEC_ID_VALUE_READER_NAME = "idValueReaderName";
 	
 	/** CODEC_ID_VALUE_WRITER_NAME 
 	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME} annotation;
 	 * */
-	String CODEC_ID_VALUE_WRITER_NAME = "codec.id.value.writer.name";
+	String CODEC_ID_VALUE_WRITER_NAME = "idValueWriterName";
 	
 	
 	

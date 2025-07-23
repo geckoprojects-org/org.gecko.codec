@@ -13,16 +13,19 @@
  */
 package org.eclipse.fennec.codec.jackson.databind.ser;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
+import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
-import org.eclipse.fennec.codec.jackson.databind.CodecWriteContext;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 
 import tools.jackson.core.JsonGenerator;
@@ -81,6 +84,10 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 	 */
 	@Override
 	public void serialize(EObject value, JsonGenerator gen, SerializationContext provider) {
+		
+		if(gen.streamWriteContext() instanceof EMFCodecContext cwt) {
+			cwt.setCurrentEObject(value);
+		} 
 
 		EClassCodecInfo eObjCodecInfo = extractModelInfo(value.eClass());
 
@@ -89,42 +96,65 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> implements 
 			throw new IllegalArgumentException(String.format("No EClassCodecInfo found in CodecModule for EObject of class %s", value.eClass()));
 		}
 		
-		CodecInfoSerializer idInfoSerializer = new IdCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getIdentityInfo());
 		CodecInfoSerializer typeInfoSerializer = new TypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getTypeInfo());
 		CodecInfoSerializer superTypeInfoSerializer = new SuperTypeCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getSuperTypeInfo());
-
-		List<CodecInfoSerializer> codecInfoSerializers = new LinkedList<>();
-		eObjCodecInfo.getAttributeCodecInfo().forEach(aci -> codecInfoSerializers.add(new FeatureCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
-		eObjCodecInfo.getReferenceCodecInfo().forEach(aci -> codecInfoSerializers.add(new ReferenceCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
-		eObjCodecInfo.getOperationCodecInfo().forEach(aci -> codecInfoSerializers.add(new OperationCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci)));
-		eObjCodecInfo.getEnumeratorCodecInfo().forEach(aci -> codecInfoSerializers.add(new EnumeratorCodecInfoSerializer(codecModule, aci)));
+		CodecInfoSerializer idInfoSerializer = new IdCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getIdentityInfo());
 		
-		if(gen.streamWriteContext() instanceof CodecWriteContext cwt) {
-			cwt.setCurrentEObject(value);
+		Map<String, CodecInfoSerializer> codecInfoSerializierMap = new HashMap<>();
+		if(codecModule.isUseId()) codecInfoSerializierMap.put(eObjCodecInfo.getIdentityInfo().getIdKey(), idInfoSerializer);
+		if(codecModule.isSerializeType()) codecInfoSerializierMap.put(eObjCodecInfo.getTypeInfo().getTypeKey(), typeInfoSerializer);
+		if(codecModule.isSerializeSuperTypes()) codecInfoSerializierMap.put(codecModule.getSuperTypeKey(), superTypeInfoSerializer);
+		eObjCodecInfo.getAttributeCodecInfo().forEach(aci -> 
+			codecInfoSerializierMap.put(getSerializablePropertyName(aci), new FeatureCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci))
+		);
+		eObjCodecInfo.getReferenceCodecInfo().forEach(aci -> 
+			codecInfoSerializierMap.put(getSerializablePropertyName(aci), new ReferenceCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci))
+		);
+		eObjCodecInfo.getOperationCodecInfo().forEach(aci -> 
+			codecInfoSerializierMap.put(getSerializablePropertyName(aci), new OperationCodecInfoSerializer(codecModule, codecModelInfoService, eObjCodecInfo, aci))
+		);
+		eObjCodecInfo.getEnumeratorCodecInfo().forEach(aci -> 
+			codecInfoSerializierMap.put(getSerializablePropertyName(aci), new EnumeratorCodecInfoSerializer(codecModule, aci))
+		);
+		
+		LinkedHashMap<String, CodecInfoSerializer> finalOrderedSerMap = new LinkedHashMap<>();
+		if(codecModule.isSortPropertiesAlphabetically()) {
+			TreeMap<String, CodecInfoSerializer> orderedCodecInfoSerMap = new TreeMap<>(codecInfoSerializierMap);
+			if(codecModule.isIdOnTop()) {
+				if(orderedCodecInfoSerMap.remove(eObjCodecInfo.getIdentityInfo().getIdKey()) != null) {
+					finalOrderedSerMap.put(eObjCodecInfo.getIdentityInfo().getIdKey(), idInfoSerializer);
+					 for(Map.Entry<String, CodecInfoSerializer> entry : orderedCodecInfoSerMap.entrySet()) {
+						 finalOrderedSerMap.put(entry.getKey(), entry.getValue());
+					  }
+				} else {
+					finalOrderedSerMap.putAll(orderedCodecInfoSerMap);
+				}				
+			} else {
+				finalOrderedSerMap.putAll(orderedCodecInfoSerMap);
+			}			
+		} else {
+			if(codecModule.isIdOnTop()) {
+				if(codecInfoSerializierMap.remove(eObjCodecInfo.getIdentityInfo().getIdKey()) != null) {
+					finalOrderedSerMap.put(eObjCodecInfo.getIdentityInfo().getIdKey(), idInfoSerializer);
+					for(Map.Entry<String, CodecInfoSerializer> entry : codecInfoSerializierMap.entrySet()) {
+						 finalOrderedSerMap.put(entry.getKey(), entry.getValue());
+					  }
+				} 
+			} else {
+				finalOrderedSerMap.putAll(codecInfoSerializierMap);
+			}
 		}
 		
 		gen.writeStartObject(value);
-
-//		TODO: what if someone has set the SORT_PROPERTIES_ALPHABETICALLY
-		if(codecModule.isUseId()) {
-			if(codecModule.isIdOnTop()) {
-				idInfoSerializer.serialize(value, gen, provider);
-			}
-		}
-		if(codecModule.isSerializeType()) {
-			typeInfoSerializer.serialize(value, gen, provider);
-		}
-		if(codecModule.isSerializeSuperTypes()) {
-			superTypeInfoSerializer.serialize(value, gen, provider);
-		}
-		if(codecModule.isUseId()) {
-			if(!codecModule.isIdOnTop()) {
-				idInfoSerializer.serialize(value, gen, provider);
-			}
-		}
-		for(CodecInfoSerializer codecInfoSerializer : codecInfoSerializers) {
-			codecInfoSerializer.serialize(value, gen, provider);
-		}
+		finalOrderedSerMap.forEach((k,v) -> {
+			v.serialize(value, gen, provider);
+		});
 		gen.writeEndObject();
+	}
+	
+	private String getSerializablePropertyName(FeatureCodecInfo featureCodecInfo) {
+		
+		if(codecModule.isUseNamesFromExtendedMetaData()) return featureCodecInfo.getKey();
+		return featureCodecInfo.getFeature().getName();
 	}
 }

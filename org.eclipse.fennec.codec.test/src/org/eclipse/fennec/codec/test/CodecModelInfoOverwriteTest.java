@@ -34,6 +34,7 @@ import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
+import org.eclipse.fennec.codec.info.codecinfo.IdentityInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
@@ -115,6 +116,29 @@ public class CodecModelInfoOverwriteTest {
 			f.delete();
 		}
 	}
+	
+	@Test
+	public void testCodecModelInfoOverwriteIdKey() throws InterruptedException, IOException {
+	
+		Resource resource = resourceSet.createResource(uri);		
+		Person person = CodecTestHelper.getTestPerson();		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "myId");
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		resource.save(options);
+		
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
+		assertNotNull(modelCodecInfo);
+		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
+		assertNotNull(personCodecInfo);
+		assertNotNull(personCodecInfo.getIdentityInfo());
+		assertEquals("myId", personCodecInfo.getIdentityInfo().getIdKey());
+	}
 
 	@Test
 	public void testCodecModelInfoOverwriteIdStrategy() throws InterruptedException, IOException {
@@ -159,9 +183,9 @@ public class CodecModelInfoOverwriteTest {
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
 		assertNotNull(personCodecInfo.getIdentityInfo());
-		assertThat(personCodecInfo.getIdentityInfo().getFeatures()).hasSize(2);
-		assertEquals(PersonPackage.eINSTANCE.getPerson_LastName(), personCodecInfo.getIdentityInfo().getFeatures().get(0));
-		assertEquals(PersonPackage.eINSTANCE.getPerson_Name(), personCodecInfo.getIdentityInfo().getFeatures().get(1));
+		assertThat(personCodecInfo.getIdentityInfo().getIdFeatures()).hasSize(2);
+		assertEquals(PersonPackage.eINSTANCE.getPerson_LastName(), personCodecInfo.getIdentityInfo().getIdFeatures().get(0));
+		assertEquals(PersonPackage.eINSTANCE.getPerson_Name(), personCodecInfo.getIdentityInfo().getIdFeatures().get(1));
 	}
 	
 	@Test
@@ -210,10 +234,10 @@ public class CodecModelInfoOverwriteTest {
 		assertNotNull(addressCodecInfo.getFeatureInfo());
 		assertThat(addressCodecInfo.getFeatureInfo()).hasSize(3);
 		for(FeatureCodecInfo fi : addressCodecInfo.getFeatureInfo()) {
-			if(PersonPackage.eINSTANCE.getAddress_Zip().equals(fi.getFeatures().get(0))) {
+			if(PersonPackage.eINSTANCE.getAddress_Zip().equals(fi.getFeature())) {
 				assertFalse(fi.isIgnore());
 			}
-			if(PersonPackage.eINSTANCE.getAddress_Street().equals(fi.getFeatures().get(0))) {
+			if(PersonPackage.eINSTANCE.getAddress_Street().equals(fi.getFeature())) {
 				assertTrue(fi.isIgnore());
 			}
 		}
@@ -338,7 +362,7 @@ public class CodecModelInfoOverwriteTest {
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
-		FeatureCodecInfo featureInfo = personCodecInfo.getFeatureInfo().stream().filter(fi -> fi.getFeatures().get(0).equals(PersonPackage.eINSTANCE.getPerson_LastName())).findFirst().get();
+		FeatureCodecInfo featureInfo = personCodecInfo.getFeatureInfo().stream().filter(fi -> fi.getFeature().equals(PersonPackage.eINSTANCE.getPerson_LastName())).findFirst().get();
 		assertNotNull(featureInfo);
 		assertEquals("TEST_VALUE_WRITER", featureInfo.getValueWriterName());
 	}
@@ -364,7 +388,7 @@ public class CodecModelInfoOverwriteTest {
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
-		FeatureCodecInfo featureInfo = personCodecInfo.getFeatureInfo().stream().filter(fi -> fi.getFeatures().get(0).equals(PersonPackage.eINSTANCE.getPerson_BirthDate())).findFirst().get();
+		FeatureCodecInfo featureInfo = personCodecInfo.getFeatureInfo().stream().filter(fi -> fi.getFeature().equals(PersonPackage.eINSTANCE.getPerson_BirthDate())).findFirst().get();
 		assertNotNull(featureInfo);
 		assertEquals("TEST_VALUE_READER", featureInfo.getValueReaderName());
 	}
@@ -390,8 +414,8 @@ public class CodecModelInfoOverwriteTest {
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
-		FeatureCodecInfo featureInfo = personCodecInfo.getIdentityInfo();
+		IdentityInfo featureInfo = personCodecInfo.getIdentityInfo();
 		assertNotNull(featureInfo);
-		assertEquals("TEST_VALUE_WRITER", featureInfo.getValueWriterName());
+		assertEquals("TEST_VALUE_WRITER", featureInfo.getIdValueWriterName());
 	}
 }

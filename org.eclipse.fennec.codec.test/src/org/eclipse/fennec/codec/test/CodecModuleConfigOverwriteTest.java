@@ -108,24 +108,6 @@ public class CodecModuleConfigOverwriteTest {
 		}
 	}
 
-	
-	@Test
-	public void testCodecModuleOverwriteIdKey() throws InterruptedException, IOException {
-	
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("_id", module.getIdKey());		
-		
-		Resource resource = resourceSet.createResource(uri);
-		
-		Person person = CodecTestHelper.getTestPerson();		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_KEY, "test");
-		resource.save(options);
-		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("test", module.getIdKey());		
-	}
 
 	
 	@Test

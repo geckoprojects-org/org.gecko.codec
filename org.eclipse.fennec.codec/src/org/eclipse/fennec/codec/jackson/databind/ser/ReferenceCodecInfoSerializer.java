@@ -80,23 +80,22 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 	public void serialize(EObject rootObj, JsonGenerator jg, SerializationContext provider) {
 		if (featureCodecInfo.isIgnore())
 			return;
-		if (featureCodecInfo.getFeatures().size() != 1) {
-			LOGGER.warning(
-					"Currently no support for multiple EStructuralFeature in CodecInfoObject which is not a CodecIdInfo");
+		if(featureCodecInfo.getFeature() == null) {
+			LOGGER.severe(String.format("No Feature found in CodecFeatureInfo. Feature will not be serialized!"));
 			return;
 		}
-		EReference feature = (EReference) featureCodecInfo.getFeatures().get(0);
-		FeatureCodecInfo featureCodecInfo = eObjCodecInfo.getReferenceCodecInfo().stream().filter(r -> r.getFeatures().get(0).getName().equals(feature.getName())).findFirst().orElse(null);
+		EReference feature = (EReference) featureCodecInfo.getFeature();
+		FeatureCodecInfo featureCodecInfo = eObjCodecInfo.getReferenceCodecInfo().stream().filter(r -> r.getFeature().getName().equals(feature.getName())).findFirst().orElse(null);
 		if(featureCodecInfo == null) {
 			throw new IllegalArgumentException(String.format("Cannot retrieve FeatureCodecInfo for current EStructuralFeature %s. Something went wrong!", feature.getName()));
 		}
 		typeInfo = featureCodecInfo.getTypeInfo();
-//		EMFContext.setParent(provider, rootObj);
-//		EMFContext.setFeature(provider, feature);
 
 		if (jg.streamWriteContext() instanceof EMFCodecWriteContext cwt) {
 			cwt.setCurrentFeature(feature);
 			cwt.setCurrentEObject(rootObj);
+		} else {
+			throw new IllegalArgumentException(String.format("StreamWriteContext is not of type EMFCodecWriteContext! Something went wrong!"));
 		}
 
 		if (feature.isMany()) {
@@ -198,11 +197,6 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		
 		if(!typeInfo.isIgnoreType()) {
 			if(codecModule.isSerializeType()) {
-//				EClassCodecInfo refClassCodecInfo = codecModule.getCodecModelInfo().getEClassCodecInfo().stream()
-//						.filter(ecci -> ecci.getClassifier().getName().equals(value.eClass().getName())).findFirst()
-//						.orElse(null);
-//				If the typeKey is an EStructuralFeature of the EObject then we do not have to write anything
-//				because it will be written with that feature
 				String[] typeKeySplit = typeInfo.getTypeKey().split("\\.");
 				FeaturePath featurePath = UtilitiesFactory.eINSTANCE.createFeaturePath();				
 				EStructuralFeature feature = null;

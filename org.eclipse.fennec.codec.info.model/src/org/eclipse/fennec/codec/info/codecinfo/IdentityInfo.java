@@ -2,6 +2,10 @@
  */
 package org.eclipse.fennec.codec.info.codecinfo;
 
+import org.eclipse.emf.common.util.EList;
+
+import org.eclipse.emf.ecore.EStructuralFeature;
+
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -13,9 +17,12 @@ import org.osgi.annotation.versioning.ProviderType;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdKey <em>Id Key</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdStrategy <em>Id Strategy</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdSeparator <em>Id Separator</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdOrder <em>Id Order</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdFeatures <em>Id Features</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdValueReaderName <em>Id Value Reader Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdValueWriterName <em>Id Value Writer Name</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo()
@@ -23,7 +30,32 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface IdentityInfo extends FeatureCodecInfo {
+public interface IdentityInfo {
+	/**
+	 * Returns the value of the '<em><b>Id Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * This is the property name to be used for the id field.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Id Key</em>' attribute.
+	 * @see #setIdKey(String)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdKey()
+	 * @model
+	 * @generated
+	 */
+	String getIdKey();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdKey <em>Id Key</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Id Key</em>' attribute.
+	 * @see #getIdKey()
+	 * @generated
+	 */
+	void setIdKey(String value);
+
 	/**
 	 * Returns the value of the '<em><b>Id Strategy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -76,28 +108,59 @@ public interface IdentityInfo extends FeatureCodecInfo {
 	void setIdSeparator(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Id Order</b></em>' attribute.
+	 * Returns the value of the '<em><b>Id Features</b></em>' reference list.
+	 * The list contents are of type {@link org.eclipse.emf.ecore.EStructuralFeature}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * This supports the possibility of setting an id as a combination of multiple fields. The idOrder defines the position of the fields to be used when building the id.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Id Order</em>' attribute.
-	 * @see #setIdOrder(int)
-	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdOrder()
+	 * @return the value of the '<em>Id Features</em>' reference list.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdFeatures()
 	 * @model
 	 * @generated
 	 */
-	int getIdOrder();
+	EList<EStructuralFeature> getIdFeatures();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdOrder <em>Id Order</em>}' attribute.
+	 * Returns the value of the '<em><b>Id Value Reader Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Id Order</em>' attribute.
-	 * @see #getIdOrder()
+	 * @return the value of the '<em>Id Value Reader Name</em>' attribute.
+	 * @see #setIdValueReaderName(String)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdValueReaderName()
+	 * @model
 	 * @generated
 	 */
-	void setIdOrder(int value);
+	String getIdValueReaderName();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdValueReaderName <em>Id Value Reader Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Id Value Reader Name</em>' attribute.
+	 * @see #getIdValueReaderName()
+	 * @generated
+	 */
+	void setIdValueReaderName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Id Value Writer Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Id Value Writer Name</em>' attribute.
+	 * @see #setIdValueWriterName(String)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getIdentityInfo_IdValueWriterName()
+	 * @model
+	 * @generated
+	 */
+	String getIdValueWriterName();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.IdentityInfo#getIdValueWriterName <em>Id Value Writer Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Id Value Writer Name</em>' attribute.
+	 * @see #getIdValueWriterName()
+	 * @generated
+	 */
+	void setIdValueWriterName(String value);
 
 } // IdentityInfo

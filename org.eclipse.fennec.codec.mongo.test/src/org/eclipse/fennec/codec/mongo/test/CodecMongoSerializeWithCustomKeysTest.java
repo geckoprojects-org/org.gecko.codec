@@ -144,7 +144,9 @@ public class CodecMongoSerializeWithCustomKeysTest extends MongoEMFSetting {
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_KEY, "_testId");
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "_testId");
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.BUSINESS_PERSON, classOptions));
 		resource.save(options);
 		
 		resource.getContents().clear();

@@ -118,6 +118,10 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 				return createTypedCodecInfoAdapter();
 			}
 			@Override
+			public Adapter caseIdentifiableCodecInfo(IdentifiableCodecInfo object) {
+				return createIdentifiableCodecInfoAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -302,6 +306,20 @@ public class CodecInfoAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createTypedCodecInfoAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.info.codecinfo.IdentifiableCodecInfo <em>Identifiable Codec Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.IdentifiableCodecInfo
+	 * @generated
+	 */
+	public Adapter createIdentifiableCodecInfoAdapter() {
 		return null;
 	}
 

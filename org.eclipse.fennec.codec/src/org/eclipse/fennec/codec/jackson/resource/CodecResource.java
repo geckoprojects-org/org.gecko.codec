@@ -153,6 +153,10 @@ public class CodecResource extends ResourceImpl {
 
 //		Update the CodecModelInfo based on the passed options
 		updateCodecModelInfoFromOptions(modelCodecInfo, options);
+		
+//		Check alphabetic order property (it's important to do it after the updateMapperFromOptions has been called, because 
+//		this property may be overwritten by the options)
+		moduleBuilder.withSortPropertiesAlphabetically(objMapperBuilder.isEnabled(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
 
 //		Bind the CodecModelInfo to the CodecModule.
 //		This is necessary otherwise asking the ModelInfoService we would get a new instance every time
@@ -260,34 +264,37 @@ public class CodecResource extends ResourceImpl {
 		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_STRATEGY)) {
 			codecInfo.getIdentityInfo().setIdStrategy((String) options.get(CodecModelInfoOptions.CODEC_ID_STRATEGY));
 			if("ID_FIELD".equals(codecInfo.getIdentityInfo().getIdStrategy())) {
-				codecInfo.getIdentityInfo().getFeatures().clear();
+				codecInfo.getIdentityInfo().getIdFeatures().clear();
 				if(codecInfo.getClassifier() instanceof EClass ec) {
-					codecInfo.getIdentityInfo().getFeatures().add(ec.getEIDAttribute());
+					codecInfo.getIdentityInfo().getIdFeatures().add(ec.getEIDAttribute());
 				}
 			}
+		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_KEY)) {
+			codecInfo.getIdentityInfo().setIdKey((String) options.get(CodecModelInfoOptions.CODEC_ID_KEY));
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_SEPARATOR)) {
 			codecInfo.getIdentityInfo().setIdSeparator((String) options.get(CodecModelInfoOptions.CODEC_ID_SEPARATOR));
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST)) {
 			List<EStructuralFeature> idFeatures = (List<EStructuralFeature>) options.get(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST);
-			codecInfo.getIdentityInfo().getFeatures().clear();
-			codecInfo.getIdentityInfo().getFeatures().addAll(idFeatures);
+			codecInfo.getIdentityInfo().getIdFeatures().clear();
+			codecInfo.getIdentityInfo().getIdFeatures().addAll(idFeatures);
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_VALUE_READER_NAME)) {
-			codecInfo.getIdentityInfo().setValueReaderName((String) options.get(CodecModelInfoOptions.CODEC_ID_VALUE_READER_NAME));
+			codecInfo.getIdentityInfo().setIdValueReaderName((String) options.get(CodecModelInfoOptions.CODEC_ID_VALUE_READER_NAME));
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER_NAME)) {
-			codecInfo.getIdentityInfo().setValueWriterName((String) options.get(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER_NAME));
+			codecInfo.getIdentityInfo().setIdValueWriterName((String) options.get(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER_NAME));
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_VALUE_READER)) {
 			CodecValueReader<?,?> reader = (CodecValueReader<?,?>) options.get(CodecModelInfoOptions.CODEC_ID_VALUE_READER);
-			codecInfo.getIdentityInfo().setValueReaderName(reader.getName());
+			codecInfo.getIdentityInfo().setIdValueReaderName(reader.getName());
 			modelInfoService.addCodecValueReaderForType(InfoType.IDENTITY, reader);
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER)) {
 			CodecValueWriter<?,?> writer = (CodecValueWriter<?,?>) options.get(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER);
-			codecInfo.getIdentityInfo().setValueWriterName(writer.getName());
+			codecInfo.getIdentityInfo().setIdValueWriterName(writer.getName());
 			modelInfoService.addCodecValueWriterForType(InfoType.IDENTITY, writer);
 		}
 		
@@ -295,14 +302,14 @@ public class CodecResource extends ResourceImpl {
 		if(options.containsKey(CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST)) {
 			List<EStructuralFeature> ignoreFeatures = (List<EStructuralFeature>) options.get(CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST);
 			ignoreFeatures.forEach(ignoreFeature -> {
-				FeatureCodecInfo fci = codecInfo.getFeatureInfo().stream().filter(featureInfo -> ignoreFeature.equals(featureInfo.getFeatures().get(0))).findFirst().get();
+				FeatureCodecInfo fci = codecInfo.getFeatureInfo().stream().filter(featureInfo -> ignoreFeature.equals(featureInfo.getFeature())).findFirst().get();
 				if(fci != null) fci.setIgnore(true);
 			});
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_IGNORE_NOT_FEATURES_LIST)) {
 			List<EStructuralFeature> ignoreFeatures = (List<EStructuralFeature>) options.get(CodecModelInfoOptions.CODEC_IGNORE_NOT_FEATURES_LIST);
 			ignoreFeatures.forEach(ignoreFeature -> {
-				FeatureCodecInfo fci = codecInfo.getFeatureInfo().stream().filter(featureInfo -> ignoreFeature.equals(featureInfo.getFeatures().get(0))).findFirst().get();
+				FeatureCodecInfo fci = codecInfo.getFeatureInfo().stream().filter(featureInfo -> ignoreFeature.equals(featureInfo.getFeature())).findFirst().get();
 				if(fci != null) fci.setIgnore(false);
 			});
 		}
@@ -310,21 +317,21 @@ public class CodecResource extends ResourceImpl {
 			Map<ETypedElement, CodecValueReader<?,?>> readersMap = (Map<ETypedElement, CodecValueReader<?,?>>)options.get(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP);
 			readersMap.forEach((element, reader) -> {
 				if(element instanceof EAttribute) {
-					FeatureCodecInfo fci = codecInfo.getAttributeCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					FeatureCodecInfo fci = codecInfo.getAttributeCodecInfo().stream().filter(featureInfo -> featureInfo.getFeature().equals(element)).findFirst().get();
 					if(fci != null) {
 						fci.setValueReaderName(reader.getName());
 						modelInfoService.addCodecValueReaderForType(InfoType.ATTRIBUTE, reader);
 					}
 				}
 				else if(element instanceof EReference) {
-					FeatureCodecInfo fci = codecInfo.getReferenceCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					FeatureCodecInfo fci = codecInfo.getReferenceCodecInfo().stream().filter(featureInfo -> featureInfo.getFeature().equals(element)).findFirst().get();
 					if(fci != null) {
 						fci.setValueReaderName(reader.getName());
 						modelInfoService.addCodecValueReaderForType(InfoType.REFERENCE, reader);
 					}
 				}
 				else if(element instanceof EOperation) {
-					FeatureCodecInfo fci = codecInfo.getOperationCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					FeatureCodecInfo fci = codecInfo.getOperationCodecInfo().stream().filter(featureInfo -> featureInfo.getFeature().equals(element)).findFirst().get();
 					if(fci != null) {
 						fci.setValueReaderName(reader.getName());
 						modelInfoService.addCodecValueReaderForType(InfoType.OPERATION, reader);
@@ -336,21 +343,21 @@ public class CodecResource extends ResourceImpl {
 			Map<ETypedElement, CodecValueWriter<?,?>> writersMap = (Map<ETypedElement, CodecValueWriter<?,?>>)options.get(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP);
 			writersMap.forEach((element, writer) -> {
 				if(element instanceof EAttribute) {
-					FeatureCodecInfo fci = codecInfo.getAttributeCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					FeatureCodecInfo fci = codecInfo.getAttributeCodecInfo().stream().filter(featureInfo -> featureInfo.getFeature().equals(element)).findFirst().get();
 					if(fci != null) {
 						fci.setValueWriterName(writer.getName());
 						modelInfoService.addCodecValueWriterForType(InfoType.ATTRIBUTE, writer);
 					}
 				}
 				else if(element instanceof EReference) {
-					FeatureCodecInfo fci = codecInfo.getReferenceCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					FeatureCodecInfo fci = codecInfo.getReferenceCodecInfo().stream().filter(featureInfo -> featureInfo.getFeature().equals(element)).findFirst().get();
 					if(fci != null) {
 						fci.setValueWriterName(writer.getName());
 						modelInfoService.addCodecValueWriterForType(InfoType.REFERENCE, writer);
 					}
 				}
 				else if(element instanceof EOperation) {
-					FeatureCodecInfo fci = codecInfo.getOperationCodecInfo().stream().filter(featureInfo -> featureInfo.getFeatures().get(0).equals(element)).findFirst().get();
+					FeatureCodecInfo fci = codecInfo.getOperationCodecInfo().stream().filter(featureInfo -> featureInfo.getFeature().equals(element)).findFirst().get();
 					if(fci != null) {
 						fci.setValueWriterName(writer.getName());
 						modelInfoService.addCodecValueWriterForType(InfoType.OPERATION, writer);
@@ -365,7 +372,7 @@ public class CodecResource extends ResourceImpl {
 		if(options.containsKey(CodecResourceOptions.CODEC_OPTIONS)) {
 			Map<EReference, Map<String, Object>> codecOptions = (Map<EReference, Map<String, Object>>) options.get(CodecResourceOptions.CODEC_OPTIONS);
 			codecOptions.forEach((ec, opt) -> {
-				FeatureCodecInfo featureCodecInfo = codecInfo.getReferenceCodecInfo().stream().filter(eci -> eci.getFeatures().get(0).getName().equals(ec.getName())).findFirst().orElse(null);
+				FeatureCodecInfo featureCodecInfo = codecInfo.getReferenceCodecInfo().stream().filter(eci -> eci.getFeature().getName().equals(ec.getName())).findFirst().orElse(null);
 				if(featureCodecInfo == null) {
 					LOGGER.severe(String.format("No FeatureCodecInfo associated with EReference %s has been found", ec.getName()));
 				}
@@ -461,9 +468,6 @@ public class CodecResource extends ResourceImpl {
 			switch((String)k) {
 			case CodecModuleOptions.CODEC_MODULE_ID_FEATURE_AS_PRIMARY_KEY:
 				moduleBuilder.withIdFeatureAsPrimaryKey((boolean) v);
-				break;
-			case CodecModuleOptions.CODEC_MODULE_ID_KEY:
-				moduleBuilder.withIdKey((String) v);
 				break;
 			case CodecModuleOptions.CODEC_MODULE_ID_ON_TOP:
 				moduleBuilder.withIdOnTop((boolean) v);

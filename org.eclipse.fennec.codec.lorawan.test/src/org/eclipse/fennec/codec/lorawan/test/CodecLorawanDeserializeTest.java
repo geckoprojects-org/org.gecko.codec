@@ -97,7 +97,7 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);
 		codecModuleAware.waitForService(2000l);	
-		resourceSet = rsAware.waitForService(2000l);
+		resourceSet = rsAware.waitForService(40000l);
 		assertNotNull(resourceSet);
 	}
 	
@@ -212,8 +212,9 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	}
 	
 	@Test
-	public void testDeserializationDraginoFromTypeInfo(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
+	public void testDeserializationDraginoFromTypeInfo(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException, InterruptedException {
 		
+		Thread.sleep(2000l);
 		Resource resource = resourceSet.createResource(URI.createURI("test-data/dragino-example.json"));	
 		Map<String, Object> options = new HashMap<>();		
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());

@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
@@ -30,9 +31,13 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.ObjectMapperOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.BusinessPerson;
+import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.mongo.osgi.MongoClientProvider;
@@ -55,6 +60,8 @@ import org.osgi.test.junit5.service.ServiceExtension;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+
+import tools.jackson.databind.MapperFeature;
 
 
 //import org.mockito.Mock;
@@ -138,7 +145,9 @@ public class CodecMongoIdOptionsTest extends MongoEMFSetting {
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_KEY, "_testId"); //we need this because mongo would always add the _id field itself
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "_testId");
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.BUSINESS_PERSON, classOptions));
 		resource.save(options);
 		
 		resource.getContents().clear();
@@ -170,7 +179,10 @@ public class CodecMongoIdOptionsTest extends MongoEMFSetting {
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_KEY, "_testId"); //we need this because mongo would always add the _id field itself
+		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "_testId");
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.BUSINESS_PERSON, classOptions));
 		resource.save(options);
 		
 		resource.getContents().clear();

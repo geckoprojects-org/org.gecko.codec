@@ -34,12 +34,12 @@ public @interface CodecModuleConfig {
 	 */
 	String codecModuleName() default "eclipse-fennec-codec-module";
 	
-	/**
-	 * Option to indicate the default key to be used for id 
-	 * Default is "_id"
-	 * @return
-	 */
-	String idKey() default "_id";
+//	/**
+//	 * Option to indicate the default key to be used for id 
+//	 * Default is "_id"
+//	 * @return
+//	 */
+//	String idKey() default "_id";
 	
 //	/**
 //	 * Option to indicate the default key to be used for type

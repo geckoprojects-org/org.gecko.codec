@@ -413,6 +413,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		sprops.clear();
 		sprops.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
 		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.FALSE);
+		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
 		findResource.load(sprops);
 
 		// get the person

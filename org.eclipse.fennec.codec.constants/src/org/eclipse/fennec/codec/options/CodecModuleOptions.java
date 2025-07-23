@@ -65,7 +65,7 @@ public interface CodecModuleOptions {
 	/** CODEC_MODULE_ID_KEY 
 	 * to overwrite the {@link org.eclipse.fennec.codec.configurator.idKey} 
 	 * */
-	String CODEC_MODULE_ID_KEY = "codec.module.id.key";
+//	String CODEC_MODULE_ID_KEY = "codec.module.id.key";
 	
 	/** CODEC_MODULE_DESERIALIZE_TYPE 
 	 * to overwrite the {@link org.eclipse.fennec.codec.configurator.deserializeType} 
