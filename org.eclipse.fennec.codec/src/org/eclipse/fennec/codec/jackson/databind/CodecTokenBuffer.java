@@ -18,6 +18,8 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl;
+
 import tools.jackson.core.Base64Variant;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
@@ -122,6 +124,16 @@ public class CodecTokenBuffer extends TokenBuffer {
         return p;
     }
     
+    public void writeObject(Object obj) {
+    	if(obj instanceof String str) writeString(str);
+    	else if(obj instanceof Integer num) writeNumber(num);
+    	else if(obj instanceof Double num) writeNumber(num);
+    	else if(obj instanceof BigInteger num) writeNumber(num);
+    	else if(obj instanceof BigDecimal num) writeNumber(num);
+    	else if(obj instanceof Float num) writeNumber(num);
+    	else if(obj instanceof byte[] binary) writeBinary(binary);
+    }
+    
     /* 
      * (non-Javadoc)
      * @see tools.jackson.databind.util.TokenBuffer#copyCurrentEvent(tools.jackson.core.JsonParser)
@@ -154,8 +166,18 @@ public class CodecTokenBuffer extends TokenBuffer {
         case VALUE_STRING:
             if (p.hasStringCharacters()) {
                 writeString(p.getStringCharacters(), p.getStringOffset(), p.getStringLength());
-            } else {
-                writeString(p.getString());
+            } else {         
+            	if(p.currentValue() instanceof String) {
+            		writeString(p.getString());
+            	} else if (p.currentValue() instanceof byte[]){
+            		writeBinary(p.getBinaryValue());
+            	} else {
+            		if(p instanceof CodecParserBaseImpl codecParser) {
+            			writeObject(codecParser.getStringValueObject()); //needed to properly store byte[] in mongo
+            		} else {
+            			writeString(p.getString());
+            		}
+            	}
             }
             break;
         case VALUE_NUMBER_INT:
@@ -171,7 +193,17 @@ public class CodecTokenBuffer extends TokenBuffer {
             }
             break;
         case VALUE_NUMBER_FLOAT:
-        	writeNumber(p.getDoubleValue());
+        	switch(p.getNumberType()) {
+        	case BIG_DECIMAL:
+        		writeNumber(p.getDecimalValue());
+        		break;        	
+        	case FLOAT:
+        		writeNumber(p.getFloatValue());
+        		break;
+        	case DOUBLE: default:
+        		writeNumber(p.getDoubleValue());
+        		break;
+        	}
             break;
         case VALUE_TRUE:
             writeBoolean(true);
@@ -793,6 +825,7 @@ public class CodecTokenBuffer extends TokenBuffer {
             } else {
                 _byteBuilder.reset();
             }
+            
             _decodeBase64(str, builder, b64variant);
             return builder.toByteArray();
         }

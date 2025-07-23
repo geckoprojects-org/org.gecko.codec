@@ -15,6 +15,7 @@ package org.eclipse.fennec.codec.mongo;
 
 import java.math.BigDecimal;
 
+import org.bson.BsonBinary;
 import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.eclipse.fennec.codec.CodecReaderProvider;
@@ -37,7 +38,7 @@ import tools.jackson.core.util.VersionUtil;
 public class MongoCodecParser extends CodecParserBaseImpl {
 
 	private BsonReader reader;
-	
+
 	/**
 	 * Creates a new instance.
 	 * 
@@ -62,7 +63,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		this.reader = reader;
 	}
 
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#closeInput()
@@ -72,8 +73,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		// Do not close the mongo reader here!
 		// reader.close();
 	}
-	
-	
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#isEndDocument()
@@ -82,7 +83,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public boolean isEndDocument() {
 		return reader.getCurrentBsonType() == BsonType.END_OF_DOCUMENT;
 	}
-	
+
 
 	/* 
 	 * (non-Javadoc)
@@ -92,8 +93,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public boolean isBeginDocument() {
 		return reader.getCurrentBsonType() == BsonType.DOCUMENT;
 	}
-	
-	
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#isBeginArray()
@@ -102,8 +103,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public boolean isBeginArray() {
 		return reader.getCurrentBsonType() == BsonType.ARRAY;
 	}
-	
-	
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doBeginArray()
@@ -112,9 +113,9 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public void doBeginArray() {
 		reader.readStartArray();
 	}
-	
-	
-	
+
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doEndArray()
@@ -123,8 +124,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public void doEndArray() {
 		reader.readEndArray();
 	}
-	
-	
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doEndDocument()
@@ -133,7 +134,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public void doEndDocument() {
 		reader.readEndDocument();
 	}
-	
+
 
 	/* 
 	 * (non-Javadoc)
@@ -143,8 +144,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public String doReadName() {
 		return reader.readName();
 	}
-	
-	
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doBeginDocument()
@@ -153,8 +154,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public void doBeginDocument() {
 		reader.readStartDocument();
 	}
-	
-	
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doGetCurrentToken()
@@ -164,8 +165,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		BsonType currentType = reader.getCurrentBsonType();
 		return map(currentType);
 	}
-	
-	
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doGetNextToken()
@@ -175,7 +176,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		BsonType nextType = reader.readBsonType();
 		return map(nextType);
 	}
-	
+
 
 	/* 
 	 * (non-Javadoc)
@@ -185,10 +186,10 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public Object doGetCurrentValue() {
 		return getCurrentValue(reader.getCurrentBsonType());
 	}
-	
-	
 
-	
+
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.core.JsonParser#canReadObjectId()
@@ -197,8 +198,8 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public boolean canReadObjectId() {
 		return true;
 	}
-	
-	
+
+
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.core.JsonParser#getObjectId()
@@ -207,7 +208,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public Object getObjectId()  {
 		return currentValue();
 	}
-	
+
 	private Object getCurrentValue(BsonType bsonType) {
 		switch (bsonType) { 
 		case STRING:
@@ -263,9 +264,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 		}
 	}
 
-	
-	
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#getDecimalValue()
@@ -274,7 +273,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public BigDecimal getDecimalValue() {
 		return ((org.bson.types.Decimal128) streamReadContext().currentValue()).bigDecimalValue();
 	}
-	
+
 
 	/* 
 	 * (non-Javadoc)
@@ -284,7 +283,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	public byte[] getBinaryValue()  {
 		return ((org.bson.BsonBinary) streamReadContext().currentValue()).getData();
 	}
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#getBinaryValue(tools.jackson.core.Base64Variant)
@@ -292,15 +291,15 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	@Override
 	public byte[] getBinaryValue(Base64Variant variant)  {		
 		return((org.bson.BsonBinary) streamReadContext().currentValue()).getData();
-    }
-	
+	}
+
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.core.json.JsonParserBase#hasStringCharacters()
 	 */
 	@Override
 	public boolean hasStringCharacters() {		
-//		Overridden to fix issue while resolving proxy for single non contained reference. See org.eclipse.fennec.codec.mongo.test.testDeserializationReference
+		//		Overridden to fix issue while resolving proxy for single non contained reference. See org.eclipse.fennec.codec.mongo.test.testDeserializationReference
 		return false;
 	}
 
@@ -311,7 +310,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	@Override
 	protected void _parseNumericValue(int expType) throws JacksonException, InputCoercionException {
 		this._numTypesValid = NR_INT;
-		
+
 	}
 
 	/* 
@@ -331,6 +330,36 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	@Override
 	public Version version() {
 		return VersionUtil.parseVersion(
-		        "1.0.0-SNAPSHOT", "org.eclipse.fennec.codec", "codec-mongo");
+				"1.0.0-SNAPSHOT", "org.eclipse.fennec.codec", "codec-mongo");
 	}
+	
+	
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.base.ParserBase#getNumberType()
+	 */
+	@Override
+	public NumberType getNumberType() { //needed to properly pass the right number type when we have a Decimal128
+
+		if(streamReadContext().currentValue() instanceof Number n) {
+			if (n instanceof org.bson.types.Decimal128) return NumberType.BIG_DECIMAL;	
+		}
+		return super.getNumberType();
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#getStringValueObject()
+	 */
+	@Override
+	public Object getStringValueObject() {
+		if((_currToken == JsonToken.VALUE_STRING)) {
+			if(streamReadContext().currentValue() instanceof BsonBinary bsonBinary) {
+				return bsonBinary.getData();
+			}
+		}
+		return streamReadContext().currentValue();		
+	}
+
 }

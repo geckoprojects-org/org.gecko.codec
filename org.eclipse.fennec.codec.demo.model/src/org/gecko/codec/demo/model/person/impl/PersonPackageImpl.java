@@ -1143,21 +1143,8 @@ public class PersonPackageImpl extends EPackageImpl implements PersonPackage {
 		   source,
 		   new String[] {
 			   "strategy", "COMBINED",
-			   "separator", "-"
-		   });
-		addAnnotation
-		  (getPerson_Name(),
-		   source,
-		   new String[] {
-			   "id.field", "true",
-			   "id.order", "0"
-		   });
-		addAnnotation
-		  (getPerson_LastName(),
-		   source,
-		   new String[] {
-			   "id.field", "true",
-			   "id.order", "1"
+			   "separator", "-",
+			   "idFeatures", "name,lastName"
 		   });
 		addAnnotation
 		  (businessPersonEClass,

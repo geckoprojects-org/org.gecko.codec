@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
@@ -33,10 +34,14 @@ import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 import org.gecko.codec.demo.model.person.PersonPackage;
+import org.gecko.emf.osgi.annotation.require.RequireEMF;
+import org.gecko.emf.osgi.constants.EMFNamespaces;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.test.common.annotation.InjectService;
+import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
@@ -50,11 +55,22 @@ import org.osgi.test.junit5.service.ServiceExtension;
  * 	https://github.com/osgi/osgi-test/wiki
  * Examples: https://github.com/osgi/osgi-test/tree/main/examples
  */
+@RequireEMF
 @ExtendWith(BundleContextExtension.class)
 @ExtendWith(ServiceExtension.class)
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
 public class CodecModelInfoTest {
+	
+	@InjectService(cardinality = 0,filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
+	ServiceAware<ResourceSet> rsAware;
+	
+	@BeforeEach
+	public void before() throws InterruptedException {
+		System.out.println("");
+		ResourceSet resourceSet = rsAware.waitForService(2000l);
+		assertNotNull(resourceSet);
+	}
 
 	
 	@Test
@@ -86,9 +102,7 @@ public class CodecModelInfoTest {
 				assertEquals(eClassCodecInfo.getId(), EcoreUtil.getURI(eClass).toString());
 				assertEquals(eClassCodecInfo.getClassifier(), eClass);				
 				
-				assertNotNull(eClassCodecInfo.getIdentityInfo());
-				assertEquals(eClassCodecInfo.getIdentityInfo().getType(), InfoType.IDENTITY);
-				
+				assertNotNull(eClassCodecInfo.getIdentityInfo());				
 				assertNotNull(eClassCodecInfo.getTypeInfo());
 			}
 		});
@@ -105,9 +119,9 @@ public class CodecModelInfoTest {
 		assertNotNull(eClassCodecInfo);
 		
 		IdentityInfo identityInfo = eClassCodecInfo.getIdentityInfo();
-		assertThat(identityInfo.getFeatures()).hasSize(2);
-		assertEquals(identityInfo.getFeatures().get(0), demoModel.getPerson_Name());
-		assertEquals(identityInfo.getFeatures().get(1), demoModel.getPerson_LastName());
+		assertThat(identityInfo.getIdFeatures()).hasSize(2);
+		assertEquals(identityInfo.getIdFeatures().get(0), demoModel.getPerson_Name());
+		assertEquals(identityInfo.getIdFeatures().get(1), demoModel.getPerson_LastName());
 		assertEquals("COMBINED", identityInfo.getIdStrategy());
 		assertEquals( "-", identityInfo.getIdSeparator());
 	}
@@ -206,7 +220,7 @@ public class CodecModelInfoTest {
 		List<FeatureCodecInfo> featureInfos = eClassCodecInfo.getFeatureInfo();
 		assertThat(featureInfos).hasSize(3);
 		for(FeatureCodecInfo fci : featureInfos) {
-			if("zip".equals(fci.getFeatures().get(0).getName())) {
+			if("zip".equals(fci.getFeature().getName())) {
 				assertTrue(fci.isIgnore());
 			}
 		}

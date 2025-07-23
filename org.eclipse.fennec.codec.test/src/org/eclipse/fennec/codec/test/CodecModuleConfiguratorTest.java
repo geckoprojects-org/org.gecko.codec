@@ -55,7 +55,6 @@ public class CodecModuleConfiguratorTest {
 		assertNotNull(codecModuleConfigurator);
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
 		assertEquals("json", module.getCodecType());	
-		assertEquals("_id", module.getIdKey());		
 		assertEquals("_supertype", module.getSuperTypeKey());		
 		assertEquals("$ref", module.getRefKey());		
 		assertEquals("_proxy", module.getProxyKey());		
@@ -85,17 +84,6 @@ public class CodecModuleConfiguratorTest {
 		assertEquals("test", module.getCodecType());		
 	}
 	
-		
-	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "idKey", value="test")
-	})
-	@Test
-	public void testCodecModuleConfigCodecIdKey(@InjectService(timeout = 2000l) CodecModuleConfigurator codecModuleConfigurator) throws InterruptedException, IOException {
-	
-		assertNotNull(codecModuleConfigurator);
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("test", module.getIdKey());		
-	}
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "superTypeKey", value="test")

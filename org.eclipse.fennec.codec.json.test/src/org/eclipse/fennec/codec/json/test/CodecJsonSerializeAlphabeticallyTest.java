@@ -140,7 +140,7 @@ public class CodecJsonSerializeAlphabeticallyTest extends JsonTestSetting {
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITH, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
 		resource.save(options);
 		int l = 0, l1 = 0, l2 = 0;
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

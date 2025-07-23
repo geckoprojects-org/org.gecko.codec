@@ -78,6 +78,7 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 				EClassCodecInfo eClassCodecInfo = (EClassCodecInfo)theEObject;
 				T1 result = caseEClassCodecInfo(eClassCodecInfo);
 				if (result == null) result = caseTypedCodecInfo(eClassCodecInfo);
+				if (result == null) result = caseIdentifiableCodecInfo(eClassCodecInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -105,8 +106,6 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 			case CodecInfoPackage.IDENTITY_INFO: {
 				IdentityInfo identityInfo = (IdentityInfo)theEObject;
 				T1 result = caseIdentityInfo(identityInfo);
-				if (result == null) result = caseFeatureCodecInfo(identityInfo);
-				if (result == null) result = caseTypedCodecInfo(identityInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -143,6 +142,12 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 			case CodecInfoPackage.TYPED_CODEC_INFO: {
 				TypedCodecInfo typedCodecInfo = (TypedCodecInfo)theEObject;
 				T1 result = caseTypedCodecInfo(typedCodecInfo);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecInfoPackage.IDENTIFIABLE_CODEC_INFO: {
+				IdentifiableCodecInfo identifiableCodecInfo = (IdentifiableCodecInfo)theEObject;
+				T1 result = caseIdentifiableCodecInfo(identifiableCodecInfo);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -327,6 +332,21 @@ public class CodecInfoSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseTypedCodecInfo(TypedCodecInfo object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Identifiable Codec Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Identifiable Codec Info</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseIdentifiableCodecInfo(IdentifiableCodecInfo object) {
 		return null;
 	}
 

@@ -70,12 +70,12 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 	@Override
 	public void deserializeAndSet(JsonParser jp, EObject current, DeserializationContext ctxt, Resource resource) {
 
-		if(featureCodecInfo.getFeatures().get(0) instanceof EOperation || featureCodecInfo.isIgnore())  {
+		if(featureCodecInfo.getFeature() instanceof EOperation || featureCodecInfo.isIgnore())  {
 			jp.nextToken();
 			jp.skipChildren();
 			return;
 		}
-		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
+		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeature();
 		EMFCodecReadContext codecReadCtxt = jp.streamReadContext() instanceof EMFCodecReadContext ? (EMFCodecReadContext) jp.streamReadContext() : null;
 		if(codecReadCtxt == null) {
 			throw new IllegalArgumentException(String.format("No EMFCodecReadContext available. Something went wrong!"));
@@ -85,7 +85,7 @@ public class FeatureCodecInfoDeserializer implements CodecInfoDeserializer {
 		codecReadCtxt.setCurrentEObject(current);
 		codecReadCtxt.setResource(resource);
 		
-		JsonToken token = null;
+		JsonToken token = jp.currentToken();
 
 		if (jp.currentToken() == JsonToken.PROPERTY_NAME) {
 			token = jp.nextToken();

@@ -55,7 +55,7 @@ public class CodecInfoHolderHelper {
 			break;
 		case IDENTITY:
 			codecInfoHolder.getReaders().add(CodecIOHelper.DEFAULT_ID_VALUE_READER);
-			codecInfoHolder.getWriters().add(CodecIOHelper.IDFIELD_VALUE_WRITER);			
+//			codecInfoHolder.getWriters().add(CodecIOHelper.IDFIELD_VALUE_WRITER);			
 			codecInfoHolder.getWriters().add(CodecIOHelper.DEFAULT_ID_VALUE_WRITER);
 			break;
 		case SUPER_TYPE:

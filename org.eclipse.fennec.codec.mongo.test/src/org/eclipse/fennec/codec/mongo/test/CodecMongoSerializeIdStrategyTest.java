@@ -173,7 +173,7 @@ public class CodecMongoSerializeIdStrategyTest extends MongoEMFSetting {
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecAnnotations.CODEC_ID_STRATEGY, "COMBINED");
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);

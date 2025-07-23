@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
@@ -48,7 +49,6 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 @Component(name = "CodecModelInfoService", service = CodecModelInfo.class)
 public class CodecModelInfoImpl extends HashMap<String, Object> implements CodecModelInfo {
@@ -58,8 +58,10 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 7749336016374647599L;
+	private static final Logger LOGGER = Logger.getLogger(CodecModelInfoImpl.class.getName());
 
 	private transient List<EPackageConfigurator> list = new ArrayList<>();
+	private transient List<EPackage> packageList = new ArrayList<>();
 
 	private Map<String, PackageCodecInfo> ePackageCodecInfoMap = new ConcurrentHashMap<>();
 	private Map<InfoType, CodecInfoHolder> codecInfoHolderMap = new ConcurrentHashMap<>();
@@ -73,7 +75,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		createCodecInfoHolderMap();
 	}
 
-	@Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC, policyOption = ReferencePolicyOption.GREEDY)
+//	@Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
 	public void bindEPackageConfigurator(EPackageConfigurator configurator) {
 		lock.writeLock().lock();
 		try {
@@ -83,16 +85,39 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 			lock.writeLock().unlock();
 		}
 	}
+	
+
+	@Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
+	public void bindEPackage(EPackage ePackage) {
+		lock.writeLock().lock();
+		try {
+			packageList.add(ePackage);
+			createPackageCodecInfo(ePackage);
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
 
 	private synchronized void refresh() {
 		list.forEach(c -> c.configureEPackage(this));
 	}
-
+	
 	public void unbindEPackageConfigurator(EPackageConfigurator configurator) {
 		lock.writeLock().lock();
 		try {
 			list.remove(configurator);
 			configurator.unconfigureEPackage(this);
+			refresh();
+		} finally {
+			lock.writeLock().unlock();
+		}
+	}
+
+	public void unbindEPackage(EPackage ePackage) {
+		lock.writeLock().lock();
+		try {
+			packageList.remove(ePackage);
+			ePackageCodecInfoMap.remove(ePackage.getNsURI());
 			refresh();
 		} finally {
 			lock.writeLock().unlock();
@@ -135,6 +160,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		ePackage.getEClassifiers().stream().forEach(ec -> {
 			ePackageCodecInfo.getEClassCodecInfo().add(createCodecEClassInfo(ec));
 		});
+	
 		return ePackageCodecInfo;
 	}
 
@@ -143,38 +169,33 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		eClassCodecInfo.setId(EcoreUtil.getURI(ec).toString());
 		eClassCodecInfo.setClassifier(ec);
 
-		IdentityInfo identityInfo = CodecInfoFactory.eINSTANCE.createIdentityInfo();
-		identityInfo.setType(InfoType.IDENTITY);
-		identityInfo.setId(UUID.randomUUID().toString());
-		eClassCodecInfo.setIdentityInfo(identityInfo);
 
 
-		String valueReaderName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_ID_VALUE_READER_NAME);
-		if(valueReaderName != null) identityInfo.setValueReaderName(valueReaderName);
-
-		String valueWriterName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME);
-		if(valueWriterName != null) identityInfo.setValueWriterName(valueWriterName);	
-
-		String identityStrategy = getAnnotationDetails(ec, "codec.id", "strategy", true);
-		if(identityStrategy != null) identityInfo.setIdStrategy(identityStrategy);
-		else identityInfo.setIdStrategy("ID_FIELD");
-
-		String identitySeparator = getAnnotationDetails(ec, "codec.id", "separator", true);
-		if(identitySeparator != null) identityInfo.setIdSeparator(identitySeparator);
 
 		if(ec instanceof EClass eClass) {
+			
+
+			
 			eClass.getEAllAttributes().forEach(att -> 
-			eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(att, eClassCodecInfo)));
+				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(att)));
 			eClass.getEAllReferences().forEach(ref -> 				
-			eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(ref, eClassCodecInfo)));
+				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(ref)));
 			eClass.getEAllOperations().forEach(op -> {
-				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(op, eClassCodecInfo));
+				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(op));
 			});
+			
+//			System.out.println(eClass.getEPackage().getNsURI() + " " + eClass.getName() +  " before " + eClassCodecInfo.getFeatureInfo().size());
+			
+			
+//			add IdentityInfo based on EAnnotation
+			eClassCodecInfo.setIdentityInfo(getIdentityInfo(eClass));
+			
+//			System.out.println(eClass.getEPackage().getNsURI() + " " + eClass.getName() +  " after " + eClassCodecInfo.getFeatureInfo().size());
 		};	
 		
-		//			Add TypeInfo based on EAnnotation
-		TypeInfo typeInfo = getTypeInfo(ec);
-		eClassCodecInfo.setTypeInfo(typeInfo);		
+//		Add TypeInfo based on EAnnotation
+		eClassCodecInfo.setTypeInfo(getTypeInfo(ec));		
+		
 
 
 		//		This is not really used at the moment.
@@ -222,6 +243,54 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	private static final List<String> TYPE_ANNOTATION_KEYS = List.of(CodecModelInfoOptions.CODEC_TYPE_INCLUDE, 
 			CodecModelInfoOptions.CODEC_TYPE_KEY, CodecModelInfoOptions.CODEC_TYPE_STRATEGY, 
 			CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME, CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME);
+	
+	
+	private IdentityInfo getIdentityInfo(EClass eClass) {
+		IdentityInfo idInfo = CodecInfoFactory.eINSTANCE.createIdentityInfo();
+		Map<String, String> idAnnotationDetails = getAnnotationDetailsMap(eClass, CodecAnnotations.CODEC_ID, true);
+		
+		String strategy = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_STRATEGY, "ID_FIELD");
+		idInfo.setIdStrategy(strategy);
+		
+		String key = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_KEY, "_id");
+		idInfo.setIdKey(key);
+		
+		String separator = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_SEPARATOR, "-");
+		idInfo.setIdSeparator(separator);
+		
+		
+		
+		if("COMBINED".equals(strategy)) {
+			String valueReaderName = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_VALUE_READER_NAME, null);
+			idInfo.setIdValueReaderName(valueReaderName);
+			
+			String valueWriterName = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER_NAME, null);
+			idInfo.setIdValueWriterName(valueWriterName);
+			String idFeatures = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, "");
+			if(!idFeatures.isEmpty()) {
+				String[] idFeaturesSplit = idFeatures.split(",");
+				for(String featureName : idFeaturesSplit) {
+					EStructuralFeature feature =  eClass.getEStructuralFeature(featureName);
+					if(feature != null) idInfo.getIdFeatures().add(feature);
+					else LOGGER.warning(String.format("No EStructuralFeature with name %s found in EClass %s", featureName, eClass.getName()));
+				}
+			}
+		} else {
+			String valueReaderName = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_VALUE_READER_NAME, "DEFAULT_ID_READER");
+			idInfo.setIdValueReaderName(valueReaderName);
+			
+			String valueWriterName = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER_NAME, "DEFAULT_ID_WRITER");
+			idInfo.setIdValueWriterName(valueWriterName);
+			if(eClass.getEIDAttribute() != null) {
+				idInfo.getIdFeatures().add(eClass.getEIDAttribute());
+			}			
+		}
+		
+		
+		
+		return idInfo;
+		
+	}
 
 	private TypeInfo getTypeInfo(EModelElement modelElement) {
 		TypeInfo typeInfo = CodecInfoFactory.eINSTANCE.createTypeInfo();
@@ -266,7 +335,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	}
 
 
-	private FeatureCodecInfo createCodecFeatureInfo(ETypedElement feature, EClassCodecInfo eClassCodecInfo) {
+	private FeatureCodecInfo createCodecFeatureInfo(ETypedElement feature) {
 		FeatureCodecInfo featureInfo = CodecInfoFactory.eINSTANCE.createFeatureCodecInfo();
 		featureInfo.setId(UUID.randomUUID().toString());
 		featureInfo.setType(feature instanceof EAttribute ? InfoType.ATTRIBUTE : 
@@ -274,28 +343,11 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		if(feature.getEType() instanceof EEnum) featureInfo.setType(InfoType.ENUMERATOR);
 
 		featureInfo.setKey(getElementName(feature));
-		featureInfo.getFeatures().add(feature);
+		featureInfo.setFeature(feature);
 
 		if(feature instanceof EStructuralFeature f && f.isTransient()) featureInfo.setIgnore(true);
 		String isIgnore = getAnnotationDetails(feature, "codec", "transient");
-		if("true".equalsIgnoreCase(isIgnore)) featureInfo.setIgnore(Boolean.valueOf(isIgnore));
-
-		//		Retrieve id info from model annotations
-		if("COMBINED".equals(eClassCodecInfo.getIdentityInfo().getIdStrategy())) {
-			String idField = getAnnotationDetails(feature, "codec.id", "id.field");
-			if(idField != null && "true".equalsIgnoreCase(idField)) {			
-				String idOrder = getAnnotationDetails(feature, "codec.id", "id.order");
-				if(idOrder != null) {
-					Integer order = Integer.valueOf(idOrder);
-					eClassCodecInfo.getIdentityInfo().getFeatures().add(order, feature);
-				} else eClassCodecInfo.getIdentityInfo().getFeatures().add(feature);
-			}
-		} else {
-			//			Retrieve id info from model properties
-			if(feature instanceof EAttribute att && att.isID()) {
-				eClassCodecInfo.getIdentityInfo().getFeatures().add(feature);
-			}
-		}		
+		if("true".equalsIgnoreCase(isIgnore)) featureInfo.setIgnore(Boolean.valueOf(isIgnore));	
 
 		//		Set value reader/writer from annotation
 		String valueReaderName = getAnnotationDetails(feature, "codec", CodecAnnotations.CODEC_VALUE_READER_NAME);

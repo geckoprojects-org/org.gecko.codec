@@ -452,7 +452,7 @@ public class MongoIntegrationTest extends MongoEMFSetting{
 		removeResource.delete(null);
 
 		findResource.unload();
-		findResource.load(null);
+		findResource.load(options);
 		// no person anymore
 		assertNotNull(findResource);
 		assertTrue(findResource.getContents().isEmpty());

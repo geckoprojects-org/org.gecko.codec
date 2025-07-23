@@ -62,30 +62,31 @@ public class CodecIOHelper {
 	};
 
 
-	public static final CodecValueWriter<EObject, Object> DEFAULT_ID_VALUE_WRITER = new CodecValueWriter<>() {
+	public static final CodecValueWriter<Object, String> DEFAULT_ID_VALUE_WRITER = new CodecValueWriter<>() {
 		@Override
 		public String getName() {
 			return "DEFAULT_ID_WRITER";
 		}
 
 		@Override
-		public Object writeValue(EObject value, SerializationContext provider) {
-			return EcoreUtil.getID(value);
+		public String writeValue(Object value, SerializationContext provider) {
+			if(value == null) return null;
+			return value.toString();
 		}
 	};
 
-
-	public static final CodecValueWriter<EObject, Object> IDFIELD_VALUE_WRITER = new CodecValueWriter<>() {
-		@Override
-		public String getName() {
-			return "ID_FIELD_WRITER";
-		}
-
-		@Override
-		public Object writeValue(EObject value, SerializationContext provider) {
-			return EcoreUtil.getID(value);
-		}
-	};
+//
+//	public static final CodecValueWriter<EObject, String> IDFIELD_VALUE_WRITER = new CodecValueWriter<>() {
+//		@Override
+//		public String getName() {
+//			return "ID_FIELD_WRITER";
+//		}
+//
+//		@Override
+//		public String writeValue(EObject value, SerializationContext provider) {
+//			return EcoreUtil.getID(value);
+//		}
+//	};
 
 
 //	public static final CodecValueReader<String, EClass> DEFAULT_ECLASS_READER = new CodecValueReader<>() {

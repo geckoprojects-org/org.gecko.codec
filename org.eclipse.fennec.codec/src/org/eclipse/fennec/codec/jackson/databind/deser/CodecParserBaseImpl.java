@@ -112,6 +112,8 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	abstract public String doReadName();
 
 	public abstract Object doGetCurrentValue();
+	
+	public abstract Object getStringValueObject();
 
 	/* 
 	 * (non-Javadoc)
@@ -281,7 +283,7 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 		if(_currToken == JsonToken.PROPERTY_NAME) {
 			return _streamReadContext.currentName();
 		}
-		if(_streamReadContext.currentValue() != null) {
+		if(_streamReadContext.currentValue() != null) {			
 			return _streamReadContext.currentValue().toString();
 		}
 		return null;
@@ -326,7 +328,7 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 */
 	@Override
 	public byte[] getBinaryValue() {
-		return (byte[]) currentValue();
+		return super.getBinaryValue();
 	}
 
 	/* 
@@ -335,7 +337,7 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 */
 	@Override
 	public byte[] getBinaryValue(Base64Variant variant){
-		return (byte[]) currentValue();
+		return super.getBinaryValue(variant);
 	}
 
 	/* 

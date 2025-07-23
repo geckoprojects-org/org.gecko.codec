@@ -97,6 +97,15 @@ public interface CodecInfoFactory extends EFactory {
 	TypedCodecInfo createTypedCodecInfo();
 
 	/**
+	 * Returns a new object of class '<em>Identifiable Codec Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Identifiable Codec Info</em>'.
+	 * @generated
+	 */
+	IdentifiableCodecInfo createIdentifiableCodecInfo();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

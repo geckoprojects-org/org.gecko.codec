@@ -54,12 +54,10 @@ public class EnumeratorCodecInfoSerializer implements CodecInfoSerializer  {
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		if (featureCodecInfo.isIgnore())
 			return;
-		if (featureCodecInfo.getFeatures().size() != 1) {
-			LOGGER.warning(
-					"Currently no support for multiple EStructuralFeature in CodecInfoObject which is not a CodecIdInfo");
-			return;
+		if (featureCodecInfo.getFeature() == null) {
+			LOGGER.severe(String.format("FeatureCodecInfo with no Feature inside! Cannot serialize!"));
 		}
-		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
+		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeature();
 //
 //		EMFContext.setParent(provider, rootObj);
 //		EMFContext.setFeature(provider, feature);

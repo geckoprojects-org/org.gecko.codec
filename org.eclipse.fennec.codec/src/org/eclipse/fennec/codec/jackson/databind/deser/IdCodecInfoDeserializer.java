@@ -80,7 +80,7 @@ public class IdCodecInfoDeserializer extends ValueDeserializer<String> {
 		}
 		String id = null;
 		if (value != null) {
-			String readerName = idCodecInfo.getValueReaderName();
+			String readerName = idCodecInfo.getIdValueReaderName();
 			
 			if(readerName != null) {
 				CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY);
@@ -128,7 +128,7 @@ public class IdCodecInfoDeserializer extends ValueDeserializer<String> {
 		}
 
 		if (value != null) {
-			String readerName = idCodecInfo.getValueReaderName();
+			String readerName = idCodecInfo.getIdValueReaderName();
 			String id = null;
 			if(readerName != null) {
 				CodecInfoHolder infoHolder = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY);
@@ -149,7 +149,7 @@ public class IdCodecInfoDeserializer extends ValueDeserializer<String> {
 		case "COMBINED":
 			String[] idSegments = deserializedIdValue.split(idCodecInfo.getIdSeparator());
 			for(int i = 0; i < idSegments.length; i++) {
-				EStructuralFeature feature = (EStructuralFeature) idCodecInfo.getFeatures().get(i);
+				EStructuralFeature feature = (EStructuralFeature) idCodecInfo.getIdFeatures().get(i);
 				current.eSet(feature, idSegments[i]);
 			}
 			break;

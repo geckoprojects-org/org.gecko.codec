@@ -103,12 +103,12 @@ public class ReferenceCodecInfoDeserializer extends ValueDeserializer<EObject> i
 		}
 
 		EObject parent = codecReadCtxt.getCurrentEObject();
-		EStructuralFeature reference = codecReadCtxt.getCurrentFeature();
+		EStructuralFeature reference = getCurrentFeature(codecReadCtxt);
 		Resource resource = codecReadCtxt.getResource();
 		
 //		TODO: we could try to retrieve the typeCodecInfo from the context, because at this point we do not have it if we construct this deserializer from the module
 		EClassCodecInfo eObjCodecInfo = extractModelInfo(reference.getEContainingClass());
-		FeatureCodecInfo featureCodecInfo = eObjCodecInfo.getReferenceCodecInfo().stream().filter(r -> r.getFeatures().get(0).getName().equals(reference.getName())).findFirst().orElse(null);
+		FeatureCodecInfo featureCodecInfo = eObjCodecInfo.getReferenceCodecInfo().stream().filter(r -> r.getFeature().getName().equals(reference.getName())).findFirst().orElse(null);
 		if(featureCodecInfo == null) {
 			throw new IllegalArgumentException(String.format("Cannot retrieve FeatureCodecInfo for current EStructuralFeature %s. Something went wrong!", reference.getName()));
 		}
@@ -175,11 +175,11 @@ public class ReferenceCodecInfoDeserializer extends ValueDeserializer<EObject> i
 
 		
 		EObject parent = getCurrentEObject((TokenStreamContext) codecReadCtxt);
-		EStructuralFeature reference = getCurrentFeature((TokenStreamContext) codecReadCtxt);
+		EStructuralFeature reference = getCurrentFeature(codecReadCtxt);
 		
 //		TODO: we could try to retrieve the typeCodecInfo from the context, because at this point we do not have it if we construct this deserializer from the module
 		EClassCodecInfo eObjCodecInfo = extractModelInfo(reference.getEContainingClass());
-		FeatureCodecInfo featureCodecInfo = eObjCodecInfo.getReferenceCodecInfo().stream().filter(r -> r.getFeatures().get(0).getName().equals(reference.getName())).findFirst().orElse(null);
+		FeatureCodecInfo featureCodecInfo = eObjCodecInfo.getReferenceCodecInfo().stream().filter(r -> r.getFeature().getName().equals(reference.getName())).findFirst().orElse(null);
 		if(featureCodecInfo == null) {
 			throw new IllegalArgumentException(String.format("Cannot retrieve FeatureCodecInfo for current EStructuralFeature %s. Something went wrong!", reference.getName()));
 		}
@@ -226,13 +226,18 @@ public class ReferenceCodecInfoDeserializer extends ValueDeserializer<EObject> i
 		}
 	}
 	
+	private EStructuralFeature getCurrentFeature(EMFCodecReadContext ctxt) {
+		if(ctxt.getCurrentFeature() != null) return ctxt.getCurrentFeature();
+		return getCurrentFeature((TokenStreamContext) ctxt);
+	}
+	
 	private EStructuralFeature getCurrentFeature(final TokenStreamContext ctxt) {
 		TokenStreamContext parentCodecReadCtxt = null;
 		if(ctxt.getParent() != null) {
 			if(ctxt.getParent().inObject()) {
 				parentCodecReadCtxt = ctxt.getParent();
 			} else if(ctxt.getParent().inArray()) {
-				parentCodecReadCtxt = ctxt.getParent().getParent();
+				parentCodecReadCtxt = ctxt.getParent();
 			}
 		}
 		if(parentCodecReadCtxt != null) {
