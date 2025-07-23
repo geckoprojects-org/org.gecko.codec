@@ -29,9 +29,13 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.codec.options.ObjectMapperOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
+import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.AfterEach;
@@ -131,6 +135,63 @@ public class CodecJsonSerializeAlphabeticallyTest extends JsonTestSetting {
 		 assertThat(l1).isLessThan(l2);
 	}
 	
+	@Test
+	public void testSerializationAlphabeticallyYESIdOnTop() throws IOException {
+	
+		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+		
+		Person person = CodecTestHelper.getTestPerson();
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITH, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
+		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, true);
+		resource.save(options);
+		int l = 0, l1 = 0, l2 = 0;
+		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			 String line = reader.readLine();
+			 while(line != null) {
+				 if(line.contains("\"_id\" :")) {
+					 l1 = l;
+				 } else if(line.contains("\"birthDate\" :")) {
+					 l2 = l;
+				 }
+				 line = reader.readLine();
+				 l++;
+			 }
+		 }
+		 assertThat(l1).isLessThan(l2);
+	}
+	
+	@Test
+	public void testSerializationAlphabeticallyYESIdOnTopNO() throws IOException {
+	
+		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+		
+		Person person = CodecTestHelper.getTestPerson();
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITH, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
+		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "id");
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
+		resource.save(options);
+		int l = 0, l1 = 0, l2 = 0;
+		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			 String line = reader.readLine();
+			 while(line != null) {
+				 if(line.contains("\"id\" :")) {
+					 l1 = l;
+				 } else if(line.contains("\"birthDate\" :")) {
+					 l2 = l;
+				 }
+				 line = reader.readLine();
+				 l++;
+			 }
+		 }
+		 assertThat(l1).isGreaterThan(l2);
+	}
+	
 
 	@Test
 	public void testSerializationAlphabeticallyNOT() throws IOException {
@@ -156,5 +217,35 @@ public class CodecJsonSerializeAlphabeticallyTest extends JsonTestSetting {
 			 }
 		 }
 		 assertThat(l1).isGreaterThan(l2);
+	}
+	
+	@Test
+	public void testSerializationAlphabeticallyNOTIdOnTop() throws IOException {
+	
+		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+		
+		Person person = CodecTestHelper.getTestPerson();
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
+		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, true);
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "id");
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
+		resource.save(options);
+		int l = 0, l1 = 0, l2 = 0;
+		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+			 String line = reader.readLine();			 
+			 while(line != null) {
+				 if(line.contains("\"id\" :")) {
+					 l1 = l;
+				 } else if(line.contains("\"birthDate\" :")) {
+					 l2 = l;
+				 }
+				 line = reader.readLine();
+				 l++;
+			 }
+		 }
+		 assertThat(l1).isLessThan(l2);
 	}
 }
