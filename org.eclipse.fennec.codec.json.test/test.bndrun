@@ -3,8 +3,6 @@
 -runrequires: \
 	bnd.identity;id='org.eclipse.fennec.codec.json',\
 	bnd.identity;id='org.eclipse.fennec.codec.json.test',\
-	bnd.identity;id='org.apache.felix.gogo.command',\
-	bnd.identity;id='org.apache.felix.gogo.shell',\
 	bnd.identity;id='org.gecko.emf.osgi.extender',\
 	bnd.identity;id='org.gecko.emf.osgi.component'
 	

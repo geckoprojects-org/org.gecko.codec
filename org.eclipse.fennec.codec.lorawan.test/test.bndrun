@@ -2,9 +2,7 @@
 
 -runrequires: \
 	bnd.identity;id='org.eclipse.fennec.codec.json',\
-	bnd.identity;id='org.eclipse.fennec.codec.lorawan.test',\
-	bnd.identity;id='org.apache.felix.gogo.command',\
-	bnd.identity;id='org.apache.felix.gogo.shell'
+	bnd.identity;id='org.eclipse.fennec.codec.lorawan.test'
 	
 -runbundles.test: \
 	org.eclipse.fennec.codec.lorawan.test;version=snapshot

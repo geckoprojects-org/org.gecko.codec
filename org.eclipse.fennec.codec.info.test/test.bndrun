@@ -2,8 +2,6 @@
 
 -runrequires: \
 	bnd.identity;id='org.eclipse.fennec.codec.info.test',\
-	bnd.identity;id='org.apache.felix.gogo.command',\
-	bnd.identity;id='org.apache.felix.gogo.shell',\
 	bnd.identity;id='org.gecko.emf.osgi.component'
 	
 -runbundles.test: \
