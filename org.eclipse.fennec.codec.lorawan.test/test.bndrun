@@ -11,6 +11,11 @@
 
 -runee: JavaSE-17
 
+-runproperties: \
+	test-data=${.}/test-data/
+	
+-includeresource: test-data=test-data/
+
 
 -runbundles: \
 	com.fasterxml.jackson.core.jackson-annotations;version='[3.0.0,3.0.1)',\
