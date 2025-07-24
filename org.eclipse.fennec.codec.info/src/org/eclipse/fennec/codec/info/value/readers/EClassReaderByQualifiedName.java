@@ -13,6 +13,8 @@
  */
 package org.eclipse.fennec.codec.info.value.readers;
 
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
@@ -24,17 +26,13 @@ import tools.jackson.databind.DeserializationContext;
 /**
  * 
  * @author ilenia
- * @since Jul 18, 2025
+ * @since Jul 24, 2025
  */
-public class EClassReaderByName implements CodecValueReader<String, EClass>{
-
+public class EClassReaderByQualifiedName implements CodecValueReader<String, EClass>{
+	
 	private ResourceSet resourceSet;
-
-	public EClassReaderByName() {
-
-	}
-
-	public EClassReaderByName(ResourceSet resourceSet) {
+	
+	public EClassReaderByQualifiedName(ResourceSet resourceSet) {
 		this.resourceSet = resourceSet;
 	}
 
@@ -44,8 +42,7 @@ public class EClassReaderByName implements CodecValueReader<String, EClass>{
 	 */
 	@Override
 	public String getName() {
-
-		return CodecValueReaderConstants.READER_BY_ECLASS_NAME;
+		return CodecValueReaderConstants.READER_BY_INSTANCE_CLASS_NAME;
 	}
 
 	/* 
@@ -54,7 +51,8 @@ public class EClassReaderByName implements CodecValueReader<String, EClass>{
 	 */
 	@Override
 	public EClass readValue(String value, DeserializationContext context) {
-		
-		return CodecIOHelper.findEClassByName(value, resourceSet);
+		Set<EClass> types = CodecIOHelper.getAllTypes(resourceSet);
+		return types.stream().filter(CodecIOHelper.findByQualifiedName(value)).findFirst().orElse(null);
 	}
+
 }

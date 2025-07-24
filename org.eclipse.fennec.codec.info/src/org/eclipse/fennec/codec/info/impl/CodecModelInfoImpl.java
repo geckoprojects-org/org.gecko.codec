@@ -43,6 +43,8 @@ import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 import org.eclipse.fennec.codec.info.helper.CodecInfoHolderHelper;
 import org.eclipse.fennec.codec.options.CodecAnnotations;
 import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
+import org.eclipse.fennec.codec.options.CodecValueWriterConstants;
 import org.gecko.emf.osgi.configurator.EPackageConfigurator;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -241,8 +243,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	}
 
 	private static final List<String> TYPE_ANNOTATION_KEYS = List.of(CodecModelInfoOptions.CODEC_TYPE_INCLUDE, 
-			CodecModelInfoOptions.CODEC_TYPE_KEY, CodecModelInfoOptions.CODEC_TYPE_STRATEGY, 
-			CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME, CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME);
+			CodecModelInfoOptions.CODEC_TYPE_KEY, CodecModelInfoOptions.CODEC_TYPE_STRATEGY);
 	
 	
 	private IdentityInfo getIdentityInfo(EClass eClass) {
@@ -258,14 +259,7 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		String separator = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_SEPARATOR, "-");
 		idInfo.setIdSeparator(separator);
 		
-		
-		
 		if("COMBINED".equals(strategy)) {
-			String valueReaderName = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_VALUE_READER_NAME, null);
-			idInfo.setIdValueReaderName(valueReaderName);
-			
-			String valueWriterName = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER_NAME, null);
-			idInfo.setIdValueWriterName(valueWriterName);
 			String idFeatures = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, "");
 			if(!idFeatures.isEmpty()) {
 				String[] idFeaturesSplit = idFeatures.split(",");
@@ -276,20 +270,13 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 				}
 			}
 		} else {
-			String valueReaderName = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_VALUE_READER_NAME, "DEFAULT_ID_READER");
-			idInfo.setIdValueReaderName(valueReaderName);
-			
-			String valueWriterName = idAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER_NAME, "DEFAULT_ID_WRITER");
-			idInfo.setIdValueWriterName(valueWriterName);
+			idInfo.setIdValueReaderName(CodecValueReaderConstants.OBJECT_TO_STRING_READER);			
+			idInfo.setIdValueWriterName(CodecValueWriterConstants.OBJECT_TO_STRING_WRITER);
 			if(eClass.getEIDAttribute() != null) {
 				idInfo.getIdFeatures().add(eClass.getEIDAttribute());
 			}			
 		}
-		
-		
-		
 		return idInfo;
-		
 	}
 
 	private TypeInfo getTypeInfo(EModelElement modelElement) {
@@ -302,8 +289,6 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		}
 		typeInfo.setTypeKey(typeAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_TYPE_KEY, "_type"));
 		String typeStrategy = typeAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "");
-		String valueWriter = typeAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME, "");
-		String valueReader = typeAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME, "");
 		Map<String, String> typeMap = new HashMap<>();
 		typeAnnotationDetails.forEach((k,v) -> {
 			if(!TYPE_ANNOTATION_KEYS.contains(k)) {
@@ -316,20 +301,18 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 			typeInfo.setTypeStrategy(typeStrategy);
 			switch(typeStrategy) {
 			case "NAME":
-				typeInfo.setTypeValueWriterName("WRITE_BY_NAME");
-				typeInfo.setTypeValueReaderName("READ_BY_NAME");
+				typeInfo.setTypeValueWriterName(CodecValueWriterConstants.WRITER_BY_ECLASS_NAME);
+				typeInfo.setTypeValueReaderName(CodecValueReaderConstants.READER_BY_ECLASS_NAME);
 				break;
 			case "CLASS":
-				typeInfo.setTypeValueWriterName("WRITE_BY_CLASS_NAME");
-				typeInfo.setTypeValueReaderName("READ_BY_CLASS");
+				typeInfo.setTypeValueWriterName(CodecValueWriterConstants.WRITER_BY_INSTANCE_CLASS_NAME);
+				typeInfo.setTypeValueReaderName(CodecValueReaderConstants.READER_BY_INSTANCE_CLASS_NAME);
 				break;
 			case "URI": default:
-				typeInfo.setTypeValueWriterName("URI_WRITER");
-				typeInfo.setTypeValueReaderName("DEFAULT_ECLASS_READER");
+				typeInfo.setTypeValueWriterName(CodecValueWriterConstants.URI_WRITER);
+				typeInfo.setTypeValueReaderName(CodecValueReaderConstants.URI_READER);
 				break;				
 			}
-			if(!valueReader.isEmpty()) typeInfo.setTypeValueReaderName(valueReader);
-			if(!valueWriter.isEmpty()) typeInfo.setTypeValueWriterName(valueWriter);
 		}
 		return typeInfo;
 	}
@@ -352,11 +335,11 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		//		Set value reader/writer from annotation
 		String valueReaderName = getAnnotationDetails(feature, "codec", CodecAnnotations.CODEC_VALUE_READER_NAME);
 		if(valueReaderName != null) featureInfo.setValueReaderName(valueReaderName);
-		else if(feature instanceof EReference) featureInfo.setValueReaderName("DEFAULT_ECLASS_READER");
+		else if(feature instanceof EReference) featureInfo.setValueReaderName(CodecValueReaderConstants.URI_READER);
 
 		String valueWriterName = getAnnotationDetails(feature, "codec", CodecAnnotations.CODEC_VALUE_WRITER_NAME);
 		if(valueWriterName != null) featureInfo.setValueWriterName(valueWriterName);
-		else if(feature instanceof EReference) featureInfo.setValueWriterName("URIS_WRITER");
+		else if(feature instanceof EReference) featureInfo.setValueWriterName(CodecValueWriterConstants.URI_WRITER);
 
 		if(feature instanceof EReference) {
 			featureInfo.setTypeInfo(getTypeInfo(feature));
@@ -421,39 +404,6 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 			}
 		}
 	}
-
-	/**
-	 * Here we create the {@link TypeInfo} instance ... 
-	 * @param ec EClass to analyze the Hierarchy for
-	 */
-	//	private void analyseHierarchy(EClassifier ec) {
-	//		if (!(ec instanceof EClass) || ec.getEPackage().equals(EcorePackage.eINSTANCE)) {
-	//			return;
-	//		}
-	//		EClass eClass = (EClass) ec;
-	//		List<EClass> thisHierarchy = needsRevisiting.remove(eClass);
-	//		if (thisHierarchy == null) {
-	//			thisHierarchy = Collections.synchronizedList(new LinkedList<EClass>());
-	//		}
-	//		upperHierarchy.put(eClass, thisHierarchy);
-	//		eClass.getEAllSuperTypes().forEach(superEClass -> {
-	//			if (superEClass.equals(EcorePackage.Literals.ECLASS)) {
-	//				return;
-	//			}
-	//			if (upperHierarchy.containsKey(superEClass)) {
-	//				List<EClass> hierarchy = upperHierarchy.get(superEClass);
-	//				if (!hierarchy.contains(superEClass)) {
-	//					hierarchy.add(eClass);
-	//				}
-	//			} else {
-	//				List<EClass> otherHierachy = needsRevisiting.getOrDefault(superEClass,
-	//						Collections.synchronizedList(new LinkedList<EClass>()));
-	//				otherHierachy.add(eClass);
-	//				needsRevisiting.put(superEClass, otherHierachy);
-	//			}
-	//		});
-	//
-	//	}
 
 	/*
 	 * (non-Javadoc)

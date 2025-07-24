@@ -17,6 +17,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
+import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
 
 import tools.jackson.databind.DeserializationContext;
 
@@ -25,15 +26,13 @@ import tools.jackson.databind.DeserializationContext;
  * @author ilenia
  * @since Jul 18, 2025
  */
-public class DefaultEClassReader implements CodecValueReader<String, EClass>{
+public class URIReader implements CodecValueReader<String, EClass>{
 	
 	private ResourceSet resourceSet;
 
-	public DefaultEClassReader() {
-		
-	}
 	
-	public DefaultEClassReader(ResourceSet resourceSet) {
+	
+	public URIReader(ResourceSet resourceSet) {
 		this.resourceSet = resourceSet;
 	}
 
@@ -43,7 +42,7 @@ public class DefaultEClassReader implements CodecValueReader<String, EClass>{
 	 */
 	@Override
 	public String getName() {
-		return "DEFAULT_ECLASS_READER";
+		return CodecValueReaderConstants.URI_READER;
 	}
 
 	/* 
@@ -51,10 +50,8 @@ public class DefaultEClassReader implements CodecValueReader<String, EClass>{
 	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecValueReader#readValue(java.lang.Object, tools.jackson.databind.DeserializationContext)
 	 */
 	@Override
-	public EClass readValue(String value, DeserializationContext context) {		
+	public EClass readValue(String value, DeserializationContext context) {	
 		return (EClass) resourceSet.getEObject(URI.createURI(value), true);
-//		Set<EClass> types = CodecIOHelper.getAllTypes(resourceSet);			
-//		return types.stream().filter(CodecIOHelper.findByURI(value)).findFirst().orElse(null);
 	}
 
 }
