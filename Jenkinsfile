@@ -60,6 +60,9 @@ pipeline  {
             when {
                 allOf {
                     not {
+                        branch 'jackson3-rc4'
+                    }
+                    not {
                         branch 'snapshot'
                     }
                     not {

@@ -17,5 +17,3 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.gecko.codec.constants;version=latest
 	
 Private-Package: {{basePackageName}}
-
-Bundle-Version: 1.0.0.SNAPSHOT
