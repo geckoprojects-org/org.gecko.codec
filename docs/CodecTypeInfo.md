@@ -2,6 +2,8 @@
 
 This document is intended to describe how the serialization/deserialization of the type information works in our codec.
 
+A more detailed view of the (de-)serialization supported strategies can be found [here](./CodecTypeInfoStrategies.md)
+
 ## The Model
 
 The `TypeInfo` object is defined in our `codec-info`model (`org.eclipse.fennec.codec.info.model`):
@@ -57,8 +59,6 @@ The source of the `EAnnotation` is `codec.type`; The details entry keys are:
 + `typeKey`: to set the `typeKey` property
 + `strategy`: to set the `typeStrategy`
 + `include`: to set the `typeIgnore` property
-+ `typeValueReaderName`: to set the name of the value reader;
-+ `typeValueWriterName`: to set the name of the value writer;
 + additional key, value pairs will be interpret for the `typeMap` property.
 
  ## Save/Load Options
@@ -70,9 +70,9 @@ The options to be used are the following:
 + `CodecModelInfoOptions.CODEC_TYPE_KEY`: to overwrite the `typeKey`;
 + `CodecModelInfoOptions.CODEC_TYPE_STRATEGY`: to overwrite the `typeStrategy`;
 + `CodecModelInfoOptions.CODEC_TYPE_INCLUDE`: to overwrite the include annotation;
-+ `CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME`: to overwrite the value reader name;
-+ `CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME`: to overwrite the value writer name;
-+ `CodecModelInfoOptions.CODEC_TYPE_MAP`: to overwrite the `typeMap`.
++ `CodecModelInfoOptions.CODEC_TYPE_MAP`: to overwrite the `typeMap`;
++ `CodecModelInfoOptions.CODEC_TYPE_VALUE_READER`: to register a custom `CodecValueReader`
++ `CodecModelnfoOptions.CODEC_TYPE_VALUE_WRITER`: to register a custom `CodecValueWriter`
 
 ## Examples
 
