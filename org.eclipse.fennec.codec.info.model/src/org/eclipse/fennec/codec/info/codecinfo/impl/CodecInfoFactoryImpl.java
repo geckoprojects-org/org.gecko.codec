@@ -87,8 +87,8 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 		switch (eDataType.getClassifierID()) {
 			case CodecInfoPackage.INFO_TYPE:
 				return createInfoTypeFromString(eDataType, initialValue);
-			case CodecInfoPackage.SERIALIZER_PROVIDER:
-				return createSerializerProviderFromString(eDataType, initialValue);
+			case CodecInfoPackage.SERIALIZATION_CONTEXT:
+				return createSerializationContextFromString(eDataType, initialValue);
 			case CodecInfoPackage.DESERIALIZATION_CONTEXT:
 				return createDeserializationContextFromString(eDataType, initialValue);
 			default:
@@ -106,8 +106,8 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 		switch (eDataType.getClassifierID()) {
 			case CodecInfoPackage.INFO_TYPE:
 				return convertInfoTypeToString(eDataType, instanceValue);
-			case CodecInfoPackage.SERIALIZER_PROVIDER:
-				return convertSerializerProviderToString(eDataType, instanceValue);
+			case CodecInfoPackage.SERIALIZATION_CONTEXT:
+				return convertSerializationContextToString(eDataType, instanceValue);
 			case CodecInfoPackage.DESERIALIZATION_CONTEXT:
 				return convertDeserializationContextToString(eDataType, instanceValue);
 			default:
@@ -249,7 +249,7 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SerializationContext createSerializerProviderFromString(EDataType eDataType, String initialValue) {
+	public SerializationContext createSerializationContextFromString(EDataType eDataType, String initialValue) {
 		return (SerializationContext)super.createFromString(eDataType, initialValue);
 	}
 
@@ -258,7 +258,7 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String convertSerializerProviderToString(EDataType eDataType, Object instanceValue) {
+	public String convertSerializationContextToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

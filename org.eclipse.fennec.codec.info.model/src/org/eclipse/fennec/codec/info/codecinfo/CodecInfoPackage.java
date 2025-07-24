@@ -982,14 +982,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int INFO_TYPE = 13;
 
 	/**
-	 * The meta object id for the '<em>Serializer Provider</em>' data type.
+	 * The meta object id for the '<em>Serialization Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see tools.jackson.databind.SerializationContext
-	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
+	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializationContext()
 	 * @generated
 	 */
-	int SERIALIZER_PROVIDER = 14;
+	int SERIALIZATION_CONTEXT = 14;
 
 	/**
 	 * The meta object id for the '<em>Deserialization Context</em>' data type.
@@ -1679,15 +1679,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EEnum getInfoType();
 
 	/**
-	 * Returns the meta object for data type '{@link tools.jackson.databind.SerializationContext <em>Serializer Provider</em>}'.
+	 * Returns the meta object for data type '{@link tools.jackson.databind.SerializationContext <em>Serialization Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Serializer Provider</em>'.
+	 * @return the meta object for data type '<em>Serialization Context</em>'.
 	 * @see tools.jackson.databind.SerializationContext
 	 * @model instanceClass="tools.jackson.databind.SerializationContext"
 	 * @generated
 	 */
-	EDataType getSerializerProvider();
+	EDataType getSerializationContext();
 
 	/**
 	 * Returns the meta object for data type '{@link tools.jackson.databind.DeserializationContext <em>Deserialization Context</em>}'.
@@ -2256,14 +2256,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EEnum INFO_TYPE = eINSTANCE.getInfoType();
 
 		/**
-		 * The meta object literal for the '<em>Serializer Provider</em>' data type.
+		 * The meta object literal for the '<em>Serialization Context</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @see tools.jackson.databind.SerializationContext
-		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializerProvider()
+		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializationContext()
 		 * @generated
 		 */
-		EDataType SERIALIZER_PROVIDER = eINSTANCE.getSerializerProvider();
+		EDataType SERIALIZATION_CONTEXT = eINSTANCE.getSerializationContext();
 
 		/**
 		 * The meta object literal for the '<em>Deserialization Context</em>' data type.

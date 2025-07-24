@@ -20,7 +20,7 @@
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/ENUMERATOR"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/OTHER"/>
     </genEnums>
-    <genDataTypes ecoreDataType="codec-info.ecore#//SerializerProvider"/>
+    <genDataTypes ecoreDataType="codec-info.ecore#//SerializationContext"/>
     <genDataTypes ecoreDataType="codec-info.ecore#//DeserializationContext"/>
     <genClasses ecoreClass="codec-info.ecore#//PackageCodecInfo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//PackageCodecInfo/id"/>
@@ -87,7 +87,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//CodecValueWriter/name"/>
       <genOperations ecoreOperation="codec-info.ecore#//CodecValueWriter/writeValue">
         <genParameters ecoreParameter="codec-info.ecore#//CodecValueWriter/writeValue/value"/>
-        <genParameters ecoreParameter="codec-info.ecore#//CodecValueWriter/writeValue/provider"/>
+        <genParameters ecoreParameter="codec-info.ecore#//CodecValueWriter/writeValue/context"/>
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//CodecInfoHolder">

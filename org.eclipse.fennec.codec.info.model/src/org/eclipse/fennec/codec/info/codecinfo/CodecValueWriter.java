@@ -38,9 +38,9 @@ public interface CodecValueWriter<T, V> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model valueRequired="true" providerDataType="org.eclipse.fennec.codec.info.codecinfo.SerializerProvider" providerRequired="true"
+	 * @model valueRequired="true" contextDataType="org.eclipse.fennec.codec.info.codecinfo.SerializationContext" contextRequired="true"
 	 * @generated
 	 */
-	V writeValue(T value, SerializationContext provider);
+	V writeValue(T value, SerializationContext context);
 
 } // CodecValueWriter

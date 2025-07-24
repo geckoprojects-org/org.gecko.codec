@@ -108,7 +108,7 @@ public class CodecJsonDeserializationOrderTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationRootObjectWOOption() throws IOException {
 
-		Resource personRes = resourceSet.createResource(URI.createURI("test-data/type-contained-ref.json"));
+		Resource personRes = resourceSet.createResource(URI.createURI(System.getProperty("test-data")+ "type-contained-ref.json"));
 		
 		Map<String, Object> options = new HashMap<>();
 		assertThrows(IllegalArgumentException.class, () -> {
@@ -119,7 +119,7 @@ public class CodecJsonDeserializationOrderTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationContainedReferenceWithType() throws IOException {
 
-		Resource personRes = resourceSet.createResource(URI.createURI("test-data/type-contained-ref.json"));
+		Resource personRes = resourceSet.createResource(URI.createURI(System.getProperty("test-data")+ "type-contained-ref.json"));
 		
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
@@ -140,7 +140,7 @@ public class CodecJsonDeserializationOrderTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationContainedReferenceWOType() throws IOException {
 
-		Resource personRes = resourceSet.createResource(URI.createURI("test-data/no-type-contained-ref.json"));
+		Resource personRes = resourceSet.createResource(URI.createURI(System.getProperty("test-data")+ "no-type-contained-ref.json"));
 		
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
@@ -156,7 +156,7 @@ public class CodecJsonDeserializationOrderTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationRefWithBuffer() throws IOException {
 
-		Resource personRes = resourceSet.createResource(URI.createURI("test-data/buffer.json"));
+		Resource personRes = resourceSet.createResource(URI.createURI(System.getProperty("test-data")+ "buffer.json"));
 		
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
