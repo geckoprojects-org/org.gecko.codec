@@ -21,8 +21,9 @@ import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
-import org.eclipse.fennec.codec.info.value.readers.DefaultEClassReader;
+import org.eclipse.fennec.codec.info.value.readers.URIReader;
 import org.eclipse.fennec.codec.info.value.readers.EClassReaderByName;
+import org.eclipse.fennec.codec.info.value.readers.EClassReaderByQualifiedName;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -55,7 +56,6 @@ public class CodecInfoHolderHelper {
 			break;
 		case IDENTITY:
 			codecInfoHolder.getReaders().add(CodecIOHelper.DEFAULT_ID_VALUE_READER);
-//			codecInfoHolder.getWriters().add(CodecIOHelper.IDFIELD_VALUE_WRITER);			
 			codecInfoHolder.getWriters().add(CodecIOHelper.DEFAULT_ID_VALUE_WRITER);
 			break;
 		case SUPER_TYPE:
@@ -63,13 +63,13 @@ public class CodecInfoHolderHelper {
 			codecInfoHolder.getWriters().add(CodecIOHelper.SINGLE_SUPERTYPE_WRITER);	
 			break;
 		case TYPE: 
-			codecInfoHolder.getReaders().add(new DefaultEClassReader(resourceSet));
+			codecInfoHolder.getReaders().add(new URIReader(resourceSet));
 			codecInfoHolder.getReaders().add(new EClassReaderByName(resourceSet));
-			codecInfoHolder.getReaders().add(CodecIOHelper.READ_BY_CLASS);
+			codecInfoHolder.getReaders().add(new EClassReaderByQualifiedName(resourceSet));
 
 			codecInfoHolder.getWriters().add(CodecIOHelper.URI_WRITER);		
-			codecInfoHolder.getWriters().add(CodecIOHelper.WRITE_BY_NAME);		
 			codecInfoHolder.getWriters().add(CodecIOHelper.WRITE_BY_CLASS_NAME);		
+			codecInfoHolder.getWriters().add(CodecIOHelper.WRITE_BY_INSTANCE_CLASS_NAME);		
 			break;
 		default:
 			break;

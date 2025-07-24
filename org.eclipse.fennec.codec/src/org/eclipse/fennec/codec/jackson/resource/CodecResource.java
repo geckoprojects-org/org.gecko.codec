@@ -52,6 +52,8 @@ import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
+import org.eclipse.fennec.codec.options.CodecValueWriterConstants;
 import org.eclipse.fennec.codec.options.ObjectMapperOptions;
 
 import tools.jackson.databind.DeserializationFeature;
@@ -281,12 +283,6 @@ public class CodecResource extends ResourceImpl {
 			codecInfo.getIdentityInfo().getIdFeatures().clear();
 			codecInfo.getIdentityInfo().getIdFeatures().addAll(idFeatures);
 		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_VALUE_READER_NAME)) {
-			codecInfo.getIdentityInfo().setIdValueReaderName((String) options.get(CodecModelInfoOptions.CODEC_ID_VALUE_READER_NAME));
-		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER_NAME)) {
-			codecInfo.getIdentityInfo().setIdValueWriterName((String) options.get(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER_NAME));
-		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_ID_VALUE_READER)) {
 			CodecValueReader<?,?> reader = (CodecValueReader<?,?>) options.get(CodecModelInfoOptions.CODEC_ID_VALUE_READER);
 			codecInfo.getIdentityInfo().setIdValueReaderName(reader.getName());
@@ -390,29 +386,23 @@ public class CodecResource extends ResourceImpl {
 			String typeUse = (String) options.get(CodecModelInfoOptions.CODEC_TYPE_STRATEGY);
 			switch(typeUse) {
 			case "NAME":
-				codecInfo.getTypeInfo().setTypeValueWriterName("WRITE_BY_NAME");
-				codecInfo.getTypeInfo().setTypeValueReaderName("READ_BY_NAME");
+				codecInfo.getTypeInfo().setTypeValueWriterName(CodecValueWriterConstants.WRITER_BY_ECLASS_NAME);
+				codecInfo.getTypeInfo().setTypeValueReaderName(CodecValueReaderConstants.READER_BY_ECLASS_NAME);
 				codecInfo.getTypeInfo().setTypeStrategy(typeUse);
 				break;
 			case "CLASS":
-				codecInfo.getTypeInfo().setTypeValueWriterName("WRITE_BY_CLASS_NAME");
-				codecInfo.getTypeInfo().setTypeValueReaderName("READ_BY_CLASS");
+				codecInfo.getTypeInfo().setTypeValueWriterName(CodecValueWriterConstants.WRITER_BY_INSTANCE_CLASS_NAME);
+				codecInfo.getTypeInfo().setTypeValueReaderName(CodecValueReaderConstants.READER_BY_INSTANCE_CLASS_NAME);
 				codecInfo.getTypeInfo().setTypeStrategy(typeUse);
 				break;
 			case "URI": 
-				codecInfo.getTypeInfo().setTypeValueWriterName("URI_WRITER");
-				codecInfo.getTypeInfo().setTypeValueReaderName("DEFAULT_ECLASS_READER");
+				codecInfo.getTypeInfo().setTypeValueWriterName(CodecValueWriterConstants.URI_WRITER);
+				codecInfo.getTypeInfo().setTypeValueReaderName(CodecValueReaderConstants.URI_READER);
 				codecInfo.getTypeInfo().setTypeStrategy(typeUse);
 				break;	
 			default:
 				LOGGER.warning(String.format("No Reader/Writer available for type use %s. Keeping the default ones.", typeUse));
 			}			
-		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME)) {
-			codecInfo.getTypeInfo().setTypeValueReaderName((String) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER_NAME));
-		}
-		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME)) {
-			codecInfo.getTypeInfo().setTypeValueWriterName((String) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER_NAME));
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER)) {
 			CodecValueReader<?,?> reader = (CodecValueReader<?,?>) options.get(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER);

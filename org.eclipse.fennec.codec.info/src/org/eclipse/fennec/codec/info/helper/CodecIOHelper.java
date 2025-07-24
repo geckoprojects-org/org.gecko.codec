@@ -19,7 +19,6 @@ import static java.util.Spliterators.spliteratorUnknownSize;
 import static java.util.stream.StreamSupport.stream;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -34,6 +33,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
+import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
+import org.eclipse.fennec.codec.options.CodecValueWriterConstants;
 import org.osgi.service.component.annotations.Component;
 
 import tools.jackson.databind.DatabindContext;
@@ -52,7 +53,7 @@ public class CodecIOHelper {
 
 		@Override
 		public String getName() {
-			return "DEFAULT_ID_READER";
+			return CodecValueReaderConstants.OBJECT_TO_STRING_READER;
 		}
 
 		@Override
@@ -65,7 +66,7 @@ public class CodecIOHelper {
 	public static final CodecValueWriter<Object, String> DEFAULT_ID_VALUE_WRITER = new CodecValueWriter<>() {
 		@Override
 		public String getName() {
-			return "DEFAULT_ID_WRITER";
+			return CodecValueWriterConstants.OBJECT_TO_STRING_WRITER;
 		}
 
 		@Override
@@ -75,41 +76,12 @@ public class CodecIOHelper {
 		}
 	};
 
-//
-//	public static final CodecValueWriter<EObject, String> IDFIELD_VALUE_WRITER = new CodecValueWriter<>() {
-//		@Override
-//		public String getName() {
-//			return "ID_FIELD_WRITER";
-//		}
-//
-//		@Override
-//		public String writeValue(EObject value, SerializationContext provider) {
-//			return EcoreUtil.getID(value);
-//		}
-//	};
-
-
-//	public static final CodecValueReader<String, EClass> DEFAULT_ECLASS_READER = new CodecValueReader<>() {
-//
-//		@Override
-//		public String getName() {
-//			return "DEFAULT_ECLASS_READER";
-//		}
-//
-//		@Override
-//		public EClass readValue(String value, DeserializationContext context) {
-//			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
-//			Set<EClass> types = getAllTypes(resSet);			
-//			return types.stream().filter(findByURI(value)).findFirst().orElse(null);
-//		}
-//	};
-
 
 	public static final CodecValueWriter<EClass, String[]> ALL_SUPERTYPE_WRITER = new CodecValueWriter<>() {
 
 		@Override
 		public String getName() {
-			return "ALL_SUPERTYPE_WRITER";
+			return CodecValueWriterConstants.ALL_SUPERTYPE_WRITER;
 		}
 
 		@Override
@@ -122,7 +94,7 @@ public class CodecIOHelper {
 
 		@Override
 		public String getName() {
-			return "SINGLE_SUPERTYPE_WRITER";
+			return CodecValueWriterConstants.SINGLE_SUPERTYPE_WRITER;
 		}
 
 		@Override
@@ -134,12 +106,11 @@ public class CodecIOHelper {
 	};
 
 
-
 	public static final CodecValueWriter<EClass, String> URI_WRITER = new CodecValueWriter<>() {
 
 		@Override
 		public String getName() {
-			return "URI_WRITER";
+			return CodecValueWriterConstants.URI_WRITER;
 		}
 
 		@Override
@@ -149,20 +120,34 @@ public class CodecIOHelper {
 			return uri.toString();
 		}		
 	};
+	
+	public static final CodecValueWriter<EClass, String> WRITE_BY_CLASS_NAME = new CodecValueWriter<>() {
 
-//	public static final CodecValueReader<String, EClass> READ_BY_NAME = new CodecValueReader<>() {
-//
-//		@Override
-//		public String getName() {
-//			return "READ_BY_NAME";
-//		}
-//
-//		@Override
-//		public EClass readValue(String value, DeserializationContext context) {
-//			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
-//			return findEClassByName(value, resSet);
-//		}
-//	};
+		@Override
+		public String getName() {
+			return CodecValueWriterConstants.WRITER_BY_ECLASS_NAME;
+		}
+
+		@Override
+		public String writeValue(EClass value, SerializationContext provider) {
+			return value != null ? value.getName() : null;
+		}		
+	};
+
+
+	public static final CodecValueWriter<EClass, String> WRITE_BY_INSTANCE_CLASS_NAME = new CodecValueWriter<>() {
+
+		@Override
+		public String getName() {
+			return CodecValueWriterConstants.WRITER_BY_INSTANCE_CLASS_NAME;
+		}
+
+		@Override
+		public String writeValue(EClass value, SerializationContext provider) {
+			return value != null ? value.getInstanceClassName() : null;
+		}
+
+	};
 	
 	public static Set<EClass> getAllTypes(ResourceSet resourceSet) {
 		EPackage.Registry global = resourceSet == null ? EPackage.Registry.INSTANCE : resourceSet.getPackageRegistry();
@@ -187,33 +172,7 @@ public class CodecIOHelper {
 
 	}
 	
-	public static Set<EClass> getAllTypes(ResourceSet resourceSet, List<String> ePackageUris) {
-		EPackage.Registry global = resourceSet == null ? EPackage.Registry.INSTANCE : resourceSet.getPackageRegistry();
-		Map<String, Object> registry = new HashMap<>();
-		registry.putAll(global);
-
-		return registry.values().stream()
-				.map(e -> {
-					if (e instanceof EPackage.Descriptor) {
-						return ((EPackage.Descriptor) e).getEPackage();
-					} else if (e instanceof EPackage) {						
-						return (EPackage) e;
-					} else {
-						return null;
-					}
-				})
-				.filter(Objects::nonNull)
-				.flatMap(e -> stream(spliteratorUnknownSize(e.eAllContents(), ORDERED), false))
-				.filter(e -> e instanceof EClass && ePackageUris.contains(((EClass) e).getEPackage().getNsURI()))
-				.map(e -> (EClass) e)
-				.collect(Collectors.toSet());
-
-	}
 	
-	public static EClass findEClassByName(String name, ResourceSet resourceSet, List<String> ePackageUris) {
-		Set<EClass> types = getAllTypes(resourceSet, ePackageUris);
-		return types.stream().filter(findByName(name)).findFirst().orElse(null);
-	}
 	
 	public static EClass findEClassByName(String name, ResourceSet resourceSet) {
 		Set<EClass> types = getAllTypes(resourceSet);
@@ -228,54 +187,11 @@ public class CodecIOHelper {
 		return e -> value != null && e instanceof EClass && value.equals(((EClass) e).getName());
 	}
 
-	private static Predicate<EObject> findByQualifiedName(final String value) {
+	public static Predicate<EObject> findByQualifiedName(final String value) {
 		return e -> value != null && e instanceof EClass && value.equals(((EClass) e).getInstanceClassName());
 	}
 
-	public static final CodecValueWriter<EClass, String> WRITE_BY_NAME = new CodecValueWriter<>() {
-
-		@Override
-		public String getName() {
-			return "WRITE_BY_NAME";
-		}
-
-		@Override
-		public String writeValue(EClass value, SerializationContext provider) {
-			return value != null ? value.getName() : null;
-		}		
-	};
-
-
-	public static final CodecValueReader<String, EClass> READ_BY_CLASS = new CodecValueReader<>() {
-
-		@Override
-		public String getName() {
-			return "READ_BY_CLASS";
-		}
-
-		@Override
-		public EClass readValue(String value, DeserializationContext context) {
-			ResourceSet resSet = (ResourceSet) context.getAttribute("RESOURCE_SET");
-			Set<EClass> types = getAllTypes(resSet);
-			return types.stream().filter(findByQualifiedName(value)).findFirst().orElse(null);
-		}
-	};
-
-
-	public static final CodecValueWriter<EClass, String> WRITE_BY_CLASS_NAME = new CodecValueWriter<>() {
-
-		@Override
-		public String getName() {
-			return "WRITE_BY_CLASS_NAME";
-		}
-
-		@Override
-		public String writeValue(EClass value, SerializationContext provider) {
-			return value != null ? value.getInstanceClassName() : null;
-		}
-
-	};
-
+	
 	private static String[] getAllSuperTypeURIs(final DatabindContext ctxt, final EObject object) {
 		if (object == null) {
 			return null;

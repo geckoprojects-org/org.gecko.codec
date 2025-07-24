@@ -73,27 +73,6 @@ public interface CodecModelInfoOptions {
 	 * */
 	String CODEC_ID_VALUE_WRITER = "codec.id.value.writer";
 	
-	/** CODEC_TYPE_VALUE_READER
-	 * to specify a {@link CodecValueReader} object to be used when deserializing the type information;
-	 * */
-	String CODEC_TYPE_VALUE_READER = "codec.type.value.reader";
-	
-	/** CODEC_TYPE_VALUE_WRITER 
-	 * to specify a {@link CodecValueWriter} object to be used when serializing the type information;
-	 * */
-	String CODEC_TYPE_VALUE_WRITER = "codec.type.value.writer";
-	
-	/** CODEC_ID_VALUE_READER_NAME 
-	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_VALUE_READER_NAME} annotation;
-	 * */
-	String CODEC_ID_VALUE_READER_NAME = "idValueReaderName";
-	
-	/** CODEC_ID_VALUE_WRITER_NAME 
-	 * to overwrite the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME} annotation;
-	 * */
-	String CODEC_ID_VALUE_WRITER_NAME = "idValueWriterName";
-	
-	
 	
 	/** CODEC_VALUE_READERS_MAP 
 	  * a {@link Map} where the keys are of type {@link EStructuralFeature} and the values 
@@ -130,21 +109,19 @@ public interface CodecModelInfoOptions {
 	 * */
 	String CODEC_TYPE_MAP = "typeMap";
 	
-	/** CODEC_TYPE_VALUE_READER_NAME 
-	 * to overwrite the "valueReader" detail of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
-	 * Setting this property will overwrite the ValueReader set through the {@link CODEC_TYPE_USE}
-	 * */
-	String CODEC_TYPE_VALUE_READER_NAME = "typeValueReaderName";
-	
-	/** CODEC_TYPE_VALUE_WRITER_NAME 
-	 * to overwrite the "valueWriter" detail of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
-	 * Setting this property will overwrite the ValueWriter set through the {@link CODEC_TYPE_USE}
-	 * */
-	String CODEC_TYPE_VALUE_WRITER_NAME = "typeValueWriterName";
-	
 	/** CODEC_TYPE_INFO 
 	 * to overwrite the entire typeInfo object that comes out of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
 	 * */
 	String CODEC_TYPE_INFO = "typeInfo";
+	
+	/** CODEC_TYPE_VALUE_READER
+	 * to specify a {@link CodecValueReader} object to be used when deserializing the type information;
+	 * */
+	String CODEC_TYPE_VALUE_READER = "codec.type.value.reader";
+	
+	/** CODEC_TYPE_VALUE_WRITER 
+	 * to specify a {@link CodecValueWriter} object to be used when serializing the type information;
+	 * */
+	String CODEC_TYPE_VALUE_WRITER = "codec.type.value.writer";
 
 }
