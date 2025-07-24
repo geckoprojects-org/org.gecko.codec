@@ -59,7 +59,7 @@ public class CodecModuleConfiguratorTest {
 		assertEquals("$ref", module.getRefKey());		
 		assertEquals("_proxy", module.getProxyKey());		
 		assertEquals("_timestamp", module.getTimestampKey());		
-		assertEquals("gecko-codec-module", module.getModuleName());		
+		assertEquals("eclipse-fennec-codec-module", module.getModuleName());		
 		assertFalse(module.isSerializeDefaultValue());		
 		assertFalse(module.isSerializeNullValue());		
 		assertFalse(module.isSerializeEmptyValue());		

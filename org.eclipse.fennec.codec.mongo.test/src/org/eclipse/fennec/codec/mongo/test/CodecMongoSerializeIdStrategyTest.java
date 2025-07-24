@@ -32,7 +32,6 @@ import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.jackson.resource.CodecResource;
-import org.eclipse.fennec.codec.options.CodecAnnotations;
 import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.codec.options.ObjectMapperOptions;

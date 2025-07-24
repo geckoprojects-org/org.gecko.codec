@@ -33,9 +33,10 @@ import org.eclipse.fennec.codec.info.codecinfo.IdentityInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
+import org.eclipse.fennec.codec.options.CodecValueWriterConstants;
 import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
-import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,7 +63,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @ExtendWith(ConfigurationExtension.class)
 public class CodecModelInfoTest {
 	
-	@InjectService(cardinality = 0,filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
+	@InjectService
 	ServiceAware<ResourceSet> rsAware;
 	
 	@BeforeEach
@@ -139,8 +140,8 @@ public class CodecModelInfoTest {
 		TypeInfo typeInfo = eClassCodecInfo.getTypeInfo();
 		assertNotNull(typeInfo);
 		assertEquals("NAME", typeInfo.getTypeStrategy());
-		assertEquals("READ_BY_NAME", typeInfo.getTypeValueReaderName());
-		assertEquals("WRITE_BY_NAME", typeInfo.getTypeValueWriterName());
+		assertEquals(CodecValueReaderConstants.READER_BY_ECLASS_NAME, typeInfo.getTypeValueReaderName());
+		assertEquals(CodecValueWriterConstants.WRITER_BY_ECLASS_NAME, typeInfo.getTypeValueWriterName());
 	}
 	
 	@Test
@@ -156,8 +157,8 @@ public class CodecModelInfoTest {
 		TypeInfo typeInfo = eClassCodecInfo.getTypeInfo();
 		assertNotNull(typeInfo);
 		assertEquals("NAME", typeInfo.getTypeStrategy());
-		assertEquals("READ_BY_NAME", typeInfo.getTypeValueReaderName());
-		assertEquals("WRITE_BY_NAME", typeInfo.getTypeValueWriterName());
+		assertEquals(CodecValueReaderConstants.READER_BY_ECLASS_NAME, typeInfo.getTypeValueReaderName());
+		assertEquals(CodecValueWriterConstants.WRITER_BY_ECLASS_NAME, typeInfo.getTypeValueWriterName());
 		assertEquals("name", typeInfo.getTypeKey());
 		assertThat(typeInfo.getTypeMap()).hasSize(2);
 		assertTrue(typeInfo.getTypeMap().containsKey("dragino"));
@@ -182,8 +183,8 @@ public class CodecModelInfoTest {
 		TypeInfo typeInfo = refCodecInfo.getTypeInfo();
 		assertNotNull(typeInfo);
 		assertEquals("NAME", typeInfo.getTypeStrategy());
-		assertEquals("READ_BY_NAME", typeInfo.getTypeValueReaderName());
-		assertEquals("WRITE_BY_NAME", typeInfo.getTypeValueWriterName());
+		assertEquals(CodecValueReaderConstants.READER_BY_ECLASS_NAME, typeInfo.getTypeValueReaderName());
+		assertEquals(CodecValueWriterConstants.WRITER_BY_ECLASS_NAME, typeInfo.getTypeValueWriterName());
 		assertEquals("name", typeInfo.getTypeKey());
 		assertThat(typeInfo.getTypeMap()).hasSize(2);
 		assertTrue(typeInfo.getTypeMap().containsKey("dragino"));
@@ -237,7 +238,7 @@ public class CodecModelInfoTest {
 		assertNotNull(codecInfoHolder);
 		assertEquals(codecInfoHolder.getInfoType(), InfoType.IDENTITY);
 		assertThat(codecInfoHolder.getReaders()).hasSize(1);
-		assertThat(codecInfoHolder.getWriters()).hasSize(2);
+		assertThat(codecInfoHolder.getWriters()).hasSize(1);
 		
 		codecInfoHolder = codecModelInfo.getCodecInfoHolderByType(InfoType.TYPE);
 		assertNotNull(codecInfoHolder);
