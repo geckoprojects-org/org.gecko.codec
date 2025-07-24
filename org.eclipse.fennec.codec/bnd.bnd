@@ -7,10 +7,10 @@ Bundle-Description: Eclipse Fennec Project Codec Framework
 	org.eclipse.fennec.codec.info.model,\
 	org.eclipse.fennec.codec.info,\
 	org.eclipse.fennec.codec.constants,\
-	com.fasterxml.jackson.core.jackson-annotations;version='3.0',\
 	tools.jackson.core.jackson-core,\
 	tools.jackson.core.jackson-databind,\
-	org.gecko.emf.util.model
+	org.gecko.emf.util.model,\
+	com.fasterxml.jackson.core.jackson-annotations
 	
 -testpath: \
 	org.eclipse.fennec.codec.test.models;version=project
