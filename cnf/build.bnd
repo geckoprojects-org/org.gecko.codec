@@ -15,6 +15,11 @@ dimcBaselining: true
 github-project: org.gecko.codec
 base-version: 1.0.1
 
+-fixupmessages: \
+  "No metadata for"; \
+    restrict:=error; \
+    is:=info
+
 # Maven Central Group-Id
 # For Geckoprojects the groupid must start with org.geckoprojects
 -groupid: org.geckoprojects.codec
