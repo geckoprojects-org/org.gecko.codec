@@ -105,7 +105,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="TypeKeyEClass">
     <eAnnotations source="codec.type">
       <details key="include" value="true"/>
-      <details key="use" value="NAME"/>
+      <details key="strategy" value="NAME"/>
       <details key="typeKey" value="name"/>
       <details key="dragino" value="DraginoUplink"/>
       <details key="em310" value="EM310Uplink"/>

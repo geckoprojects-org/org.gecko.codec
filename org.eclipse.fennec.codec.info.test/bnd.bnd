@@ -11,7 +11,8 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.eclipse.fennec.codec.info.model;version=latest,\
 	org.eclipse.fennec.codec.demo.model;version=latest,\
 	org.osgi.test.junit5.cm,\
-	org.eclipse.fennec.codec.test.helper
+	org.eclipse.fennec.codec.test.helper,\
+	org.eclipse.fennec.codec.constants;version=latest
 	
 Private-Package: org.eclipse.fennec.codec.info.test
 

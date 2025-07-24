@@ -13,7 +13,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *
  *
  * @see org.gecko.codec.demo.model.person.PersonPackage#getTypeKeyEClass()
- * @model annotation="codec.type include='true' use='NAME' typeKey='name' dragino='DraginoUplink' em310='EM310Uplink'"
+ * @model annotation="codec.type include='true' strategy='NAME' typeKey='name' dragino='DraginoUplink' em310='EM310Uplink'"
  * @generated
  */
 @ProviderType

@@ -306,6 +306,7 @@ public class ObjMapperConfigOverwriteTest {
 		assertThat(resource).isInstanceOf(CodecResource.class);
 		CodecResource codecRes = (CodecResource) resource;
 		ObjectMapper mapper = codecRes.getMapper();
+		
 		assertNotNull(mapper);
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS));
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES));

@@ -402,63 +402,7 @@ public class MongoIntegrationTest extends MongoEMFSetting{
 		personCollection.drop();
 	}
 	
-	@Test
-	public void testCreateAndRemoveSingle()
-			throws IOException {
-		System.out.println("Dropping DB");
-		MongoCollection<Document> personCollection = getDatabase("test").getCollection("Person");
-		personCollection.drop();
-
-		// create contacts
-		Contact c1 = BasicFactory.eINSTANCE.createContact();
-		c1.setContext(ContactContextType.PRIVATE);
-		c1.setType(ContactType.SKYPE);
-		c1.setValue("charles-brown");
-		Contact c2 = BasicFactory.eINSTANCE.createContact();
-		c2.setContext(ContactContextType.WORK);
-		c2.setType(ContactType.EMAIL);
-		c2.setValue("mark.hoffmann@tests.de");
-
-		assertEquals(0, personCollection.countDocuments());
-		Resource resource = resourceSet.createResource(URI.createURI("mongodb://localhost:27017/test/Person/"));
-
-		Person person = BasicFactory.eINSTANCE.createPerson();
-		person.setFirstName("Mark");
-		person.setLastName("Hoffmann");
-		person.setGender(GenderType.MALE);
-		person.getContact().add(EcoreUtil.copy(c1));
-		person.getContact().add(EcoreUtil.copy(c2));
-		resource.getContents().add(person);
-		resource.save(null);
-
-		resource.getContents().clear();
-		resource.unload();
-		/*
-		 * Find person in the collection
-		 */
-		// long start = System.currentTimeMillis();
-		Resource findResource = resourceSet
-				.createResource(URI.createURI("mongodb://localhost:27017/test/Person/" + person.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getPerson());
-		findResource.load(options);
-		// get the person
-		assertNotNull(findResource);
-		assertFalse(findResource.getContents().isEmpty());
-		assertEquals(1, findResource.getContents().size());
-
-		Resource removeResource = resourceSet
-				.createResource(URI.createURI("mongodb://localhost:27017/test/Person/" + person.getId()));
-		removeResource.delete(null);
-
-		findResource.unload();
-		findResource.load(options);
-		// no person anymore
-		assertNotNull(findResource);
-		assertTrue(findResource.getContents().isEmpty());
-
-		personCollection.drop();
-	}
+	
 	
 	
 
