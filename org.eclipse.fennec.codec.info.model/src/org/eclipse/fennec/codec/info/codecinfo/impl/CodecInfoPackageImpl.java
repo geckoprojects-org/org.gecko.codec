@@ -146,7 +146,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType serializerProviderEDataType = null;
+	private EDataType serializationContextEDataType = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -854,8 +854,8 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
-	public EDataType getSerializerProvider() {
-		return serializerProviderEDataType;
+	public EDataType getSerializationContext() {
+		return serializationContextEDataType;
 	}
 
 	/**
@@ -976,7 +976,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		infoTypeEEnum = createEEnum(INFO_TYPE);
 
 		// Create data types
-		serializerProviderEDataType = createEDataType(SERIALIZER_PROVIDER);
+		serializationContextEDataType = createEDataType(SERIALIZATION_CONTEXT);
 		deserializationContextEDataType = createEDataType(DESERIALIZATION_CONTEXT);
 	}
 
@@ -1085,7 +1085,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		op = initEOperation(getCodecValueWriter__WriteValue__Object_SerializationContext(), null, "writeValue", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(codecValueWriterEClass_T);
 		addEParameter(op, g1, "value", 1, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getSerializerProvider(), "provider", 1, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getSerializationContext(), "context", 1, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(codecValueWriterEClass_V);
 		initEOperation(op, g1);
 
@@ -1135,7 +1135,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		addEEnumLiteral(infoTypeEEnum, InfoType.OTHER);
 
 		// Initialize data types
-		initEDataType(serializerProviderEDataType, SerializationContext.class, "SerializerProvider", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(serializationContextEDataType, SerializationContext.class, "SerializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(deserializationContextEDataType, DeserializationContext.class, "DeserializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
