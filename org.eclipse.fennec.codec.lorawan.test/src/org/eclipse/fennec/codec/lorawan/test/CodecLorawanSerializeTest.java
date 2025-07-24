@@ -118,7 +118,7 @@ public class CodecLorawanSerializeTest extends JsonTestSetting{
 		Map<String, Object> options = new HashMap<>();		
 		resource.save(options);
 		
-		assertTrue(areJsonFilesTheSame(fileName, "test-data/dragino-ser.json"));		
+		assertTrue(areJsonFilesTheSame(fileName, System.getProperty("test-data") +"dragino-ser.json"));		
 	}
 	
 	@Test
@@ -133,7 +133,7 @@ public class CodecLorawanSerializeTest extends JsonTestSetting{
 		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(DraginoPackage.Literals.DRAGINO_LSE01_UPLINK, classOptions));
 		resource.save(options);
 		
-		assertTrue(areJsonFilesTheSame(fileName, "test-data/dragino-ser-type-key.json"));		
+		assertTrue(areJsonFilesTheSame(fileName, System.getProperty("test-data") +"dragino-ser-type-key.json"));		
 	}
 	
 	@Test
@@ -149,7 +149,7 @@ public class CodecLorawanSerializeTest extends JsonTestSetting{
 		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(DraginoPackage.Literals.DRAGINO_LSE01_UPLINK, classOptions));
 		resource.save(options);
 		
-		assertTrue(areJsonFilesTheSame(fileName, "test-data/dragino-ser-type-strategy.json"));		
+		assertTrue(areJsonFilesTheSame(fileName, System.getProperty("test-data") +"dragino-ser-type-strategy.json"));		
 	}
 	
 	private DraginoLSE01Uplink getDraginoUplink() {
