@@ -51,6 +51,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
+import org.osgi.test.common.annotation.Property.TemplateArgument;
+import org.osgi.test.common.annotation.Property.ValueSource;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
 import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
@@ -78,7 +80,8 @@ import org.osgi.test.junit5.service.ServiceExtension;
 		@Property(key = "type", value="json")
 })
 @WithFactoryConfiguration(factoryPid = "DynamicModelConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "emf.dynamicEcoreUri", value="file:/opt/git/org.gecko.codec/org.eclipse.fennec.codec.json.test/test-data/type-as-feature.ecore")
+		@Property(key = "emf.dynamicEcoreUri", value="file:%s/type-as-feature.ecore", templateArguments = { //
+                @TemplateArgument(source = ValueSource.SystemProperty, value = "basePath")})
 })
 public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 
