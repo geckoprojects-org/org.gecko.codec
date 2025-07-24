@@ -18,7 +18,7 @@ Bundle-Version: ${base-version}.SNAPSHOT
 
 # Maven Central Group-Id
 # For Geckoprojects the groupid must start with org.geckoprojects
--groupid: org.geckoprojects.codec
+-groupid: org.geckoprojects.codec.j3
 
 javac.source: 17
 javac.target: 17
