@@ -29,8 +29,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecModuleOptions;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.jackson.resource.CodecResource;
+import org.eclipse.fennec.codec.options.CodecModuleOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -47,6 +48,8 @@ import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
+
+import tools.jackson.databind.ObjectMapper;
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
@@ -108,42 +111,7 @@ public class CodecModuleConfigOverwriteTest {
 		}
 	}
 
-	
-	@Test
-	public void testCodecModuleOverwriteIdKey() throws InterruptedException, IOException {
-	
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("_id", module.getIdKey());		
-		
-		Resource resource = resourceSet.createResource(uri);
-		
-		Person person = CodecTestHelper.getTestPerson();		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_KEY, "test");
-		resource.save(options);
-		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("test", module.getIdKey());		
-	}
-	
-	@Test
-	public void testCodecModuleOverwriteTypeKey() throws InterruptedException, IOException {
-	
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("_type", module.getTypeKey());		
-		
-		Resource resource = resourceSet.createResource(uri);
-		
-		Person person = CodecTestHelper.getTestPerson();		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "test");
-		resource.save(options);
-		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("test", module.getTypeKey());		
-	}
+
 	
 	@Test
 	public void testCodecModuleOverwriteProxyKey() throws InterruptedException, IOException {
@@ -159,7 +127,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_PROXY_KEY, "test");
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertEquals("test", module.getProxyKey());		
 	}
 	
@@ -177,7 +145,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_REFERENCE_KEY, "test");
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertEquals("test", module.getRefKey());		
 	}
 	
@@ -195,7 +163,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_TIMESTAMP_KEY, "test");
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertEquals("test", module.getTimestampKey());		
 	}
 	
@@ -212,7 +180,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_SUPERTYPE_KEY, "test");
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertEquals("test", module.getSuperTypeKey());		
 	}
 	
@@ -229,7 +197,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_ID, false);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertFalse(module.isUseId());	
 	}
 
@@ -247,7 +215,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertFalse(module.isSerializeType());	
 	}
 	
@@ -264,7 +232,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY, false);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertFalse(module.isSerializeSuperTypesAsArray());	
 	}
 	
@@ -281,7 +249,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, false);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertFalse(module.isUseNamesFromExtendedMetaData());	
 	}
 	
@@ -298,7 +266,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertFalse(module.isIdOnTop());	
 	}
 	
@@ -315,7 +283,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_ID_FEATURE_AS_PRIMARY_KEY, false);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertFalse(module.isIdFeatureAsPrimaryKey());	
 	}
 	
@@ -332,7 +300,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertTrue(module.isSerializeSuperTypes());	
 	}
 	
@@ -349,7 +317,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertTrue(module.isSerializeDefaultValue());	
 	}
 	
@@ -366,7 +334,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertTrue(module.isSerializeEmptyValue());	
 	}
 	
@@ -383,7 +351,7 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertTrue(module.isSerializeNullValue());	
 	}
 	
@@ -401,7 +369,16 @@ public class CodecModuleConfigOverwriteTest {
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
 		resource.save(options);
 		
-		module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		module = getCodecModuleFromResource(resource);
 		assertTrue(module.isSerializeIdField());	
+	}
+	
+	private CodecModule getCodecModuleFromResource(Resource resource) {
+		assertTrue(resource instanceof CodecResource);
+		CodecResource codecRes = (CodecResource) resource;
+		ObjectMapper mapper = codecRes.getMapper();
+		assertEquals(1, mapper.getRegisteredModules().size());		
+		assertTrue(mapper.getRegisteredModules().stream().toList().get(0) instanceof CodecModule);		
+		return  (CodecModule) mapper.getRegisteredModules().stream().toList().get(0);
 	}
 }

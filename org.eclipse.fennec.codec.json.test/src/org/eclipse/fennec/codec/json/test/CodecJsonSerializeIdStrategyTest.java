@@ -30,10 +30,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecAnnotations;
-import org.eclipse.fennec.codec.constants.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.constants.CodecResourceOptions;
-import org.eclipse.fennec.codec.constants.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.ObjectMapperOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -149,7 +148,7 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		personOptions.put(CodecAnnotations.CODEC_ID_STRATEGY, "COMBINED");
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
 
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);

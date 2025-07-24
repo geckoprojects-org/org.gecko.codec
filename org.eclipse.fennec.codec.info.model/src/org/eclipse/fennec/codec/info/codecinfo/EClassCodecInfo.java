@@ -19,8 +19,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * <ul>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getClassifier <em>Classifier</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getIdentityInfo <em>Identity Info</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getTypeInfo <em>Type Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getSuperTypeInfo <em>Super Type Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getFeatureInfo <em>Feature Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getReferenceCodecInfo <em>Reference Codec Info</em>}</li>
@@ -34,7 +32,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface EClassCodecInfo {
+public interface EClassCodecInfo extends TypedCodecInfo, IdentifiableCodecInfo {
 	/**
 	 * Returns the value of the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -78,50 +76,6 @@ public interface EClassCodecInfo {
 	 * @generated
 	 */
 	void setClassifier(EClassifier value);
-
-	/**
-	 * Returns the value of the '<em><b>Identity Info</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Identity Info</em>' containment reference.
-	 * @see #setIdentityInfo(IdentityInfo)
-	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_IdentityInfo()
-	 * @model containment="true"
-	 * @generated
-	 */
-	IdentityInfo getIdentityInfo();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getIdentityInfo <em>Identity Info</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Identity Info</em>' containment reference.
-	 * @see #getIdentityInfo()
-	 * @generated
-	 */
-	void setIdentityInfo(IdentityInfo value);
-
-	/**
-	 * Returns the value of the '<em><b>Type Info</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Type Info</em>' containment reference.
-	 * @see #setTypeInfo(TypeInfo)
-	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_TypeInfo()
-	 * @model containment="true"
-	 * @generated
-	 */
-	TypeInfo getTypeInfo();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getTypeInfo <em>Type Info</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Type Info</em>' containment reference.
-	 * @see #getTypeInfo()
-	 * @generated
-	 */
-	void setTypeInfo(TypeInfo value);
 
 	/**
 	 * Returns the value of the '<em><b>Super Type Info</b></em>' containment reference.

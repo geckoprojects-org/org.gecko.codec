@@ -64,17 +64,13 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 	@SuppressWarnings("unchecked")
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		if(featureCodecInfo.isIgnore()) return;
-		if(featureCodecInfo.getFeatures().size() != 1) {
-			LOGGER.warning(String.format("Currently no support for multiple EStructuralFeature in CodecInfoObject which is not a CodecIdInfo"));
+		if(featureCodecInfo.getFeature() == null) {
+			LOGGER.severe(String.format("No Feature found in CodecFeatureInfo. Feature will not be serialized!"));
 			return;
 		}
-		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeatures().get(0);
-				
-//		EMFContext.setParent(provider, rootObj);
-//		EMFContext.setFeature(provider, feature);
-		
+		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeature();		
 		if(!codecModule.isSerializeIdField()) {
-			if(eObjCodecInfo.getIdentityInfo().getFeatures().contains(feature)) {
+			if(eObjCodecInfo.getIdentityInfo().getIdFeatures().contains(feature)) {
 				return;
 			}
 		}
@@ -82,6 +78,8 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 		if(gen.streamWriteContext() instanceof EMFCodecWriteContext cwt) {
 			cwt.setCurrentFeature(feature);
 			cwt.setCurrentEObject(rootObj);
+		} else {
+			throw new IllegalArgumentException(String.format("StreamWriteContext is not of type EMFCodecWriteContext! Something went wrong!"));
 		}
 		
 		JavaType javaType = TypeConstructorHelper.constructJavaTypeFromFeature(feature, provider);

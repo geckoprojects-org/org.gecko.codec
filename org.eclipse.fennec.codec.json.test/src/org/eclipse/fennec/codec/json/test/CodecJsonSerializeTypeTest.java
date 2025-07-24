@@ -21,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -30,8 +29,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecModuleOptions;
-import org.eclipse.fennec.codec.constants.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
@@ -51,8 +51,6 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-import tools.jackson.databind.SerializationFeature;
-
 /**
  * See documentation here: https://github.com/osgi/osgi-test
  * https://github.com/osgi/osgi-test/wiki Examples:
@@ -67,6 +65,7 @@ import tools.jackson.databind.SerializationFeature;
 		@Property(key = "type", value = "json") })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="json"),
+		@Property(key = "enableFeatures", value = "SerializationFeature.INDENT_OUTPUT", type = Type.Array),
 		@Property(key = "disableFeatures", value={"JsonWriteFeature.ESCAPE_FORWARD_SLASHES"}, type = Type.Array)
 })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
@@ -113,8 +112,6 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
-				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -130,6 +127,67 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 		}
 	}
 
+//	@Test
+//	public void testSerializeTypeRootObjMetadataNO() throws IOException {
+//
+//		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+//
+//		org.eclipse.fennec.codec.test.models.metadata.Person person = org.eclipse.fennec.codec.test.models.metadata.MetadataFactory.eINSTANCE.createPerson();
+//		person.setKind("Person");
+//		
+//		resource.getContents().add(person);
+//		Map<String, Object> options = new HashMap<>();
+//		Map<String, Object> classOptions = new HashMap<>();
+//		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
+//		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(org.eclipse.fennec.codec.test.models.metadata.MetadataPackage.Literals.PERSON, classOptions));
+//		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
+//		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, false);
+//		resource.save(options);
+//
+//		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+//			String line = reader.readLine();
+//			boolean found = false;
+//			while (line != null) {
+//				if (line.contains("\"kind\" : ")) {
+//					found = true;
+//				}
+//				line = reader.readLine();
+//			}
+//			assertTrue(found);
+//		}
+//	}
+	
+//	@Test
+//	public void testSerializeTypeRootObjMetadataYES() throws IOException {
+//
+//		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
+//
+//		org.eclipse.fennec.codec.test.models.metadata.Person person = org.eclipse.fennec.codec.test.models.metadata.MetadataFactory.eINSTANCE.createPerson();
+//		person.setKind("Person");
+//		
+//		resource.getContents().add(person);
+//		Map<String, Object> options = new HashMap<>();
+//		Map<String, Object> classOptions = new HashMap<>();
+//		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
+//		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(org.eclipse.fennec.codec.test.models.metadata.MetadataPackage.Literals.PERSON, classOptions));
+//		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
+//		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
+//		resource.save(options);
+//
+//		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
+//			String line = reader.readLine();
+//			boolean found = false;
+//			while (line != null) {
+//				if (line.contains("\"typeOfPerson\" : ")) {
+//					found = true;
+//				}
+//				line = reader.readLine();
+//			}
+//			assertTrue(found);
+//		}
+//	}
+
+	
 	@Test
 	public void testSerializeTypeRootObjNO() throws IOException {
 
@@ -139,8 +197,6 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
-				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -167,8 +223,6 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
-				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -197,8 +251,6 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
-				List.of(SerializationFeature.INDENT_OUTPUT));
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -221,9 +273,7 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
-				List.of(SerializationFeature.INDENT_OUTPUT));
-
+		
 		Person person = CodecTestHelper.getTestPerson();
 		Address address = CodecTestHelper.getTestAddress();
 		person.setNonContainedAdd(address);
@@ -252,8 +302,6 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
-				List.of(SerializationFeature.INDENT_OUTPUT));
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
 		Person person = CodecTestHelper.getTestPerson();
 		Address address = CodecTestHelper.getTestAddress();

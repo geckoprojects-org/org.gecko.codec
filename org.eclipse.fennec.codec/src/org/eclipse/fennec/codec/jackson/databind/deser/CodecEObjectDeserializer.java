@@ -15,6 +15,7 @@ package org.eclipse.fennec.codec.jackson.databind.deser;
 
 import static tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EClass;
@@ -23,13 +24,11 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.fennec.codec.constants.CodecResourceOptions;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
-import org.eclipse.fennec.codec.info.codecinfo.IdentityInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo;
@@ -38,13 +37,13 @@ import org.eclipse.fennec.codec.jackson.databind.CodecTokenBuffer;
 import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.jackson.utils.CodecParserException;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.TokenStreamContext;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
-import tools.jackson.databind.deser.jdk.StringDeserializer;
 
 /**
  * 
@@ -133,24 +132,31 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 			if(ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) != null) {
 				type  = (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT);
 				System.out.println("Root object with CODEC_ROOT_OBJECT option!");
+				EClassCodecInfo eObjCodecInfo = extractModelInfo(type);
+				buffer = determineType(jp, ctxt, eObjCodecInfo.getTypeInfo());
 			} else {
 				//				We look in the type key (the type key has to be the same for all root objects otherwise we have no way to decide which key to use when)
 				System.out.println("Root object but without CODEC_ROOT_OBJECT option!");
-				buffer = determineType(jp, ctxt);
-				if(type == null) {
-					throw new IllegalArgumentException(String.format("It was not possible to determine the type of the EObject from the type key %s", codecModule.getTypeKey()));
-				}
+//				TODO: can we really end up here???
+//				buffer = determineType(jp, ctxt);
+//				if(type == null) {
+//					throw new IllegalArgumentException(String.format("It was not possible to determine the type of the EObject from the type key %s", eObjCodecInfo.getTypeInfo().getTypeKey()));
+//				}
 			}
 		} else {
-			EStructuralFeature currentFeature = getCurrentFeature((TokenStreamContext)codecReadCtxt);
+			EStructuralFeature currentFeature = getCurrentFeature(codecReadCtxt);
+			
 			if(currentFeature == null) {
 				throw new IllegalArgumentException(String.format("Current Feature is not set in context. Something went wrong!"));
 			}
-			//			Here in principle we could have different type keys based on the EStructuralFeature...? Where are we storing them though? In the Module? In the InfoService?
-			System.out.println("Reference!");
-			buffer = determineType(jp, ctxt);
+			EClassCodecInfo eObjCodecInfo = extractModelInfo(currentFeature.getEContainingClass());
+			FeatureCodecInfo featureCodecInfo = eObjCodecInfo.getReferenceCodecInfo().stream().filter(r -> r.getFeature().getName().equals(currentFeature.getName())).findFirst().orElse(null);
+			if(featureCodecInfo == null) {
+				throw new IllegalArgumentException(String.format("Cannot retrieve FeatureCodecInfo for current EStructuralFeature %s. Something went wrong!", currentFeature.getName()));
+			}
+			buffer = determineType(jp, ctxt, featureCodecInfo.getTypeInfo());
 			if(type == null) {
-				LOGGER.warning(() -> String.format("It was not possible to determine the type of the EReference %s from the type key %s. The type of the EReference will be set to its default type", currentFeature.getName(), codecModule.getTypeKey()));
+				LOGGER.warning(() -> String.format("It was not possible to determine the type of the EReference %s from the type key %s. The type of the EReference will be set to its default type", currentFeature.getName(), featureCodecInfo.getTypeInfo().getTypeKey()));
 				type = (EClass) currentFeature.getEGenericType().getERawType();
 			}
 		}
@@ -159,7 +165,6 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		EObject current = EcoreUtil.create(type);
 		codecReadCtxt.setCurrentEObject(current);
 		
-//		TODO: if we now have a custom deserializer for the current type we shall use that		
 		if(buffer != null) {
 			doDeserialize(buffer.asParser(), ctxt, current, codecReadCtxt);
 		} else {
@@ -175,48 +180,103 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		JsonToken nextToken = jp.nextToken();
 		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
 			final String field = jp.currentName();
-			FeatureCodecInfo featureCodecInfo = getFeatureCodecInfo(field, eObjCodecInfo);
-			if(featureCodecInfo instanceof IdentityInfo idInfo) {
-				new IdCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, idInfo)
+			if(eObjCodecInfo.getIdentityInfo().getIdKey().equals(field)) {
+				new IdCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, eObjCodecInfo.getIdentityInfo())
 				.deserializeAndSet(jp, current, ctxt, resource);
-			} 
-			else if(featureCodecInfo != null && !(featureCodecInfo instanceof TypeInfo) && !(featureCodecInfo instanceof SuperTypeInfo)) {
+			}
+			FeatureCodecInfo featureCodecInfo = getFeatureCodecInfo(field, eObjCodecInfo);			
+			if(featureCodecInfo != null && !(featureCodecInfo instanceof SuperTypeInfo)) {
+				codecReadContext.setCurrentEObject(current);
+				if(featureCodecInfo.getFeature() instanceof EStructuralFeature) codecReadContext.setCurrentFeature((EStructuralFeature)featureCodecInfo.getFeature());
 				new FeatureCodecInfoDeserializer(codecModule, codecModelInfoService, eObjCodecInfo, featureCodecInfo, eObjCodecInfo.getTypeInfo())
 				.deserializeAndSet(jp, current, ctxt, resource);
 			} else if(featureCodecInfo == null && current != null) {
 				handleUnknownProperty(jp, resource, ctxt, current.eClass());
 			} 
 			nextToken = jp.nextToken();
+			if(nextToken == null) {
+				nextToken = jp.nextToken();
+			}
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	private CodecTokenBuffer determineType(JsonParser jp, DeserializationContext ctxt) {
-		CodecTokenBuffer buffer = null;
-		JsonToken nextToken = jp.nextToken();
-
-		while (nextToken != JsonToken.END_OBJECT && nextToken != null) {
+	private CodecTokenBuffer determineType(JsonParser jp, DeserializationContext ctxt, TypeInfo typeInfo) {
+		
+		String typeKey = typeInfo.getTypeKey();
+		if(typeKey == null) return null;
+		String typeReaderName = typeInfo.getTypeValueReaderName();
+		CodecValueReader<String, EClass> typeReader = infoHolder.getReaderByName(typeReaderName);
+		Map<String, String> typeMap = typeInfo.getTypeMap().map();
+		String[] typeKeySplit = typeKey.split("\\.");
+		
+		int i = 0, l = typeKeySplit.length;
+		Integer depth = 1;
+		CodecTokenBuffer buffer = CodecTokenBuffer.forBuffering(jp, ctxt);
+		JsonToken nextToken = getAndSaveNextToken(jp, buffer);	
+		depth = updateDepth(nextToken, depth);
+		
+		while (depth > 0 && nextToken != null) {
 			final String field = jp.currentName();
-			//			If it was not possible to determine the type from the conditions before then we look for the _type in the serialized document
-			if(field.equals(codecModule.getTypeKey()) && type == null) {
-				jp.nextToken();
-				for(CodecValueReader<String, EClass> reader : infoHolder.getReaders()) {
-					try {
-						type = reader.readValue(StringDeserializer.instance.deserialize(jp, ctxt), ctxt);
-					} catch(Exception e) {
-						type = null;
+			if(field != null && field.equals(typeKeySplit[i]) && depth == i + 1) {
+				if(l > i + 1) {
+					i++;
+					nextToken = getAndSaveNextToken(jp, buffer);		
+					depth = updateDepth(nextToken, depth);
+					nextToken = getAndSaveNextToken(jp, buffer);
+					depth = updateDepth(nextToken, depth);
+					continue;
+				} else {
+					nextToken = getAndSaveNextToken(jp, buffer);
+					depth = updateDepth(nextToken, depth);
+					if(typeMap.containsKey(jp.getString())) {
+						EClass deserializedType = typeReader.readValue(typeMap.get(jp.getString()), ctxt);
+						if(deserializedType == null) {
+							LOGGER.severe(String.format("Failed to deserialize type from typeKey %s, with reader type %s from value %s. "
+									+ "We will use the default type, if any.", typeKey, typeReaderName, jp.getString()));
+						} else {
+							type = deserializedType;
+						}						
+					} else {
+						LOGGER.warning(String.format("No type mapping for token %s. Trying to directly deserialize token value.", jp.getString()));
+						EClass deserializedType = typeReader.readValue(jp.getString(), ctxt);
+						if(deserializedType == null) {
+							LOGGER.severe(String.format("Failed to deserialize type from typeKey %s, with reader type %s from value %s. "
+									+ "We will use the default type, if any.", typeKey, typeReaderName, jp.getString()));
+						} else {
+							type = deserializedType;
+						}
 					}
-					if(type != null) break;
-				}				
+				}
 			}
-			if (buffer == null) {
-				buffer = CodecTokenBuffer.forBuffering(jp, ctxt);
-			}
-			buffer.copyCurrentStructure(jp);
-			nextToken = jp.nextToken();
+			nextToken = getAndSaveNextToken(jp, buffer);
+			depth = updateDepth(nextToken, depth);			
 		}
 		return buffer;
 	}
+	
+	private int updateDepth(JsonToken nextToken, int depth) {
+		if (nextToken == JsonToken.START_OBJECT || nextToken == JsonToken.START_ARRAY) {
+	        depth = depth + 1;
+	    } else if (nextToken == JsonToken.END_OBJECT || nextToken == JsonToken.END_ARRAY) {
+	    	depth = depth - 1;
+	    }
+		return depth;
+	}
+	
+	private JsonToken getAndSaveNextToken(JsonParser jp, CodecTokenBuffer buffer) {
+		JsonToken nextToken = jp.nextToken();	
+		if(nextToken != null) {
+			System.out.println(nextToken + " -> " + jp.getString());
+			buffer.copyCurrentEvent(jp);
+			
+		} else {
+			System.out.println("Null token in getAndSave");
+			
+		}
+		return nextToken;
+	}
+
 
 	private void handleUnknownProperty(final JsonParser jp, final Resource resource, final DeserializationContext ctxt,	EClass currentEClass)  {
 		if (resource != null && ctxt.getConfig().hasDeserializationFeatures(FAIL_ON_UNKNOWN_PROPERTIES.getMask())) {
@@ -230,11 +290,11 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
 	private FeatureCodecInfo getFeatureCodecInfo(String fieldName, EClassCodecInfo eObjCodecInfo) {
 		if(fieldName == null) return null;
-		if(fieldName.equals(codecModule.getIdKey())) return eObjCodecInfo.getIdentityInfo();
-		if(fieldName.equals(codecModule.getTypeKey()) && !codecModule.isDeserializeType()) return eObjCodecInfo.getTypeInfo();
+//		if(fieldName.equals(codecModule.getIdKey())) return eObjCodecInfo.getIdentityInfo();
+//		if(fieldName.equals(codecModule.getTypeKey()) && !codecModule.isDeserializeType()) return eObjCodecInfo.getTypeInfo();
 		if(fieldName.equals(codecModule.getSuperTypeKey())) return eObjCodecInfo.getSuperTypeInfo();
 		for(FeatureCodecInfo featureCodecInfo : eObjCodecInfo.getFeatureInfo()) {
-			String key = codecModule.isUseNamesFromExtendedMetaData() ? featureCodecInfo.getKey() : featureCodecInfo.getFeatures().get(0).getName();
+			String key = codecModule.isUseNamesFromExtendedMetaData() ? featureCodecInfo.getKey() : featureCodecInfo.getFeature().getName();
 			if(fieldName.equals(key)) {
 				return featureCodecInfo;
 			}
@@ -243,6 +303,10 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		return null;
 	}
 
+	private EStructuralFeature getCurrentFeature(EMFCodecReadContext ctxt) {
+		if(ctxt.getCurrentFeature() != null) return ctxt.getCurrentFeature();
+		return getCurrentFeature((TokenStreamContext) ctxt);
+	}
 	
 	private EStructuralFeature getCurrentFeature(final TokenStreamContext ctxt) {
 		TokenStreamContext parentCodecReadCtxt = null;

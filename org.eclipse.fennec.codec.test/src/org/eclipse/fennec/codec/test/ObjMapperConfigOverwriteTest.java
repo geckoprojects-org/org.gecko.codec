@@ -38,9 +38,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.ObjectMapperOptions;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.resource.CodecResource;
+import org.eclipse.fennec.codec.options.ObjectMapperOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -306,6 +306,7 @@ public class ObjMapperConfigOverwriteTest {
 		assertThat(resource).isInstanceOf(CodecResource.class);
 		CodecResource codecRes = (CodecResource) resource;
 		ObjectMapper mapper = codecRes.getMapper();
+		
 		assertNotNull(mapper);
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS));
 		assertTrue(mapper.isEnabled(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES));

@@ -32,8 +32,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecModuleOptions;
-import org.eclipse.fennec.codec.constants.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.ObjectMapperOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -51,6 +51,7 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
+import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.SerializationFeature;
 
 /**
@@ -198,6 +199,7 @@ public class CodecJsonIdOptionsTest extends JsonTestSetting {
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_ID, true);
 		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
 		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

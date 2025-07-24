@@ -186,7 +186,7 @@ public class CodecTestHelper {
 		public EClass readValue(String value, DeserializationContext ctxt) {
 			if(value == null) return null;
 			if(value.startsWith("test.")) value = value.substring(5);
-			return CodecIOHelper.findEClassByName(value);
+			return CodecIOHelper.findEClassByName(value, null);
 		}
 	};
 }

@@ -53,18 +53,18 @@ public class CodecModule extends SimpleModule {
 	private boolean idOnTop;
 	private boolean serializeIdField;
 	private boolean idFeatureAsPrimaryKey;
-	private String idKey;
 	private boolean deserializeType;
 	private boolean serializeType;
 	private boolean serializeSuperTypes;
 	private boolean serializeAllSuperTypes;
 	private boolean serializeSuperTypesAsArray;
-	private String typeKey;
 	private String superTypeKey;
 	private String refKey;
 	private String proxyKey;
 	private String timestampKey;
 	private boolean writeEnumLiterals;
+	private boolean sortPropertiesAlphabetically;
+
 	
 	private ValueSerializer<EObject> referenceSerializer;
 	private ValueDeserializer<EObject> referenceDeserializer;
@@ -115,10 +115,6 @@ public class CodecModule extends SimpleModule {
 		return idFeatureAsPrimaryKey;
 	}
 
-	public String getIdKey() {
-		return idKey;
-	}
-	
 	public boolean isDeserializeType() {
 		return deserializeType;
 	}
@@ -139,10 +135,6 @@ public class CodecModule extends SimpleModule {
 		return serializeSuperTypesAsArray;
 	}
 
-	public String getTypeKey() {
-		return typeKey;
-	}
-
 	public String getSuperTypeKey() {
 		return superTypeKey;
 	}
@@ -161,6 +153,10 @@ public class CodecModule extends SimpleModule {
 	
 	public boolean isWriteEnumLiterals() {
 		return writeEnumLiterals;
+	}
+	
+	public boolean isSortPropertiesAlphabetically() {
+		return sortPropertiesAlphabetically;
 	}
 
 	public PackageCodecInfo getCodecModelInfo() {
@@ -188,8 +184,6 @@ public class CodecModule extends SimpleModule {
 		this.serializeType = builder.serializeType;
 		this.deserializeType = builder.deserializeType;
 		this.idFeatureAsPrimaryKey = builder.idFeatureAsPrimaryKey;
-		this.idKey = builder.idKey;
-		this.typeKey = builder.typeKey;
 		this.superTypeKey = builder.superTypeKey;
 		this.timestampKey = builder.timestampKey;
 		this.proxyKey = builder.proxyKey;
@@ -205,6 +199,7 @@ public class CodecModule extends SimpleModule {
 		this.setReferenceDeserializer(builder.referenceDeserializer);
 		this.setUriHandler(builder.handler);
 		this.setReferenceSerializer(builder.referenceSerializer);
+		this.sortPropertiesAlphabetically = builder.sortPropertiesAlphabetically;
 	}
 
 	
@@ -297,13 +292,11 @@ public class CodecModule extends SimpleModule {
 		private boolean idOnTop = true;
 		private boolean serializeIdField = false;
 		private boolean idFeatureAsPrimaryKey = true;
-		private String idKey =  "_id";
 		private boolean serializeType = true;
 		private boolean deserializeType = false;
 		private boolean serializeSuperTypes = false;
 		private boolean serializeAllSuperTypes = false;
 		private boolean serializeSuperTypesAsArray = true;
-		private String typeKey = "_type";
 		private String superTypeKey = "_supertype";
 		private String refKey = "$ref";
 		private String proxyKey = "_proxy";
@@ -312,6 +305,7 @@ public class CodecModule extends SimpleModule {
 		private ValueDeserializer<EObject> referenceDeserializer;
 		private URIHandler handler;
 		private ValueSerializer<EObject> referenceSerializer;
+		private boolean sortPropertiesAlphabetically = false;
 
 		public Builder() {
 
@@ -324,16 +318,6 @@ public class CodecModule extends SimpleModule {
 
 		public Builder withCodecModuleName(String codecModuleName) {
 			this.codecModuleName = codecModuleName;
-			return this;
-		}
-
-		public Builder withIdKey(String idKey) {
-			this.idKey = idKey;
-			return this;
-		}
-
-		public Builder withTypeKey(String typeKey) {
-			this.typeKey = typeKey;
 			return this;
 		}
 
@@ -424,6 +408,11 @@ public class CodecModule extends SimpleModule {
 			this.writeEnumLiterals = writeEnumLiterals;
 			return this;
 		}
+		
+		public Builder withSortPropertiesAlphabetically(boolean sortPropertiesAlphabetically) {
+			this.sortPropertiesAlphabetically = sortPropertiesAlphabetically;
+			return this;
+		}
 
 		public Builder bindCodecModelInfo(PackageCodecInfo codecModelInfo) {
 			this.codecModelInfo = codecModelInfo;
@@ -453,6 +442,8 @@ public class CodecModule extends SimpleModule {
 			this.referenceSerializer = referenceSerializer;
 			return this;
 		}
+		
+		
 
 		public CodecModule build() {
 			return new CodecModule(this);

@@ -33,8 +33,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecModuleOptions;
-import org.eclipse.fennec.codec.constants.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.emf.osgi.example.model.basic.BasicFactory;
@@ -413,6 +413,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		sprops.clear();
 		sprops.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
 		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.FALSE);
+		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
 		findResource.load(sprops);
 
 		// get the person

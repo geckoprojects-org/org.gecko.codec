@@ -2,8 +2,6 @@
  */
 package org.eclipse.fennec.codec.info.codecinfo;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.ETypedElement;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -18,7 +16,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getFeatures <em>Features</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getFeature <em>Feature</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getValueReaderName <em>Value Reader Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getValueWriterName <em>Value Writer Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getType <em>Type</em>}</li>
@@ -31,7 +29,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface FeatureCodecInfo {
+public interface FeatureCodecInfo extends TypedCodecInfo {
 	/**
 	 * Returns the value of the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -55,16 +53,26 @@ public interface FeatureCodecInfo {
 	void setId(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Features</b></em>' reference list.
-	 * The list contents are of type {@link org.eclipse.emf.ecore.ETypedElement}.
+	 * Returns the value of the '<em><b>Feature</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Features</em>' reference list.
-	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_Features()
+	 * @return the value of the '<em>Feature</em>' reference.
+	 * @see #setFeature(ETypedElement)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getFeatureCodecInfo_Feature()
 	 * @model
 	 * @generated
 	 */
-	EList<ETypedElement> getFeatures();
+	ETypedElement getFeature();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getFeature <em>Feature</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Feature</em>' reference.
+	 * @see #getFeature()
+	 * @generated
+	 */
+	void setFeature(ETypedElement value);
 
 	/**
 	 * Returns the value of the '<em><b>Value Reader Name</b></em>' attribute.

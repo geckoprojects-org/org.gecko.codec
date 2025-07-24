@@ -2,6 +2,8 @@
  */
 package org.eclipse.fennec.codec.info.codecinfo.impl;
 
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -67,6 +69,9 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 			case CodecInfoPackage.SUPER_TYPE_INFO: return (EObject)createSuperTypeInfo();
 			case CodecInfoPackage.IDENTITY_INFO: return (EObject)createIdentityInfo();
 			case CodecInfoPackage.CODEC_INFO_HOLDER: return (EObject)createCodecInfoHolder();
+			case CodecInfoPackage.STRING_TO_STRING_MAP: return (EObject)createStringToStringMap();
+			case CodecInfoPackage.TYPED_CODEC_INFO: return (EObject)createTypedCodecInfo();
+			case CodecInfoPackage.IDENTIFIABLE_CODEC_INFO: return (EObject)createIdentifiableCodecInfo();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -185,6 +190,38 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	public CodecInfoHolder createCodecInfoHolder() {
 		CodecInfoHolderImpl codecInfoHolder = new CodecInfoHolderImpl();
 		return codecInfoHolder;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, String> createStringToStringMap() {
+		StringToStringMapImpl stringToStringMap = new StringToStringMapImpl();
+		return stringToStringMap;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public TypedCodecInfo createTypedCodecInfo() {
+		TypedCodecInfoImpl typedCodecInfo = new TypedCodecInfoImpl();
+		return typedCodecInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public IdentifiableCodecInfo createIdentifiableCodecInfo() {
+		IdentifiableCodecInfoImpl identifiableCodecInfo = new IdentifiableCodecInfoImpl();
+		return identifiableCodecInfo;
 	}
 
 	/**

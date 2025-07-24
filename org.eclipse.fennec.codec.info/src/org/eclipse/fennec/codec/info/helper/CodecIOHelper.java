@@ -29,9 +29,13 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
+import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
+import org.eclipse.fennec.codec.options.CodecValueWriterConstants;
+import org.osgi.service.component.annotations.Component;
 
 import tools.jackson.databind.DatabindContext;
 import tools.jackson.databind.DeserializationContext;
@@ -42,15 +46,14 @@ import tools.jackson.databind.SerializationContext;
  * @author ilenia
  * @since Aug 2, 2024
  */
-public class CodecIOHelper {
-
-
+@Component(immediate = true, name = "CodecIOHelper")
+public class CodecIOHelper {	
 
 	public static final CodecValueReader<Object, String> DEFAULT_ID_VALUE_READER = new CodecValueReader<>() {
 
 		@Override
 		public String getName() {
-			return "DEFAULT_ID_READER";
+			return CodecValueReaderConstants.OBJECT_TO_STRING_READER;
 		}
 
 		@Override
@@ -60,43 +63,16 @@ public class CodecIOHelper {
 	};
 
 
-	public static final CodecValueWriter<EObject, Object> DEFAULT_ID_VALUE_WRITER = new CodecValueWriter<>() {
+	public static final CodecValueWriter<Object, String> DEFAULT_ID_VALUE_WRITER = new CodecValueWriter<>() {
 		@Override
 		public String getName() {
-			return "DEFAULT_ID_WRITER";
+			return CodecValueWriterConstants.OBJECT_TO_STRING_WRITER;
 		}
 
 		@Override
-		public Object writeValue(EObject value, SerializationContext provider) {
-			return EcoreUtil.getID(value);
-		}
-	};
-
-
-	public static final CodecValueWriter<EObject, Object> IDFIELD_VALUE_WRITER = new CodecValueWriter<>() {
-		@Override
-		public String getName() {
-			return "ID_FIELD_WRITER";
-		}
-
-		@Override
-		public Object writeValue(EObject value, SerializationContext provider) {
-			return EcoreUtil.getID(value);
-		}
-	};
-
-
-	public static final CodecValueReader<String, EClass> DEFAULT_ECLASS_READER = new CodecValueReader<>() {
-
-		@Override
-		public String getName() {
-			return "DEFAULT_ECLASS_READER";
-		}
-
-		@Override
-		public EClass readValue(String value, DeserializationContext context) {
-			Set<EClass> types = getAllTypes();			
-			return types.stream().filter(findByURI(value)).findFirst().orElse(null);
+		public String writeValue(Object value, SerializationContext provider) {
+			if(value == null) return null;
+			return value.toString();
 		}
 	};
 
@@ -105,7 +81,7 @@ public class CodecIOHelper {
 
 		@Override
 		public String getName() {
-			return "ALL_SUPERTYPE_WRITER";
+			return CodecValueWriterConstants.ALL_SUPERTYPE_WRITER;
 		}
 
 		@Override
@@ -118,7 +94,7 @@ public class CodecIOHelper {
 
 		@Override
 		public String getName() {
-			return "SINGLE_SUPERTYPE_WRITER";
+			return CodecValueWriterConstants.SINGLE_SUPERTYPE_WRITER;
 		}
 
 		@Override
@@ -130,12 +106,11 @@ public class CodecIOHelper {
 	};
 
 
-
 	public static final CodecValueWriter<EClass, String> URI_WRITER = new CodecValueWriter<>() {
 
 		@Override
 		public String getName() {
-			return "URI_WRITER";
+			return CodecValueWriterConstants.URI_WRITER;
 		}
 
 		@Override
@@ -145,22 +120,37 @@ public class CodecIOHelper {
 			return uri.toString();
 		}		
 	};
-
-	public static final CodecValueReader<String, EClass> READ_BY_NAME = new CodecValueReader<>() {
+	
+	public static final CodecValueWriter<EClass, String> WRITE_BY_CLASS_NAME = new CodecValueWriter<>() {
 
 		@Override
 		public String getName() {
-			return "READ_BY_NAME";
+			return CodecValueWriterConstants.WRITER_BY_ECLASS_NAME;
 		}
 
 		@Override
-		public EClass readValue(String value, DeserializationContext context) {
-			return findEClassByName(value);
+		public String writeValue(EClass value, SerializationContext provider) {
+			return value != null ? value.getName() : null;
+		}		
+	};
+
+
+	public static final CodecValueWriter<EClass, String> WRITE_BY_INSTANCE_CLASS_NAME = new CodecValueWriter<>() {
+
+		@Override
+		public String getName() {
+			return CodecValueWriterConstants.WRITER_BY_INSTANCE_CLASS_NAME;
 		}
+
+		@Override
+		public String writeValue(EClass value, SerializationContext provider) {
+			return value != null ? value.getInstanceClassName() : null;
+		}
+
 	};
 	
-	private static Set<EClass> getAllTypes() {
-		EPackage.Registry global = EPackage.Registry.INSTANCE;
+	public static Set<EClass> getAllTypes(ResourceSet resourceSet) {
+		EPackage.Registry global = resourceSet == null ? EPackage.Registry.INSTANCE : resourceSet.getPackageRegistry();
 		Map<String, Object> registry = new HashMap<>();
 		registry.putAll(global);
 
@@ -182,12 +172,14 @@ public class CodecIOHelper {
 
 	}
 	
-	public static EClass findEClassByName(String name) {
-		Set<EClass> types = getAllTypes();
+	
+	
+	public static EClass findEClassByName(String name, ResourceSet resourceSet) {
+		Set<EClass> types = getAllTypes(resourceSet);
 		return types.stream().filter(findByName(name)).findFirst().orElse(null);
 	}
 	
-	private static Predicate<EObject> findByURI(final String value) {
+	public static Predicate<EObject> findByURI(final String value) {
 		return e -> value != null && e instanceof EClass && EcoreUtil.getURI(e) != null && value.equals(EcoreUtil.getURI(e).toString());
 	}
 
@@ -195,53 +187,11 @@ public class CodecIOHelper {
 		return e -> value != null && e instanceof EClass && value.equals(((EClass) e).getName());
 	}
 
-	private static Predicate<EObject> findByQualifiedName(final String value) {
+	public static Predicate<EObject> findByQualifiedName(final String value) {
 		return e -> value != null && e instanceof EClass && value.equals(((EClass) e).getInstanceClassName());
 	}
 
-	public static final CodecValueWriter<EClass, String> WRITE_BY_NAME = new CodecValueWriter<>() {
-
-		@Override
-		public String getName() {
-			return "WRITE_BY_NAME";
-		}
-
-		@Override
-		public String writeValue(EClass value, SerializationContext provider) {
-			return value != null ? value.getName() : null;
-		}		
-	};
-
-
-	public static final CodecValueReader<String, EClass> READ_BY_CLASS = new CodecValueReader<>() {
-
-		@Override
-		public String getName() {
-			return "READ_BY_CLASS";
-		}
-
-		@Override
-		public EClass readValue(String value, DeserializationContext context) {
-			Set<EClass> types = getAllTypes();
-			return types.stream().filter(findByQualifiedName(value)).findFirst().orElse(null);
-		}
-	};
-
-
-	public static final CodecValueWriter<EClass, String> WRITE_BY_CLASS_NAME = new CodecValueWriter<>() {
-
-		@Override
-		public String getName() {
-			return "WRITE_BY_CLASS_NAME";
-		}
-
-		@Override
-		public String writeValue(EClass value, SerializationContext provider) {
-			return value != null ? value.getInstanceClassName() : null;
-		}
-
-	};
-
+	
 	private static String[] getAllSuperTypeURIs(final DatabindContext ctxt, final EObject object) {
 		if (object == null) {
 			return null;

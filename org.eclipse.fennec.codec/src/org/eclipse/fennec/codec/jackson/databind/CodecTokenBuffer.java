@@ -18,6 +18,8 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl;
+
 import tools.jackson.core.Base64Variant;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
@@ -121,6 +123,106 @@ public class CodecTokenBuffer extends TokenBuffer {
         p.nextToken();
         return p;
     }
+    
+    public void writeObject(Object obj) {
+    	if(obj instanceof String str) writeString(str);
+    	else if(obj instanceof Integer num) writeNumber(num);
+    	else if(obj instanceof Double num) writeNumber(num);
+    	else if(obj instanceof BigInteger num) writeNumber(num);
+    	else if(obj instanceof BigDecimal num) writeNumber(num);
+    	else if(obj instanceof Float num) writeNumber(num);
+    	else if(obj instanceof byte[] binary) writeBinary(binary);
+    }
+    
+    /* 
+     * (non-Javadoc)
+     * @see tools.jackson.databind.util.TokenBuffer#copyCurrentEvent(tools.jackson.core.JsonParser)
+     */
+    @Override
+    public void copyCurrentEvent(JsonParser p)
+    {
+    	if ((_typeId = p.getTypeId()) != null) {
+            _hasNativeId = true;
+        }
+        if ((_objectId = p.getObjectId()) != null) {
+            _hasNativeId = true;
+        }
+        switch (p.currentToken()) {
+        case START_OBJECT:
+            writeStartObject();
+            break;
+        case END_OBJECT:
+            writeEndObject();
+            break;
+        case START_ARRAY:
+            writeStartArray();
+            break;
+        case END_ARRAY:
+            writeEndArray();
+            break;
+        case PROPERTY_NAME:
+            writeName(p.currentName());
+            break;
+        case VALUE_STRING:
+            if (p.hasStringCharacters()) {
+                writeString(p.getStringCharacters(), p.getStringOffset(), p.getStringLength());
+            } else {         
+            	if(p.currentValue() instanceof String) {
+            		writeString(p.getString());
+            	} else if (p.currentValue() instanceof byte[]){
+            		writeBinary(p.getBinaryValue());
+            	} else {
+            		if(p instanceof CodecParserBaseImpl codecParser) {
+            			writeObject(codecParser.getStringValueObject()); //needed to properly store byte[] in mongo
+            		} else {
+            			writeString(p.getString());
+            		}
+            	}
+            }
+            break;
+        case VALUE_NUMBER_INT:
+            switch (p.getNumberType()) {
+            case INT:
+                writeNumber(p.getIntValue());
+                break;
+            case BIG_INTEGER:
+            	writeNumber(p.getBigIntegerValue());
+                break;
+            default:
+                writeNumber(p.getLongValue());
+            }
+            break;
+        case VALUE_NUMBER_FLOAT:
+        	switch(p.getNumberType()) {
+        	case BIG_DECIMAL:
+        		writeNumber(p.getDecimalValue());
+        		break;        	
+        	case FLOAT:
+        		writeNumber(p.getFloatValue());
+        		break;
+        	case DOUBLE: default:
+        		writeNumber(p.getDoubleValue());
+        		break;
+        	}
+            break;
+        case VALUE_TRUE:
+            writeBoolean(true);
+            break;
+        case VALUE_FALSE:
+            writeBoolean(false);
+            break;
+        case VALUE_NULL:
+            writeNull();
+            break;
+        case VALUE_EMBEDDED_OBJECT:
+            writePOJO(p.getEmbeddedObject());
+            break;
+        default:
+            throw new RuntimeException("Internal error: unexpected token: "+p.currentToken());
+        }
+    }
+    
+    
     
     /*
     /**********************************************************************
@@ -699,7 +801,6 @@ public class CodecTokenBuffer extends TokenBuffer {
         }
 
         @Override
-        @SuppressWarnings("resource")
         public byte[] getBinaryValue(Base64Variant b64variant) throws JacksonException
         {
             // First: maybe we some special types?
@@ -724,6 +825,7 @@ public class CodecTokenBuffer extends TokenBuffer {
             } else {
                 _byteBuilder.reset();
             }
+            
             _decodeBase64(str, builder, b64variant);
             return builder.toByteArray();
         }
@@ -784,5 +886,7 @@ public class CodecTokenBuffer extends TokenBuffer {
         protected void _handleEOF() {
             _throwInternal();
         }
+        
+  
     }
 }

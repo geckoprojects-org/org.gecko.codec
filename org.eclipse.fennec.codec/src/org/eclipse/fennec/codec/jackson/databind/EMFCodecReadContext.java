@@ -13,6 +13,8 @@
  */
 package org.eclipse.fennec.codec.jackson.databind;
 
+import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+
 import tools.jackson.core.TokenStreamContext;
 import tools.jackson.core.exc.StreamReadException;
 
@@ -32,5 +34,15 @@ public interface EMFCodecReadContext extends EMFCodecContext {
 	TokenStreamContext clearAndGetParent();
 	
 	void setCurrentName(String name) throws StreamReadException;
+	
+	boolean hasParentContext();
+	
+	void setCurrentTypeInfo(TypeInfo typeInfo);
+	
+	TypeInfo getCurrentTypeInfo();
+	
+	
+	
+//	TokenStreamContext getParentContext();
 
 }

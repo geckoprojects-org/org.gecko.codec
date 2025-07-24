@@ -13,8 +13,8 @@
  */
 package org.eclipse.fennec.codec.jackson.module;
 
-import org.eclipse.fennec.codec.configurator.CodecModuleConfig;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
+import org.eclipse.fennec.codec.options.CodecModuleConfig;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
@@ -28,17 +28,18 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
 	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
 public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 	
-	private CodecModule.Builder moduleBuilder; 
+	private CodecModule.Builder moduleBuilder;
+	private CodecModuleConfig codecConfig; 
 
 	@Activate
 	public void activate(CodecModuleConfig codecConfig) {
+		this.codecConfig = codecConfig;
 		moduleBuilder = new CodecModule.Builder();
 		configureModuleBuilder(codecConfig);
 	}
 	
 	private void configureModuleBuilder(CodecModuleConfig codecConfig) {
 		moduleBuilder
-			.withIdKey(codecConfig.idKey())
 			.withIdOnTop(codecConfig.idOnTop())
 			.withCodecModuleName(codecConfig.codecModuleName())
 			.withCodecType(codecConfig.type())
@@ -54,13 +55,14 @@ public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 			.withSerializeAllSuperTypes(codecConfig.serializeAllSuperTypes())
 			.withSerializeType(codecConfig.serializeType())
 			.withTimestampKey(codecConfig.timestampKey())
-			.withTypeKey(codecConfig.typeKey())
 			.withUseId(codecConfig.useId())
 			.withUseNamesFromExtendedMetaData(codecConfig.useNamesFromExtendedMetaData())
 			.withSuperTypeKey(codecConfig.superTypeKey());
 	}
 	
 	public CodecModule.Builder getCodecModuleBuilder() {
+		moduleBuilder = new CodecModule.Builder();
+		configureModuleBuilder(codecConfig);
 		return moduleBuilder;
 	}
 	

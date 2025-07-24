@@ -62,11 +62,11 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 		}
 		
 		String idStrategy = idCodecInfo.getIdStrategy() != null ? idCodecInfo.getIdStrategy() : "";
-		List<EStructuralFeature> idFeatures = idCodecInfo.getFeatures().stream().filter(f -> f instanceof EStructuralFeature).map(EStructuralFeature.class::cast).collect(Collectors.toList());
+		List<EStructuralFeature> idFeatures = idCodecInfo.getIdFeatures().stream().filter(f -> f instanceof EStructuralFeature).map(EStructuralFeature.class::cast).collect(Collectors.toList());
 
 		switch(idStrategy) {
 		case "COMBINED":
-			CodecValueWriter<Object, String> w = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY).getWriterByName(idCodecInfo.getValueWriterName());
+			CodecValueWriter<Object, String> w = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY).getWriterByName(idCodecInfo.getIdValueWriterName());
 			String idSeparator = idCodecInfo.getIdSeparator();
 			String id = "";
 			for(EStructuralFeature f : idFeatures) {
@@ -81,7 +81,7 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 				id = w.writeValue(id, provider);
 			}
 			
-			gen.writeName(codecModule.getIdKey());
+			gen.writeName(idCodecInfo.getIdKey());
 			
 			if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {
 				gen.writeObjectId(id);
@@ -98,11 +98,10 @@ public class IdCodecInfoSerializer implements CodecInfoSerializer{
 				LOGGER.severe(String.format("ID strategy is ID_FIELD but id features are %d. There should be exactly 1!", idFeatures.size()));
 				break;
 			}
-			gen.writeName(codecModule.getIdKey());
+			gen.writeName(idCodecInfo.getIdKey());
 			EStructuralFeature idFeature = idFeatures.get(0);
 			Object featureValue = rootObj.eGet(idFeature);
-			//TODO: We have to specify in the documentation that we are expecting a writer which takes the id field as input
-			CodecValueWriter<Object, String> writer = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY).getWriterByName(idCodecInfo.getValueWriterName());
+			CodecValueWriter<Object, String> writer = codecModelInfoService.getCodecInfoHolderByType(InfoType.IDENTITY).getWriterByName(idCodecInfo.getIdValueWriterName());	
 			if(writer != null) {
 				String value = writer.writeValue(featureValue, provider);
 				if(gen.canWriteObjectId() && codecModule.isIdFeatureAsPrimaryKey()) {

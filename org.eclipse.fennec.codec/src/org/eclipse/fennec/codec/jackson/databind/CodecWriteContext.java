@@ -40,7 +40,7 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
 	public final static int STATUS_EXPECT_VALUE = 4;
 	public final static int STATUS_EXPECT_NAME = 5;
 
-	private final EMFContextHolder holder;
+	private EMFContextHolder holder;
 
 	/**
 	 * Parent context for this context; null for root context.
@@ -373,6 +373,25 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
 	@Override
 	public Object currentValue() {
 		return _currentValue;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#getEMFContextHolder()
+	 */
+	@Override
+	public EMFContextHolder getEMFContextHolder() {
+		return holder;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#setEMFContextHolder(org.eclipse.fennec.codec.jackson.databind.EMFContextHolder)
+	 */
+	@Override
+	public void setEMFContextHolder(EMFContextHolder holder) {
+		this.holder = holder;
+		
 	}
 	
 	

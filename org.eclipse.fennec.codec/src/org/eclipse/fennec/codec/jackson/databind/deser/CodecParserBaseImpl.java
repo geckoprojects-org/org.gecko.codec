@@ -112,6 +112,8 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	abstract public String doReadName();
 
 	public abstract Object doGetCurrentValue();
+	
+	public abstract Object getStringValueObject();
 
 	/* 
 	 * (non-Javadoc)
@@ -274,8 +276,15 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 */
 	@Override
 	public String getString() throws JacksonException {
-		if(_streamReadContext.currentValue() instanceof String str) {
-			return str;
+		if(_currToken == JsonToken.START_OBJECT) return "{";
+		if(_currToken == JsonToken.END_OBJECT) return "}";
+		if(_currToken == JsonToken.START_ARRAY) return "[";
+		if(_currToken == JsonToken.END_ARRAY) return "]";
+		if(_currToken == JsonToken.PROPERTY_NAME) {
+			return _streamReadContext.currentName();
+		}
+		if(_streamReadContext.currentValue() != null) {			
+			return _streamReadContext.currentValue().toString();
 		}
 		return null;
 	}
@@ -319,7 +328,7 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 */
 	@Override
 	public byte[] getBinaryValue() {
-		return (byte[]) currentValue();
+		return super.getBinaryValue();
 	}
 
 	/* 
@@ -328,7 +337,7 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 	 */
 	@Override
 	public byte[] getBinaryValue(Base64Variant variant){
-		return (byte[]) currentValue();
+		return super.getBinaryValue(variant);
 	}
 
 	/* 

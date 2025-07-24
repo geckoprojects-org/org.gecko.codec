@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.jackson.databind;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 
 import tools.jackson.core.TokenStreamContext;
 import tools.jackson.core.exc.StreamReadException;
@@ -27,7 +28,7 @@ import tools.jackson.core.exc.StreamReadException;
  */
 public class CodecReadContext extends TokenStreamContext implements EMFCodecReadContext{
 
-	private final EMFContextHolder holder;
+	private EMFContextHolder holder;
 
 	protected CodecReadContext _child;
 	protected CodecReadContext _parent;
@@ -237,16 +238,40 @@ public class CodecReadContext extends TokenStreamContext implements EMFCodecRead
 
 	/* 
 	 * (non-Javadoc)
-	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#getParentContext()
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#getEMFContextHolder()
 	 */
-//	@Override
-//	public CodecReadContext getParentContext() {
-//		return _parent;
-//	}
+	@Override
+	public EMFContextHolder getEMFContextHolder() {
+		return holder;
+	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecContext#setEMFContextHolder(org.eclipse.fennec.codec.jackson.databind.EMFContextHolder)
+	 */
+	@Override
+	public void setEMFContextHolder(EMFContextHolder holder) {
+		this.holder = holder;
+		
+	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#setCurrentTypeInfo(org.eclipse.fennec.codec.info.codecinfo.TypeInfo)
+	 */
+	@Override
+	public void setCurrentTypeInfo(TypeInfo typeInfo) {
+		holder.setCurrentTypeInfo(typeInfo);
+		
+	}
 
-
-
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#getCurrentTypeInfo()
+	 */
+	@Override
+	public TypeInfo getCurrentTypeInfo() {
+		return holder.getCurrentTypeInfo();
+	}
 
 }

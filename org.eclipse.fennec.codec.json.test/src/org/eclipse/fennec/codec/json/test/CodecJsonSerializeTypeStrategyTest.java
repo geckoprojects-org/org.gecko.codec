@@ -21,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -31,9 +30,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecAnnotations;
-import org.eclipse.fennec.codec.constants.CodecResourceOptions;
-import org.eclipse.fennec.codec.constants.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -53,8 +51,6 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
-import tools.jackson.databind.SerializationFeature;
-
 /**
  * See documentation here: 
  * 	https://github.com/osgi/osgi-test
@@ -71,6 +67,7 @@ import tools.jackson.databind.SerializationFeature;
 })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="json"),
+		@Property(key = "enableFeatures", value = "SerializationFeature.INDENT_OUTPUT", type = Type.Array),
 		@Property(key = "disableFeatures", value={"JsonWriteFeature.ESCAPE_FORWARD_SLASHES"}, type = Type.Array)
 })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
@@ -120,8 +117,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> addOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		addOptions.put(CodecAnnotations.CODEC_TYPE_USE, "NAME");
+		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
@@ -150,8 +146,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> addOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		addOptions.put(CodecAnnotations.CODEC_TYPE_USE, "CLASS");
+		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "CLASS");
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
@@ -180,8 +175,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> addOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		addOptions.put(CodecAnnotations.CODEC_TYPE_USE, "URI");
+		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
@@ -210,8 +204,7 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> addOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		addOptions.put(CodecAnnotations.CODEC_TYPE_INCLUDE, false);
+		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_INCLUDE, false);
 
 		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);

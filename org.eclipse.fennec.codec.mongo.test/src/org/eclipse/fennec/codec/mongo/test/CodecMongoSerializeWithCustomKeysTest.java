@@ -28,10 +28,13 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.BusinessPerson;
+import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.mongo.osgi.MongoClientProvider;
@@ -141,7 +144,9 @@ public class CodecMongoSerializeWithCustomKeysTest extends MongoEMFSetting {
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_KEY, "_testId");
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "_testId");
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.BUSINESS_PERSON, classOptions));
 		resource.save(options);
 		
 		resource.getContents().clear();
@@ -167,7 +172,9 @@ public class CodecMongoSerializeWithCustomKeysTest extends MongoEMFSetting {
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
 		resource.getContents().add(person);
 		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "_testType");
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "_testType");
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.BUSINESS_PERSON, classOptions));
 		resource.save(options);
 		
 		resource.getContents().clear();

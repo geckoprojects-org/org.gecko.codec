@@ -32,12 +32,16 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.constants.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.constants.CodecResourceOptions;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
+import org.eclipse.fennec.codec.info.codecinfo.IdentityInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.jackson.resource.CodecResource;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
+import org.eclipse.fennec.codec.options.CodecValueWriterConstants;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -55,6 +59,8 @@ import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
+
+import tools.jackson.databind.ObjectMapper;
 
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
@@ -94,7 +100,6 @@ public class CodecModelInfoOverwriteTest {
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 	
 	private ResourceSet resourceSet;
-	private CodecModuleConfigurator codecModuleConfigurator;
 	private URI uri = URI.createURI("mytest.json");
 	
 	@BeforeEach() 
@@ -104,8 +109,6 @@ public class CodecModelInfoOverwriteTest {
 		codecModuleAware.waitForService(2000l);	
 		resourceSet = rsAware.waitForService(2000l);
 		assertNotNull(resourceSet);
-		codecModuleConfigurator = codecModuleAware.waitForService(2000l);
-		assertNotNull(codecModuleConfigurator);
 	}
 	
 	@AfterEach()
@@ -114,6 +117,29 @@ public class CodecModelInfoOverwriteTest {
 		if(f.exists()) {
 			f.delete();
 		}
+	}
+	
+	@Test
+	public void testCodecModelInfoOverwriteIdKey() throws InterruptedException, IOException {
+	
+		Resource resource = resourceSet.createResource(uri);		
+		Person person = CodecTestHelper.getTestPerson();		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		personOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "myId");
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		resource.save(options);
+		
+		CodecModule module = getCodecModuleFromResource(resource);
+		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
+		assertNotNull(modelCodecInfo);
+		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
+		assertNotNull(personCodecInfo);
+		assertNotNull(personCodecInfo.getIdentityInfo());
+		assertEquals("myId", personCodecInfo.getIdentityInfo().getIdKey());
 	}
 
 	@Test
@@ -130,7 +156,7 @@ public class CodecModelInfoOverwriteTest {
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		CodecModule module = getCodecModuleFromResource(resource);
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
@@ -153,15 +179,15 @@ public class CodecModelInfoOverwriteTest {
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		CodecModule module = getCodecModuleFromResource(resource);
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
 		assertNotNull(personCodecInfo.getIdentityInfo());
-		assertThat(personCodecInfo.getIdentityInfo().getFeatures()).hasSize(2);
-		assertEquals(PersonPackage.eINSTANCE.getPerson_LastName(), personCodecInfo.getIdentityInfo().getFeatures().get(0));
-		assertEquals(PersonPackage.eINSTANCE.getPerson_Name(), personCodecInfo.getIdentityInfo().getFeatures().get(1));
+		assertEquals(2, personCodecInfo.getIdentityInfo().getIdFeatures().size());
+		assertEquals(PersonPackage.eINSTANCE.getPerson_LastName(), personCodecInfo.getIdentityInfo().getIdFeatures().get(0));
+		assertEquals(PersonPackage.eINSTANCE.getPerson_Name(), personCodecInfo.getIdentityInfo().getIdFeatures().get(1));
 	}
 	
 	@Test
@@ -178,7 +204,7 @@ public class CodecModelInfoOverwriteTest {
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		CodecModule module = getCodecModuleFromResource(resource);
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
@@ -202,7 +228,7 @@ public class CodecModelInfoOverwriteTest {
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		CodecModule module = getCodecModuleFromResource(resource);
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo addressCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getAddress().getName().equals(ci.getClassifier().getName())).findFirst().get();
@@ -210,10 +236,10 @@ public class CodecModelInfoOverwriteTest {
 		assertNotNull(addressCodecInfo.getFeatureInfo());
 		assertThat(addressCodecInfo.getFeatureInfo()).hasSize(3);
 		for(FeatureCodecInfo fi : addressCodecInfo.getFeatureInfo()) {
-			if(PersonPackage.eINSTANCE.getAddress_Zip().equals(fi.getFeatures().get(0))) {
+			if(PersonPackage.eINSTANCE.getAddress_Zip().equals(fi.getFeature())) {
 				assertFalse(fi.isIgnore());
 			}
-			if(PersonPackage.eINSTANCE.getAddress_Street().equals(fi.getFeatures().get(0))) {
+			if(PersonPackage.eINSTANCE.getAddress_Street().equals(fi.getFeature())) {
 				assertTrue(fi.isIgnore());
 			}
 		}
@@ -233,7 +259,7 @@ public class CodecModelInfoOverwriteTest {
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		CodecModule module = getCodecModuleFromResource(resource);
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
@@ -243,7 +269,7 @@ public class CodecModelInfoOverwriteTest {
 	}
 	
 	@Test
-	public void testCodecModelInfoOverwriteTypeUse() throws InterruptedException, IOException {
+	public void testCodecModelInfoOverwriteTypeStrategy() throws InterruptedException, IOException {
 	
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();		
@@ -251,20 +277,69 @@ public class CodecModelInfoOverwriteTest {
 		Map<String, Object> options = new HashMap<>();
 		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
 		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_USE, "CLASS");
+		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "CLASS");
 		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		CodecModule module = getCodecModuleFromResource(resource);
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
 		assertNotNull(personCodecInfo.getTypeInfo());
 		assertEquals("CLASS", personCodecInfo.getTypeInfo().getTypeStrategy());
-		assertEquals("WRITE_BY_CLASS_NAME", personCodecInfo.getTypeInfo().getValueWriterName());
-		assertEquals("READ_BY_CLASS", personCodecInfo.getTypeInfo().getValueReaderName());
+		assertEquals(CodecValueWriterConstants.WRITER_BY_INSTANCE_CLASS_NAME, personCodecInfo.getTypeInfo().getTypeValueWriterName());
+		assertEquals(CodecValueReaderConstants.READER_BY_INSTANCE_CLASS_NAME, personCodecInfo.getTypeInfo().getTypeValueReaderName());
+	}
+	
+	@Test
+	public void testCodecModelInfoOverwriteTypeKey() throws InterruptedException, IOException {
+	
+		Resource resource = resourceSet.createResource(uri);
+		Person person = CodecTestHelper.getTestPerson();		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "eClass");
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		resource.save(options);
+		
+		CodecModule module = getCodecModuleFromResource(resource);
+		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
+		assertNotNull(modelCodecInfo);
+		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
+		assertNotNull(personCodecInfo);
+		assertNotNull(personCodecInfo.getTypeInfo());
+		assertEquals("eClass", personCodecInfo.getTypeInfo().getTypeKey());
+	}
+	
+	@Test
+	public void testCodecModelInfoOverwriteTypeMap() throws InterruptedException, IOException {
+	
+		Resource resource = resourceSet.createResource(uri);
+		Person person = CodecTestHelper.getTestPerson();		
+		resource.getContents().add(person);
+		Map<String, Object> options = new HashMap<>();
+		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
+		Map<String, Object> personOptions = new HashMap<>();
+		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP, Map.of("person1", "Person", "person2", "Person"));
+		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
+		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
+		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		resource.save(options);
+		
+		CodecModule module = getCodecModuleFromResource(resource);
+		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
+		assertNotNull(modelCodecInfo);
+		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
+		assertNotNull(personCodecInfo);
+		assertNotNull(personCodecInfo.getTypeInfo());
+		assertNotNull(personCodecInfo.getTypeInfo().getTypeMap());
+		assertTrue(personCodecInfo.getTypeInfo().getTypeMap().containsKey("person1"));
+		assertTrue(personCodecInfo.getTypeInfo().getTypeMap().containsKey("person2"));
 	}
 	
 	
@@ -283,12 +358,12 @@ public class CodecModelInfoOverwriteTest {
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		CodecModule module = getCodecModuleFromResource(resource);
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
-		FeatureCodecInfo featureInfo = personCodecInfo.getFeatureInfo().stream().filter(fi -> fi.getFeatures().get(0).equals(PersonPackage.eINSTANCE.getPerson_LastName())).findFirst().get();
+		FeatureCodecInfo featureInfo = personCodecInfo.getFeatureInfo().stream().filter(fi -> fi.getFeature().equals(PersonPackage.eINSTANCE.getPerson_LastName())).findFirst().get();
 		assertNotNull(featureInfo);
 		assertEquals("TEST_VALUE_WRITER", featureInfo.getValueWriterName());
 	}
@@ -309,12 +384,12 @@ public class CodecModelInfoOverwriteTest {
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		CodecModule module = getCodecModuleFromResource(resource);
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
-		FeatureCodecInfo featureInfo = personCodecInfo.getFeatureInfo().stream().filter(fi -> fi.getFeatures().get(0).equals(PersonPackage.eINSTANCE.getPerson_BirthDate())).findFirst().get();
+		FeatureCodecInfo featureInfo = personCodecInfo.getFeatureInfo().stream().filter(fi -> fi.getFeature().equals(PersonPackage.eINSTANCE.getPerson_BirthDate())).findFirst().get();
 		assertNotNull(featureInfo);
 		assertEquals("TEST_VALUE_READER", featureInfo.getValueReaderName());
 	}
@@ -335,13 +410,22 @@ public class CodecModelInfoOverwriteTest {
 		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 		resource.save(options);
 		
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		CodecModule module = getCodecModuleFromResource(resource);
 		PackageCodecInfo modelCodecInfo = module.getCodecModelInfo();
 		assertNotNull(modelCodecInfo);
 		EClassCodecInfo personCodecInfo = modelCodecInfo.getEClassCodecInfo().stream().filter(ci -> PersonPackage.eINSTANCE.getPerson().getName().equals(ci.getClassifier().getName())).findFirst().get();
 		assertNotNull(personCodecInfo);
-		FeatureCodecInfo featureInfo = personCodecInfo.getIdentityInfo();
+		IdentityInfo featureInfo = personCodecInfo.getIdentityInfo();
 		assertNotNull(featureInfo);
-		assertEquals("TEST_VALUE_WRITER", featureInfo.getValueWriterName());
+		assertEquals("TEST_VALUE_WRITER", featureInfo.getIdValueWriterName());
+	}
+	
+	private CodecModule getCodecModuleFromResource(Resource resource) {
+		assertTrue(resource instanceof CodecResource);
+		CodecResource codecRes = (CodecResource) resource;
+		ObjectMapper mapper = codecRes.getMapper();
+		assertEquals(1, mapper.getRegisteredModules().size());		
+		assertTrue(mapper.getRegisteredModules().stream().toList().get(0) instanceof CodecModule);		
+		return  (CodecModule) mapper.getRegisteredModules().stream().toList().get(0);
 	}
 }

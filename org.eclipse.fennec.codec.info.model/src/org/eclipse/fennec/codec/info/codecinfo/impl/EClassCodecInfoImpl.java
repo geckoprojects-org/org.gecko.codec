@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -25,10 +24,10 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage;
 import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
+import org.eclipse.fennec.codec.info.codecinfo.IdentifiableCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.IdentityInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo;
-import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 
 /**
  * <!-- begin-user-doc -->
@@ -38,10 +37,9 @@ import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getIdentityInfo <em>Identity Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getClassifier <em>Classifier</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getIdentityInfo <em>Identity Info</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getTypeInfo <em>Type Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getSuperTypeInfo <em>Super Type Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getFeatureInfo <em>Feature Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getReferenceCodecInfo <em>Reference Codec Info</em>}</li>
@@ -52,7 +50,17 @@ import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
  *
  * @generated
  */
-public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements EClassCodecInfo {
+public class EClassCodecInfoImpl extends TypedCodecInfoImpl implements EClassCodecInfo {
+	/**
+	 * The cached value of the '{@link #getIdentityInfo() <em>Identity Info</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIdentityInfo()
+	 * @generated
+	 * @ordered
+	 */
+	protected IdentityInfo identityInfo;
+
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -82,26 +90,6 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	 * @ordered
 	 */
 	protected EClassifier classifier;
-
-	/**
-	 * The cached value of the '{@link #getIdentityInfo() <em>Identity Info</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIdentityInfo()
-	 * @generated
-	 * @ordered
-	 */
-	protected IdentityInfo identityInfo;
-
-	/**
-	 * The cached value of the '{@link #getTypeInfo() <em>Type Info</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTypeInfo()
-	 * @generated
-	 * @ordered
-	 */
-	protected TypeInfo typeInfo;
 
 	/**
 	 * The cached value of the '{@link #getSuperTypeInfo() <em>Super Type Info</em>}' containment reference.
@@ -140,6 +128,51 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	protected EClass eStaticClass() {
 		return CodecInfoPackage.Literals.ECLASS_CODEC_INFO;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public IdentityInfo getIdentityInfo() {
+		return identityInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetIdentityInfo(IdentityInfo newIdentityInfo, NotificationChain msgs) {
+		IdentityInfo oldIdentityInfo = identityInfo;
+		identityInfo = newIdentityInfo;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO, oldIdentityInfo, newIdentityInfo);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setIdentityInfo(IdentityInfo newIdentityInfo) {
+		if (newIdentityInfo != identityInfo) {
+			NotificationChain msgs = null;
+			if (identityInfo != null)
+				msgs = ((InternalEObject)identityInfo).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO, null, msgs);
+			if (newIdentityInfo != null)
+				msgs = ((InternalEObject)newIdentityInfo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO, null, msgs);
+			msgs = basicSetIdentityInfo(newIdentityInfo, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO, newIdentityInfo, newIdentityInfo));
 	}
 
 	/**
@@ -203,96 +236,6 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 		classifier = newClassifier;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__CLASSIFIER, oldClassifier, classifier));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public IdentityInfo getIdentityInfo() {
-		return identityInfo;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetIdentityInfo(IdentityInfo newIdentityInfo, NotificationChain msgs) {
-		IdentityInfo oldIdentityInfo = identityInfo;
-		identityInfo = newIdentityInfo;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO, oldIdentityInfo, newIdentityInfo);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setIdentityInfo(IdentityInfo newIdentityInfo) {
-		if (newIdentityInfo != identityInfo) {
-			NotificationChain msgs = null;
-			if (identityInfo != null)
-				msgs = ((InternalEObject)identityInfo).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO, null, msgs);
-			if (newIdentityInfo != null)
-				msgs = ((InternalEObject)newIdentityInfo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO, null, msgs);
-			msgs = basicSetIdentityInfo(newIdentityInfo, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO, newIdentityInfo, newIdentityInfo));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public TypeInfo getTypeInfo() {
-		return typeInfo;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetTypeInfo(TypeInfo newTypeInfo, NotificationChain msgs) {
-		TypeInfo oldTypeInfo = typeInfo;
-		typeInfo = newTypeInfo;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO, oldTypeInfo, newTypeInfo);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setTypeInfo(TypeInfo newTypeInfo) {
-		if (newTypeInfo != typeInfo) {
-			NotificationChain msgs = null;
-			if (typeInfo != null)
-				msgs = ((InternalEObject)typeInfo).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO, null, msgs);
-			if (newTypeInfo != null)
-				msgs = ((InternalEObject)newTypeInfo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO, null, msgs);
-			msgs = basicSetTypeInfo(newTypeInfo, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO, newTypeInfo, newTypeInfo));
 	}
 
 	/**
@@ -403,8 +346,6 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 		switch (featureID) {
 			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
 				return basicSetIdentityInfo(null, msgs);
-			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
-				return basicSetTypeInfo(null, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
 				return basicSetSuperTypeInfo(null, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
@@ -421,15 +362,13 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
+				return getIdentityInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ID:
 				return getId();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__CLASSIFIER:
 				if (resolve) return getClassifier();
 				return basicGetClassifier();
-			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
-				return getIdentityInfo();
-			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
-				return getTypeInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
 				return getSuperTypeInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
@@ -455,17 +394,14 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
+				setIdentityInfo((IdentityInfo)newValue);
+				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ID:
 				setId((String)newValue);
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__CLASSIFIER:
 				setClassifier((EClassifier)newValue);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
-				setIdentityInfo((IdentityInfo)newValue);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
-				setTypeInfo((TypeInfo)newValue);
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
 				setSuperTypeInfo((SuperTypeInfo)newValue);
@@ -502,17 +438,14 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
+				setIdentityInfo((IdentityInfo)null);
+				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ID:
 				setId(ID_EDEFAULT);
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__CLASSIFIER:
 				setClassifier((EClassifier)null);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
-				setIdentityInfo((IdentityInfo)null);
-				return;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
-				setTypeInfo((TypeInfo)null);
 				return;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
 				setSuperTypeInfo((SuperTypeInfo)null);
@@ -544,14 +477,12 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
+				return identityInfo != null;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__CLASSIFIER:
 				return classifier != null;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
-				return identityInfo != null;
-			case CodecInfoPackage.ECLASS_CODEC_INFO__TYPE_INFO:
-				return typeInfo != null;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__SUPER_TYPE_INFO:
 				return superTypeInfo != null;
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
@@ -566,6 +497,38 @@ public class EClassCodecInfoImpl extends MinimalEObjectImpl.Container implements
 				return !getEnumeratorCodecInfo().isEmpty();
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		if (baseClass == IdentifiableCodecInfo.class) {
+			switch (derivedFeatureID) {
+				case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO: return CodecInfoPackage.IDENTIFIABLE_CODEC_INFO__IDENTITY_INFO;
+				default: return -1;
+			}
+		}
+		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		if (baseClass == IdentifiableCodecInfo.class) {
+			switch (baseFeatureID) {
+				case CodecInfoPackage.IDENTIFIABLE_CODEC_INFO__IDENTITY_INFO: return CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO;
+				default: return -1;
+			}
+		}
+		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
 	/**
