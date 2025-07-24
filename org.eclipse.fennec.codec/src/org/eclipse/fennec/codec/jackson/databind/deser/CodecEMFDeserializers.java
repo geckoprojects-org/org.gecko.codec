@@ -113,19 +113,19 @@ public class CodecEMFDeserializers extends Deserializers.Base {
 				elementDeserializer);
 	}
 
-
 	/* 
 	 * (non-Javadoc)
-	 * @see tools.jackson.databind.deser.Deserializers.Base#findEnumDeserializer(java.lang.Class, tools.jackson.databind.DeserializationConfig, tools.jackson.databind.BeanDescription.Supplier)
+	 * @see tools.jackson.databind.deser.Deserializers#findEnumDeserializer(tools.jackson.databind.JavaType, tools.jackson.databind.DeserializationConfig, tools.jackson.databind.BeanDescription.Supplier)
 	 */
 	@Override
-	public ValueDeserializer<?> findEnumDeserializer(Class<?> type, DeserializationConfig config,
+	public ValueDeserializer<?> findEnumDeserializer(JavaType type, DeserializationConfig config,
 			Supplier beanDescRef) {
-		if (Enumerator.class.isAssignableFrom(type)) {
+		if (Enumerator.class.isAssignableFrom(type.getRawClass())) {
 			return enumDeserializer;
 		}
 		return super.findEnumDeserializer(type, config, beanDescRef);
 	}
+
 
 	/* 
 	 * (non-Javadoc)

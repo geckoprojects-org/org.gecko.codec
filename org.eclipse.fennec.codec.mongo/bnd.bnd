@@ -9,4 +9,4 @@
 	org.eclipse.fennec.codec.info.model;version=latest,\
 	tools.jackson.core.jackson-core,\
 	tools.jackson.core.jackson-databind,\
-	com.fasterxml.jackson.core.jackson-annotations;version='3.0'
+	com.fasterxml.jackson.core.jackson-annotations
