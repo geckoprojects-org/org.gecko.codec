@@ -34,6 +34,7 @@ import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Child;
@@ -126,19 +127,21 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON);
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "type");
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
-		resource.save(options);
+		
+		CodecOptionsBuilder optionsBuilder = new CodecOptionsBuilder();
+		optionsBuilder.with(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON);
+		
+		CodecOptionsBuilder classOptionsBuilder = new CodecOptionsBuilder();
+		classOptionsBuilder.with(CodecModelInfoOptions.CODEC_TYPE_KEY, "type").with(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
+		
+		optionsBuilder.with(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptionsBuilder.build()));
+		resource.save(optionsBuilder.build());
 
 		resource.getContents().clear();
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		findResource.load(options);
+		findResource.load(optionsBuilder.build());
 
 		// get the person
 		assertNotNull(findResource);

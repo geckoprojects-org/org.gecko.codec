@@ -34,6 +34,7 @@ import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.ObjectMapperOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
@@ -110,10 +111,11 @@ public class CodecJsonCustomDateFormatTest extends JsonTestSetting {
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
-				List.of(SerializationFeature.INDENT_OUTPUT));
+		CodecOptionsBuilder optionsBuilder = new CodecOptionsBuilder();
+		optionsBuilder
+			.with(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true)
+			.with(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = optionsBuilder.build();		
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
