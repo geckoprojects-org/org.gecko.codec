@@ -18,5 +18,3 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	tools.jackson.core.jackson-databind
 	
 Private-Package: org.eclipse.fennec.codec.test
-
-Bundle-Version: 1.0.0.SNAPSHOT

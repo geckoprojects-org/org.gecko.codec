@@ -132,7 +132,6 @@ tools.jackson.dataformat:jackson-dataformat-properties:3.0.0-rc6
 tools.jackson.dataformat:jackson-dataformat-yaml:3.0.0-rc6
 com.fasterxml.jackson.core:jackson-annotations:2.19.2
 
-
 de.undercouch:bson4jackson:2.13.1
 org.yaml:snakeyaml:2.0
 
@@ -145,7 +144,7 @@ org.slf4j:slf4j-api:1.7.36
 org.freemarker:freemarker:2.3.32
 com.google.guava:guava:33.0.0-jre
 
-org.geckoprojects.bnd:org.gecko.bnd.dimc.library:1.6.0
+org.geckoprojects.bnd:org.gecko.bnd.dimc.library:2.0.0
 org.geckoprojects.bnd:org.gecko.bnd.jacoco.library:1.6.0
 org.geckoprojects.bnd:org.gecko.bnd.osgitest.library:1.6.0
 

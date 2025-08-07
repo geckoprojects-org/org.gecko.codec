@@ -111,7 +111,7 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationDragino(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/dragino-example.json"));	
+		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"dragino-example.json"));	
 		Map<String, Object> options = new HashMap<>();		
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, DraginoPackage.eINSTANCE.getDraginoLSE01Uplink());
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
@@ -215,7 +215,7 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	public void testDeserializationDraginoFromTypeInfo(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException, InterruptedException {
 		
 		Thread.sleep(2000l);
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/dragino-example.json"));	
+		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"dragino-example.json"));	
 		Map<String, Object> options = new HashMap<>();		
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
@@ -318,7 +318,7 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationDraginoFromTypeInfoOptions(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/dragino-example.json"));	
+		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"dragino-example.json"));	
 		Map<String, Object> options = new HashMap<>();		
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
@@ -430,7 +430,7 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationEm130(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/em310-example.json"));	
+		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"em310-example.json"));	
 		Map<String, Object> options = new HashMap<>();		
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EM310UDLPackage.eINSTANCE.getEM310UDLUplink());
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
@@ -509,7 +509,7 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationEm130FromTypeInfo(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/em310-example.json"));	
+		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"em310-example.json"));	
 		Map<String, Object> options = new HashMap<>();		
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
@@ -588,7 +588,7 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationEm130FromTypeInfoOptions(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
-		Resource resource = resourceSet.createResource(URI.createURI("test-data/em310-example.json"));	
+		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"em310-example.json"));	
 		Map<String, Object> options = new HashMap<>();		
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
