@@ -19,8 +19,10 @@ import java.util.Set;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.CodecEMFSerializers;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.osgi.service.component.annotations.Component;
 
 import com.fasterxml.jackson.annotation.JsonFormat.Value;
 
@@ -40,17 +42,26 @@ import tools.jackson.databind.type.MapLikeType;
  * @author ilenia
  * @since Apr 24, 2025
  */
-public class CodecEMFSerializers extends Serializers.Base {
+@Component(immediate = true, name = "DefaultCodecEMFSerializers", service = CodecEMFSerializers.class)
+public class DefaultCodecEMFSerializers extends Serializers.Base implements CodecEMFSerializers{
 
-	private final ValueSerializer<EObject> referenceSerializer;
-	private final ValueSerializer<Resource> resourceSerializer = new CodecResourceSerializer();
-	private final ValueSerializer<Object> mapKeySerializer = new EMapKeySerializer();
-	private final ValueSerializer<Object> mapValueSerializer = new EMapValueSerializer();
-	private CodecModule codecModule;
-	private CodecModelInfo codecModelInfoService;
+	protected ValueSerializer<EObject> referenceSerializer;
+	protected ValueSerializer<Resource> resourceSerializer = new CodecResourceSerializer();
+	protected ValueSerializer<Object> mapKeySerializer = new EMapKeySerializer();
+	protected ValueSerializer<Object> mapValueSerializer = new EMapValueSerializer();
+	protected CodecModule codecModule;
+	protected CodecModelInfo codecModelInfoService;
 
 
-	public CodecEMFSerializers(CodecModule module) {
+//	public CodecEMFSerializers(CodecModule module) {
+//		
+//	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.CodecEMFSerializers#bindCodecModule(org.eclipse.fennec.codec.jackson.module.CodecModule)
+	 */
+	public void bindCodecModule(CodecModule module) {
 		this.referenceSerializer = module.getReferenceSerializer();
 		this.codecModule = module;
 		this.codecModelInfoService = module.getCodecModelInfoService();

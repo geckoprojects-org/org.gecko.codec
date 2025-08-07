@@ -18,19 +18,21 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.fennec.codec.CodecEMFDeserializers;
+import org.eclipse.fennec.codec.CodecEMFSerializers;
 import org.eclipse.fennec.codec.CodecProxyFactory;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
-import org.eclipse.fennec.codec.jackson.databind.deser.CodecEMFDeserializers;
 import org.eclipse.fennec.codec.jackson.databind.deser.ReferenceCodecInfoDeserializer;
-import org.eclipse.fennec.codec.jackson.databind.ser.CodecEMFSerializers;
 import org.eclipse.fennec.codec.jackson.utils.BaseURIHandler;
 import org.eclipse.fennec.codec.jackson.utils.URIHandler;
 
 import tools.jackson.core.Version;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.deser.Deserializers;
 import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.Serializers;
 
 /**
  * Extension of EMFModule which allows to set codec specific options
@@ -64,7 +66,9 @@ public class CodecModule extends SimpleModule {
 	private String timestampKey;
 	private boolean writeEnumLiterals;
 	private boolean sortPropertiesAlphabetically;
-
+	
+	private CodecEMFSerializers serializers;
+	private CodecEMFDeserializers deserializers;
 	
 	private ValueSerializer<EObject> referenceSerializer;
 	private ValueDeserializer<EObject> referenceDeserializer;
@@ -200,6 +204,8 @@ public class CodecModule extends SimpleModule {
 		this.setUriHandler(builder.handler);
 		this.setReferenceSerializer(builder.referenceSerializer);
 		this.sortPropertiesAlphabetically = builder.sortPropertiesAlphabetically;
+		this.serializers = builder.serializers;
+		this.deserializers = builder.deserializers;
 	}
 
 	
@@ -256,11 +262,14 @@ public class CodecModule extends SimpleModule {
 	         handler = new BaseURIHandler();
 	      }
 
-		CodecEMFSerializers serializers = new CodecEMFSerializers(this);
-		context.addSerializers(serializers);
+//		CodecEMFSerializers serializers = new CodecEMFSerializers(this);
+		serializers.bindCodecModule(this);
+		context.addSerializers((Serializers) serializers);
 		
-		CodecEMFDeserializers deserializers = new CodecEMFDeserializers(this);
-		context.addDeserializers(deserializers);
+//		CodecEMFDeserializers deserializers = new CodecEMFDeserializers(this);
+		
+		deserializers.bindCodecModule(this);
+		context.addDeserializers((Deserializers) deserializers);
 		
 		if(codecProxyFactory == null) {
 			codecProxyFactory = new CodecProxyFactory() {
@@ -306,6 +315,8 @@ public class CodecModule extends SimpleModule {
 		private URIHandler handler;
 		private ValueSerializer<EObject> referenceSerializer;
 		private boolean sortPropertiesAlphabetically = false;
+		private CodecEMFSerializers serializers = null;
+		private CodecEMFDeserializers deserializers = null;
 
 		public Builder() {
 
@@ -318,6 +329,16 @@ public class CodecModule extends SimpleModule {
 
 		public Builder withCodecModuleName(String codecModuleName) {
 			this.codecModuleName = codecModuleName;
+			return this;
+		}
+		
+		public Builder withCodecEMFSerializers(CodecEMFSerializers serializers) {
+			this.serializers = serializers;
+			return this;
+		}
+		
+		public Builder withCodecEMFDeserializers(CodecEMFDeserializers deserializers) {
+			this.deserializers = deserializers;
 			return this;
 		}
 

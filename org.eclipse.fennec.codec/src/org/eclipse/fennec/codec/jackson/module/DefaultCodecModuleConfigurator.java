@@ -13,11 +13,15 @@
  */
 package org.eclipse.fennec.codec.jackson.module;
 
+import org.eclipse.fennec.codec.CodecEMFDeserializers;
+import org.eclipse.fennec.codec.CodecEMFSerializers;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.options.CodecModuleConfig;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
 
 /**
  * Default implementation of {@link CodecModuleConfigurator}
@@ -28,6 +32,12 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
 	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
 public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 	
+	@Reference(cardinality = ReferenceCardinality.MANDATORY)
+	CodecEMFSerializers serializers;
+	
+	@Reference(cardinality = ReferenceCardinality.MANDATORY)
+	CodecEMFDeserializers deserializers;
+
 	private CodecModule.Builder moduleBuilder;
 	private CodecModuleConfig codecConfig; 
 
@@ -57,7 +67,9 @@ public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 			.withTimestampKey(codecConfig.timestampKey())
 			.withUseId(codecConfig.useId())
 			.withUseNamesFromExtendedMetaData(codecConfig.useNamesFromExtendedMetaData())
-			.withSuperTypeKey(codecConfig.superTypeKey());
+			.withSuperTypeKey(codecConfig.superTypeKey())
+			.withCodecEMFDeserializers(deserializers)
+			.withCodecEMFSerializers(serializers);
 	}
 	
 	public CodecModule.Builder getCodecModuleBuilder() {

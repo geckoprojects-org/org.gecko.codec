@@ -24,6 +24,11 @@ javac.target: 17
 
 -require-bnd "(version>=7.0.0)"
 
+-plugin.4.EMFCompare: \
+ 	aQute.bnd.repository.p2.provider.P2Repository; \
+ 	url = https://download.eclipse.org/modeling/emf/compare/updates/releases/latest/; \
+ 	name = EMFCompare
+ 	
 -plugin.3.Central: \
     aQute.bnd.repository.maven.provider.MavenBndRepository; \
         snapshotUrl="https://oss.sonatype.org/content/repositories/snapshots/,https://s01.oss.sonatype.org/content/repositories/snapshots/"; \
