@@ -123,5 +123,17 @@ public interface CodecModelInfoOptions {
 	 * to specify a {@link CodecValueWriter} object to be used when serializing the type information;
 	 * */
 	String CODEC_TYPE_VALUE_WRITER = "codec.type.value.writer";
+	
+	/** CODEC_CUSTOM_VALUE_READER 
+	 * to specify a {@link CodecValueReader} object to be used when deserializing the object with that option. 
+	 * This will overwrite any other behavior and the custom value reader will be used.
+	 * */
+	String CODEC_CUSTOM_VALUE_READER = "codec.custom.value.reader";
+	
+	/** CODEC_CUSTOM_VALUE_WRITER 
+	 *  to specify a {@link CodecValueWriter} object to be used when serializing the object with that option. 
+	 * This will overwrite any other behavior and the custom value writer will be used.
+	 * */
+	String CODEC_CUSTOM_VALUE_WRITER = "codec.custom.value.writer";
 
 }

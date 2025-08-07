@@ -20,9 +20,11 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.CodecEMFDeserializers;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.jackson.utils.URIHandler;
+import org.osgi.service.component.annotations.Component;
 
 import tools.jackson.databind.BeanDescription.Supplier;
 import tools.jackson.databind.DeserializationConfig;
@@ -40,18 +42,34 @@ import tools.jackson.databind.type.ReferenceType;
  * @author ilenia
  * @since Apr 23, 2025
  */
-public class CodecEMFDeserializers extends Deserializers.Base {
+@Component(immediate = true, name = "DefaultCodecEMFDeserializers", service = CodecEMFDeserializers.class)
+public class DefaultCodecEMFDeserializers extends Deserializers.Base implements CodecEMFDeserializers{
 
-	private final ValueDeserializer<EObject> referenceDeserializer;
-	private final ValueDeserializer<EList<Map.Entry<?, ?>>> mapDeserializer;
-	private final ValueDeserializer<Enumerator> enumDeserializer;
-	private final CodecResourceDeserializer resourceDeserializer;
-	protected final URIHandler handler;
-	private CodecModelInfo codecModelInfoService;
-	private CodecModule module;
+	protected ValueDeserializer<EObject> referenceDeserializer;
+	protected ValueDeserializer<EList<Map.Entry<?, ?>>> mapDeserializer;
+	protected ValueDeserializer<Enumerator> enumDeserializer;
+	protected CodecResourceDeserializer resourceDeserializer;
+	protected URIHandler handler;
+	protected CodecModelInfo codecModelInfoService;
+	protected CodecModule module;
 
 
-	public CodecEMFDeserializers(CodecModule module) {
+//	public CodecEMFDeserializers(CodecModule module) {
+//		this.module = module;
+//		this.codecModelInfoService = module.getCodecModelInfoService();
+//		this.referenceDeserializer = module.getReferenceDeserializer();
+//		this.mapDeserializer = new EMapDeserializer();
+//		this.handler = module.getUriHandler();
+//		this.enumDeserializer = new EnumDeserializer(module);
+//		this.resourceDeserializer = new CodecResourceDeserializer(module.getUriHandler());
+//
+//	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.CodecEMFDeserializers#bindCodecModule(org.eclipse.fennec.codec.jackson.module.CodecModule)
+	 */
+	public void bindCodecModule(CodecModule module) {
 		this.module = module;
 		this.codecModelInfoService = module.getCodecModelInfoService();
 		this.referenceDeserializer = module.getReferenceDeserializer();
@@ -59,7 +77,6 @@ public class CodecEMFDeserializers extends Deserializers.Base {
 		this.handler = module.getUriHandler();
 		this.enumDeserializer = new EnumDeserializer(module);
 		this.resourceDeserializer = new CodecResourceDeserializer(module.getUriHandler());
-
 	}
 	
 	/* 
