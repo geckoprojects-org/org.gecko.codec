@@ -316,6 +316,29 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	}
 	
 	@Test
+	public void test(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException, InterruptedException {
+		
+		Thread.sleep(2000l);
+		Resource resource = resourceSet.createResource(URI.createURI("test-data/em310-example.json"));	
+		Map<String, Object> options = new HashMap<>();		
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
+		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
+		resource.load(options);
+
+		// get the person
+		assertNotNull(resource);
+		assertThat(resource.getContents()).hasSize(1);
+		assertThat(resource.getContents().get(0)).isInstanceOf(EM310UDLUplink.class);
+		
+		EM310UDLUplink msg = (EM310UDLUplink) resource.getContents().get(0);
+		
+		resource = resourceSet.createResource(URI.createURI("test-data/em310-example.xmi"));	
+		resource.getContents().add(msg);
+		resource.save(null);
+		
+	}
+	
+	@Test
 	public void testDeserializationDraginoFromTypeInfoOptions(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI("test-data/dragino-example.json"));	

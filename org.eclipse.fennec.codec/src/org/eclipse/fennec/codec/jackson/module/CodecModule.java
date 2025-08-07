@@ -204,18 +204,20 @@ public class CodecModule extends SimpleModule {
 
 	
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.databind.module.SimpleModule#getModuleName()
+	 * @see tools.jackson.databind.module.SimpleModule#getModuleName()
 	 */
 	@Override
 	public String getModuleName() {
 		return this.codecModuleName;
 	}
 
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see org.eclipse.emfcloud.jackson.module.EMFModule#version()
+	 * @see tools.jackson.databind.module.SimpleModule#version()
 	 */
 	@Override
 	public Version version() {
@@ -241,9 +243,10 @@ public class CodecModule extends SimpleModule {
 		this.referenceSerializer = referenceSerializer;
 	}
 	
+
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.databind.module.SimpleModule#setupModule(com.fasterxml.jackson.databind.Module.SetupContext)
+	 * @see tools.jackson.databind.module.SimpleModule#setupModule(tools.jackson.databind.JacksonModule.SetupContext)
 	 */
 	@Override
 	public void setupModule(final SetupContext context) {

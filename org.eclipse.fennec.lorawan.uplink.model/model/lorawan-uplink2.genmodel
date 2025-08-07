@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.eclipse.fennec.lorawan.uplink.model/src2"
+    editDirectory="/org.eclipse.fennec.lorawan.uplink.model.edit/src2" editorDirectory="/org.eclipse.fennec.lorawan.uplink.model.editor/src2"
+    modelPluginID="org.eclipse.fennec.lorawan.uplink.model" modelName="Lorawan-uplink2"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" testsDirectory="/org.eclipse.fennec.lorawan.uplink.model.tests/src2"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="17.0" suppressGenModelAnnotations="false"
+    copyrightFields="false" operationReflection="true" importOrganizing="true" oSGiCompatible="true">
+  <foreignModel>lorawan-uplink2.ecore</foreignModel>
+  <genPackages prefix="Lorawan2" basePackage="org.eclipse.fennec.lorawan.uplink2.model"
+      disposableProviderFactory="true" ecorePackage="lorawan-uplink2.ecore#/">
+    <genClasses image="false" ecoreClass="lorawan-uplink2.ecore#//UplinkMessage">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//UplinkMessage/deduplicationId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//UplinkMessage/time"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//UplinkMessage/adr"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//UplinkMessage/dr"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//UplinkMessage/fCnt"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//UplinkMessage/fPort"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//UplinkMessage/confirmed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//UplinkMessage/data"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference lorawan-uplink2.ecore#//UplinkMessage/deviceInfo"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference lorawan-uplink2.ecore#//UplinkMessage/rxInfo"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference lorawan-uplink2.ecore#//UplinkMessage/txInfo"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference lorawan-uplink2.ecore#//UplinkMessage/object"/>
+    </genClasses>
+    <genClasses ecoreClass="lorawan-uplink2.ecore#//DeviceInfo">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//DeviceInfo/tenantId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//DeviceInfo/tenantName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//DeviceInfo/applicationId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//DeviceInfo/applicationName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//DeviceInfo/deviceProfileId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//DeviceInfo/deviceProfileName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//DeviceInfo/deviceName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//DeviceInfo/devEui"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//DeviceInfo/devAddr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference lorawan-uplink2.ecore#//DeviceInfo/tags"/>
+    </genClasses>
+    <genClasses ecoreClass="lorawan-uplink2.ecore#//Tags">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//Tags/dev_type"/>
+    </genClasses>
+    <genClasses ecoreClass="lorawan-uplink2.ecore#//RxInfo">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//RxInfo/gatewayId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//RxInfo/uplinkId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//RxInfo/time"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//RxInfo/rssi"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//RxInfo/snr"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//RxInfo/channel"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//RxInfo/context"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference lorawan-uplink2.ecore#//RxInfo/location"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference lorawan-uplink2.ecore#//RxInfo/metadata"/>
+    </genClasses>
+    <genClasses ecoreClass="lorawan-uplink2.ecore#//Location">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//Location/latitude"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//Location/longitude"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//Location/altitude"/>
+    </genClasses>
+    <genClasses ecoreClass="lorawan-uplink2.ecore#//Metadata">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//Metadata/region_name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//Metadata/region_common_name"/>
+    </genClasses>
+    <genClasses ecoreClass="lorawan-uplink2.ecore#//TxInfo">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//TxInfo/frequency"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//TxInfo/modulation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference lorawan-uplink2.ecore#//TxInfo/lora"/>
+    </genClasses>
+    <genClasses ecoreClass="lorawan-uplink2.ecore#//LoraInfo">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//LoraInfo/bandwidth"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//LoraInfo/spreadingFactor"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute lorawan-uplink2.ecore#//LoraInfo/codeRate"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="lorawan-uplink2.ecore#//DecodedObject"/>
+  </genPackages>
+</genmodel:GenModel>
