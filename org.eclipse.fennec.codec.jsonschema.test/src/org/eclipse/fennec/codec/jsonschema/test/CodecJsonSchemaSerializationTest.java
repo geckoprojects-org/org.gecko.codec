@@ -20,8 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +45,8 @@ import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.openapi.model.OpenApi;
+import org.eclipse.fennec.openapi.model.OpenApiPackage;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.AfterEach;
@@ -116,7 +116,7 @@ public class CodecJsonSchemaSerializationTest {
 
 	@AfterEach()
 	public void afterEach() throws IOException {
-		if(file2 != null) Files.deleteIfExists(Path.of(file2));
+//		if(file2 != null) Files.deleteIfExists(Path.of(file2));
 	}
 	
 	
@@ -130,8 +130,31 @@ public class CodecJsonSchemaSerializationTest {
 	@Test
 	public void openAPIJsonSchema() throws IOException {
 		String file1 = "test-data/open-api.json";
-		file2 = "test-data/ser_open.api.json";
+		file2 = "test-data/ser_open-api.json";
 		executeTest(file1, file2);
+	}
+	
+	@Test
+	public void openAPIComplete() throws IOException {
+		String file1 = "test-data/openapi-complete.json";
+		file2 = "test-data/ser_openapi-complete.json";
+		
+		Resource res = resourceSet.createResource(URI.createURI(file1));
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, OpenApiPackage.Literals.OPEN_API);
+		
+		res.load(options);		
+		assertFalse(res.getContents().isEmpty());
+		EObject obj = res.getContents().get(0);
+		assertNotNull(obj);
+		assertThat(obj).isInstanceOf(OpenApi.class);
+		OpenApi openApi = (OpenApi) res.getContents().get(0);
+
+		res = resourceSet.createResource(URI.createURI(file2));
+		res.getContents().add(openApi);
+		res.save(options);
+		
+		assertTrue(areJsonFilesTheSame(file1, file2));
 	}
 
 //	@Test

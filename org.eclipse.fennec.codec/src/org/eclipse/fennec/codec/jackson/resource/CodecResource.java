@@ -247,6 +247,7 @@ public class CodecResource extends ResourceImpl {
 
 //			Register the module with the mapper
 			mapper = objMapperBuilder.addModule(moduleBuilder.build()).build();
+			
 		} catch(Exception e) {
 			throw e;
 		}

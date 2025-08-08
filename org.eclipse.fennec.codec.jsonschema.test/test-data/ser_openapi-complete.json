@@ -1,0 +1,6 @@
+{
+  "_type" : "https://spec.openapis.org/oas/3.0.1/schema#//OpenApi",
+  "components" : {
+    "_type" : "https://spec.openapis.org/oas/3.0.1/schema#//Components"
+  }
+}

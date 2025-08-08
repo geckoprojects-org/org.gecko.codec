@@ -14,19 +14,16 @@
 package org.eclipse.fennec.codec.jsonschema;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.fennec.codec.CodecEMFDeserializers;
-import org.eclipse.fennec.codec.jackson.databind.deser.CodecEObjectDeserializer;
 import org.eclipse.fennec.codec.jackson.databind.deser.DefaultCodecEMFDeserializers;
-import org.eclipse.fennec.codec.jsonschema.readers.JsonSchemaToEPackageDeserializer;
+import org.eclipse.fennec.codec.jsonschema.readers.SmartJsonSchemaDeserializer;
 import org.osgi.service.component.annotations.Component;
 
+import tools.jackson.databind.BeanDescription.Supplier;
 import tools.jackson.databind.DeserializationConfig;
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.ValueDeserializer;
-import tools.jackson.databind.BeanDescription.Supplier;
 
 /**
  * 
@@ -46,11 +43,8 @@ public class JsonSchemaCodecEMFDeserializers extends DefaultCodecEMFDeserializer
 		if (type.isReferenceType()) {
 			return referenceDeserializer;
 		}
-		if(type.isTypeOrSubTypeOf(EObject.class)) {
-			return new JsonSchemaToEPackageDeserializer();
-		}
 		if (type.isTypeOrSubTypeOf(EObject.class)) {
-			return new CodecEObjectDeserializer(type.getRawClass(), module, codecModelInfoService);
+			return new SmartJsonSchemaDeserializer(type.getRawClass(), module, codecModelInfoService);
 		}
 		return super.findBeanDeserializer(type, config, beanDescRef);
 	}

@@ -12,7 +12,8 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.eclipse.fennec.codec.constants;version=snapshot,\
 	tools.jackson.core.jackson-databind,\
 	org.osgi.test.junit5.cm,\
-	tools.jackson.core.jackson-core
+	tools.jackson.core.jackson-core,\
+	org.eclipse.fennec.openapi.model;version=snapshot
 	
 Private-Package: org.eclipse.fennec.codec.jsonschema.test
 
