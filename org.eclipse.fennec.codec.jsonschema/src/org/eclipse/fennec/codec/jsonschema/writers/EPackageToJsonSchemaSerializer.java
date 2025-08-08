@@ -47,6 +47,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 	private static final String JSONSCHEMA_ANNOTATION_SOURCE = "http://fennec.eclipse.org/jsonschema";
 
 	private EPackage ePackage;
+	private static final String SCHEMA_FEATURE = "schemas";
 
 	/* 
 	 * (non-Javadoc)
@@ -66,7 +67,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 		}
 
 
-		gen.writeObjectPropertyStart("schemas"); // For EClasses
+		gen.writeObjectPropertyStart(SCHEMA_FEATURE); // For EClasses
 
 		for (EClassifier classifier : ePackage.getEClassifiers()) {
 			serializeEClassifier(classifier, gen, ctxt);
@@ -98,12 +99,11 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 		
 		if(description != null) gen.writeStringProperty("description", description);
 		if(additionalProperties != null) {
-			if(additionalProperties.startsWith("{")) {
-//				ObjectMapper mapper = new ObjectMapper();
-//				JsonNode node = mapper.readTree(additionalProperties);
-				gen.writeStringProperty("additionalProperties", additionalProperties);
-//				gen.writeN
-//				gen.writeTree(node);
+			if(additionalProperties.contains("{")) {
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode node = mapper.readTree(additionalProperties);
+				gen.writeName("additionalProperties");
+				gen.writeTree(node);
 			} else {
 				gen.writeBooleanProperty("additionalProperties", Boolean.valueOf(additionalProperties));
 			}
@@ -171,7 +171,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 				gen.writeStartArray();
 				for(EClass st : nonArtificialParents) {
 					gen.writeStartObject();
-					gen.writeStringProperty("$ref", "#/definitions/"+st.getName());
+					gen.writeStringProperty("$ref", "#/"+SCHEMA_FEATURE+"/"+st.getName());
 					gen.writeEndObject();
 				}
 				gen.writeStartObject();
@@ -230,6 +230,8 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 		String documentation = extractAnnotationDetail(eAttribute, GEN_MODEL_ANNOTATION_SOURCE, "documentation");
 		String noTypeInfo = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "noTypeInfo");
 		String format = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "format");
+		String writeOnly = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "writeOnly");
+		String uniqueItems = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "uniqueItems");
 		EDataType type = eAttribute.getEAttributeType();
 		gen.writeName(eAttribute.getName());
 		if(eAttribute.isMany()) {
@@ -238,7 +240,8 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 				gen.writeStringProperty("description", documentation);
 			}					
 			if(noTypeInfo == null || !("true".equals(noTypeInfo))) gen.writeStringProperty("type", "array");
-			if(format != null) gen.writeStringProperty("format", format);
+			if(writeOnly != null) gen.writeBooleanProperty("writeOnly", Boolean.valueOf(writeOnly));
+			if(uniqueItems != null) gen.writeBooleanProperty("uniqueItems", Boolean.valueOf(uniqueItems));
 			serializeConstValue(eAttribute, true, gen, ctxt);
 			String itemsAnnotation = extractAnnotationDetail(eAttribute, JSONSCHEMA_ANNOTATION_SOURCE, "items");
 			if(itemsAnnotation != null && "true".equals(itemsAnnotation)) {
@@ -255,6 +258,8 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 				if(noTypeInfo == null || !("true".equals(noTypeInfo)))  gen.writeStringProperty("type", "string");
 				serializeConstValue(eAttribute, false, gen, ctxt);
 				if(format != null) gen.writeStringProperty("format", format);
+				if(writeOnly != null) gen.writeBooleanProperty("writeOnly", Boolean.valueOf(writeOnly));
+				if(uniqueItems != null) gen.writeBooleanProperty("uniqueItems", Boolean.valueOf(uniqueItems));
 				gen.writeEndObject();
 			} else {
 				gen.writeStartObject();
@@ -263,6 +268,8 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 				}
 				serializeConstValue(eAttribute, false, gen, ctxt);
 				if(format != null) gen.writeStringProperty("format", format);
+				if(writeOnly != null) gen.writeBooleanProperty("writeOnly", Boolean.valueOf(writeOnly));
+				if(uniqueItems != null) gen.writeBooleanProperty("uniqueItems", Boolean.valueOf(uniqueItems));
 				if(noTypeInfo == null || !("true".equals(noTypeInfo)))  {
 					String jsonType = getJsonTypeFromEDataType(type);
 					if("javaObject".equals(jsonType)) {
@@ -288,12 +295,16 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 	private void serializeEReference(EReference eReference, JsonGenerator gen, SerializationContext ctxt) {
 		String documentation = extractAnnotationDetail(eReference, GEN_MODEL_ANNOTATION_SOURCE, "documentation");
 		String noTypeInfo = extractAnnotationDetail(eReference, JSONSCHEMA_ANNOTATION_SOURCE, "noTypeInfo");
+		String writeOnly = extractAnnotationDetail(eReference, JSONSCHEMA_ANNOTATION_SOURCE, "writeOnly");
+		String uniqueItems = extractAnnotationDetail(eReference, JSONSCHEMA_ANNOTATION_SOURCE, "uniqueItems");
 		EClassifier type = eReference.getEType();	
 		gen.writeName(eReference.getName());
 		if(eReference.isMany()) {
 			gen.writeStartObject();
 			if(documentation != null) gen.writeStringProperty("description", documentation);
 			if(noTypeInfo == null || !("true".equals(noTypeInfo)))  gen.writeStringProperty("type", "array");
+			if(writeOnly != null) gen.writeBooleanProperty("writeOnly", Boolean.valueOf(writeOnly));
+			if(uniqueItems != null) gen.writeBooleanProperty("uniqueItems", Boolean.valueOf(uniqueItems));
 			gen.writeName("items");
 			if(eReference.isContainment()) {				
 				serializeEClass((EClass) type, gen, ctxt);									
@@ -319,7 +330,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 							filter(c -> c.getESuperTypes().contains((EClass) type)).
 							forEach(c -> {
 								gen.writeStartObject();
-								gen.writeStringProperty("$ref", "#/definitions/"+c.getName());
+								gen.writeStringProperty("$ref", "#/"+SCHEMA_FEATURE+"/"+c.getName());
 								gen.writeEndObject();
 							});						
 					}					
@@ -337,7 +348,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 						filter(c -> c.getESuperTypes().contains((EClass) type)).
 						forEach(c -> {
 							gen.writeStartObject();
-							gen.writeStringProperty("$ref", "#/definitions/"+c.getName());
+							gen.writeStringProperty("$ref", "#/"+SCHEMA_FEATURE+"/"+c.getName());
 							gen.writeEndObject();
 						});		
 						gen.writeEndArray();
@@ -355,7 +366,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 				if(ref != null) {
 					gen.writeStringProperty("$ref", ref);
 				} else {
-					gen.writeStringProperty("$ref", "#/definitions/"+type.getName());
+					gen.writeStringProperty("$ref", "#/"+SCHEMA_FEATURE+"/"+type.getName());
 				}
 				gen.writeEndObject();
 			}
@@ -417,7 +428,9 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 	
 	private void serializeArrayItems(EStructuralFeature feature, EDataType type, JsonGenerator gen, SerializationContext ctxt) {
 		String noArrayItemsTypeInfo = extractAnnotationDetail(feature, JSONSCHEMA_ANNOTATION_SOURCE, "noArrayItemsTypeInfo");
+		String format = extractAnnotationDetail(feature, JSONSCHEMA_ANNOTATION_SOURCE, "format");
 		gen.writeObjectPropertyStart("items");
+		if(format != null) gen.writeStringProperty("format", format);
 		if(type instanceof EEnum eEnum) {
 			serializeEEnumLiterals(eEnum.getELiterals(), gen, ctxt);
 			if(noArrayItemsTypeInfo == null || !"true".equals(noArrayItemsTypeInfo)) gen.writeStringProperty("type", "string");
@@ -448,7 +461,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 		if(EcorePackage.Literals.EBIG_DECIMAL.equals(eDataType)) return "number";
 		if(EcorePackage.Literals.EBIG_INTEGER.equals(eDataType)) return "integer";
 		if(EcorePackage.Literals.EBYTE.equals(eDataType)) return "binary";
-		if(EcorePackage.Literals.EBOOLEAN.equals(eDataType) || EcorePackage.Literals.EBOOLEAN_OBJECT.equals(eDataType)) return "binary";
+		if(EcorePackage.Literals.EBOOLEAN.equals(eDataType) || EcorePackage.Literals.EBOOLEAN_OBJECT.equals(eDataType)) return "boolean";
 		return "javaObject";
 	}
 

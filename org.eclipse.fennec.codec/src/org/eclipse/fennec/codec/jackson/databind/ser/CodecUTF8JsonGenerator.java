@@ -116,7 +116,7 @@ public class CodecUTF8JsonGenerator extends UTF8JsonGenerator  {
 	 */
 	@Override
 	public JsonGenerator writeStartObject(Object forValue, int size) throws JacksonException {
-		return writeStartArray(forValue);
+		return writeStartObject(forValue);
 	}
 	
 	/* 

@@ -53,11 +53,30 @@ public class CodecTokenBuffer extends TokenBuffer {
 	 * @param ctxt
 	 */
 	protected CodecTokenBuffer(JsonParser p, ObjectReadContext ctxt) {
-		super(p, ctxt);
+		super(p, ctxt);	
+	}
+	
+	protected CodecTokenBuffer(TokenStreamContext parentContext) {
+		 super(false);
+		_parentContext = parentContext;
 	}
 	
     public static CodecTokenBuffer forBuffering(JsonParser p, ObjectReadContext ctxt) {
         return new CodecTokenBuffer(p, ctxt);
+    }
+    
+    public static CodecTokenBuffer forBuffering(TokenStreamContext parentContext) {
+    	return new CodecTokenBuffer(parentContext);
+    	
+    }
+    
+    public static CodecTokenBuffer forGeneration() {
+    	return new CodecTokenBuffer(false);
+    }
+    
+    public CodecTokenBuffer(boolean hasNativeIds)
+    {
+        super(hasNativeIds);
     }
     
     /* 

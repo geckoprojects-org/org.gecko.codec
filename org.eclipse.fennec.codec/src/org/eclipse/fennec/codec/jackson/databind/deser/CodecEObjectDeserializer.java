@@ -128,7 +128,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 		}
 
 		CodecTokenBuffer buffer = null;
-		if(isRootObject((TokenStreamContext)codecReadCtxt)) { //also non contained ref end up here!!
+		if(isRootObject((TokenStreamContext)codecReadCtxt) && getCurrentFeature(codecReadCtxt) == null) { //also non contained ref end up here!!
 			if(ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) != null) {
 				type  = (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT);
 				System.out.println("Root object with CODEC_ROOT_OBJECT option!");
@@ -267,7 +267,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 	private JsonToken getAndSaveNextToken(JsonParser jp, CodecTokenBuffer buffer) {
 		JsonToken nextToken = jp.nextToken();	
 		if(nextToken != null) {
-			System.out.println(nextToken + " -> " + jp.getString());
+//			System.out.println(nextToken + " -> " + jp.getString());
 			buffer.copyCurrentEvent(jp);
 			
 		} else {

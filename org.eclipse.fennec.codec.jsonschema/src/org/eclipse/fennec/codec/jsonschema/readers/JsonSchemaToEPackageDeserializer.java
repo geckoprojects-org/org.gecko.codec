@@ -60,6 +60,8 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 	private Map<EClass, List<String>> allOfRefMap = new HashMap<>();
 	private Map<String, EClassifier> cachedClassifiers = new HashMap<>();
 	private Map<Map<String, JsonNode>, EClass> parentClassMaps = new HashMap<>(); 
+	
+	private static final String SCHEMA_FEATURE = "schemas";
 
 	/* 
 	 * (non-Javadoc)
@@ -68,12 +70,12 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 	@Override
 	public EPackage deserialize(JsonParser parser, DeserializationContext ctxt) {
 		JsonNode node = ctxt.readTree(parser);
-		JsonNode defNode = node.get("schemas");
+		JsonNode defNode = node.get(SCHEMA_FEATURE);
 		if(defNode == null) {
-			throw new IllegalArgumentException("Expecting document to have a \"definitions\" node");
+			throw new IllegalArgumentException(String.format("Expecting document to have a \"%s\" node", SCHEMA_FEATURE));
 		} 
 		if(!defNode.isObject()) {
-			throw new IllegalArgumentException("Expecting \"definitions\" node to be an object node");
+			throw new IllegalArgumentException(String.format("Expecting \"%s\" node to be an object node", SCHEMA_FEATURE));
 		}
 		EPackage ePackage = ecoreFactory.createEPackage();
 		if(node.get("$schema") != null) {
@@ -184,8 +186,8 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 	}
 
 	private EClass createEClass(JsonNode classNode, String name, JsonNode rootNode) {
-		if(cachedClassifiers.containsKey(classNode.toString())) {
-			System.out.println("Found existing class");
+		if(cachedClassifiers.containsKey(classNode.toString()) && name.startsWith(ARTIFICIAL_CLASSIFIER_PREFIX)) { //TODO: do we really want to do it only for the artificial??
+			System.out.println("Found existing class for " + name);
 			return (EClass)cachedClassifiers.get(classNode.toString());
 		} 
 		EClass eClass = null;
@@ -235,7 +237,7 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 				}
 			}
 			if(classNode.get("additionalProperties") != null) {
-				addEAnnotation(eClass, JSONSCHEMA_ANNOTATION_SOURCE, "additionalProperties", classNode.get("additionalProperties").isBoolean() ? String.valueOf(classNode.get("additionalProperties")) : classNode.get("additionalProperties").toPrettyString());
+				addEAnnotation(eClass, JSONSCHEMA_ANNOTATION_SOURCE, "additionalProperties", (classNode.get("additionalProperties").isBoolean() ? String.valueOf(classNode.get("additionalProperties")) : classNode.get("additionalProperties").toPrettyString()));
 			}
 		}
 
@@ -246,7 +248,7 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 	}
 
 	private EClass createEClass(JsonNode classNode, String name, JsonNode rootNode, List<String> ignorePropertiesList) {
-		if(cachedClassifiers.containsKey(classNode.toString())) {
+		if(cachedClassifiers.containsKey(classNode.toString()) && name.startsWith(ARTIFICIAL_CLASSIFIER_PREFIX)) {
 			System.out.println("Found existing class");
 			return (EClass)cachedClassifiers.get(classNode.toString());
 		} 
@@ -342,6 +344,12 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 			}
 			if(propertyNode.get("type") == null) {
 				addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, isArrayItems? "noArrayItemsTypeInfo" : "noTypeInfo", "true");
+			}
+			if(propertyNode.get("uniqueItems") != null) {
+				addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "uniqueItems", propertyNode.get("uniqueItems").asString());
+			}
+			if(propertyNode.get("writeOnly") != null) {
+				addEAnnotation(feature, JSONSCHEMA_ANNOTATION_SOURCE, "writeOnly", propertyNode.get("writeOnly").asString());
 			}
 
 		}
@@ -451,7 +459,7 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 			//			We have a reference to another class
 			if(subNode.get("$ref") != null) {
 				refAnnotation += subNode.get("$ref").asString() + ",";
-				String refClassName = subNode.get("$ref").asString().replace("#/definitions/", "");
+				String refClassName = subNode.get("$ref").asString().replace("#/"+SCHEMA_FEATURE+"/", "");
 				if(rootNode.get(refClassName) != null) {
 					refClassesNodes.put(refClassName, rootNode.get(refClassName));
 				} else {
