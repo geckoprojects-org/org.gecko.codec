@@ -218,6 +218,10 @@ public class OpenApiAdapterFactory extends AdapterFactoryImpl {
 				return createExtensionAdapter();
 			}
 			@Override
+			public Adapter caseApiKey(ApiKey object) {
+				return createApiKeyAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -752,6 +756,20 @@ public class OpenApiAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createExtensionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.openapi.model.ApiKey <em>Api Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.openapi.model.ApiKey
+	 * @generated
+	 */
+	public Adapter createApiKeyAdapter() {
 		return null;
 	}
 

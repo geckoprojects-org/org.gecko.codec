@@ -269,13 +269,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO = TYPED_CODEC_INFO_FEATURE_COUNT + 8;
 
 	/**
+	 * The feature id for the '<em><b>Codec Extra Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECLASS_CODEC_INFO__CODEC_EXTRA_PROPERTIES = TYPED_CODEC_INFO_FEATURE_COUNT + 9;
+
+	/**
 	 * The number of structural features of the '<em>EClass Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ECLASS_CODEC_INFO_FEATURE_COUNT = TYPED_CODEC_INFO_FEATURE_COUNT + 9;
+	int ECLASS_CODEC_INFO_FEATURE_COUNT = TYPED_CODEC_INFO_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of operations of the '<em>EClass Codec Info</em>' class.
@@ -369,13 +378,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_CODEC_INFO__IGNORE = TYPED_CODEC_INFO_FEATURE_COUNT + 6;
 
 	/**
+	 * The feature id for the '<em><b>Codec Extra Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_CODEC_INFO__CODEC_EXTRA_PROPERTIES = TYPED_CODEC_INFO_FEATURE_COUNT + 7;
+
+	/**
 	 * The number of structural features of the '<em>Feature Codec Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_INFO_FEATURE_COUNT = TYPED_CODEC_INFO_FEATURE_COUNT + 7;
+	int FEATURE_CODEC_INFO_FEATURE_COUNT = TYPED_CODEC_INFO_FEATURE_COUNT + 8;
 
 	/**
 	 * The number of operations of the '<em>Feature Codec Info</em>' class.
@@ -549,6 +567,15 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int SUPER_TYPE_INFO__IGNORE = FEATURE_CODEC_INFO__IGNORE;
+
+	/**
+	 * The feature id for the '<em><b>Codec Extra Properties</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_INFO__CODEC_EXTRA_PROPERTIES = FEATURE_CODEC_INFO__CODEC_EXTRA_PROPERTIES;
 
 	/**
 	 * The feature id for the '<em><b>Super Type Strategy</b></em>' attribute.
@@ -1155,6 +1182,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getEClassCodecInfo_EnumeratorCodecInfo();
 
 	/**
+	 * Returns the meta object for the map '{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getCodecExtraProperties <em>Codec Extra Properties</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>Codec Extra Properties</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getCodecExtraProperties()
+	 * @see #getEClassCodecInfo()
+	 * @generated
+	 */
+	EReference getEClassCodecInfo_CodecExtraProperties();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo <em>Feature Codec Info</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1240,6 +1278,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getFeatureCodecInfo_Ignore();
+
+	/**
+	 * Returns the meta object for the map '{@link org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getCodecExtraProperties <em>Codec Extra Properties</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the map '<em>Codec Extra Properties</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo#getCodecExtraProperties()
+	 * @see #getFeatureCodecInfo()
+	 * @generated
+	 */
+	EReference getFeatureCodecInfo_CodecExtraProperties();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo <em>Type Info</em>}'.
@@ -1840,6 +1889,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EReference ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO = eINSTANCE.getEClassCodecInfo_EnumeratorCodecInfo();
 
 		/**
+		 * The meta object literal for the '<em><b>Codec Extra Properties</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ECLASS_CODEC_INFO__CODEC_EXTRA_PROPERTIES = eINSTANCE.getEClassCodecInfo_CodecExtraProperties();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl <em>Feature Codec Info</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1904,6 +1961,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute FEATURE_CODEC_INFO__IGNORE = eINSTANCE.getFeatureCodecInfo_Ignore();
+
+		/**
+		 * The meta object literal for the '<em><b>Codec Extra Properties</b></em>' map feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference FEATURE_CODEC_INFO__CODEC_EXTRA_PROPERTIES = eINSTANCE.getFeatureCodecInfo_CodecExtraProperties();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.impl.TypeInfoImpl <em>Type Info</em>}' class.

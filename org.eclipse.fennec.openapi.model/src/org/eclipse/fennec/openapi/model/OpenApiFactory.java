@@ -286,6 +286,15 @@ public interface OpenApiFactory extends EFactory {
 	Extension createExtension();
 
 	/**
+	 * Returns a new object of class '<em>Api Key</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Api Key</em>'.
+	 * @generated
+	 */
+	ApiKey createApiKey();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

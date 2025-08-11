@@ -4,4 +4,6 @@
 	tools.jackson.core.jackson-databind,\
 	com.fasterxml.jackson.core.jackson-annotations,\
 	tools.jackson.core.jackson-core,\
-	org.eclipse.fennec.codec.info;version=snapshot
+	org.eclipse.fennec.codec.info;version=snapshot,\
+	org.eclipse.fennec.codec.info.model,\
+	org.eclipse.fennec.codec.constants

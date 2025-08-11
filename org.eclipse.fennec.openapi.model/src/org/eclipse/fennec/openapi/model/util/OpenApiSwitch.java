@@ -297,6 +297,12 @@ public class OpenApiSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case OpenApiPackage.API_KEY: {
+				ApiKey apiKey = (ApiKey)theEObject;
+				T result = caseApiKey(apiKey);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -853,6 +859,21 @@ public class OpenApiSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseExtension(Extension object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Api Key</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Api Key</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseApiKey(ApiKey object) {
 		return null;
 	}
 

@@ -93,6 +93,7 @@ public class OpenApiFactoryImpl extends EFactoryImpl implements OpenApiFactory {
 			case OpenApiPackage.NUMERIC_CONSTRAINT: return createNumericConstraint();
 			case OpenApiPackage.ARRAY_CONSTRAINT: return createArrayConstraint();
 			case OpenApiPackage.EXTENSION: return createExtension();
+			case OpenApiPackage.API_KEY: return createApiKey();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -475,6 +476,17 @@ public class OpenApiFactoryImpl extends EFactoryImpl implements OpenApiFactory {
 	public Extension createExtension() {
 		ExtensionImpl extension = new ExtensionImpl();
 		return extension;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public ApiKey createApiKey() {
+		ApiKeyImpl apiKey = new ApiKeyImpl();
+		return apiKey;
 	}
 
 	/**

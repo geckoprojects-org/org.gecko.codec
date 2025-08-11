@@ -59,6 +59,8 @@
         <details key="suppressedSetVisibility" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="codecExtraProperties" upperBound="-1"
+        eType="#//StringToStringMap" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FeatureCodecInfo" eSuperTypes="#//TypedCodecInfo">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -77,6 +79,8 @@
         <details key="documentation" value="If set to true, the EStructuralFeature marked with that will not be serialized."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="codecExtraProperties" upperBound="-1"
+        eType="#//StringToStringMap" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypeInfo">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeStrategy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">

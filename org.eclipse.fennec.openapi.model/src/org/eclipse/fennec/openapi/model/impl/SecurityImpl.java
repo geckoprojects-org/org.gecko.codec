@@ -24,6 +24,8 @@ import org.eclipse.fennec.openapi.model.Security;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.fennec.openapi.model.impl.SecurityImpl#getBearerAuth <em>Bearer Auth</em>}</li>
+ *   <li>{@link org.eclipse.fennec.openapi.model.impl.SecurityImpl#getBasicAuth <em>Basic Auth</em>}</li>
+ *   <li>{@link org.eclipse.fennec.openapi.model.impl.SecurityImpl#getApiKey <em>Api Key</em>}</li>
  * </ul>
  *
  * @generated
@@ -38,6 +40,26 @@ public class SecurityImpl extends MinimalEObjectImpl.Container implements Securi
 	 * @ordered
 	 */
 	protected EList<String> bearerAuth;
+
+	/**
+	 * The cached value of the '{@link #getBasicAuth() <em>Basic Auth</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBasicAuth()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> basicAuth;
+
+	/**
+	 * The cached value of the '{@link #getApiKey() <em>Api Key</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getApiKey()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> apiKey;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -77,10 +99,40 @@ public class SecurityImpl extends MinimalEObjectImpl.Container implements Securi
 	 * @generated
 	 */
 	@Override
+	public EList<String> getBasicAuth() {
+		if (basicAuth == null) {
+			basicAuth = new EDataTypeUniqueEList<String>(String.class, this, OpenApiPackage.SECURITY__BASIC_AUTH);
+		}
+		return basicAuth;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<String> getApiKey() {
+		if (apiKey == null) {
+			apiKey = new EDataTypeUniqueEList<String>(String.class, this, OpenApiPackage.SECURITY__API_KEY);
+		}
+		return apiKey;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case OpenApiPackage.SECURITY__BEARER_AUTH:
 				return getBearerAuth();
+			case OpenApiPackage.SECURITY__BASIC_AUTH:
+				return getBasicAuth();
+			case OpenApiPackage.SECURITY__API_KEY:
+				return getApiKey();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -98,6 +150,14 @@ public class SecurityImpl extends MinimalEObjectImpl.Container implements Securi
 				getBearerAuth().clear();
 				getBearerAuth().addAll((Collection<? extends String>)newValue);
 				return;
+			case OpenApiPackage.SECURITY__BASIC_AUTH:
+				getBasicAuth().clear();
+				getBasicAuth().addAll((Collection<? extends String>)newValue);
+				return;
+			case OpenApiPackage.SECURITY__API_KEY:
+				getApiKey().clear();
+				getApiKey().addAll((Collection<? extends String>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -113,6 +173,12 @@ public class SecurityImpl extends MinimalEObjectImpl.Container implements Securi
 			case OpenApiPackage.SECURITY__BEARER_AUTH:
 				getBearerAuth().clear();
 				return;
+			case OpenApiPackage.SECURITY__BASIC_AUTH:
+				getBasicAuth().clear();
+				return;
+			case OpenApiPackage.SECURITY__API_KEY:
+				getApiKey().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -127,6 +193,10 @@ public class SecurityImpl extends MinimalEObjectImpl.Container implements Securi
 		switch (featureID) {
 			case OpenApiPackage.SECURITY__BEARER_AUTH:
 				return bearerAuth != null && !bearerAuth.isEmpty();
+			case OpenApiPackage.SECURITY__BASIC_AUTH:
+				return basicAuth != null && !basicAuth.isEmpty();
+			case OpenApiPackage.SECURITY__API_KEY:
+				return apiKey != null && !apiKey.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -143,6 +213,10 @@ public class SecurityImpl extends MinimalEObjectImpl.Container implements Securi
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (bearerAuth: ");
 		result.append(bearerAuth);
+		result.append(", basicAuth: ");
+		result.append(basicAuth);
+		result.append(", apiKey: ");
+		result.append(apiKey);
 		result.append(')');
 		return result.toString();
 	}

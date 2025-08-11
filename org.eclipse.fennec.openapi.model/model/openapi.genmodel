@@ -60,6 +60,8 @@
     </genClasses>
     <genClasses ecoreClass="openapi.ecore#//Security">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute openapi.ecore#//Security/bearerAuth"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute openapi.ecore#//Security/basicAuth"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute openapi.ecore#//Security/apiKey"/>
     </genClasses>
     <genClasses image="false" ecoreClass="openapi.ecore#//Method">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute openapi.ecore#//Method/tags"/>
@@ -99,6 +101,7 @@
     <genClasses ecoreClass="openapi.ecore#//SecuritySchemes">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference openapi.ecore#//SecuritySchemes/bearerAuth"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference openapi.ecore#//SecuritySchemes/basicAuth"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference openapi.ecore#//SecuritySchemes/apiKey"/>
     </genClasses>
     <genClasses ecoreClass="openapi.ecore#//BearerAuth">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute openapi.ecore#//BearerAuth/type"/>
@@ -162,6 +165,11 @@
     <genClasses ecoreClass="openapi.ecore#//Extension">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute openapi.ecore#//Extension/key"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference openapi.ecore#//Extension/value"/>
+    </genClasses>
+    <genClasses ecoreClass="openapi.ecore#//ApiKey">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute openapi.ecore#//ApiKey/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute openapi.ecore#//ApiKey/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute openapi.ecore#//ApiKey/in"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
