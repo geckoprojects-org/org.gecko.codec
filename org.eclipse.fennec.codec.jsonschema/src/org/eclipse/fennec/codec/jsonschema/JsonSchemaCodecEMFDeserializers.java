@@ -36,6 +36,8 @@ public class JsonSchemaCodecEMFDeserializers extends DefaultCodecEMFDeserializer
 	@Override
 	public ValueDeserializer<?> findBeanDeserializer(JavaType type, DeserializationConfig config,
 			Supplier beanDescRef) {
+		
+	
 		if (type.isTypeOrSubTypeOf(Resource.class)) {
 			return resourceDeserializer;
 		}

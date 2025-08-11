@@ -11,14 +11,17 @@ import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage;
@@ -46,6 +49,7 @@ import org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo;
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getAttributeCodecInfo <em>Attribute Codec Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getOperationCodecInfo <em>Operation Codec Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getEnumeratorCodecInfo <em>Enumerator Codec Info</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.EClassCodecInfoImpl#getCodecExtraProperties <em>Codec Extra Properties</em>}</li>
  * </ul>
  *
  * @generated
@@ -110,6 +114,16 @@ public class EClassCodecInfoImpl extends TypedCodecInfoImpl implements EClassCod
 	 * @ordered
 	 */
 	protected EList<FeatureCodecInfo> featureInfo;
+
+	/**
+	 * The cached value of the '{@link #getCodecExtraProperties() <em>Codec Extra Properties</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCodecExtraProperties()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> codecExtraProperties;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -342,6 +356,19 @@ public class EClassCodecInfoImpl extends TypedCodecInfoImpl implements EClassCod
 	 * @generated
 	 */
 	@Override
+	public EMap<String, String> getCodecExtraProperties() {
+		if (codecExtraProperties == null) {
+			codecExtraProperties = new EcoreEMap<String,String>(CodecInfoPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, CodecInfoPackage.ECLASS_CODEC_INFO__CODEC_EXTRA_PROPERTIES);
+		}
+		return codecExtraProperties;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case CodecInfoPackage.ECLASS_CODEC_INFO__IDENTITY_INFO:
@@ -350,6 +377,8 @@ public class EClassCodecInfoImpl extends TypedCodecInfoImpl implements EClassCod
 				return basicSetSuperTypeInfo(null, msgs);
 			case CodecInfoPackage.ECLASS_CODEC_INFO__FEATURE_INFO:
 				return ((InternalEList<?>)getFeatureInfo()).basicRemove(otherEnd, msgs);
+			case CodecInfoPackage.ECLASS_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				return ((InternalEList<?>)getCodecExtraProperties()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -381,6 +410,9 @@ public class EClassCodecInfoImpl extends TypedCodecInfoImpl implements EClassCod
 				return getOperationCodecInfo();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
 				return getEnumeratorCodecInfo();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				if (coreType) return getCodecExtraProperties();
+				else return getCodecExtraProperties().map();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -426,6 +458,9 @@ public class EClassCodecInfoImpl extends TypedCodecInfoImpl implements EClassCod
 				getEnumeratorCodecInfo().clear();
 				getEnumeratorCodecInfo().addAll((Collection<? extends FeatureCodecInfo>)newValue);
 				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				((EStructuralFeature.Setting)getCodecExtraProperties()).set(newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -465,6 +500,9 @@ public class EClassCodecInfoImpl extends TypedCodecInfoImpl implements EClassCod
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
 				getEnumeratorCodecInfo().clear();
 				return;
+			case CodecInfoPackage.ECLASS_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				getCodecExtraProperties().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -495,6 +533,8 @@ public class EClassCodecInfoImpl extends TypedCodecInfoImpl implements EClassCod
 				return !getOperationCodecInfo().isEmpty();
 			case CodecInfoPackage.ECLASS_CODEC_INFO__ENUMERATOR_CODEC_INFO:
 				return !getEnumeratorCodecInfo().isEmpty();
+			case CodecInfoPackage.ECLASS_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				return codecExtraProperties != null && !codecExtraProperties.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

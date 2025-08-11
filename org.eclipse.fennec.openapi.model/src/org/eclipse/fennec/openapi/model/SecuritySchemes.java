@@ -17,6 +17,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <ul>
  *   <li>{@link org.eclipse.fennec.openapi.model.SecuritySchemes#getBearerAuth <em>Bearer Auth</em>}</li>
  *   <li>{@link org.eclipse.fennec.openapi.model.SecuritySchemes#getBasicAuth <em>Basic Auth</em>}</li>
+ *   <li>{@link org.eclipse.fennec.openapi.model.SecuritySchemes#getApiKey <em>Api Key</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.openapi.model.OpenApiPackage#getSecuritySchemes()
@@ -33,6 +34,7 @@ public interface SecuritySchemes extends EObject {
 	 * @see #setBearerAuth(BearerAuth)
 	 * @see org.eclipse.fennec.openapi.model.OpenApiPackage#getSecuritySchemes_BearerAuth()
 	 * @model containment="true"
+	 *        annotation="JsonProperty value='OpenID/JWT'"
 	 * @generated
 	 */
 	BearerAuth getBearerAuth();
@@ -55,6 +57,7 @@ public interface SecuritySchemes extends EObject {
 	 * @see #setBasicAuth(BasicAuth)
 	 * @see org.eclipse.fennec.openapi.model.OpenApiPackage#getSecuritySchemes_BasicAuth()
 	 * @model containment="true"
+	 *        extendedMetaData="name='BASIC'"
 	 * @generated
 	 */
 	BasicAuth getBasicAuth();
@@ -68,5 +71,28 @@ public interface SecuritySchemes extends EObject {
 	 * @generated
 	 */
 	void setBasicAuth(BasicAuth value);
+
+	/**
+	 * Returns the value of the '<em><b>Api Key</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Api Key</em>' containment reference.
+	 * @see #setApiKey(ApiKey)
+	 * @see org.eclipse.fennec.openapi.model.OpenApiPackage#getSecuritySchemes_ApiKey()
+	 * @model containment="true"
+	 *        annotation="JsonProperty value='API_KEY'"
+	 * @generated
+	 */
+	ApiKey getApiKey();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.openapi.model.SecuritySchemes#getApiKey <em>Api Key</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Api Key</em>' containment reference.
+	 * @see #getApiKey()
+	 * @generated
+	 */
+	void setApiKey(ApiKey value);
 
 } // SecuritySchemes

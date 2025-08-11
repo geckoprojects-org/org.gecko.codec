@@ -172,12 +172,11 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		eClassCodecInfo.setClassifier(ec);
 
 
-
+		Map<String, String> extras = getAnnotationDetailsMap(ec, "codec.extras", true);
+		if(!extras.isEmpty()) eClassCodecInfo.getCodecExtraProperties().putAll(extras);
 
 		if(ec instanceof EClass eClass) {
-			
-
-			
+						
 			eClass.getEAllAttributes().forEach(att -> 
 				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(att)));
 			eClass.getEAllReferences().forEach(ref -> 				
@@ -185,14 +184,9 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 			eClass.getEAllOperations().forEach(op -> {
 				eClassCodecInfo.getFeatureInfo().add(createCodecFeatureInfo(op));
 			});
-			
-//			System.out.println(eClass.getEPackage().getNsURI() + " " + eClass.getName() +  " before " + eClassCodecInfo.getFeatureInfo().size());
-			
-			
+									
 //			add IdentityInfo based on EAnnotation
 			eClassCodecInfo.setIdentityInfo(getIdentityInfo(eClass));
-			
-//			System.out.println(eClass.getEPackage().getNsURI() + " " + eClass.getName() +  " after " + eClassCodecInfo.getFeatureInfo().size());
 		};	
 		
 //		Add TypeInfo based on EAnnotation
@@ -209,34 +203,6 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		if(supertypeValue != null && "false".equalsIgnoreCase(supertypeValue)) {
 			superTypeInfo.setIgnoreSuperType(true);
 		}
-		//		SUPPORT FOR DIFFERENT SUPERTYPE SERIALIZATION STRATEGIES...?
-		//		if(!superTypeInfo.isIgnoreSuperType()) {
-		//			String superTypeStrategy = getAnnotationDetails(ec, "codec.supertype", "use", true);
-		//			if(superTypeStrategy != null) {
-		//				superTypeInfo.setSuperTypeStrategy(superTypeStrategy);
-		//				switch(superTypeStrategy) {
-		//				case "ARRAY": default:
-		//					superTypeInfo.setValueWriterName("URIS_WRITER");
-		//					superTypeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
-		//					break;				
-		//				}
-		//			} else {
-		//				valueReaderName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_SUPERTYPE_VALUE_READER_NAME);
-		//				valueWriterName = getAnnotationDetails(ec, "codec", CodecAnnotations.CODEC_SUPERTYPE_VALUE_WRITER_NAME);
-		//
-		//				if(valueReaderName != null) {
-		//					superTypeInfo.setValueReaderName(valueReaderName);
-		//				} else {
-		//					superTypeInfo.setValueReaderName("DEFAULT_ECLASS_READER");
-		//				}
-		//
-		//				if(valueWriterName != null) {
-		//					superTypeInfo.setValueWriterName(valueWriterName);
-		//				} else {
-		//					superTypeInfo.setValueWriterName("URIS_WRITER");
-		//				}
-		//			}
-		//		}
 
 		eClassCodecInfo.setSuperTypeInfo(superTypeInfo);
 		return eClassCodecInfo;
@@ -344,6 +310,9 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		if(feature instanceof EReference) {
 			featureInfo.setTypeInfo(getTypeInfo(feature));
 		}
+		
+		Map<String, String> extras = getAnnotationDetailsMap(feature, "codec.extras", true);
+		if(!extras.isEmpty()) featureInfo.getCodecExtraProperties().putAll(extras);
 
 		return featureInfo;
 	}

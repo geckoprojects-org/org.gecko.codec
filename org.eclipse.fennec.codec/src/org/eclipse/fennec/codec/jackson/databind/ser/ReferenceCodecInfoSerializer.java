@@ -34,13 +34,17 @@ import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecContext;
 import org.eclipse.fennec.codec.jackson.databind.EMFCodecWriteContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.jackson.utils.TypeConstructorHelper;
 import org.gecko.emf.utilities.FeaturePath;
 import org.gecko.emf.utilities.UtilitiesFactory;
 
 import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.JavaType;
 import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 /**
  * Codec Serializer for References
@@ -91,7 +95,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		}
 		typeInfo = featureCodecInfo.getTypeInfo();
 
-		if (jg.streamWriteContext() instanceof EMFCodecWriteContext cwt) {
+		if (jg.streamWriteContext() instanceof EMFCodecContext cwt) {
 			cwt.setCurrentFeature(feature);
 			cwt.setCurrentEObject(rootObj);
 		} else {
@@ -142,6 +146,9 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 				}
 			} else if (v instanceof EMap<?,?> innerMap) {
 				serializeEMap(jg, provider, innerMap);
+			} else {
+				ValueSerializer<Object> valueSerializer = provider.findValueSerializer(v.getClass());
+				valueSerializer.serialize(v, jg, provider);
 			}
 
 		});
@@ -168,7 +175,8 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		} else {
 			jg.writeName(feature.getName());
 		}
-
+//		We have to reset the current feature because for some reason calling writeName resets it...
+		((EMFCodecContext) jg.streamWriteContext()).setCurrentFeature(feature);
 		serializeSingleReferenceValue(rootObj, value, feature, jg, provider);
 	}
 
@@ -178,8 +186,11 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		if (feature.isContainment()) {
 			if (value == null)
 				jg.writeNull();
-			else
-				new CodecEObjectSerializer(codecModule, codecModelInfoService).serialize(value, jg, provider);
+			else {
+				ValueSerializer<Object> valueSerializer = provider.findValueSerializer(value.getClass());
+				valueSerializer.serialize(value, jg, provider);
+//				new CodecEObjectSerializer(codecModule, codecModelInfoService).serialize(value, jg, provider);
+			}
 		} else {
 			serializeNonContainment(rootObj, value, jg, provider);
 		}

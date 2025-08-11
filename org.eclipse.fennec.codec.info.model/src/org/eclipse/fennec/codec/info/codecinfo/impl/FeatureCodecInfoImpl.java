@@ -3,12 +3,19 @@
 package org.eclipse.fennec.codec.info.codecinfo.impl;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.emf.ecore.util.EcoreEMap;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage;
 import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
@@ -29,6 +36,7 @@ import org.eclipse.fennec.codec.info.codecinfo.InfoType;
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getKey <em>Key</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#isIgnore <em>Ignore</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.FeatureCodecInfoImpl#getCodecExtraProperties <em>Codec Extra Properties</em>}</li>
  * </ul>
  *
  * @generated
@@ -163,6 +171,16 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 	 * @ordered
 	 */
 	protected boolean ignore = IGNORE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getCodecExtraProperties() <em>Codec Extra Properties</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCodecExtraProperties()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, String> codecExtraProperties;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -367,6 +385,33 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 	 * @generated
 	 */
 	@Override
+	public EMap<String, String> getCodecExtraProperties() {
+		if (codecExtraProperties == null) {
+			codecExtraProperties = new EcoreEMap<String,String>(CodecInfoPackage.Literals.STRING_TO_STRING_MAP, StringToStringMapImpl.class, this, CodecInfoPackage.FEATURE_CODEC_INFO__CODEC_EXTRA_PROPERTIES);
+		}
+		return codecExtraProperties;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case CodecInfoPackage.FEATURE_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				return ((InternalEList<?>)getCodecExtraProperties()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case CodecInfoPackage.FEATURE_CODEC_INFO__ID:
@@ -384,6 +429,9 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 				return getKey();
 			case CodecInfoPackage.FEATURE_CODEC_INFO__IGNORE:
 				return isIgnore();
+			case CodecInfoPackage.FEATURE_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				if (coreType) return getCodecExtraProperties();
+				else return getCodecExtraProperties().map();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -416,6 +464,9 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 				return;
 			case CodecInfoPackage.FEATURE_CODEC_INFO__IGNORE:
 				setIgnore((Boolean)newValue);
+				return;
+			case CodecInfoPackage.FEATURE_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				((EStructuralFeature.Setting)getCodecExtraProperties()).set(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -450,6 +501,9 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 			case CodecInfoPackage.FEATURE_CODEC_INFO__IGNORE:
 				setIgnore(IGNORE_EDEFAULT);
 				return;
+			case CodecInfoPackage.FEATURE_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				getCodecExtraProperties().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -476,6 +530,8 @@ public class FeatureCodecInfoImpl extends TypedCodecInfoImpl implements FeatureC
 				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
 			case CodecInfoPackage.FEATURE_CODEC_INFO__IGNORE:
 				return ignore != IGNORE_EDEFAULT;
+			case CodecInfoPackage.FEATURE_CODEC_INFO__CODEC_EXTRA_PROPERTIES:
+				return codecExtraProperties != null && !codecExtraProperties.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

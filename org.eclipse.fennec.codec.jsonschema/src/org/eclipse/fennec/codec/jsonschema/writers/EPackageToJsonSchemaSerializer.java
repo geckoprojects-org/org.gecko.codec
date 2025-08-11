@@ -47,7 +47,15 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 	private static final String JSONSCHEMA_ANNOTATION_SOURCE = "http://fennec.eclipse.org/jsonschema";
 
 	private EPackage ePackage;
-	private static final String SCHEMA_FEATURE = "schemas";
+	private String schemaFeature;
+	
+	public EPackageToJsonSchemaSerializer() {
+		
+	}
+	
+	public EPackageToJsonSchemaSerializer(String schemaFeature) {
+		this.schemaFeature = schemaFeature;
+	}
 
 	/* 
 	 * (non-Javadoc)
@@ -66,8 +74,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 			gen.writeStringProperty("description", extractAnnotationDetail(ePackage, GEN_MODEL_ANNOTATION_SOURCE, "documentation"));
 		}
 
-
-		gen.writeObjectPropertyStart(SCHEMA_FEATURE); // For EClasses
+		if(schemaFeature != null) gen.writeObjectPropertyStart(schemaFeature); // For EClasses
 
 		for (EClassifier classifier : ePackage.getEClassifiers()) {
 			serializeEClassifier(classifier, gen, ctxt);
@@ -171,7 +178,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 				gen.writeStartArray();
 				for(EClass st : nonArtificialParents) {
 					gen.writeStartObject();
-					gen.writeStringProperty("$ref", "#/"+SCHEMA_FEATURE+"/"+st.getName());
+					gen.writeStringProperty("$ref", "#/"+schemaFeature+"/"+st.getName());
 					gen.writeEndObject();
 				}
 				gen.writeStartObject();
@@ -330,7 +337,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 							filter(c -> c.getESuperTypes().contains((EClass) type)).
 							forEach(c -> {
 								gen.writeStartObject();
-								gen.writeStringProperty("$ref", "#/"+SCHEMA_FEATURE+"/"+c.getName());
+								gen.writeStringProperty("$ref", "#/"+schemaFeature+"/"+c.getName());
 								gen.writeEndObject();
 							});						
 					}					
@@ -348,7 +355,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 						filter(c -> c.getESuperTypes().contains((EClass) type)).
 						forEach(c -> {
 							gen.writeStartObject();
-							gen.writeStringProperty("$ref", "#/"+SCHEMA_FEATURE+"/"+c.getName());
+							gen.writeStringProperty("$ref", "#/"+schemaFeature+"/"+c.getName());
 							gen.writeEndObject();
 						});		
 						gen.writeEndArray();
@@ -366,7 +373,7 @@ public class EPackageToJsonSchemaSerializer extends ValueSerializer<EPackage> {
 				if(ref != null) {
 					gen.writeStringProperty("$ref", ref);
 				} else {
-					gen.writeStringProperty("$ref", "#/"+SCHEMA_FEATURE+"/"+type.getName());
+					gen.writeStringProperty("$ref", "#/"+schemaFeature+"/"+type.getName());
 				}
 				gen.writeEndObject();
 			}

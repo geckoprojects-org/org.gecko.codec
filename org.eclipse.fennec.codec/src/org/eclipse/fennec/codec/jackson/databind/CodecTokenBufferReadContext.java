@@ -47,6 +47,12 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 		_currentValue = base.currentValue();
 		_startLocation = startLoc;
 		holder = new EMFContextHolder();
+		if(base.getParent() instanceof EMFCodecContext codecCtxt) {
+			holder.setCurrentEObject(codecCtxt.getCurrentEObject());
+			holder.setCurrentFeature(codecCtxt.getCurrentFeature());
+			holder.setResource(codecCtxt.getResource());
+		}
+		
 	} 
 
 
@@ -58,6 +64,11 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 		_parent = parent;
 		_startLocation = parent._startLocation;
 		holder = new EMFContextHolder();
+		if(parent instanceof EMFCodecContext codecCtxt) {
+			holder.setCurrentEObject(codecCtxt.getCurrentEObject());
+			holder.setCurrentFeature(codecCtxt.getCurrentFeature());
+			holder.setResource(codecCtxt.getResource());
+		}
 	}
 
 

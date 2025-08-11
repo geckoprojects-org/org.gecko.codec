@@ -135,5 +135,12 @@ public interface CodecModelInfoOptions {
 	 * This will overwrite any other behavior and the custom value writer will be used.
 	 * */
 	String CODEC_CUSTOM_VALUE_WRITER = "codec.custom.value.writer";
+	
+	
+	/** 
+	 * CODEC_EXTRAS 
+	 * To add extras properties to either an EObjectCodecInfo or a FeatureCodecInfo via load/save options
+	 * */
+	String CODEC_EXTRAS = "codec.extras";
 
 }

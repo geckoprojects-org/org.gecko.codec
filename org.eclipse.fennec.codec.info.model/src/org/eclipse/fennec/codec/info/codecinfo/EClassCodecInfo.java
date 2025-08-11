@@ -3,6 +3,7 @@
 package org.eclipse.fennec.codec.info.codecinfo;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 
 import org.eclipse.emf.ecore.EClassifier;
 
@@ -25,6 +26,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getAttributeCodecInfo <em>Attribute Codec Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getOperationCodecInfo <em>Operation Codec Info</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getEnumeratorCodecInfo <em>Enumerator Codec Info</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo#getCodecExtraProperties <em>Codec Extra Properties</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo()
@@ -162,5 +164,18 @@ public interface EClassCodecInfo extends TypedCodecInfo, IdentifiableCodecInfo {
 	 * @generated
 	 */
 	EList<FeatureCodecInfo> getEnumeratorCodecInfo();
+
+	/**
+	 * Returns the value of the '<em><b>Codec Extra Properties</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.String},
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Codec Extra Properties</em>' map.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getEClassCodecInfo_CodecExtraProperties()
+	 * @model mapType="org.eclipse.fennec.codec.info.codecinfo.StringToStringMap&lt;org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EString&gt;"
+	 * @generated
+	 */
+	EMap<String, String> getCodecExtraProperties();
 
 } // EClassCodecInfo

@@ -622,13 +622,31 @@ public interface OpenApiPackage extends org.eclipse.emf.ecore.EPackage {
 	int SECURITY__BEARER_AUTH = 0;
 
 	/**
+	 * The feature id for the '<em><b>Basic Auth</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY__BASIC_AUTH = 1;
+
+	/**
+	 * The feature id for the '<em><b>Api Key</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY__API_KEY = 2;
+
+	/**
 	 * The number of structural features of the '<em>Security</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SECURITY_FEATURE_COUNT = 1;
+	int SECURITY_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Security</em>' class.
@@ -1343,13 +1361,22 @@ public interface OpenApiPackage extends org.eclipse.emf.ecore.EPackage {
 	int SECURITY_SCHEMES__BASIC_AUTH = 1;
 
 	/**
+	 * The feature id for the '<em><b>Api Key</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_SCHEMES__API_KEY = 2;
+
+	/**
 	 * The number of structural features of the '<em>Security Schemes</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SECURITY_SCHEMES_FEATURE_COUNT = 2;
+	int SECURITY_SCHEMES_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Security Schemes</em>' class.
@@ -2133,6 +2160,61 @@ public interface OpenApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 */
 	int EXTENSION_OPERATION_COUNT = 0;
 
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.openapi.model.impl.ApiKeyImpl <em>Api Key</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.openapi.model.impl.ApiKeyImpl
+	 * @see org.eclipse.fennec.openapi.model.impl.OpenApiPackageImpl#getApiKey()
+	 * @generated
+	 */
+	int API_KEY = 37;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int API_KEY__TYPE = 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int API_KEY__NAME = 1;
+
+	/**
+	 * The feature id for the '<em><b>In</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int API_KEY__IN = 2;
+
+	/**
+	 * The number of structural features of the '<em>Api Key</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int API_KEY_FEATURE_COUNT = 3;
+
+	/**
+	 * The number of operations of the '<em>Api Key</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int API_KEY_OPERATION_COUNT = 0;
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.openapi.model.OpenApi <em>Open Api</em>}'.
@@ -2598,6 +2680,28 @@ public interface OpenApiPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getSecurity_BearerAuth();
 
 	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.fennec.openapi.model.Security#getBasicAuth <em>Basic Auth</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Basic Auth</em>'.
+	 * @see org.eclipse.fennec.openapi.model.Security#getBasicAuth()
+	 * @see #getSecurity()
+	 * @generated
+	 */
+	EAttribute getSecurity_BasicAuth();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.fennec.openapi.model.Security#getApiKey <em>Api Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Api Key</em>'.
+	 * @see org.eclipse.fennec.openapi.model.Security#getApiKey()
+	 * @see #getSecurity()
+	 * @generated
+	 */
+	EAttribute getSecurity_ApiKey();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.openapi.model.Method <em>Method</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2927,6 +3031,17 @@ public interface OpenApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EReference getSecuritySchemes_BasicAuth();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.fennec.openapi.model.SecuritySchemes#getApiKey <em>Api Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Api Key</em>'.
+	 * @see org.eclipse.fennec.openapi.model.SecuritySchemes#getApiKey()
+	 * @see #getSecuritySchemes()
+	 * @generated
+	 */
+	EReference getSecuritySchemes_ApiKey();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.openapi.model.BearerAuth <em>Bearer Auth</em>}'.
@@ -3474,6 +3589,49 @@ public interface OpenApiPackage extends org.eclipse.emf.ecore.EPackage {
 	EReference getExtension_Value();
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.openapi.model.ApiKey <em>Api Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Api Key</em>'.
+	 * @see org.eclipse.fennec.openapi.model.ApiKey
+	 * @generated
+	 */
+	EClass getApiKey();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.openapi.model.ApiKey#getType <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type</em>'.
+	 * @see org.eclipse.fennec.openapi.model.ApiKey#getType()
+	 * @see #getApiKey()
+	 * @generated
+	 */
+	EAttribute getApiKey_Type();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.openapi.model.ApiKey#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.eclipse.fennec.openapi.model.ApiKey#getName()
+	 * @see #getApiKey()
+	 * @generated
+	 */
+	EAttribute getApiKey_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.openapi.model.ApiKey#getIn <em>In</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>In</em>'.
+	 * @see org.eclipse.fennec.openapi.model.ApiKey#getIn()
+	 * @see #getApiKey()
+	 * @generated
+	 */
+	EAttribute getApiKey_In();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3861,6 +4019,22 @@ public interface OpenApiPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute SECURITY__BEARER_AUTH = eINSTANCE.getSecurity_BearerAuth();
 
 		/**
+		 * The meta object literal for the '<em><b>Basic Auth</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SECURITY__BASIC_AUTH = eINSTANCE.getSecurity_BasicAuth();
+
+		/**
+		 * The meta object literal for the '<em><b>Api Key</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SECURITY__API_KEY = eINSTANCE.getSecurity_ApiKey();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.openapi.model.impl.MethodImpl <em>Method</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -4127,6 +4301,14 @@ public interface OpenApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference SECURITY_SCHEMES__BASIC_AUTH = eINSTANCE.getSecuritySchemes_BasicAuth();
+
+		/**
+		 * The meta object literal for the '<em><b>Api Key</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SECURITY_SCHEMES__API_KEY = eINSTANCE.getSecuritySchemes_ApiKey();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.openapi.model.impl.BearerAuthImpl <em>Bearer Auth</em>}' class.
@@ -4561,6 +4743,40 @@ public interface OpenApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference EXTENSION__VALUE = eINSTANCE.getExtension_Value();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.openapi.model.impl.ApiKeyImpl <em>Api Key</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.openapi.model.impl.ApiKeyImpl
+		 * @see org.eclipse.fennec.openapi.model.impl.OpenApiPackageImpl#getApiKey()
+		 * @generated
+		 */
+		EClass API_KEY = eINSTANCE.getApiKey();
+
+		/**
+		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute API_KEY__TYPE = eINSTANCE.getApiKey_Type();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute API_KEY__NAME = eINSTANCE.getApiKey_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>In</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute API_KEY__IN = eINSTANCE.getApiKey_In();
 
 	}
 

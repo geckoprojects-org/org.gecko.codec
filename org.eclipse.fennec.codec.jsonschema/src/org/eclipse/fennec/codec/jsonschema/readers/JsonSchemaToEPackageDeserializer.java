@@ -61,8 +61,16 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 	private Map<String, EClassifier> cachedClassifiers = new HashMap<>();
 	private Map<Map<String, JsonNode>, EClass> parentClassMaps = new HashMap<>(); 
 	
-	private static final String SCHEMA_FEATURE = "schemas";
+	private String schemaFeature;
+	
+	public JsonSchemaToEPackageDeserializer() {
+		
+	}
 
+	public JsonSchemaToEPackageDeserializer(String schemaFeature) {
+		this.schemaFeature = schemaFeature;		
+	}
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.databind.ValueDeserializer#deserialize(tools.jackson.core.JsonParser, tools.jackson.databind.DeserializationContext)
@@ -70,13 +78,14 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 	@Override
 	public EPackage deserialize(JsonParser parser, DeserializationContext ctxt) {
 		JsonNode node = ctxt.readTree(parser);
-		JsonNode defNode = node.get(SCHEMA_FEATURE);
-		if(defNode == null) {
-			throw new IllegalArgumentException(String.format("Expecting document to have a \"%s\" node", SCHEMA_FEATURE));
-		} 
-		if(!defNode.isObject()) {
-			throw new IllegalArgumentException(String.format("Expecting \"%s\" node to be an object node", SCHEMA_FEATURE));
-		}
+		JsonNode defNode = node.get(schemaFeature);
+		if(defNode == null) defNode = node;
+//		if(defNode == null) {
+//			throw new IllegalArgumentException(String.format("Expecting document to have a \"%s\" node", SCHEMA_FEATURE));
+//		} 
+//		if(!defNode.isObject()) {
+//			throw new IllegalArgumentException(String.format("Expecting \"%s\" node to be an object node", SCHEMA_FEATURE));
+//		}
 		EPackage ePackage = ecoreFactory.createEPackage();
 		if(node.get("$schema") != null) {
 			addEAnnotation(ePackage, JSONSCHEMA_ANNOTATION_SOURCE, "schema", node.get("$schema").asString());
@@ -459,7 +468,7 @@ public class JsonSchemaToEPackageDeserializer extends ValueDeserializer<EPackage
 			//			We have a reference to another class
 			if(subNode.get("$ref") != null) {
 				refAnnotation += subNode.get("$ref").asString() + ",";
-				String refClassName = subNode.get("$ref").asString().replace("#/"+SCHEMA_FEATURE+"/", "");
+				String refClassName = subNode.get("$ref").asString().replace("#/"+schemaFeature+"/", "");
 				if(rootNode.get(refClassName) != null) {
 					refClassesNodes.put(refClassName, rootNode.get(refClassName));
 				} else {

@@ -13,15 +13,24 @@
  */
 package org.eclipse.fennec.codec.jsonschema.readers;
 
+import java.util.logging.Logger;
+
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
-import org.eclipse.fennec.codec.jackson.databind.CodecReadContext;
+import org.eclipse.fennec.codec.info.codecinfo.EClassCodecInfo;
+import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
+import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.jackson.databind.CodecTokenBuffer;
+import org.eclipse.fennec.codec.jackson.databind.EMFCodecContext;
 import org.eclipse.fennec.codec.jackson.databind.deser.CodecEObjectDeserializer;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
+import org.eclipse.fennec.codec.options.CodecResourceOptions;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.TokenStreamContext;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 
@@ -32,6 +41,8 @@ import tools.jackson.databind.ValueDeserializer;
  * @since Aug 8, 2025
  */
 public class SmartJsonSchemaDeserializer extends ValueDeserializer<EObject> {
+	
+	private static final Logger LOGGER = Logger.getLogger(SmartJsonSchemaDeserializer.class.getName());
     
     private final Class<?> targetClass;
     private final CodecModule module;
@@ -43,22 +54,86 @@ public class SmartJsonSchemaDeserializer extends ValueDeserializer<EObject> {
         this.codecModelInfoService = codecModelInfoService;
     }
 
+    private EClassCodecInfo extractModelInfo(EClass type) {
+		PackageCodecInfo codecModelInfo = module.getCodecModelInfo();
+		EClassCodecInfo eObjCodecInfo = null;
+		if(type != null) {
+			for(EClassCodecInfo eci : codecModelInfo.getEClassCodecInfo()) {
+				if(eci.getClassifier().equals(type)) {
+					eObjCodecInfo = eci;
+					break;
+				}
+			}
+		}
+//		we look in other packages
+		if(eObjCodecInfo == null) {
+			eObjCodecInfo = codecModelInfoService.getCodecInfoForEClass(type).orElse(null);
+		}
+		return eObjCodecInfo;
+	}
+    
+    private boolean isRootObject(TokenStreamContext codecContext) {
+		if(codecContext.getParent() == null) return true;
+		if(codecContext.inObject() && codecContext.getParent().inRoot()) return true; //if we are in a Resource then the root object has as parent the Resource ctxt
+		return false;
+	}
+    
     @Override
     public EObject deserialize(JsonParser parser, DeserializationContext ctxt) {
+    	
+    	if(parser.streamReadContext() instanceof EMFCodecContext codecCtxt) {
+    		
+    		if(isRootObject(parser.streamReadContext()) && codecCtxt.getCurrentFeature() == null) {
+    			if(ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT) != null) {
+    				EClass type  = (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT);
+    				EClassCodecInfo eObjCodecInfo = extractModelInfo(type);
+    				if(eObjCodecInfo.getCodecExtraProperties().containsKey("jsonschema")) {
+        				if(eObjCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) return new JsonSchemaToEPackageDeserializer(eObjCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).deserialize(parser, ctxt);
+        				return new JsonSchemaToEPackageDeserializer().deserialize(parser, ctxt);
+        			} else {
+        				return new CodecEObjectDeserializer(targetClass, module, codecModelInfoService).deserialize(parser, ctxt);
+        			}
+    			} else {
+    				throw new IllegalArgumentException("No CODEC_ROOT_OBJECT option found for root object! Something is wrong!");
+    			}
+    		}    		
+    		EStructuralFeature currentFeature = codecCtxt.getCurrentFeature();
+    		if(currentFeature != null) {
+    			EClassCodecInfo eObjCodecInfo = extractModelInfo(currentFeature.getEContainingClass());
+    			FeatureCodecInfo featureCodecInfo = eObjCodecInfo.getReferenceCodecInfo().stream().filter(r -> r.getFeature().getName().equals(currentFeature.getName())).findFirst().orElse(null);
+    			if(featureCodecInfo == null) {
+    				throw new IllegalArgumentException(String.format("Cannot retrieve FeatureCodecInfo for current EStructuralFeature %s. Something went wrong!", currentFeature.getName()));
+    			}
+    			if(featureCodecInfo.getCodecExtraProperties().containsKey("jsonschema")) {
+    				if(featureCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) return new JsonSchemaToEPackageDeserializer(featureCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).deserialize(parser, ctxt);
+    				return new JsonSchemaToEPackageDeserializer().deserialize(parser, ctxt);
+    			} else {
+    				return new CodecEObjectDeserializer(targetClass, module, codecModelInfoService).deserialize(parser, ctxt);
+    			}
+    		} else {    
+    			LOGGER.warning(String.format("No current feature is set but we are not in root object. Something is wrong, but we try to deserialize with CodecEObjectDeserializer"));
+    			return new CodecEObjectDeserializer(targetClass, module, codecModelInfoService).deserialize(parser, ctxt);
+    		}
+    		
+    	} else {
+    		throw new IllegalArgumentException(String.format("No EMFCodecContext. Something went wrong!"));
+    	}
+    	
+//    	parser.streamReadContext();
         // Use CodecTokenBuffer to read ahead while preserving the codec context
-//        CodecTokenBuffer buffer = CodecTokenBuffer.forBuffering(parser, ctxt);
-    	CodecTokenBuffer buffer = CodecTokenBuffer.forGeneration();
-        // Read the content into the buffer while detecting JSON Schema patterns
-        boolean isJsonSchema = readAndDetectJsonSchema(parser, buffer);
-        
-        // Create a new parser from the buffered content that preserves the codec context
-        JsonParser bufferedParser = buffer.asParser();
-        
-        if (isJsonSchema) {
-            return new JsonSchemaToEPackageDeserializer().deserialize(bufferedParser, ctxt);
-        } else {
-            return new CodecEObjectDeserializer(targetClass, module, codecModelInfoService).deserialize(bufferedParser, ctxt);
-        }
+//        CodecTokenBuffer buffer = CodecTokenBuffer.forBuffering(parser, ctxt);  //this preserves context but parses all the parser, also things already parsed
+//    	CodecTokenBuffer buffer = CodecTokenBuffer.forGeneration();
+//        // Read the content into the buffer while detecting JSON Schema patterns
+//        boolean isJsonSchema = readAndDetectJsonSchema(parser, buffer);
+//        
+//        // Create a new parser from the buffered content that preserves the codec context
+//        JsonParser bufferedParser = buffer.asParser();
+//        
+//        if (isJsonSchema) {
+//            return new JsonSchemaToEPackageDeserializer().deserialize(bufferedParser, ctxt);
+//        } else {
+//            return new CodecEObjectDeserializer(targetClass, module, codecModelInfoService).deserialize(bufferedParser, ctxt);
+//        }
     }
     
     private JsonToken getAndSaveNextToken(JsonParser jp, CodecTokenBuffer buffer) {

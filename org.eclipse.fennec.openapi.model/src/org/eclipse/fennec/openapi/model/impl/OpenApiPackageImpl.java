@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.eclipse.fennec.openapi.model.AdditionalProperties;
+import org.eclipse.fennec.openapi.model.ApiKey;
 import org.eclipse.fennec.openapi.model.ArrayConstraint;
 import org.eclipse.fennec.openapi.model.BasicAuth;
 import org.eclipse.fennec.openapi.model.BearerAuth;
@@ -311,6 +312,13 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 	 * @generated
 	 */
 	private EClass extensionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass apiKeyEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -811,6 +819,26 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getSecurity_BasicAuth() {
+		return (EAttribute)securityEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getSecurity_ApiKey() {
+		return (EAttribute)securityEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getMethod() {
 		return methodEClass;
 	}
@@ -1113,6 +1141,16 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 	@Override
 	public EReference getSecuritySchemes_BasicAuth() {
 		return (EReference)securitySchemesEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getSecuritySchemes_ApiKey() {
+		return (EReference)securitySchemesEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1621,6 +1659,46 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 	 * @generated
 	 */
 	@Override
+	public EClass getApiKey() {
+		return apiKeyEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getApiKey_Type() {
+		return (EAttribute)apiKeyEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getApiKey_Name() {
+		return (EAttribute)apiKeyEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getApiKey_In() {
+		return (EAttribute)apiKeyEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public OpenApiFactory getOpenApiFactory() {
 		return (OpenApiFactory)getEFactoryInstance();
 	}
@@ -1696,6 +1774,8 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 
 		securityEClass = createEClass(SECURITY);
 		createEAttribute(securityEClass, SECURITY__BEARER_AUTH);
+		createEAttribute(securityEClass, SECURITY__BASIC_AUTH);
+		createEAttribute(securityEClass, SECURITY__API_KEY);
 
 		methodEClass = createEClass(METHOD);
 		createEAttribute(methodEClass, METHOD__TAGS);
@@ -1737,6 +1817,7 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 		securitySchemesEClass = createEClass(SECURITY_SCHEMES);
 		createEReference(securitySchemesEClass, SECURITY_SCHEMES__BEARER_AUTH);
 		createEReference(securitySchemesEClass, SECURITY_SCHEMES__BASIC_AUTH);
+		createEReference(securitySchemesEClass, SECURITY_SCHEMES__API_KEY);
 
 		bearerAuthEClass = createEClass(BEARER_AUTH);
 		createEAttribute(bearerAuthEClass, BEARER_AUTH__TYPE);
@@ -1804,6 +1885,11 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 		extensionEClass = createEClass(EXTENSION);
 		createEAttribute(extensionEClass, EXTENSION__KEY);
 		createEReference(extensionEClass, EXTENSION__VALUE);
+
+		apiKeyEClass = createEClass(API_KEY);
+		createEAttribute(apiKeyEClass, API_KEY__TYPE);
+		createEAttribute(apiKeyEClass, API_KEY__NAME);
+		createEAttribute(apiKeyEClass, API_KEY__IN);
 	}
 
 	/**
@@ -1898,6 +1984,8 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 
 		initEClass(securityEClass, Security.class, "Security", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getSecurity_BearerAuth(), ecorePackage.getEString(), "bearerAuth", null, 0, -1, Security.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSecurity_BasicAuth(), ecorePackage.getEString(), "basicAuth", null, 0, -1, Security.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSecurity_ApiKey(), ecorePackage.getEString(), "apiKey", null, 0, -1, Security.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(methodEClass, Method.class, "Method", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getMethod_Tags(), ecorePackage.getEString(), "tags", null, 0, -1, Method.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1939,6 +2027,7 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 		initEClass(securitySchemesEClass, SecuritySchemes.class, "SecuritySchemes", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getSecuritySchemes_BearerAuth(), this.getBearerAuth(), null, "bearerAuth", null, 0, 1, SecuritySchemes.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getSecuritySchemes_BasicAuth(), this.getBasicAuth(), null, "basicAuth", null, 0, 1, SecuritySchemes.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getSecuritySchemes_ApiKey(), this.getApiKey(), null, "apiKey", null, 0, 1, SecuritySchemes.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(bearerAuthEClass, BearerAuth.class, "BearerAuth", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBearerAuth_Type(), ecorePackage.getEString(), "type", null, 0, 1, BearerAuth.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2007,12 +2096,21 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 		initEAttribute(getExtension_Key(), ecorePackage.getEString(), "key", null, 1, 1, Extension.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getExtension_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, Extension.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(apiKeyEClass, ApiKey.class, "ApiKey", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getApiKey_Type(), ecorePackage.getEString(), "type", null, 0, 1, ApiKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getApiKey_Name(), ecorePackage.getEString(), "name", null, 0, 1, ApiKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getApiKey_In(), ecorePackage.getEString(), "in", null, 0, 1, ApiKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		// Create resource
 		createResource(eNS_URI);
 
 		// Create annotations
 		// JsonProperty
 		createJsonPropertyAnnotations();
+		// codec.extras
+		createCodecAnnotations();
+		// http:///org/eclipse/emf/ecore/util/ExtendedMetaData
+		createExtendedMetaDataAnnotations();
 		// http://www.eclipse.org/emf/2002/GenModel
 		createGenModelAnnotations();
 	}
@@ -2026,10 +2124,72 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 	protected void createJsonPropertyAnnotations() {
 		String source = "JsonProperty";
 		addAnnotation
+		  (getSecurity_BearerAuth(),
+		   source,
+		   new String[] {
+			   "value", "OpenID/JWT"
+		   });
+		addAnnotation
+		  (getSecurity_BasicAuth(),
+		   source,
+		   new String[] {
+			   "value", "BASIC"
+		   });
+		addAnnotation
+		  (getSecurity_ApiKey(),
+		   source,
+		   new String[] {
+			   "value", "API_KEY"
+		   });
+		addAnnotation
+		  (getSecuritySchemes_BearerAuth(),
+		   source,
+		   new String[] {
+			   "value", "OpenID/JWT"
+		   });
+		addAnnotation
+		  (getSecuritySchemes_ApiKey(),
+		   source,
+		   new String[] {
+			   "value", "API_KEY"
+		   });
+		addAnnotation
 		  (getProperty_Ref(),
 		   source,
 		   new String[] {
 			   "value", "$ref"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>codec.extras</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createCodecAnnotations() {
+		String source = "codec.extras";
+		addAnnotation
+		  (getComponents_Schemas(),
+		   source,
+		   new String[] {
+			   "jsonschema", "true"
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>http:///org/eclipse/emf/ecore/util/ExtendedMetaData</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createExtendedMetaDataAnnotations() {
+		String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";
+		addAnnotation
+		  (getSecuritySchemes_BasicAuth(),
+		   source,
+		   new String[] {
+			   "name", "BASIC"
 		   });
 	}
 

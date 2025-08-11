@@ -362,6 +362,12 @@ public class CodecResource extends ResourceImpl {
 				}
 			});
 		}	
+		
+		if(options.containsKey(CodecModelInfoOptions.CODEC_EXTRAS)) {
+			Map<String, String> extras = (Map<String, String>) options.get(CodecModelInfoOptions.CODEC_EXTRAS);
+			codecInfo.getCodecExtraProperties().putAll(extras);
+		}
+		
 //		Update the TypeInfo part
 		updateCodecModelInfoFromOptions((TypedCodecInfo) codecInfo, options);
 		
@@ -376,6 +382,10 @@ public class CodecResource extends ResourceImpl {
 				else {
 //					Update the TypeInfo part
 					updateCodecModelInfoFromOptions(featureCodecInfo, opt);
+					if(opt.containsKey(CodecModelInfoOptions.CODEC_EXTRAS)) {
+						Map<String, String> extras = (Map<String, String>) opt.get(CodecModelInfoOptions.CODEC_EXTRAS);
+						featureCodecInfo.getCodecExtraProperties().putAll(extras);
+					}
 				}
 			});
 		}

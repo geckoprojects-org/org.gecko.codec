@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.fennec.openapi.model.ApiKey;
 import org.eclipse.fennec.openapi.model.BasicAuth;
 import org.eclipse.fennec.openapi.model.BearerAuth;
 import org.eclipse.fennec.openapi.model.OpenApiPackage;
@@ -26,6 +27,7 @@ import org.eclipse.fennec.openapi.model.SecuritySchemes;
  * <ul>
  *   <li>{@link org.eclipse.fennec.openapi.model.impl.SecuritySchemesImpl#getBearerAuth <em>Bearer Auth</em>}</li>
  *   <li>{@link org.eclipse.fennec.openapi.model.impl.SecuritySchemesImpl#getBasicAuth <em>Basic Auth</em>}</li>
+ *   <li>{@link org.eclipse.fennec.openapi.model.impl.SecuritySchemesImpl#getApiKey <em>Api Key</em>}</li>
  * </ul>
  *
  * @generated
@@ -50,6 +52,16 @@ public class SecuritySchemesImpl extends MinimalEObjectImpl.Container implements
 	 * @ordered
 	 */
 	protected BasicAuth basicAuth;
+
+	/**
+	 * The cached value of the '{@link #getApiKey() <em>Api Key</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getApiKey()
+	 * @generated
+	 * @ordered
+	 */
+	protected ApiKey apiKey;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -166,12 +178,59 @@ public class SecuritySchemesImpl extends MinimalEObjectImpl.Container implements
 	 * @generated
 	 */
 	@Override
+	public ApiKey getApiKey() {
+		return apiKey;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetApiKey(ApiKey newApiKey, NotificationChain msgs) {
+		ApiKey oldApiKey = apiKey;
+		apiKey = newApiKey;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, OpenApiPackage.SECURITY_SCHEMES__API_KEY, oldApiKey, newApiKey);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setApiKey(ApiKey newApiKey) {
+		if (newApiKey != apiKey) {
+			NotificationChain msgs = null;
+			if (apiKey != null)
+				msgs = ((InternalEObject)apiKey).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - OpenApiPackage.SECURITY_SCHEMES__API_KEY, null, msgs);
+			if (newApiKey != null)
+				msgs = ((InternalEObject)newApiKey).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - OpenApiPackage.SECURITY_SCHEMES__API_KEY, null, msgs);
+			msgs = basicSetApiKey(newApiKey, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OpenApiPackage.SECURITY_SCHEMES__API_KEY, newApiKey, newApiKey));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case OpenApiPackage.SECURITY_SCHEMES__BEARER_AUTH:
 				return basicSetBearerAuth(null, msgs);
 			case OpenApiPackage.SECURITY_SCHEMES__BASIC_AUTH:
 				return basicSetBasicAuth(null, msgs);
+			case OpenApiPackage.SECURITY_SCHEMES__API_KEY:
+				return basicSetApiKey(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -188,6 +247,8 @@ public class SecuritySchemesImpl extends MinimalEObjectImpl.Container implements
 				return getBearerAuth();
 			case OpenApiPackage.SECURITY_SCHEMES__BASIC_AUTH:
 				return getBasicAuth();
+			case OpenApiPackage.SECURITY_SCHEMES__API_KEY:
+				return getApiKey();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -205,6 +266,9 @@ public class SecuritySchemesImpl extends MinimalEObjectImpl.Container implements
 				return;
 			case OpenApiPackage.SECURITY_SCHEMES__BASIC_AUTH:
 				setBasicAuth((BasicAuth)newValue);
+				return;
+			case OpenApiPackage.SECURITY_SCHEMES__API_KEY:
+				setApiKey((ApiKey)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -224,6 +288,9 @@ public class SecuritySchemesImpl extends MinimalEObjectImpl.Container implements
 			case OpenApiPackage.SECURITY_SCHEMES__BASIC_AUTH:
 				setBasicAuth((BasicAuth)null);
 				return;
+			case OpenApiPackage.SECURITY_SCHEMES__API_KEY:
+				setApiKey((ApiKey)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -240,6 +307,8 @@ public class SecuritySchemesImpl extends MinimalEObjectImpl.Container implements
 				return bearerAuth != null;
 			case OpenApiPackage.SECURITY_SCHEMES__BASIC_AUTH:
 				return basicAuth != null;
+			case OpenApiPackage.SECURITY_SCHEMES__API_KEY:
+				return apiKey != null;
 		}
 		return super.eIsSet(featureID);
 	}
