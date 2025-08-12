@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -44,6 +45,7 @@ import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
+import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
@@ -76,15 +78,25 @@ public class EcowittTest {
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "ecowitt")
 	@Test
 	public void testFactoryConfigDisableJsonFactoryFeature(
-			@InjectService(timeout = 2000l) EcoWittResourceFactory ecowittRF) throws InterruptedException, IOException, ParseException {
+			@InjectService(cardinality = 0) ServiceAware<EcoWittResourceFactory> ecowittRFAware) {
 	
+		EcoWittResourceFactory ecowittRF = null;
+		try {
+			ecowittRF = ecowittRFAware.waitForService(5000l);
+		} catch (InterruptedException e) {
+			fail("Retrieven Ecowitt ResourceFactory failed with timeout after 5 secs", e);
+		}
 		assertNotNull(ecowittRF);
 		Resource resource = ecowittRF.createResource(URI.createURI("test.ecowitt"));
 		assertInstanceOf(EcoWittResource.class, resource);
 		Map<String, Object> properties = new HashMap<>();
 		properties.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EcoWittPackage.eINSTANCE.getEcoWittWeather());
 		properties.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.TRUE);
-		resource.load(new ByteArrayInputStream(DATA.getBytes()), properties);
+		try {
+			resource.load(new ByteArrayInputStream(DATA.getBytes()), properties);
+		} catch (IOException e) {
+			fail("Failed loading Ecowitt DATA", e);
+		}
 		assertFalse(resource.getContents().isEmpty());
 		EObject content = resource.getContents().get(0);
 		assertInstanceOf(EcoWittWeather.class, content);
@@ -98,8 +110,13 @@ public class EcowittTest {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		// IMPORTANT: Set the timezone to UTC
 		dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Date date = dateFormat.parse("2025-08-07 13:02:00");
-		assertEquals(date, weather.getDateUTC());
+		Date date;
+		try {
+			date = dateFormat.parse("2025-08-07 13:02:00");
+			assertEquals(date, weather.getDateUTC());
+		} catch (ParseException e) {
+			fail("Error parsing the date string", e);
+		}
 		assertEquals(10.563, weather.getRainYearly());
 		assertEquals(29.616, weather.getBarometerAbs());
 	}
