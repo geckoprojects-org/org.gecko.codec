@@ -58,4 +58,5 @@
 	org.gecko.emf.osgi.extender;version='[6.3.0,6.3.1)',\
 	org.osgi.service.coordinator;version='[1.0.2,1.0.3)',\
 	org.gecko.emf.osgi.component;version='[6.3.0,6.3.1)',\
-	com.fasterxml.jackson.core.jackson-annotations;version='[2.19.2,2.19.3)'
+	com.fasterxml.jackson.core.jackson-annotations;version='[2.19.2,2.19.3)',\
+	org.osgi.service.cm;version='[1.6.1,1.6.2)'
