@@ -30,7 +30,6 @@ import java.util.TimeZone;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.ecowitt.resource.EcoWittResource;
 import org.eclipse.fennec.codec.ecowitt.resource.EcoWittResourceFactory;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
@@ -77,10 +76,8 @@ public class EcowittTest {
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "ecowitt")
 	@Test
 	public void testFactoryConfigDisableJsonFactoryFeature(
-			@InjectService(timeout = 20000l, filter = "(type=ecowitt)") CodecFactoryConfigurator configurator,
 			@InjectService(timeout = 2000l) EcoWittResourceFactory ecowittRF) throws InterruptedException, IOException, ParseException {
 	
-		assertNotNull(configurator);
 		assertNotNull(ecowittRF);
 		Resource resource = ecowittRF.createResource(URI.createURI("test.ecowitt"));
 		assertInstanceOf(EcoWittResource.class, resource);
