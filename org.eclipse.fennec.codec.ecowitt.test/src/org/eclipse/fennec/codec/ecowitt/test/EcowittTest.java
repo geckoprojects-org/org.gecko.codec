@@ -33,10 +33,12 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.fennec.codec.ecowitt.resource.EcoWittResource;
 import org.eclipse.fennec.codec.ecowitt.resource.EcoWittResourceFactory;
+import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.ecowitt.model.ecowitt.EcoWittPackage;
 import org.eclipse.fennec.ecowitt.model.ecowitt.EcoWittWeather;
+import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,6 +61,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
  * 	https://github.com/osgi/osgi-test/wiki
  * Examples: https://github.com/osgi/osgi-test/tree/main/examples
  */
+@RequireEMF
 @ExtendWith(BundleContextExtension.class)
 @ExtendWith(ServiceExtension.class)
 @ExtendWith(ConfigurationExtension.class)
@@ -69,6 +72,11 @@ public class EcowittTest {
 	@BeforeEach
 	public void before(@InjectBundleContext BundleContext ctx) {
 		
+	}
+	
+	@Test
+	public void testCodecInfoCreation(@InjectService(timeout = 2000l) CodecModelInfo codecModelInfo) {
+		assertNotNull(codecModelInfo);
 	}
 	
 	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "ecowitt", properties = {
