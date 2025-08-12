@@ -8,8 +8,7 @@ Bundle-Description: Codec De-Serializer for EcoWitt Weatherstation Data
 	tools.jackson.core.jackson-core;version=latest,\
 	org.eclipse.fennec.ecowitt.model;version=snapshot,\
 	org.eclipse.fennec.codec;version=snapshot,\
-	org.eclipse.fennec.codec.info;version=project,\
+	org.eclipse.fennec.codec.info;version=snapshot,\
 	org.eclipse.fennec.codec.json;version=snapshot,\
 	org.eclipse.fennec.codec.constants;version=snapshot
 	
--dependson: org.eclipse.fennec.codec.info
