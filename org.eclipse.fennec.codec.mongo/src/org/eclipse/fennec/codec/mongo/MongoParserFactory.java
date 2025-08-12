@@ -36,4 +36,13 @@ public class MongoParserFactory implements CodecParserFactory<BsonReader, MongoC
 		return new MongoCodecParser(context, provider);
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.CodecParserFactory#createParser(tools.jackson.core.io.IOContext, java.lang.Object)
+	 */
+	@Override
+	public MongoCodecParser createParser(IOContext context, BsonReader input) {
+		throw new UnsupportedOperationException("MongoParser cannot be created out of an InputStream");
+	}
+
 }

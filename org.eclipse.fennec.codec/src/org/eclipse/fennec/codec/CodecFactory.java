@@ -11,6 +11,8 @@
  */
 package org.eclipse.fennec.codec;
 
+import static java.util.Objects.nonNull;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.InputStream;
@@ -50,68 +52,52 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 		this.parserFactory = parserFactory;
 	}
 
-//	/* 
-//	 * (non-Javadoc)
-//	 * @see com.fasterxml.jackson.core.JsonFactory#createGenerator(java.io.DataOutput)
-//	 */
-//	@Override
-//	public JsonGenerator _createGenerator(DataOutput out)  {
-//		return internalCreateGenerator(out);
-//	}
-
-	
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.core.TokenStreamFactory#createGenerator(java.io.OutputStream)
 	 */
 	@Override
 	public JsonGenerator createGenerator(OutputStream out)  {
+
 		return internalCreateGenerator(out, null);
 	}
 
-//	/* 
-//	 * (non-Javadoc)
-//	 * @see com.fasterxml.jackson.core.JsonFactory#_createUTF8Generator(java.io.OutputStream, com.fasterxml.jackson.core.io.IOContext)
-//	 */
-//	@Override
-//	protected JsonGenerator _createUTF8Generator(OutputStream out, IOContext ctxt)  {
-//		return internalCreateGenerator(out);
-//	}
-	
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.core.base.TextualTSFactory#createGenerator(tools.jackson.core.ObjectWriteContext, java.io.OutputStream, tools.jackson.core.JsonEncoding)
 	 */
 	@Override
 	public JsonGenerator createGenerator(ObjectWriteContext writeCtxt,
-            OutputStream out, JsonEncoding enc) {
-		return internalCreateGenerator(out, null);
+			OutputStream out, JsonEncoding enc) {
+		if (nonNull(genFactory)) {
+			return internalCreateGenerator(out, null);
+		} else {
+			return super.createGenerator(writeCtxt, out, enc);
+		}
 	}
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.core.json.JsonFactory#_createUTF8Generator(tools.jackson.core.ObjectWriteContext, tools.jackson.core.io.IOContext, java.io.OutputStream)
 	 */
 	@Override
-    public JsonGenerator _createUTF8Generator(ObjectWriteContext writeCtxt,
-            IOContext ioCtxt, OutputStream out) {
-	
-		return internalCreateGenerator(out, ioCtxt);
+	public JsonGenerator _createUTF8Generator(ObjectWriteContext writeCtxt,
+			IOContext ioCtxt, OutputStream out) {
+		if (nonNull(genFactory)) {
+			return internalCreateGenerator(out, ioCtxt);
+		} else {
+			return super._createUTF8Generator(writeCtxt, ioCtxt, out); 
+		}
 	}
 
-//	/* 
-//	 * (non-Javadoc)
-//	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.DataInput)
-//	 */
-//	@Override
-//	public JsonParser createParser(DataInput in)  {
-//		return internalCreateParser(in);
-//	}
-	
 	@Override
 	public JsonParser _createParser(ObjectReadContext readCtxt, IOContext ioCtxt,
-            DataInput input) {
-		return internalCreateParser(input, ioCtxt);
+			DataInput input) {
+		if (nonNull(parserFactory)) {
+			return internalCreateParser(input, ioCtxt);
+		} else {
+			return super.createParser(readCtxt, input);
+		}
 	}
 
 	/* 
@@ -120,7 +106,11 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	 */
 	@Override
 	public JsonParser createParser(URL url)  {
-		return internalCreateParser(url, null);
+		if (nonNull(parserFactory)) {
+			return internalCreateParser(url, null);
+		} else {
+			return super.createParser(ObjectReadContext.empty(), url);
+		}
 	}
 
 	/* 
@@ -129,7 +119,24 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 	 */
 	@Override
 	public JsonParser createParser(InputStream in) {
-		return internalCreateParser(in, null);
+		if (nonNull(parserFactory)) {
+			return internalCreateParser(in, null);
+		} else {
+			return super.createParser(ObjectReadContext.empty(), in);
+		}
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.InputStream)
+	 */
+	@Override
+	public JsonParser createParser(ObjectReadContext ctx, InputStream in) {
+		if (nonNull(parserFactory)) {
+			return internalCreateParser(in, null);
+		} else {
+			return super.createParser(ctx, in);
+		}
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -142,6 +149,13 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 						true);
 			}			
 			return parserFactory.createParser(ioCtxt, readerProvider);
+		} else if (in instanceof InputStream is) {
+			if(ioCtxt == null) {
+				ioCtxt = _createContext(
+						ContentReference.construct(false, is, ErrorReportConfiguration.defaults()),
+						true);
+			}		
+			return parserFactory.createParser(ioCtxt, (R)is);
 		} else {
 			throw new UnsupportedOperationException("The createParser call is only supported with a CodecReaderProvider as parameter.");
 		}
@@ -149,7 +163,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 
 	@SuppressWarnings("unchecked")
 	private G internalCreateGenerator(Object in, IOContext ioCtxt) {
-		
+
 		if(in instanceof CodecDataOutputAsStream doas) {
 			if(ioCtxt == null) {
 				ioCtxt = _createContext(
@@ -158,7 +172,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 			}
 			return (G) genFactory.createGenerator(doas.getCodecDataOutput(), ioCtxt);
 		}
-		
+
 		if (in instanceof CodecWriterProvider provider) {
 			if(ioCtxt == null) {
 				ioCtxt = _createContext(
@@ -170,7 +184,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 			throw new UnsupportedOperationException("The createGenerator call is only supported with a CodecWriterProvider as parameter.");
 		}
 	}
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.core.TokenStreamFactory#_createDataOutputWrapper(java.io.DataOutput)
