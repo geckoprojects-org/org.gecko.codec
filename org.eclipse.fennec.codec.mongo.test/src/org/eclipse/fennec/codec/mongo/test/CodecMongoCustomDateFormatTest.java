@@ -74,17 +74,13 @@ import com.mongodb.client.MongoCollection;
 		@Property(key = "client_id", value = "test"), @Property(key = "uri", value = "mongodb://localhost:27017") })
 @WithFactoryConfiguration(name = "mongoDatabase", location = "?", factoryPid = "MongoDatabaseProvider", properties = {
 		@Property(key = "alias", value = "TestDB"), @Property(key = "database", value = "test") })
-@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="mongo"),
-		@Property(key = "genFactory.target", value="(type=mongo)"), 
-		@Property(key = "parserFactory.target", value="(type=mongo)")
-})
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "codecFactoryConfigurator.target", value="(type=mongo)"),
 		@Property(key = "type", value="mongo")
 })
+@WithFactoryConfiguration(factoryPid = "MongoCodecFactoryConfigurator", location = "?", name = "test")
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="mongo")
+		@Property(key = "type", value = "mongo")
 })
 public class CodecMongoCustomDateFormatTest extends MongoEMFSetting {
 
@@ -128,7 +124,6 @@ public class CodecMongoCustomDateFormatTest extends MongoEMFSetting {
 		cleanDBCollection(bpCollection);
 		super.doAfter();		
 	}
-	
 	
 	@Test
 	public void testSaveCustomDateFormat() throws BundleException, InvalidSyntaxException, IOException, InterruptedException {

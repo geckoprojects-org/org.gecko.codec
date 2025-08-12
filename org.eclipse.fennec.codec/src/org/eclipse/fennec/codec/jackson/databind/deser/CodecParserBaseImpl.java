@@ -151,7 +151,7 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 			String name = doReadName();
 			_streamReadContext.setCurrentName(name);
 			_currToken = JsonToken.PROPERTY_NAME;
-			_nextToken = doGetNextToken();
+			//	Do not call	_nextToken = doGetNextToken(); The doReadName can be responsible to switch the state to value reading
 		} else if (isBeginDocument()) {
 			doBeginDocument();
 			_streamReadContext = _streamReadContext.createChildObjectContext(1, 0);

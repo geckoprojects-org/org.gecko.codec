@@ -149,6 +149,7 @@ public class EcoWittParser extends CodecParserBaseImpl {
 	@Override
 	public String doReadName() {
 		currentName = dataMap.keySet().iterator().next();
+		state = State.VALUE;
 		return currentName;
 	}
 

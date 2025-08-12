@@ -15,7 +15,6 @@ import org.bson.BsonWriter;
 import org.eclipse.fennec.codec.CodecDataOutput;
 import org.eclipse.fennec.codec.CodecGeneratorFactory;
 import org.eclipse.fennec.codec.CodecWriterProvider;
-import org.osgi.service.component.annotations.Component;
 
 import tools.jackson.core.io.IOContext;
 
@@ -24,7 +23,6 @@ import tools.jackson.core.io.IOContext;
  * @author grune
  * @since Apr 10, 2024
  */
-@Component(immediate=true, name = "MongoGeneratorFactory", service = CodecGeneratorFactory.class, property = {"type=mongo"})
 public class MongoGeneratorFactory implements CodecGeneratorFactory<BsonWriter, MongoCodecGenerator>{
 
 	

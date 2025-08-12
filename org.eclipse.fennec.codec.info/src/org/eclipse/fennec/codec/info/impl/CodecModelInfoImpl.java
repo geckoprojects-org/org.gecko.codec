@@ -52,7 +52,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 
-@Component(name = "CodecModelInfoService", service = CodecModelInfo.class)
+@Component(immediate = true, name = "CodecModelInfoService", service = CodecModelInfo.class)
 public class CodecModelInfoImpl extends HashMap<String, Object> implements CodecModelInfo {
 	
 	@Reference

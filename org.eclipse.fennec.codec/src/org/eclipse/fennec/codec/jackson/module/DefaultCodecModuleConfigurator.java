@@ -25,7 +25,7 @@ import org.osgi.service.component.annotations.ConfigurationPolicy;
  * @since Aug 15, 2024
  */
 @Component(name = "DefaultCodecModuleConfigurator", service = CodecModuleConfigurator.class, 
-	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
+	configurationPolicy = ConfigurationPolicy.REQUIRE, property = "type=json")
 public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 	
 	private CodecModule.Builder moduleBuilder;
