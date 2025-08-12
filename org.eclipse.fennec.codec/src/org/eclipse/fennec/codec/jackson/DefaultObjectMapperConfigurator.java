@@ -29,7 +29,7 @@ import org.osgi.service.component.annotations.Reference;
  * @since Aug 14, 2024
  */
 @Component(name = "DefaultObjectMapperConfigurator", service = ObjectMapperConfigurator.class, 
-configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
+configurationPolicy = ConfigurationPolicy.REQUIRE, property = "type=json")
 public class DefaultObjectMapperConfigurator implements ObjectMapperConfigurator {
 	
 	@Reference(target="(type=json)")

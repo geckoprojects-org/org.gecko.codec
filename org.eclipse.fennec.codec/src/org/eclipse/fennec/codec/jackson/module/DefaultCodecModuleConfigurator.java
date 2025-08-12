@@ -29,7 +29,7 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
  * @since Aug 15, 2024
  */
 @Component(name = "DefaultCodecModuleConfigurator", service = CodecModuleConfigurator.class, 
-	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
+	configurationPolicy = ConfigurationPolicy.REQUIRE, property = "type=json")
 public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 	
 	@Reference(cardinality = ReferenceCardinality.MANDATORY)

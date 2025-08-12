@@ -1,12 +1,12 @@
 -library: enable-emf
 
 -buildpath: \
-	org.eclipse.fennec.codec,\
-	org.mongodb.mongo-java-driver,\
-	org.gecko.mongo.osgi.api,\
-	org.gecko.emf.collections,\
-	org.eclipse.fennec.codec.info;version=latest,\
-	org.eclipse.fennec.codec.info.model;version=latest,\
-	tools.jackson.core.jackson-core,\
-	tools.jackson.core.jackson-databind,\
-	com.fasterxml.jackson.core.jackson-annotations
+	tools.jackson.core.jackson-core;version=latest,\
+	tools.jackson.core.jackson-databind;version=latest,\
+	com.fasterxml.jackson.core.jackson-annotations;version=latest,\
+	org.mongodb.mongo-java-driver;version=latest,\
+	org.gecko.mongo.osgi.api;version=latest,\
+	org.gecko.emf.collections;version=latest,\
+	org.eclipse.fennec.codec.info;version=snapshot,\
+	org.eclipse.fennec.codec.info.model;version=snapshot,\
+	org.eclipse.fennec.codec;version=snapshot
