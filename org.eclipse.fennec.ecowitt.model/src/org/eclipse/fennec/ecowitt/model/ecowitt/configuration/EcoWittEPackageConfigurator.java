@@ -68,6 +68,7 @@ public class EcoWittEPackageConfigurator implements EPackageConfigurator {
 		properties.put(EMFNamespaces.EMF_MODEL_NSURI, EcoWittPackage.eNS_URI);
 		properties.put(EMFNamespaces.EMF_MODEL_REGISTRATION, EMFNamespaces.MODEL_REGISTRATION_PROVIDED);
 		properties.put(EMFNamespaces.EMF_MODEL_FILE_EXT, "ecowitt");
+		properties.put(EMFNamespaces.EMF_MODEL_CONTENT_TYPE, "ecowitt#1.0");
 		properties.put(EMFNamespaces.EMF_MODEL_VERSION, "1.0");
 		return properties;
 	}
