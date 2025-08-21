@@ -7,7 +7,7 @@
     copyrightFields="false" operationReflection="true" importOrganizing="true" oSGiCompatible="true">
   <foreignModel>ecowitt.ecore</foreignModel>
   <genPackages prefix="EcoWitt" basePackage="org.eclipse.fennec.ecowitt.model" resource="XMI"
-      disposableProviderFactory="true" ecorePackage="ecowitt.ecore#/">
+      disposableProviderFactory="true" contentTypeIdentifier="ecowitt#1.0" ecorePackage="ecowitt.ecore#/">
     <genClasses ecoreClass="ecowitt.ecore#//EcoWittWeather">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ecowitt.ecore#//EcoWittWeather/passkey"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ecowitt.ecore#//EcoWittWeather/stationType"/>
