@@ -13,8 +13,7 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.eclipse.fennec.codec.ecowitt;version=snapshot,\
 	org.eclipse.fennec.ecowitt.model;version=snapshot,\
 	org.eclipse.fennec.codec.info;version=snapshot,\
-	org.eclipse.fennec.codec.info.model;version=snapshot,\
-	org.apache.commons.commons-csv
+	org.eclipse.fennec.codec.info.model;version=snapshot
 	
 Private-Package: org.eclipse.fennec.codec.ecowitt.test
 

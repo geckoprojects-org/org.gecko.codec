@@ -13,16 +13,25 @@
  */
 package org.eclipse.fennec.codec.csv.test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -62,44 +71,102 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @ExtendWith(ConfigurationExtension.class)
 //@ExtendWith(MockitoExtension.class)
 public class CSVTest {
-	
-//	@Mock
-//	TestInterface test;
-	
+
+	//	@Mock
+	//	TestInterface test;
+
 	@BeforeEach
 	public void before(@InjectBundleContext BundleContext ctx) {
-		
+
 	}
-	
+
 	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "csv", properties = {
 			@Property(key = "type", value="csv"),
 			@Property(key = "codecFactoryConfigurator.target", value="(type=csv)")
 	})
 	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "csv")
 	@Test
-	public void testCSV01(
-			@InjectService(cardinality = 0) ServiceAware<CSVResourceFactory> csvRFAware, @InjectService ResourceSet rs) {
-		
+	public void testCSVParser(
+			@InjectService(cardinality = 0) ServiceAware<CSVResourceFactory> ecowittRFAware, @InjectService ResourceSet rs) {
+
 		CSVResourceFactory csvRF = null;
 		try {
-			csvRF = csvRFAware.waitForService(5000l);
+			csvRF = ecowittRFAware.waitForService(5000l);
 		} catch (InterruptedException e) {
-			fail("Retrievial CSV ResourceFactory failed with timeout after 5 secs", e);
+			fail("Retrieven CSV ResourceFactory failed with timeout after 5 secs", e);
 		}
 		assertNotNull(csvRF);
-		Resource resource = csvRF.createResource(URI.createURI(System.getProperty("data")+"test01.csv"));
-		assertInstanceOf(CSVResource.class, resource);
+
 		Map<String, Object> properties = new HashMap<>();
 		properties.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EcoWittPackage.eINSTANCE.getEcoWittWeather());
 		properties.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.TRUE);
-		try {
-			resource.load(properties);
-		} catch (IOException e) {
-			fail("Failed loading Ecowitt DATA", e);
+
+		List<String> csvRowStringList = getCSVRowStringList(System.getProperty("data")+"test01.csv");
+		List<EcoWittWeather> results = new LinkedList<>();
+		int i = 0;
+		for(String row : csvRowStringList) {
+			Resource resource = csvRF.createResource(URI.createURI("test"+i+".csv"));
+			assertInstanceOf(CSVResource.class, resource);
+			try {
+				resource.load(new ByteArrayInputStream(row.getBytes()), properties);
+			} catch (IOException e) {
+				fail("Failed loading Ecowitt DATA", e);
+			}
+			assertFalse(resource.getContents().isEmpty());
+			EObject content = resource.getContents().get(0);
+			assertInstanceOf(EcoWittWeather.class, content);
+			EcoWittWeather weather = (EcoWittWeather) content;
+			results.add(weather);
 		}
-		assertFalse(resource.getContents().isEmpty());
-		EObject content = resource.getContents().get(0);
-		assertInstanceOf(EcoWittWeather.class, content);
+		assertThat(results).hasSize(3);
+		EcoWittWeather w1 = null, w2 = null, w3 = null;
+		for(EcoWittWeather w : results) {
+			if("aaa".equals(w.getPasskey())) {
+				w1 = w;
+			} else if("bbb".equals(w.getPasskey())) {
+				w2 = w;
+			} else if("ccc".equals(w.getPasskey())) {
+				w3 = w;
+			}
+		}
+		assertNotNull(w1);
+		assertNotNull(w2);
+		assertNotNull(w3);
+		assertThat(w1.getStationType()).isEqualTo("A");
+		assertThat(w2.getStationType()).isEqualTo("B");
+		assertThat(w3.getStationType()).isEqualTo("C");
+		assertThat(w1.getHuminityIndoor()).isEqualTo(10);
+		assertThat(w2.getHuminityIndoor()).isEqualTo(20);
+		assertThat(w3.getHuminityIndoor()).isEqualTo(30);
+
 	}
+
+	private List<String> getCSVRowStringList(String csvFilePath) {
+		try (Reader reader = new FileReader(csvFilePath);
+				CSVParser csvParser = CSVParser.parse(reader, CSVFormat.DEFAULT.builder().setHeader().get());) {
+			List<String> csvRowStringList = new LinkedList<>();
+			// The parser automatically uses the first row as headers.
+			// You can get the headers if needed:
+			Map<String, Integer> headers = csvParser.getHeaderMap();
+			System.out.println("CSV Headers: " + headers.keySet());
+
+			// Iterate over each record (row) in the CSV file
+			for (CSVRecord csvRecord : csvParser) {
+				StringBuilder sb = new StringBuilder();
+				// Iterate through the headers to get the key-value pairs
+				for (String header : headers.keySet()) {
+					// Use the header to get the corresponding value from the record
+					String value = csvRecord.get(header);
+					sb.append(header+"="+value+"&");
+				}
+				csvRowStringList.add(sb.toString().substring(0, sb.toString().length()-1));
+			}
+			return csvRowStringList;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Collections.emptyList();
+		}
+	}
+
 
 }

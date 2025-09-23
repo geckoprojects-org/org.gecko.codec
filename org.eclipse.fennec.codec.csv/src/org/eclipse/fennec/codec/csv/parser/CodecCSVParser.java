@@ -13,14 +13,10 @@
  */
 package org.eclipse.fennec.codec.csv.parser;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.eclipse.fennec.codec.CodecReaderProvider;
 import org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl;
 
@@ -46,51 +42,35 @@ public class CodecCSVParser extends CodecParserBaseImpl {
 	}
 	
 	private InputStream input;
-	private CSVParser csvParser;
-	private Iterator<CSVRecord> recordIterator;
-	private Map<String, Object> currentRowMap;
+	private Map<String, Object> dataMap;
 	private String currentName = null;
 	private State state = State.BEGIN;
-	private String[] headers;
+	
 
 	/**
 	 * Creates a new instance.
-	 * @param readCtxt
-	 * @param ctxt
-	 * @param streamReadFeatures
-	 * @param formatReadFeatures
+	 * 
+	 * @param context
+	 * @param reader
+	 * @param objectCodec 
 	 */
 	public CodecCSVParser(IOContext context, CodecReaderProvider<InputStream> reader) {
 		super(null, context, -1, -1, reader.getObjectCodec());
 		this.input = reader.getReader();
-		initializeCSVParser();
+		try {
+			this.dataMap = QueryStringParser.parse(input);
+		} catch (Exception e) {
+			this.dataMap = Collections.emptyMap();
+		}
 	}
 	
 	public CodecCSVParser(IOContext context, InputStream is) {
 		super(null, context, -1, -1);
 		this.input = is;
-		initializeCSVParser();
-	}
-	
-	private void initializeCSVParser() {
 		try {
-			this.csvParser = CSVStringParser.createParser(input);
-			this.recordIterator = csvParser.iterator();
-			this.headers = csvParser.getHeaderNames().toArray(new String[0]);
-			loadNextRow();
+			this.dataMap = QueryStringParser.parse(input);
 		} catch (Exception e) {
-			this.currentRowMap = Collections.emptyMap();
-			this.state = State.END;
-		}
-	}
-	
-	private void loadNextRow() {
-		if (recordIterator.hasNext()) {
-			CSVRecord record = recordIterator.next();
-			this.currentRowMap = CSVStringParser.parseRow(headers, record);
-		} else {
-			this.currentRowMap = Collections.emptyMap();
-			this.state = State.END;
+			this.dataMap = Collections.emptyMap();
 		}
 	}
 
@@ -100,36 +80,9 @@ public class CodecCSVParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public void closeInput() {
-		if (currentRowMap != null) {
-			currentRowMap.clear();
-		}
-		try {
-			if (csvParser != null) {
-				csvParser.close();
-			}
-		} catch (IOException e) {
-			// Ignore close errors
-		}
+		dataMap.clear();
 	}
 
-	/* 
-	 * (non-Javadoc)
-	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#isBeginDocument()
-	 */
-	@Override
-	public boolean isBeginDocument() {
-		return State.BEGIN.equals(state);
-	}
-
-	/* 
-	 * (non-Javadoc)
-	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doBeginDocument()
-	 */
-	@Override
-	public void doBeginDocument() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	/* 
 	 * (non-Javadoc)
@@ -140,15 +93,16 @@ public class CodecCSVParser extends CodecParserBaseImpl {
 		return State.END.equals(state);
 	}
 
+
 	/* 
 	 * (non-Javadoc)
-	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doEndDocument()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#isBeginDocument()
 	 */
 	@Override
-	public void doEndDocument() {
-		// TODO Auto-generated method stub
-		
+	public boolean isBeginDocument() {
+		return State.BEGIN.equals(state);
 	}
+
 
 	/* 
 	 * (non-Javadoc)
@@ -159,15 +113,16 @@ public class CodecCSVParser extends CodecParserBaseImpl {
 		return false;
 	}
 
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doBeginArray()
 	 */
 	@Override
 	public void doBeginArray() {
-		// TODO Auto-generated method stub
-		
 	}
+
+
 
 	/* 
 	 * (non-Javadoc)
@@ -175,32 +130,38 @@ public class CodecCSVParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public void doEndArray() {
-		// TODO Auto-generated method stub
-		
 	}
+
 
 	/* 
 	 * (non-Javadoc)
-	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doGetNextToken()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doEndDocument()
 	 */
 	@Override
-	public JsonToken doGetNextToken() {
-		switch (state) {
-		case BEGIN:
-			state = State.NAME;
-			break;
-		case NAME:
-			state = State.VALUE;
-			break;
-		case VALUE:			
-			state = currentRowMap.isEmpty() ? State.END : State.NAME;
-			break;
-		case END:
-			state = State.END;
-			break;
-		}
-		return doGetCurrentToken();
+	public void doEndDocument() {
 	}
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doReadName()
+	 */
+	@Override
+	public String doReadName() {
+		currentName = dataMap.keySet().iterator().next();
+		state = State.VALUE;
+		return currentName;
+	}
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doBeginDocument()
+	 */
+	@Override
+	public void doBeginDocument() {
+	}
+
 
 	/* 
 	 * (non-Javadoc)
@@ -224,19 +185,30 @@ public class CodecCSVParser extends CodecParserBaseImpl {
 	};
 	}
 
+
 	/* 
 	 * (non-Javadoc)
-	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doReadName()
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#doGetNextToken()
 	 */
 	@Override
-	public String doReadName() {
-		if (!currentRowMap.isEmpty()) {
-			currentName = currentRowMap.keySet().iterator().next();
+	public JsonToken doGetNextToken() {
+		switch (state) {
+		case BEGIN:
+			state = State.NAME;
+			break;
+		case NAME:
 			state = State.VALUE;
-			return currentName;
+			break;
+		case VALUE:
+			state = dataMap.isEmpty() ? State.END : State.NAME;
+			break;
+		case END:
+			state = State.END;
+			break;
 		}
-		return null;
+		return doGetCurrentToken();
 	}
+
 
 	/* 
 	 * (non-Javadoc)
@@ -246,40 +218,33 @@ public class CodecCSVParser extends CodecParserBaseImpl {
 	public Object doGetCurrentValue() {
 		return getCurrentValue(currentName);
 	}
-	
+
+
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#canReadObjectId()
+	 */
+	@Override
+	public boolean canReadObjectId() {
+		return false;
+	}
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.JsonParser#getObjectId()
+	 */
+	@Override
+	public Object getObjectId()  {
+		return currentValue();
+	}
+
 	private Object getCurrentValue(String name) {
-		return currentRowMap.remove(name);
+		return dataMap.remove(name);
 	}
-
-	/* 
-	 * (non-Javadoc)
-	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#getStringValueObject()
-	 */
-	@Override
-	public Object getStringValueObject() {
-		return doGetCurrentValue();
-	}
-
-	/* 
-	 * (non-Javadoc)
-	 * @see tools.jackson.core.base.ParserBase#_parseNumericValue(int)
-	 */
-	@Override
-	protected void _parseNumericValue(int expType) throws JacksonException, InputCoercionException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* 
-	 * (non-Javadoc)
-	 * @see tools.jackson.core.base.ParserBase#_parseIntValue()
-	 */
-	@Override
-	protected int _parseIntValue() throws JacksonException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.core.JsonParser#version()
@@ -289,5 +254,33 @@ public class CodecCSVParser extends CodecParserBaseImpl {
 		return VersionUtil.parseVersion(
 				"1.0.0-SNAPSHOT", "org.eclipse.fennec.codec", "codec-csv");
 	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl#getStringValueObject()
+	 */
+	@Override
+	public Object getStringValueObject() {
+		return null;
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.base.ParserBase#_parseNumericValue(int)
+	 */
+	@Override
+	protected void _parseNumericValue(int expType) throws JacksonException, InputCoercionException {
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.base.ParserBase#_parseIntValue()
+	 */
+	@Override
+	protected int _parseIntValue() throws JacksonException {
+		return 0;
+	}
+
+
 
 }
