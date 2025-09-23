@@ -10,13 +10,13 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	tools.jackson.core.jackson-core;version=latest,\
 	org.eclipse.fennec.codec.constants;version=snapshot,\
 	org.eclipse.fennec.codec;version=snapshot,\
-	org.eclipse.fennec.codec.ecowitt;version=snapshot,\
-	org.eclipse.fennec.ecowitt.model;version=snapshot,\
+	org.eclipse.fennec.codec.csv;version=snapshot,\
 	org.eclipse.fennec.codec.info;version=snapshot,\
 	org.eclipse.fennec.codec.info.model;version=snapshot,\
+	org.eclipse.fennec.ecowitt.model;version=snapshot,\
 	org.apache.commons.commons-csv
 	
-Private-Package: org.eclipse.fennec.codec.ecowitt.test
+Private-Package: org.eclipse.fennec.codec.csv.test
 
 Bundle-Version: 1.0.0.SNAPSHOT
 
