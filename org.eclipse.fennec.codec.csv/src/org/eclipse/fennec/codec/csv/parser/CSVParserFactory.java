@@ -17,7 +17,6 @@ import java.io.InputStream;
 
 import org.eclipse.fennec.codec.CodecParserFactory;
 import org.eclipse.fennec.codec.CodecReaderProvider;
-import org.eclipse.fennec.codec.ecowitt.parser.EcoWittParser;
 
 import tools.jackson.core.io.IOContext;
 
@@ -26,15 +25,15 @@ import tools.jackson.core.io.IOContext;
  * @author ilenia
  * @since Sep 22, 2025
  */
-public class CSVParserFactory implements CodecParserFactory<InputStream, CSVParser>{
+public class CSVParserFactory implements CodecParserFactory<InputStream, CodecCSVParser>{
 
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.CodecParserFactory#createParser(tools.jackson.core.io.IOContext, org.eclipse.fennec.codec.CodecReaderProvider)
 	 */
 	@Override
-	public CSVParser createParser(IOContext context, CodecReaderProvider<InputStream> provider) {
-		return new CSVParser(context, provider);
+	public CodecCSVParser createParser(IOContext context, CodecReaderProvider<InputStream> provider) {
+		return new CodecCSVParser(context, provider);
 	}
 
 	/* 
@@ -42,9 +41,8 @@ public class CSVParserFactory implements CodecParserFactory<InputStream, CSVPars
 	 * @see org.eclipse.fennec.codec.CodecParserFactory#createParser(tools.jackson.core.io.IOContext, java.lang.Object)
 	 */
 	@Override
-	public CSVParser createParser(IOContext context, InputStream input) {
-		// TODO Auto-generated method stub
-		return null;
+	public CodecCSVParser createParser(IOContext context, InputStream input) {
+		return new CodecCSVParser(context, input);
 	}
 
 }

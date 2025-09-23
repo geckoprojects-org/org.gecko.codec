@@ -10,4 +10,5 @@ Bundle-Description: Codec De-Serializer for CSV Data
 	org.eclipse.fennec.codec;version=snapshot,\
 	org.eclipse.fennec.codec.info;version=snapshot,\
 	org.eclipse.fennec.codec.json;version=snapshot,\
-	org.eclipse.fennec.codec.constants;version=snapshot
+	org.eclipse.fennec.codec.constants;version=snapshot,\
+	org.apache.commons.commons-csv

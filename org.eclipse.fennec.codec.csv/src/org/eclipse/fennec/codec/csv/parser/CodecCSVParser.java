@@ -13,28 +13,30 @@
  */
 package org.eclipse.fennec.codec.csv.parser;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.eclipse.fennec.codec.CodecReaderProvider;
-import org.eclipse.fennec.codec.ecowitt.parser.QueryStringParser;
-import org.eclipse.fennec.codec.ecowitt.parser.EcoWittParser.State;
 import org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonToken;
-import tools.jackson.core.ObjectReadContext;
 import tools.jackson.core.Version;
 import tools.jackson.core.exc.InputCoercionException;
 import tools.jackson.core.io.IOContext;
+import tools.jackson.core.util.VersionUtil;
 
 /**
  * 
  * @author ilenia
  * @since Sep 22, 2025
  */
-public class CSVParser extends CodecParserBaseImpl {
+public class CodecCSVParser extends CodecParserBaseImpl {
 	
 	private enum State {
 		BEGIN,
@@ -44,9 +46,12 @@ public class CSVParser extends CodecParserBaseImpl {
 	}
 	
 	private InputStream input;
-	private Map<String, Object> dataMap;
+	private CSVParser csvParser;
+	private Iterator<CSVRecord> recordIterator;
+	private Map<String, Object> currentRowMap;
 	private String currentName = null;
 	private State state = State.BEGIN;
+	private String[] headers;
 
 	/**
 	 * Creates a new instance.
@@ -55,23 +60,37 @@ public class CSVParser extends CodecParserBaseImpl {
 	 * @param streamReadFeatures
 	 * @param formatReadFeatures
 	 */
-	public CSVParser(IOContext context, CodecReaderProvider<InputStream> reader) {
+	public CodecCSVParser(IOContext context, CodecReaderProvider<InputStream> reader) {
 		super(null, context, -1, -1, reader.getObjectCodec());
 		this.input = reader.getReader();
+		initializeCSVParser();
+	}
+	
+	public CodecCSVParser(IOContext context, InputStream is) {
+		super(null, context, -1, -1);
+		this.input = is;
+		initializeCSVParser();
+	}
+	
+	private void initializeCSVParser() {
 		try {
-			this.dataMap = QueryStringParser.parse(input);
+			this.csvParser = CSVStringParser.createParser(input);
+			this.recordIterator = csvParser.iterator();
+			this.headers = csvParser.getHeaderNames().toArray(new String[0]);
+			loadNextRow();
 		} catch (Exception e) {
-			this.dataMap = Collections.emptyMap();
+			this.currentRowMap = Collections.emptyMap();
+			this.state = State.END;
 		}
 	}
 	
-	public CSVParser(IOContext context, InputStream is) {
-		super(null, context, -1, -1);
-		this.input = is;
-		try {
-			this.dataMap = QueryStringParser.parse(input);
-		} catch (Exception e) {
-			this.dataMap = Collections.emptyMap();
+	private void loadNextRow() {
+		if (recordIterator.hasNext()) {
+			CSVRecord record = recordIterator.next();
+			this.currentRowMap = CSVStringParser.parseRow(headers, record);
+		} else {
+			this.currentRowMap = Collections.emptyMap();
+			this.state = State.END;
 		}
 	}
 
@@ -81,8 +100,16 @@ public class CSVParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public void closeInput() {
-		dataMap.clear();
-		
+		if (currentRowMap != null) {
+			currentRowMap.clear();
+		}
+		try {
+			if (csvParser != null) {
+				csvParser.close();
+			}
+		} catch (IOException e) {
+			// Ignore close errors
+		}
 	}
 
 	/* 
@@ -129,7 +156,6 @@ public class CSVParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public boolean isBeginArray() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -166,8 +192,8 @@ public class CSVParser extends CodecParserBaseImpl {
 		case NAME:
 			state = State.VALUE;
 			break;
-		case VALUE:
-			state = dataMap.isEmpty() ? State.END : State.NAME;
+		case VALUE:			
+			state = currentRowMap.isEmpty() ? State.END : State.NAME;
 			break;
 		case END:
 			state = State.END;
@@ -204,9 +230,12 @@ public class CSVParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public String doReadName() {
-		currentName = dataMap.keySet().iterator().next();
-		state = State.VALUE;
-		return currentName;
+		if (!currentRowMap.isEmpty()) {
+			currentName = currentRowMap.keySet().iterator().next();
+			state = State.VALUE;
+			return currentName;
+		}
+		return null;
 	}
 
 	/* 
@@ -215,8 +244,11 @@ public class CSVParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public Object doGetCurrentValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return getCurrentValue(currentName);
+	}
+	
+	private Object getCurrentValue(String name) {
+		return currentRowMap.remove(name);
 	}
 
 	/* 
@@ -225,8 +257,7 @@ public class CSVParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public Object getStringValueObject() {
-		// TODO Auto-generated method stub
-		return null;
+		return doGetCurrentValue();
 	}
 
 	/* 
@@ -255,8 +286,8 @@ public class CSVParser extends CodecParserBaseImpl {
 	 */
 	@Override
 	public Version version() {
-		// TODO Auto-generated method stub
-		return null;
+		return VersionUtil.parseVersion(
+				"1.0.0-SNAPSHOT", "org.eclipse.fennec.codec", "codec-csv");
 	}
 
 }
