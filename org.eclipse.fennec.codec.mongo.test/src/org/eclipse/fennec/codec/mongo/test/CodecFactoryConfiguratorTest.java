@@ -56,15 +56,12 @@ import tools.jackson.core.json.JsonFactory;
 public class CodecFactoryConfiguratorTest {
 
 	
-	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="mongo"),
-			@Property(key = "genFactory.target", value="(type=mongo)"), 
-			@Property(key = "parserFactory.target", value="(type=mongo)"),
+	@WithFactoryConfiguration(factoryPid = "MongoCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "disableFeatures", value={"INTERN_PROPERTY_NAMES", "TokenStreamFactory.Feature.CANONICALIZE_PROPERTY_NAMES", 
 					"FAIL_ON_SYMBOL_HASH_OVERFLOW","CHARSET_DETECTION"}, type = Type.Array)
 	})
 	@Test
-	public void testFactoryConfigDisableJsonFactoryFeature(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+	public void testFactoryConfigDisableJsonFactoryFeature(@InjectService(timeout = 2000l, filter = "(type=mongo)") CodecFactoryConfigurator configurator
 			) throws InterruptedException, IOException {
 	
 		assertNotNull(configurator);
@@ -79,15 +76,12 @@ public class CodecFactoryConfiguratorTest {
 	}
 	
 	
-	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="mongo"),
-			@Property(key = "genFactory.target", value="(type=mongo)"), 
-			@Property(key = "parserFactory.target", value="(type=mongo)"),
+	@WithFactoryConfiguration(factoryPid = "MongoCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "enableFeatures", value={"WRITE_BIGDECIMAL_AS_PLAIN", "StreamWriteFeature.IGNORE_UNKNOWN", 
 					"StreamWriteFeature.STRICT_DUPLICATE_DETECTION", "StreamWriteFeature.USE_FAST_DOUBLE_WRITER"}, type = Type.Array)
 	})
 	@Test
-	public void testFactoryConfigEnableStreamWrite(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+	public void testFactoryConfigEnableStreamWrite(@InjectService(timeout = 2000l, filter = "(type=mongo)") CodecFactoryConfigurator configurator
 			) throws InterruptedException, IOException {
 	
 		assertNotNull(configurator);
@@ -101,15 +95,12 @@ public class CodecFactoryConfiguratorTest {
 	
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="mongo"),
-			@Property(key = "genFactory.target", value="(type=mongo)"), 
-			@Property(key = "parserFactory.target", value="(type=mongo)"),
+	@WithFactoryConfiguration(factoryPid = "MongoCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "disableFeatures", value={"AUTO_CLOSE_TARGET", "StreamWriteFeature.AUTO_CLOSE_CONTENT", 
 					"StreamWriteFeature.FLUSH_PASSED_TO_STREAM"}, type = Type.Array)
 	})
 	@Test
-	public void testFactoryConfigDisableStreamWrite(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+	public void testFactoryConfigDisableStreamWrite(@InjectService(timeout = 2000l, filter = "(type=mongo)") CodecFactoryConfigurator configurator
 			) throws InterruptedException, IOException {
 	
 		assertNotNull(configurator);
@@ -122,15 +113,12 @@ public class CodecFactoryConfiguratorTest {
 		assertFalse(codecFactory.isEnabled(StreamWriteFeature.FLUSH_PASSED_TO_STREAM));	
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="mongo"),
-			@Property(key = "genFactory.target", value="(type=mongo)"), 
-			@Property(key = "parserFactory.target", value="(type=mongo)"),
+	@WithFactoryConfiguration(factoryPid = "MongoCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "enableFeatures", value={"STRICT_DUPLICATE_DETECTION", "IGNORE_UNDEFINED", 
 					"INCLUDE_SOURCE_IN_LOCATION", "USE_FAST_DOUBLE_PARSER", "USE_FAST_BIG_NUMBER_PARSER"}, type = Type.Array)
 	})
 	@Test
-	public void testFactoryConfigEnableStreamRead(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+	public void testFactoryConfigEnableStreamRead(@InjectService(timeout = 2000l, filter = "(type=mongo)") CodecFactoryConfigurator configurator
 			) throws InterruptedException, IOException {
 	
 		assertNotNull(configurator);
@@ -145,14 +133,11 @@ public class CodecFactoryConfiguratorTest {
 		assertTrue(codecFactory.isEnabled(StreamReadFeature.USE_FAST_DOUBLE_PARSER));	
 	}
 	
-	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-			@Property(key = "type", value="mongo"),
-			@Property(key = "genFactory.target", value="(type=mongo)"), 
-			@Property(key = "parserFactory.target", value="(type=mongo)"),
+	@WithFactoryConfiguration(factoryPid = "MongoCodecFactoryConfigurator", location = "?", name = "test", properties = {
 			@Property(key = "disableFeatures", value={"AUTO_CLOSE_SOURCE"}, type = Type.Array)
 	})
 	@Test
-	public void testFactoryConfigDisableStreamRead(@InjectService(timeout = 2000l) CodecFactoryConfigurator configurator
+	public void testFactoryConfigDisableStreamRead(@InjectService(timeout = 2000l, filter = "(type=mongo)") CodecFactoryConfigurator configurator
 			) throws InterruptedException, IOException {
 	
 		assertNotNull(configurator);

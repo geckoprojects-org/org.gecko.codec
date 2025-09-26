@@ -15,8 +15,8 @@ package org.eclipse.fennec.codec.mongo;
 
 import java.math.BigDecimal;
 
+import org.bson.AbstractBsonReader;
 import org.bson.BsonBinary;
-import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.eclipse.fennec.codec.CodecReaderProvider;
 import org.eclipse.fennec.codec.jackson.databind.deser.CodecParserBaseImpl;
@@ -37,7 +37,7 @@ import tools.jackson.core.util.VersionUtil;
  */
 public class MongoCodecParser extends CodecParserBaseImpl {
 
-	private BsonReader reader;
+	private AbstractBsonReader reader;
 
 	/**
 	 * Creates a new instance.
@@ -46,7 +46,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 * @param reader
 	 * @param objectCodec 
 	 */
-	public MongoCodecParser(IOContext context, CodecReaderProvider<BsonReader> reader) {
+	public MongoCodecParser(IOContext context, CodecReaderProvider<AbstractBsonReader> reader) {
 		super(null, context, -1, -1, reader.getObjectCodec());
 		this.reader = reader.getReader();
 	}
@@ -58,7 +58,7 @@ public class MongoCodecParser extends CodecParserBaseImpl {
 	 * @param reader
 	 * @param objectCodec 
 	 */
-	public MongoCodecParser(IOContext context, BsonReader reader, TreeCodec objectCodec) {
+	public MongoCodecParser(IOContext context, AbstractBsonReader reader, TreeCodec objectCodec) {
 		super(null, context, -1, -1, objectCodec);
 		this.reader = reader;
 	}

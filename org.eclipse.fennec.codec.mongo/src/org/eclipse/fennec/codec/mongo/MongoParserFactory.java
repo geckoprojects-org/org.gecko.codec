@@ -11,10 +11,9 @@
  */
 package org.eclipse.fennec.codec.mongo;
 
-import org.bson.BsonReader;
+import org.bson.AbstractBsonReader;
 import org.eclipse.fennec.codec.CodecParserFactory;
 import org.eclipse.fennec.codec.CodecReaderProvider;
-import org.osgi.service.component.annotations.Component;
 
 import tools.jackson.core.io.IOContext;
 
@@ -23,8 +22,7 @@ import tools.jackson.core.io.IOContext;
  * @author grune
  * @since Apr 10, 2024
  */
-@Component(immediate=true, name = "MongoParserFactory", service = CodecParserFactory.class, property = {"type=mongo"})
-public class MongoParserFactory implements CodecParserFactory<BsonReader, MongoCodecParser>{
+public class MongoParserFactory implements CodecParserFactory<AbstractBsonReader, MongoCodecParser>{
 
 	
 	/* 
@@ -32,8 +30,17 @@ public class MongoParserFactory implements CodecParserFactory<BsonReader, MongoC
 	 * @see org.eclipse.fennec.codec.CodecParserFactory#createParser(tools.jackson.core.io.IOContext, org.eclipse.fennec.codec.CodecReaderProvider)
 	 */
 	@Override
-	public MongoCodecParser createParser(IOContext context, CodecReaderProvider<BsonReader> provider) {
+	public MongoCodecParser createParser(IOContext context, CodecReaderProvider<AbstractBsonReader> provider) {
 		return new MongoCodecParser(context, provider);
+	}
+
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.CodecParserFactory#createParser(tools.jackson.core.io.IOContext, java.lang.Object)
+	 */
+	@Override
+	public MongoCodecParser createParser(IOContext context, AbstractBsonReader input) {
+		throw new UnsupportedOperationException("MongoParser cannot be created out of an InputStream");
 	}
 
 }

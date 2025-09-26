@@ -22,12 +22,10 @@ import tools.jackson.core.Base64Variant;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.ObjectReadContext;
-import tools.jackson.core.StreamReadFeature;
 import tools.jackson.core.TokenStreamLocation;
 import tools.jackson.core.TreeCodec;
 import tools.jackson.core.base.ParserBase;
 import tools.jackson.core.io.IOContext;
-import tools.jackson.core.json.DupDetector;
 
 /**
  * This is the default basic impl of the Parser. 
@@ -48,8 +46,8 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 
 	protected CodecParserBaseImpl(ObjectReadContext readCtxt, IOContext ctxt, int streamReadFeatures, int formatReadFeatures) {
 		super(readCtxt, ctxt, streamReadFeatures);
-		DupDetector dups = StreamReadFeature.STRICT_DUPLICATE_DETECTION.enabledIn(streamReadFeatures)
-				? DupDetector.rootDetector(this) : null;
+//		DupDetector dups = StreamReadFeature.STRICT_DUPLICATE_DETECTION.enabledIn(streamReadFeatures)
+//				? DupDetector.rootDetector(this) : null;
 		_streamReadContext = CodecReadContext.createRootContext();	     
 	}
 	
@@ -143,7 +141,9 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 				doEndDocument();
 				_currToken = JsonToken.END_OBJECT;
 			}
-			_streamReadContext = _streamReadContext.clearAndGetParent();
+			if (!_streamReadContext.inRoot()) {
+				_streamReadContext =  _streamReadContext.clearAndGetParent();
+			}
 			if(!_streamReadContext.inRoot()) {
 				_nextToken = doGetNextToken();
 			}
@@ -151,6 +151,7 @@ public abstract class CodecParserBaseImpl extends ParserBase {
 			String name = doReadName();
 			_streamReadContext.setCurrentName(name);
 			_currToken = JsonToken.PROPERTY_NAME;
+			//	Do not call	_nextToken = doGetNextToken(); The doReadName can be responsible to switch the state to value reading
 		} else if (isBeginDocument()) {
 			doBeginDocument();
 			_streamReadContext = _streamReadContext.createChildObjectContext(1, 0);

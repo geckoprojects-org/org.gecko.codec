@@ -24,7 +24,7 @@ import org.gecko.mongo.osgi.MongoDatabaseProvider;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-@Component(name= "MongoRF", service = Resource.Factory.class, property = { EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo",
+@Component(immediate = true, name= "MongoRF", service = Resource.Factory.class, property = { EMFNamespaces.EMF_CONFIGURATOR_NAME + "=mongo",
 		EMFNamespaces.EMF_MODEL_PROTOCOL + "=mongodb" })
 public class MongoResourceFactory extends ResourceFactoryImpl {
 	
@@ -39,7 +39,6 @@ public class MongoResourceFactory extends ResourceFactoryImpl {
 	
 	@Reference(target="(type=mongo)")
 	private CodecModuleConfigurator codecModuleConfigurator;
-	
 	
 	@Override
 	public Resource createResource(URI uri) {

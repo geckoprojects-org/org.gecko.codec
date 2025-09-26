@@ -22,4 +22,6 @@ import tools.jackson.core.io.IOContext;
  */
 public interface CodecParserFactory<R, P extends JsonParser> {
 	P createParser(IOContext context, CodecReaderProvider<R> provider);
+	
+	P createParser(IOContext context, R input);
 }

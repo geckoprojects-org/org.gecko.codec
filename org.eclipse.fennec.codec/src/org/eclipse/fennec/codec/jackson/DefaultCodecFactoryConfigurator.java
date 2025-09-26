@@ -14,25 +14,17 @@
 package org.eclipse.fennec.codec.jackson;
 
 import java.util.Map;
-import java.util.logging.Logger;
 
-import org.eclipse.fennec.codec.CodecFactory;
 import org.eclipse.fennec.codec.CodecGeneratorFactory;
 import org.eclipse.fennec.codec.CodecParserFactory;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
+import org.eclipse.fennec.codec.jackson.configurator.AbstractCodecFactoryConfigurator;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
-
-import tools.jackson.core.StreamReadFeature;
-import tools.jackson.core.StreamWriteFeature;
-import tools.jackson.core.TokenStreamFactory;
-import tools.jackson.core.json.JsonFactory;
-import tools.jackson.core.json.JsonFactoryBuilder;
-import tools.jackson.core.json.JsonReadFeature;
-import tools.jackson.core.json.JsonWriteFeature;
+import org.osgi.service.component.annotations.ReferencePolicy;
 
 
 /**
@@ -42,167 +34,47 @@ import tools.jackson.core.json.JsonWriteFeature;
  * @since Nov 14, 2024
  */
 @Component(name = "DefaultCodecFactoryConfigurator", service = CodecFactoryConfigurator.class, 
-	configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
-public class DefaultCodecFactoryConfigurator implements CodecFactoryConfigurator{
-	
-	@Reference(target="(type=json)", cardinality = ReferenceCardinality.OPTIONAL)
-	CodecGeneratorFactory<?,?> genFactory;
-	
-	@Reference(target="(type=json)", cardinality = ReferenceCardinality.OPTIONAL)
-	CodecParserFactory<?,?> parserFactory;
-	
-	private final static Logger LOGGER = Logger.getLogger(DefaultCodecFactoryConfigurator.class.getName());
-	private JsonFactoryBuilder factoryBuilder;
-	
-	private class CodecFactoryBuilder<F extends JsonFactory, B extends JsonFactoryBuilder> extends JsonFactoryBuilder{
+configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
+public class DefaultCodecFactoryConfigurator extends AbstractCodecFactoryConfigurator {
 
-		
-		/**
-		 * Creates a new instance.
-		 * @param base
-		 */
-		protected CodecFactoryBuilder(JsonFactory base) {
-			super(base);
-		}
 
-		/* 
-		 * (non-Javadoc)
-		 * @see com.fasterxml.jackson.core.TSFBuilder#build()
-		 */
-		@SuppressWarnings("unchecked")
-		@Override
-		public F build() {
-			if(genFactory == null || parserFactory == null) {
-				return (F) new DefaultCodecJsonFactory(this);
-			} else {
-				return (F) new CodecFactory(this, genFactory, parserFactory);
-			}	
-		}
-	}
-	
 
 	@Activate
 	public void activate(Map<String, Object> properties) {
-//		if(genFactory == null || parserFactory == null ) {
-//			factoryBuilder = DefaultCodecJsonFactory.builder();
-//		} else {
-//			factoryBuilder = new CodecFactoryBuilder(JsonFactory.builder().build());
-//		}
-		factoryBuilder = new CodecFactoryBuilder(JsonFactory.builder().build());
-		buildAndConfigureCodecFactory(properties);
-		
+		initialize(properties);
+
+	}
+
+	/**
+	 * Sets the genFactory.
+	 * @param genFactory the genFactory to set
+	 */
+	@Reference(target="(type=json)", cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+	public void setGenFactory(CodecGeneratorFactory<?,?> genFactory) {
+		super.setGenFactory(genFactory);
 	}
 	
-	public JsonFactoryBuilder getFactoryBuilder() {
-		return factoryBuilder;
-	}
-
-	private void buildAndConfigureCodecFactory(Map<String, Object> properties) {
-		if(properties == null || properties.isEmpty()) {
-			return;
-		}
-		String[] enableFeatures = (String[]) properties.getOrDefault("enableFeatures", new String[0]);
-		for(String f : enableFeatures) {
-			setFeature(f, true);
-		}
-		String[] disableFeatures = (String[]) properties.getOrDefault("disableFeatures", new String[0]);
-		for(String f : disableFeatures) {
-			setFeature(f, false);
-		}
-	}
-
-	private void setFeature(String featureString, boolean state) {
-		if(featureString.contains(".")) {
-			String prefix = featureString.substring(0, featureString.lastIndexOf("."));
-			featureString = featureString.substring(featureString.lastIndexOf(".")+1);
-			switch(prefix) {
-			case "TokenStreamFactory.Feature":
-				setTokenStreamFactoryFeature(featureString, state);
-				break;
-			case "StreamWriteFeature":
-				setStreamWriteFeature(featureString, state);
-				break;
-			case "JsonWriteFeature":
-				setJsonWriteFeature(featureString, state);
-				break;
-			case "StreamReadFeature":
-				setStreamReadFeature(featureString, state);
-				break;
-			case "JsonReadFeature":
-				setJsonReadFeature(featureString, state);
-				break;			
-			default:
-				LOGGER.warning(String.format("Feature prefix %s not supported", prefix));
-			}
-		} else {
-			setTokenStreamFactoryFeature(featureString, state);
-			setStreamWriteFeature(featureString, state);
-			setJsonWriteFeature(featureString, state);
-			setStreamReadFeature(featureString, state);
-			setJsonReadFeature(featureString, state);			
-		}
+	public void unsetGenFactory(CodecGeneratorFactory<?,?> genFactory) {
+		super.unsetGenFactory(genFactory);
 	}
 	
 
+	/**
+	 * Sets the parserFactory.
+	 * @param parserFactory the parserFactory to set
+	 */
+	@Reference(target="(type=json)", cardinality = ReferenceCardinality.OPTIONAL, policy = ReferencePolicy.DYNAMIC)
+	public void setParserFactory(CodecParserFactory<?,?> parserFactory) {
+		super.setParserFactory(parserFactory);
+	}
+	
+	/* 
+	 * (non-Javadoc)
+	 * @see org.eclipse.fennec.codec.jackson.configurator.AbstractCodecFactoryConfigurator#unsetParserFactory(org.eclipse.fennec.codec.CodecParserFactory)
+	 */
+	@Override
+	public void unsetParserFactory(CodecParserFactory<?, ?> parserFactory) {
+		super.unsetParserFactory(parserFactory);
+	}
 
-	private void setTokenStreamFactoryFeature(String featureString, boolean state) {
-		try {
-			if(state) factoryBuilder.enable(TokenStreamFactory.Feature.valueOf(featureString));
-			else factoryBuilder.disable(TokenStreamFactory.Feature.valueOf(featureString));
-			return;
-		} catch(Exception e) {
-			LOGGER.warning(String.format("No TokenStreamFactory feature with name %s has been found", featureString));
-		} 
-		
-	}
-
-//	private void setJsonFactoryFeature(String featureString, boolean state) {
-//		try {
-//			if(state) factoryBuilder.enable(JsonFactory.Feature.valueOf(featureString));
-//			else factoryBuilder.disable(JsonFactory.Feature.valueOf(featureString));
-//			return;
-//		} catch(Exception e) {
-//			LOGGER.warning(String.format("No JsonFactoryFeature feature with name %s has been found", featureString));
-//		} 
-//	}
-	
-	private void setStreamWriteFeature(String featureString, boolean state) {
-		try {
-			if(state) factoryBuilder.enable(StreamWriteFeature.valueOf(featureString));
-			else factoryBuilder.disable(StreamWriteFeature.valueOf(featureString));
-			return;
-		} catch(Exception e) {
-			LOGGER.warning(String.format("No StreamWriteFeature feature with name %s has been found", featureString));
-		} 
-	}
-	
-	private void setJsonWriteFeature(String featureString, boolean state) {
-		try {
-			if(state) factoryBuilder.enable(JsonWriteFeature.valueOf(featureString));
-			else factoryBuilder.disable(JsonWriteFeature.valueOf(featureString));
-			return;
-		} catch(Exception e) {
-			LOGGER.warning(String.format("No JsonWriteFeature feature with name %s has been found", featureString));
-		} 
-	}
-	
-	private void setStreamReadFeature(String featureString, boolean state) {
-		try {
-			if(state) factoryBuilder.enable(StreamReadFeature.valueOf(featureString));
-			else factoryBuilder.disable(StreamReadFeature.valueOf(featureString));
-			return;
-		} catch(Exception e) {
-			LOGGER.warning(String.format("No StreamReadFeature feature with name %s has been found", featureString));
-		} 
-	}
-	
-	private void setJsonReadFeature(String featureString, boolean state) {
-		try {
-			if(state) factoryBuilder.enable(JsonReadFeature.valueOf(featureString));
-			else factoryBuilder.disable(JsonReadFeature.valueOf(featureString));
-			return;
-		} catch(Exception e) {
-			LOGGER.warning(String.format("No JsonReadFeature feature with name %s has been found", featureString));
-		} 
-	}
 }
