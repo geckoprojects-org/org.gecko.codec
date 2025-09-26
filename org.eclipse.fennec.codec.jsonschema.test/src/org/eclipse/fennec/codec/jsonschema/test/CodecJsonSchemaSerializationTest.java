@@ -154,6 +154,36 @@ public class CodecJsonSchemaSerializationTest {
 	}
 	
 	@Test
+	public void meterReading() throws IOException {
+		String file1 = "test-data/meter-reading.json";
+		file2 = "test-data/ser_meter-reading.ecore";
+		Resource res = resourceSet.createResource(URI.createURI(file1));
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EcorePackage.Literals.EPACKAGE);
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
+		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
+		Map<String, Object> classOptions = new HashMap<>();
+		classOptions.put(CodecModelInfoOptions.CODEC_EXTRAS, Map.of("jsonschema", "true", "jsonschema.feature.key", "definitions"));
+		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(EcorePackage.Literals.EPACKAGE, classOptions));
+		
+		res.load(options);		
+		assertFalse(res.getContents().isEmpty());
+		EObject obj = res.getContents().get(0);
+		assertNotNull(obj);
+		assertThat(obj).isInstanceOf(EPackage.class);
+		EPackage ePackage = (EPackage) res.getContents().get(0);
+		
+		res = resourceSet.createResource(URI.createURI(file2));
+		res.getContents().add(ePackage);
+		res.save(options);
+//		res.save(System.out, options);
+		
+//		assertTrue(areJsonFilesTheSame(file1, file2));
+	}
+	
+	
+	@Test
 	public void openAPIJsonSchema() throws IOException {
 		String file1 = "test-data/open-api.json";
 		file2 = "test-data/ser_open-api.json";
