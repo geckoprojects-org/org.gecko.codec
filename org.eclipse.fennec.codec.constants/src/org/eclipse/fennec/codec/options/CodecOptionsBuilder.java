@@ -727,6 +727,17 @@ public class CodecOptionsBuilder {
 			classOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER, writer);
 			return this;
 		}
+		
+		/**
+		 * Sets the extras property
+		 *
+		 * @param the Map with extras properties (keys are the name of the extra properties and values are the actual values)
+		 * @return this builder
+		 */
+		public ClassOptionsBuilder withExtraProperties(Map<String, String> extraPropertiesMap) {
+			classOptions.put(CodecModelInfoOptions.CODEC_EXTRAS, extraPropertiesMap);
+			return this;
+		}
 
 		// ========== Feature options ==========
 
@@ -879,6 +890,17 @@ public class CodecOptionsBuilder {
 			 */
 			public ReferenceOptionsBuilder valueWriters(Map<EStructuralFeature, Object> writersMap) {
 				refOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, writersMap);
+				return this;
+			}
+			
+			/**
+			 * Sets the extras property
+			 *
+			 * @param the Map with extras properties (keys are the name of the extra properties and values are the actual values)
+			 * @return this builder
+			 */
+			public ReferenceOptionsBuilder withExtraProperties(Map<String, String> extraPropertiesMap) {
+				refOptions.put(CodecModelInfoOptions.CODEC_EXTRAS, extraPropertiesMap);
 				return this;
 			}
 

@@ -37,7 +37,9 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 configurationPolicy = ConfigurationPolicy.REQUIRE, property = {"type=json"})
 public class DefaultCodecFactoryConfigurator extends AbstractCodecFactoryConfigurator {
 
-
+	public DefaultCodecFactoryConfigurator() {
+		initialize(null);
+	}
 
 	@Activate
 	public void activate(Map<String, Object> properties) {

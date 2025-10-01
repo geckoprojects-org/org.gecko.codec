@@ -19,7 +19,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
+import org.eclipse.fennec.codec.jsonschema.configurator.JsonSchemaCodecModuleConfiguarator;
+import org.eclipse.fennec.codec.jsonschema.configurator.JsonSchemaObjectMapperConfigurator;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -28,18 +31,21 @@ import org.osgi.service.component.annotations.Reference;
  * @author ilenia
  * @since Sep 29, 2025
  */
-@Component(name = "JsonSchemaRF", service = {Resource.Factory.class, JsonSchemaResourceFactory.class}, 
-property = {EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson", EMFNamespaces.EMF_MODEL_FILE_EXT + "=json", EMFNamespaces.EMF_MODEL_CONTENT_TYPE + "=application/json"})
+@Component(immediate = true, name = "JsonSchemaRF", service = {Resource.Factory.class, JsonSchemaResourceFactory.class}, 
+property = {EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson", EMFNamespaces.EMF_MODEL_FILE_EXT + "=json", EMFNamespaces.EMF_MODEL_CONTENT_TYPE + "=application/schema+json"})
 public class JsonSchemaResourceFactory extends ResourceFactoryImpl {
 	
 	@Reference
 	private CodecModelInfo modelInfo;
 	
-	@Reference(target="(type=jsonschema)")
 	private ObjectMapperConfigurator objMapperConfigurator;
-	
-	@Reference(target="(type=jsonschema)")
 	private CodecModuleConfigurator codecModuleConfigurator;
+	
+	@Activate
+	public void activate() {
+		codecModuleConfigurator = new JsonSchemaCodecModuleConfiguarator();
+		objMapperConfigurator = new JsonSchemaObjectMapperConfigurator();
+	}
 	
 	/* 
 	 * (non-Javadoc)

@@ -43,11 +43,8 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
-import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
-import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.openapi.model.OpenApi;
 import org.eclipse.fennec.openapi.model.OpenApiPackage;
@@ -61,10 +58,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.osgi.framework.BundleContext;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
-import org.osgi.test.common.annotation.Property;
-import org.osgi.test.common.annotation.Property.Type;
-import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
-import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
@@ -77,32 +70,10 @@ import tools.jackson.databind.ObjectMapper;
 @ExtendWith(BundleContextExtension.class)
 @ExtendWith(ServiceExtension.class)
 @ExtendWith(ConfigurationExtension.class)
-@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value = "json") })
-@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value = "jsonschema"),
-		@Property(key = "disableFeatures", value={"JsonWriteFeature.ESCAPE_FORWARD_SLASHES"}, type = Type.Array),
-		@Property(key = "enableFeatures", value={"SerializationFeature.INDENT_OUTPUT"}, type = Type.Array)		
-})
-@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value = "jsonschema"),
-		@Property(key = "serializers.target", value = "(component.name=JsonSchemaCodecEMFSerializers)"),
-		@Property(key = "deserializers.target", value = "(component.name=JsonSchemaCodecEMFDeserializers)")
-		
-})
 public class CodecJsonSchemaSerializationTest {
 
-	@InjectService(filter="("+EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
+	@InjectService(filter="("+EMFNamespaces.EMF_MODEL_CONTENT_TYPE + "=application/schema+json)")
 	ResourceSet resourceSet;
-
-	@InjectService(cardinality = 0, filter = "(type=json)")
-	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
-
-	@InjectService(cardinality = 0, filter = "(type=jsonschema)")
-	ServiceAware<ObjectMapperConfigurator> mapperAware;
-
-	@InjectService(cardinality = 0, filter = "(type=jsonschema)")
-	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 
 	@InjectBundleContext
 	BundleContext ctx;
@@ -114,14 +85,12 @@ public class CodecJsonSchemaSerializationTest {
 
 	@BeforeEach()
 	public void beforeEach() throws InterruptedException {
-		codecFactoryAware.waitForService(2000l);
-		mapperAware.waitForService(2000l);
-		codecModuleAware.waitForService(2000l);
+		assertNotNull(resourceSet);
 	}
 
 	@AfterEach()
 	public void afterEach() throws IOException {
-//		if(file2 != null) Files.deleteIfExists(Path.of(file2));
+		if(file2 != null) Files.deleteIfExists(Path.of(file2));
 	}
 	
 	
@@ -129,15 +98,15 @@ public class CodecJsonSchemaSerializationTest {
 	public void topLevelEClass() throws IOException {
 		String file1 = "test-data/top-level-eclass.json";
 		file2 = "test-data/ser_top-level-eclass.json";
-		Resource res = resourceSet.createResource(URI.createURI(file1));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EcorePackage.Literals.EPACKAGE);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_EXTRAS, Map.of("jsonschema", "true", "jsonschema.feature.key", "definitions"));
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(EcorePackage.Literals.EPACKAGE, classOptions));
+		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
+		Map<String, Object> options = CodecOptionsBuilder.create(). 
+				rootObject(EcorePackage.Literals.EPACKAGE).
+				serializeType(false).
+				serializeEmptyValue(true).
+				serializeNullValue(true).
+				forClass(EcorePackage.Literals.EPACKAGE).
+				withExtraProperties(Map.of("jsonschema", "true", "jsonschema.feature.key", "definitions")).
+				build();
 		
 		res.load(options);		
 		assertFalse(res.getContents().isEmpty());
@@ -157,15 +126,16 @@ public class CodecJsonSchemaSerializationTest {
 	public void meterReading() throws IOException {
 		String file1 = "test-data/meter-reading.json";
 		file2 = "test-data/ser_meter-reading.ecore";
-		Resource res = resourceSet.createResource(URI.createURI(file1));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EcorePackage.Literals.EPACKAGE);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_EXTRAS, Map.of("jsonschema", "true", "jsonschema.feature.key", "definitions"));
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(EcorePackage.Literals.EPACKAGE, classOptions));
+		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
+		
+		Map<String, Object> options = CodecOptionsBuilder.create(). 
+				rootObject(EcorePackage.Literals.EPACKAGE).
+				serializeType(false).
+				serializeEmptyValue(true).
+				serializeNullValue(true).
+				forClass(EcorePackage.Literals.EPACKAGE).
+				withExtraProperties(Map.of("jsonschema", "true", "jsonschema.feature.key", "definitions")).
+				build();
 		
 		res.load(options);		
 		assertFalse(res.getContents().isEmpty());
@@ -177,9 +147,6 @@ public class CodecJsonSchemaSerializationTest {
 		res = resourceSet.createResource(URI.createURI(file2));
 		res.getContents().add(ePackage);
 		res.save(options);
-//		res.save(System.out, options);
-		
-//		assertTrue(areJsonFilesTheSame(file1, file2));
 	}
 	
 	
@@ -188,15 +155,15 @@ public class CodecJsonSchemaSerializationTest {
 		String file1 = "test-data/open-api.json";
 		file2 = "test-data/ser_open-api.json";
 		
-		Resource res = resourceSet.createResource(URI.createURI(file1));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EcorePackage.Literals.EPACKAGE);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_EXTRAS, Map.of("jsonschema", "true", "jsonschema.feature.key", "schemas"));
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(EcorePackage.Literals.EPACKAGE, classOptions));
+		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
+		Map<String, Object> options = CodecOptionsBuilder.create(). 
+				rootObject(EcorePackage.Literals.EPACKAGE).
+				serializeType(false).
+				serializeEmptyValue(true).
+				serializeNullValue(true).
+				forClass(EcorePackage.Literals.EPACKAGE).
+				withExtraProperties(Map.of("jsonschema", "true", "jsonschema.feature.key", "schemas")).
+				build();
 		
 		res.load(options);		
 		assertFalse(res.getContents().isEmpty());
@@ -218,7 +185,7 @@ public class CodecJsonSchemaSerializationTest {
 		String file1 = "test-data/openapi-complete.json";
 		file2 = "test-data/ser_openapi-complete.json";
 		
-		Resource res = resourceSet.createResource(URI.createURI(file1));
+		Resource res = resourceSet.createResource(URI.createURI(file1), "application/json");
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, OpenApiPackage.Literals.OPEN_API);
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
