@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.bson.Document;
@@ -32,6 +31,7 @@ import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.emf.osgi.example.model.basic.BasicFactory;
@@ -139,8 +139,9 @@ public class StoreSuperTypeIntegrationTest extends MongoEMFSetting{
 		Resource resource = resourceSet.createResource(URI.createURI("mongodb://"+ mongoHost + ":27017/test/Person/"));
 		testResourceSet(resourceSet, resource, 1, 0);
 		
-		Map<String, Object> saveOptions = new HashMap<>();
-		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.TRUE);
+		Map<String, Object> saveOptions = CodecOptionsBuilder.create().
+				serializeSuperTypes(true).
+				build();
 		BusinessPerson person = BasicFactory.eINSTANCE.createBusinessPerson();
 		person.setFirstName("Mark");
 		person.setLastName("Hoffmann" );
@@ -166,7 +167,10 @@ public class StoreSuperTypeIntegrationTest extends MongoEMFSetting{
 		assertTrue(document.containsKey("_supertype"));
 		personCollection.drop();
 		
-		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SUPERTYPE_KEY, "mySupaType");
+		saveOptions = CodecOptionsBuilder.create().
+				supertypeKey("mySupaType").
+				serializeSuperTypes(true).
+				build();
 		resource.getContents().add(person);
 		
 		testResourceSet(resourceSet, resource, 1, 1);
@@ -186,7 +190,10 @@ public class StoreSuperTypeIntegrationTest extends MongoEMFSetting{
 		testResourceSet(resourceSet, resource, 1, 0);
 		resource.unload();
 		
-		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.FALSE);
+		saveOptions = CodecOptionsBuilder.create().
+				supertypeKey("mySupaType").
+				serializeSuperTypes(false).
+				build();
 		resource.getContents().add(person);
 		
 		testResourceSet(resourceSet, resource, 1, 1);
@@ -206,7 +213,9 @@ public class StoreSuperTypeIntegrationTest extends MongoEMFSetting{
 		testResourceSet(resourceSet, resource, 1, 0);
 		resource.unload();
 		
-		saveOptions = new HashMap<>();
+		saveOptions = CodecOptionsBuilder.create().
+				serializeSuperTypes(true).
+				build();
 		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, Boolean.TRUE);
 
 		Person p = BasicFactory.eINSTANCE.createPerson();

@@ -19,18 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -116,14 +113,12 @@ public class CodecJsonDeserializeFeatureListTest extends JsonTestSetting{
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
-		personOptions.put(CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Age()));
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getPerson())
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.ignoreFeatures(PersonPackage.eINSTANCE.getPerson_Age())
+			.build();
 		findResource.load(options);
 
 		// get the person
@@ -149,14 +144,12 @@ public class CodecJsonDeserializeFeatureListTest extends JsonTestSetting{
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
-		personOptions.put(CodecModelInfoOptions.CODEC_IGNORE_NOT_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Age()));
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
 
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getPerson())
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.ignoreNotFeatures(PersonPackage.eINSTANCE.getPerson_Age())
+			.build();
 		findResource.load(options);
 
 		// get the person

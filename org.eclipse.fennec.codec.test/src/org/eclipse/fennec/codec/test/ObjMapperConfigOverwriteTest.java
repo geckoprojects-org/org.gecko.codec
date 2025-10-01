@@ -26,8 +26,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -40,7 +38,7 @@ import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.resource.CodecResource;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -130,14 +128,16 @@ public class ObjMapperConfigOverwriteTest {
 	
 	@Test
 	public void testDateFormatOption() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
-		
+
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		options.put(ObjectMapperOptions.OBJ_MAPPER_DATE_FORMAT, df);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.dateFormat(df)
+			.build();
 		resource.save(options);
 		
 		assertThat(resource).isInstanceOf(CodecResource.class);
@@ -164,14 +164,16 @@ public class ObjMapperConfigOverwriteTest {
 	
 	@Test
 	public void testLocaleOption() throws InterruptedException, IOException {
-		
-		Resource resource = resourceSet.createResource(uri);		
+
+		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
-		
+
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
 		Locale loc = new Locale.Builder().setLanguageTag("it-IT").build();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_LOCALE, loc);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.locale(loc)
+			.build();
 		resource.save(options);
 		
 		assertThat(resource).isInstanceOf(CodecResource.class);
@@ -187,14 +189,16 @@ public class ObjMapperConfigOverwriteTest {
 	
 	@Test
 	public void testTimeZoneOption() throws InterruptedException, IOException {
-	
-		Resource resource = resourceSet.createResource(uri);		
+
+		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
-		
+
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
 		TimeZone tz = TimeZone.getTimeZone("Europe/Amsterdam");
-		options.put(ObjectMapperOptions.OBJ_MAPPER_TIME_ZONE, tz);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.timeZone(tz)
+			.build();
 		resource.save(options);
 		
 		assertThat(resource).isInstanceOf(CodecResource.class);
@@ -210,13 +214,15 @@ public class ObjMapperConfigOverwriteTest {
 	
 	@Test
 	public void testSerFeatureWithOption() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
-		
+
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT, SerializationFeature.CLOSE_CLOSEABLE));
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT, SerializationFeature.CLOSE_CLOSEABLE)
+			.build();
 		resource.save(options);
 		
 		assertThat(resource).isInstanceOf(CodecResource.class);
@@ -230,13 +236,15 @@ public class ObjMapperConfigOverwriteTest {
 	
 	@Test
 	public void testSerFeatureWithoutOption() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
-		
+
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITHOUT, List.of(SerializationFeature.FAIL_ON_EMPTY_BEANS, SerializationFeature.FAIL_ON_SELF_REFERENCES));
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializationFeaturesWithout(SerializationFeature.FAIL_ON_EMPTY_BEANS, SerializationFeature.FAIL_ON_SELF_REFERENCES)
+			.build();
 		resource.save(options);
 		
 		assertThat(resource).isInstanceOf(CodecResource.class);
@@ -250,13 +258,15 @@ public class ObjMapperConfigOverwriteTest {
 	
 	@Test
 	public void testDeserFeatureWithOption() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
-		
+
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_DESERIALIZATION_FEATURES_WITH, List.of(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY));
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.deserializationFeaturesWith(DeserializationFeature.ACCEPT_EMPTY_ARRAY_AS_NULL_OBJECT, DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+			.build();
 		resource.save(options);
 		
 		assertThat(resource).isInstanceOf(CodecResource.class);
@@ -270,13 +280,15 @@ public class ObjMapperConfigOverwriteTest {
 	
 	@Test
 	public void testDeserFeatureWithoutOption() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
-		
+
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_DESERIALIZATION_FEATURES_WITHOUT, List.of(DeserializationFeature.ACCEPT_FLOAT_AS_INT, DeserializationFeature.EAGER_DESERIALIZER_FETCH));
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.deserializationFeaturesWithout(DeserializationFeature.ACCEPT_FLOAT_AS_INT, DeserializationFeature.EAGER_DESERIALIZER_FETCH)
+			.build();
 		resource.save(options);
 		
 		assertThat(resource).isInstanceOf(CodecResource.class);
@@ -291,16 +303,17 @@ public class ObjMapperConfigOverwriteTest {
 	
 	@Test
 	public void testMapperFeatureWithOption() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
-		
+
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITH, 
-				List.of(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, 
-						MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,
-						MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.mapperFeaturesWith(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS,
+					MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,
+					MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+			.build();
 		resource.save(options);
 		
 		assertThat(resource).isInstanceOf(CodecResource.class);
@@ -316,13 +329,15 @@ public class ObjMapperConfigOverwriteTest {
 	
 	@Test
 	public void testMapperFeatureWithoutOption() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
-		
+
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT, List.of(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS, MapperFeature.APPLY_DEFAULT_VALUES));
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.mapperFeaturesWithout(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS, MapperFeature.APPLY_DEFAULT_VALUES)
+			.build();
 		resource.save(options);
 		
 		assertThat(resource).isInstanceOf(CodecResource.class);

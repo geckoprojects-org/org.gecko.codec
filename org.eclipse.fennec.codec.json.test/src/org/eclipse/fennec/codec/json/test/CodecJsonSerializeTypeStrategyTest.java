@@ -31,6 +31,7 @@ import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
@@ -114,13 +115,10 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 
 		Address address = CodecTestHelper.getTestAddress();
 		resource.getContents().add(address);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
-
-		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				forClass(PersonPackage.eINSTANCE.getAddress()).
+				typeStrategy("NAME").build();
+				
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(addFileName))) {
@@ -143,13 +141,9 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Address address = CodecTestHelper.getTestAddress();
 		resource.getContents().add(address);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "CLASS");
-
-		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				forClass(PersonPackage.eINSTANCE.getAddress()).
+				typeStrategy("CLASS").build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(addFileName))) {
@@ -172,13 +166,9 @@ public class CodecJsonSerializeTypeStrategyTest extends JsonTestSetting{
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Address address = CodecTestHelper.getTestAddress();
 		resource.getContents().add(address);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-
-		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				forClass(PersonPackage.eINSTANCE.getAddress()).
+				typeStrategy("URI").build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(addFileName))) {

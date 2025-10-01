@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -28,9 +27,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.BusinessPerson;
@@ -110,15 +107,16 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 	
 	@Test
 	public void testSerializationCustomIdKey() throws IOException {
-	
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "_myId");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.forClass(PersonPackage.Literals.PERSON)
+					.idKey("_myId")
+				.and()
+				.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -136,15 +134,16 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 	
 	@Test
 	public void testSerializationCustomTypeKey() throws IOException {
-	
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "_myType");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.forClass(PersonPackage.Literals.PERSON)
+					.typeKey("_myType")
+				.and()
+				.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -163,14 +162,15 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 	
 	@Test
 	public void testSerializationCustomSuperTypeKey() throws IOException {
-	
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SUPERTYPE_KEY, "_mySuperType");
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.supertypeKey("_mySuperType")
+				.serializeSuperTypes(true)
+				.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -188,19 +188,20 @@ public class CodecJsonSerializeWithCustomKeysTest extends JsonTestSetting {
 
 	@Test
 	public void testSerializationCustomRefKey() throws IOException {
-	
+
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Address add = CodecTestHelper.getTestAddress();
 		Person person = CodecTestHelper.getTestPerson();
 		person.setNonContainedAdd(add);
-		
+
 		resource.getContents().add(add);
 		resource.save(null);
-		
+
 		resource = resourceSet.createResource(URI.createURI(personFileName));
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_REFERENCE_KEY, "_myRef");
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.referenceKey("_myRef")
+				.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

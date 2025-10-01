@@ -25,7 +25,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.bson.Document;
@@ -37,7 +36,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.emf.osgi.example.model.basic.BasicFactory;
@@ -154,8 +153,9 @@ public class MongoIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet
 				.createResource(URI.createURI("mongodb://localhost:27017/test/Person/" + person.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getPerson());
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getPerson()).
+				build();
 		findResource.load(options);
 
 		// get the person
@@ -207,8 +207,9 @@ public class MongoIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet
 				.createResource(URI.createURI("mongodb://localhost:27017/test/Person/" + person.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getPerson());
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getPerson()).
+				build();
 		findResource.load(options);
 
 
@@ -260,8 +261,9 @@ public class MongoIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet
 				.createResource(URI.createURI("mongodb://localhost:27017/test/Person/" + person.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getPerson());
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getPerson()).
+				build();
 		findResource.load(options);
 
 		// get the person
@@ -315,8 +317,9 @@ public class MongoIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet
 				.createResource(URI.createURI("mongodb://localhost:27017/test/Person/" + person.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getPerson());
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getPerson()).
+				build();
 		findResource.load(options);
 
 		// get the person
@@ -376,8 +379,9 @@ public class MongoIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet
 				.createResource(URI.createURI("mongodb://localhost:27017/test/Person/" + person.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getPerson());
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getPerson()).
+				build();
 		findResource.load(options);
 
 
@@ -397,9 +401,4 @@ public class MongoIntegrationTest extends MongoEMFSetting{
 
 		personCollection.drop();
 	}
-	
-	
-	
-	
-
 }

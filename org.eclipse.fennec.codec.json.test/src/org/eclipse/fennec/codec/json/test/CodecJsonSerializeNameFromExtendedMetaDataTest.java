@@ -20,8 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -30,8 +28,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -43,13 +40,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
+import org.osgi.test.common.annotation.Property.Type;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
 import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
-
-import tools.jackson.databind.SerializationFeature;
 
 /**
  * See documentation here: 
@@ -66,7 +62,8 @@ import tools.jackson.databind.SerializationFeature;
 		@Property(key = "type", value="json")
 })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
+		@Property(key = "type", value="json"),
+		@Property(key = "enableFeatures", value = "SerializationFeature.INDENT_OUTPUT", type = Type.Array)
 })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="json")
@@ -111,9 +108,9 @@ public class CodecJsonSerializeNameFromExtendedMetaDataTest extends JsonTestSett
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				useNamesFromExtendedMetadata(true).build();
+				
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -137,9 +134,8 @@ public class CodecJsonSerializeNameFromExtendedMetaDataTest extends JsonTestSett
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				useNamesFromExtendedMetadata(false).build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

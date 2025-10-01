@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.emf.osgi.example.model.basic.BasicFactory;
@@ -137,7 +136,10 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 		assertNull(person.getId());
 		person.setCompanyIdCardNumber("test1234");
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+				useNamesFromExtendedMetadata(false).
+				build();
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
 		resource.save(options);
 		
@@ -148,7 +150,6 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 		 */
 		//		long start = System.currentTimeMillis();
 		Resource findResource = resourceSet.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
 		findResource.load(options);
 		
 		// get the person
@@ -195,7 +196,10 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 		assertNull(person.getId());
 		person.setCompanyIdCardNumber("test1234");
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+				useNamesFromExtendedMetadata(true).
+				build();
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.TRUE);
 		resource.save(options);
 		
@@ -206,7 +210,6 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 		 */
 		//		long start = System.currentTimeMillis();
 		Resource findResource = resourceSet.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
 		findResource.load(options);
 		
 		// get the person
@@ -261,7 +264,10 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 		person.getEmployeeInfo().add(einfo02);
 		
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+				useNamesFromExtendedMetadata(false).
+				build();
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
 		resource.save(options);
 		
@@ -272,7 +278,6 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 		 */
 		//		long start = System.currentTimeMillis();
 		Resource findResource = resourceSet.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
 		findResource.load(options);
 		
 		// get the person
@@ -335,7 +340,10 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 		person.getEmployeeInfo().add(einfo02);
 		
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+				useNamesFromExtendedMetadata(true).
+				build();
 		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.TRUE);
 		resource.save(options);
 		
@@ -346,7 +354,6 @@ public class MongoExtendedMetadataIntegrationTest extends MongoEMFSetting{
 		 */
 		//		long start = System.currentTimeMillis();
 		Resource findResource = resourceSet.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
 		findResource.load(options);
 		
 		// get the person

@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +33,7 @@ import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.emf.osgi.example.model.basic.BasicFactory;
@@ -149,8 +148,7 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		c1.setValue("http://test.de");
 		person.getContact().add(c1);
 		resource.getContents().add(person);
-		Map<String, Object> sprops = new HashMap<String, Object>();
-		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
+		Map<String, Object> sprops = CodecOptionsBuilder.create().useNamesFromExtendedMetadata(false).build();
 		resource.save(sprops);
 
 		resource.getContents().clear();
@@ -161,8 +159,9 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet.createResource(
 				URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
-		sprops.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
-		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
+		sprops = CodecOptionsBuilder.create().useNamesFromExtendedMetadata(false).
+				rootObject( BasicPackage.eINSTANCE.getBusinessPerson()).build();
+				
 		findResource.load(sprops);
 
 		// get the person
@@ -229,7 +228,9 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		c1.setValue("http://test.de");
 		person.getContact().add(c1);
 		resource.getContents().add(person);
-		Map<String, Object> sprops = new HashMap<String, Object>();
+		Map<String, Object> sprops = CodecOptionsBuilder.create().useNamesFromExtendedMetadata(false).
+				writeEnumLiteral(true).
+				build();
 		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.TRUE);
 		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
 		resource.save(sprops);
@@ -242,8 +243,13 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet.createResource(
 				URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
-		sprops.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
-		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
+		
+		sprops = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+				useNamesFromExtendedMetadata(false).
+				writeEnumLiteral(true).
+				build();
+		
 		findResource.load(sprops);
 
 		// get the person
@@ -310,8 +316,9 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		c1.setValue("http://test.de");
 		person.getContact().add(c1);
 		resource.getContents().add(person);
-		Map<String, Object> sprops = new HashMap<String, Object>();
-		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
+		Map<String, Object> sprops =  CodecOptionsBuilder.create().
+				useNamesFromExtendedMetadata(false).
+				build();
 		resource.save(sprops);
 
 		resource.getContents().clear();
@@ -322,7 +329,10 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet.createResource(
 				URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
-		sprops.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
+		sprops = CodecOptionsBuilder.create().
+			rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+			useNamesFromExtendedMetadata(false).
+			build();
 		findResource.load(sprops);
 
 		// get the person
@@ -393,7 +403,11 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		c1.setValue("http://test.de");
 		person.getContact().add(c1);
 		resource.getContents().add(person);
-		Map<String, Object> sprops = new HashMap<String, Object>();
+		Map<String, Object> sprops = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+				useNamesFromExtendedMetadata(false).
+				writeEnumLiteral(true).
+				build();
 		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
 		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.TRUE);
 		resource.save(sprops);
@@ -406,10 +420,12 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet.createResource(
 				URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
-		sprops.clear();
-		sprops.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
-		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.FALSE);
-		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
+		sprops = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+				useNamesFromExtendedMetadata(false).
+				writeEnumLiteral(false).
+				build();
+		
 		findResource.load(sprops);
 
 		// get the person
@@ -476,8 +492,10 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		c1.setValue("http://test.de");
 		person.getContact().add(c1);
 		resource.getContents().add(person);
-		Map<String, Object> sprops = new HashMap<String, Object>();
-		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
+		Map<String, Object> sprops = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+				useNamesFromExtendedMetadata(false).
+				build();
 		resource.save(sprops);
 
 		resource.getContents().clear();
@@ -488,10 +506,12 @@ public class MongoEnumIntegrationTest extends MongoEMFSetting{
 		// long start = System.currentTimeMillis();
 		Resource findResource = resourceSet.createResource(
 				URI.createURI("mongodb://" + mongoHost + ":27017/test/BusinessPerson/" + person.getId()));
-		sprops = new HashMap<String, Object>();
-		sprops.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.TRUE);
-		sprops.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.FALSE);
-		sprops.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getBusinessPerson());
+		sprops = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getBusinessPerson()).
+				useNamesFromExtendedMetadata(false).
+				writeEnumLiteral(true).
+				build();
+		
 		findResource.load(sprops);
 
 		// get the person

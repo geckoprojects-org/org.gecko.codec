@@ -27,8 +27,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.BusinessAddress;
 import org.gecko.codec.demo.model.person.Person;
@@ -120,16 +119,17 @@ public class CodecJsonDeserializationOrderTest extends JsonTestSetting{
 	public void testDeserializationContainedReferenceWithType() throws IOException {
 
 		Resource personRes = resourceSet.createResource(URI.createURI(System.getProperty("test-data")+ "type-contained-ref.json"));
-		
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
-		Map<String, Object> personOptions = new HashMap<>();
-		Map<String, Object> refOptions = new HashMap<>();
-		refOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
-		personOptions.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON__ADDRESS, refOptions));
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, personOptions));
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.eINSTANCE.getPerson())
+				.forClass(PersonPackage.Literals.PERSON)
+					.forReference(PersonPackage.Literals.PERSON__ADDRESS)
+						.typeStrategy("NAME")
+						.and()
+					.and()
+				.build();
 		personRes.load(options);
-		
+
 		assertThat(personRes.getContents()).hasSize(1);
 		assertThat(personRes.getContents().get(0)).isInstanceOf(Person.class);
 		Person person = (Person) personRes.getContents().get(0);
@@ -141,11 +141,12 @@ public class CodecJsonDeserializationOrderTest extends JsonTestSetting{
 	public void testDeserializationContainedReferenceWOType() throws IOException {
 
 		Resource personRes = resourceSet.createResource(URI.createURI(System.getProperty("test-data")+ "no-type-contained-ref.json"));
-		
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.eINSTANCE.getPerson())
+				.build();
 		personRes.load(options);
-		
+
 		assertThat(personRes.getContents()).hasSize(1);
 		assertThat(personRes.getContents().get(0)).isInstanceOf(Person.class);
 		Person person = (Person) personRes.getContents().get(0);
@@ -157,16 +158,17 @@ public class CodecJsonDeserializationOrderTest extends JsonTestSetting{
 	public void testDeserializationRefWithBuffer() throws IOException {
 
 		Resource personRes = resourceSet.createResource(URI.createURI(System.getProperty("test-data")+ "buffer.json"));
-		
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
-		Map<String, Object> personOptions = new HashMap<>();
-		Map<String, Object> refOptions = new HashMap<>();
-		refOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
-		personOptions.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON__ADDRESS, refOptions));
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, personOptions));
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.eINSTANCE.getPerson())
+				.forClass(PersonPackage.Literals.PERSON)
+					.forReference(PersonPackage.Literals.PERSON__ADDRESS)
+						.typeStrategy("NAME")
+						.and()
+					.and()
+				.build();
 		personRes.load(options);
-		
+
 		assertThat(personRes.getContents()).hasSize(1);
 		assertThat(personRes.getContents().get(0)).isInstanceOf(Person.class);
 		Person person = (Person) personRes.getContents().get(0);

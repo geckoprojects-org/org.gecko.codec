@@ -19,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -29,8 +27,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.GENDER_TYPE;
 import org.gecko.codec.demo.model.person.Person;
@@ -113,9 +110,10 @@ public class CodecJsonSerializeEnumTest extends JsonTestSetting {
 		person.setGender(GENDER_TYPE.FEMALE);
 		resource.getContents().add(person);
 		String enumName = GENDER_TYPE.FEMALE.getName();
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeDefaultValue(true)
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -140,10 +138,11 @@ public class CodecJsonSerializeEnumTest extends JsonTestSetting {
 		person.setGender(GENDER_TYPE.FEMALE);
 		String enumLiteral = GENDER_TYPE.FEMALE.getLiteral();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_WRITE_ENUM_LITERAL, Boolean.TRUE);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.writeEnumLiteral(Boolean.TRUE)
+			.serializeDefaultValue(true)
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

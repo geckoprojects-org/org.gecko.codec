@@ -19,20 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -111,16 +106,14 @@ public class CodecJsonObjectMapperFormatFeatureTest extends JsonTestSetting {
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();		
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.typeStrategy("URI")
+				.and()
+				.build();
 		resource.save(options);
-		
-		
+
+
 		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http:\\/\\/example.de\\/person\\/1.0#\\/\\/Person\",");
 	}
 
@@ -131,28 +124,26 @@ public class CodecJsonObjectMapperFormatFeatureTest extends JsonTestSetting {
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();		
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);		
-		
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FORMAT_SER_FEATURES_WITHOUT,
-				List.of(JsonWriteFeature.ESCAPE_FORWARD_SLASHES));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.typeStrategy("URI")
+				.and()
+				.formatSerFeaturesWithout(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
+				.build();
 		resource.save(options);
 
 		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http://example.de/person/1.0#//Person\",");
-		
-		options.clear();
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);		
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FORMAT_SER_FEATURES_WITH,
-				List.of(JsonWriteFeature.ESCAPE_FORWARD_SLASHES));
+
+		options = CodecOptionsBuilder.create()
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.typeStrategy("URI")
+				.and()
+				.formatSerFeaturesWith(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
+				.build();
 		resource.save(options);
-		
+
 		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http:\\/\\/example.de\\/person\\/1.0#\\/\\/Person\",");
-		
+
 	}
 	
 }

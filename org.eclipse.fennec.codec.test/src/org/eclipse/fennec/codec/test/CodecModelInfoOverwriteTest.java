@@ -21,12 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
@@ -38,8 +35,7 @@ import org.eclipse.fennec.codec.info.codecinfo.IdentityInfo;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.jackson.resource.CodecResource;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
 import org.eclipse.fennec.codec.options.CodecValueWriterConstants;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
@@ -125,12 +121,13 @@ public class CodecModelInfoOverwriteTest {
 		Resource resource = resourceSet.createResource(uri);		
 		Person person = CodecTestHelper.getTestPerson();		
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "myId");
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		
+		Map<String, Object> options = CodecOptionsBuilder.create()
+	      .forClass(PersonPackage.eINSTANCE.getPerson())
+	          .idKey("myId")
+	          .and()
+	      .build();
+	
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -144,16 +141,15 @@ public class CodecModelInfoOverwriteTest {
 
 	@Test
 	public void testCodecModelInfoOverwriteIdStrategy() throws InterruptedException, IOException {
-	
-		Resource resource = resourceSet.createResource(uri);		
-		Person person = CodecTestHelper.getTestPerson();		
+
+		Resource resource = resourceSet.createResource(uri);
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "TEST");
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idStrategy("TEST")
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -167,16 +163,15 @@ public class CodecModelInfoOverwriteTest {
 	
 	@Test
 	public void testCodecModelInfoOverwriteIdOrder() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_LastName(), PersonPackage.eINSTANCE.getPerson_Name()));
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idFeatures(PersonPackage.eINSTANCE.getPerson_LastName(), PersonPackage.eINSTANCE.getPerson_Name())
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -192,16 +187,15 @@ public class CodecModelInfoOverwriteTest {
 	
 	@Test
 	public void testCodecModelInfoOverwriteIdSeparator() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_SEPARATOR, "/");
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idSeparator("/")
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -217,15 +211,14 @@ public class CodecModelInfoOverwriteTest {
 	public void testCodecModelInfoOverwriteIgnoreFeature() throws InterruptedException, IOException {
 
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> addressOptions = new HashMap<>();
-		addressOptions.put(CodecModelInfoOptions.CODEC_IGNORE_NOT_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getAddress_Zip()));
-		addressOptions.put(CodecModelInfoOptions.CODEC_IGNORE_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getAddress_Street()));
-		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addressOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getAddress())
+				.ignoreNotFeatures(PersonPackage.eINSTANCE.getAddress_Zip())
+				.ignoreFeatures(PersonPackage.eINSTANCE.getAddress_Street())
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -247,16 +240,15 @@ public class CodecModelInfoOverwriteTest {
 	
 	@Test
 	public void testCodecModelInfoOverwriteTypeInclude() throws InterruptedException, IOException {
-		
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_INCLUDE, false);
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.typeInclude(false)
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -270,16 +262,15 @@ public class CodecModelInfoOverwriteTest {
 	
 	@Test
 	public void testCodecModelInfoOverwriteTypeStrategy() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "CLASS");
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.typeStrategy("CLASS")
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -295,16 +286,15 @@ public class CodecModelInfoOverwriteTest {
 	
 	@Test
 	public void testCodecModelInfoOverwriteTypeKey() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "eClass");
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.typeKey("eClass")
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -318,17 +308,16 @@ public class CodecModelInfoOverwriteTest {
 	
 	@Test
 	public void testCodecModelInfoOverwriteTypeMap() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP, Map.of("person1", "Person", "person2", "Person"));
-		personOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.typeMap(Map.of("person1", "Person", "person2", "Person"))
+				.typeStrategy("NAME")
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -345,17 +334,15 @@ public class CodecModelInfoOverwriteTest {
 	
 	@Test
 	public void testCodecModelInfoOverwriteWriter() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, 
-				Map.of(PersonPackage.eINSTANCE.getPerson_LastName(), CodecTestHelper.TEST_VALUE_WRITER));
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.valueWriters(Map.of(PersonPackage.eINSTANCE.getPerson_LastName(), CodecTestHelper.TEST_VALUE_WRITER))
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -370,18 +357,15 @@ public class CodecModelInfoOverwriteTest {
 	
 	@Test
 	public void testCodecModelInfoOverwriteReader() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		
-		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP, 
-				Map.of(PersonPackage.eINSTANCE.getPerson_BirthDate(), CodecTestHelper.TEST_VALUE_READER));
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.valueReaders(Map.of(PersonPackage.eINSTANCE.getPerson_BirthDate(), CodecTestHelper.TEST_VALUE_READER))
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);
@@ -396,18 +380,16 @@ public class CodecModelInfoOverwriteTest {
 	
 	@Test
 	public void testCodecModelInfoOverwriteIdWriter() throws InterruptedException, IOException {
-	
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "ID_FIELD");
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idValueWriter(CodecTestHelper.TEST_VALUE_WRITER)
+				.idStrategy("ID_FIELD")
+			.build();
 		resource.save(options);
 		
 		CodecModule module = getCodecModuleFromResource(resource);

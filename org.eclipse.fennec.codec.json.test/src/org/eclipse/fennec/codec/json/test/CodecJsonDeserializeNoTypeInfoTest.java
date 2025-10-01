@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -28,8 +27,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
@@ -106,21 +104,26 @@ public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 	@Test
 	public void testDeserializationRootObjWOType() throws IOException {
 
-	
+
 		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
 
 		Person person = CodecTestHelper.getTestPerson();
 		personRes.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeType(false)
+			.build();
 		personRes.save(options);
 
 		personRes.getContents().clear();
 		personRes.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getPerson())
+			.serializeType(false)
+			.build();
 		findResource.load(options);
 
 		// get the person
@@ -137,7 +140,7 @@ public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 	@Disabled("Not implemented use case")
 	public void testDeserializationReferenceWOType() throws IOException {
 
-	
+
 		Resource addRes = resourceSet.createResource(URI.createURI(addFileName));
 		Resource personRes = resourceSet.createResource(URI.createURI(personFileName));
 
@@ -146,8 +149,10 @@ public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 		person.setNonContainedAdd(address);
 		addRes.getContents().add(address);
 		personRes.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeType(false)
+			.build();
 		addRes.save(options);
 		personRes.save(options);
 
@@ -157,7 +162,11 @@ public class CodecJsonDeserializeNoTypeInfoTest extends JsonTestSetting{
 		personRes.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getPerson())
+			.serializeType(false)
+			.build();
 		findResource.load(options);
 
 		// get the person
