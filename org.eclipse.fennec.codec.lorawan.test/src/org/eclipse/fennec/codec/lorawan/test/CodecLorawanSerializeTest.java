@@ -27,8 +27,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.dragino.message.model.dragino.DraginoFactory;
 import org.eclipse.fennec.dragino.message.model.dragino.DraginoLSE01Uplink;
 import org.eclipse.fennec.dragino.message.model.dragino.DraginoPackage;
@@ -127,10 +126,10 @@ public class CodecLorawanSerializeTest extends JsonTestSetting{
 		Resource resource = resourceSet.createResource(URI.createURI(fileName));	
 		DraginoLSE01Uplink dragino = getDraginoUplink();
 		resource.getContents().add(dragino);
-		Map<String, Object> options = new HashMap<>();		
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "eClass");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(DraginoPackage.Literals.DRAGINO_LSE01_UPLINK, classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				forClass(DraginoPackage.Literals.DRAGINO_LSE01_UPLINK).
+				typeKey("eClass").build();
+				
 		resource.save(options);
 		
 		assertTrue(areJsonFilesTheSame(fileName, System.getProperty("test-data") +"dragino-ser-type-key.json"));		
@@ -142,11 +141,12 @@ public class CodecLorawanSerializeTest extends JsonTestSetting{
 		Resource resource = resourceSet.createResource(URI.createURI(fileName));	
 		DraginoLSE01Uplink dragino = getDraginoUplink();
 		resource.getContents().add(dragino);
-		Map<String, Object> options = new HashMap<>();		
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "eClass");
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(DraginoPackage.Literals.DRAGINO_LSE01_UPLINK, classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				forClass(DraginoPackage.Literals.DRAGINO_LSE01_UPLINK).
+				typeKey("eClass").
+				typeStrategy("URI").
+				build();
+		
 		resource.save(options);
 		
 		assertTrue(areJsonFilesTheSame(fileName, System.getProperty("test-data") +"dragino-ser-type-strategy.json"));		

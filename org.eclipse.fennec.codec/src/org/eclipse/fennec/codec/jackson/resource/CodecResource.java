@@ -56,6 +56,9 @@ import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
 import org.eclipse.fennec.codec.options.CodecValueWriterConstants;
 import org.eclipse.fennec.codec.options.ObjectMapperOptions;
 
+import tools.jackson.core.FormatFeature;
+import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.core.json.JsonWriteFeature;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
@@ -583,6 +586,22 @@ public class CodecResource extends ResourceImpl {
 		if(options.containsKey(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT)) {
 			List<MapperFeature> featureWithout = (List<MapperFeature>) options.get(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT);
 			featureWithout.forEach(sf -> objMapperBuilder.disable(sf));
+		}
+		if(options.containsKey(ObjectMapperOptions.OBJ_MAPPER_FORMAT_SER_FEATURES_WITHOUT)) {
+			List<FormatFeature> featureWithout = (List<FormatFeature>) options.get(ObjectMapperOptions.OBJ_MAPPER_FORMAT_SER_FEATURES_WITHOUT);			
+			featureWithout.forEach(sf -> objMapperBuilder.disable((JsonWriteFeature) sf));
+		}
+		if(options.containsKey(ObjectMapperOptions.OBJ_MAPPER_FORMAT_SER_FEATURES_WITH)) {
+			List<FormatFeature> featureWithout = (List<FormatFeature>) options.get(ObjectMapperOptions.OBJ_MAPPER_FORMAT_SER_FEATURES_WITH);			
+			featureWithout.forEach(sf -> objMapperBuilder.enable((JsonWriteFeature) sf));
+		}
+		if(options.containsKey(ObjectMapperOptions.OBJ_MAPPER_FORMAT_DESER_FEATURES_WITHOUT)) {
+			List<FormatFeature> featureWithout = (List<FormatFeature>) options.get(ObjectMapperOptions.OBJ_MAPPER_FORMAT_DESER_FEATURES_WITHOUT);			
+			featureWithout.forEach(sf -> objMapperBuilder.disable((JsonReadFeature) sf));
+		}
+		if(options.containsKey(ObjectMapperOptions.OBJ_MAPPER_FORMAT_DESER_FEATURES_WITH)) {
+			List<FormatFeature> featureWithout = (List<FormatFeature>) options.get(ObjectMapperOptions.OBJ_MAPPER_FORMAT_DESER_FEATURES_WITH);			
+			featureWithout.forEach(sf -> objMapperBuilder.enable((JsonReadFeature) sf));
 		}
 	}
 	

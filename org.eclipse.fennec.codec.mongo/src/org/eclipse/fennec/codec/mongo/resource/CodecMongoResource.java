@@ -28,9 +28,9 @@ import org.eclipse.fennec.codec.configurator.ObjectMapperBuilderFactory;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.jackson.resource.CodecResource;
-import org.eclipse.fennec.codec.mongo.CodecMongoOptions;
 import org.eclipse.fennec.codec.mongo.MongoCodecProvider;
 import org.eclipse.fennec.codec.mongo.helper.MongoUtils;
+import org.eclipse.fennec.codec.mongo.options.CodecMongoOptions;
 import org.gecko.mongo.osgi.MongoDatabaseProvider;
 
 import com.mongodb.BasicDBObject;

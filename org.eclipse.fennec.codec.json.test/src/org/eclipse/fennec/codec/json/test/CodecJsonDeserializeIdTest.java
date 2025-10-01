@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -27,8 +26,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
@@ -106,16 +104,21 @@ public class CodecJsonDeserializeIdTest extends JsonTestSetting{
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, false);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeIdField(false)
+			.build();
 		resource.save(options);
 
 		resource.getContents().clear();
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getPerson())
+			.serializeIdField(false)
+			.build();
 		findResource.load(options);
 
 		// get the person
@@ -131,22 +134,25 @@ public class CodecJsonDeserializeIdTest extends JsonTestSetting{
 
 	@Test
 	public void testDeserializationIdNoIdFieldSerialized() throws IOException {
-		
+
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 
 		Address address = CodecTestHelper.getTestAddress();
 		resource.getContents().add(address);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, false);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeIdField(false)
+			.build();
 		resource.save(options);
 
 		resource.getContents().clear();
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(addFileName));
-		options = new HashMap<>();
 
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getAddress());
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getAddress())
+			.build();
 		findResource.load(options);
 
 		// get the person

@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -30,9 +29,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.BusinessAddress;
@@ -124,14 +121,15 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		person.setNonContainedAdd(address);
 		addRes.getContents().add(address);
 		personRes.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		Map<String, Object> refOptions = new HashMap<>();
-		refOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP, Map.of("business", "BusinessAddress", "personal", "Address"));
-		refOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "NAME");
-		personOptions.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON__NON_CONTAINED_ADD, refOptions));
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, personOptions));
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeDefaultValue(true)
+				.forClass(PersonPackage.Literals.PERSON)
+					.forReference(PersonPackage.Literals.PERSON__NON_CONTAINED_ADD)
+						.typeMap(Map.of("business", "BusinessAddress", "personal", "Address"))
+						.typeStrategy("NAME")
+						.and()
+					.and()
+				.build();
 		addRes.save(options);
 		personRes.save(options);
 
@@ -143,7 +141,16 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		resourceSet.getResources().clear();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+		options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.eINSTANCE.getPerson())
+				.serializeDefaultValue(true)
+				.forClass(PersonPackage.Literals.PERSON)
+					.forReference(PersonPackage.Literals.PERSON__NON_CONTAINED_ADD)
+						.typeMap(Map.of("business", "BusinessAddress", "personal", "Address"))
+						.typeStrategy("NAME")
+						.and()
+					.and()
+				.build();
 
 		findResource.load(options);
 		// get the person
@@ -170,8 +177,9 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		person.setNonContainedAdd(address);
 		addRes.getContents().add(address);
 		personRes.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeDefaultValue(true)
+				.build();
 		addRes.save(options);
 		personRes.save(options);
 
@@ -183,7 +191,10 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		resourceSet.getResources().clear();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+		options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.eINSTANCE.getPerson())
+				.serializeDefaultValue(true)
+				.build();
 
 		findResource.load(options);
 
@@ -213,16 +224,18 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAddress(address);
 		personRes.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeIdField(true)
+				.build();
 		personRes.save(options);
 
 		personRes.getContents().clear();
 		personRes.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+		options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.eINSTANCE.getPerson())
+				.build();
 
 		findResource.load(options);
 
@@ -234,7 +247,7 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		// doing some object checks
 		Person p = (Person) findResource.getContents().get(0);
 		assertEquals(person.getId(), p.getId());
-		Address add = p.getAddress();		
+		Address add = p.getAddress();
 		assertNotNull(add);
 		assertEquals(address.getStreet(), add.getStreet());
 		assertEquals(address.getId(), add.getId());
@@ -253,16 +266,18 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		person.getAddresses().add(address1);
 		person.getAddresses().add(address2);
 		personRes.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeIdField(true)
+				.build();
 		personRes.save(options);
 
 		personRes.getContents().clear();
 		personRes.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+		options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.eINSTANCE.getPerson())
+				.build();
 
 		findResource.load(options);
 
@@ -298,8 +313,9 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		addRes1.getContents().add(address1);
 		addRes1.getContents().add(address2);
 		personRes.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeIdField(true)
+				.build();
 		addRes1.save(options);
 		personRes.save(options);
 
@@ -309,8 +325,9 @@ public class CodecJsonDeserializeReferenceTest extends JsonTestSetting{
 		personRes.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+		options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.eINSTANCE.getPerson())
+				.build();
 
 		findResource.load(options);
 

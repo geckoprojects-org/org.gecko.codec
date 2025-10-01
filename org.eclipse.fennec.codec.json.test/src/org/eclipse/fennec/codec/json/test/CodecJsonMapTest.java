@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,9 +36,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.gecko.codec.demo.model.person.PersonFactory;
 import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.codec.demo.model.person.SimpleMap;
@@ -112,8 +108,9 @@ public class CodecJsonMapTest {
 	@Test
 	public void testLoadMapWithStringKeyWithMapValue() throws IOException {
 		Resource resource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/test-map.json").toString()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getSimpleMap());
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getSimpleMap())
+			.build();
 		resource.load(options);
 
 		assertThat(resource.getContents()).hasSize(1);
@@ -144,8 +141,9 @@ public class CodecJsonMapTest {
 		// load dynamic eobjects from json with classifier from ecore
 		Resource resource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/test-map.json").toString()));
 
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, simpleMapClassifier);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.rootObject(simpleMapClassifier)
+			.build();
 		resource.load(options);
 
 		assertThat(resource.getContents()).hasSize(1);
@@ -156,16 +154,18 @@ public class CodecJsonMapTest {
 		// save dynamic eobjects
 		Resource saveResource = resourceSet.createResource(URI.createURI(mapFileName));
 		saveResource.getContents().add(simpleMap);
-		Map<String, Object> saveOptions = new HashMap<>();
-		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, false);
-		saveOptions.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+		Map<String, Object> saveOptions = CodecOptionsBuilder.create()
+			.serializeIdField(false)
+			.serializeType(false)
+			.build();
 		saveResource.save(saveOptions);
 		saveResource.unload();
 
 		// load from saved json
 		Resource loadResource = resourceSet.createResource(URI.createURI(mapFileName));
-		Map<String, Object> loadOptions = new HashMap<>();
-		loadOptions.put(CodecResourceOptions.CODEC_ROOT_OBJECT, simpleMapClassifier);
+		Map<String, Object> loadOptions = CodecOptionsBuilder.create()
+			.rootObject(simpleMapClassifier)
+			.build();
 		loadResource.load(loadOptions);
 
 		assertThat(loadResource.getContents()).hasSize(1);
@@ -195,17 +195,18 @@ public class CodecJsonMapTest {
 		map.put("1", null);
 
 		saveResource.getContents().add(simpleMap);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH,
-				List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeDefaultValue(true)
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.build();
 		saveResource.save(options);
 		
 		assertFileContains("\"1\" : null");
 
 		Resource loadResource = resourceSet.createResource(URI.createURI(mapFileName));
-		Map<String, Object> loadOptions = new HashMap<>();
-		loadOptions.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getSimpleMap());
+		Map<String, Object> loadOptions = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getSimpleMap())
+			.build();
 		loadResource.load(loadOptions);
 
 		assertThat(loadResource.getContents()).hasSize(1);

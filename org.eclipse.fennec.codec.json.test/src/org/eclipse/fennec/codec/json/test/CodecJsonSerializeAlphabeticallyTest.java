@@ -19,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -29,10 +27,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -116,8 +111,9 @@ public class CodecJsonSerializeAlphabeticallyTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITH, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.mapperFeaturesWith(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+			.build();
 		resource.save(options);
 		int l = 0, l1 = 0, l2 = 0;
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -142,9 +138,10 @@ public class CodecJsonSerializeAlphabeticallyTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITH, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, true);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.mapperFeaturesWith(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+			.idOnTop(true)
+			.build();
 		resource.save(options);
 		int l = 0, l1 = 0, l2 = 0;
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -169,12 +166,13 @@ public class CodecJsonSerializeAlphabeticallyTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITH, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "id");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.mapperFeaturesWith(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+			.idOnTop(false)
+			.forClass(PersonPackage.Literals.PERSON)
+				.idKey("id")
+				.and()
+			.build();
 		resource.save(options);
 		int l = 0, l1 = 0, l2 = 0;
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -200,8 +198,9 @@ public class CodecJsonSerializeAlphabeticallyTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.mapperFeaturesWithout(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+			.build();
 		resource.save(options);
 		int l = 0, l1 = 0, l2 = 0;
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -226,12 +225,13 @@ public class CodecJsonSerializeAlphabeticallyTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, true);
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_ID_KEY, "id");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.mapperFeaturesWithout(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+			.idOnTop(true)
+			.forClass(PersonPackage.Literals.PERSON)
+				.idKey("id")
+				.and()
+			.build();
 		resource.save(options);
 		int l = 0, l1 = 0, l2 = 0;
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

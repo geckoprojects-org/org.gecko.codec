@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.mongo;
+package org.eclipse.fennec.codec.mongo.options;
 
 import java.util.Map;
 

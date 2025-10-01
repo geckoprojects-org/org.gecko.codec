@@ -19,20 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
@@ -115,15 +110,13 @@ public class CodecJsonSerializeWithCustomWriterTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER));
-
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeDefaultValue(true)
+				.serializeIdField(true)
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.valueWriters(Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER))
+				.and()
+				.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -147,16 +140,14 @@ public class CodecJsonSerializeWithCustomWriterTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, false); //needed because in the model there is "title" and not "titles" in metadata
-		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER));
-
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeDefaultValue(true)
+				.serializeIdField(true)
+				.useNamesFromExtendedMetadata(false)
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.valueWriters(Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER))
+				.and()
+				.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -180,15 +171,13 @@ public class CodecJsonSerializeWithCustomWriterTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "ID_FIELD");
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
-
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeDefaultValue(true)
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.idStrategy("ID_FIELD")
+					.idValueWriter(CodecTestHelper.TEST_VALUE_WRITER)
+				.and()
+				.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -212,16 +201,14 @@ public class CodecJsonSerializeWithCustomWriterTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Name(), PersonPackage.eINSTANCE.getPerson_LastName()));
-
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeDefaultValue(true)
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.idStrategy("COMBINED")
+					.idValueWriter(CodecTestHelper.TEST_VALUE_WRITER)
+					.idFeatures(PersonPackage.eINSTANCE.getPerson_Name(), PersonPackage.eINSTANCE.getPerson_LastName())
+				.and()
+				.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -243,13 +230,10 @@ public class CodecJsonSerializeWithCustomWriterTest extends JsonTestSetting{
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
 		Address address = CodecTestHelper.getTestAddress();
 		resource.getContents().add(address);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER, CodecTestHelper.TEST_TYPE_WRITER);
-
-		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				forClass(PersonPackage.eINSTANCE.getAddress()).
+				typeValueWriter(CodecTestHelper.TEST_TYPE_WRITER).build();
+			
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(addFileName))) {

@@ -21,10 +21,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -34,11 +35,11 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.ecowitt.resource.EcoWittResource;
 import org.eclipse.fennec.codec.ecowitt.resource.EcoWittResourceFactory;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.ecowitt.model.ecowitt.EcoWittPackage;
 import org.eclipse.fennec.ecowitt.model.ecowitt.EcoWittWeather;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,6 +77,13 @@ public class EcowittTest {
 		
 	}
 	
+	@AfterAll
+	public static void afterAll() throws IOException {
+		if(Files.exists(Path.of("ecowitt01.xmi"))) Files.delete(Path.of("ecowitt01.xmi"));
+		if(Files.exists(Path.of("ecowitt02.xmi"))) Files.delete(Path.of("ecowitt02.xmi"));
+		if(Files.exists(Path.of("ecowitt03.xmi"))) Files.delete(Path.of("ecowitt03.xmi"));
+	}
+	
 	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "ecowitt", properties = {
 			@Property(key = "type", value="ecowitt"),
 			@Property(key = "codecFactoryConfigurator.target", value="(type=ecowitt)")
@@ -94,9 +102,10 @@ public class EcowittTest {
 		assertNotNull(ecowittRF);
 		Resource resource = ecowittRF.createResource(URI.createURI("test01.ecowitt"));
 		assertInstanceOf(EcoWittResource.class, resource);
-		Map<String, Object> properties = new HashMap<>();
-		properties.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EcoWittPackage.eINSTANCE.getEcoWittWeather());
-		properties.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.TRUE);
+		Map<String, Object> properties = CodecOptionsBuilder.create().
+				rootObject(EcoWittPackage.eINSTANCE.getEcoWittWeather()).
+				useNamesFromExtendedMetadata(true).build();
+				
 		try {
 			resource.load(new ByteArrayInputStream(DATA01.getBytes()), properties);
 		} catch (IOException e) {
@@ -124,13 +133,12 @@ public class EcowittTest {
 		}
 		assertEquals(10.563, weather.getRainYearly());
 		assertEquals(29.616, weather.getBarometerAbs());
-		Resource resource2 = rs.createResource(URI.createURI("/home/mark/tmp/ecowitt01.xmi"));
+		Resource resource2 = rs.createResource(URI.createURI("ecowitt01.xmi"));
 		resource2.getContents().add(weather);
 		try {
 			resource2.save(null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e);
 		}
 	}
 	
@@ -152,9 +160,9 @@ public class EcowittTest {
 		assertNotNull(ecowittRF);
 		Resource resource = ecowittRF.createResource(URI.createURI("test02.ecowitt"));
 		assertInstanceOf(EcoWittResource.class, resource);
-		Map<String, Object> properties = new HashMap<>();
-		properties.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EcoWittPackage.eINSTANCE.getEcoWittWeather());
-		properties.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.TRUE);
+		Map<String, Object> properties = CodecOptionsBuilder.create().
+				rootObject(EcoWittPackage.eINSTANCE.getEcoWittWeather()).
+				useNamesFromExtendedMetadata(true).build();
 		try {
 			resource.load(new ByteArrayInputStream(DATA02.getBytes()), properties);
 		} catch (IOException e) {
@@ -182,13 +190,12 @@ public class EcowittTest {
 		}
 		assertEquals(10.563, weather.getRainYearly());
 		assertEquals(29.619, weather.getBarometerAbs());
-		Resource resource2 = rs.createResource(URI.createURI("/home/mark/tmp/ecowitt02.xmi"));
+		Resource resource2 = rs.createResource(URI.createURI("ecowitt02.xmi"));
 		resource2.getContents().add(weather);
 		try {
 			resource2.save(null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e);
 		}
 	}
 	
@@ -210,9 +217,9 @@ public class EcowittTest {
 		assertNotNull(ecowittRF);
 		Resource resource = ecowittRF.createResource(URI.createURI("test03.ecowitt"));
 		assertInstanceOf(EcoWittResource.class, resource);
-		Map<String, Object> properties = new HashMap<>();
-		properties.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EcoWittPackage.eINSTANCE.getEcoWittWeather());
-		properties.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, Boolean.TRUE);
+		Map<String, Object> properties = CodecOptionsBuilder.create().
+				rootObject(EcoWittPackage.eINSTANCE.getEcoWittWeather()).
+				useNamesFromExtendedMetadata(true).build();
 		try {
 			resource.load(new ByteArrayInputStream(DATA03.getBytes()), properties);
 		} catch (IOException e) {
@@ -240,13 +247,12 @@ public class EcowittTest {
 		}
 		assertEquals(10.563, weather.getRainYearly());
 		assertEquals(29.610, weather.getBarometerAbs());
-		Resource resource2 = rs.createResource(URI.createURI("/home/mark/tmp/ecowitt03.xmi"));
+		Resource resource2 = rs.createResource(URI.createURI("ecowitt03.xmi"));
 		resource2.getContents().add(weather);
 		try {
 			resource2.save(null);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e);
 		}
 	}
 	

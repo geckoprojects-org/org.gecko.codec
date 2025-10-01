@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -32,8 +30,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -115,9 +112,10 @@ public class CodecJsonIdOptionsTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_ID, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.useId(true)
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -141,9 +139,10 @@ public class CodecJsonIdOptionsTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_ID, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.useId(false)
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -167,10 +166,11 @@ public class CodecJsonIdOptionsTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_ID, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.useId(true)
+			.idOnTop(true)
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.build();
 		resource.save(options);
 
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -195,11 +195,12 @@ public class CodecJsonIdOptionsTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_ID, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		options.put(ObjectMapperOptions.OBJ_MAPPER_FEATURES_WITHOUT, List.of(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.useId(true)
+			.idOnTop(false)
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.mapperFeaturesWithout(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+			.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -224,9 +225,10 @@ public class CodecJsonIdOptionsTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeIdField(true)
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -250,9 +252,10 @@ public class CodecJsonIdOptionsTest extends JsonTestSetting {
 		
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeIdField(false)
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

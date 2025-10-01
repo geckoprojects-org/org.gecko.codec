@@ -20,8 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -30,8 +28,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.BusinessPerson;
 import org.gecko.codec.demo.model.person.Person;
@@ -116,10 +113,11 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 		
 		SpecificBusinessPerson person = CodecTestHelper.getTestSpecificBusinessPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeType(true).
+				serializeSuperTypes(true).
+				serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT).build();
+
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -143,11 +141,12 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 		
 		SpecificBusinessPerson person = CodecTestHelper.getTestSpecificBusinessPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ALL_SUPER_TYPES, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeType(true).
+				serializeSuperTypes(true).
+				serializeAllSuperTypes(true).
+				serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT).build();
+		
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -171,12 +170,13 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 		
 		SpecificBusinessPerson person = CodecTestHelper.getTestSpecificBusinessPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ALL_SUPER_TYPES, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY, true);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeType(true).
+				serializeSuperTypes(true).
+				serializeAllSuperTypes(true).
+				serializeSuperTypesAsArray(true).
+				serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT).build();
+		
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -200,12 +200,13 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 		
 		SpecificBusinessPerson person = CodecTestHelper.getTestSpecificBusinessPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ALL_SUPER_TYPES, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeType(true).
+				serializeSuperTypes(true).
+				serializeAllSuperTypes(true).
+				serializeSuperTypesAsArray(false).
+				serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT).build();
+		
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -229,11 +230,12 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 		
 		SpecificBusinessPerson person = CodecTestHelper.getTestSpecificBusinessPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ALL_SUPER_TYPES, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeType(true).
+				serializeSuperTypes(true).
+				serializeAllSuperTypes(false).
+				serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT).build();
+		
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -257,9 +259,11 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 		
 		BusinessPerson person = CodecTestHelper.getTestBusinessPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, false);
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeType(true).
+				serializeSuperTypes(false).
+				serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT).build();
+		
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -285,9 +289,9 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setBusinessAdd(CodecTestHelper.getTestBusinessAddress());
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true); 
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeSuperTypes(true).
+				serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT).build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -312,9 +316,9 @@ public class CodecJsonSerializeSuperTypesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setBusinessAdd(CodecTestHelper.getTestBusinessAddress());
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, false); 
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeSuperTypes(false).
+				serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT).build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

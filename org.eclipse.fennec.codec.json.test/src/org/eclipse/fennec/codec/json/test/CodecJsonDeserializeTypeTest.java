@@ -20,21 +20,20 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Child;
 import org.gecko.codec.demo.model.person.Child2;
@@ -126,12 +125,13 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON);
-		Map<String, Object> classOptions = new HashMap<>();
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "type");
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.PERSON, classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.Literals.PERSON)
+				.forClass(PersonPackage.Literals.PERSON)
+					.typeKey("type")
+					.typeStrategy("URI")
+				.and()
+				.build();
 		resource.save(options);
 
 		resource.getContents().clear();
@@ -150,35 +150,32 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 		assertNotNull(p);
 	}
 
-	@Test	
+	@Test
 	public void testDeserializationDifferentTypeKeysFeatureLevelDynamicModel(@InjectService(filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware, @InjectService(filter = "(" + EMFNamespaces.EMF_MODEL_NSURI + "=http://example.de/type/1.0)") ServiceAware<EPackage> ePackageAware ) throws IOException {
 
 
 		EPackage epackage = ePackageAware.getService();
-	
+
 		EClass testClass = (EClass) epackage.getEClassifier("TestObject");
 
 
 		// load dynamic eobjects from json with classifier from ecore
 		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") + "type-different-keys.json"));
 
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, testClass);
-		Map<String, Object> classOptions = new HashMap<>();
-
-		Map<String, Object> ref1Options = new HashMap<>();
-		ref1Options.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "type");
-		ref1Options.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-
-		Map<String, Object> ref2Options = new HashMap<>();
-		ref2Options.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
-		ref2Options.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-
-		classOptions.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(testClass.getEStructuralFeature("ref1"), ref1Options,
-				testClass.getEStructuralFeature("ref2"), ref2Options));
-
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(testClass, classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.rootObject(testClass)
+				.forClass(testClass)
+					.forReference((EReference) testClass.getEStructuralFeature("ref1"))
+						.typeKey("type")
+						.typeStrategy("URI")
+					.and()
+					.forReference((EReference) testClass.getEStructuralFeature("ref2"))
+						.typeKey("kind")
+						.typeStrategy("URI")
+					.and()
+				.and()
+				.build();
 		//		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "type");
 		resource.load(options);
 
@@ -205,22 +202,19 @@ public class CodecJsonDeserializeTypeTest extends JsonTestSetting{
 		// load dynamic eobjects from json with classifier from ecore
 		Resource resource = resourceSet.createResource(URI.createURI(ctx.getBundle().getEntry("test-data/person-model-different-keys.json").toString()));
 
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.Literals.TEST_OBJECT);
-		Map<String, Object> classOptions = new HashMap<>();
-
-		Map<String, Object> ref1Options = new HashMap<>();
-		ref1Options.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "type");
-		ref1Options.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-
-		Map<String, Object> ref2Options = new HashMap<>();
-		ref2Options.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "kind");
-		ref2Options.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-
-		classOptions.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.TEST_OBJECT__REF1, ref1Options,
-				PersonPackage.Literals.TEST_OBJECT__REF2, ref2Options));
-
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(PersonPackage.Literals.TEST_OBJECT, classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.rootObject(PersonPackage.Literals.TEST_OBJECT)
+				.forClass(PersonPackage.Literals.TEST_OBJECT)
+					.forReference(PersonPackage.Literals.TEST_OBJECT__REF1)
+						.typeKey("type")
+						.typeStrategy("URI")
+					.and()
+					.forReference(PersonPackage.Literals.TEST_OBJECT__REF2)
+						.typeKey("kind")
+						.typeStrategy("URI")
+					.and()
+				.and()
+				.build();
 		//		options.put(CodecModuleOptions.CODEC_MODULE_TYPE_KEY, "type");
 		resource.load(options);
 

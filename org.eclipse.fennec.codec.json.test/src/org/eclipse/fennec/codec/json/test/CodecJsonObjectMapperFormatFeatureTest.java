@@ -13,13 +13,12 @@
  */
 package org.eclipse.fennec.codec.json.test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -31,6 +30,7 @@ import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
+import org.gecko.codec.demo.model.person.PersonPackage;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.AfterEach;
@@ -47,11 +47,12 @@ import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
 
+import tools.jackson.core.json.JsonWriteFeature;
+
 /**
- * See documentation here: 
- * 	https://github.com/osgi/osgi-test
- * 	https://github.com/osgi/osgi-test/wiki
- * Examples: https://github.com/osgi/osgi-test/tree/main/examples
+ * See documentation here: https://github.com/osgi/osgi-test
+ * https://github.com/osgi/osgi-test/wiki Examples:
+ * https://github.com/osgi/osgi-test/tree/main/examples
  */
 @RequireEMF
 @ExtendWith(BundleContextExtension.class)
@@ -59,97 +60,90 @@ import org.osgi.test.junit5.service.ServiceExtension;
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(ConfigurationExtension.class)
 @WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
-})
+		@Property(key = "type", value = "json") })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json"),
-		@Property(key = "enableFeatures", value = "SerializationFeature.INDENT_OUTPUT", type = Type.Array)
-})
+		@Property(key = "type", value = "json"),
+		@Property(key = "enableFeatures", value = "SerializationFeature.INDENT_OUTPUT", type = Type.Array) })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
-})
-public class CodecJsonSerializeNameFromExtendedMetaDataTest extends JsonTestSetting{
-	
-	@InjectService(cardinality = 0, filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
+		@Property(key = "type", value = "json") })
+public class CodecJsonObjectMapperFormatFeatureTest extends JsonTestSetting {
+
+	@InjectService(cardinality = 0,filter = "(" + EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson)")
 	ServiceAware<ResourceSet> rsAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<ObjectMapperConfigurator> mapperAware;
-	
+
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
-	
-	private ResourceSet resourceSet;	
-	
+
+	private ResourceSet resourceSet;
+
 	@BeforeEach()
 	@Override
-	public void beforeEach() throws Exception{
+	public void beforeEach() throws Exception {
 		super.beforeEach();
 		codecFactoryAware.waitForService(2000l);
 		mapperAware.waitForService(2000l);
-		codecModuleAware.waitForService(2000l);	
+		codecModuleAware.waitForService(2000l);
 		resourceSet = rsAware.waitForService(2000l);
 		assertNotNull(resourceSet);
 	}
-	
-	@AfterEach() 
+
+	@AfterEach()
 	@Override
 	public void afterEach() throws IOException {
 		super.afterEach();
-	}	
+	}
 
 	@Test
-	public void testSerializationExtendedMetadataYES() throws IOException {
-	
+	public void testSerializationDefault() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = CodecOptionsBuilder.create().
-				useNamesFromExtendedMetadata(true).build();
-				
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.typeStrategy("URI")
+				.and()
+				.build();
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"title\" :")) {//we need to check against "title" and not "titles" because use-name-from-extended-metadata is true by default
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertTrue(found);
-		 }
+
+
+		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http:\\/\\/example.de\\/person\\/1.0#\\/\\/Person\",");
 	}
-	
-	
+
 	@Test
-	public void testSerializationExtendedMetadataNO() throws IOException {
-	
+	public void testSerializatioDisableEnable() throws IOException {
+
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
-		
+
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = CodecOptionsBuilder.create().
-				useNamesFromExtendedMetadata(false).build();
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.typeStrategy("URI")
+				.and()
+				.formatSerFeaturesWithout(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
+				.build();
 		resource.save(options);
-		
-		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
-			 String line = reader.readLine();
-			 boolean found = false;
-			 while(line != null) {
-				 if(line.contains("\"title\" :")) {//we need to check against "title" and not "titles" because use-name-from-extended-metadata is true by default
-					 found = true;
-				 }
-				 line = reader.readLine();
-			 }
-			 assertFalse(found);
-		 }
+
+		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http://example.de/person/1.0#//Person\",");
+
+		options = CodecOptionsBuilder.create()
+				.forClass(PersonPackage.eINSTANCE.getPerson())
+					.typeStrategy("URI")
+				.and()
+				.formatSerFeaturesWith(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
+				.build();
+		resource.save(options);
+
+		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http:\\/\\/example.de\\/person\\/1.0#\\/\\/Person\",");
+
 	}
-	
 	
 }

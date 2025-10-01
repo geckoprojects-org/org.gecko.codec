@@ -19,20 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.codec.demo.model.person.PersonPackage;
@@ -45,6 +40,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
+import org.osgi.test.common.annotation.Property.Type;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
 import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
@@ -68,7 +64,8 @@ import tools.jackson.databind.SerializationFeature;
 		@Property(key = "type", value="json")
 })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
+		@Property(key = "type", value="json"),
+		@Property(key = "enableFeatures", value = "SerializationFeature.INDENT_OUTPUT", type = Type.Array)
 })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="json")
@@ -113,14 +110,12 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "ID_FIELD");
 
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idStrategy("ID_FIELD")
+			.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -144,14 +139,12 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
 
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idStrategy("COMBINED")
+			.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -176,16 +169,13 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAge(42);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Name(), 
-				PersonPackage.eINSTANCE.getPerson_Age()));
 
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idStrategy("COMBINED")
+				.idFeatures(PersonPackage.eINSTANCE.getPerson_Name(), PersonPackage.eINSTANCE.getPerson_Age())
+			.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -210,16 +200,13 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAge(42);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_FEATURES_LIST, List.of(PersonPackage.eINSTANCE.getPerson_Age(), 
-				PersonPackage.eINSTANCE.getPerson_Name()));
 
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idStrategy("COMBINED")
+				.idFeatures(PersonPackage.eINSTANCE.getPerson_Age(), PersonPackage.eINSTANCE.getPerson_Name())
+			.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -245,15 +232,13 @@ public class CodecJsonSerializeIdStrategyTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAge(42);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_STRATEGY, "COMBINED");
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_SEPARATOR, "test");
 
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idStrategy("COMBINED")
+				.idSeparator("test")
+			.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
