@@ -20,8 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -30,8 +28,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.ObjectMapperOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -43,13 +40,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.osgi.test.common.annotation.InjectService;
 import org.osgi.test.common.annotation.Property;
+import org.osgi.test.common.annotation.Property.Type;
 import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
 import org.osgi.test.common.service.ServiceAware;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
-
-import tools.jackson.databind.SerializationFeature;
 
 /**
  * See documentation here: 
@@ -66,7 +62,8 @@ import tools.jackson.databind.SerializationFeature;
 		@Property(key = "type", value="json")
 })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value="json")
+		@Property(key = "type", value="json"),
+		@Property(key = "enableFeatures", value = "SerializationFeature.INDENT_OUTPUT", type = Type.Array)
 })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value="json")
@@ -112,11 +109,11 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setLastName(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true); //lastName = null is the default, so we need also this option
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(true).
+				serializeDefaultValue(true).
+				serializeIdField(true).build();
+				
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -140,11 +137,10 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.getTitles().add(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true); //lastName = null is the default, so we need also this option
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(true).
+				serializeDefaultValue(true).
+				serializeIdField(true).build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -168,11 +164,10 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.getTitles().add(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true); //lastName = null is the default, so we need also this option
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(false).
+				serializeDefaultValue(true).
+				serializeIdField(true).build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -197,11 +192,10 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setLastName(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true); //lastName = null is the default, so we need also this option
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(false).
+				serializeDefaultValue(true).
+				serializeIdField(true).build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -226,11 +220,10 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setLastName(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, false); //lastName = null is the default, so we need also this option
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(false).
+				serializeDefaultValue(false).
+				serializeIdField(true).build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -255,11 +248,10 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setLastName(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, false); //lastName = null is the default, so we need also this option
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true); //lastName is part of the id in the model so we need this option as well to get it serialized
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(true).
+				serializeDefaultValue(false).
+				serializeIdField(true).build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -284,10 +276,10 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAddress(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true); //address = null is the default, so we need also this option
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(true).
+				serializeDefaultValue(true).
+				build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -312,10 +304,10 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAddress(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true); //address = null is the default, so we need also this option
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(false).
+				serializeDefaultValue(true).
+				build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -340,10 +332,10 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAddress(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, false); //address = null is the default, so we need also this option
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(true).
+				serializeDefaultValue(false).
+				build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -368,10 +360,10 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Person person = CodecTestHelper.getTestPerson();
 		person.setAddress(null);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, false); //address = null is the default, so we need also this option
-		options.put(ObjectMapperOptions.OBJ_MAPPER_SERIALIZATION_FEATURES_WITH, List.of(SerializationFeature.INDENT_OUTPUT));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(true).
+				serializeDefaultValue(false).
+				build();
 		resource.save(options);
 		
 		 try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {

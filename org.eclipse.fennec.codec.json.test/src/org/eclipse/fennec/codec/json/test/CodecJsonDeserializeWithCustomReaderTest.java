@@ -19,19 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
@@ -111,28 +107,24 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 
 		Address address = CodecTestHelper.getTestAddress();
 		resource.getContents().add(address);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
 
-		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeIdField(true)
+			.forClass(PersonPackage.eINSTANCE.getAddress())
+				.idValueWriter(CodecTestHelper.TEST_VALUE_WRITER)
+			.build();
 		resource.save(options);
 
 		resource.getContents().clear();
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(addFileName));
-		options = new HashMap<>();
-		classOptions = new HashMap<>();
-		addOptions = new HashMap<>();
 
-		addOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
-		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getAddress());
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getAddress())
+			.forClass(PersonPackage.eINSTANCE.getAddress())
+				.idValueReader(CodecTestHelper.TEST_VALUE_READER)
+			.build();
 		findResource.load(options);
 
 		// get the person
@@ -153,22 +145,26 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_WRITER, CodecTestHelper.TEST_VALUE_WRITER);
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeIdField(true)
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idValueWriter(CodecTestHelper.TEST_VALUE_WRITER)
+			.build();
 		resource.save(options);
 
 		resource.getContents().clear();
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
-		personOptions.put(CodecModelInfoOptions.CODEC_ID_VALUE_READER, CodecTestHelper.TEST_VALUE_READER);
 
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getPerson())
+			.serializeIdField(true)
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.idValueReader(CodecTestHelper.TEST_VALUE_READER)
+				.idValueWriter(CodecTestHelper.TEST_VALUE_WRITER)
+			.build();
 		findResource.load(options);
 
 		// get the person
@@ -190,27 +186,23 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 
 		Address address = CodecTestHelper.getTestAddress();
 		resource.getContents().add(address);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> addOptions = new HashMap<>();
-		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_WRITER, CodecTestHelper.TEST_TYPE_WRITER);
 
-		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getAddress())
+				.typeValueWriter(CodecTestHelper.TEST_TYPE_WRITER)
+			.build();
 		resource.save(options);
 
 		resource.getContents().clear();
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(addFileName));
-		options = new HashMap<>();
-		classOptions = new HashMap<>();
-		addOptions = new HashMap<>();
 
-		addOptions.put(CodecModelInfoOptions.CODEC_TYPE_VALUE_READER, CodecTestHelper.TEST_TYPE_READER);
-		classOptions.put(PersonPackage.eINSTANCE.getAddress(), addOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getAddress());
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getAddress())
+			.forClass(PersonPackage.eINSTANCE.getAddress())
+				.typeValueReader(CodecTestHelper.TEST_TYPE_READER)
+			.build();
 		findResource.load(options);
 
 		// get the person
@@ -231,23 +223,27 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
-		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER));
-		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_READER));
 
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeIdField(true)
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.valueWriters(Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER))
+				.valueReaders(Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_READER))
+			.build();
 		resource.save(options);
 
 		resource.getContents().clear();
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getPerson())
+			.serializeIdField(true)
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.valueWriters(Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_WRITER))
+				.valueReaders(Map.of(PersonPackage.eINSTANCE.getPerson_Name(), CodecTestHelper.TEST_VALUE_READER))
+			.build();
 		findResource.load(options);
 
 		// get the person
@@ -268,22 +264,25 @@ public class CodecJsonDeserializeWithCustomReaderTest extends JsonTestSetting{
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		Map<EClass, Map<String, Object>> classOptions = new HashMap<>();
-		Map<String, Object> personOptions = new HashMap<>();
-		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_WRITERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER));
-		personOptions.put(CodecModelInfoOptions.CODEC_VALUE_READERS_MAP, Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_VALUE_READER));
 
-		classOptions.put(PersonPackage.eINSTANCE.getPerson(), personOptions);
-		options.put(CodecResourceOptions.CODEC_OPTIONS, classOptions);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.valueWriters(Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER))
+				.valueReaders(Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_VALUE_READER))
+			.build();
 		resource.save(options);
 
 		resource.getContents().clear();
 		resource.unload();
 
 		Resource findResource = resourceSet.createResource(URI.createURI(personFileName));
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
 
+		options = CodecOptionsBuilder.create()
+			.rootObject(PersonPackage.eINSTANCE.getPerson())
+			.forClass(PersonPackage.eINSTANCE.getPerson())
+				.valueWriters(Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_MULTI_VALUE_WRITER))
+				.valueReaders(Map.of(PersonPackage.eINSTANCE.getPerson_Titles(), CodecTestHelper.TEST_VALUE_READER))
+			.build();
 		findResource.load(options);
 
 		// get the person

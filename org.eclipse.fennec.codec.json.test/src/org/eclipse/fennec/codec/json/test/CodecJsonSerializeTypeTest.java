@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -29,7 +28,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Address;
 import org.gecko.codec.demo.model.person.Person;
@@ -108,8 +107,9 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeType(true)
+				.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -193,8 +193,9 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeType(false)
+				.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -219,8 +220,9 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 		Address address = CodecTestHelper.getTestAddress();
 		person.setAddress(address);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, true);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeType(true)
+				.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -247,8 +249,9 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 		Address address = CodecTestHelper.getTestAddress();
 		person.setAddress(address);
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeType(false)
+				.build();
 		resource.save(options);
 
 		try (BufferedReader reader = new BufferedReader(new FileReader(personFileName))) {
@@ -270,8 +273,9 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 	public void testSerializationNonContainedRefTypeYES() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
-		Map<String, Object> options = new HashMap<>();
-		
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.build();
+
 		Person person = CodecTestHelper.getTestPerson();
 		Address address = CodecTestHelper.getTestAddress();
 		person.setNonContainedAdd(address);
@@ -299,8 +303,9 @@ public class CodecJsonSerializeTypeTest extends JsonTestSetting {
 	public void testSerializationNonContainedRefTypeNO() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(addFileName));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+		Map<String, Object> options = CodecOptionsBuilder.create()
+				.serializeType(false)
+				.build();
 		Person person = CodecTestHelper.getTestPerson();
 		Address address = CodecTestHelper.getTestAddress();
 		person.setNonContainedAdd(address);

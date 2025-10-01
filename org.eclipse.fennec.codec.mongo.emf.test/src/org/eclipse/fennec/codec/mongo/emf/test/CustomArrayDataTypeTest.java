@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -32,8 +31,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
-import org.eclipse.fennec.codec.options.CodecResourceOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.gecko.emf.osgi.example.model.basic.BasicFactory;
@@ -151,8 +149,9 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 		// load the Geometry object from the db
 		Resource findResource = resourceSet
 				.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Geometry/" + geometry.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getGeometry());
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getGeometry()).build();
+				
 		findResource.load(options);
 		assertNotNull(findResource);
 		assertFalse(findResource.getContents().isEmpty());
@@ -201,8 +200,9 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 
 //		save the Geometry object
 		resource.getContents().add(geometry);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, Boolean.TRUE);
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				serializeNullValue(true).build();
+		
 		resource.save(options);
 
 		resource.getContents().clear();
@@ -211,8 +211,8 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 		// load the Geometry object from the db
 		Resource findResource = resourceSet
 				.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Geometry/" + geometry.getId()));
-		options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getGeometry());
+		options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getGeometry()).build();
 		findResource.load(options);
 		assertNotNull(findResource);
 		assertFalse(findResource.getContents().isEmpty());
@@ -271,8 +271,8 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 		// load the Geometry object from the db
 		Resource findResource = resourceSet
 				.createResource(URI.createURI("mongodb://" + mongoHost + ":27017/test/Geometry/" + geometry.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, BasicPackage.eINSTANCE.getGeometry());
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(BasicPackage.eINSTANCE.getGeometry()).build();
 		findResource.load(options);
 		assertNotNull(findResource);
 		assertFalse(findResource.getContents().isEmpty());
@@ -331,8 +331,8 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 		// load the ExtendedGeometry object from the db
 		Resource findResource = resourceSet.createResource(
 				URI.createURI("mongodb://" + mongoHost + ":27017/test/ExtendedGeometry/" + extendedGeometry.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, ExtendedPackage.eINSTANCE.getExtendedGeometry());
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(ExtendedPackage.eINSTANCE.getExtendedGeometry()).build();
 		findResource.load(options);
 		assertNotNull(findResource);
 		assertFalse(findResource.getContents().isEmpty());
@@ -379,8 +379,8 @@ public class CustomArrayDataTypeTest extends MongoEMFSetting{
 		// load the ExtendedGeometry object from the db
 		Resource findResource = resourceSet.createResource(
 				URI.createURI("mongodb://" + mongoHost + ":27017/test/ExtendedGeometry/" + extendedGeometry.getId()));
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, ExtendedPackage.eINSTANCE.getExtendedGeometry());
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(ExtendedPackage.eINSTANCE.getExtendedGeometry()).build();
 		findResource.load(options);
 		assertNotNull(findResource);
 		assertFalse(findResource.getContents().isEmpty());

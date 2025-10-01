@@ -1,3 +1,5 @@
 -library: enable-emf
 -buildpath: \
-  osgi.annotation; version=7.0.0
+	osgi.annotation;version='7.0.0',\
+	tools.jackson.core.jackson-databind,\
+	tools.jackson.core.jackson-core

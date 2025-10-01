@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -31,7 +30,7 @@ import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.jackson.resource.CodecResource;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.test.helper.CodecTestHelper;
 import org.gecko.codec.demo.model.person.Person;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -115,16 +114,18 @@ public class CodecModuleConfigOverwriteTest {
 	
 	@Test
 	public void testCodecModuleOverwriteProxyKey() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("_proxy", module.getProxyKey());		
-		
+		assertEquals("_proxy", module.getProxyKey());
+
 		Resource resource = resourceSet.createResource(uri);
-		
-		Person person = CodecTestHelper.getTestPerson();		
+
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_PROXY_KEY, "test");
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.proxyKey("test")
+			.build();
 		resource.save(options);
 		
 		module = getCodecModuleFromResource(resource);
@@ -133,16 +134,18 @@ public class CodecModuleConfigOverwriteTest {
 	
 	@Test
 	public void testCodecModuleOverwriteRefKey() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("$ref", module.getRefKey());		
-		
+		assertEquals("$ref", module.getRefKey());
+
 		Resource resource = resourceSet.createResource(uri);
-		
-		Person person = CodecTestHelper.getTestPerson();		
+
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_REFERENCE_KEY, "test");
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.referenceKey("test")
+			.build();
 		resource.save(options);
 		
 		module = getCodecModuleFromResource(resource);
@@ -151,226 +154,252 @@ public class CodecModuleConfigOverwriteTest {
 	
 	@Test
 	public void testCodecModuleOverwriteTimestampKey() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("_timestamp", module.getTimestampKey());		
-		
+		assertEquals("_timestamp", module.getTimestampKey());
+
 		Resource resource = resourceSet.createResource(uri);
-		
-		Person person = CodecTestHelper.getTestPerson();		
+
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_TIMESTAMP_KEY, "test");
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.timestampKey("test")
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertEquals("test", module.getTimestampKey());		
-	}
-	
-	@Test
-	public void testCodecModuleOverwriteSupertypeKey() throws InterruptedException, IOException {
-	
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertEquals("_supertype", module.getSuperTypeKey());		
-		
-		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SUPERTYPE_KEY, "test");
-		resource.save(options);
-		
-		module = getCodecModuleFromResource(resource);
-		assertEquals("test", module.getSuperTypeKey());		
-	}
-	
-	@Test
-	public void testCodecModuleOverwriteUseId() throws InterruptedException, IOException {
-	
-		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isUseId());	
-		
-		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
-		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_ID, false);
-		resource.save(options);
-		
-		module = getCodecModuleFromResource(resource);
-		assertFalse(module.isUseId());	
+		assertEquals("test", module.getTimestampKey());
 	}
 
-	
+	@Test
+	public void testCodecModuleOverwriteSupertypeKey() throws InterruptedException, IOException {
+
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertEquals("_supertype", module.getSuperTypeKey());
+
+		Resource resource = resourceSet.createResource(uri);
+		Person person = CodecTestHelper.getTestPerson();
+		resource.getContents().add(person);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.supertypeKey("test")
+			.build();
+		resource.save(options);
+
+		module = getCodecModuleFromResource(resource);
+		assertEquals("test", module.getSuperTypeKey());
+	}
+
+	@Test
+	public void testCodecModuleOverwriteUseId() throws InterruptedException, IOException {
+
+		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
+		assertTrue(module.isUseId());
+
+		Resource resource = resourceSet.createResource(uri);
+		Person person = CodecTestHelper.getTestPerson();
+		resource.getContents().add(person);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.useId(false)
+			.build();
+		resource.save(options);
+
+		module = getCodecModuleFromResource(resource);
+		assertFalse(module.isUseId());
+	}
+
+
 	@Test
 	public void testCodecModuleOverwriteSerializeType() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isSerializeType());	
-		
+		assertTrue(module.isSerializeType());
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeType(false)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertFalse(module.isSerializeType());	
+		assertFalse(module.isSerializeType());
 	}
-	
+
 	@Test
 	public void testCodecModuleOverwriteSerializeSuperTypesAsArray() throws InterruptedException, IOException {
-		
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isSerializeSuperTypesAsArray());	
-		
+		assertTrue(module.isSerializeSuperTypesAsArray());
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY, false);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeSuperTypesAsArray(false)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertFalse(module.isSerializeSuperTypesAsArray());	
+		assertFalse(module.isSerializeSuperTypesAsArray());
 	}
-	
+
 	@Test
 	public void testCodecModuleOverwriteUseNamesFromExtendedMetaData() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isUseNamesFromExtendedMetaData());	
-		
+		assertTrue(module.isUseNamesFromExtendedMetaData());
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, false);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.useNamesFromExtendedMetadata(false)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertFalse(module.isUseNamesFromExtendedMetaData());	
+		assertFalse(module.isUseNamesFromExtendedMetaData());
 	}
 	
 	@Test
 	public void testCodecModuleOverwriteIdOnTop() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isIdOnTop());	
-		
+		assertTrue(module.isIdOnTop());
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_ON_TOP, false);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.idOnTop(false)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertFalse(module.isIdOnTop());	
+		assertFalse(module.isIdOnTop());
 	}
-	
+
 	@Test
 	public void testCodecModuleOverwriteIdFeatureAsPrimaryKey() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isIdFeatureAsPrimaryKey());	
-		
+		assertTrue(module.isIdFeatureAsPrimaryKey());
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_ID_FEATURE_AS_PRIMARY_KEY, false);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.idFeatureAsPrimaryKey(false)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertFalse(module.isIdFeatureAsPrimaryKey());	
+		assertFalse(module.isIdFeatureAsPrimaryKey());
 	}
-	
+
 	@Test
 	public void testCodecModuleOverwriteSerializeSuperTypes() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertFalse(module.isSerializeSuperTypes());	
-		
+		assertFalse(module.isSerializeSuperTypes());
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_SUPER_TYPES, true);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeSuperTypes(true)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertTrue(module.isSerializeSuperTypes());	
+		assertTrue(module.isSerializeSuperTypes());
 	}
-	
+
 	@Test
 	public void testCodecModuleOverwriteSerializeDefaultValue() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertFalse(module.isSerializeDefaultValue());	
-		
+		assertFalse(module.isSerializeDefaultValue());
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeDefaultValue(true)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertTrue(module.isSerializeDefaultValue());	
+		assertTrue(module.isSerializeDefaultValue());
 	}
-	
+
 	@Test
 	public void testCodecModuleOverwriteSerializeEmptyValue() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertFalse(module.isSerializeEmptyValue());	
-		
+		assertFalse(module.isSerializeEmptyValue());
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeEmptyValue(true)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertTrue(module.isSerializeEmptyValue());	
+		assertTrue(module.isSerializeEmptyValue());
 	}
-	
+
 	@Test
 	public void testCodecModuleOverwriteSerializeNullValue() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertFalse(module.isSerializeNullValue());	
-		
+		assertFalse(module.isSerializeNullValue());
+
 		Resource resource = resourceSet.createResource(uri);
-		Person person = CodecTestHelper.getTestPerson();		
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeNullValue(true)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertTrue(module.isSerializeNullValue());	
+		assertTrue(module.isSerializeNullValue());
 	}
-	
+
 	@Test
 	public void testCodecModuleOverwriteSerializeIdField() throws InterruptedException, IOException {
-	
+
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertFalse(module.isSerializeIdField());	
-		
+		assertFalse(module.isSerializeIdField());
+
 		Resource resource = resourceSet.createResource(uri);
-		
-		Person person = CodecTestHelper.getTestPerson();		
+
+		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_ID_FIELD, true);
+
+		Map<String, Object> options = CodecOptionsBuilder.create()
+			.serializeIdField(true)
+			.build();
 		resource.save(options);
-		
+
 		module = getCodecModuleFromResource(resource);
-		assertTrue(module.isSerializeIdField());	
+		assertTrue(module.isSerializeIdField());
 	}
 	
 	private CodecModule getCodecModuleFromResource(Resource resource) {

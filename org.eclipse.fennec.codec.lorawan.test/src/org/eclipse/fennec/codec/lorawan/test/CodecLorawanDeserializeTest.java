@@ -19,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -28,8 +27,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
-import org.eclipse.fennec.codec.options.CodecModuleOptions;
+import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
 import org.eclipse.fennec.dragino.message.model.dragino.DecodedObject;
 import org.eclipse.fennec.dragino.message.model.dragino.DraginoLSE01Uplink;
@@ -112,9 +110,10 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	public void testDeserializationDragino(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"dragino-example.json"));	
-		Map<String, Object> options = new HashMap<>();		
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, DraginoPackage.eINSTANCE.getDraginoLSE01Uplink());
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(DraginoPackage.eINSTANCE.getDraginoLSE01Uplink()).
+				useNamesFromExtendedMetadata(true).build();
+				
 		resource.load(options);
 
 		// get the person
@@ -216,9 +215,10 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 		
 		Thread.sleep(2000l);
 		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"dragino-example.json"));	
-		Map<String, Object> options = new HashMap<>();		
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(LorawanPackage.eINSTANCE.getUplinkMessage()).
+				useNamesFromExtendedMetadata(true).build();
+		
 		resource.load(options);
 
 		// get the person
@@ -319,15 +319,15 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	public void testDeserializationDraginoFromTypeInfoOptions(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"dragino-example.json"));	
-		Map<String, Object> options = new HashMap<>();		
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
-		Map<String, Object> classOptions = new HashMap<>();		
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "dr");
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP, Map.of("0", "https://eclipse.org/fennec/lorawan/dragino#//DraginoLSE01Uplink",
-				"2", "http://www.example.org/lorawan/specific/em310udl#//EM310UDLUplink"));
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(LorawanPackage.eINSTANCE.getUplinkMessage(), classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(LorawanPackage.eINSTANCE.getUplinkMessage()).
+				useNamesFromExtendedMetadata(true).
+				forClass(LorawanPackage.eINSTANCE.getUplinkMessage()).
+				typeKey("dr").
+				typeStrategy("URI").
+				typeMap(Map.of("0", "https://eclipse.org/fennec/lorawan/dragino#//DraginoLSE01Uplink",
+				"2", "http://www.example.org/lorawan/specific/em310udl#//EM310UDLUplink")).build();
+				options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
 		
 		resource.load(options);
 
@@ -431,9 +431,10 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	public void testDeserializationEm130(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"em310-example.json"));	
-		Map<String, Object> options = new HashMap<>();		
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, EM310UDLPackage.eINSTANCE.getEM310UDLUplink());
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(EM310UDLPackage.eINSTANCE.getEM310UDLUplink()).
+				useNamesFromExtendedMetadata(true).build();
+	
 		resource.load(options);
 
 		// get the person
@@ -510,9 +511,9 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	public void testDeserializationEm130FromTypeInfo(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"em310-example.json"));	
-		Map<String, Object> options = new HashMap<>();		
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(LorawanPackage.eINSTANCE.getUplinkMessage()).
+				useNamesFromExtendedMetadata(true).build();
 		resource.load(options);
 
 		// get the person
@@ -589,15 +590,16 @@ public class CodecLorawanDeserializeTest extends JsonTestSetting{
 	public void testDeserializationEm130FromTypeInfoOptions(@InjectService ServiceAware<DraginoPackage> packageAware) throws IOException {
 		
 		Resource resource = resourceSet.createResource(URI.createURI(System.getProperty("test-data") +"em310-example.json"));	
-		Map<String, Object> options = new HashMap<>();		
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
-		Map<String, Object> classOptions = new HashMap<>();		
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_KEY, "dr");
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_STRATEGY, "URI");
-		classOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP, Map.of("0", "https://eclipse.org/fennec/lorawan/dragino#//DraginoLSE01Uplink",
-				"2", "http://www.example.org/lorawan/specific/em310udl#//EM310UDLUplink"));
-		options.put(CodecResourceOptions.CODEC_OPTIONS, Map.of(LorawanPackage.eINSTANCE.getUplinkMessage(), classOptions));
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(LorawanPackage.eINSTANCE.getUplinkMessage()).
+				useNamesFromExtendedMetadata(true).
+				forClass(LorawanPackage.eINSTANCE.getUplinkMessage()).
+				typeKey("dr").
+				typeStrategy("URI").
+				typeMap(Map.of("0", "https://eclipse.org/fennec/lorawan/dragino#//DraginoLSE01Uplink",
+				"2", "http://www.example.org/lorawan/specific/em310udl#//EM310UDLUplink")).build();
+				options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, LorawanPackage.eINSTANCE.getUplinkMessage());
+				
 		resource.load(options);
 
 		// get the person
