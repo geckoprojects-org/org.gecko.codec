@@ -80,12 +80,12 @@ import tools.jackson.databind.ObjectMapper;
 @WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
 		@Property(key = "type", value = "json") })
 @WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value = "json"),
+		@Property(key = "type", value = "jsonschema"),
 		@Property(key = "disableFeatures", value={"JsonWriteFeature.ESCAPE_FORWARD_SLASHES"}, type = Type.Array),
 		@Property(key = "enableFeatures", value={"SerializationFeature.INDENT_OUTPUT"}, type = Type.Array)		
 })
 @WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
-		@Property(key = "type", value = "json"),
+		@Property(key = "type", value = "jsonschema"),
 		@Property(key = "serializers.target", value = "(component.name=JsonSchemaCodecEMFSerializers)"),
 		@Property(key = "deserializers.target", value = "(component.name=JsonSchemaCodecEMFDeserializers)")
 		
@@ -98,10 +98,10 @@ public class CodecJsonSchemaSerializationTest {
 	@InjectService(cardinality = 0, filter = "(type=json)")
 	ServiceAware<CodecFactoryConfigurator> codecFactoryAware;
 
-	@InjectService(cardinality = 0, filter = "(type=json)")
+	@InjectService(cardinality = 0, filter = "(type=jsonschema)")
 	ServiceAware<ObjectMapperConfigurator> mapperAware;
 
-	@InjectService(cardinality = 0, filter = "(type=json)")
+	@InjectService(cardinality = 0, filter = "(type=jsonschema)")
 	ServiceAware<CodecModuleConfigurator> codecModuleAware;
 
 	@InjectBundleContext
@@ -121,7 +121,7 @@ public class CodecJsonSchemaSerializationTest {
 
 	@AfterEach()
 	public void afterEach() throws IOException {
-		if(file2 != null) Files.deleteIfExists(Path.of(file2));
+//		if(file2 != null) Files.deleteIfExists(Path.of(file2));
 	}
 	
 	
