@@ -253,19 +253,19 @@ public class CodecModuleConfigOverwriteTest {
 	public void testCodecModuleOverwriteUseNamesFromExtendedMetaData() throws InterruptedException, IOException {
 
 		CodecModule module = codecModuleConfigurator.getCodecModuleBuilder().build();
-		assertTrue(module.isUseNamesFromExtendedMetaData());
+		assertFalse(module.isUseNamesFromExtendedMetaData());
 
 		Resource resource = resourceSet.createResource(uri);
 		Person person = CodecTestHelper.getTestPerson();
 		resource.getContents().add(person);
 
 		Map<String, Object> options = CodecOptionsBuilder.create()
-			.useNamesFromExtendedMetadata(false)
+			.useNamesFromExtendedMetadata(true)
 			.build();
 		resource.save(options);
 
 		module = getCodecModuleFromResource(resource);
-		assertFalse(module.isUseNamesFromExtendedMetaData());
+		assertTrue(module.isUseNamesFromExtendedMetaData());
 	}
 	
 	@Test

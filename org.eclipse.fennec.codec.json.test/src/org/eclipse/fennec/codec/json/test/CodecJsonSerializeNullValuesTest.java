@@ -140,6 +140,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Map<String, Object> options = CodecOptionsBuilder.create().
 				serializeNullValue(true).
 				serializeDefaultValue(true).
+				useNamesFromExtendedMetadata(true).
 				serializeIdField(true).build();
 		resource.save(options);
 		
@@ -167,6 +168,7 @@ public class CodecJsonSerializeNullValuesTest extends JsonTestSetting{
 		Map<String, Object> options = CodecOptionsBuilder.create().
 				serializeNullValue(false).
 				serializeDefaultValue(true).
+				useNamesFromExtendedMetadata(true).
 				serializeIdField(true).build();
 		resource.save(options);
 		
