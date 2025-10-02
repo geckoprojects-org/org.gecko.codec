@@ -52,7 +52,7 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 			holder.setCurrentFeature(codecCtxt.getCurrentFeature());
 			holder.setResource(codecCtxt.getResource());
 		}
-		
+
 	} 
 
 
@@ -64,11 +64,10 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 		_parent = parent;
 		_startLocation = parent._startLocation;
 		holder = new EMFContextHolder();
-		if(parent instanceof EMFCodecContext codecCtxt) {
-			holder.setCurrentEObject(codecCtxt.getCurrentEObject());
-			holder.setCurrentFeature(codecCtxt.getCurrentFeature());
-			holder.setResource(codecCtxt.getResource());
-		}
+		holder.setCurrentEObject(parent.getCurrentEObject());
+		holder.setCurrentFeature(parent.getCurrentFeature());
+		holder.setResource(parent.getResource());
+
 	}
 
 
@@ -85,7 +84,7 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 		_parent = origContext.getParent();
 		_currentName = origContext.currentName();
 		_currentValue = origContext.currentValue();
-		
+
 		if (origContext instanceof CodecJsonReadContext rc) {
 			_startLocation = rc.startLocation(contentRef);
 		} else {
@@ -96,7 +95,7 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 		} else {
 			holder = new EMFContextHolder();
 		}
-		
+
 	}
 
 
@@ -317,7 +316,7 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 	public void setEMFContextHolder(EMFContextHolder holder) {
 		this.holder = holder;		
 	}
-	
+
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext#setCurrentTypeInfo(org.eclipse.fennec.codec.info.codecinfo.TypeInfo)
@@ -325,7 +324,7 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 	@Override
 	public void setCurrentTypeInfo(TypeInfo typeInfo) {
 		holder.setCurrentTypeInfo(typeInfo);
-		
+
 	}
 
 	/* 
@@ -337,5 +336,5 @@ public class CodecTokenBufferReadContext extends TokenBufferReadContext implemen
 		return holder.getCurrentTypeInfo();
 	}
 
-	
+
 }

@@ -19,5 +19,7 @@ Private-Package: org.eclipse.fennec.codec.jsonschema.test
 
 Bundle-Version: 1.0.0.SNAPSHOT
 
+-includeresource: test-data=test-data/
+
 # Sometimes without DynamicImport Mockito will not find certain classes
 #DynamicImport-Package: *

@@ -4,9 +4,7 @@
 	bnd.identity;id='org.eclipse.fennec.codec.jsonschema.test',\
 	bnd.identity;id='org.eclipse.fennec.codec.jsonschema',\
 	bnd.identity;id='org.eclipse.fennec.codec.json',\
-	bnd.identity;id='org.eclipse.fennec.codec.info',\
-	bnd.identity;id='org.apache.felix.gogo.command',\
-	bnd.identity;id='org.apache.felix.gogo.shell'
+	bnd.identity;id='org.eclipse.fennec.codec.info'
 	
 -runbundles.test: \
 	org.eclipse.fennec.codec.jsonschema.test;version=snapshot
@@ -14,6 +12,9 @@
 -runfw: org.apache.felix.framework
 
 -runee: JavaSE-17
+
+-runproperties: \
+	data=${.}/test-data/
 
 -runbundles: \
 	assertj-core;version='[3.26.3,3.26.4)',\

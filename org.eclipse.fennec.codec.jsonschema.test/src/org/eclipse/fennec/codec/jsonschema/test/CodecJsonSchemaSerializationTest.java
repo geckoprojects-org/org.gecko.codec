@@ -96,8 +96,8 @@ public class CodecJsonSchemaSerializationTest {
 	
 	@Test
 	public void topLevelEClass() throws IOException {
-		String file1 = "test-data/top-level-eclass.json";
-		file2 = "test-data/ser_top-level-eclass.json";
+		String file1 = System.getProperty("data")+"top-level-eclass.json";
+		file2 = System.getProperty("data")+"ser_top-level-eclass.json";
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
 		Map<String, Object> options = CodecOptionsBuilder.create(). 
 				rootObject(EcorePackage.Literals.EPACKAGE).
@@ -124,8 +124,8 @@ public class CodecJsonSchemaSerializationTest {
 	
 	@Test
 	public void meterReading() throws IOException {
-		String file1 = "test-data/meter-reading.json";
-		file2 = "test-data/ser_meter-reading.ecore";
+		String file1 = System.getProperty("data")+"meter-reading.json";
+		file2 = System.getProperty("data")+"ser_meter-reading.ecore";
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
 		
 		Map<String, Object> options = CodecOptionsBuilder.create(). 
@@ -152,8 +152,8 @@ public class CodecJsonSchemaSerializationTest {
 	
 	@Test
 	public void openAPIJsonSchema() throws IOException {
-		String file1 = "test-data/open-api.json";
-		file2 = "test-data/ser_open-api.json";
+		String file1 = System.getProperty("data")+"open-api.json";
+		file2 = System.getProperty("data")+"ser_open-api.json";
 		
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
 		Map<String, Object> options = CodecOptionsBuilder.create(). 
@@ -182,8 +182,8 @@ public class CodecJsonSchemaSerializationTest {
 	@Disabled("This does not fully work, because of the emf model we have. Some features are deserialized as String and then serialized back as String. This is no jsonschema (de)serializer fault. It depends on the model!")
 	@Test
 	public void openAPIComplete() throws IOException {
-		String file1 = "test-data/openapi-complete.json";
-		file2 = "test-data/ser_openapi-complete.json";
+		String file1 = System.getProperty("data")+"openapi-complete.json";
+		file2 = System.getProperty("data")+"ser_openapi-complete.json";
 		
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/json");
 		Map<String, Object> options = new HashMap<>();
@@ -210,168 +210,168 @@ public class CodecJsonSchemaSerializationTest {
 //	@Test
 //	public void topLevelEEnum() throws IOException {
 //
-//		String file1 = "test-data/top-level-enum.json";
-//		file2 = "test-data/ser_top-level-enum.json";
+//		String file1 = System.getProperty("data")+"top-level-enum.json";
+//		file2 = System.getProperty("data")+"ser_top-level-enum.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void topLevelArray() throws IOException {
 //
-//		String file1 = "test-data/top-level-array.json";
-//		file2 = "test-data/ser_top-level-array.json";
+//		String file1 = System.getProperty("data")+"top-level-array.json";
+//		file2 = System.getProperty("data")+"ser_top-level-array.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void topLevelSimpleEDataType() throws IOException {
 //
-//		String file1 = "test-data/top-level-simple-edatatype.json";
-//		file2 = "test-data/ser_top-level-simple-edatatype.json";
+//		String file1 = System.getProperty("data")+"top-level-simple-edatatype.json";
+//		file2 = System.getProperty("data")+"ser_top-level-simple-edatatype.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void topLevelObjectEDataType() throws IOException {
 //
-//		String file1 = "test-data/top-level-object-edatatype.json";
-//		file2 = "test-data/ser_top-level-object-edatatype.json";
+//		String file1 = System.getProperty("data")+"top-level-object-edatatype.json";
+//		file2 = System.getProperty("data")+"ser_top-level-object-edatatype.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void singleAttribute() throws IOException {
 //
-//		String file1 = "test-data/single-attribute.json";
-//		file2 = "test-data/ser_single-attribute.json";
+//		String file1 = System.getProperty("data")+"single-attribute.json";
+//		file2 = System.getProperty("data")+"ser_single-attribute.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void singleAttributeArrayType() throws IOException {
 //
-//		String file1 = "test-data/single-attribute-array-type.json";
-//		file2 = "test-data/ser_single-attribute-array-type.json";
+//		String file1 = System.getProperty("data")+"single-attribute-array-type.json";
+//		file2 = System.getProperty("data")+"ser_single-attribute-array-type.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void singleAttributeEnum() throws IOException {
 //
-//		String file1 = "test-data/single-attribute-enum.json";
-//		file2 = "test-data/ser_single-attribute-enum.json";
+//		String file1 = System.getProperty("data")+"single-attribute-enum.json";
+//		file2 = System.getProperty("data")+"ser_single-attribute-enum.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void singleAttributeEnumWOType() throws IOException {
 //
-//		String file1 = "test-data/single-attribute-enum-wo-type.json";
-//		file2 = "test-data/ser_single-attribute-enum-wo-type.json";
+//		String file1 = System.getProperty("data")+"single-attribute-enum-wo-type.json";
+//		file2 = System.getProperty("data")+"ser_single-attribute-enum-wo-type.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void manyAttribute() throws IOException {
 //
-//		String file1 = "test-data/many-attribute.json";
-//		file2 = "test-data/ser_many-attribute.json";
+//		String file1 = System.getProperty("data")+"many-attribute.json";
+//		file2 = System.getProperty("data")+"ser_many-attribute.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void manyAttributeConst() throws IOException {
 //
-//		String file1 = "test-data/many-attribute-const.json";
-//		file2 = "test-data/ser_many-attribute-const.json";
+//		String file1 = System.getProperty("data")+"many-attribute-const.json";
+//		file2 = System.getProperty("data")+"ser_many-attribute-const.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void manyAttributeConstWOType() throws IOException {
 //
-//		String file1 = "test-data/many-attribute-const-wo-type.json";
-//		file2 = "test-data/ser_many-attribute-const-wo-type.json";
+//		String file1 = System.getProperty("data")+"many-attribute-const-wo-type.json";
+//		file2 = System.getProperty("data")+"ser_many-attribute-const-wo-type.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void manyAttributeEnumWOType() throws IOException {
 //
-//		String file1 = "test-data/many-attribute-enum-wo-type.json";
-//		file2 = "test-data/ser_many-attribute-enum-wo-type.json";
+//		String file1 = System.getProperty("data")+"many-attribute-enum-wo-type.json";
+//		file2 = System.getProperty("data")+"ser_many-attribute-enum-wo-type.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void manyAttributeEnum() throws IOException {
 //
-//		String file1 = "test-data/many-attribute-enum.json";
-//		file2 = "test-data/ser_many-attribute-enum.json";
+//		String file1 = System.getProperty("data")+"many-attribute-enum.json";
+//		file2 = System.getProperty("data")+"ser_many-attribute-enum.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void singleAttributeConst() throws IOException {
 //
-//		String file1 = "test-data/single-attribute-const.json";
-//		file2 = "test-data/ser_single-attribute-const.json";
+//		String file1 = System.getProperty("data")+"single-attribute-const.json";
+//		file2 = System.getProperty("data")+"ser_single-attribute-const.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void singleAttributeConstWOType() throws IOException {
 //
-//		String file1 = "test-data/single-attribute-const-wo-type.json";
-//		file2 = "test-data/ser_single-attribute-const-wo-type.json";
+//		String file1 = System.getProperty("data")+"single-attribute-const-wo-type.json";
+//		file2 = System.getProperty("data")+"ser_single-attribute-const-wo-type.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void containedRef() throws IOException {
 //
-//		String file1 = "test-data/contained-ref.json";
-//		file2 = "test-data/ser_contained-ref.json";
+//		String file1 = System.getProperty("data")+"contained-ref.json";
+//		file2 = System.getProperty("data")+"ser_contained-ref.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void manyContainedRef() throws IOException {
 //
-//		String file1 = "test-data/many-contained-ref.json";
-//		file2 = "test-data/ser_many-contained-ref.json";
+//		String file1 = System.getProperty("data")+"many-contained-ref.json";
+//		file2 = System.getProperty("data")+"ser_many-contained-ref.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void containedReusedRef() throws IOException {
 //
-//		String file1 = "test-data/contained-reused-ref.json";
-//		file2 = "test-data/ser_many-contained-reused-ref.json";
+//		String file1 = System.getProperty("data")+"contained-reused-ref.json";
+//		file2 = System.getProperty("data")+"ser_many-contained-reused-ref.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void nonContainedRef() throws IOException {
 //
-//		String file1 = "test-data/non-contained-ref.json";
-//		file2 = "test-data/ser_non-contained-ref.json";
+//		String file1 = System.getProperty("data")+"non-contained-ref.json";
+//		file2 = System.getProperty("data")+"ser_non-contained-ref.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void manyNonContainedRef() throws IOException {
 //
-//		String file1 = "test-data/many-non-contained-ref.json";
-//		file2 = "test-data/ser_many-non-contained-ref.json";
+//		String file1 = System.getProperty("data")+"many-non-contained-ref.json";
+//		file2 = System.getProperty("data")+"ser_many-non-contained-ref.json";
 //		executeTest(file1, file2);
 //	}
 //	
 //	@Test
 //	public void anyOfWithRef() throws IOException {
 //
-//		String file1 = "test-data/anyOf-with-ref.json";
-//		file2 = "test-data/ser_anyOf-with-ref.json";
+//		String file1 = System.getProperty("data")+"anyOf-with-ref.json";
+//		file2 = System.getProperty("data")+"ser_anyOf-with-ref.json";
 //		executeTest(file1, file2);
 //	}
 	
