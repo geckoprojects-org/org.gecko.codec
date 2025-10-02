@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
-    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.gecko.emf.codec.test.model/src" modelPluginID="org.gecko.emf.codec.test.model"
-    modelName="codec-test" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" suppressGenModelAnnotations="false"
-    copyrightFields="false" operationReflection="true" importOrganizing="true" oSGiCompatible="true">
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2012 - 2024 Data In Motion and others.&#xA;All rights reserved.&#xA;&#xA;This program and the accompanying materials are made&#xA;available under the terms of the Eclipse Public License 2.0&#xA;which is available at https://www.eclipse.org/legal/epl-2.0/&#xA;&#xA;SPDX-License-Identifier: EPL-2.0&#xA;&#xA;Contributors:&#xA;    Data In Motion - initial API and implementation&#xA;"
+    modelDirectory="org.gecko.codec.test.models/src" modelPluginID="org.gecko.emf.codec.test.model"
+    modelName="codec-test" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" bundleManifest="false" complianceLevel="8.0"
+    suppressGenModelAnnotations="false" copyrightFields="false" operationReflection="true"
+    importOrganizing="true" oSGiCompatible="true">
   <foreignModel>codec-test.ecore</foreignModel>
-  <genPackages prefix="CodecTest" basePackage="org.gecko.emf.codec.test.model" resource="XMI"
+  <genPackages prefix="CodecTest" basePackage="org.gecko.codec.test" resource="XMI"
       disposableProviderFactory="true" ecorePackage="codec-test.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="codec-test.ecore#//ContactType">
       <genEnumLiterals ecoreEnumLiteral="codec-test.ecore#//ContactType/EMAIL"/>

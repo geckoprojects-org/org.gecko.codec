@@ -52,50 +52,6 @@ public interface CodecAnnotations {
 	 * */
 	String CODEC_ID = "codec.id";
 	
-	/** CODEC_ID_STRATEGY 
-	 *  Annotation for specifying a strategy to be followed when building the id 
-	 *  of the {@link EObject} when serializing it
-	 * */
-//	String CODEC_ID_STRATEGY = "codec.id.strategy";
-	
-	
-	/** CODEC_ID_FIELD 
-	 * Annotation for specifying that a field should be treated as an id field.
-	 * This is needed especially when the id should be a combination of more fields.
-	 * This is intended to be used when annotating the model.
-	 * For overwriting this property via {@link Resource}{@link #save} and {@link #load} options
-	 * use {@link CODEC_ID_FEATURES_LIST} and pass a list of {@link EStructuralFeauture} which should
-	 * form the id field.
-	 * */
-//	String CODEC_ID_FIELD = "codec.id.field";
-	
-	/** CODEC_ID_ORDER 
-	 * to specify the order of the annotated field when constructing the id. 
-	 * This is ignored if the id strategy is not set to COMBINED or the same feature is not 
-	 * marked with the {@link CODEC_ID_FIELD} annotation
-	 * */
-//	String CODEC_ID_ORDER = "codec.id.order";
-	
-	/** CODEC_ID_SEPARATOR 
-	 * annotation at the {@link EClassifier} level, to specify the separator to be used when constructing the id 
-	 * with the COMBINED strategy. The default separator value is "-". This option is ignored if the id strategy 
-	 * is different from COMBINED.
-	 * */
-//	String CODEC_ID_SEPARATOR = "codec.id.separator";
-	
-	/** CODEC_ID_VALUE_WRITER_NAME 
-	 * annotation at the {@link EClassifier} level, to specify a {@link CodecValueWriter} name to be used 
-	 * when serializing the id field. The actual {@link CodecValueWriter} object should then be one
-	 * of the automatically registered ones or should be passed through the options when saving a {@link Resource}. 
-	 * */
-//	String CODEC_ID_VALUE_WRITER_NAME = "codec.id.value.writer.name";
-	
-	/** CODEC_ID_VALUE_READER_NAME 
-	 * annotation at the {@link EClassifier} level, to specify a {@link CodecValueReader} name to be used 
-	 * when deserializing the id field. The actual {@link CodecValueReader} object should then be one
-	 * of the automatically registered ones or should be passed through the options when loading a {@link Resource}. 
-	 * */
-//	String CODEC_ID_VALUE_READER_NAME = "codec.id.value.reader.name";
 	
 	/** CODEC_VALUE_WRITER_NAME 
 	 * annotation at the {@link EStructuralFeature} level, to specify a {@link CodecValueWriter} name to be used 

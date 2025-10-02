@@ -83,7 +83,7 @@ which work as the corresponding ones we saw for the `CodecFactoryConfigurator`.
 
 In addition to that, one can set:
 
-+ `dateFormat` (default is "yyyy-MM-dd'T' HH: mm: ss")
++ `dateFormat` (default is "yyyy-MM-dd'T'HH:mm:ss")
 + `locale` (default is `en-US`)
 + `timeZone` (default is "Europe/Berlin")
 + `type` (default `json`, same meaning as for the `CodecFactoryConfigurator`)
@@ -112,10 +112,6 @@ The service provider is defined in `org.eclipse.fennec.codec.configurator.CodecM
 
 This service is responsible for setting up the `CodecModule.Builder`. Through the configuration (`org.eclipse.fennec.codec.configurator.CodecModuleConfig`) one can set:
 
-+ `idKey`: to instruct which keyword to use when serializing the id. Default is `_id`;
-
-+ `typeKey`: to instruct which keyword to use when serializing the type. Default is `_type`;
-
 + `superTypeKey`: to instruct which keyword to use when serializing the supertype. Default is `_supertype`;
 
 + `refKey`: to instruct which keyword to use when serializing the reference. Default is `$ref`
@@ -130,7 +126,7 @@ This service is responsible for setting up the `CodecModule.Builder`. Through th
 
 + `serializeNullValue`: to instruct the module weather to serialize or not `null` values. This refers to `null` lists or one dimensional arrays, and to `null` objects. Default value is `FALSE`;
 
-+ `useNamesFromExtendedMetaData`: to specify weather or not to use the name set to through the `EXTENDED_META_DATA` annotation, instead of the `EStructuralFeature` name. Default value is `TRUE`;
++ `useNamesFromExtendedMetaData`: to specify weather or not to use the name set to through the `EXTENDED_META_DATA` annotation, instead of the `EStructuralFeature` name. Default value is `FALSE`;
 
 + `useId`: option used to instruct the module to serialize the id information.  Default value is `TRUE`;
 
@@ -158,24 +154,42 @@ Our `CodecModule`, which is then built through the `CodecModule.Builder`, is an 
 
 Another key ingredient is the `org.eclipse.fennec.codec.info.CodecModelInfo` service. This is responsible for creating the `PackageCodecInfo` whenever a new `EPackage` is registered. The `PackageCodeInfo` is defined in the `org.eclipse.fennec.codec.info.model`. For every `Eclassifier`, it contains info about codec annotations that might have been used (e.g, to specify the id strategy on to mark a feature as transient). This info will be then used and merged with the options passed to save/load a resource. 
 
-There are several codec model annotations currently supported, which are defined in `org.eclipse.fennec.codec.constants.CodecAnnotations`:
+There are several codec model annotations currently supported, which are defined in `org.eclipse.fennec.codec.options.CodecAnnotations`:
 
 + `CODEC_INHERIT`: annotation at the `EClassifier` level for specifying that codec annotations on the direct parent should be inherited, even if the parent comes from another `EPackage`. By default only if the parent belongs to the same `EPackage` then the codec annotations are inherited.
+
 + `CODEC_TRANSIENT`: annotation at the `EStructuralFeature` level, for specifying that the feature should not be serialized. 
-+ `CODEC_ID_STRATEGY`: annotation at the `EClassifier` level, for specifying the strategy for constructing the id. Accepted values so far are ID-FIELD and COMBINED. The first simply takes the id attribute, while the other performs a concatenation of the fields marked with the `CODEC_ID_FIELD` annotation with the provided order (set through the `CODEC_ID_ORDER`) and separator (set through the `CODEC_ID_SEPARATOR`).
-+ `CODEC_ID_FIELD`: to annotate a field as an id field. This is ignored if the id strategy is not set to COMBINED.
-+ `CODEC_ID_ORDER`: to specify the order of the annotated field when constructing the id. This is ignored if the id strategy is not set to COMBINED or the same feature is not marked with the `CODEC_ID_FIELD` annotation.
-+ `CODEC_ID_SEPARATOR`: annotation at the `EClassifier` level, to specify the separator to be used when constructing the id with the COMBINED strategy. The default separator value is `-`. This option is ignored if the id strategy is different from COMBINED.
-+ `CODEC_TYPE_INCLUDE`: annotation at the `EClassifier` level, to specify weather the type information should be serialized or not.
-+ `CODEC_TYPE_USE`: annotation at the `EClassifier` level, to specify a strategy for serializing the type information. Currently supported values are:
-  +  `CLASS`: the class name will be used (e.g. `org.eclipse.fennec.codec.demo.model.person.Person`) 
-  + `NAME`: the class name will be used (e.g. `Person`)
-  + `URI`: the URI will be used (e.g. `http://example.de/person/1.0#//Person`) 
-+ `CODEC_ID_VALUE_WRITER_NAME`: annotation at the `EClassifier` level, to specify a `CodecValueWriter` name to be used when serializing the id field. The actual `CodecValueWriter` object should then be one of the automatically registered ones (see the paragraph on `CodecValueWriter/Reader`) or should be passed through the options when saving a Resource. 
-+ `CODEC_ID_VALUE_READER_NAME`: same as the `CODEC_ID_VALUE_WRITER`, but for deserializing.
-+ `CODEC_TYPE_VALUE_WRITER_NAME`: same as the `CODEC_ID_VALUE_WRITER`, but for serializing the type information.
-+ `CODEC_TYPE_VALUE_READER_NAME`: same as the `CODEC_ID_VALUE_READER`, but for deserializing the type information.
+
++ `CODEC_ID`:  Annotation to specify, at the level of an EClass how to treat the id field during (de-)serialization. The details map may contain:
+
+  ​	  - `key`: the property name to be used when serializing the id info
+
+  ​	  - `strategy`: either `ID_FIELD` or `COMBINED`
+
+  ​	  - `separator`: when the strategy is `COMBINED` we can specify with this property the separator character to be used
+
+  ​	  - `idValueReaderName`: a name for a `CodecValueReader` to be used when deserializing the id info
+
+  ​	  - `idValueWriterName`: a name for a `CodecValueWriter` to be used when serializing the id info
+
+  ​	  - `idFeatures`: a comma separated String, with the URI of the features to be used as id 
+
++ `CODEC_TYPE`: annotation used for specifying how to treat the type information of the object marked this way. This annotation can be either put at the `EClass` level or at the `EReference` level. The details map keys are:
+
+  ​	 - `strategy`: to specify a strategy for the type value reader/writer (supported are NAME, CLASS, URI)
+
+  ​	 - `include`: to specify weather the type information should be considered or not (default is true)
+
+  ​	  - `typeKey`: the String to be looked for retrieving the type of the object and the property name to be used when serializing the type (default is `_type`)
+
+  ​	 - `typeValueWriterName`: a name for a CodecValueWriter to serialize the type info
+
+  ​	 - `typeValueReaderName`: a name for a CodecValueReader to deserialize the type info
+
+  ​	 - additional <key, value> pairs in the details map should represent string to look for when deserializing the object, to decide which type of object it is.
+
 + `CODEC_VALUE_WRITER_NAME` annotation at the `EStructuralFeature` level, to specify the name for the `CodecValueWriter` that should be used when serializing that feature. The actual `CodecValueWriter` object should then be one of the automatically registered ones (see the paragraph on `CodecValueWriter/Reader`) or should be passed through the options when saving a Resource. 
+
 + `CODEC_VALUE_READER_NAME`: same as `CODEC_VALUE_WRITER_NAME` but for deserialization.
 
 #### `CodecValueWriter` and `CodecValueReader`
@@ -215,6 +229,10 @@ These are defined in `org.eclipse.fennec.codec.constants.ObjectMapperOptions` an
 + `OBJ_MAPPER_DESERIALIZATION_FEATURES_WITHOUT`: to specify a `List` of `tools.jackson.databind.DeserializationFeature` that should be disabled;
 + `OBJ_MAPPER_FEATURES_WITH`: to specify a `List` of `tools.jackson.databind.MapperFeature` that should be enabled;
 + `OBJ_MAPPER_FEATURES_WITHOUT`: to specify a `List` of `tools.jackson.databind.MapperFeature` that should be disabled;
++ `OBJ_MAPPER_FORMAT_SER_FEATURES_WITH`: to specify a `List` of  `tools.jackson.core.FormatFeature` for serialization that should be enabled. Since the `FormatFeature` are meant to be format specific, we currently support only `JsonWriteFeature` for this option. 
++ `OBJ_MAPPER_FORMAT_SER_FEATURES_WITHOUT`: to specify a `List` of  `tools.jackson.core.FormatFeature` for serialization that should be disabled. Since the `FormatFeature` are meant to be format specific, we currently support only `JsonWriteFeature` for this option. 
++ `OBJ_MAPPER_FORMAT_DESER_FEATURES_WITH`: to specify a `List` of  `tools.jackson.core.FormatFeature` for serialization that should be enabled. Since the `FormatFeature` are meant to be format specific, we currently support only `JsonReadFeature` for this option. 
++ `OBJ_MAPPER_FORMAT_DESER_FEATURES_WITHOUT`: to specify a `List` of  `tools.jackson.core.FormatFeature` for serialization that should be disabled. Since the `FormatFeature` are meant to be format specific, we currently support only `JsonReadFeature` for this option. 
 
 #### `CodecModuleOptions`
 
@@ -228,8 +246,6 @@ These are defined in `org.eclipse.fennec.codec.constants.CodecModuleOptions` and
 + `CODEC_MODULE_ID_ON_TOP`: to overwrite the `idOnTop` property of the `CodecModuleConfigurator`;
 + `CODEC_MODULE_SERIALIZE_ID_FIELD`: to overwrite the `serializeIdField` property of the `CodecModuleConfigurator`;
 + `CODEC_MODULE_ID_FEATURE_AS_PRIMARY_KEY`: to overwrite the `idFeatureAsPrimaryKey` property of the `CodecModuleConfigurator`;
-+ `CODEC_MODULE_ID_KEY`: to overwrite the `idKey` property of the `CodecModuleConfigurator`;
-+ `CODEC_MODULE_TYPE_KEY`: to overwrite the `typeKey` property of the `CodecModuleConfigurator`;
 + `CODEC_MODULE_SUPERTYPE_KEY`: to overwrite the `superTypeKey` property of the `CodecModuleConfigurator`;
 + `CODEC_MODULE_REFERENCE_KEY`: to overwrite the `refKey` property of the `CodecModuleConfigurator`;
 + `CODEC_MODULE_PROXY_KEY`: to overwrite the `proxyKey` property of the `CodecModuleConfigurator` (**NOT IMPLEMENTED CURRENTLY**);
@@ -238,7 +254,9 @@ These are defined in `org.eclipse.fennec.codec.constants.CodecModuleOptions` and
 + `CODEC_MODULE_SERIALIZE_SUPER_TYPES`: to overwrite the `serializeSuperTypes` property of the `CodecModuleConfigurator`;
 + `CODEC_MODULE_SERIALIZE_ALL_SUPER_TYPES`: to overwrite the `serializeAllSuperTypes` property of the `CodecModuleConfigurator`;
 + `CODEC_MODULE_SERIALIZE_SUPER_TYPES_AS_ARRAY`: to overwrite the `serializeSuperTypesAsArray` property of the `CodecModuleConfigurator`;
-+ `CODEC_MODULE_WRITE_ENUM_LITERAL`: to overwrite the `writeEnumLiteral` property of the `CodecModuleConfigurator`.
++ `CODEC_MODULE_WRITE_ENUM_LITERAL`: to overwrite the `writeEnumLiteral` property of the `CodecModuleConfigurator`;
++ `CODEC_MODULE_REFERENCE_DESERIALIZER`
++ `CODEC_PROXY_FACTORY`
 
 #### `CodecModelInfoOptions`
 
@@ -246,21 +264,25 @@ These are defined in `org.eclipse.fennec.codec.constants.CodecModelInfoOptions` 
 
 + `CODEC_IGNORE_FEATURE_LIST`: to specify a list of `EStructuralFeature` that should be ignored during serialization or deserialization. If an `EStructuralFeature` is marked as `transient` in the model or has been annotated with the `CODEC_TRANSIENT` annotation, it will still be ignored even is it is not present in this list;
 + `CODEC_IGNORE_NOT_FEATURE_LIST`:  to specify a list of `EStructuralFeature` that should **NOT** be ignored during serialization or deserialization. If an `EStructuralFeature` is marked as `transient` in the model or has been annotated with the `CODEC_TRANSIENT` annotation, it will then be taken into account if present in this list;
-+ `CODEC_ID_SRATEGY`: to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_ID_STRATEGY` annotation;
-+ `CODEC_ID_SEPARATOR`: to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_ID_SEPARATOR` annotation;
++ `CODEC_ID_KEY`: to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_ID` key detail annotation;
++ `CODEC_ID_SRATEGY`: to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_ID` strategy detail annotation;
++ `CODEC_ID_SEPARATOR`: to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_ID` separator detail annotation;
 + `CODEC_ID_FEATURES_LIST`: to specify an ordered list of `EStructuralFeature` to be used when constructing the id, if the id strategy is set to COMBINED. Otherwise it will be ignored.
-+ `CODEC_ID_VALUE_WRITER_NAME`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_ID_VALUE_WRITER_NAME` annotation;
-+ `CODEC_ID_VALUE_READER_NAME`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_ID_VALUE_READER_NAME` annotation;
-+ `CODEC_TYPE_VALUE_WRITER_NAME`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_WRITER_NAME` annotation;
-+ `CODEC_TYPE_VALUE_READER_NAME`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_TYPE_VALUE_READER_NAME` annotation;
-+ `CODEC_ID_VALUE_WRITER`: to specify a `CodecValueWriter` object to be used when serializing the id information;
-+ `CODEC_ID_VALUE_READER`: to specify a `CodecValueReader` object to be used when deserializing the id information;
-+ `CODEC_TYPE_VALUE_WRITER`: to specify a `CodecValueWriter` object to be used when serializing the type information;
-+ `CODEC_TYPE_VALUE_READER`: to specify a `CodecValueReader` object to be used when deserializing the type information;
++ `CODEC_ID_VALUE_WRITER`:  to specify a `CodecValueWriter` to be used when serializing the id information; 
++ `CODEC_ID_VALUE_READER`:  to specify a `CodecValueReader` to be used when deserializing the id information; 
++ `CODEC_TYPE_VALUE_WRITER`: to specify a `CodecValueWriter` to be used when serializing the type information; 
++ `CODEC_TYPE_VALUE_READER`: to specify a `CodecValueReader` to be used when deserializing the type information; 
 + `CODEC_VALUE_WRITERS_MAP`: a Map, where the keys are of type `EStructuralFeature` and the values are of type `CodecValueWriter`, to specify the `CodecValueWrtier` to use when serializing the corresponding `EStructuralFeautre`;
 + `CODEC_VALUE_READERS_MAP`: a Map, where the keys are of type `EStructuralFeature` and the values are of type `CodecValueReader`, to specify the `CodecValueReader` to use when deserializing the corresponding `EStructuralFeautre`;
-+ `CODEC_TYPE_USE`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_TYPE_USE` annotation;
-+ `CODEC_TYPE_INCLUDE`:  to overwrite the `org.eclipse.fennec.codec.constants.CodecAnnotations.CODEC_TYPE_INCLUDE` annotation. If the `CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE` is set to `FALSE` then this option is ignored, even if set to `TRUE`.
++ `CODEC_TYPE_STRATEGY`:  to overwrite the `strategy` detail of the  `org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE` annotation;
++ `CODEC_TYPE_INCLUDE`:  to overwrite the `include` detail of the  `org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE` annotation;. If the `CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE` is set to `FALSE` then this option is ignored, even if set to `TRUE`;
++ `CODEC_TYPE_KEY`: to overwrite the `key` detail of the  `org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE` annotation;
++ `CODEC_TYPE_MAP`: to overwrite or merge (depending on the `CODEC_TYPE_MAP_STRATEGY` option) the type mapping defined via model annotation;
++ `CODEC_TYPE_MAP_STRATEGY`: the strategy to use when there is a type mapping via options and one via annotations. Default behaviour is that the one from the options overwrites the one from the model annotation. 
++ `CODEC_TYPE_INFO`: to directly overwrite the entire `TypeInfo` object that is created out of the `org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE` annotation.
++ `CODEC_CUSTOM_VALUE_READER`: to specify a custom `CodecValueReader` to be used during deserialization of the object marked with that
++ `CODEC_CUSTOM_VALUE_WRITER`: to specify a custom `CodecValueWriter` to be used during serialization of the object marked with that.
++ `CODEC_EXTRAS`: option to pass some extra properties. It accepts a Map of <property, value> pairs. This is used for instance in the `jsonschema` case.
 
 As these options can be different for different `EClass`, when saving/loading a Resource, one should actually create a Map, where the keys are the `EClass` and the values are the options for that `EClass`. The Map then should be passed via the saving/loading options with the key `org.eclipse.fennec.codec.constants.CodecResourceOptions.CODEC_OPTIONS`.
 
@@ -276,6 +298,18 @@ resource.save(options);
 ```
 
 In addition to all these options, when deserializing, the  `org.eclipse.fennec.codec.constants.CodecResourceOptions.CODEC_ROOT_OBJECT` option should be passed. This accepts as value the `EClass` of the root object that has to be deserialized. This option is **MANDATORY** if there is no type information in the document to be read.  
+
+To make things easier, there is also a `org.eclipse.fennec.codec.options.CodecOptionsBuilder` to create the option `Map`. So, the same option map as the previous example can also be achieved like:
+
+```java
+Map<String, Object> options = CodecOptionsBuilder
+    .create()
+    .forClass(PersonPackage.eINSTANCE.getPerson())
+    .idStrategy("ID_FIELD")
+    .build();
+```
+
+
 
 ### The Serialization/Deserialization Mechanism
 
@@ -355,6 +389,9 @@ We currently have implemented the codec for:
 
 + `json`
 + `mongodb`
++ `jsonschema` (detailed documentation can be found [here](./CodecJsonSchemaSupport.md))
++ `csv`
++ `ecowitt`
 
 For the `json` implementation we are relying on the `JsonGenerator`s and `JsonParser`s already available in jackson, while for the `mongo` implementation we are providing `org.eclipse.fennec.codec.mongo.MongoCodecGenerator` and `org.eclipse.fennec.codec.mongo.MongoCodecParser`, which are then constructed in the corresponding `MongoGeneratorFactory` and `MongoParserFactory`, injected in the `CodecFactoryConfigurator`.
 

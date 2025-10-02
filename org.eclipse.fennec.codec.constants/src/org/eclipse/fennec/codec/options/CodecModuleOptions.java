@@ -62,11 +62,6 @@ public interface CodecModuleOptions {
 	 * */
 	String CODEC_MODULE_ID_FEATURE_AS_PRIMARY_KEY = "codec.module.id.feature.as.primary.key";
 	
-	/** CODEC_MODULE_ID_KEY 
-	 * to overwrite the {@link org.eclipse.fennec.codec.configurator.idKey} 
-	 * */
-//	String CODEC_MODULE_ID_KEY = "codec.module.id.key";
-	
 	/** CODEC_MODULE_DESERIALIZE_TYPE 
 	 * to overwrite the {@link org.eclipse.fennec.codec.configurator.deserializeType} 
 	 * */
