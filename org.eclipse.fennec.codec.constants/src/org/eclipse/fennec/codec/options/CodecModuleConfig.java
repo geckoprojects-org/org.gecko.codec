@@ -34,20 +34,6 @@ public @interface CodecModuleConfig {
 	 */
 	String codecModuleName() default "eclipse-fennec-codec-module";
 	
-//	/**
-//	 * Option to indicate the default key to be used for id 
-//	 * Default is "_id"
-//	 * @return
-//	 */
-//	String idKey() default "_id";
-	
-//	/**
-//	 * Option to indicate the default key to be used for type
-//	 * Default is "_type"
-//	 * @return
-//	 */
-//	String typeKey() default "_type";
-	
 	/**
 	 * Option to indicate the default key used for supertype
 	 * @return
@@ -102,10 +88,10 @@ public @interface CodecModuleConfig {
 	 * Option used to indicate whether feature names specified in
      * {@link org.eclipse.emf.ecore.util.ExtendedMetaData} annotations should
      * be respected.
-     * Default is Boolean.TRUE
+     * Default is Boolean.FALSE
 	 * @return
 	 */
-	boolean useNamesFromExtendedMetaData() default true;
+	boolean useNamesFromExtendedMetaData() default false;
 	
 	/**
 	 * Option used to indicate the module to serialize the id information.

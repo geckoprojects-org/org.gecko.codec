@@ -350,6 +350,7 @@ public class CodecMongoSerializeEmptyValuesTest extends MongoEMFSetting {
 		Map<String, Object> options = new HashMap<>();
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_DEFAULT_VALUE, true);
 		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
+		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
 		resource.save(options);
 		
 		resource.getContents().clear();
