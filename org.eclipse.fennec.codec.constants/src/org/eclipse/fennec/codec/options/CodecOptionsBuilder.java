@@ -29,6 +29,7 @@ import tools.jackson.core.FormatFeature;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.SerializationFeature;
+import org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType;
 
 /**
  * Builder for creating codec load/save options in a fluent and type-safe manner.
@@ -694,6 +695,28 @@ public class CodecOptionsBuilder {
 			classOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP, typeMap);
 			return this;
 		}
+		
+		/**
+		 * Sets the type map strategy for this class.
+		 *
+		 * @param typeMapStrategy the type map strategy
+		 * @return this builder
+		 */
+		public ClassOptionsBuilder typeMapStrategy(TypeMapStrategyType typeMapStrategy) {
+			classOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP_STRATEGY, typeMapStrategy);
+			return this;
+		}
+		
+		/**
+		 * Sets the type map strategy for this class.
+		 *
+		 * @param typeMapStrategy the type map strategy
+		 * @return this builder
+		 */
+		public ClassOptionsBuilder typeMapStrategy(String typeMapStrategy) {
+			classOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP_STRATEGY, typeMapStrategy);
+			return this;
+		}
 
 		/**
 		 * Sets the type info for this class.
@@ -868,6 +891,28 @@ public class CodecOptionsBuilder {
 			 */
 			public ReferenceOptionsBuilder typeMap(Map<String, String> typeMap) {
 				refOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP, typeMap);
+				return this;
+			}
+			
+			/**
+			 * Sets the type map strategy for this class.
+			 *
+			 * @param typeMapStrategy the type map strategy
+			 * @return this builder
+			 */
+			public ReferenceOptionsBuilder typeMapStrategy(TypeMapStrategyType typeMapStrategy) {
+				refOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP_STRATEGY, typeMapStrategy);
+				return this;
+			}
+			
+			/**
+			 * Sets the type map strategy for this class.
+			 *
+			 * @param typeMapStrategy the type map strategy
+			 * @return this builder
+			 */
+			public ReferenceOptionsBuilder typeMapStrategy(String typeMapStrategy) {
+				refOptions.put(CodecModelInfoOptions.CODEC_TYPE_MAP_STRATEGY, typeMapStrategy);
 				return this;
 			}
 

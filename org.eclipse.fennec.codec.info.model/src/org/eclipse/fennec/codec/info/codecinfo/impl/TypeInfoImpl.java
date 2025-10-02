@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType;
 
 /**
  * <!-- begin-user-doc -->
@@ -34,6 +35,7 @@ import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.TypeInfoImpl#getTypeMap <em>Type Map</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.TypeInfoImpl#getTypeValueReaderName <em>Type Value Reader Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.TypeInfoImpl#getTypeValueWriterName <em>Type Value Writer Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.impl.TypeInfoImpl#getTypeMapStrategy <em>Type Map Strategy</em>}</li>
  * </ul>
  *
  * @generated
@@ -148,6 +150,26 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
 	 * @ordered
 	 */
 	protected String typeValueWriterName = TYPE_VALUE_WRITER_NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getTypeMapStrategy() <em>Type Map Strategy</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTypeMapStrategy()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final TypeMapStrategyType TYPE_MAP_STRATEGY_EDEFAULT = TypeMapStrategyType.OVERWRITE;
+
+	/**
+	 * The cached value of the '{@link #getTypeMapStrategy() <em>Type Map Strategy</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTypeMapStrategy()
+	 * @generated
+	 * @ordered
+	 */
+	protected TypeMapStrategyType typeMapStrategy = TYPE_MAP_STRATEGY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -302,6 +324,29 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
 	 * @generated
 	 */
 	@Override
+	public TypeMapStrategyType getTypeMapStrategy() {
+		return typeMapStrategy;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setTypeMapStrategy(TypeMapStrategyType newTypeMapStrategy) {
+		TypeMapStrategyType oldTypeMapStrategy = typeMapStrategy;
+		typeMapStrategy = newTypeMapStrategy == null ? TYPE_MAP_STRATEGY_EDEFAULT : newTypeMapStrategy;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecInfoPackage.TYPE_INFO__TYPE_MAP_STRATEGY, oldTypeMapStrategy, typeMapStrategy));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case CodecInfoPackage.TYPE_INFO__TYPE_MAP:
@@ -331,6 +376,8 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
 				return getTypeValueReaderName();
 			case CodecInfoPackage.TYPE_INFO__TYPE_VALUE_WRITER_NAME:
 				return getTypeValueWriterName();
+			case CodecInfoPackage.TYPE_INFO__TYPE_MAP_STRATEGY:
+				return getTypeMapStrategy();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -360,6 +407,9 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
 				return;
 			case CodecInfoPackage.TYPE_INFO__TYPE_VALUE_WRITER_NAME:
 				setTypeValueWriterName((String)newValue);
+				return;
+			case CodecInfoPackage.TYPE_INFO__TYPE_MAP_STRATEGY:
+				setTypeMapStrategy((TypeMapStrategyType)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -391,6 +441,9 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
 			case CodecInfoPackage.TYPE_INFO__TYPE_VALUE_WRITER_NAME:
 				setTypeValueWriterName(TYPE_VALUE_WRITER_NAME_EDEFAULT);
 				return;
+			case CodecInfoPackage.TYPE_INFO__TYPE_MAP_STRATEGY:
+				setTypeMapStrategy(TYPE_MAP_STRATEGY_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -415,6 +468,8 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
 				return TYPE_VALUE_READER_NAME_EDEFAULT == null ? typeValueReaderName != null : !TYPE_VALUE_READER_NAME_EDEFAULT.equals(typeValueReaderName);
 			case CodecInfoPackage.TYPE_INFO__TYPE_VALUE_WRITER_NAME:
 				return TYPE_VALUE_WRITER_NAME_EDEFAULT == null ? typeValueWriterName != null : !TYPE_VALUE_WRITER_NAME_EDEFAULT.equals(typeValueWriterName);
+			case CodecInfoPackage.TYPE_INFO__TYPE_MAP_STRATEGY:
+				return typeMapStrategy != TYPE_MAP_STRATEGY_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -439,6 +494,8 @@ public class TypeInfoImpl extends MinimalEObjectImpl.Container implements TypeIn
 		result.append(typeValueReaderName);
 		result.append(", typeValueWriterName: ");
 		result.append(typeValueWriterName);
+		result.append(", typeMapStrategy: ");
+		result.append(typeMapStrategy);
 		result.append(')');
 		return result.toString();
 	}

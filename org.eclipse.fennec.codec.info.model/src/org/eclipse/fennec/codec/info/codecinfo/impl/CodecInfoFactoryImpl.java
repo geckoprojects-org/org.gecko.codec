@@ -87,6 +87,8 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 		switch (eDataType.getClassifierID()) {
 			case CodecInfoPackage.INFO_TYPE:
 				return createInfoTypeFromString(eDataType, initialValue);
+			case CodecInfoPackage.TYPE_MAP_STRATEGY_TYPE:
+				return createTypeMapStrategyTypeFromString(eDataType, initialValue);
 			case CodecInfoPackage.SERIALIZATION_CONTEXT:
 				return createSerializationContextFromString(eDataType, initialValue);
 			case CodecInfoPackage.DESERIALIZATION_CONTEXT:
@@ -106,6 +108,8 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 		switch (eDataType.getClassifierID()) {
 			case CodecInfoPackage.INFO_TYPE:
 				return convertInfoTypeToString(eDataType, instanceValue);
+			case CodecInfoPackage.TYPE_MAP_STRATEGY_TYPE:
+				return convertTypeMapStrategyTypeToString(eDataType, instanceValue);
 			case CodecInfoPackage.SERIALIZATION_CONTEXT:
 				return convertSerializationContextToString(eDataType, instanceValue);
 			case CodecInfoPackage.DESERIALIZATION_CONTEXT:
@@ -241,6 +245,26 @@ public class CodecInfoFactoryImpl extends EFactoryImpl implements CodecInfoFacto
 	 * @generated
 	 */
 	public String convertInfoTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TypeMapStrategyType createTypeMapStrategyTypeFromString(EDataType eDataType, String initialValue) {
+		TypeMapStrategyType result = TypeMapStrategyType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertTypeMapStrategyTypeToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 
