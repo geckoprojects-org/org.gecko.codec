@@ -13,8 +13,7 @@
 # Activate baselining
 dimcBaselining: true
 github-project: org.gecko.codec
-base-version: 1.0.1
-Bundle-Version: ${base-version}.SNAPSHOT
+base-version: 1.1.0
 
 # Maven Central Group-Id
 # For Geckoprojects the groupid must start with org.geckoprojects
