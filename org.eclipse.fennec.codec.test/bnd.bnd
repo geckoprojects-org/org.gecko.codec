@@ -17,6 +17,7 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	tools.jackson.core.jackson-core,\
 	tools.jackson.core.jackson-databind,\
 	org.eclipse.fennec.codec.json;version=snapshot,\
-	org.eclipse.fennec.codec.jsonschema;version=snapshot
+	org.eclipse.fennec.codec.jsonschema;version=snapshot,\
+	org.eclipse.fennec.codec.csv;version=snapshot
 	
 Private-Package: org.eclipse.fennec.codec.test
