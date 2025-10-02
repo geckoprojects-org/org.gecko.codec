@@ -105,9 +105,18 @@ public interface CodecModelInfoOptions {
 	String CODEC_TYPE_KEY = "typeKey";	
 	
 	/** CODEC_TYPE_MAP 
-	 * to overwrite the type mapping in the details of {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
+	 * to overwrite or merge (based on the {@link CODEC_TYPE_MAP_STRATEGY}) the type mapping in the details of {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
 	 * */
 	String CODEC_TYPE_MAP = "typeMap";
+	
+	/** CODEC_TYPE_MAP_STRATEGY 
+	 * whether to overwrite or merge the type mapping passed via options with the one provided via model annotation.
+	 * The value has to be either a {@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType} or a 
+	 * String compatible with the {@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType} values.
+	 * Default is to {@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType#OVERWRITE} 
+	 * 
+	 * */
+	String CODEC_TYPE_MAP_STRATEGY = "codec.type.map.strategy";
 	
 	/** CODEC_TYPE_INFO 
 	 * to overwrite the entire typeInfo object that comes out of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;

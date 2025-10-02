@@ -469,13 +469,22 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int TYPE_INFO__TYPE_VALUE_WRITER_NAME = 5;
 
 	/**
+	 * The feature id for the '<em><b>Type Map Strategy</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_INFO__TYPE_MAP_STRATEGY = 6;
+
+	/**
 	 * The number of structural features of the '<em>Type Info</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_INFO_FEATURE_COUNT = 6;
+	int TYPE_INFO_FEATURE_COUNT = 7;
 
 	/**
 	 * The number of operations of the '<em>Type Info</em>' class.
@@ -1009,6 +1018,16 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	int INFO_TYPE = 13;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType <em>Type Map Strategy Type</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType
+	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getTypeMapStrategyType()
+	 * @generated
+	 */
+	int TYPE_MAP_STRATEGY_TYPE = 14;
+
+	/**
 	 * The meta object id for the '<em>Serialization Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1016,7 +1035,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getSerializationContext()
 	 * @generated
 	 */
-	int SERIALIZATION_CONTEXT = 14;
+	int SERIALIZATION_CONTEXT = 15;
 
 	/**
 	 * The meta object id for the '<em>Deserialization Context</em>' data type.
@@ -1026,7 +1045,7 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getDeserializationContext()
 	 * @generated
 	 */
-	int DESERIALIZATION_CONTEXT = 15;
+	int DESERIALIZATION_CONTEXT = 16;
 
 
 	/**
@@ -1365,6 +1384,17 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getTypeInfo_TypeValueWriterName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeMapStrategy <em>Type Map Strategy</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type Map Strategy</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeMapStrategy()
+	 * @see #getTypeInfo()
+	 * @generated
+	 */
+	EAttribute getTypeInfo_TypeMapStrategy();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo <em>Super Type Info</em>}'.
@@ -1728,6 +1758,16 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 	EEnum getInfoType();
 
 	/**
+	 * Returns the meta object for enum '{@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType <em>Type Map Strategy Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Type Map Strategy Type</em>'.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType
+	 * @generated
+	 */
+	EEnum getTypeMapStrategyType();
+
+	/**
 	 * Returns the meta object for data type '{@link tools.jackson.databind.SerializationContext <em>Serialization Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2029,6 +2069,14 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute TYPE_INFO__TYPE_VALUE_WRITER_NAME = eINSTANCE.getTypeInfo_TypeValueWriterName();
 
 		/**
+		 * The meta object literal for the '<em><b>Type Map Strategy</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute TYPE_INFO__TYPE_MAP_STRATEGY = eINSTANCE.getTypeInfo_TypeMapStrategy();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.impl.SuperTypeInfoImpl <em>Super Type Info</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2319,6 +2367,16 @@ public interface CodecInfoPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EEnum INFO_TYPE = eINSTANCE.getInfoType();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType <em>Type Map Strategy Type</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType
+		 * @see org.eclipse.fennec.codec.info.codecinfo.impl.CodecInfoPackageImpl#getTypeMapStrategyType()
+		 * @generated
+		 */
+		EEnum TYPE_MAP_STRATEGY_TYPE = eINSTANCE.getTypeMapStrategyType();
 
 		/**
 		 * The meta object literal for the '<em>Serialization Context</em>' data type.

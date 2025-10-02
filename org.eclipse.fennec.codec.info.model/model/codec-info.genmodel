@@ -20,6 +20,10 @@
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/ENUMERATOR"/>
       <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//InfoType/OTHER"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="codec-info.ecore#//TypeMapStrategyType">
+      <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//TypeMapStrategyType/OVERWRITE"/>
+      <genEnumLiterals ecoreEnumLiteral="codec-info.ecore#//TypeMapStrategyType/MERGE"/>
+    </genEnums>
     <genDataTypes ecoreDataType="codec-info.ecore#//SerializationContext"/>
     <genDataTypes ecoreDataType="codec-info.ecore#//DeserializationContext"/>
     <genClasses ecoreClass="codec-info.ecore#//PackageCodecInfo">
@@ -60,6 +64,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec-info.ecore#//TypeInfo/typeMap"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//TypeInfo/typeValueReaderName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//TypeInfo/typeValueWriterName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//TypeInfo/typeMapStrategy"/>
     </genClasses>
     <genClasses ecoreClass="codec-info.ecore#//SuperTypeInfo">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec-info.ecore#//SuperTypeInfo/superTypeStrategy"/>
