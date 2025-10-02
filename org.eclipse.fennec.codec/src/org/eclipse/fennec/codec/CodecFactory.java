@@ -17,7 +17,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 
 import tools.jackson.core.ErrorReportConfiguration;
 import tools.jackson.core.JsonEncoding;
@@ -90,6 +89,10 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 		}
 	}
 
+	/* 
+	 * (non-Javadoc)
+	 * @see tools.jackson.core.json.JsonFactory#_createParser(tools.jackson.core.ObjectReadContext, tools.jackson.core.io.IOContext, java.io.DataInput)
+	 */
 	@Override
 	public JsonParser _createParser(ObjectReadContext readCtxt, IOContext ioCtxt,
 			DataInput input) {
@@ -102,20 +105,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.net.URL)
-	 */
-	@Override
-	public JsonParser createParser(URL url)  {
-		if (nonNull(parserFactory)) {
-			return internalCreateParser(url, null);
-		} else {
-			return super.createParser(ObjectReadContext.empty(), url);
-		}
-	}
-
-	/* 
-	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.InputStream)
+	 * @see tools.jackson.core.TokenStreamFactory#createParser(java.io.InputStream)
 	 */
 	@Override
 	public JsonParser createParser(InputStream in) {
@@ -126,9 +116,10 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 		}
 	}
 	
+	
 	/* 
 	 * (non-Javadoc)
-	 * @see com.fasterxml.jackson.core.JsonFactory#createParser(java.io.InputStream)
+	 * @see tools.jackson.core.base.TextualTSFactory#createParser(tools.jackson.core.ObjectReadContext, java.io.InputStream)
 	 */
 	@Override
 	public JsonParser createParser(ObjectReadContext ctx, InputStream in) {
@@ -185,6 +176,7 @@ public class CodecFactory<R, W, P extends JsonParser, G extends JsonGenerator> e
 		}
 	}
 
+	
 	/* 
 	 * (non-Javadoc)
 	 * @see tools.jackson.core.TokenStreamFactory#_createDataOutputWrapper(java.io.DataOutput)
