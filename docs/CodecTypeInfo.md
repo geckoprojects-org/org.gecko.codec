@@ -70,7 +70,8 @@ The options to be used are the following:
 + `CodecModelInfoOptions.CODEC_TYPE_KEY`: to overwrite the `typeKey`;
 + `CodecModelInfoOptions.CODEC_TYPE_STRATEGY`: to overwrite the `typeStrategy`;
 + `CodecModelInfoOptions.CODEC_TYPE_INCLUDE`: to overwrite the include annotation;
-+ `CodecModelInfoOptions.CODEC_TYPE_MAP`: to overwrite the `typeMap`;
++ `CodecModelInfoOptions.CODEC_TYPE_MAP`: to overwrite or merge into the `typeMap`;
++ `CodecModelInfoOptions.CODEC_TYPE_MAP_STRATEGY`: to specify whether to merge or overwrite the `typeMap` constructed via annotations with the one passed via options. Default is that the one passed via options will overwrite the one defined in the model annotations.
 + `CodecModelInfoOptions.CODEC_TYPE_VALUE_READER`: to register a custom `CodecValueReader`
 + `CodecModelnfoOptions.CODEC_TYPE_VALUE_WRITER`: to register a custom `CodecValueWriter`
 

@@ -89,7 +89,7 @@ public interface CodecModelInfoOptions {
 	 *  */
 	String CODEC_VALUE_WRITERS_MAP = "codec.value.writers.map";
 	
-	/** CODEC_TYPE_USE 
+	/** CODEC_TYPE_STRATEGY 
 	 * to overwrite the "strategy" detail of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
 	 * */
 	String CODEC_TYPE_STRATEGY = "strategy";
