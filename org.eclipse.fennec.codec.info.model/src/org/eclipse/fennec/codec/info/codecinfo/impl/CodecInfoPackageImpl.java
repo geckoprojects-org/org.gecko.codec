@@ -31,6 +31,7 @@ import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.SampleValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.SuperTypeInfo;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType;
 import org.eclipse.fennec.codec.info.codecinfo.TypedCodecInfo;
 
 import tools.jackson.databind.DeserializationContext;
@@ -140,6 +141,13 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	private EEnum infoTypeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum typeMapStrategyTypeEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -534,6 +542,16 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
+	public EAttribute getTypeInfo_TypeMapStrategy() {
+		return (EAttribute)typeInfoEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getSuperTypeInfo() {
 		return superTypeInfoEClass;
 	}
@@ -874,6 +892,16 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 	 * @generated
 	 */
 	@Override
+	public EEnum getTypeMapStrategyType() {
+		return typeMapStrategyTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EDataType getSerializationContext() {
 		return serializationContextEDataType;
 	}
@@ -951,6 +979,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		createEReference(typeInfoEClass, TYPE_INFO__TYPE_MAP);
 		createEAttribute(typeInfoEClass, TYPE_INFO__TYPE_VALUE_READER_NAME);
 		createEAttribute(typeInfoEClass, TYPE_INFO__TYPE_VALUE_WRITER_NAME);
+		createEAttribute(typeInfoEClass, TYPE_INFO__TYPE_MAP_STRATEGY);
 
 		superTypeInfoEClass = createEClass(SUPER_TYPE_INFO);
 		createEAttribute(superTypeInfoEClass, SUPER_TYPE_INFO__SUPER_TYPE_STRATEGY);
@@ -996,6 +1025,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 
 		// Create enums
 		infoTypeEEnum = createEEnum(INFO_TYPE);
+		typeMapStrategyTypeEEnum = createEEnum(TYPE_MAP_STRATEGY_TYPE);
 
 		// Create data types
 		serializationContextEDataType = createEDataType(SERIALIZATION_CONTEXT);
@@ -1079,6 +1109,7 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		initEReference(getTypeInfo_TypeMap(), this.getStringToStringMap(), null, "typeMap", null, 0, -1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTypeInfo_TypeValueReaderName(), theEcorePackage.getEString(), "typeValueReaderName", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTypeInfo_TypeValueWriterName(), theEcorePackage.getEString(), "typeValueWriterName", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeInfo_TypeMapStrategy(), this.getTypeMapStrategyType(), "typeMapStrategy", null, 0, 1, TypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(superTypeInfoEClass, SuperTypeInfo.class, "SuperTypeInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getSuperTypeInfo_SuperTypeStrategy(), ecorePackage.getEString(), "superTypeStrategy", null, 0, 1, SuperTypeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1157,6 +1188,10 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		addEEnumLiteral(infoTypeEEnum, InfoType.SUPER_TYPE);
 		addEEnumLiteral(infoTypeEEnum, InfoType.ENUMERATOR);
 		addEEnumLiteral(infoTypeEEnum, InfoType.OTHER);
+
+		initEEnum(typeMapStrategyTypeEEnum, TypeMapStrategyType.class, "TypeMapStrategyType");
+		addEEnumLiteral(typeMapStrategyTypeEEnum, TypeMapStrategyType.OVERWRITE);
+		addEEnumLiteral(typeMapStrategyTypeEEnum, TypeMapStrategyType.MERGE);
 
 		// Initialize data types
 		initEDataType(serializationContextEDataType, SerializationContext.class, "SerializationContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -1274,6 +1309,12 @@ public class CodecInfoPackageImpl extends EPackageImpl implements CodecInfoPacka
 		   source,
 		   new String[] {
 			   "documentation", "This supports the possibility of specifying a map for matching the type key with a certain type, based on its value. The keys are the value of the type key to be expected to found in the document to deserialize, while the value "
+		   });
+		addAnnotation
+		  (getTypeInfo_TypeMapStrategy(),
+		   source,
+		   new String[] {
+			   "documentation", "This specifies whether to overwrite or to merge eventual type mapping coming from the load/save options to the ones provided via model annotation."
 		   });
 		addAnnotation
 		  (getSuperTypeInfo_SuperTypeStrategy(),

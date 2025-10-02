@@ -47,6 +47,7 @@ import org.eclipse.fennec.codec.info.codecinfo.FeatureCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
 import org.eclipse.fennec.codec.info.codecinfo.PackageCodecInfo;
 import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
+import org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType;
 import org.eclipse.fennec.codec.info.codecinfo.TypedCodecInfo;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
@@ -434,9 +435,22 @@ public class CodecResource extends ResourceImpl {
 		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_KEY)) {
 			codecInfo.getTypeInfo().setTypeKey((String) options.get(CodecModelInfoOptions.CODEC_TYPE_KEY));
 		}
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_MAP_STRATEGY)) {
+			Object mapStrategy = options.get(CodecModelInfoOptions.CODEC_TYPE_MAP_STRATEGY);
+			if(mapStrategy instanceof TypeMapStrategyType mapStrategyType) {
+				codecInfo.getTypeInfo().setTypeMapStrategy(mapStrategyType); 
+			} else if(mapStrategy instanceof String mapStrategyStr) {
+				codecInfo.getTypeInfo().setTypeMapStrategy(TypeMapStrategyType.valueOf(mapStrategyStr));
+			} else {
+				LOGGER.warning(String.format("Option CodecModelInfoOptions.CODEC_TYPE_MAP_STRATEGY must be either a String or a TypeMapStrategyType. Instead it is %s", mapStrategy.getClass().getName()));
+			}
+		}
+		
 		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_MAP)) {
 			Map<String, String> typeMap = (Map<String, String>) options.get(CodecModelInfoOptions.CODEC_TYPE_MAP);
-			codecInfo.getTypeInfo().getTypeMap().clear(); //overwrite what we have in the annotation
+			if(TypeMapStrategyType.OVERWRITE.equals(codecInfo.getTypeInfo().getTypeMapStrategy())) {
+				codecInfo.getTypeInfo().getTypeMap().clear(); //overwrite what we have in the annotation
+			}			
 			codecInfo.getTypeInfo().getTypeMap().putAll(typeMap);
 		}
 		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_INFO)) {

@@ -21,6 +21,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeMap <em>Type Map</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeValueReaderName <em>Type Value Reader Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeValueWriterName <em>Type Value Writer Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeMapStrategy <em>Type Map Strategy</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getTypeInfo()
@@ -163,5 +164,33 @@ public interface TypeInfo {
 	 * @generated
 	 */
 	void setTypeValueWriterName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Type Map Strategy</b></em>' attribute.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * This specifies whether to overwrite or to merge eventual type mapping coming from the load/save options to the ones provided via model annotation.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Type Map Strategy</em>' attribute.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType
+	 * @see #setTypeMapStrategy(TypeMapStrategyType)
+	 * @see org.eclipse.fennec.codec.info.codecinfo.CodecInfoPackage#getTypeInfo_TypeMapStrategy()
+	 * @model
+	 * @generated
+	 */
+	TypeMapStrategyType getTypeMapStrategy();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.info.codecinfo.TypeInfo#getTypeMapStrategy <em>Type Map Strategy</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Type Map Strategy</em>' attribute.
+	 * @see org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType
+	 * @see #getTypeMapStrategy()
+	 * @generated
+	 */
+	void setTypeMapStrategy(TypeMapStrategyType value);
 
 } // TypeInfo
