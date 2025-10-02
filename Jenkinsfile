@@ -45,7 +45,7 @@ pipeline  {
             when { 
                 anyOf {
                     branch 'snapshot';
-                    branch 'jackson3-rc4'
+                    branch 'jackson3-rc10'
                 }
             }
             steps  {
