@@ -63,7 +63,7 @@ public class CodecModuleConfiguratorTest {
 		assertFalse(module.isSerializeDefaultValue());		
 		assertFalse(module.isSerializeNullValue());		
 		assertFalse(module.isSerializeEmptyValue());		
-		assertTrue(module.isUseNamesFromExtendedMetaData());
+		assertFalse(module.isUseNamesFromExtendedMetaData());
 		assertTrue(module.isUseId());
 		assertTrue(module.isIdOnTop());
 		assertFalse(module.isSerializeIdField());

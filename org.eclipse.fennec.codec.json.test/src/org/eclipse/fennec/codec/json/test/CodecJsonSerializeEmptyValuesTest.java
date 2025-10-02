@@ -307,6 +307,7 @@ public class CodecJsonSerializeEmptyValuesTest extends JsonTestSetting {
 		Map<String, Object> options = CodecOptionsBuilder.create()
 			.serializeDefaultValue(true)
 			.serializeEmptyValue(true)
+			.useNamesFromExtendedMetadata(true)
 			.serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT)
 			.build();
 		resource.save(options);
