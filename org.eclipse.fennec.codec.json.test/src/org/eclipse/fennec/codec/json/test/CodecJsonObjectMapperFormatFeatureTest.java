@@ -114,11 +114,11 @@ public class CodecJsonObjectMapperFormatFeatureTest extends JsonTestSetting {
 		resource.save(options);
 
 
-		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http:\\/\\/example.de\\/person\\/1.0#\\/\\/Person\",");
+		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http://example.de/person/1.0#//Person\",");
 	}
 
 	@Test
-	public void testSerializatioDisableEnable() throws IOException {
+	public void testSerializatioEnableDisable() throws IOException {
 
 		Resource resource = resourceSet.createResource(URI.createURI(personFileName));
 
@@ -128,21 +128,23 @@ public class CodecJsonObjectMapperFormatFeatureTest extends JsonTestSetting {
 				.forClass(PersonPackage.eINSTANCE.getPerson())
 					.typeStrategy("URI")
 				.and()
-				.formatSerFeaturesWithout(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
+				.formatSerFeaturesWith(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
 				.build();
 		resource.save(options);
+		
+		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http:\\/\\/example.de\\/person\\/1.0#\\/\\/Person\",");
 
-		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http://example.de/person/1.0#//Person\",");
+
 
 		options = CodecOptionsBuilder.create()
 				.forClass(PersonPackage.eINSTANCE.getPerson())
 					.typeStrategy("URI")
 				.and()
-				.formatSerFeaturesWith(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
+				.formatSerFeaturesWithout(JsonWriteFeature.ESCAPE_FORWARD_SLASHES)
 				.build();
 		resource.save(options);
 
-		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http:\\/\\/example.de\\/person\\/1.0#\\/\\/Person\",");
+		assertThat(Files.readString(Paths.get(personFileName))).contains("\"_type\" : \"http://example.de/person/1.0#//Person\",");
 
 	}
 	

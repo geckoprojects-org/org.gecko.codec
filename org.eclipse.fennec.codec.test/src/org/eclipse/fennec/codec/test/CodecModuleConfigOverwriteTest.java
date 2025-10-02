@@ -406,8 +406,8 @@ public class CodecModuleConfigOverwriteTest {
 		assertTrue(resource instanceof CodecResource);
 		CodecResource codecRes = (CodecResource) resource;
 		ObjectMapper mapper = codecRes.getMapper();
-		assertEquals(1, mapper.getRegisteredModules().size());		
-		assertTrue(mapper.getRegisteredModules().stream().toList().get(0) instanceof CodecModule);		
-		return  (CodecModule) mapper.getRegisteredModules().stream().toList().get(0);
+		assertEquals(1, mapper.registeredModules().size());		
+		assertTrue(mapper.registeredModules().stream().toList().get(0) instanceof CodecModule);		
+		return  (CodecModule) mapper.registeredModules().stream().toList().get(0);
 	}
 }
