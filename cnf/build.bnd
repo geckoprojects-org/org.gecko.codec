@@ -7,7 +7,8 @@
 	geckoOSGi-Test,\
 	geckoJacoco,\
 	geckoEMF,\
-	geckoEMFUtil
+	geckoEMFUtil,\
+	geckoEMFRepository
 
 # Needed because we enabled library 'gecko-dimc'
 # Activate baselining
@@ -24,12 +25,7 @@ javac.target: 17
 
 -require-bnd "(version>=7.0.0)"
 
--plugin.4.EMFCompare: \
- 	aQute.bnd.repository.p2.provider.P2Repository; \
- 	url = https://download.eclipse.org/modeling/emf/compare/updates/releases/latest/; \
- 	name = EMFCompare
- 	
--plugin.3.Central: \
+-plugin.0.Central: \
     aQute.bnd.repository.maven.provider.MavenBndRepository; \
         snapshotUrl="https://oss.sonatype.org/content/repositories/snapshots/,https://s01.oss.sonatype.org/content/repositories/snapshots/"; \
         releaseUrl=https://repo.maven.apache.org/maven2/; \
@@ -38,20 +34,27 @@ javac.target: 17
         poll.time=-1; \
         name="Central"
         
--plugin.0.Local: \
-	aQute.bnd.deployer.repository.LocalIndexedRepo; \
-		name = Local; \
-		pretty = true; \
-		local = ${build}/local
-		
--plugin.2.Templates: \
-	aQute.bnd.deployer.repository.LocalIndexedRepo; \
-		name = Templates; \
-		pretty = true; \
-		local = ${build}/templates
-
 -plugin.1.Temp: \
 	aQute.bnd.deployer.repository.LocalIndexedRepo; \
 		name = Temp; \
 		pretty = true; \
 		local = ${build}/cache/temp
+		
+-plugin.2.Local: \
+	aQute.bnd.deployer.repository.LocalIndexedRepo; \
+		name = Local; \
+		pretty = true; \
+		local = ${build}/local
+		
+-plugin.3.Templates: \
+	aQute.bnd.deployer.repository.LocalIndexedRepo; \
+		name = Templates; \
+		pretty = true; \
+		local = ${build}/templates
+		
+-plugin.4.EMFCompare: \
+ 	aQute.bnd.repository.p2.provider.P2Repository; \
+ 	url = https://download.eclipse.org/modeling/emf/compare/updates/releases/latest/; \
+ 	name = EMFCompare
+
+
