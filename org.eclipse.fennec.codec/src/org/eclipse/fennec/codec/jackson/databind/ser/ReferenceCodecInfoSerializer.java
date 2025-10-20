@@ -37,12 +37,10 @@ import org.eclipse.fennec.codec.info.codecinfo.TypeInfo;
 import org.eclipse.fennec.codec.jackson.databind.EMFCodecContext;
 import org.eclipse.fennec.codec.jackson.databind.EMFCodecWriteContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
-import org.eclipse.fennec.codec.jackson.utils.TypeConstructorHelper;
 import org.gecko.emf.utilities.FeaturePath;
 import org.gecko.emf.utilities.UtilitiesFactory;
 
 import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.JavaType;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 
@@ -84,6 +82,12 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 	public void serialize(EObject rootObj, JsonGenerator jg, SerializationContext provider) {
 		if (featureCodecInfo.isIgnore())
 			return;
+
+		// Check global ignore list
+		if (featureCodecInfo.getFeature() != null &&
+			codecModule.getGlobalIgnoreFeatureNames().contains(featureCodecInfo.getFeature().getName())) {
+			return;
+		}
 		if(featureCodecInfo.getFeature() == null) {
 			LOGGER.severe(String.format("No Feature found in CodecFeatureInfo. Feature will not be serialized!"));
 			return;
@@ -98,6 +102,7 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 		if (jg.streamWriteContext() instanceof EMFCodecContext cwt) {
 			cwt.setCurrentFeature(feature);
 			cwt.setCurrentEObject(rootObj);
+			cwt.setResource(rootObj.eResource());
 		} else {
 			throw new IllegalArgumentException(String.format("StreamWriteContext is not of type EMFCodecWriteContext! Something went wrong!"));
 		}
@@ -325,6 +330,8 @@ public class ReferenceCodecInfoSerializer implements CodecInfoSerializer {
 					&& !sourceResource.getURI().equals(uri.trimFragment());
 		}
 
-		return sourceResource == null;
+		// Check if target is in a different resource than source
+		Resource targetResource = target.eResource();
+		return sourceResource == null || sourceResource != targetResource;
 	}
 }

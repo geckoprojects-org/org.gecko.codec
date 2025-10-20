@@ -64,10 +64,19 @@ public class FeatureCodecInfoSerializer implements CodecInfoSerializer{
 	@SuppressWarnings("unchecked")
 	public void serialize(EObject rootObj, JsonGenerator gen, SerializationContext provider) {
 		if(featureCodecInfo.isIgnore()) return;
+		
 		if(featureCodecInfo.getFeature() == null) {
 			LOGGER.severe(String.format("No Feature found in CodecFeatureInfo. Feature will not be serialized!"));
 			return;
 		}
+
+		// Check global ignore list
+		if (featureCodecInfo.getFeature() != null &&
+			codecModule.getGlobalIgnoreFeatureNames().contains(featureCodecInfo.getFeature().getName())) {
+			return;
+		}
+
+		
 		EStructuralFeature feature = (EStructuralFeature) featureCodecInfo.getFeature();		
 		if(!codecModule.isSerializeIdField()) {
 			if(eObjCodecInfo.getIdentityInfo().getIdFeatures().contains(feature)) {

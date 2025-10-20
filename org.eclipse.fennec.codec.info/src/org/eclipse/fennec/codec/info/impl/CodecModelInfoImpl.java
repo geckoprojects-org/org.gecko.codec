@@ -287,14 +287,26 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 	private FeatureCodecInfo createCodecFeatureInfo(ETypedElement feature) {
 		FeatureCodecInfo featureInfo = CodecInfoFactory.eINSTANCE.createFeatureCodecInfo();
 		featureInfo.setId(UUID.randomUUID().toString());
-		featureInfo.setType(feature instanceof EAttribute ? InfoType.ATTRIBUTE : 
+		featureInfo.setType(feature instanceof EAttribute ? InfoType.ATTRIBUTE :
 			feature instanceof EOperation ? InfoType.OPERATION : InfoType.REFERENCE);
 		if(feature.getEType() instanceof EEnum) featureInfo.setType(InfoType.ENUMERATOR);
 
 		featureInfo.setKey(getElementName(feature));
 		featureInfo.setFeature(feature);
 
-		if(feature instanceof EStructuralFeature f && f.isTransient()) featureInfo.setIgnore(true);
+		// Filter out transient
+		if(feature instanceof EStructuralFeature f && f.isTransient()) {
+			featureInfo.setIgnore(true);
+		}
+
+		// Operations should be ignored by default unless explicitly included via annotation
+		if(feature instanceof EOperation) {
+			String includeOperation = getAnnotationDetails(feature, "codec", "include");
+			if(!"true".equalsIgnoreCase(includeOperation)) {
+				featureInfo.setIgnore(true);
+			}
+		}
+
 		String isIgnore = getAnnotationDetails(feature, "codec", "transient");
 		if("true".equalsIgnoreCase(isIgnore)) featureInfo.setIgnore(Boolean.valueOf(isIgnore));	
 

@@ -26,13 +26,21 @@ import java.util.Map;
  */
 public interface CodecModelInfoOptions {
 	
-	/** CODEC_IGNORE_FEATURES_LIST 
-	 * to specify a {@link List} of {@link EStructuralFeature} that should be ignored 
-	 * during serialization or deserialization. If an {@link EStructuralFeature} is marked as 
-	 * transient in the model or has been annotated with the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TRANSIENT} 
+	/** CODEC_IGNORE_FEATURES_LIST
+	 * to specify a {@link List} of {@link EStructuralFeature} that should be ignored
+	 * during serialization or deserialization. If an {@link EStructuralFeature} is marked as
+	 * transient in the model or has been annotated with the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TRANSIENT}
 	 * annotation, it will still be ignored even is it is not present in this list.
 	 * */
 	String CODEC_IGNORE_FEATURES_LIST = "codec.ignore.features.list";
+
+	/** CODEC_GLOBAL_IGNORE_FEATURES_LIST
+	 * to specify a {@link List} of {@link EStructuralFeature} that should be ignored globally
+	 * across all EClasses during serialization or deserialization. This is useful for excluding
+	 * features from metamodel classes (like Ecore's eGenericType) without having to specify
+	 * them for each individual EClass.
+	 * */
+	String CODEC_GLOBAL_IGNORE_FEATURES_LIST = "codec.global.ignore.features.list";
 	
 	/** CODEC_IGNORE_NOT_FEATURES_LIST 
 	 * to specify a {@link List} of {@link EStructuralFeature} that should NOT be ignored 
