@@ -13,6 +13,9 @@
  */
 package org.eclipse.fennec.codec.jackson.module;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -66,7 +69,8 @@ public class CodecModule extends SimpleModule {
 	private String timestampKey;
 	private boolean writeEnumLiterals;
 	private boolean sortPropertiesAlphabetically;
-	
+	private List<String> globalIgnoreFeatureNames;
+
 	private CodecEMFSerializers serializers;
 	private CodecEMFDeserializers deserializers;
 	
@@ -163,6 +167,10 @@ public class CodecModule extends SimpleModule {
 		return sortPropertiesAlphabetically;
 	}
 
+	public List<String> getGlobalIgnoreFeatureNames() {
+		return globalIgnoreFeatureNames != null ? globalIgnoreFeatureNames : Collections.emptyList();
+	}
+
 	public PackageCodecInfo getCodecModelInfo() {
 		return codecModelInfo;
 	}
@@ -204,6 +212,7 @@ public class CodecModule extends SimpleModule {
 		this.setUriHandler(builder.handler);
 		this.setReferenceSerializer(builder.referenceSerializer);
 		this.sortPropertiesAlphabetically = builder.sortPropertiesAlphabetically;
+		this.globalIgnoreFeatureNames = builder.globalIgnoreFeatureNames;
 		this.serializers = builder.serializers;
 		this.deserializers = builder.deserializers;
 	}
@@ -315,6 +324,7 @@ public class CodecModule extends SimpleModule {
 		private URIHandler handler;
 		private ValueSerializer<EObject> referenceSerializer;
 		private boolean sortPropertiesAlphabetically = false;
+		private List<String> globalIgnoreFeatureNames = null;
 		private CodecEMFSerializers serializers = null;
 		private CodecEMFDeserializers deserializers = null;
 
@@ -432,6 +442,11 @@ public class CodecModule extends SimpleModule {
 		
 		public Builder withSortPropertiesAlphabetically(boolean sortPropertiesAlphabetically) {
 			this.sortPropertiesAlphabetically = sortPropertiesAlphabetically;
+			return this;
+		}
+
+		public Builder withGlobalIgnoreFeatureNames(List<String> globalIgnoreFeatureNames) {
+			this.globalIgnoreFeatureNames = globalIgnoreFeatureNames;
 			return this;
 		}
 

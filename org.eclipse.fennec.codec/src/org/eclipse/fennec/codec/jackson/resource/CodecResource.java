@@ -151,6 +151,14 @@ public class CodecResource extends ResourceImpl {
 		if(options == null) options = Collections.emptyMap();
 		objMapperBuilder = objMapperBuilderFactory.createObjectMapperBuilder();
 
+		//		Handle global ignore features list - extract feature names and pass to module
+		if(options.containsKey(CodecModelInfoOptions.CODEC_GLOBAL_IGNORE_FEATURES_LIST)) {
+			@SuppressWarnings("unchecked")
+			List<EStructuralFeature> globalIgnoreFeatures = (List<EStructuralFeature>) options.get(CodecModelInfoOptions.CODEC_GLOBAL_IGNORE_FEATURES_LIST);
+			List<String> featureNames = globalIgnoreFeatures.stream().map(f -> f.getName()).toList();
+			moduleBuilder.withGlobalIgnoreFeatureNames(featureNames);
+		}
+
 		//		Update the CodecModule based on the passed options
 		updateCodecModuleFromOptions(options);
 

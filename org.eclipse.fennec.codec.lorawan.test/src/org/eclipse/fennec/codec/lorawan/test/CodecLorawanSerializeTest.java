@@ -24,15 +24,19 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
 import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
+import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
 import org.eclipse.fennec.dragino.message.model.dragino.DraginoFactory;
 import org.eclipse.fennec.dragino.message.model.dragino.DraginoLSE01Uplink;
 import org.eclipse.fennec.dragino.message.model.dragino.DraginoPackage;
 import org.eclipse.fennec.lorawan.uplink.model.lorawan.DeviceInfo;
 import org.eclipse.fennec.lorawan.uplink.model.lorawan.LorawanFactory;
+import org.eclipse.fennec.lorawan.uplink.model.lorawan.LorawanPackage;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.AfterEach;
@@ -105,6 +109,23 @@ public class CodecLorawanSerializeTest extends JsonTestSetting{
 	@Override
 	public void afterEach() throws IOException {
 		super.afterEach();
+	}
+	
+	@Test
+	public void testSerializeParentPackage(@InjectService ServiceAware<LorawanPackage> packageAware) throws IOException, InterruptedException {
+
+		LorawanPackage model = packageAware.waitForService(2000l);
+		assertNotNull(model);
+
+		Resource resource = resourceSet.createResource(URI.createURI(fileName));
+		resource.getContents().add(EcoreUtil.copy(model));
+
+		// Create options to exclude eGenericType from serialization for all Ecore classes
+		Map<String, Object> options = new HashMap<>();
+		options.put(CodecModelInfoOptions.CODEC_GLOBAL_IGNORE_FEATURES_LIST,
+			java.util.List.of(EcorePackage.Literals.ETYPED_ELEMENT__EGENERIC_TYPE));
+		resource.save(options);
+		
 	}
 	
 

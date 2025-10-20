@@ -263,6 +263,7 @@ These are defined in `org.eclipse.fennec.codec.constants.CodecModuleOptions` and
 These are defined in `org.eclipse.fennec.codec.constants.CodecModelInfoOptions` and are:
 
 + `CODEC_IGNORE_FEATURE_LIST`: to specify a list of `EStructuralFeature` that should be ignored during serialization or deserialization. If an `EStructuralFeature` is marked as `transient` in the model or has been annotated with the `CODEC_TRANSIENT` annotation, it will still be ignored even is it is not present in this list;
++ `CODEC_GLOBAL_IGNORE_FEATURES_LIST`: to specify a list of `EStructuralFeature` that should be ignored globally across all EClasses during serialization or deserialization. This is particularly useful for excluding features from metamodel classes (like Ecore's `eGenericType`) without having to specify them for each individual EClass. Unlike `CODEC_IGNORE_FEATURE_LIST`, this option applies to all packages being serialized, not just the root package. **Use case**: When serializing an EPackage, you may want to exclude `eGenericType` from all ETypedElements. Since `eGenericType` is always present as a wrapper around `eType` (even when no generics are used), it can be redundant. Using this option allows you to globally exclude it: `options.put(CodecModelInfoOptions.CODEC_GLOBAL_IGNORE_FEATURES_LIST, List.of(EcorePackage.Literals.ETYPED_ELEMENT__EGENERIC_TYPE))`;
 + `CODEC_IGNORE_NOT_FEATURE_LIST`:  to specify a list of `EStructuralFeature` that should **NOT** be ignored during serialization or deserialization. If an `EStructuralFeature` is marked as `transient` in the model or has been annotated with the `CODEC_TRANSIENT` annotation, it will then be taken into account if present in this list;
 + `CODEC_ID_KEY`: to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_ID` key detail annotation;
 + `CODEC_ID_SRATEGY`: to overwrite the `org.gecko.codec.constants.CodecAnnotations.CODEC_ID` strategy detail annotation;
@@ -308,6 +309,22 @@ Map<String, Object> options = CodecOptionsBuilder
     .idStrategy("ID_FIELD")
     .build();
 ```
+
+#### Example: Excluding eGenericType Globally
+
+When serializing an EPackage, `eGenericType` is often redundant since it's always present as a wrapper around `eType`, even when no generics are used. To exclude it globally across all EClasses:
+
+```java
+Map<String, Object> options = new HashMap<>();
+options.put(CodecModelInfoOptions.CODEC_GLOBAL_IGNORE_FEATURES_LIST,
+    List.of(EcorePackage.Literals.ETYPED_ELEMENT__EGENERIC_TYPE));
+
+Resource resource = resourceSet.createResource(URI.createURI("my-package.json"));
+resource.getContents().add(myEPackage);
+resource.save(options);
+```
+
+This approach ensures that `eGenericType` is excluded from all ETypedElements (EAttributes, EReferences, EOperations) regardless of which package they belong to.
 
 
 
