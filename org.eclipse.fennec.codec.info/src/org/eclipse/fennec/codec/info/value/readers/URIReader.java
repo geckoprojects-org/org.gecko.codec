@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
+import org.osgi.service.component.ComponentServiceObjects;
 
 import tools.jackson.databind.DeserializationContext;
 
@@ -28,13 +29,17 @@ import tools.jackson.databind.DeserializationContext;
  */
 public class URIReader implements CodecValueReader<String, EClass>{
 	
-	private ResourceSet resourceSet;
+//	private ResourceSet resourceSet;
+	private ComponentServiceObjects<ResourceSet> rsFactory;
 
-	
-	
-	public URIReader(ResourceSet resourceSet) {
-		this.resourceSet = resourceSet;
+	public URIReader(ComponentServiceObjects<ResourceSet> rsFactory) {
+		this.rsFactory = rsFactory;
+		
 	}
+	
+//	public URIReader(ResourceSet resourceSet) {
+//		this.resourceSet = resourceSet;
+//	}
 
 	/* 
 	 * (non-Javadoc)
@@ -51,7 +56,17 @@ public class URIReader implements CodecValueReader<String, EClass>{
 	 */
 	@Override
 	public EClass readValue(String value, DeserializationContext context) {	
-		return (EClass) resourceSet.getEObject(URI.createURI(value), true);
+		ResourceSet resourceSet = rsFactory.getService();
+		try  {
+			return (EClass) resourceSet.getEObject(URI.createURI(value), true);
+		} catch(Exception e) {
+			System.out.println("");
+			return null;
+		}
+		
+		finally {
+			rsFactory.ungetService(resourceSet);
+		}		
 	}
 
 }

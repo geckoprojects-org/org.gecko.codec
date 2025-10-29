@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.helper.CodecIOHelper;
 import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
+import org.osgi.service.component.ComponentServiceObjects;
 
 import tools.jackson.databind.DeserializationContext;
 
@@ -28,15 +29,21 @@ import tools.jackson.databind.DeserializationContext;
  */
 public class EClassReaderByName implements CodecValueReader<String, EClass>{
 
-	private ResourceSet resourceSet;
+//	private ResourceSet resourceSet;
+	private ComponentServiceObjects<ResourceSet> rsFactory;
 
 	public EClassReaderByName() {
 
 	}
-
-	public EClassReaderByName(ResourceSet resourceSet) {
-		this.resourceSet = resourceSet;
+	
+	public EClassReaderByName(ComponentServiceObjects<ResourceSet> rsFactory) {
+		this.rsFactory = rsFactory;
+		
 	}
+
+//	public EClassReaderByName(ResourceSet resourceSet) {
+//		this.resourceSet = resourceSet;
+//	}
 
 	/* 
 	 * (non-Javadoc)
@@ -54,7 +61,12 @@ public class EClassReaderByName implements CodecValueReader<String, EClass>{
 	 */
 	@Override
 	public EClass readValue(String value, DeserializationContext context) {
+		ResourceSet resourceSet = rsFactory.getService();
+		try {
+			return CodecIOHelper.findEClassByName(value, resourceSet);
+		} finally {
+			rsFactory.ungetService(resourceSet);
+		}
 		
-		return CodecIOHelper.findEClassByName(value, resourceSet);
 	}
 }

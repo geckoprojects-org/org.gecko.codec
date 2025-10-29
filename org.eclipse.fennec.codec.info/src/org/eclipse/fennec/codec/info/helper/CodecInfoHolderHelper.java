@@ -21,9 +21,10 @@ import org.eclipse.fennec.codec.info.codecinfo.CodecInfoHolder;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueWriter;
 import org.eclipse.fennec.codec.info.codecinfo.InfoType;
-import org.eclipse.fennec.codec.info.value.readers.URIReader;
 import org.eclipse.fennec.codec.info.value.readers.EClassReaderByName;
 import org.eclipse.fennec.codec.info.value.readers.EClassReaderByQualifiedName;
+import org.eclipse.fennec.codec.info.value.readers.URIReader;
+import org.osgi.service.component.ComponentServiceObjects;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,13 +38,13 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, name = "CodecInfoHolderHelper", service = CodecInfoHolderHelper.class)
 public class CodecInfoHolderHelper {
 	
-	@Reference
-	ResourceSet resourceSet;
-	
+	ComponentServiceObjects<ResourceSet> rsFactory;
+		
 	private static final Logger LOGGER = Logger.getLogger(CodecInfoHolderHelper.class.getName());
 	
 	@Activate
-	public void activate() {
+	public CodecInfoHolderHelper(@Reference ComponentServiceObjects<ResourceSet> rsFactory) {
+		this.rsFactory = rsFactory;
 		System.out.println("I am CodecInfoHolderHelper");
 	}
 
@@ -63,9 +64,9 @@ public class CodecInfoHolderHelper {
 			codecInfoHolder.getWriters().add(CodecIOHelper.SINGLE_SUPERTYPE_WRITER);	
 			break;
 		case TYPE: 
-			codecInfoHolder.getReaders().add(new URIReader(resourceSet));
-			codecInfoHolder.getReaders().add(new EClassReaderByName(resourceSet));
-			codecInfoHolder.getReaders().add(new EClassReaderByQualifiedName(resourceSet));
+			codecInfoHolder.getReaders().add(new URIReader(rsFactory));
+			codecInfoHolder.getReaders().add(new EClassReaderByName(rsFactory));
+			codecInfoHolder.getReaders().add(new EClassReaderByQualifiedName(rsFactory));
 
 			codecInfoHolder.getWriters().add(CodecIOHelper.URI_WRITER);		
 			codecInfoHolder.getWriters().add(CodecIOHelper.WRITE_BY_CLASS_NAME);		
