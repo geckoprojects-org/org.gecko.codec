@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.info.codecinfo.CodecValueReader;
 import org.eclipse.fennec.codec.info.helper.CodecIOHelper;
 import org.eclipse.fennec.codec.options.CodecValueReaderConstants;
+import org.osgi.service.component.ComponentServiceObjects;
 
 import tools.jackson.databind.DeserializationContext;
 
@@ -30,11 +31,16 @@ import tools.jackson.databind.DeserializationContext;
  */
 public class EClassReaderByQualifiedName implements CodecValueReader<String, EClass>{
 	
-	private ResourceSet resourceSet;
+//	private ResourceSet resourceSet;
+	private ComponentServiceObjects<ResourceSet> rsFactory;
 	
-	public EClassReaderByQualifiedName(ResourceSet resourceSet) {
-		this.resourceSet = resourceSet;
+	public EClassReaderByQualifiedName(ComponentServiceObjects<ResourceSet> rsFactory) {
+		this.rsFactory = rsFactory;		
 	}
+	
+//	public EClassReaderByQualifiedName(ResourceSet resourceSet) {
+//		this.resourceSet = resourceSet;
+//	}
 
 	/* 
 	 * (non-Javadoc)
@@ -51,8 +57,13 @@ public class EClassReaderByQualifiedName implements CodecValueReader<String, ECl
 	 */
 	@Override
 	public EClass readValue(String value, DeserializationContext context) {
-		Set<EClass> types = CodecIOHelper.getAllTypes(resourceSet);
-		return types.stream().filter(CodecIOHelper.findByQualifiedName(value)).findFirst().orElse(null);
+		ResourceSet resourceSet = rsFactory.getService();
+		try {
+			Set<EClass> types = CodecIOHelper.getAllTypes(resourceSet);
+			return types.stream().filter(CodecIOHelper.findByQualifiedName(value)).findFirst().orElse(null);
+		} finally {
+			rsFactory.ungetService(resourceSet);
+		}
 	}
 
 }
