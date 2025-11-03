@@ -99,8 +99,8 @@ public class CodecUTF8JsonGenerator extends UTF8JsonGenerator  {
         ctxt.setCurrentFeature(feature);
         streamWriteConstraints().validateNestingDepth(ctxt.getNestingDepth());
         _streamWriteContext = ctxt;
-        if (_cfgPrettyPrinter != null) {
-            _cfgPrettyPrinter.writeStartObject(this);
+        if (_prettyPrinter != null) {
+        	_prettyPrinter.writeStartObject(this);
         } else {
             if (_outputTail >= _outputEnd) {
                 _flushBuffer();
