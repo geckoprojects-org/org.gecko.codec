@@ -88,8 +88,9 @@ public class SmartJsonSchemaDeserializer extends ValueDeserializer<EObject> {
     				EClass type  = (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT);
     				EClassCodecInfo eObjCodecInfo = extractModelInfo(type);
     				if(eObjCodecInfo.getCodecExtraProperties().containsKey("jsonschema")) {
-        				if(eObjCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) return new JsonSchemaToEPackageDeserializer(eObjCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).deserialize(parser, ctxt);
-        				return new JsonSchemaToEPackageDeserializer().deserialize(parser, ctxt);
+        				if(eObjCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) return new EnhancedJsonSchemaToEPackageDeserializer(eObjCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).deserialize(parser, ctxt);
+//        				return new JsonSchemaToEPackageDeserializer().deserialize(parser, ctxt);
+        				return new EnhancedJsonSchemaToEPackageDeserializer().deserialize(parser, ctxt);
         			} else {
         				return new CodecEObjectDeserializer(targetClass, module, codecModelInfoService).deserialize(parser, ctxt);
         			}
@@ -105,8 +106,9 @@ public class SmartJsonSchemaDeserializer extends ValueDeserializer<EObject> {
     				throw new IllegalArgumentException(String.format("Cannot retrieve FeatureCodecInfo for current EStructuralFeature %s. Something went wrong!", currentFeature.getName()));
     			}
     			if(featureCodecInfo.getCodecExtraProperties().containsKey("jsonschema")) {
-    				if(featureCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) return new JsonSchemaToEPackageDeserializer(featureCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).deserialize(parser, ctxt);
-    				return new JsonSchemaToEPackageDeserializer().deserialize(parser, ctxt);
+    				if(featureCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) return new EnhancedJsonSchemaToEPackageDeserializer(featureCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).deserialize(parser, ctxt);
+//    				return new JsonSchemaToEPackageDeserializer().deserialize(parser, ctxt);
+    				return new EnhancedJsonSchemaToEPackageDeserializer().deserialize(parser, ctxt);
     			} else {
     				return new CodecEObjectDeserializer(targetClass, module, codecModelInfoService).deserialize(parser, ctxt);
     			}

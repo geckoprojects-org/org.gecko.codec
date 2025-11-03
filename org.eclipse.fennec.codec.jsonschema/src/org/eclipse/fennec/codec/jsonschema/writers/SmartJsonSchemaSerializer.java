@@ -84,8 +84,8 @@ public class SmartJsonSchemaSerializer extends ValueSerializer<EObject> {
     				EClass type  = (EClass) ctxt.getAttribute(CodecResourceOptions.CODEC_ROOT_OBJECT);
     				EClassCodecInfo eObjCodecInfo = extractModelInfo(type);
     				if(eObjCodecInfo.getCodecExtraProperties().containsKey("jsonschema") && value instanceof EPackage ePackage) {
-        				if(eObjCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) new EPackageToJsonSchemaSerializer(eObjCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).serialize(ePackage, gen, ctxt);
-        				else new EPackageToJsonSchemaSerializer().serialize(ePackage, gen, ctxt);
+        				if(eObjCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) new EnhancedEPackageToJsonSchemaSerializer(eObjCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).serialize(ePackage, gen, ctxt);
+        				else new EnhancedEPackageToJsonSchemaSerializer().serialize(ePackage, gen, ctxt);
         			} else {
         				new CodecEObjectSerializer(codecModule, codecModelInfoService).serialize(value, gen, ctxt);
         			}
@@ -101,8 +101,8 @@ public class SmartJsonSchemaSerializer extends ValueSerializer<EObject> {
         				throw new IllegalArgumentException(String.format("Cannot retrieve FeatureCodecInfo for current EStructuralFeature %s. Something went wrong!", currentFeature.getName()));
         			}
         			if(featureCodecInfo.getCodecExtraProperties().containsKey("jsonschema") && value instanceof EPackage ePackage) {
-        				if(featureCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) new EPackageToJsonSchemaSerializer(featureCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).serialize(ePackage, gen, ctxt);
-        				else new EPackageToJsonSchemaSerializer().serialize(ePackage, gen, ctxt);
+        				if(featureCodecInfo.getCodecExtraProperties().containsKey("jsonschema.feature.key")) new EnhancedEPackageToJsonSchemaSerializer(featureCodecInfo.getCodecExtraProperties().get("jsonschema.feature.key")).serialize(ePackage, gen, ctxt);
+        				else new EnhancedEPackageToJsonSchemaSerializer().serialize(ePackage, gen, ctxt);
         			} else {
         				new CodecEObjectSerializer(codecModule, codecModelInfoService).serialize(value, gen, ctxt);
         			}

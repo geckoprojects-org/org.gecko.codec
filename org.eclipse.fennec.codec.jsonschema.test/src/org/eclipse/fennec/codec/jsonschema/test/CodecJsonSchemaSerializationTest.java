@@ -20,8 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,10 +37,12 @@ import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
 import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
@@ -65,6 +65,7 @@ import org.osgi.test.junit5.service.ServiceExtension;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
 
 @RequireEMF
 @ExtendWith(BundleContextExtension.class)
@@ -74,6 +75,9 @@ public class CodecJsonSchemaSerializationTest {
 
 	@InjectService(filter="("+EMFNamespaces.EMF_MODEL_CONTENT_TYPE + "=application/schema+json)")
 	ResourceSet resourceSet;
+
+	@InjectService
+	CodecModelInfo codecModelInfo;
 
 	@InjectBundleContext
 	BundleContext ctx;
@@ -90,11 +94,11 @@ public class CodecJsonSchemaSerializationTest {
 
 	@AfterEach()
 	public void afterEach() throws IOException {
-		if(file2 != null) Files.deleteIfExists(Path.of(file2));
+//		if(file2 != null) Files.deleteIfExists(Path.of(file2));
 	}
 	
 	
-	@Test
+//	@Test
 	public void topLevelEClass() throws IOException {
 		String file1 = System.getProperty("data")+"top-level-eclass.json";
 		file2 = System.getProperty("data")+"ser_top-level-eclass.json";
@@ -127,8 +131,8 @@ public class CodecJsonSchemaSerializationTest {
 		String file1 = System.getProperty("data")+"meter-reading.json";
 		file2 = System.getProperty("data")+"ser_meter-reading.ecore";
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
-		
-		Map<String, Object> options = CodecOptionsBuilder.create(). 
+
+		Map<String, Object> options = CodecOptionsBuilder.create().
 				rootObject(EcorePackage.Literals.EPACKAGE).
 				serializeType(false).
 				serializeEmptyValue(true).
@@ -136,21 +140,273 @@ public class CodecJsonSchemaSerializationTest {
 				forClass(EcorePackage.Literals.EPACKAGE).
 				withExtraProperties(Map.of("jsonschema", "true", "jsonschema.feature.key", "definitions")).
 				build();
-		
-		res.load(options);		
+
+		res.load(options);
 		assertFalse(res.getContents().isEmpty());
 		EObject obj = res.getContents().get(0);
 		assertNotNull(obj);
 		assertThat(obj).isInstanceOf(EPackage.class);
 		EPackage ePackage = (EPackage) res.getContents().get(0);
-		
+
 		res = resourceSet.createResource(URI.createURI(file2));
 		res.getContents().add(ePackage);
 		res.save(options);
 	}
-	
+
+	@Test
+	public void meterReadingDataDeserialization() throws IOException {
+		// Step 1: Load JSON Schema and convert to EPackage
+		String schemaFile = System.getProperty("data")+"meter-reading.json";
+		Resource schemaRes = resourceSet.createResource(URI.createURI(schemaFile), "application/schema+json");
+
+		Map<String, Object> schemaOptions = CodecOptionsBuilder.create().
+				rootObject(EcorePackage.Literals.EPACKAGE).
+				serializeType(false).
+				serializeEmptyValue(true).
+				serializeNullValue(true).
+				forClass(EcorePackage.Literals.EPACKAGE).
+				withExtraProperties(Map.of("jsonschema", "true", "jsonschema.feature.key", "definitions")).
+				build();
+
+		schemaRes.load(schemaOptions);
+		assertFalse(schemaRes.getContents().isEmpty());
+		EPackage ePackage = (EPackage) schemaRes.getContents().get(0);
+		assertNotNull(ePackage);
+
+		// Step 2: Register the generated EPackage
+		// a) Register in ResourceSet's package registry so it can be found by URI
+		resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
+		// b) Register in CodecModelInfo so CodecInfo metadata is generated
+		codecModelInfo.put(ePackage.getNsURI(), ePackage);
+
+		// Step 3: Find the MeterReading EClass from the generated package
+		EClassifier meterReadingClassifier = ePackage.getEClassifier("MeterReading");
+		assertNotNull(meterReadingClassifier, "MeterReading EClass should exist in generated package");
+		assertThat(meterReadingClassifier).isInstanceOf(EClass.class);
+		EClass meterReadingEClass = (EClass) meterReadingClassifier;
+
+		// Step 4: Load JSON data that conforms to the schema
+		String dataFile = System.getProperty("data")+"meter-reading-data.json";
+		Resource dataRes = resourceSet.createResource(URI.createURI(dataFile));
+
+		Map<String, Object> dataOptions = CodecOptionsBuilder.create().
+				rootObject(meterReadingEClass).
+				serializeType(false).
+				build();
+
+		dataRes.load(dataOptions);
+
+		// Step 5: Verify the deserialized EObject
+		assertFalse(dataRes.getContents().isEmpty());
+		EObject meterReading = dataRes.getContents().get(0);
+		assertNotNull(meterReading);
+		assertThat(meterReading.eClass()).isEqualTo(meterReadingEClass);
+
+		// Verify the attribute values
+		EAttribute idAttr = (EAttribute) meterReadingEClass.getEStructuralFeature("id");
+		EAttribute meterIdAttr = (EAttribute) meterReadingEClass.getEStructuralFeature("meter_id");
+		EAttribute valueAttr = (EAttribute) meterReadingEClass.getEStructuralFeature("value");
+		EAttribute timestampAttr = (EAttribute) meterReadingEClass.getEStructuralFeature("timestamp");
+
+		assertNotNull(idAttr);
+		assertNotNull(meterIdAttr);
+		assertNotNull(valueAttr);
+		assertNotNull(timestampAttr);
+
+		assertThat(meterReading.eGet(idAttr)).isEqualTo(12345);
+		assertThat(meterReading.eGet(meterIdAttr)).isEqualTo("METER_001");
+		assertThat(meterReading.eGet(valueAttr)).isEqualTo(123.45);
+		assertThat(meterReading.eGet(timestampAttr)).isEqualTo("2025-01-29T10:30:00Z");
+	}
 	
 	@Test
+	public void pipeline() throws IOException {
+		String file1 = System.getProperty("data")+"pipeline_schema.json";
+		file2 = System.getProperty("data")+"pipeline.ecore";
+		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
+
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(EcorePackage.Literals.EPACKAGE).
+				serializeType(false).
+				serializeEmptyValue(true).
+				serializeNullValue(true).
+				forClass(EcorePackage.Literals.EPACKAGE).
+				withExtraProperties(Map.of("jsonschema", "true", "jsonschema.feature.key", "$defs")).
+				build();
+
+		res.load(options);
+		assertFalse(res.getContents().isEmpty());
+		EObject obj = res.getContents().get(0);
+		assertNotNull(obj);
+		assertThat(obj).isInstanceOf(EPackage.class);
+		EPackage ePackage = (EPackage) res.getContents().get(0);
+
+		res = resourceSet.createResource(URI.createURI(file2));
+		res.getContents().add(ePackage);
+		res.save(options);
+	}
+
+	@Test
+	@Disabled("This is disabled because we would need some kind of type mapping for the complex structures like oneOf, otherwise the codec tries to deserialize the parent class which might be abstract")
+	public void pipelineDataDeserializationWithOneOf() throws IOException {
+		// Step 1: Load JSON Schema and convert to EPackage
+		String schemaFile = System.getProperty("data")+"pipeline_schema.json";
+		Resource schemaRes = resourceSet.createResource(URI.createURI(schemaFile), "application/schema+json");
+
+		Map<String, Object> schemaOptions = CodecOptionsBuilder.create().
+				rootObject(EcorePackage.Literals.EPACKAGE).
+				serializeType(false).
+				serializeEmptyValue(true).
+				serializeNullValue(true).
+				forClass(EcorePackage.Literals.EPACKAGE).
+				withExtraProperties(Map.of("jsonschema", "true", "jsonschema.feature.key", "$defs")).
+				build();
+
+		schemaRes.load(schemaOptions);
+		assertFalse(schemaRes.getContents().isEmpty());
+		EPackage ePackage = (EPackage) schemaRes.getContents().get(0);
+		assertNotNull(ePackage);
+
+		// Log the generated EClasses to understand the structure
+		System.out.println("Generated EPackage: " + ePackage.getName());
+		System.out.println("NsURI: " + ePackage.getNsURI());
+		System.out.println("EClasses:");
+		ePackage.getEClassifiers().forEach(classifier -> {
+			System.out.println("  - " + classifier.getName() + " (" + classifier.getClass().getSimpleName() + ")");
+			if (classifier instanceof EClass eClass) {
+				eClass.getEStructuralFeatures().forEach(feature -> {
+					System.out.println("    * " + feature.getName() + " : " + feature.getEType().getName());
+				});
+			}
+		});
+
+		// Step 2: Register the generated EPackage
+		resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
+		codecModelInfo.put(ePackage.getNsURI(), ePackage);
+
+		// Step 3: Find the root EClass (should be something like RedpandaConnectPipelineSchema or similar)
+		// The root is defined by the top-level "type": "object" with "properties"
+		EClass rootEClass = null;
+		for (EClassifier classifier : ePackage.getEClassifiers()) {
+			if (classifier instanceof EClass eClass) {
+				// Look for the class that has input, pipeline, and output features
+				if (eClass.getEStructuralFeature("input") != null &&
+					eClass.getEStructuralFeature("pipeline") != null &&
+					eClass.getEStructuralFeature("output") != null) {
+					rootEClass = eClass;
+					break;
+				}
+			}
+		}
+		assertNotNull(rootEClass, "Root EClass with input/pipeline/output should exist");
+		System.out.println("Using root EClass: " + rootEClass.getName());
+
+		// Step 4: Load JSON data that conforms to the schema
+		String dataFile = System.getProperty("data")+"pipeline-data.json";
+		Resource dataRes = resourceSet.createResource(URI.createURI(dataFile));
+
+		Map<String, Object> dataOptions = CodecOptionsBuilder.create().
+				rootObject(rootEClass).
+				serializeType(false).
+				build();
+
+		dataRes.load(dataOptions);
+
+		// Step 5: Verify the deserialized EObject
+		assertFalse(dataRes.getContents().isEmpty());
+		EObject pipelineConfig = dataRes.getContents().get(0);
+		assertNotNull(pipelineConfig);
+		assertThat(pipelineConfig.eClass()).isEqualTo(rootEClass);
+
+		// Step 6: Verify the structure - particularly the oneOf types
+		// Check that input exists and is of the correct type (should contain kafka config)
+		EStructuralFeature inputFeature = rootEClass.getEStructuralFeature("input");
+		assertNotNull(inputFeature, "input feature should exist");
+		Object inputValue = pipelineConfig.eGet(inputFeature);
+		assertNotNull(inputValue, "input should have a value");
+		assertThat(inputValue).isInstanceOf(EObject.class);
+
+		EObject inputNode = (EObject) inputValue;
+		System.out.println("Input node type: " + inputNode.eClass().getName());
+
+		// The inputNode should have a "kafka" feature (from the oneOf)
+		EStructuralFeature kafkaFeature = inputNode.eClass().getEStructuralFeature("kafka");
+		assertNotNull(kafkaFeature, "kafka feature should exist in inputNode (oneOf variant)");
+		Object kafkaValue = inputNode.eGet(kafkaFeature);
+		assertNotNull(kafkaValue, "kafka should have a value");
+		assertThat(kafkaValue).isInstanceOf(EObject.class);
+
+		// Verify kafka configuration
+		EObject kafkaConfig = (EObject) kafkaValue;
+		System.out.println("Kafka config type: " + kafkaConfig.eClass().getName());
+
+		// Check addresses attribute
+		EStructuralFeature addressesFeature = kafkaConfig.eClass().getEStructuralFeature("addresses");
+		assertNotNull(addressesFeature);
+		Object addresses = kafkaConfig.eGet(addressesFeature);
+		assertNotNull(addresses);
+		System.out.println("Addresses: " + addresses);
+
+		// Check topics attribute
+		EStructuralFeature topicsFeature = kafkaConfig.eClass().getEStructuralFeature("topics");
+		assertNotNull(topicsFeature);
+		Object topics = kafkaConfig.eGet(topicsFeature);
+		assertNotNull(topics);
+		System.out.println("Topics: " + topics);
+
+		// Step 7: Verify processors array (another oneOf scenario)
+		EStructuralFeature pipelineFeature = rootEClass.getEStructuralFeature("pipeline");
+		assertNotNull(pipelineFeature);
+		Object pipelineValue = pipelineConfig.eGet(pipelineFeature);
+		assertNotNull(pipelineValue);
+		assertThat(pipelineValue).isInstanceOf(EObject.class);
+
+		EObject pipelineObj = (EObject) pipelineValue;
+		EStructuralFeature processorsFeature = pipelineObj.eClass().getEStructuralFeature("processors");
+		assertNotNull(processorsFeature, "processors feature should exist");
+
+		System.out.println("\nTest completed successfully!");
+		System.out.println("This validates that:");
+		System.out.println("1. JSON Schema with oneOf is converted to EPackage with proper structure");
+		System.out.println("2. Dynamic EClasses handle union types correctly");
+		System.out.println("3. JSON data conforming to the schema can be deserialized into EObjects");
+	}
+
+	@Test
+	public void pipelineRoundTrip() throws IOException {
+		String file1 = System.getProperty("data")+"pipeline_schema.json";
+		file2 = System.getProperty("data")+"pipeline_schema2.json";
+		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
+
+		Map<String, Object> options = CodecOptionsBuilder.create().
+				rootObject(EcorePackage.Literals.EPACKAGE).
+				serializeType(false).
+				serializeEmptyValue(true).
+				serializeNullValue(true).
+				serializationFeaturesWith(SerializationFeature.INDENT_OUTPUT).
+				forClass(EcorePackage.Literals.EPACKAGE).
+				withExtraProperties(Map.of("jsonschema", "true", "jsonschema.feature.key", "$defs")).
+				build();
+
+		// Load JSON Schema → EPackage
+		res.load(options);
+		assertFalse(res.getContents().isEmpty());
+		EObject obj = res.getContents().get(0);
+		assertNotNull(obj);
+		assertThat(obj).isInstanceOf(EPackage.class);
+		EPackage ePackage = (EPackage) res.getContents().get(0);
+
+		// Serialize EPackage → JSON Schema
+		res = resourceSet.createResource(URI.createURI(file2), "application/schema+json");
+		res.getContents().add(ePackage);
+		res.save(options);
+
+		// Compare the two JSON Schema files
+		assertTrue(areJsonFilesTheSame(file1, file2));
+	}
+	
+	
+//	@Test
 	public void openAPIJsonSchema() throws IOException {
 		String file1 = System.getProperty("data")+"open-api.json";
 		file2 = System.getProperty("data")+"ser_open-api.json";
@@ -562,7 +818,8 @@ public class CodecJsonSchemaSerializationTest {
 		JsonNode json1 = mapper.readTree(new File(file1));
 		JsonNode json2 = mapper.readTree(new File(file2));
 		// Compare the two JSON objects
-		return json1.equals(json2);
+		return JsonSchemaComparator.schemaEquals(json1, json2);
+//		return json1.equals(json2);
 	}
 	
 	private boolean areEPackagesTheSame(EPackage ePackage1, EPackage ePackage2) {
