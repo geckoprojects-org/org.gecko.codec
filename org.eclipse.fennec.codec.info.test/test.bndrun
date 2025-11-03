@@ -22,8 +22,6 @@
 	org.osgi.util.function;version='[1.2.0,1.2.1)',\
 	org.osgi.util.promise;version='[1.3.0,1.3.1)',\
 	org.apache.felix.configadmin;version='[1.9.26,1.9.27)',\
-	tools.jackson.core.jackson-core;version='[3.0.0,3.0.1)',\
-	tools.jackson.core.jackson-databind;version='[3.0.0,3.0.1)',\
 	org.eclipse.fennec.codec.demo.model;version=snapshot,\
 	org.eclipse.fennec.codec.info;version=snapshot,\
 	org.eclipse.fennec.codec.info.model;version=snapshot,\
@@ -40,4 +38,6 @@
 	org.osgi.util.converter;version='[1.0.9,1.0.10)',\
 	org.osgi.service.cm;version='[1.6.1,1.6.2)',\
 	org.gecko.emf.osgi.component.minimal;version='[6.3.0,6.3.1)',\
-	com.fasterxml.jackson.core.jackson-annotations;version='[2.20.0,2.20.1)'
+	com.fasterxml.jackson.core.jackson-annotations;version='[2.20.0,2.20.1)',\
+	tools.jackson.core.jackson-core;version='[3.0.1,3.0.2)',\
+	tools.jackson.core.jackson-databind;version='[3.0.1,3.0.2)'
