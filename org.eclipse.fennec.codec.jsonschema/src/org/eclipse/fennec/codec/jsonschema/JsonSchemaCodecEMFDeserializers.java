@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.fennec.codec.CodecEMFDeserializers;
 import org.eclipse.fennec.codec.jackson.databind.deser.DefaultCodecEMFDeserializers;
+import org.eclipse.fennec.codec.jsonschema.readers.EnhancedJsonSchemaToEPackageDeserializer;
 import org.eclipse.fennec.codec.jsonschema.readers.SmartJsonSchemaDeserializer;
 import org.osgi.service.component.annotations.Component;
 
