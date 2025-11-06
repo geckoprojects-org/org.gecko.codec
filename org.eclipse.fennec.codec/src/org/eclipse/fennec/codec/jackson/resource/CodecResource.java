@@ -26,6 +26,7 @@ import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -464,6 +465,40 @@ public class CodecResource extends ResourceImpl {
 		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_INFO)) {
 			TypeInfo typeInfo = (TypeInfo) options.get(CodecModelInfoOptions.CODEC_TYPE_INFO);
 			codecInfo.setTypeInfo(typeInfo);
+		}
+
+		// Handle inherits.from.parent option for EReferences
+		// This controls whether the reference inherits codec.type from its target EClass
+		if(options.containsKey(CodecModelInfoOptions.CODEC_TYPE_INHERITS_FROM_PARENT)) {
+			Boolean inheritsFromParent = (Boolean) options.get(CodecModelInfoOptions.CODEC_TYPE_INHERITS_FROM_PARENT);
+
+			// Only relevant for FeatureCodecInfo (EReferences)
+			if(codecInfo instanceof FeatureCodecInfo featureInfo &&
+			   featureInfo.getFeature() instanceof EReference reference) {
+
+				if(!inheritsFromParent) {
+					// Inheritance is disabled - we need to rebuild TypeInfo from only the reference's own annotations
+					// Get the reference's own codec.type annotation (without inheritance)
+					EAnnotation codecTypeAnnotation = reference.getEAnnotation("codec.type");
+
+					if(codecTypeAnnotation != null) {
+						// Clear inherited type mappings and rebuild from reference's annotation only
+						codecInfo.getTypeInfo().getTypeMap().clear();
+						codecTypeAnnotation.getDetails().entrySet().forEach(entry -> {
+							// Skip the control keys, add only the type mappings
+							if(!entry.getKey().equals("include") && !entry.getKey().equals("strategy") &&
+							   !entry.getKey().equals("typeKey") && !entry.getKey().equals(CodecModelInfoOptions.CODEC_TYPE_INHERITS_FROM_PARENT)) {
+								codecInfo.getTypeInfo().getTypeMap().put(entry.getKey(), entry.getValue());
+							}
+						});
+					} else {
+						// No annotation on reference, so clear all inherited mappings
+						codecInfo.getTypeInfo().getTypeMap().clear();
+					}
+				}
+				// Note: If inheritsFromParent==true, the inheritance was already applied during
+				// CodecModelInfo creation, so we don't need to do anything
+			}
 		}
 	}
 

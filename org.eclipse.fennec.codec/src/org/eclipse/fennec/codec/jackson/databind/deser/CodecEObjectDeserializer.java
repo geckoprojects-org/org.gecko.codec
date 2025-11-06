@@ -37,6 +37,7 @@ import org.eclipse.fennec.codec.jackson.databind.CodecTokenBuffer;
 import org.eclipse.fennec.codec.jackson.databind.EMFCodecReadContext;
 import org.eclipse.fennec.codec.jackson.module.CodecModule;
 import org.eclipse.fennec.codec.jackson.utils.CodecParserException;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
 
 import tools.jackson.core.JsonParser;
@@ -202,26 +203,32 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 	
 	@SuppressWarnings("unchecked")
 	private CodecTokenBuffer determineType(JsonParser jp, DeserializationContext ctxt, TypeInfo typeInfo) {
-		
+
 		String typeKey = typeInfo.getTypeKey();
-		if(typeKey == null) return null;
+		Map<String, String> typeMap = typeInfo.getTypeMap().map();
+
+		// Feature-based discrimination: if typeKey is null or "*", check for property presence
+		if(typeKey == null || typeKey.equals(CodecModelInfoOptions.CODEC_TYPE_KEY_FEATURE_BASED)) {
+			return determineTypeByFeaturePresence(jp, ctxt, typeInfo, typeMap);
+		}
+
+		// Value-based discrimination: existing behavior
 		String typeReaderName = typeInfo.getTypeValueReaderName();
 		CodecValueReader<String, EClass> typeReader = infoHolder.getReaderByName(typeReaderName);
-		Map<String, String> typeMap = typeInfo.getTypeMap().map();
 		String[] typeKeySplit = typeKey.split("\\.");
-		
+
 		int i = 0, l = typeKeySplit.length;
 		Integer depth = 1;
 		CodecTokenBuffer buffer = CodecTokenBuffer.forBuffering(jp, ctxt);
-		JsonToken nextToken = getAndSaveNextToken(jp, buffer);	
+		JsonToken nextToken = getAndSaveNextToken(jp, buffer);
 		depth = updateDepth(nextToken, depth);
-		
+
 		while (depth > 0 && nextToken != null) {
 			final String field = jp.currentName();
 			if(field != null && field.equals(typeKeySplit[i]) && depth == i + 1) {
 				if(l > i + 1) {
 					i++;
-					nextToken = getAndSaveNextToken(jp, buffer);		
+					nextToken = getAndSaveNextToken(jp, buffer);
 					depth = updateDepth(nextToken, depth);
 					nextToken = getAndSaveNextToken(jp, buffer);
 					depth = updateDepth(nextToken, depth);
@@ -236,7 +243,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 									+ "We will use the default type, if any.", typeKey, typeReaderName, jp.getString()));
 						} else {
 							type = deserializedType;
-						}						
+						}
 					} else {
 						LOGGER.warning(String.format("No type mapping for token %s. Trying to directly deserialize token value.", jp.getString()));
 						EClass deserializedType = typeReader.readValue(jp.getString(), ctxt);
@@ -250,8 +257,74 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 				}
 			}
 			nextToken = getAndSaveNextToken(jp, buffer);
-			depth = updateDepth(nextToken, depth);			
+			depth = updateDepth(nextToken, depth);
 		}
+		return buffer;
+	}
+
+	/**
+	 * Feature-based type discrimination: determines type based on which property exists in the JSON object.
+	 * Used for JSON Schema oneOf patterns where different variants have different property names.
+	 *
+	 * @param jp The JSON parser
+	 * @param ctxt The deserialization context
+	 * @param typeInfo The type information
+	 * @param typeMap Map from property name to type identifier
+	 * @return A buffer containing all parsed tokens for replay
+	 */
+	@SuppressWarnings("unchecked")
+	private CodecTokenBuffer determineTypeByFeaturePresence(JsonParser jp, DeserializationContext ctxt,
+			TypeInfo typeInfo, Map<String, String> typeMap) {
+
+		if(typeMap.isEmpty()) {
+			LOGGER.warning("Feature-based type discrimination enabled but typeMap is empty. Using default type.");
+			return null;
+		}
+
+		String typeReaderName = typeInfo.getTypeValueReaderName();
+		CodecValueReader<String, EClass> typeReader = infoHolder.getReaderByName(typeReaderName);
+
+		CodecTokenBuffer buffer = CodecTokenBuffer.forBuffering(jp, ctxt);
+		JsonToken nextToken = getAndSaveNextToken(jp, buffer);
+		Integer depth = 1;
+		depth = updateDepth(nextToken, depth);
+
+		// Scan all field names at depth 1 (top-level properties of the object)
+		while (depth > 0 && nextToken != null) {
+			final String field = jp.currentName();
+
+			// Check if this field name matches any key in the typeMap
+			if(field != null && depth == 1 && typeMap.containsKey(field)) {
+				// Found a matching feature - determine the type
+				String typeIdentifier = typeMap.get(field);
+				EClass deserializedType = typeReader.readValue(typeIdentifier, ctxt);
+
+				if(deserializedType == null) {
+					LOGGER.severe(String.format("Failed to deserialize type from feature '%s' mapped to type '%s'. "
+							+ "We will continue scanning for other features.", field, typeIdentifier));
+				} else {
+					type = deserializedType;
+					LOGGER.fine(String.format("Determined type %s based on presence of feature '%s'",
+							deserializedType.getName(), field));
+
+					// Continue buffering the rest of the tokens but don't change the type
+					while (depth > 0 && nextToken != null) {
+						nextToken = getAndSaveNextToken(jp, buffer);
+						depth = updateDepth(nextToken, depth);
+					}
+					return buffer;
+				}
+			}
+
+			nextToken = getAndSaveNextToken(jp, buffer);
+			depth = updateDepth(nextToken, depth);
+		}
+
+		if(type == null) {
+			LOGGER.warning(String.format("Feature-based type discrimination: no matching property found in JSON. "
+					+ "Expected one of: %s", String.join(", ", typeMap.keySet())));
+		}
+
 		return buffer;
 	}
 	

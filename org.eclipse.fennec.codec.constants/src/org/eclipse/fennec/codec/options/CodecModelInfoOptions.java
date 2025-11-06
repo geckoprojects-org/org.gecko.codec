@@ -107,24 +107,86 @@ public interface CodecModelInfoOptions {
 	 * */
 	String CODEC_TYPE_INCLUDE = "include";
 	
-	/** CODEC_TYPE_KEY 
-	 * to overwrite the "typeKey" detail of {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
+	/** CODEC_TYPE_KEY
+	 * to overwrite the "typeKey" detail of {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation.
+	 *
+	 * <p>Type Discrimination Modes:</p>
+	 * <ul>
+	 *   <li><b>Value-based (default):</b> Set typeKey to a field path (e.g., "deviceInfo.deviceProfileName").
+	 *       The deserializer will look for this field in the JSON and use its <i>value</i> to determine the type
+	 *       via {@link #CODEC_TYPE_MAP}.</li>
+	 *   <li><b>Feature-based:</b> Set typeKey to {@link #CODEC_TYPE_KEY_FEATURE_BASED} or null.
+	 *       The deserializer will check which <i>properties exist</i> in the JSON object and use the property name
+	 *       to determine the type via {@link #CODEC_TYPE_MAP}. This is useful for JSON Schema oneOf patterns
+	 *       where different variants have different property structures (e.g., {"kafka": {...}} vs {"file": {...}}).</li>
+	 * </ul>
 	 * */
-	String CODEC_TYPE_KEY = "typeKey";	
-	
-	/** CODEC_TYPE_MAP 
-	 * to overwrite or merge (based on the {@link CODEC_TYPE_MAP_STRATEGY}) the type mapping in the details of {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;
+	String CODEC_TYPE_KEY = "typeKey";
+
+	/** CODEC_TYPE_KEY_FEATURE_BASED
+	 * Special marker value for {@link #CODEC_TYPE_KEY} to enable feature-based type discrimination.
+	 * When typeKey is set to this value (or null), the deserializer will determine the type based on
+	 * which property names are present in the JSON object, rather than looking at a specific field's value.
+	 *
+	 * <p>Example usage for JSON Schema oneOf patterns:</p>
+	 * <pre>
+	 * typeKey = "*"  // or null
+	 * typeMap = {
+	 *   "kafka": "KafkaInput",
+	 *   "file": "FileInput",
+	 *   "mqtt": "MqttInput"
+	 * }
+	 *
+	 * JSON: {"kafka": {"addresses": [...], "topics": [...]}}
+	 * Result: Deserializes as KafkaInput type because "kafka" property is present
+	 * </pre>
+	 * */
+	String CODEC_TYPE_KEY_FEATURE_BASED = "*";
+
+	/** CODEC_TYPE_MAP
+	 * to overwrite or merge (based on the {@link CODEC_TYPE_MAP_STRATEGY}) the type mapping in the details of {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation.
+	 *
+	 * <p>The semantics of the type map depend on the type discrimination mode:</p>
+	 * <ul>
+	 *   <li><b>Value-based mode:</b> Maps field <i>values</i> to types (e.g., "Dragino_LSE01" → "DraginoLSE01Uplink")</li>
+	 *   <li><b>Feature-based mode:</b> Maps <i>property names</i> to types (e.g., "kafka" → "KafkaInput")</li>
+	 * </ul>
 	 * */
 	String CODEC_TYPE_MAP = "typeMap";
-	
-	/** CODEC_TYPE_MAP_STRATEGY 
+
+	/** CODEC_TYPE_MAP_STRATEGY
 	 * whether to overwrite or merge the type mapping passed via options with the one provided via model annotation.
-	 * The value has to be either a {@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType} or a 
+	 * The value has to be either a {@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType} or a
 	 * String compatible with the {@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType} values.
-	 * Default is to {@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType#OVERWRITE} 
-	 * 
+	 * Default is to {@link org.eclipse.fennec.codec.info.codecinfo.TypeMapStrategyType#OVERWRITE}
+	 *
 	 * */
 	String CODEC_TYPE_MAP_STRATEGY = "codec.type.map.strategy";
+
+	/** CODEC_TYPE_INHERITS_FROM_PARENT
+	 * Controls whether an EReference should inherit codec.type annotation from its target EClass.
+	 *
+	 * <p>By default, when an EReference has no codec.type annotation or has one without
+	 * inherits.from.parent="false", it automatically inherits the codec.type annotation from
+	 * the target EClass. This option allows overriding this behavior at runtime via load/save options.</p>
+	 *
+	 * <p>Valid values:</p>
+	 * <ul>
+	 *   <li>"true" (default) - Inherit codec.type from target EClass and merge with reference's own annotation</li>
+	 *   <li>"false" - Do not inherit from target EClass, use only the reference's annotation</li>
+	 * </ul>
+	 *
+	 * <p>Example usage:</p>
+	 * <pre>
+	 * CodecOptionsBuilder.create()
+	 *   .forClass(MeetingClass)
+	 *     .forReference("responsiblePerson")
+	 *       .inheritsTypeFromParent(false)  // Disable inheritance for this reference
+	 *     .and()
+	 *   .build();
+	 * </pre>
+	 * */
+	String CODEC_TYPE_INHERITS_FROM_PARENT = "inherits.from.parent";
 	
 	/** CODEC_TYPE_INFO 
 	 * to overwrite the entire typeInfo object that comes out of the {@link org.gecko.codec.constants.CodecAnnotations.CODEC_TYPE} annotation;

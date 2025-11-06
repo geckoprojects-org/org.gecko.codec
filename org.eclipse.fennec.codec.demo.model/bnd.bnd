@@ -7,11 +7,11 @@
 	model/person.genmodel;\
 		generate=geckoEMF;\
 		genmodel=model/person.genmodel;\
-		output=src
-#	model/map.genmodel;\
-#		generate=geckoEMF;\
-#		genmodel=model/map.genmodel;\
-#		output=src
+		output=src;\
+	model/test1.genmodel;\
+		generate=geckoEMF;\
+		genmodel=model/test1.genmodel;\
+		output=src-test1
 
 # Add this attribute to find some logging information
 #		logfile=test.log;\
