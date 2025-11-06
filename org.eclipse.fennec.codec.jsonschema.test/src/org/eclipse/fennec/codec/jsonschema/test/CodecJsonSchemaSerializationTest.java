@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
+import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
 import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
@@ -247,7 +248,7 @@ public class CodecJsonSchemaSerializationTest {
 	}
 
 	@Test
-	@Disabled("This is disabled because we would need some kind of type mapping for the complex structures like oneOf, otherwise the codec tries to deserialize the parent class which might be abstract")
+	@Disabled("This is disabled because w/o generating code for the pipeline model I do not know how to make it work")
 	public void pipelineDataDeserializationWithOneOf() throws IOException {
 		// Step 1: Load JSON Schema and convert to EPackage
 		String schemaFile = System.getProperty("data")+"pipeline_schema.json";
@@ -266,6 +267,7 @@ public class CodecJsonSchemaSerializationTest {
 		assertFalse(schemaRes.getContents().isEmpty());
 		EPackage ePackage = (EPackage) schemaRes.getContents().get(0);
 		assertNotNull(ePackage);
+		
 
 		// Log the generated EClasses to understand the structure
 		System.out.println("Generated EPackage: " + ePackage.getName());
@@ -281,8 +283,14 @@ public class CodecJsonSchemaSerializationTest {
 		});
 
 		// Step 2: Register the generated EPackage
-		resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
-		codecModelInfo.put(ePackage.getNsURI(), ePackage);
+		ctx.registerService(EPackage.class, ePackage, null);
+		// Register the EPackage in the Global EPackage Registry
+		EPackage.Registry.INSTANCE.put(
+		    ePackage.getNsURI(), // The Namespace URI from your Ecore model
+		    ePackage
+		);
+//		resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
+//		codecModelInfo.put(ePackage.getNsURI(), ePackage);
 
 		// Step 3: Find the root EClass (should be something like RedpandaConnectPipelineSchema or similar)
 		// The root is defined by the top-level "type": "object" with "properties"
@@ -301,75 +309,113 @@ public class CodecJsonSchemaSerializationTest {
 		assertNotNull(rootEClass, "Root EClass with input/pipeline/output should exist");
 		System.out.println("Using root EClass: " + rootEClass.getName());
 
+		// Step 3.5: Find the EClasses for input, pipeline, and output to configure type mappings
+		EStructuralFeature inputFeature = rootEClass.getEStructuralFeature("input");
+		EStructuralFeature pipelineFeature = rootEClass.getEStructuralFeature("pipeline");
+		EStructuralFeature outputFeature = rootEClass.getEStructuralFeature("output");
+
+		assertNotNull(inputFeature, "input feature should exist");
+		assertNotNull(pipelineFeature, "pipeline feature should exist");
+		assertNotNull(outputFeature, "output feature should exist");
+
+		// Get the type of each feature - these should be the oneOf wrapper classes
+		EClass inputNodeClass = (EClass) inputFeature.getEType();
+		EClass pipelineClass = (EClass) pipelineFeature.getEType();
+		EClass outputNodeClass = (EClass) outputFeature.getEType();
+
+		System.out.println("\nInput Node Class: " + inputNodeClass.getName());
+		System.out.println("  Features: " + inputNodeClass.getEStructuralFeatures().stream()
+				.map(f -> f.getName() + ":" + f.getEType().getName()).toList());
+
+		System.out.println("\nPipeline Class: " + pipelineClass.getName());
+		System.out.println("  Features: " + pipelineClass.getEStructuralFeatures().stream()
+				.map(f -> f.getName() + ":" + f.getEType().getName()).toList());
+
+		System.out.println("\nOutput Node Class: " + outputNodeClass.getName());
+		System.out.println("  Features: " + outputNodeClass.getEStructuralFeatures().stream()
+				.map(f -> f.getName() + ":" + f.getEType().getName()).toList());
+
+		// For processors, we need to find the array item type
+		EStructuralFeature processorsFeature = pipelineClass.getEStructuralFeature("processors");
+		assertNotNull(processorsFeature, "processors feature should exist");
+		EClass processorNodeClass = (EClass) processorsFeature.getEType();
+
+		System.out.println("\nProcessor Node Class: " + processorNodeClass.getName());
+		System.out.println("  Features: " + processorNodeClass.getEStructuralFeatures().stream()
+				.map(f -> f.getName() + ":" + f.getEType().getName()).toList());
+
 		// Step 4: Load JSON data that conforms to the schema
+		// The codec.type annotations are now embedded in the EPackage model.
+		// CodecModelInfoService will automatically parse and apply them during deserialization.
 		String dataFile = System.getProperty("data")+"pipeline-data.json";
 		Resource dataRes = resourceSet.createResource(URI.createURI(dataFile));
 
 		Map<String, Object> dataOptions = CodecOptionsBuilder.create().
 				rootObject(rootEClass).
-				serializeType(false).
 				build();
 
 		dataRes.load(dataOptions);
 
-		// Step 5: Verify the deserialized EObject
+		// Step 6: Verify the deserialized EObject
 		assertFalse(dataRes.getContents().isEmpty());
 		EObject pipelineConfig = dataRes.getContents().get(0);
 		assertNotNull(pipelineConfig);
 		assertThat(pipelineConfig.eClass()).isEqualTo(rootEClass);
 
-		// Step 6: Verify the structure - particularly the oneOf types
-		// Check that input exists and is of the correct type (should contain kafka config)
-		EStructuralFeature inputFeature = rootEClass.getEStructuralFeature("input");
-		assertNotNull(inputFeature, "input feature should exist");
+		// Step 5: Verify the structure - particularly the oneOf types
+		// Check that input exists and is of the correct type
 		Object inputValue = pipelineConfig.eGet(inputFeature);
 		assertNotNull(inputValue, "input should have a value");
 		assertThat(inputValue).isInstanceOf(EObject.class);
 
 		EObject inputNode = (EObject) inputValue;
-		System.out.println("Input node type: " + inputNode.eClass().getName());
+		System.out.println("\nDeserialized Input node type: " + inputNode.eClass().getName());
+		System.out.println("Input node is instance of InputNode: " + inputNodeClass.isInstance(inputNode));
 
-		// The inputNode should have a "kafka" feature (from the oneOf)
-		EStructuralFeature kafkaFeature = inputNode.eClass().getEStructuralFeature("kafka");
-		assertNotNull(kafkaFeature, "kafka feature should exist in inputNode (oneOf variant)");
-		Object kafkaValue = inputNode.eGet(kafkaFeature);
-		assertNotNull(kafkaValue, "kafka should have a value");
-		assertThat(kafkaValue).isInstanceOf(EObject.class);
+		// The inputNode should be a KafkaInputNode (discriminated based on "kafka" property presence)
+		assertThat(inputNode.eClass().getName()).isEqualTo("KafkaInputNode");
+
+		// The inputNode should have a "config" feature pointing to the Kafka configuration
+		EStructuralFeature configFeature = inputNode.eClass().getEStructuralFeature("config");
+		assertNotNull(configFeature, "config feature should exist in KafkaInputNode");
+		Object configValue = inputNode.eGet(configFeature);
+		assertNotNull(configValue, "config should have a value");
+		assertThat(configValue).isInstanceOf(EObject.class);
 
 		// Verify kafka configuration
-		EObject kafkaConfig = (EObject) kafkaValue;
+		EObject kafkaConfig = (EObject) configValue;
 		System.out.println("Kafka config type: " + kafkaConfig.eClass().getName());
 
 		// Check addresses attribute
 		EStructuralFeature addressesFeature = kafkaConfig.eClass().getEStructuralFeature("addresses");
-		assertNotNull(addressesFeature);
+		assertNotNull(addressesFeature, "addresses feature should exist");
 		Object addresses = kafkaConfig.eGet(addressesFeature);
-		assertNotNull(addresses);
+		assertNotNull(addresses, "addresses should have a value");
 		System.out.println("Addresses: " + addresses);
 
 		// Check topics attribute
 		EStructuralFeature topicsFeature = kafkaConfig.eClass().getEStructuralFeature("topics");
-		assertNotNull(topicsFeature);
+		assertNotNull(topicsFeature, "topics feature should exist");
 		Object topics = kafkaConfig.eGet(topicsFeature);
-		assertNotNull(topics);
+		assertNotNull(topics, "topics should have a value");
 		System.out.println("Topics: " + topics);
 
-		// Step 7: Verify processors array (another oneOf scenario)
-		EStructuralFeature pipelineFeature = rootEClass.getEStructuralFeature("pipeline");
-		assertNotNull(pipelineFeature);
+		// Step 8: Verify processors array (another oneOf scenario)
 		Object pipelineValue = pipelineConfig.eGet(pipelineFeature);
 		assertNotNull(pipelineValue);
 		assertThat(pipelineValue).isInstanceOf(EObject.class);
 
 		EObject pipelineObj = (EObject) pipelineValue;
-		EStructuralFeature processorsFeature = pipelineObj.eClass().getEStructuralFeature("processors");
-		assertNotNull(processorsFeature, "processors feature should exist");
+		EStructuralFeature processorsFeatureCheck = pipelineObj.eClass().getEStructuralFeature("processors");
+		assertNotNull(processorsFeatureCheck, "processors feature should exist");
+		assertThat(processorsFeatureCheck).isEqualTo(processorsFeature);
 
 		System.out.println("\nTest completed successfully!");
 		System.out.println("This validates that:");
 		System.out.println("1. JSON Schema with oneOf is converted to EPackage with proper structure");
 		System.out.println("2. Dynamic EClasses handle union types correctly");
-		System.out.println("3. JSON data conforming to the schema can be deserialized into EObjects");
+		System.out.println("3. Feature-based type discrimination allows deserialization based on property presence");
+		System.out.println("4. JSON data conforming to the schema can be deserialized into EObjects");
 	}
 
 	@Test
@@ -827,6 +873,59 @@ public class CodecJsonSchemaSerializationTest {
 				new DefaultComparisonScope(ePackage1, ePackage2, null)
 			);
 		return comparison.getDifferences().stream().filter(d -> !DifferenceKind.MOVE.equals(d.getKind())).toList().isEmpty();
+	}
+
+	/**
+	 * Build a type map for oneOf structures by finding all child EClasses and mapping their unique feature names
+	 * to the child EClass names.
+	 *
+	 * For JSON Schema oneOf, the parent is abstract with no features, and each variant is a child class
+	 * with features. We need to find the feature that is UNIQUE to each child (appears in only one variant).
+	 * This is typically the discriminating property like "kafka", "file", "mapping", "log", etc.
+	 *
+	 * @param ePackage The EPackage containing all classifiers
+	 * @param parentClass The abstract parent EClass (e.g., InputNode, ProcessorNode)
+	 * @return Map from unique feature name to child EClass name
+	 */
+	private Map<String, String> buildTypeMapForOneOf(EPackage ePackage, EClass parentClass) {
+		Map<String, String> typeMap = new java.util.HashMap<>();
+
+		// First, collect all children and their features
+		java.util.List<EClass> children = new java.util.ArrayList<>();
+		for (EClassifier classifier : ePackage.getEClassifiers()) {
+			if (classifier instanceof EClass childClass) {
+				// Check if this is a direct subtype of the parent (not the parent itself)
+				if (!childClass.equals(parentClass) && childClass.getEAllSuperTypes().contains(parentClass)) {
+					children.add(childClass);
+				}
+			}
+		}
+
+		// Count how many children have each feature name
+		Map<String, Integer> featureCounts = new java.util.HashMap<>();
+		Map<String, String> featureToClass = new java.util.HashMap<>();
+
+		for (EClass childClass : children) {
+			// Only consider direct features, not inherited ones
+			for (EStructuralFeature feature : childClass.getEStructuralFeatures()) {
+				String featureName = feature.getName();
+				featureCounts.put(featureName, featureCounts.getOrDefault(featureName, 0) + 1);
+				featureToClass.put(featureName, childClass.getName());
+			}
+		}
+
+		// Only add features that appear in exactly one child (unique discriminators)
+		for (EClass childClass : children) {
+			for (EStructuralFeature feature : childClass.getEStructuralFeatures()) {
+				String featureName = feature.getName();
+				if (featureCounts.get(featureName) == 1) {
+					typeMap.put(featureName, childClass.getName());
+					System.out.println("  Mapping: " + featureName + " -> " + childClass.getName());
+				}
+			}
+		}
+
+		return typeMap;
 	}
 
 

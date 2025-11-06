@@ -16,6 +16,22 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Genau EIN Input pro Objekt (z. B. { &quot;kafka&quot;: { ... } })"/>
     </eAnnotations>
+    <eAnnotations source="codec.type">
+      <details key="typeKey" value="*"/>
+      <details key="strategy" value="NAME"/>
+      <details key="schema_registry" value="Schema_registryInputNode"/>
+      <details key="file" value="FileInputNode"/>
+      <details key="csv" value="CsvInputNode"/>
+      <details key="kafka" value="KafkaInputNode"/>
+      <details key="mqtt" value="MqttInputNode"/>
+      <details key="sql_raw" value="Sql_rawInputNode"/>
+      <details key="http_client" value="Http_clientInputNode"/>
+      <details key="aws_s3" value="Aws_s3InputNode"/>
+      <details key="broker" value="BrokerInputNode"/>
+      <details key="http_server" value="Http_serverInputNode"/>
+      <details key="sql_select" value="Sql_selectInputNode"/>
+      <details key="generate" value="GenerateInputNode"/>
+    </eAnnotations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ProcessorNode" abstract="true">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -28,6 +44,33 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Genau EIN Processor/Control pro Objekt (z. B. { &quot;mapping&quot;: { ... } })"/>
     </eAnnotations>
+    <eAnnotations source="codec.type">
+      <details key="typeKey" value="*"/>
+      <details key="strategy" value="NAME"/>
+      <details key="mapping" value="MappingProcessorNode"/>
+      <details key="alarm_thresholds" value="Alarm_thresholdsProcessorNode"/>
+      <details key="log" value="LogProcessorNode"/>
+      <details key="jq" value="JqProcessorNode"/>
+      <details key="confidentiality" value="ConfidentialityProcessorNode"/>
+      <details key="sql_raw" value="Sql_rawProcessorNode"/>
+      <details key="branch" value="BranchProcessorNode"/>
+      <details key="sql_select" value="Sql_selectProcessorNode"/>
+      <details key="switch" value="SwitchProcessorNode"/>
+      <details key="sleep" value="SleepProcessorNode"/>
+      <details key="jmespath" value="JmespathProcessorNode"/>
+      <details key="noop" value="NoopProcessorNode"/>
+      <details key="schema_registry_encode" value="Schema_registry_encodeProcessorNode"/>
+      <details key="evaluate_thresholds" value="Evaluate_thresholdsProcessorNode"/>
+      <details key="metadata_retrieval" value="Metadata_retrievalProcessorNode"/>
+      <details key="json_schema" value="Json_schemaProcessorNode"/>
+      <details key="sql_insert" value="Sql_insertProcessorNode"/>
+      <details key="http" value="HttpProcessorNode"/>
+      <details key="unarchive" value="UnarchiveProcessorNode"/>
+      <details key="directus_mapping" value="Directus_mappingProcessorNode"/>
+      <details key="catch" value="CatchProcessorNode"/>
+      <details key="bloblang" value="BloblangProcessorNode"/>
+      <details key="openapi_validator" value="Openapi_validatorProcessorNode"/>
+    </eAnnotations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OutputNode" abstract="true">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -39,6 +82,21 @@
     </eAnnotations>
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Genau EIN Output pro Objekt (z. B. { &quot;drop&quot;: {} } oder { &quot;kafka&quot;: { ... } })"/>
+    </eAnnotations>
+    <eAnnotations source="codec.type">
+      <details key="typeKey" value="*"/>
+      <details key="strategy" value="NAME"/>
+      <details key="drop" value="DropOutputNode"/>
+      <details key="file" value="FileOutputNode"/>
+      <details key="kafka" value="KafkaOutputNode"/>
+      <details key="mqtt" value="MqttOutputNode"/>
+      <details key="sql_insert" value="Sql_insertOutputNode"/>
+      <details key="aws_s3" value="Aws_s3OutputNode"/>
+      <details key="switch_output" value="Switch_outputOutputNode"/>
+      <details key="http_client" value="Http_clientOutputNode"/>
+      <details key="fallback" value="FallbackOutputNode"/>
+      <details key="sync_response" value="Sync_responseOutputNode"/>
+      <details key="switch" value="SwitchOutputNode"/>
     </eAnnotations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Http_server">

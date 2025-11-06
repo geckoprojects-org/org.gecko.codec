@@ -308,6 +308,10 @@ public class EnhancedJsonSchemaToEPackageDeserializer extends ValueDeserializer<
 			}
 		}
 
+		// Add codec.type annotations for feature-based type discrimination
+		// This must be done after all subclasses are created and in the classifierMap
+		addCodecTypeAnnotationsForDiscriminatedUnion(abstractBase);
+
 		return abstractBase;
 	}
 
@@ -356,6 +360,65 @@ public class EnhancedJsonSchemaToEPackageDeserializer extends ValueDeserializer<
 		}
 
 		return null;
+	}
+
+	/**
+	 * Adds codec.type annotations to a discriminated union EClass.
+	 * This enables feature-based type discrimination during deserialization.
+	 *
+	 * For each discriminated union (e.g., InputNode with children KafkaInputNode, FileInputNode),
+	 * this method extracts the discriminator keys (kafka, file, etc.) and builds a type map
+	 * that maps property names to EClass names.
+	 *
+	 * @param unionClass The discriminated union EClass (abstract parent) to annotate
+	 */
+	private void addCodecTypeAnnotationsForDiscriminatedUnion(EClass unionClass) {
+		// Check if this is a discriminated union
+		EAnnotation discriminatedAnnotation = unionClass.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE);
+		if (discriminatedAnnotation == null ||
+			!"true".equals(discriminatedAnnotation.getDetails().get("discriminatedUnion"))) {
+			return;
+		}
+
+		// Find all child EClasses of this union
+		Map<String, String> typeMap = new HashMap<>();
+		for (EClassifier classifier : classifierMap.values()) {
+			if (classifier instanceof EClass) {
+				EClass childClass = (EClass) classifier;
+				// Check if this is a direct child of the union class
+				if (childClass.getESuperTypes().contains(unionClass)) {
+					// Extract the discriminator key from the child's annotation
+					EAnnotation childAnnotation = childClass.getEAnnotation(JSONSCHEMA_ANNOTATION_SOURCE);
+					if (childAnnotation != null) {
+						String discriminatorKey = childAnnotation.getDetails().get("discriminatorKey");
+						if (discriminatorKey != null) {
+							// Map the discriminator key to the child class name
+							typeMap.put(discriminatorKey, childClass.getName());
+						}
+					}
+				}
+			}
+		}
+
+		// Only add annotations if we found discriminator mappings
+		if (!typeMap.isEmpty()) {
+			// Create codec.type annotation with feature-based discrimination
+			EAnnotation codecTypeAnnotation = ecoreFactory.createEAnnotation();
+			codecTypeAnnotation.setSource("codec.type");
+
+			// Set typeKey to "*" for feature-based discrimination
+			codecTypeAnnotation.getDetails().put("typeKey", "*");
+			
+			// Set the type Strategy to NAME since we are adding just the class name			
+			codecTypeAnnotation.getDetails().put("strategy", "NAME");
+
+			// Add all type mappings to the annotation details
+			for (Map.Entry<String, String> entry : typeMap.entrySet()) {
+				codecTypeAnnotation.getDetails().put(entry.getKey(), entry.getValue());
+			}
+
+			unionClass.getEAnnotations().add(codecTypeAnnotation);
+		}
 	}
 
 	/**
@@ -979,7 +1042,10 @@ public class EnhancedJsonSchemaToEPackageDeserializer extends ValueDeserializer<
 
 				// Handle regular EReference type resolution
 				if (deferredRef.feature instanceof EReference) {
-					((EReference) deferredRef.feature).setEType(referencedType);
+					EReference reference = (EReference) deferredRef.feature;
+					reference.setEType(referencedType);
+					// Note: codec.type annotations are NOT copied here.
+					// CodecModelInfoService automatically inherits them from the target EClass
 				}
 
 				// If this is a config reference for a discriminated union subclass,
