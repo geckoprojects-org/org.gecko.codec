@@ -208,8 +208,9 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		return eClassCodecInfo;
 	}
 
-	private static final List<String> TYPE_ANNOTATION_KEYS = List.of(CodecModelInfoOptions.CODEC_TYPE_INCLUDE, 
-			CodecModelInfoOptions.CODEC_TYPE_KEY, CodecModelInfoOptions.CODEC_TYPE_STRATEGY);
+	private static final List<String> TYPE_ANNOTATION_KEYS = List.of(CodecModelInfoOptions.CODEC_TYPE_INCLUDE,
+			CodecModelInfoOptions.CODEC_TYPE_KEY, CodecModelInfoOptions.CODEC_TYPE_STRATEGY,
+			CodecModelInfoOptions.CODEC_TYPE_INHERITS_FROM_PARENT);
 	
 	
 	private IdentityInfo getIdentityInfo(EClass eClass) {
@@ -247,8 +248,8 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 
 	private TypeInfo getTypeInfo(EModelElement modelElement) {
 		TypeInfo typeInfo = CodecInfoFactory.eINSTANCE.createTypeInfo();
-		Map<String, String> typeAnnotationDetails = getAnnotationDetailsMap(modelElement, CodecAnnotations.CODEC_TYPE, true);
-		
+		Map<String, String> typeAnnotationDetails = getTypeAnnotationDetailsWithInheritance(modelElement);
+
 		String typeValue = typeAnnotationDetails.getOrDefault(CodecModelInfoOptions.CODEC_TYPE_INCLUDE, "true");
 		if("false".equalsIgnoreCase(typeValue)) {
 			typeInfo.setIgnoreType(true);
@@ -366,6 +367,60 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 			}
 		}
 		return Collections.emptyMap();
+	}
+
+	/**
+	 * Gets codec.type annotation details for an EModelElement with inheritance support for EReferences.
+	 *
+	 * For EReferences:
+	 * - If the reference has NO codec.type annotation → inherit from target EClass
+	 * - If the reference has codec.type annotation WITHOUT inherits.from.parent="false" → merge annotations (target first, then reference overrides)
+	 * - If the reference has codec.type annotation WITH inherits.from.parent="false" → use only reference annotation
+	 *
+	 * Note: The inherits.from.parent value can be overridden at runtime via CodecOptionsBuilder.
+	 *
+	 * @param modelElement The element to get type annotation details for
+	 * @return Map of codec.type annotation details (may be empty, never null)
+	 */
+	private Map<String, String> getTypeAnnotationDetailsWithInheritance(EModelElement modelElement) {
+		// Get annotation details from the element itself (could be empty)
+		EAnnotation referenceAnnotation = modelElement.getEAnnotation(CodecAnnotations.CODEC_TYPE);
+		Map<String, String> referenceDetails = referenceAnnotation != null ?
+			new HashMap<>(referenceAnnotation.getDetails().map()) : new HashMap<>();
+
+		// Only apply inheritance logic for EReferences
+		if (!(modelElement instanceof EReference reference)) {
+			// For non-references, use standard inheritance from superclasses
+			return getAnnotationDetailsMap(modelElement, CodecAnnotations.CODEC_TYPE, true);
+		}
+
+		// Check if inheritance from target EClass is explicitly disabled
+		// This can come from annotation (String) or will be overridden by runtime options (Boolean) in CodecResource
+		String inheritsFromParent = referenceDetails.get(CodecModelInfoOptions.CODEC_TYPE_INHERITS_FROM_PARENT);
+		if ("false".equalsIgnoreCase(inheritsFromParent)) {
+			// Inheritance disabled - use only reference annotation
+			return referenceDetails;
+		}
+
+		// Get target EClass
+		if (!(reference.getEType() instanceof EClass targetClass)) {
+			// Not an EClass reference, return reference details as-is
+			return referenceDetails;
+		}
+
+		// Get codec.type annotation from target EClass
+		Map<String, String> targetDetails = getAnnotationDetailsMap(targetClass, CodecAnnotations.CODEC_TYPE, true);
+
+		// If target has no codec.type annotation, return reference details
+		if (targetDetails.isEmpty()) {
+			return referenceDetails;
+		}
+
+		// Merge: target details first, then reference details override
+		Map<String, String> merged = new HashMap<>(targetDetails);
+		merged.putAll(referenceDetails);
+
+		return merged;
 	}
 
 	private static final String EXTENDED_METADATA = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";

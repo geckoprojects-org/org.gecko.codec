@@ -917,6 +917,19 @@ public class CodecOptionsBuilder {
 			}
 
 			/**
+			 * Controls whether this reference should inherit codec.type annotation from its target EClass.
+			 * By default, references inherit type information from their target EClass and merge it with
+			 * their own annotations (if any).
+			 *
+			 * @param inherits true to inherit from target EClass (default), false to disable inheritance
+			 * @return this builder
+			 */
+			public ReferenceOptionsBuilder inheritsTypeFromParent(boolean inherits) {
+				refOptions.put(CodecModelInfoOptions.CODEC_TYPE_INHERITS_FROM_PARENT, inherits);
+				return this;
+			}
+
+			/**
 			 * Sets custom value readers for this reference.
 			 *
 			 * @param readersMap map of feature to reader
