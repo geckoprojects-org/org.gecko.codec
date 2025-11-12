@@ -19,38 +19,38 @@ import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Person</b></em>'.
+ * A representation of the model object '<em><b>Test1 Person</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.Person#getName <em>Name</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.Person#getLastName <em>Last Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.Test1Person#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.Test1Person#getLastName <em>Last Name</em>}</li>
  * </ul>
  *
- * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getPerson()
- * @model annotation="codec.type include='true' strategy='NAME' companyId='BusinessPerson'"
+ * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getTest1Person()
+ * @model annotation="codec.type include='true' strategy='NAME' companyId='Test1BusinessPerson'"
  *        annotation="codec.id strategy='COMBINED' separator='-' idFeatures='name,lastName'"
  * @generated
  */
 @ProviderType
-public interface Person extends EObject {
+public interface Test1Person extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getPerson_Name()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getTest1Person_Name()
 	 * @model
 	 * @generated
 	 */
 	String getName();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.demo.model.test1.Person#getName <em>Name</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.demo.model.test1.Test1Person#getName <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Name</em>' attribute.
@@ -65,14 +65,14 @@ public interface Person extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Last Name</em>' attribute.
 	 * @see #setLastName(String)
-	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getPerson_LastName()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getTest1Person_LastName()
 	 * @model
 	 * @generated
 	 */
 	String getLastName();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.demo.model.test1.Person#getLastName <em>Last Name</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.demo.model.test1.Test1Person#getLastName <em>Last Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Last Name</em>' attribute.
@@ -81,4 +81,4 @@ public interface Person extends EObject {
 	 */
 	void setLastName(String value);
 
-} // Person
+} // Test1Person

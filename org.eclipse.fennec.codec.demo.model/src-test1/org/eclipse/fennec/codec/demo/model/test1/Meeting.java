@@ -88,12 +88,12 @@ public interface Meeting extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Responsible Person</em>' containment reference.
-	 * @see #setResponsiblePerson(Person)
+	 * @see #setResponsiblePerson(Test1Person)
 	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getMeeting_ResponsiblePerson()
 	 * @model containment="true"
 	 * @generated
 	 */
-	Person getResponsiblePerson();
+	Test1Person getResponsiblePerson();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.fennec.codec.demo.model.test1.Meeting#getResponsiblePerson <em>Responsible Person</em>}' containment reference.
@@ -103,6 +103,6 @@ public interface Meeting extends EObject {
 	 * @see #getResponsiblePerson()
 	 * @generated
 	 */
-	void setResponsiblePerson(Person value);
+	void setResponsiblePerson(Test1Person value);
 
 } // Meeting

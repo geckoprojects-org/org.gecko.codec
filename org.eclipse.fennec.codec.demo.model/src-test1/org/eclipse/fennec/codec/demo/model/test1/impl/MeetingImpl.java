@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.fennec.codec.demo.model.test1.Meeting;
-import org.eclipse.fennec.codec.demo.model.test1.Person;
+import org.eclipse.fennec.codec.demo.model.test1.Test1Person;
 import org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage;
 
 /**
@@ -92,7 +92,7 @@ public class MeetingImpl extends MinimalEObjectImpl.Container implements Meeting
 	 * @generated
 	 * @ordered
 	 */
-	protected Person responsiblePerson;
+	protected Test1Person responsiblePerson;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -165,7 +165,7 @@ public class MeetingImpl extends MinimalEObjectImpl.Container implements Meeting
 	 * @generated
 	 */
 	@Override
-	public Person getResponsiblePerson() {
+	public Test1Person getResponsiblePerson() {
 		return responsiblePerson;
 	}
 
@@ -174,8 +174,8 @@ public class MeetingImpl extends MinimalEObjectImpl.Container implements Meeting
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetResponsiblePerson(Person newResponsiblePerson, NotificationChain msgs) {
-		Person oldResponsiblePerson = responsiblePerson;
+	public NotificationChain basicSetResponsiblePerson(Test1Person newResponsiblePerson, NotificationChain msgs) {
+		Test1Person oldResponsiblePerson = responsiblePerson;
 		responsiblePerson = newResponsiblePerson;
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, TestTypeAnnotationInheritancePackage.MEETING__RESPONSIBLE_PERSON, oldResponsiblePerson, newResponsiblePerson);
@@ -190,7 +190,7 @@ public class MeetingImpl extends MinimalEObjectImpl.Container implements Meeting
 	 * @generated
 	 */
 	@Override
-	public void setResponsiblePerson(Person newResponsiblePerson) {
+	public void setResponsiblePerson(Test1Person newResponsiblePerson) {
 		if (newResponsiblePerson != responsiblePerson) {
 			NotificationChain msgs = null;
 			if (responsiblePerson != null)
@@ -251,7 +251,7 @@ public class MeetingImpl extends MinimalEObjectImpl.Container implements Meeting
 				setDate((Date)newValue);
 				return;
 			case TestTypeAnnotationInheritancePackage.MEETING__RESPONSIBLE_PERSON:
-				setResponsiblePerson((Person)newValue);
+				setResponsiblePerson((Test1Person)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -272,7 +272,7 @@ public class MeetingImpl extends MinimalEObjectImpl.Container implements Meeting
 				setDate(DATE_EDEFAULT);
 				return;
 			case TestTypeAnnotationInheritancePackage.MEETING__RESPONSIBLE_PERSON:
-				setResponsiblePerson((Person)null);
+				setResponsiblePerson((Test1Person)null);
 				return;
 		}
 		super.eUnset(featureID);

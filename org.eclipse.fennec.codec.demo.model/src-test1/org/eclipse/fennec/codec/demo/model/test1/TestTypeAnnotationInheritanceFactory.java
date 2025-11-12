@@ -36,22 +36,22 @@ public interface TestTypeAnnotationInheritanceFactory extends EFactory {
 	TestTypeAnnotationInheritanceFactory eINSTANCE = org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritanceFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Person</em>'.
+	 * Returns a new object of class '<em>Test1 Person</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Person</em>'.
+	 * @return a new object of class '<em>Test1 Person</em>'.
 	 * @generated
 	 */
-	Person createPerson();
+	Test1Person createTest1Person();
 
 	/**
-	 * Returns a new object of class '<em>Business Person</em>'.
+	 * Returns a new object of class '<em>Test1 Business Person</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Business Person</em>'.
+	 * @return a new object of class '<em>Test1 Business Person</em>'.
 	 * @generated
 	 */
-	BusinessPerson createBusinessPerson();
+	Test1BusinessPerson createTest1BusinessPerson();
 
 	/**
 	 * Returns a new object of class '<em>Meeting</em>'.

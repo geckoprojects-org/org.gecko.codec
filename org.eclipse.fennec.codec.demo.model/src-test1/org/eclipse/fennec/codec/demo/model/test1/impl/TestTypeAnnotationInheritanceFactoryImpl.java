@@ -67,8 +67,8 @@ public class TestTypeAnnotationInheritanceFactoryImpl extends EFactoryImpl imple
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case TestTypeAnnotationInheritancePackage.PERSON: return createPerson();
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON: return createBusinessPerson();
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON: return createTest1Person();
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON: return createTest1BusinessPerson();
 			case TestTypeAnnotationInheritancePackage.MEETING: return createMeeting();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -81,9 +81,9 @@ public class TestTypeAnnotationInheritanceFactoryImpl extends EFactoryImpl imple
 	 * @generated
 	 */
 	@Override
-	public Person createPerson() {
-		PersonImpl person = new PersonImpl();
-		return person;
+	public Test1Person createTest1Person() {
+		Test1PersonImpl test1Person = new Test1PersonImpl();
+		return test1Person;
 	}
 
 	/**
@@ -92,9 +92,9 @@ public class TestTypeAnnotationInheritanceFactoryImpl extends EFactoryImpl imple
 	 * @generated
 	 */
 	@Override
-	public BusinessPerson createBusinessPerson() {
-		BusinessPersonImpl businessPerson = new BusinessPersonImpl();
-		return businessPerson;
+	public Test1BusinessPerson createTest1BusinessPerson() {
+		Test1BusinessPersonImpl test1BusinessPerson = new Test1BusinessPersonImpl();
+		return test1BusinessPerson;
 	}
 
 	/**

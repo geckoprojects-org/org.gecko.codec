@@ -77,16 +77,16 @@ public class TestTypeAnnotationInheritanceSwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case TestTypeAnnotationInheritancePackage.PERSON: {
-				Person person = (Person)theEObject;
-				T result = casePerson(person);
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON: {
+				Test1Person test1Person = (Test1Person)theEObject;
+				T result = caseTest1Person(test1Person);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON: {
-				BusinessPerson businessPerson = (BusinessPerson)theEObject;
-				T result = caseBusinessPerson(businessPerson);
-				if (result == null) result = casePerson(businessPerson);
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON: {
+				Test1BusinessPerson test1BusinessPerson = (Test1BusinessPerson)theEObject;
+				T result = caseTest1BusinessPerson(test1BusinessPerson);
+				if (result == null) result = caseTest1Person(test1BusinessPerson);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -101,32 +101,32 @@ public class TestTypeAnnotationInheritanceSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Person</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Test1 Person</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Person</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Test1 Person</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T casePerson(Person object) {
+	public T caseTest1Person(Test1Person object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Business Person</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Test1 Business Person</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Business Person</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Test1 Business Person</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseBusinessPerson(BusinessPerson object) {
+	public T caseTest1BusinessPerson(Test1BusinessPerson object) {
 		return null;
 	}
 

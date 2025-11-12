@@ -295,7 +295,7 @@ public class CodecModelInfoTest {
 		assertNotNull(codecModelInfo);
 
 		// Get codec info for Person EClass
-		EClassCodecInfo personCodecInfo = codecModelInfo.getCodecInfoForEClass(testModel.getPerson()).get();
+		EClassCodecInfo personCodecInfo = codecModelInfo.getCodecInfoForEClass(testModel.getTest1Person()).get();
 		assertNotNull(personCodecInfo);
 
 		// Check that type info is configured correctly
@@ -310,7 +310,7 @@ public class CodecModelInfoTest {
 		// Check type map - should have the discriminator mapping
 		assertThat(typeInfo.getTypeMap()).hasSize(1);
 		assertTrue(typeInfo.getTypeMap().containsKey("companyId"));
-		assertEquals("BusinessPerson", typeInfo.getTypeMap().get("companyId"));
+		assertEquals("Test1BusinessPerson", typeInfo.getTypeMap().get("companyId"));
 	}
 
 	/**
@@ -347,7 +347,7 @@ public class CodecModelInfoTest {
 		// Check type map - should have the inherited discriminator mapping
 		assertThat(typeInfo.getTypeMap()).hasSize(1);
 		assertTrue(typeInfo.getTypeMap().containsKey("companyId"), "Should inherit companyId discriminator");
-		assertEquals("BusinessPerson", typeInfo.getTypeMap().get("companyId"));
+		assertEquals("Test1BusinessPerson", typeInfo.getTypeMap().get("companyId"));
 	}
 
 	/**
@@ -362,7 +362,7 @@ public class CodecModelInfoTest {
 		assertNotNull(codecModelInfo);
 
 		// Get codec info for BusinessPerson EClass
-		EClassCodecInfo businessPersonCodecInfo = codecModelInfo.getCodecInfoForEClass(testModel.getBusinessPerson()).get();
+		EClassCodecInfo businessPersonCodecInfo = codecModelInfo.getCodecInfoForEClass(testModel.getTest1BusinessPerson()).get();
 		assertNotNull(businessPersonCodecInfo);
 
 		// BusinessPerson has no codec.type annotation itself, but inherits from Person (its superclass)
@@ -376,7 +376,7 @@ public class CodecModelInfoTest {
 		// Should inherit the type map from Person parent
 		assertThat(typeInfo.getTypeMap()).hasSize(1);
 		assertTrue(typeInfo.getTypeMap().containsKey("companyId"), "Should inherit companyId discriminator from Person");
-		assertEquals("BusinessPerson", typeInfo.getTypeMap().get("companyId"));
+		assertEquals("Test1BusinessPerson", typeInfo.getTypeMap().get("companyId"));
 	}
 
 	/**
@@ -409,7 +409,7 @@ public class CodecModelInfoTest {
 		assertNotNull(typeInfo);
 		assertThat(typeInfo.getTypeMap()).hasSize(1);
 		assertTrue(typeInfo.getTypeMap().containsKey("companyId"));
-		assertEquals("BusinessPerson", typeInfo.getTypeMap().get("companyId"));
+		assertEquals("Test1BusinessPerson", typeInfo.getTypeMap().get("companyId"));
 
 		// Simulate what CodecResource does when inheritsTypeFromParent(false) is set via options:
 		// 1. It would check if the reference itself has a codec.type annotation

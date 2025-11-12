@@ -79,12 +79,12 @@ public class TestTypeAnnotationInheritanceAdapterFactory extends AdapterFactoryI
 	protected TestTypeAnnotationInheritanceSwitch<Adapter> modelSwitch =
 		new TestTypeAnnotationInheritanceSwitch<Adapter>() {
 			@Override
-			public Adapter casePerson(Person object) {
-				return createPersonAdapter();
+			public Adapter caseTest1Person(Test1Person object) {
+				return createTest1PersonAdapter();
 			}
 			@Override
-			public Adapter caseBusinessPerson(BusinessPerson object) {
-				return createBusinessPersonAdapter();
+			public Adapter caseTest1BusinessPerson(Test1BusinessPerson object) {
+				return createTest1BusinessPersonAdapter();
 			}
 			@Override
 			public Adapter caseMeeting(Meeting object) {
@@ -111,30 +111,30 @@ public class TestTypeAnnotationInheritanceAdapterFactory extends AdapterFactoryI
 
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.demo.model.test1.Person <em>Person</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.demo.model.test1.Test1Person <em>Test1 Person</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.fennec.codec.demo.model.test1.Person
+	 * @see org.eclipse.fennec.codec.demo.model.test1.Test1Person
 	 * @generated
 	 */
-	public Adapter createPersonAdapter() {
+	public Adapter createTest1PersonAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.demo.model.test1.BusinessPerson <em>Business Person</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson <em>Test1 Business Person</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.fennec.codec.demo.model.test1.BusinessPerson
+	 * @see org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson
 	 * @generated
 	 */
-	public Adapter createBusinessPersonAdapter() {
+	public Adapter createTest1BusinessPersonAdapter() {
 		return null;
 	}
 

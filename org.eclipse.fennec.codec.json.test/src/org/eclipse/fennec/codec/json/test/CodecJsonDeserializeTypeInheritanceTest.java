@@ -30,9 +30,9 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.configurator.CodecFactoryConfigurator;
 import org.eclipse.fennec.codec.configurator.CodecModuleConfigurator;
 import org.eclipse.fennec.codec.configurator.ObjectMapperConfigurator;
-import org.eclipse.fennec.codec.demo.model.test1.BusinessPerson;
 import org.eclipse.fennec.codec.demo.model.test1.Meeting;
-import org.eclipse.fennec.codec.demo.model.test1.Person;
+import org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson;
+import org.eclipse.fennec.codec.demo.model.test1.Test1Person;
 import org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage;
 import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
@@ -126,9 +126,9 @@ public class CodecJsonDeserializeTypeInheritanceTest extends JsonTestSetting{
 
 		Resource resource = resourceSet.createResource(URI.createURI("test.json"));
 		Map<String, Object> options = CodecOptionsBuilder.create()
-				.rootObject(testModel.getPerson())
+				.rootObject(testModel.getTest1Person())
 				.serializeType(false)
-				.forClass(testModel.getPerson())
+				.forClass(testModel.getTest1Person())
 				.typeKey("*")
 				.build();
 
@@ -139,8 +139,8 @@ public class CodecJsonDeserializeTypeInheritanceTest extends JsonTestSetting{
 		EObject obj = resource.getContents().get(0);
 
 		// Verify it's a BusinessPerson (not just Person)
-		assertThat(obj).isInstanceOf(BusinessPerson.class);
-		BusinessPerson businessPerson = (BusinessPerson) obj;
+		assertThat(obj).isInstanceOf(Test1BusinessPerson.class);
+		Test1BusinessPerson businessPerson = (Test1BusinessPerson) obj;
 
 		assertEquals("John", businessPerson.getName());
 		assertEquals("Doe", businessPerson.getLastName());
@@ -164,7 +164,7 @@ public class CodecJsonDeserializeTypeInheritanceTest extends JsonTestSetting{
 
 		Resource resource = resourceSet.createResource(URI.createURI("test.json"));
 		Map<String, Object> options = CodecOptionsBuilder.create()
-				.rootObject(testModel.getPerson())
+				.rootObject(testModel.getTest1Person())
 				.serializeType(false)
 				.build();
 
@@ -175,10 +175,10 @@ public class CodecJsonDeserializeTypeInheritanceTest extends JsonTestSetting{
 		EObject obj = resource.getContents().get(0);
 
 		// Verify it's a Person (not BusinessPerson)
-		assertThat(obj).isInstanceOf(Person.class);
-		assertThat(obj).isNotInstanceOf(BusinessPerson.class);
+		assertThat(obj).isInstanceOf(Test1Person.class);
+		assertThat(obj).isNotInstanceOf(Test1BusinessPerson.class);
 
-		Person person = (Person) obj;
+		Test1Person person = (Test1Person) obj;
 		assertEquals("Jane", person.getName());
 		assertEquals("Smith", person.getLastName());
 	}
@@ -229,8 +229,8 @@ public class CodecJsonDeserializeTypeInheritanceTest extends JsonTestSetting{
 
 		// KEY ASSERTION: responsiblePerson should be BusinessPerson (not just Person)
 		// This proves that the EReference inherited the codec.type annotation from Person
-		assertThat(meeting.getResponsiblePerson()).isInstanceOf(BusinessPerson.class);
-		BusinessPerson responsiblePerson = (BusinessPerson) meeting.getResponsiblePerson();
+		assertThat(meeting.getResponsiblePerson()).isInstanceOf(Test1BusinessPerson.class);
+		Test1BusinessPerson responsiblePerson = (Test1BusinessPerson) meeting.getResponsiblePerson();
 
 		assertEquals("Alice", responsiblePerson.getName());
 		assertEquals("Johnson", responsiblePerson.getLastName());
@@ -275,10 +275,10 @@ public class CodecJsonDeserializeTypeInheritanceTest extends JsonTestSetting{
 		assertNotNull(meeting.getResponsiblePerson());
 
 		// Should be regular Person (not BusinessPerson)
-		assertThat(meeting.getResponsiblePerson()).isInstanceOf(Person.class);
-		assertThat(meeting.getResponsiblePerson()).isNotInstanceOf(BusinessPerson.class);
+		assertThat(meeting.getResponsiblePerson()).isInstanceOf(Test1Person.class);
+		assertThat(meeting.getResponsiblePerson()).isNotInstanceOf(Test1BusinessPerson.class);
 
-		Person responsiblePerson = meeting.getResponsiblePerson();
+		Test1Person responsiblePerson = meeting.getResponsiblePerson();
 		assertEquals("Bob", responsiblePerson.getName());
 		assertEquals("Williams", responsiblePerson.getLastName());
 	}
@@ -328,10 +328,10 @@ public class CodecJsonDeserializeTypeInheritanceTest extends JsonTestSetting{
 
 		// With inheritance disabled, responsiblePerson should be Person (not BusinessPerson)
 		// even though JSON has companyId field
-		assertThat(meeting.getResponsiblePerson()).isInstanceOf(Person.class);
-		assertThat(meeting.getResponsiblePerson()).isNotInstanceOf(BusinessPerson.class);
+		assertThat(meeting.getResponsiblePerson()).isInstanceOf(Test1Person.class);
+		assertThat(meeting.getResponsiblePerson()).isNotInstanceOf(Test1BusinessPerson.class);
 
-		Person responsiblePerson = meeting.getResponsiblePerson();
+		Test1Person responsiblePerson = meeting.getResponsiblePerson();
 		assertEquals("Charlie", responsiblePerson.getName());
 		assertEquals("Brown", responsiblePerson.getLastName());
 	}

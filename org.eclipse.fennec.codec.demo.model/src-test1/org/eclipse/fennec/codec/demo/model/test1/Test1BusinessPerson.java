@@ -17,37 +17,37 @@ import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Business Person</b></em>'.
+ * A representation of the model object '<em><b>Test1 Business Person</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.BusinessPerson#getCompanyId <em>Company Id</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.BusinessPerson#getCompanyIdCardNumber <em>Company Id Card Number</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson#getCompanyId <em>Company Id</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson#getCompanyIdCardNumber <em>Company Id Card Number</em>}</li>
  * </ul>
  *
- * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getBusinessPerson()
+ * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getTest1BusinessPerson()
  * @model annotation="codec.id strategy='ID_FIELD'"
  * @generated
  */
 @ProviderType
-public interface BusinessPerson extends Person {
+public interface Test1BusinessPerson extends Test1Person {
 	/**
 	 * Returns the value of the '<em><b>Company Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Company Id</em>' attribute.
 	 * @see #setCompanyId(String)
-	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getBusinessPerson_CompanyId()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getTest1BusinessPerson_CompanyId()
 	 * @model required="true"
 	 * @generated
 	 */
 	String getCompanyId();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.demo.model.test1.BusinessPerson#getCompanyId <em>Company Id</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson#getCompanyId <em>Company Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Company Id</em>' attribute.
@@ -62,14 +62,14 @@ public interface BusinessPerson extends Person {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Company Id Card Number</em>' attribute.
 	 * @see #setCompanyIdCardNumber(String)
-	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getBusinessPerson_CompanyIdCardNumber()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getTest1BusinessPerson_CompanyIdCardNumber()
 	 * @model extendedMetaData="name='compId'"
 	 * @generated
 	 */
 	String getCompanyIdCardNumber();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.demo.model.test1.BusinessPerson#getCompanyIdCardNumber <em>Company Id Card Number</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson#getCompanyIdCardNumber <em>Company Id Card Number</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Company Id Card Number</em>' attribute.
@@ -78,4 +78,4 @@ public interface BusinessPerson extends Person {
 	 */
 	void setCompanyIdCardNumber(String value);
 
-} // BusinessPerson
+} // Test1BusinessPerson

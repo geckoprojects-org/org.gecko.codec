@@ -20,9 +20,9 @@ import org.eclipse.emf.ecore.EReference;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
-import org.eclipse.fennec.codec.demo.model.test1.BusinessPerson;
 import org.eclipse.fennec.codec.demo.model.test1.Meeting;
-import org.eclipse.fennec.codec.demo.model.test1.Person;
+import org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson;
+import org.eclipse.fennec.codec.demo.model.test1.Test1Person;
 import org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritanceFactory;
 import org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage;
 
@@ -38,14 +38,14 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass personEClass = null;
+	private EClass test1PersonEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass businessPersonEClass = null;
+	private EClass test1BusinessPersonEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -120,8 +120,8 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	 * @generated
 	 */
 	@Override
-	public EClass getPerson() {
-		return personEClass;
+	public EClass getTest1Person() {
+		return test1PersonEClass;
 	}
 
 	/**
@@ -130,8 +130,8 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	 * @generated
 	 */
 	@Override
-	public EAttribute getPerson_Name() {
-		return (EAttribute)personEClass.getEStructuralFeatures().get(0);
+	public EAttribute getTest1Person_Name() {
+		return (EAttribute)test1PersonEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -140,8 +140,8 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	 * @generated
 	 */
 	@Override
-	public EAttribute getPerson_LastName() {
-		return (EAttribute)personEClass.getEStructuralFeatures().get(1);
+	public EAttribute getTest1Person_LastName() {
+		return (EAttribute)test1PersonEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -150,8 +150,8 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	 * @generated
 	 */
 	@Override
-	public EClass getBusinessPerson() {
-		return businessPersonEClass;
+	public EClass getTest1BusinessPerson() {
+		return test1BusinessPersonEClass;
 	}
 
 	/**
@@ -160,8 +160,8 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBusinessPerson_CompanyId() {
-		return (EAttribute)businessPersonEClass.getEStructuralFeatures().get(0);
+	public EAttribute getTest1BusinessPerson_CompanyId() {
+		return (EAttribute)test1BusinessPersonEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -170,8 +170,8 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBusinessPerson_CompanyIdCardNumber() {
-		return (EAttribute)businessPersonEClass.getEStructuralFeatures().get(1);
+	public EAttribute getTest1BusinessPerson_CompanyIdCardNumber() {
+		return (EAttribute)test1BusinessPersonEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -243,13 +243,13 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 		isCreated = true;
 
 		// Create classes and their features
-		personEClass = createEClass(PERSON);
-		createEAttribute(personEClass, PERSON__NAME);
-		createEAttribute(personEClass, PERSON__LAST_NAME);
+		test1PersonEClass = createEClass(TEST1_PERSON);
+		createEAttribute(test1PersonEClass, TEST1_PERSON__NAME);
+		createEAttribute(test1PersonEClass, TEST1_PERSON__LAST_NAME);
 
-		businessPersonEClass = createEClass(BUSINESS_PERSON);
-		createEAttribute(businessPersonEClass, BUSINESS_PERSON__COMPANY_ID);
-		createEAttribute(businessPersonEClass, BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER);
+		test1BusinessPersonEClass = createEClass(TEST1_BUSINESS_PERSON);
+		createEAttribute(test1BusinessPersonEClass, TEST1_BUSINESS_PERSON__COMPANY_ID);
+		createEAttribute(test1BusinessPersonEClass, TEST1_BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER);
 
 		meetingEClass = createEClass(MEETING);
 		createEAttribute(meetingEClass, MEETING__ID);
@@ -285,21 +285,21 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		businessPersonEClass.getESuperTypes().add(this.getPerson());
+		test1BusinessPersonEClass.getESuperTypes().add(this.getTest1Person());
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(personEClass, Person.class, "Person", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getPerson_Name(), ecorePackage.getEString(), "name", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPerson_LastName(), ecorePackage.getEString(), "lastName", null, 0, 1, Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(test1PersonEClass, Test1Person.class, "Test1Person", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getTest1Person_Name(), ecorePackage.getEString(), "name", null, 0, 1, Test1Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTest1Person_LastName(), ecorePackage.getEString(), "lastName", null, 0, 1, Test1Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(businessPersonEClass, BusinessPerson.class, "BusinessPerson", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getBusinessPerson_CompanyId(), ecorePackage.getEString(), "companyId", null, 1, 1, BusinessPerson.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getBusinessPerson_CompanyIdCardNumber(), ecorePackage.getEString(), "companyIdCardNumber", null, 0, 1, BusinessPerson.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(test1BusinessPersonEClass, Test1BusinessPerson.class, "Test1BusinessPerson", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getTest1BusinessPerson_CompanyId(), ecorePackage.getEString(), "companyId", null, 1, 1, Test1BusinessPerson.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTest1BusinessPerson_CompanyIdCardNumber(), ecorePackage.getEString(), "companyIdCardNumber", null, 0, 1, Test1BusinessPerson.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(meetingEClass, Meeting.class, "Meeting", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getMeeting_Id(), ecorePackage.getEString(), "id", null, 1, 1, Meeting.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getMeeting_Date(), ecorePackage.getEDate(), "date", null, 0, 1, Meeting.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getMeeting_ResponsiblePerson(), this.getPerson(), null, "responsiblePerson", null, 0, 1, Meeting.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMeeting_ResponsiblePerson(), this.getTest1Person(), null, "responsiblePerson", null, 0, 1, Meeting.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -340,12 +340,12 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	protected void createCodecAnnotations() {
 		String source = "codec.type";
 		addAnnotation
-		  (personEClass,
+		  (test1PersonEClass,
 		   source,
 		   new String[] {
 			   "include", "true",
 			   "strategy", "NAME",
-			   "companyId", "BusinessPerson"
+			   "companyId", "Test1BusinessPerson"
 		   });
 	}
 
@@ -358,7 +358,7 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	protected void createCodec_1Annotations() {
 		String source = "codec.id";
 		addAnnotation
-		  (personEClass,
+		  (test1PersonEClass,
 		   source,
 		   new String[] {
 			   "strategy", "COMBINED",
@@ -366,7 +366,7 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 			   "idFeatures", "name,lastName"
 		   });
 		addAnnotation
-		  (businessPersonEClass,
+		  (test1BusinessPersonEClass,
 		   source,
 		   new String[] {
 			   "strategy", "ID_FIELD"
@@ -382,7 +382,7 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 	protected void createExtendedMetaDataAnnotations() {
 		String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData";
 		addAnnotation
-		  (getBusinessPerson_CompanyIdCardNumber(),
+		  (getTest1BusinessPerson_CompanyIdCardNumber(),
 		   source,
 		   new String[] {
 			   "name", "compId"

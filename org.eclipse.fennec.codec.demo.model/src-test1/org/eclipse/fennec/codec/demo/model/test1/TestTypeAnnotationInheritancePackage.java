@@ -75,14 +75,14 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 	TestTypeAnnotationInheritancePackage eINSTANCE = org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritancePackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.PersonImpl <em>Person</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.Test1PersonImpl <em>Test1 Person</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.fennec.codec.demo.model.test1.impl.PersonImpl
-	 * @see org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritancePackageImpl#getPerson()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.impl.Test1PersonImpl
+	 * @see org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritancePackageImpl#getTest1Person()
 	 * @generated
 	 */
-	int PERSON = 0;
+	int TEST1_PERSON = 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -91,7 +91,7 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__NAME = 0;
+	int TEST1_PERSON__NAME = 0;
 
 	/**
 	 * The feature id for the '<em><b>Last Name</b></em>' attribute.
@@ -100,35 +100,35 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON__LAST_NAME = 1;
+	int TEST1_PERSON__LAST_NAME = 1;
 
 	/**
-	 * The number of structural features of the '<em>Person</em>' class.
+	 * The number of structural features of the '<em>Test1 Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_FEATURE_COUNT = 2;
+	int TEST1_PERSON_FEATURE_COUNT = 2;
 
 	/**
-	 * The number of operations of the '<em>Person</em>' class.
+	 * The number of operations of the '<em>Test1 Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSON_OPERATION_COUNT = 0;
+	int TEST1_PERSON_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.BusinessPersonImpl <em>Business Person</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.Test1BusinessPersonImpl <em>Test1 Business Person</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.fennec.codec.demo.model.test1.impl.BusinessPersonImpl
-	 * @see org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritancePackageImpl#getBusinessPerson()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.impl.Test1BusinessPersonImpl
+	 * @see org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritancePackageImpl#getTest1BusinessPerson()
 	 * @generated
 	 */
-	int BUSINESS_PERSON = 1;
+	int TEST1_BUSINESS_PERSON = 1;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -137,7 +137,7 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 	 * @generated
 	 * @ordered
 	 */
-	int BUSINESS_PERSON__NAME = PERSON__NAME;
+	int TEST1_BUSINESS_PERSON__NAME = TEST1_PERSON__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Last Name</b></em>' attribute.
@@ -146,7 +146,7 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 	 * @generated
 	 * @ordered
 	 */
-	int BUSINESS_PERSON__LAST_NAME = PERSON__LAST_NAME;
+	int TEST1_BUSINESS_PERSON__LAST_NAME = TEST1_PERSON__LAST_NAME;
 
 	/**
 	 * The feature id for the '<em><b>Company Id</b></em>' attribute.
@@ -155,7 +155,7 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 	 * @generated
 	 * @ordered
 	 */
-	int BUSINESS_PERSON__COMPANY_ID = PERSON_FEATURE_COUNT + 0;
+	int TEST1_BUSINESS_PERSON__COMPANY_ID = TEST1_PERSON_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Company Id Card Number</b></em>' attribute.
@@ -164,25 +164,25 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 	 * @generated
 	 * @ordered
 	 */
-	int BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER = PERSON_FEATURE_COUNT + 1;
+	int TEST1_BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER = TEST1_PERSON_FEATURE_COUNT + 1;
 
 	/**
-	 * The number of structural features of the '<em>Business Person</em>' class.
+	 * The number of structural features of the '<em>Test1 Business Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BUSINESS_PERSON_FEATURE_COUNT = PERSON_FEATURE_COUNT + 2;
+	int TEST1_BUSINESS_PERSON_FEATURE_COUNT = TEST1_PERSON_FEATURE_COUNT + 2;
 
 	/**
-	 * The number of operations of the '<em>Business Person</em>' class.
+	 * The number of operations of the '<em>Test1 Business Person</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BUSINESS_PERSON_OPERATION_COUNT = PERSON_OPERATION_COUNT + 0;
+	int TEST1_BUSINESS_PERSON_OPERATION_COUNT = TEST1_PERSON_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.MeetingImpl <em>Meeting</em>}' class.
@@ -241,68 +241,68 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.demo.model.test1.Person <em>Person</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.demo.model.test1.Test1Person <em>Test1 Person</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Person</em>'.
-	 * @see org.eclipse.fennec.codec.demo.model.test1.Person
+	 * @return the meta object for class '<em>Test1 Person</em>'.
+	 * @see org.eclipse.fennec.codec.demo.model.test1.Test1Person
 	 * @generated
 	 */
-	EClass getPerson();
+	EClass getTest1Person();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.demo.model.test1.Person#getName <em>Name</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.demo.model.test1.Test1Person#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.eclipse.fennec.codec.demo.model.test1.Person#getName()
-	 * @see #getPerson()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.Test1Person#getName()
+	 * @see #getTest1Person()
 	 * @generated
 	 */
-	EAttribute getPerson_Name();
+	EAttribute getTest1Person_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.demo.model.test1.Person#getLastName <em>Last Name</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.demo.model.test1.Test1Person#getLastName <em>Last Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Last Name</em>'.
-	 * @see org.eclipse.fennec.codec.demo.model.test1.Person#getLastName()
-	 * @see #getPerson()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.Test1Person#getLastName()
+	 * @see #getTest1Person()
 	 * @generated
 	 */
-	EAttribute getPerson_LastName();
+	EAttribute getTest1Person_LastName();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.demo.model.test1.BusinessPerson <em>Business Person</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson <em>Test1 Business Person</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Business Person</em>'.
-	 * @see org.eclipse.fennec.codec.demo.model.test1.BusinessPerson
+	 * @return the meta object for class '<em>Test1 Business Person</em>'.
+	 * @see org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson
 	 * @generated
 	 */
-	EClass getBusinessPerson();
+	EClass getTest1BusinessPerson();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.demo.model.test1.BusinessPerson#getCompanyId <em>Company Id</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson#getCompanyId <em>Company Id</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Company Id</em>'.
-	 * @see org.eclipse.fennec.codec.demo.model.test1.BusinessPerson#getCompanyId()
-	 * @see #getBusinessPerson()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson#getCompanyId()
+	 * @see #getTest1BusinessPerson()
 	 * @generated
 	 */
-	EAttribute getBusinessPerson_CompanyId();
+	EAttribute getTest1BusinessPerson_CompanyId();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.demo.model.test1.BusinessPerson#getCompanyIdCardNumber <em>Company Id Card Number</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson#getCompanyIdCardNumber <em>Company Id Card Number</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Company Id Card Number</em>'.
-	 * @see org.eclipse.fennec.codec.demo.model.test1.BusinessPerson#getCompanyIdCardNumber()
-	 * @see #getBusinessPerson()
+	 * @see org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson#getCompanyIdCardNumber()
+	 * @see #getTest1BusinessPerson()
 	 * @generated
 	 */
-	EAttribute getBusinessPerson_CompanyIdCardNumber();
+	EAttribute getTest1BusinessPerson_CompanyIdCardNumber();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.demo.model.test1.Meeting <em>Meeting</em>}'.
@@ -371,14 +371,14 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 	 */
 	interface Literals {
 		/**
-		 * The meta object literal for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.PersonImpl <em>Person</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.Test1PersonImpl <em>Test1 Person</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.fennec.codec.demo.model.test1.impl.PersonImpl
-		 * @see org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritancePackageImpl#getPerson()
+		 * @see org.eclipse.fennec.codec.demo.model.test1.impl.Test1PersonImpl
+		 * @see org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritancePackageImpl#getTest1Person()
 		 * @generated
 		 */
-		EClass PERSON = eINSTANCE.getPerson();
+		EClass TEST1_PERSON = eINSTANCE.getTest1Person();
 
 		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -386,7 +386,7 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute PERSON__NAME = eINSTANCE.getPerson_Name();
+		EAttribute TEST1_PERSON__NAME = eINSTANCE.getTest1Person_Name();
 
 		/**
 		 * The meta object literal for the '<em><b>Last Name</b></em>' attribute feature.
@@ -394,17 +394,17 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute PERSON__LAST_NAME = eINSTANCE.getPerson_LastName();
+		EAttribute TEST1_PERSON__LAST_NAME = eINSTANCE.getTest1Person_LastName();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.BusinessPersonImpl <em>Business Person</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.Test1BusinessPersonImpl <em>Test1 Business Person</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.fennec.codec.demo.model.test1.impl.BusinessPersonImpl
-		 * @see org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritancePackageImpl#getBusinessPerson()
+		 * @see org.eclipse.fennec.codec.demo.model.test1.impl.Test1BusinessPersonImpl
+		 * @see org.eclipse.fennec.codec.demo.model.test1.impl.TestTypeAnnotationInheritancePackageImpl#getTest1BusinessPerson()
 		 * @generated
 		 */
-		EClass BUSINESS_PERSON = eINSTANCE.getBusinessPerson();
+		EClass TEST1_BUSINESS_PERSON = eINSTANCE.getTest1BusinessPerson();
 
 		/**
 		 * The meta object literal for the '<em><b>Company Id</b></em>' attribute feature.
@@ -412,7 +412,7 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute BUSINESS_PERSON__COMPANY_ID = eINSTANCE.getBusinessPerson_CompanyId();
+		EAttribute TEST1_BUSINESS_PERSON__COMPANY_ID = eINSTANCE.getTest1BusinessPerson_CompanyId();
 
 		/**
 		 * The meta object literal for the '<em><b>Company Id Card Number</b></em>' attribute feature.
@@ -420,7 +420,7 @@ public interface TestTypeAnnotationInheritancePackage extends org.eclipse.emf.ec
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER = eINSTANCE.getBusinessPerson_CompanyIdCardNumber();
+		EAttribute TEST1_BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER = eINSTANCE.getTest1BusinessPerson_CompanyIdCardNumber();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.demo.model.test1.impl.MeetingImpl <em>Meeting</em>}' class.

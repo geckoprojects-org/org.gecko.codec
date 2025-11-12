@@ -20,24 +20,24 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.fennec.codec.demo.model.test1.Person;
+import org.eclipse.fennec.codec.demo.model.test1.Test1Person;
 import org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Person</b></em>'.
+ * An implementation of the model object '<em><b>Test1 Person</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.impl.PersonImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.impl.PersonImpl#getLastName <em>Last Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.impl.Test1PersonImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.impl.Test1PersonImpl#getLastName <em>Last Name</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
+public class Test1PersonImpl extends MinimalEObjectImpl.Container implements Test1Person {
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -83,7 +83,7 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected PersonImpl() {
+	protected Test1PersonImpl() {
 		super();
 	}
 
@@ -94,7 +94,7 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return TestTypeAnnotationInheritancePackage.Literals.PERSON;
+		return TestTypeAnnotationInheritancePackage.Literals.TEST1_PERSON;
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, TestTypeAnnotationInheritancePackage.PERSON__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, TestTypeAnnotationInheritancePackage.TEST1_PERSON__NAME, oldName, name));
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		String oldLastName = lastName;
 		lastName = newLastName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, TestTypeAnnotationInheritancePackage.PERSON__LAST_NAME, oldLastName, lastName));
+			eNotify(new ENotificationImpl(this, Notification.SET, TestTypeAnnotationInheritancePackage.TEST1_PERSON__LAST_NAME, oldLastName, lastName));
 	}
 
 	/**
@@ -151,9 +151,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case TestTypeAnnotationInheritancePackage.PERSON__NAME:
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON__NAME:
 				return getName();
-			case TestTypeAnnotationInheritancePackage.PERSON__LAST_NAME:
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON__LAST_NAME:
 				return getLastName();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -167,10 +167,10 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case TestTypeAnnotationInheritancePackage.PERSON__NAME:
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON__NAME:
 				setName((String)newValue);
 				return;
-			case TestTypeAnnotationInheritancePackage.PERSON__LAST_NAME:
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON__LAST_NAME:
 				setLastName((String)newValue);
 				return;
 		}
@@ -185,10 +185,10 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case TestTypeAnnotationInheritancePackage.PERSON__NAME:
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case TestTypeAnnotationInheritancePackage.PERSON__LAST_NAME:
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON__LAST_NAME:
 				setLastName(LAST_NAME_EDEFAULT);
 				return;
 		}
@@ -203,9 +203,9 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case TestTypeAnnotationInheritancePackage.PERSON__NAME:
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case TestTypeAnnotationInheritancePackage.PERSON__LAST_NAME:
+			case TestTypeAnnotationInheritancePackage.TEST1_PERSON__LAST_NAME:
 				return LAST_NAME_EDEFAULT == null ? lastName != null : !LAST_NAME_EDEFAULT.equals(lastName);
 		}
 		return super.eIsSet(featureID);
@@ -229,4 +229,4 @@ public class PersonImpl extends MinimalEObjectImpl.Container implements Person {
 		return result.toString();
 	}
 
-} //PersonImpl
+} //Test1PersonImpl

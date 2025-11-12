@@ -13,11 +13,11 @@
     <details key="prefix" value="TestTypeAnnotationInheritance"/>
     <details key="modelName"/>
   </eAnnotations>
-  <eClassifiers xsi:type="ecore:EClass" name="Person">
+  <eClassifiers xsi:type="ecore:EClass" name="Test1Person">
     <eAnnotations source="codec.type">
       <details key="include" value="true"/>
       <details key="strategy" value="NAME"/>
-      <details key="companyId" value="BusinessPerson"/>
+      <details key="companyId" value="Test1BusinessPerson"/>
     </eAnnotations>
     <eAnnotations source="codec.id">
       <details key="strategy" value="COMBINED"/>
@@ -27,7 +27,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BusinessPerson" eSuperTypes="#//Person">
+  <eClassifiers xsi:type="ecore:EClass" name="Test1BusinessPerson" eSuperTypes="#//Test1Person">
     <eAnnotations source="codec.id">
       <details key="strategy" value="ID_FIELD"/>
     </eAnnotations>
@@ -43,7 +43,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         iD="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="date" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="responsiblePerson" eType="#//Person"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="responsiblePerson" eType="#//Test1Person"
         containment="true"/>
   </eClassifiers>
 </ecore:EPackage>

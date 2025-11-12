@@ -19,24 +19,24 @@ import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
-import org.eclipse.fennec.codec.demo.model.test1.BusinessPerson;
+import org.eclipse.fennec.codec.demo.model.test1.Test1BusinessPerson;
 import org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Business Person</b></em>'.
+ * An implementation of the model object '<em><b>Test1 Business Person</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.impl.BusinessPersonImpl#getCompanyId <em>Company Id</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.impl.BusinessPersonImpl#getCompanyIdCardNumber <em>Company Id Card Number</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.impl.Test1BusinessPersonImpl#getCompanyId <em>Company Id</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.demo.model.test1.impl.Test1BusinessPersonImpl#getCompanyIdCardNumber <em>Company Id Card Number</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
+public class Test1BusinessPersonImpl extends Test1PersonImpl implements Test1BusinessPerson {
 	/**
 	 * The default value of the '{@link #getCompanyId() <em>Company Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -82,7 +82,7 @@ public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected BusinessPersonImpl() {
+	protected Test1BusinessPersonImpl() {
 		super();
 	}
 
@@ -93,7 +93,7 @@ public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return TestTypeAnnotationInheritancePackage.Literals.BUSINESS_PERSON;
+		return TestTypeAnnotationInheritancePackage.Literals.TEST1_BUSINESS_PERSON;
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
 		String oldCompanyId = companyId;
 		companyId = newCompanyId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID, oldCompanyId, companyId));
+			eNotify(new ENotificationImpl(this, Notification.SET, TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID, oldCompanyId, companyId));
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
 		String oldCompanyIdCardNumber = companyIdCardNumber;
 		companyIdCardNumber = newCompanyIdCardNumber;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER, oldCompanyIdCardNumber, companyIdCardNumber));
+			eNotify(new ENotificationImpl(this, Notification.SET, TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER, oldCompanyIdCardNumber, companyIdCardNumber));
 	}
 
 	/**
@@ -150,9 +150,9 @@ public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID:
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID:
 				return getCompanyId();
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER:
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER:
 				return getCompanyIdCardNumber();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -166,10 +166,10 @@ public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID:
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID:
 				setCompanyId((String)newValue);
 				return;
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER:
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER:
 				setCompanyIdCardNumber((String)newValue);
 				return;
 		}
@@ -184,10 +184,10 @@ public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID:
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID:
 				setCompanyId(COMPANY_ID_EDEFAULT);
 				return;
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER:
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER:
 				setCompanyIdCardNumber(COMPANY_ID_CARD_NUMBER_EDEFAULT);
 				return;
 		}
@@ -202,9 +202,9 @@ public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID:
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID:
 				return COMPANY_ID_EDEFAULT == null ? companyId != null : !COMPANY_ID_EDEFAULT.equals(companyId);
-			case TestTypeAnnotationInheritancePackage.BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER:
+			case TestTypeAnnotationInheritancePackage.TEST1_BUSINESS_PERSON__COMPANY_ID_CARD_NUMBER:
 				return COMPANY_ID_CARD_NUMBER_EDEFAULT == null ? companyIdCardNumber != null : !COMPANY_ID_CARD_NUMBER_EDEFAULT.equals(companyIdCardNumber);
 		}
 		return super.eIsSet(featureID);
@@ -228,4 +228,4 @@ public class BusinessPersonImpl extends PersonImpl implements BusinessPerson {
 		return result.toString();
 	}
 
-} //BusinessPersonImpl
+} //Test1BusinessPersonImpl
