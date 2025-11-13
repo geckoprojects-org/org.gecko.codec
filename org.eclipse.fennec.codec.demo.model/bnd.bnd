@@ -21,4 +21,6 @@
 # Bundle Annotations		
 -includeresource.model: model=model
 
-
+src= \
+	src,\
+	src-test1
