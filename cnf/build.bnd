@@ -15,10 +15,11 @@
 dimcBaselining: true
 github-project: org.gecko.codec
 base-version: 1.1.0
+Bundle-Version: ${base-version}.SNAPSHOT
 
 # Maven Central Group-Id
 # For Geckoprojects the groupid must start with org.geckoprojects
--groupid: org.geckoprojects.codec.j3
+-groupid: org.geckoprojects.codec
 
 javac.source: 17
 javac.target: 17
