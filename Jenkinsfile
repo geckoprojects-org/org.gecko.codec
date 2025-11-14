@@ -43,7 +43,10 @@ pipeline  {
         }
         stage('Snapshot branch release') {
             when { 
-                branch 'snapshot'
+                anyOf {
+                    branch 'snapshot';
+                    branch 'jackson3-rc10'
+                }
             }
             steps  {
                 echo "I am building on ${env.JOB_NAME}"
@@ -56,6 +59,9 @@ pipeline  {
         stage('Other branch') {
             when {
                 allOf {
+                    not {
+                        branch 'jackson3-rc4'
+                    }
                     not {
                         branch 'snapshot'
                     }

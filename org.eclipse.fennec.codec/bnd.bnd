@@ -1,0 +1,13 @@
+-library: enable-emf
+Bundle-Name: Eclipse Fennec Codec 
+Bundle-Description: Eclipse Fennec Project Codec Framework
+
+-buildpath: \
+	org.osgi.util.promise;version=latest,\
+	org.eclipse.fennec.codec.info.model,\
+	org.eclipse.fennec.codec.info,\
+	org.eclipse.fennec.codec.constants,\
+	tools.jackson.core.jackson-core,\
+	tools.jackson.core.jackson-databind,\
+	org.gecko.emf.util.model,\
+	com.fasterxml.jackson.core.jackson-annotations
