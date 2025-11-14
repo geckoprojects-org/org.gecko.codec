@@ -11,6 +11,3 @@ Bundle-Description: Eclipse Fennec Project Codec Framework
 	tools.jackson.core.jackson-databind,\
 	org.gecko.emf.util.model,\
 	com.fasterxml.jackson.core.jackson-annotations
-	
--testpath: \
-	org.eclipse.fennec.codec.test.models;version=project
