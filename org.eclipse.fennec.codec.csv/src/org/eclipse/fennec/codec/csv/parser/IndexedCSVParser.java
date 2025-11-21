@@ -26,12 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.fennec.codec.csv.config.CSVReaderConfig;
+
 import de.siegmar.fastcsv.reader.CsvReader;
 import de.siegmar.fastcsv.reader.CsvRow;
 import de.siegmar.fastcsv.reader.IndexedCsvReader;
 
 /**
- * Indexed CSV Parser using FastCSV's IndexedCsvReader for lazy loading.
+ * Indexed CSV Parser using FastCSV's IndexedCsvReader for lazy loading with validation and security.
  * This parser allows random access to CSV rows without loading the entire file into memory.
  *
  * Features:
@@ -39,6 +41,8 @@ import de.siegmar.fastcsv.reader.IndexedCsvReader;
  * - Random access: can jump to any row by index
  * - Memory efficient: suitable for large CSV files
  * - On-demand reference resolution: ECore references can be resolved when needed
+ * - Security limits: max field length, max row length (DoS prevention)
+ * - Validation: field count validation, configurable delimiters
  *
  * @author Claude Code
  * @since Nov 21, 2025
@@ -48,20 +52,33 @@ public class IndexedCSVParser implements Closeable {
     private final IndexedCsvReader<CsvRow> indexedReader;
     private final List<String> headers;
     private final long totalRows;
+    private final CSVReaderConfig config;
 
     /**
-     * Creates a new IndexedCSVParser from an InputStream.
+     * Creates a new IndexedCSVParser from an InputStream with default configuration.
      *
      * @param inputStream The input stream containing CSV data. Must not be <code>null</code>
      * @throws IOException when error during reading happen.
      */
     public IndexedCSVParser(InputStream inputStream) throws IOException {
-        requireNonNull(inputStream);
+        this(inputStream, CSVReaderConfig.defaultConfig());
+    }
 
-        // Create indexed reader for random access
-        this.indexedReader = CsvReader.builder()
-                .ofCsvRecord(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-                .indexed();
+    /**
+     * Creates a new IndexedCSVParser from an InputStream with custom configuration.
+     *
+     * @param inputStream The input stream containing CSV data. Must not be <code>null</code>
+     * @param config The CSV reader configuration. Must not be <code>null</code>
+     * @throws IOException when error during reading happen.
+     */
+    public IndexedCSVParser(InputStream inputStream, CSVReaderConfig config) throws IOException {
+        requireNonNull(inputStream);
+        requireNonNull(config);
+
+        this.config = config;
+
+        // Create indexed reader for random access with configuration
+        this.indexedReader = buildIndexedCsvReader(inputStream, config);
 
         // Read headers from first row
         CsvRow headerRow = indexedReader.getRow(0);
@@ -97,12 +114,12 @@ public class IndexedCSVParser implements Closeable {
     }
 
     /**
-     * Lazily loads a specific row by index.
+     * Lazily loads a specific row by index with validation.
      * Row indices start at 0 (first data row after header).
      *
      * @param rowIndex The zero-based index of the row to load
      * @return Map containing the row data with column headers as keys
-     * @throws IOException when error during reading happen
+     * @throws IOException when error during reading or validation failure
      */
     public Map<String, Object> getRow(long rowIndex) throws IOException {
         if (rowIndex < 0 || rowIndex >= totalRows) {
@@ -115,9 +132,28 @@ public class IndexedCSVParser implements Closeable {
             return Collections.emptyMap();
         }
 
+        // Validation: Check field count
+        int expectedFieldCount = config.getExpectedFieldCount() != null ?
+                config.getExpectedFieldCount() : headers.size();
+
+        if (config.isErrorOnDifferentFieldCount() && row.getFieldCount() != expectedFieldCount) {
+            throw new IOException(String.format(
+                    "CSV validation error at row %d (line %d): Expected %d fields but found %d",
+                    rowIndex, row.getStartingLineNumber(), expectedFieldCount, row.getFieldCount()));
+        }
+
         Map<String, Object> rowMap = new HashMap<>();
         for (int i = 0; i < Math.min(headers.size(), row.getFieldCount()); i++) {
-            rowMap.put(headers.get(i), row.getField(i));
+            String value = row.getField(i);
+            // Apply whitespace trimming if configured
+            if (config.isIgnoreLeadingWhitespace() && config.isIgnoreTrailingWhitespace()) {
+                value = value.trim();
+            } else if (config.isIgnoreLeadingWhitespace()) {
+                value = value.stripLeading();
+            } else if (config.isIgnoreTrailingWhitespace()) {
+                value = value.stripTrailing();
+            }
+            rowMap.put(headers.get(i), value);
         }
         return rowMap;
     }
@@ -203,10 +239,47 @@ public class IndexedCSVParser implements Closeable {
         return results;
     }
 
+    /**
+     * Returns the configuration used by this parser.
+     *
+     * @return The CSVReaderConfig
+     */
+    public CSVReaderConfig getConfig() {
+        return config;
+    }
+
     @Override
     public void close() throws IOException {
         if (indexedReader != null) {
             indexedReader.close();
         }
+    }
+
+    /**
+     * Builds an IndexedCsvReader with the specified configuration.
+     *
+     * @param inputStream The input stream
+     * @param config The configuration
+     * @return configured IndexedCsvReader
+     */
+    private static IndexedCsvReader<CsvRow> buildIndexedCsvReader(InputStream inputStream, CSVReaderConfig config) {
+        var builder = CsvReader.builder()
+                .fieldSeparator(config.getFieldSeparator())
+                .quoteCharacter(config.getQuoteCharacter())
+                .skipEmptyLines(config.isSkipEmptyRows())
+                .acceptChainedExceptions(config.isAcceptChainedExceptions());
+
+        // Security limits
+        if (config.getMaxFieldLength() > 0) {
+            builder.maxFieldLength(config.getMaxFieldLength());
+        }
+
+        // Comment support
+        if (config.isCommentEnabled()) {
+            builder.commentCharacter(config.getCommentCharacter())
+                   .commentStrategy(de.siegmar.fastcsv.reader.CommentStrategy.SKIP);
+        }
+
+        return builder.ofCsvRecord(new InputStreamReader(inputStream, config.getCharset())).indexed();
     }
 }

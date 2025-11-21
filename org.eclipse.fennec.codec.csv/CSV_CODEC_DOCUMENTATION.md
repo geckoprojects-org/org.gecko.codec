@@ -51,6 +51,11 @@ EObject object = resource.getContents().get(0);
 - ✅ Einfache API
 - ✅ Header-Erkennung automatisch
 - ✅ UTF-8 Unterstützung
+- ✅ **Field Count Validation**
+- ✅ **DoS-Schutz (Max Field Length)**
+- ✅ **Whitespace Trimming**
+- ✅ **Custom Delimiters (Semicolon, Tab, etc.)**
+- ✅ **Comment Support**
 - ❌ Nicht für sehr große Dateien (> 1GB)
 
 ---
@@ -128,6 +133,11 @@ EObject referencedObject = createFromRow(referencedRow);
 - ✅ Lazy Loading - nur bei Bedarf laden
 - ✅ Referenz-Auflösung on-demand
 - ✅ Geeignet für Dateien mit Millionen von Zeilen
+- ✅ **Field Count Validation**
+- ✅ **DoS-Schutz (Max Field Length)**
+- ✅ **Whitespace Trimming**
+- ✅ **Custom Delimiters & Encoding**
+- ✅ **Comment Support**
 - ❌ Etwas komplexere API
 - ❌ Overhead für kleine Dateien
 
@@ -277,6 +287,88 @@ InputStream bytes = new ByteArrayInputStream(csvData);
 // Wechsel von Fast Mode zu Indexed Mode
 type = "csv-indexed" // statt "csv"
 ```
+
+---
+
+## 🔒 Validierung & Sicherheit
+
+Beide Modi unterstützen **erweiterte Validierungs- und Sicherheitsfeatures** über `CSVReaderConfig`:
+
+### Vorkonfigurierte Profile
+
+```java
+// Default: Standard-Einstellungen
+CSVReaderConfig config = CSVReaderConfig.defaultConfig();
+
+// Strict: Mit Validierung
+CSVReaderConfig config = CSVReaderConfig.strictConfig();
+
+// Secure: Mit DoS-Schutz
+CSVReaderConfig config = CSVReaderConfig.secureConfig();
+
+// Permissive: Flexibel für verschiedene Formate
+CSVReaderConfig config = CSVReaderConfig.permissiveConfig();
+```
+
+### Security Features
+
+```java
+// DoS-Schutz: Max Field Length
+CSVReaderConfig config = CSVReaderConfig.defaultConfig()
+    .setMaxFieldLength(1_000_000);  // 1MB pro Feld
+
+// Memory-Schutz: Max Row Length
+config.setMaxRowLength(10_000_000);  // 10MB pro Zeile
+
+IndexedCSVParser parser = new IndexedCSVParser(inputStream, config);
+```
+
+### Validation Features
+
+```java
+// Field Count Validation
+CSVReaderConfig config = CSVReaderConfig.defaultConfig()
+    .setExpectedFieldCount(10)
+    .setErrorOnDifferentFieldCount(true);
+
+// Whitespace Trimming
+config.setIgnoreLeadingWhitespace(true)
+      .setIgnoreTrailingWhitespace(true);
+
+// Custom Delimiters
+config.useSemicolonSeparator();  // European CSV
+config.useTabSeparator();        // TSV
+config.setFieldSeparator('|');   // Custom
+
+// Comment Support
+config.setCommentEnabled(true)
+      .setCommentCharacter('#');
+
+List<Map<String, Object>> rows = FastCSVParser.parseAll(inputStream, config);
+```
+
+### Beispiel: Sichere API
+
+```java
+// Sichere Konfiguration für User-Uploads
+CSVReaderConfig config = CSVReaderConfig.secureConfig()
+    .setMaxFieldLength(100_000)     // 100KB
+    .setMaxRowLength(1_000_000)     // 1MB
+    .setExpectedFieldCount(5);
+
+try (IndexedCSVParser parser = new IndexedCSVParser(userUpload, config)) {
+    for (long i = 0; i < parser.getRowCount(); i++) {
+        Map<String, Object> row = parser.getRow(i);
+        processRow(row);
+    }
+} catch (IOException e) {
+    // Fehler mit Zeilennummer:
+    // "CSV validation error at row 42 (line 43): Expected 5 fields but found 3"
+    logger.error(e.getMessage());
+}
+```
+
+**Vollständige Dokumentation:** Siehe [CSV_VALIDATION_AND_SECURITY.md](CSV_VALIDATION_AND_SECURITY.md)
 
 ---
 
