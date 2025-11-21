@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2012 - 2025 Data In Motion and others.
- * All rights reserved. 
- * 
+ * All rights reserved.
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
@@ -21,22 +21,21 @@ import org.eclipse.fennec.codec.CodecReaderProvider;
 import tools.jackson.core.io.IOContext;
 
 /**
- * Fast CSV Parser Factory using FastCSV for efficient parsing.
- * This is the default parser factory for CSV files.
+ * Indexed CSV Parser Factory using FastCSV's IndexedCsvReader for lazy loading.
+ * This parser factory enables lazy loading of large CSV files with random access.
  *
- * @author ilenia
  * @author Claude Code
- * @since Sep 22, 2025
+ * @since Nov 21, 2025
  */
-public class CSVParserFactory implements CodecParserFactory<InputStream, CodecCSVParserFast>{
+public class CSVParserFactoryIndexed implements CodecParserFactory<InputStream, CodecCSVParserIndexed>{
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.fennec.codec.CodecParserFactory#createParser(tools.jackson.core.io.IOContext, org.eclipse.fennec.codec.CodecReaderProvider)
 	 */
 	@Override
-	public CodecCSVParserFast createParser(IOContext context, CodecReaderProvider<InputStream> provider) {
-		return new CodecCSVParserFast(context, provider);
+	public CodecCSVParserIndexed createParser(IOContext context, CodecReaderProvider<InputStream> provider) {
+		return new CodecCSVParserIndexed(context, provider);
 	}
 
 	/*
@@ -44,8 +43,8 @@ public class CSVParserFactory implements CodecParserFactory<InputStream, CodecCS
 	 * @see org.eclipse.fennec.codec.CodecParserFactory#createParser(tools.jackson.core.io.IOContext, java.lang.Object)
 	 */
 	@Override
-	public CodecCSVParserFast createParser(IOContext context, InputStream input) {
-		return new CodecCSVParserFast(context, input);
+	public CodecCSVParserIndexed createParser(IOContext context, InputStream input) {
+		return new CodecCSVParserIndexed(context, input);
 	}
 
 }
