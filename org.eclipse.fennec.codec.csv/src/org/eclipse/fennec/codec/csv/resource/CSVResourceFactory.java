@@ -31,23 +31,33 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, name = "CSVRF", service = {Resource.Factory.class, CSVResourceFactory.class}, 
 property = {EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecCSV", EMFNamespaces.EMF_MODEL_FILE_EXT + "=csv", EMFNamespaces.EMF_MODEL_CONTENT_TYPE + "=application/csv"})
 public class CSVResourceFactory extends ResourceFactoryImpl {
-	
-	@Reference
+
 	private CodecModelInfo modelInfo;
-	
-	@Reference(target="(type=csv)")
 	private ObjectMapperConfigurator objMapperConfigurator;
-	
-	@Reference(target="(type=json)")
 	private CodecModuleConfigurator codecModuleConfigurator;
-	
-	/* 
+
+	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl#createResource(org.eclipse.emf.common.util.URI)
 	 */
 	@Override
-	public Resource createResource(URI uri) {		
+	public Resource createResource(URI uri) {
 		return new CSVResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilderFactory());
+	}
+
+	@Reference
+	public void setModelInfo(CodecModelInfo modelInfo) {
+		this.modelInfo = modelInfo;
+	}
+
+	@Reference(target="(type=csv)")
+	public void setObjMapperConfigurator(ObjectMapperConfigurator objMapperConfigurator) {
+		this.objMapperConfigurator = objMapperConfigurator;
+	}
+
+	@Reference(target="(type=json)")
+	public void setCodecModuleConfigurator(CodecModuleConfigurator codecModuleConfigurator) {
+		this.codecModuleConfigurator = codecModuleConfigurator;
 	}
 
 }

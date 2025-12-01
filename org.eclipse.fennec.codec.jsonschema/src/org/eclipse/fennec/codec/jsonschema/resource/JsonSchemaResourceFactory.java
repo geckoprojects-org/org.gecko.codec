@@ -34,26 +34,29 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, name = "JsonSchemaRF", service = {Resource.Factory.class, JsonSchemaResourceFactory.class}, 
 property = {EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecJson", EMFNamespaces.EMF_MODEL_FILE_EXT + "=json", EMFNamespaces.EMF_MODEL_CONTENT_TYPE + "=application/schema+json"})
 public class JsonSchemaResourceFactory extends ResourceFactoryImpl {
-	
-	@Reference
+
 	private CodecModelInfo modelInfo;
-	
 	private ObjectMapperConfigurator objMapperConfigurator;
 	private CodecModuleConfigurator codecModuleConfigurator;
-	
+
 	@Activate
 	public void activate() {
 		codecModuleConfigurator = new JsonSchemaCodecModuleConfiguarator();
 		objMapperConfigurator = new JsonSchemaObjectMapperConfigurator();
 	}
-	
-	/* 
+
+	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl#createResource(org.eclipse.emf.common.util.URI)
 	 */
 	@Override
-	public Resource createResource(URI uri) {		
+	public Resource createResource(URI uri) {
 		return new CodecJsonSchemaResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilderFactory());
+	}
+
+	@Reference
+	public void setModelInfo(CodecModelInfo modelInfo) {
+		this.modelInfo = modelInfo;
 	}
 
 }

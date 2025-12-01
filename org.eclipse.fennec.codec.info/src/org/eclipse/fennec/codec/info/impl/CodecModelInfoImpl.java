@@ -67,9 +67,8 @@ import org.osgi.service.component.annotations.ReferencePolicy;
 
 @Component(immediate = true, name = "CodecModelInfoService", service = CodecModelInfo.class)
 public class CodecModelInfoImpl extends HashMap<String, Object> implements CodecModelInfo {
-	
-	@Reference
-	CodecInfoHolderHelper codecInfoHolderHelper;
+
+	private CodecInfoHolderHelper codecInfoHolderHelper;
 
 	/** serialVersionUID */
 	private static final long serialVersionUID = 7749336016374647599L;
@@ -139,9 +138,14 @@ public class CodecModelInfoImpl extends HashMap<String, Object> implements Codec
 		}
 	}
 
+	@Reference
+	public void setCodecInfoHolderHelper(CodecInfoHolderHelper codecInfoHolderHelper) {
+		this.codecInfoHolderHelper = codecInfoHolderHelper;
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.HashMap#put(java.lang.Object, java.lang.Object)
 	 */
 	@Override

@@ -38,14 +38,13 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, name = "CodecInfoHolderHelper", service = CodecInfoHolderHelper.class)
 public class CodecInfoHolderHelper {
 	
-	ComponentServiceObjects<ResourceSet> rsFactory;
+	private ComponentServiceObjects<ResourceSet> rsFactory;
 		
 	private static final Logger LOGGER = Logger.getLogger(CodecInfoHolderHelper.class.getName());
 	
 	@Activate
 	public CodecInfoHolderHelper(@Reference ComponentServiceObjects<ResourceSet> rsFactory) {
 		this.rsFactory = rsFactory;
-		System.out.println("I am CodecInfoHolderHelper");
 	}
 
 	public CodecInfoHolder createCodecInfoHolderForType(InfoType codecType) {

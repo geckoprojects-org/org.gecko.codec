@@ -21,7 +21,6 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
 
 /**
  * Default implementation of {@link CodecModuleConfigurator}
@@ -32,12 +31,8 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 	configurationPolicy = ConfigurationPolicy.REQUIRE, property = "type=json")
 public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 	
-	@Reference(cardinality = ReferenceCardinality.MANDATORY)
-	CodecEMFSerializers serializers;
-	
-	@Reference(cardinality = ReferenceCardinality.MANDATORY)
-	CodecEMFDeserializers deserializers;
-
+	private CodecEMFSerializers serializers;
+	private CodecEMFDeserializers deserializers;
 	private CodecModule.Builder moduleBuilder;
 	private CodecModuleConfig codecConfig; 
 
@@ -77,5 +72,15 @@ public class DefaultCodecModuleConfigurator implements CodecModuleConfigurator {
 		configureModuleBuilder(codecConfig);
 		return moduleBuilder;
 	}
-	
+
+	@Reference
+	public void setSerializers(CodecEMFSerializers serializers) {
+		this.serializers = serializers;
+	}
+
+	@Reference
+	public void setDeserializers(CodecEMFDeserializers deserializers) {
+		this.deserializers = deserializers;
+	}
+
 }

@@ -31,23 +31,33 @@ import org.osgi.service.component.annotations.Reference;
 @Component(immediate = true, name = "EcowittRF", service = {Resource.Factory.class, EcoWittResourceFactory.class}, 
 		property = {EMFNamespaces.EMF_CONFIGURATOR_NAME + "=CodecEcoWitt", EMFNamespaces.EMF_MODEL_FILE_EXT + "=ecowitt", EMFNamespaces.EMF_MODEL_CONTENT_TYPE + "=application/ecowitt"})
 public class EcoWittResourceFactory extends ResourceFactoryImpl {
-	
-	@Reference
+
 	private CodecModelInfo modelInfo;
-	
-	@Reference(target="(type=ecowitt)")
 	private ObjectMapperConfigurator objMapperConfigurator;
-	
-	@Reference(target="(type=json)")
 	private CodecModuleConfigurator codecModuleConfigurator;
-	
-	/* 
+
+	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl#createResource(org.eclipse.emf.common.util.URI)
 	 */
 	@Override
-	public Resource createResource(URI uri) {		
+	public Resource createResource(URI uri) {
 		return new EcoWittResource(uri, modelInfo, codecModuleConfigurator.getCodecModuleBuilder(), objMapperConfigurator.getObjMapperBuilderFactory());
+	}
+
+	@Reference
+	public void setModelInfo(CodecModelInfo modelInfo) {
+		this.modelInfo = modelInfo;
+	}
+
+	@Reference(target="(type=ecowitt)")
+	public void setObjMapperConfigurator(ObjectMapperConfigurator objMapperConfigurator) {
+		this.objMapperConfigurator = objMapperConfigurator;
+	}
+
+	@Reference(target="(type=json)")
+	public void setCodecModuleConfigurator(CodecModuleConfigurator codecModuleConfigurator) {
+		this.codecModuleConfigurator = codecModuleConfigurator;
 	}
 
 }

@@ -32,10 +32,7 @@ import org.osgi.service.component.annotations.Reference;
 configurationPolicy = ConfigurationPolicy.REQUIRE, property = "type=json")
 public class DefaultObjectMapperConfigurator implements ObjectMapperConfigurator {
 	
-	@Reference(target="(type=json)")
-	CodecFactoryConfigurator codecFactoryConfigurator;
-
-
+	private CodecFactoryConfigurator codecFactoryConfigurator;
 	private Map<String, Object> properties;
 	
 	@Activate
@@ -51,5 +48,10 @@ public class DefaultObjectMapperConfigurator implements ObjectMapperConfigurator
 	public ObjectMapperBuilderFactory getObjMapperBuilderFactory() {
 		DefaultObjectMapperBuilderFactory factory = new DefaultObjectMapperBuilderFactory(properties, codecFactoryConfigurator);
 		return factory;
+	}
+
+	@Reference(name="codecFactoryConfigurator", target="(type=json)")
+	public void setCodecFactoryConfigurator(CodecFactoryConfigurator codecFactoryConfigurator) {
+		this.codecFactoryConfigurator = codecFactoryConfigurator;
 	}
 }

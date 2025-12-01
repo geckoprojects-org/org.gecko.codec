@@ -27,7 +27,7 @@ import org.osgi.service.component.annotations.Component;
  * @author ilenia
  * @since Sep 22, 2025
  */
-@Component(immediate = true, service = CodecFactoryConfigurator.class, property = {"type=csv"})
+@Component(immediate = true, service = CodecFactoryConfigurator.class, property = "type=csv")
 public class CSVCodecFactoryConfigurator extends AbstractCodecFactoryConfigurator {
 	
 	@Activate
