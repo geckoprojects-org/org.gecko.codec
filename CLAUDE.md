@@ -33,7 +33,8 @@ This is an Eclipse EMF codec framework built on Jackson, providing a common abst
 - **org.eclipse.fennec.codec** - Core codec framework and base classes
 - **org.eclipse.fennec.codec.json** - JSON implementation using Jackson
 - **org.eclipse.fennec.codec.mongo** - MongoDB persistence implementation
-- **org.eclipse.fennec.codec.jsonschema** - JSON Schema support (current branch focus)
+- **org.eclipse.fennec.codec.jsonschema** - JSON Schema to/from EMF EPackage conversion
+- **org.eclipse.fennec.codec.csv** - CSV format serialization
 - **org.eclipse.fennec.codec.info** - Model annotation processing and codec metadata
 - **org.eclipse.fennec.codec.constants** - Shared constants and annotations
 
@@ -61,12 +62,6 @@ The framework uses three main configurators:
 - Each implementation has corresponding `.test` project with OSGi integration tests
 - Tests use `.bndrun` files to define OSGi runtime requirements
 
-### Current Branch: jsonschema
-Working on JSON Schema serialization/deserialization functionality. Key files:
-- `JsonSchemaToEPackageDeserializer.java:*` - Converts JSON Schema to EMF EPackage
-- `EPackageToJsonSchemaSerializer.java:*` - Converts EMF EPackage to JSON Schema  
-- `CodecJsonSchemaSerializationTest.java:*` - Test coverage for schema operations
-
 ## Development Notes
 
 ### Build System
@@ -90,3 +85,19 @@ The framework supports extensive codec annotations for customizing serialization
 
 ### Jackson 3.x Migration
 The codebase has been migrated to Jackson 3.x (tools.jackson.*) - be aware of package name changes from com.fasterxml.jackson.* in older versions.
+
+### Key Options Classes
+When working with save/load operations, the main option classes are:
+- `org.eclipse.fennec.codec.constants.ObjectMapperOptions` - Jackson ObjectMapper settings
+- `org.eclipse.fennec.codec.constants.CodecModuleOptions` - Codec module serialization settings
+- `org.eclipse.fennec.codec.constants.CodecModelInfoOptions` - Per-EClass codec settings
+- `org.eclipse.fennec.codec.constants.CodecResourceOptions` - Resource-level options (e.g., CODEC_ROOT_OBJECT for deserialization)
+
+Use `CodecOptionsBuilder` to construct options maps:
+```java
+Map<String, Object> options = CodecOptionsBuilder
+    .create()
+    .forClass(PersonPackage.eINSTANCE.getPerson())
+    .idStrategy("ID_FIELD")
+    .build();
+```

@@ -187,7 +187,7 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="headers" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier0Base"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier0Base"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Unarchive">
@@ -200,7 +200,7 @@
       <details key="name" value="unarchive"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="format" lowerBound="1"
-        eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier1"/>
+        eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier1"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Sql_selectBase" abstract="true">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -212,24 +212,24 @@
       <details key="name" value="sql_select"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="driver" lowerBound="1"
-        eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier2"/>
+        eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier2"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="dsn" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="table" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="columns" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier3Base"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier3Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="where" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="args_mapping" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="prefix" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="suffix" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="init_files" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier4Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="init_files" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier4Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="init_statement" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="conn_max_idle_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="conn_max_life_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_idle" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier5"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_idle" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier5"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_open" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier6"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_open" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier6"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Sql_rawBase" abstract="true">
@@ -242,7 +242,7 @@
       <details key="name" value="sql_raw"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="driver" lowerBound="1"
-        eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier7"/>
+        eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier7"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="dsn" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="query" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="unsafe_dynamic_query" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
@@ -256,16 +256,16 @@
         <details key="default" value="false"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="queries" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier8Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="queries" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier8Base"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="init_files" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier9Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="init_files" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier9Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="init_statement" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="conn_max_idle_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="conn_max_life_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_idle" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier10"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_idle" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier10"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_open" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier11"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_open" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier11"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Sql_insertBase" abstract="true">
@@ -278,24 +278,24 @@
       <details key="name" value="sql_insert"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="driver" lowerBound="1"
-        eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier12"/>
+        eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier12"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="dsn" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="table" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="columns" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier13Base"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier13Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="args_mapping" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="prefix" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="suffix" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="init_files" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier14Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="init_files" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier14Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="init_statement" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="conn_max_idle_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="conn_max_life_time" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_idle" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier15"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_idle" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier15"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_open" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier16"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="conn_max_open" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier16"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Sleep">
@@ -357,13 +357,13 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="jwt.private_key_file" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="jwt.signing_method" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="jwt.claims" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier17"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="jwt.claims" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier17"
         containment="true">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="{}"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="jwt.headers" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier18"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="jwt.headers" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier18"
         containment="true">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="{}"/>
@@ -382,7 +382,7 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tls.root_cas" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tls.root_cas_file" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="tls.client_certs" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier19Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tls.client_certs" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier19Base"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Noop">
@@ -404,7 +404,7 @@
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
       <details key="name" value="log"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="level" lowerBound="1" eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier20">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="level" lowerBound="1" eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier20">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="&quot;INFO&quot;"/>
       </eAnnotations>
@@ -480,7 +480,7 @@
         <details key="default" value="&quot;GET&quot;"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="headers" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier21Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="headers" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier21Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="metadata.include_prefixes"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -518,7 +518,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="oauth2.token_url" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="oauth2.scopes" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="oauth2.endpoint_params"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier22"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier22"
         containment="true">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="{}"/>
@@ -538,13 +538,13 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="jwt.private_key_file" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="jwt.signing_method" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="jwt.claims" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier23"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="jwt.claims" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier23"
         containment="true">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="{}"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="jwt.headers" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier24"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="jwt.headers" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier24"
         containment="true">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="{}"/>
@@ -568,7 +568,7 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tls.root_cas" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tls.root_cas_file" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="tls.client_certs" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier25Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tls.client_certs" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier25Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="dump_request_log_level"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -584,7 +584,7 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="drop_on" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="successful_on" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="retries" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier26"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="retries" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier26"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="retry_period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -647,7 +647,7 @@
       <details key="name" value="generate"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="interval" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="count" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier27"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="count" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier27"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="mapping" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -674,13 +674,13 @@
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
       <details key="name" value="broker"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="inputs" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier30Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inputs" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier30Base"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="copies" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier31"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="copies" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier31"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="batching.count" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier32"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="batching.count" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier32"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="batching.byte_size" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier33"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="batching.byte_size" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier33"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="batching.period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="check" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -694,7 +694,7 @@
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
       <details key="name" value="csv"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" lowerBound="1" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier34Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" lowerBound="1" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier34Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="parse_header_row" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -751,10 +751,10 @@
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
       <details key="name" value="mqtt"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="urls" lowerBound="1" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier42Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="urls" lowerBound="1" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier42Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="client_id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qos" eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier43">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qos" eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier43">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="&quot;1&quot;"/>
       </eAnnotations>
@@ -775,7 +775,7 @@
       <details key="name" value="schema_registry"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="url" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="subjects" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier45Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subjects" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier45Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="compatibility" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -789,7 +789,7 @@
       <details key="name" value="kafka"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="addresses" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier46Base"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier46Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tls.enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -809,9 +809,9 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tls.root_cas" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tls.root_cas_file" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="tls.client_certs" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier47Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tls.client_certs" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier47Base"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sasl.mechanism" eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier48">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sasl.mechanism" eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier48">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="&quot;none&quot;"/>
       </eAnnotations>
@@ -966,7 +966,7 @@
         <details key="default" value="&quot;&quot;"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="numeric_mode" eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier52">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="numeric_mode" eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier52">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="&quot;loose&quot;"/>
       </eAnnotations>
@@ -991,13 +991,13 @@
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
       <details key="name" value="confidentiality"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="level" lowerBound="1" eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier53">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="level" lowerBound="1" eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier53">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="&quot;Public&quot;"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="fields" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier54Base"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier54Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="redaction_text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -1153,48 +1153,48 @@
       <details key="additionalProperties" value="false"/>
       <details key="rootClass" value="true"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="input" lowerBound="1" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="input" lowerBound="1" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode"
         containment="true">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="ref" value="#/$defs/inputNode"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="pipeline" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier55"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier55"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="output" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode"
         containment="true">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="ref" value="#/$defs/outputNode"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sync_responseOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Sync_responseOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="sync_response"/>
       <details key="configRef" value="#/$defs/configs/sync_response"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sync_response"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sync_response"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BranchProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="BranchProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="branch"/>
       <details key="configRef" value="#/$defs/configs/branch"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Branch"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Branch"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Aws_s3InputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Aws_s3InputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="aws_s3"/>
       <details key="configRef" value="#/$defs/configs/aws_s3"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Aws_s3Base"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Aws_s3Base"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ArtificialClassifier1">
@@ -1211,7 +1211,7 @@
     <eLiterals name="tar" value="6" literal="tar"/>
     <eLiterals name="zip" value="7" literal="zip"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier4Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier4Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier4Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier4Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier4"/>
       <details key="namespacePath" value="configs/sql_select"/>
@@ -1226,7 +1226,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier4Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier4Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier4Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier4Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier4"/>
       <details key="namespacePath" value="configs/sql_select"/>
@@ -1238,13 +1238,13 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Http_serverInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Http_serverInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="http_server"/>
       <details key="configRef" value="#/$defs/configs/http_server"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_server"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_server"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ArtificialClassifier39">
@@ -1256,43 +1256,43 @@
     <eLiterals name="delimited" value="1" literal="delimited"/>
     <eLiterals name="auto" value="2" literal="auto"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="GenerateInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="GenerateInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="generate"/>
       <details key="configRef" value="#/$defs/configs/generate"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Generate"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Generate"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LogProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="LogProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="log"/>
       <details key="configRef" value="#/$defs/configs/log"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Log"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Log"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SleepProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="SleepProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="sleep"/>
       <details key="configRef" value="#/$defs/configs/sleep"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sleep"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sleep"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="JmespathProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="JmespathProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="jmespath"/>
       <details key="configRef" value="#/$defs/configs/jmespath"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Jmespath"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Jmespath"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier8Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier8Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier8Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier8Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier8"/>
       <details key="namespacePath" value="configs/sql_raw"/>
@@ -1304,13 +1304,13 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Alarm_thresholdsProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Alarm_thresholdsProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="alarm_thresholds"/>
       <details key="configRef" value="#/$defs/configs/alarm_thresholds"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Alarm_thresholds"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Alarm_thresholds"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier9Base" abstract="true">
@@ -1325,7 +1325,7 @@
       <details key="name" value="ArtificialClassifier9"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier50Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier50">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier50Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier50">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -1333,7 +1333,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier8Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier8Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier8Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier8Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier8"/>
       <details key="namespacePath" value="configs/sql_raw"/>
@@ -1359,25 +1359,25 @@
       <details key="name" value="ArtificialClassifier49"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BloblangProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="BloblangProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="bloblang"/>
       <details key="configRef" value="#/$defs/configs/bloblang"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Bloblang"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Bloblang"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="HttpProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="HttpProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="http"/>
       <details key="configRef" value="#/$defs/configs/http"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier50Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier50">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier50Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier50">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -1409,7 +1409,7 @@
       <details key="default" value="1"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier44Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier44">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier44Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier44">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -1417,7 +1417,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier44Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier44">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier44Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier44">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -1437,16 +1437,16 @@
       <details key="name" value="ArtificialClassifier45"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_insertProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_insertProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="sql_insert"/>
       <details key="configRef" value="#/$defs/configs/sql_insert"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_insertBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_insertBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Http_clientOutput" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_clientBase">
+  <eClassifiers xsi:type="ecore:EClass" name="Http_clientOutput" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_clientBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="http_client"/>
       <details key="namespacePath" value="configs"/>
@@ -1461,14 +1461,14 @@
         <details key="default" value="&quot;POST&quot;"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="headers" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier40Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="headers" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier40Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="propagate_response" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="false"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="retries" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier41"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="retries" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier41"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="retry_period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -1486,16 +1486,16 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Directus_mappingProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Directus_mappingProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="directus_mapping"/>
       <details key="configRef" value="#/$defs/configs/directus_mapping"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Directus_mapping"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Directus_mapping"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier32Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier32">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier32Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier32">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -1503,16 +1503,16 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MqttInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="MqttInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="mqtt"/>
       <details key="configRef" value="#/$defs/configs/mqtt"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//MqttBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//MqttBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier32Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier32">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier32Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier32">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -1531,67 +1531,67 @@
       <details key="name" value="ArtificialClassifier46"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="CatchProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="CatchProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="catch"/>
       <details key="configRef" value="#/$defs/configs/catch"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Catch"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Catch"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_rawProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_rawProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="sql_raw"/>
       <details key="configRef" value="#/$defs/configs/sql_raw"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_rawBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_rawBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Schema_registryInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Schema_registryInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="schema_registry"/>
       <details key="configRef" value="#/$defs/configs/schema_registry"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Schema_registry"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Schema_registry"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SwitchProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="SwitchProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="switch"/>
       <details key="configRef" value="#/$defs/configs/switch"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Switch"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Switch"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_insertOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_insertOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="sql_insert"/>
       <details key="configRef" value="#/$defs/configs/sql_insert"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_insertBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_insertBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FallbackOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="FallbackOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="fallback"/>
       <details key="configRef" value="#/$defs/configs/fallback"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Fallback"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Fallback"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Switch_outputOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Switch_outputOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="switch_output"/>
       <details key="configRef" value="#/$defs/configs/switch_output"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Switch_output"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Switch_output"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier27" abstract="true">
@@ -1601,7 +1601,7 @@
       <details key="typeArray" value="[&quot;integer&quot;,&quot;string&quot;]"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_insertProcessor_Output_Form" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_insertBase">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_insertProcessor_Output_Form" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_insertBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="sql_insert"/>
       <details key="namespacePath" value="configs"/>
@@ -1622,13 +1622,13 @@
     <eLiterals name="Confidential" value="2" literal="Confidential"/>
     <eLiterals name="Secret" value="3" literal="Secret"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="NoopProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="NoopProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="noop"/>
       <details key="configRef" value="#/$defs/configs/noop"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Noop"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Noop"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier18">
@@ -1645,25 +1645,25 @@
       <details key="artificial" value="true"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_selectProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_selectProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="sql_select"/>
       <details key="configRef" value="#/$defs/configs/sql_select"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_selectBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_selectBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ConfidentialityProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="ConfidentialityProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="confidentiality"/>
       <details key="configRef" value="#/$defs/configs/confidentiality"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Confidentiality"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Confidentiality"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier42Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier42Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier42Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier42Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier42"/>
       <details key="namespacePath" value="configs/mqtt"/>
@@ -1675,7 +1675,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier41Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier41">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier41Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier41">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -1683,7 +1683,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier42Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier42Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier42Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier42Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier42"/>
       <details key="namespacePath" value="configs/mqtt"/>
@@ -1698,25 +1698,25 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="UnarchiveProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="UnarchiveProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="unarchive"/>
       <details key="configRef" value="#/$defs/configs/unarchive"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Unarchive"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Unarchive"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KafkaInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="KafkaInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="kafka"/>
       <details key="configRef" value="#/$defs/configs/kafka"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//KafkaBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//KafkaBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier41Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier41">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier41Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier41">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -1724,43 +1724,43 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_selectInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_selectInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="sql_select"/>
       <details key="configRef" value="#/$defs/configs/sql_select"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_selectBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_selectBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Aws_s3OutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Aws_s3OutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="aws_s3"/>
       <details key="configRef" value="#/$defs/configs/aws_s3"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Aws_s3Base"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Aws_s3Base"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Metadata_retrievalProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Metadata_retrievalProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="metadata_retrieval"/>
       <details key="configRef" value="#/$defs/configs/metadata_retrieval"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Metadata_retrieval"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Metadata_retrieval"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FileOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="FileOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="file"/>
       <details key="configRef" value="#/$defs/configs/file"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//FileBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//FileBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier11Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier11">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier11Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier11">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -1768,7 +1768,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier11Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier11">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier11Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier11">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -1776,7 +1776,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier40Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier40Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier40Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier40Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier40"/>
       <details key="namespacePath" value="configs/http_client"/>
@@ -1794,7 +1794,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier40Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier40Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier40Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier40Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier40"/>
       <details key="namespacePath" value="configs/http_client"/>
@@ -1806,7 +1806,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier6Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier6">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier6Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier6">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -1814,7 +1814,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier6Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier6">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier6Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier6">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -1836,7 +1836,7 @@
       <details key="artificial" value="true"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier38Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier38Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier38Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier38Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier38"/>
       <details key="namespacePath" value="configs/http_client"/>
@@ -1885,7 +1885,7 @@
       <details key="default" value="3"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier35Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier35Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier35Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier35Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier35"/>
       <details key="namespacePath" value="configs/file"/>
@@ -1900,7 +1900,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier35Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier35Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier35Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier35Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier35"/>
       <details key="namespacePath" value="configs/file"/>
@@ -1924,7 +1924,7 @@
       <details key="name" value="ArtificialClassifier8"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier34Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier34Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier34Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier34Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier34"/>
       <details key="namespacePath" value="configs/csv"/>
@@ -1936,7 +1936,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_rawProcessor_Input_Form" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_rawBase">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_rawProcessor_Input_Form" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_rawBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="sql_raw"/>
       <details key="namespacePath" value="configs"/>
@@ -1947,7 +1947,7 @@
       <details key="name" value="sql_raw"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier34Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier34Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier34Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier34Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier34"/>
       <details key="namespacePath" value="configs/csv"/>
@@ -1962,7 +1962,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier38Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier38Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier38Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier38Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier38"/>
       <details key="namespacePath" value="configs/http_client"/>
@@ -1974,7 +1974,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier10Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier10">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier10Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier10">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -1982,7 +1982,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier10Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier10">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier10Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier10">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -2010,7 +2010,7 @@
       <details key="default" value="2"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier26Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier26">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier26Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier26">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -2026,7 +2026,7 @@
       <details key="default" value="0"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier26Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier26">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier26Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier26">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -2046,7 +2046,7 @@
       <details key="name" value="ArtificialClassifier30"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Aws_s3Input" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Aws_s3Base">
+  <eClassifiers xsi:type="ecore:EClass" name="Aws_s3Input" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Aws_s3Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="aws_s3"/>
       <details key="namespacePath" value="configs"/>
@@ -2059,7 +2059,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bucket" lowerBound="1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="prefix" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="scanner" eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier28">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="scanner" eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier28">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="&quot;to_the_end&quot;"/>
       </eAnnotations>
@@ -2068,7 +2068,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key_path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="bucket_path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Aws_s3Output" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Aws_s3Base">
+  <eClassifiers xsi:type="ecore:EClass" name="Aws_s3Output" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Aws_s3Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="aws_s3"/>
       <details key="namespacePath" value="configs"/>
@@ -2083,7 +2083,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="content_type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="batching.count" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier29"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="batching.count" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier29"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="batching.period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -2099,16 +2099,16 @@
       <details key="name" value="ArtificialClassifier34"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BrokerInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="BrokerInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="broker"/>
       <details key="configRef" value="#/$defs/configs/broker"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Broker"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Broker"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier0Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier0Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier0Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier0Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier0"/>
       <details key="namespacePath" value="configs/sync_response"/>
@@ -2132,7 +2132,7 @@
       <details key="name" value="ArtificialClassifier4"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier0Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier0Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier0Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier0Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier0"/>
       <details key="namespacePath" value="configs/sync_response"/>
@@ -2150,7 +2150,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier15Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier15">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier15Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier15">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -2158,7 +2158,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier15Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier15">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier15Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier15">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -2166,16 +2166,16 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="JqProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="JqProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="jq"/>
       <details key="configRef" value="#/$defs/configs/jq"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Jq"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Jq"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier47Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier47Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier47Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier47Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier47"/>
       <details key="namespacePath" value="configs/kafka"/>
@@ -2187,16 +2187,16 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MqttOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="MqttOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="mqtt"/>
       <details key="configRef" value="#/$defs/configs/mqtt"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//MqttBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//MqttBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier47Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier47Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier47Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier47Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier47"/>
       <details key="namespacePath" value="configs/kafka"/>
@@ -2211,22 +2211,22 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FileInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="FileInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="file"/>
       <details key="configRef" value="#/$defs/configs/file"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//FileBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//FileBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="CsvInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="CsvInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="csv"/>
       <details key="configRef" value="#/$defs/configs/csv"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Csv"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Csv"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier50" abstract="true">
@@ -2237,13 +2237,13 @@
       <details key="default" value="1024"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Openapi_validatorProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Openapi_validatorProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="openapi_validator"/>
       <details key="configRef" value="#/$defs/configs/openapi_validator"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Openapi_validator"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Openapi_validator"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier51" abstract="true">
@@ -2253,7 +2253,7 @@
       <details key="typeArray" value="[&quot;integer&quot;,&quot;string&quot;]"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier54Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier54Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier54Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier54Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier54"/>
       <details key="namespacePath" value="configs/confidentiality"/>
@@ -2284,7 +2284,7 @@
       <details key="default" value="2"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier54Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier54Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier54Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier54Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier54"/>
       <details key="namespacePath" value="configs/confidentiality"/>
@@ -2312,13 +2312,13 @@
     <eLiterals name="gocosmos" value="8" literal="gocosmos"/>
     <eLiterals name="spanner" value="9" literal="spanner"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Http_clientInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Http_clientInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="http_client"/>
       <details key="configRef" value="#/$defs/configs/http_client"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_clientBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_clientBase"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier41" abstract="true">
@@ -2353,7 +2353,7 @@
       <details key="default" value="2"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier45Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier45Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier45Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier45Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier45"/>
       <details key="namespacePath" value="configs/schema_registry"/>
@@ -2365,13 +2365,13 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KafkaOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="KafkaOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="kafka"/>
       <details key="configRef" value="#/$defs/configs/kafka"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//KafkaBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//KafkaBase"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier16" abstract="true">
@@ -2382,7 +2382,7 @@
       <details key="default" value="0"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier45Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier45Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier45Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier45Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier45"/>
       <details key="namespacePath" value="configs/schema_registry"/>
@@ -2419,7 +2419,7 @@
       <details key="name" value="ArtificialClassifier13"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier31Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier31">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier31Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier31">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -2427,7 +2427,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier31Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier31">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier31Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier31">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -2435,16 +2435,16 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SwitchOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="SwitchOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="switch"/>
       <details key="configRef" value="#/$defs/configs/switch"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Switch"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Switch"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier9Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier9Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier9Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier9Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier9"/>
       <details key="namespacePath" value="configs/sql_raw"/>
@@ -2456,7 +2456,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier9Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier9Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier9Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier9Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier9"/>
       <details key="namespacePath" value="configs/sql_raw"/>
@@ -2471,7 +2471,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier21Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier21Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier21Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier21Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier21"/>
       <details key="namespacePath" value="configs/http"/>
@@ -2489,7 +2489,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier46Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier46Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier46Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier46Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier46"/>
       <details key="namespacePath" value="configs/kafka"/>
@@ -2501,13 +2501,13 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MappingProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="MappingProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="mapping"/>
       <details key="configRef" value="#/$defs/configs/mapping"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Mapping"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Mapping"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier25Base" abstract="true">
@@ -2522,7 +2522,7 @@
       <details key="name" value="ArtificialClassifier25"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier46Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier46Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier46Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier46Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier46"/>
       <details key="namespacePath" value="configs/kafka"/>
@@ -2537,7 +2537,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier21Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier21Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier21Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier21Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier21"/>
       <details key="namespacePath" value="configs/http"/>
@@ -2550,16 +2550,16 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Schema_registry_encodeProcessorNode"
-      eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+      eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="schema_registry_encode"/>
       <details key="configRef" value="#/$defs/configs/schema_registry_encode"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Schema_registry_encode"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Schema_registry_encode"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier16Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier16">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier16Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier16">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -2585,7 +2585,7 @@
     <eLiterals name="lines" literal="lines"/>
     <eLiterals name="to_the_end" value="1" literal="to_the_end"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier16Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier16">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier16Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier16">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -2593,7 +2593,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier29Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier29">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier29Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier29">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -2601,16 +2601,16 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="DropOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="DropOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="drop"/>
       <details key="configRef" value="#/$defs/configs/drop"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Drop"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Drop"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier29Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier29">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier29Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier29">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -2642,7 +2642,7 @@
       <details key="name" value="ArtificialClassifier47"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier5Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier5">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier5Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier5">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -2650,16 +2650,16 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Evaluate_thresholdsProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Evaluate_thresholdsProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="evaluate_thresholds"/>
       <details key="configRef" value="#/$defs/configs/evaluate_thresholds"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Evaluate_thresholds"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Evaluate_thresholds"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier5Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier5">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier5Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier5">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -2694,7 +2694,7 @@
       <details key="default" value="0"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MqttOutput" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//MqttBase">
+  <eClassifiers xsi:type="ecore:EClass" name="MqttOutput" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//MqttBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="mqtt"/>
       <details key="namespacePath" value="configs"/>
@@ -2711,7 +2711,7 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="write_timeout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="max_in_flight" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier44"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="max_in_flight" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier44"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ArtificialClassifier43">
@@ -2742,7 +2742,7 @@
       <details key="name" value="ArtificialClassifier21"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_selectInput_Form" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_selectBase">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_selectInput_Form" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_selectBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="sql_select"/>
       <details key="namespacePath" value="configs"/>
@@ -2753,16 +2753,16 @@
       <details key="name" value="sql_select"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Http_clientOutputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Http_clientOutputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//OutputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="http_client"/>
       <details key="configRef" value="#/$defs/configs/http_client"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_clientBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_clientBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier19Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier19Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier19Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier19Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier19"/>
       <details key="namespacePath" value="configs/schema_registry_encode"/>
@@ -2774,7 +2774,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier19Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier19Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier19Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier19Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier19"/>
       <details key="namespacePath" value="configs/schema_registry_encode"/>
@@ -2789,7 +2789,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier3Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier3Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier3Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier3Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier3"/>
       <details key="namespacePath" value="configs/sql_select"/>
@@ -2813,7 +2813,7 @@
       <details key="name" value="ArtificialClassifier38"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier3Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier3Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier3Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier3Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier3"/>
       <details key="namespacePath" value="configs/sql_select"/>
@@ -2828,7 +2828,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier14Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier14Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier14Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier14Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier14"/>
       <details key="namespacePath" value="configs/sql_insert"/>
@@ -2840,7 +2840,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier14Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier14Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier14Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier14Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier14"/>
       <details key="namespacePath" value="configs/sql_insert"/>
@@ -2855,7 +2855,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KafkaOutput" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//KafkaBase">
+  <eClassifiers xsi:type="ecore:EClass" name="KafkaOutput" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//KafkaBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="kafka"/>
       <details key="namespacePath" value="configs"/>
@@ -2867,7 +2867,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="topic" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="max_in_flight" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier51"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="max_in_flight" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier51"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -2882,16 +2882,16 @@
     <eLiterals name="WARN" value="3" literal="WARN"/>
     <eLiterals name="ERROR" value="4" literal="ERROR"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Json_schemaProcessorNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Json_schemaProcessorNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="json_schema"/>
       <details key="configRef" value="#/$defs/configs/json_schema"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Json_schema"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Json_schema"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Http_clientInput" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_clientBase">
+  <eClassifiers xsi:type="ecore:EClass" name="Http_clientInput" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Http_clientBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="http_client"/>
       <details key="namespacePath" value="configs"/>
@@ -2906,14 +2906,14 @@
         <details key="default" value="&quot;GET&quot;"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="headers" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier38Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="headers" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier38Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="stream" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="false"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="scanner" eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier39">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="scanner" eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier39">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="&quot;lines&quot;"/>
       </eAnnotations>
@@ -2937,7 +2937,7 @@
       <details key="name" value="ArtificialClassifier40"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KafkaInput" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//KafkaBase">
+  <eClassifiers xsi:type="ecore:EClass" name="KafkaInput" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//KafkaBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="kafka"/>
       <details key="namespacePath" value="configs"/>
@@ -2948,7 +2948,7 @@
       <details key="name" value="kafka"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="topics" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier49Base"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier49Base"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="consumer_group" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="start_from_oldest" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
@@ -2956,7 +2956,7 @@
         <details key="default" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="checkpoint_limit" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier50"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="checkpoint_limit" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier50"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="auto_replay_nacks" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
@@ -2964,7 +2964,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier27Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier27">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier27Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier27">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -2972,7 +2972,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FileInput" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//FileBase">
+  <eClassifiers xsi:type="ecore:EClass" name="FileInput" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//FileBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="file"/>
       <details key="namespacePath" value="configs"/>
@@ -2982,9 +2982,9 @@
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
       <details key="name" value="file"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" lowerBound="1" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier35Base"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="paths" lowerBound="1" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier35Base"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="scanner" eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier36">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="scanner" eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier36">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="&quot;lines&quot;"/>
       </eAnnotations>
@@ -2995,7 +2995,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier27Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier27">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier27Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier27">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -3011,7 +3011,7 @@
     <eLiterals name="loose" literal="loose"/>
     <eLiterals name="strict" value="1" literal="strict"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier49Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier49Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier49Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier49Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier49"/>
       <details key="namespacePath" value="configs/kafka"/>
@@ -3023,7 +3023,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier49Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier49Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier49Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier49Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier49"/>
       <details key="namespacePath" value="configs/kafka"/>
@@ -3038,7 +3038,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier33Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier33">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier33Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier33">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -3046,7 +3046,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier33Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier33">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier33Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier33">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -3054,7 +3054,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier25Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier25Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier25Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier25Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier25"/>
       <details key="namespacePath" value="configs/http"/>
@@ -3069,7 +3069,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MqttInput" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//MqttBase">
+  <eClassifiers xsi:type="ecore:EClass" name="MqttInput" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//MqttBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="mqtt"/>
       <details key="namespacePath" value="configs"/>
@@ -3084,7 +3084,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="connect_timeout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="keepalive" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier25Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier25Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier25Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier25Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier25"/>
       <details key="namespacePath" value="configs/http"/>
@@ -3108,7 +3108,7 @@
       <details key="name" value="ArtificialClassifier42"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier51Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier51">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier51Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier51">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="string"/>
@@ -3116,7 +3116,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier51Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier51">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier51Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier51">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="artificial" value="true"/>
       <details key="variant" value="integer"/>
@@ -3136,16 +3136,16 @@
       <details key="name" value="ArtificialClassifier0"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_rawInputNode" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_rawInputNode" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//InputNode">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="discriminatorKey" value="sql_raw"/>
       <details key="configRef" value="#/$defs/configs/sql_raw"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="config" lowerBound="1"
-        eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_rawBase"
+        eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_rawBase"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FileOutput" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//FileBase">
+  <eClassifiers xsi:type="ecore:EClass" name="FileOutput" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//FileBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="file"/>
       <details key="namespacePath" value="configs"/>
@@ -3160,7 +3160,7 @@
         <details key="default" value="&quot;/tmp/data.txt&quot;"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="codec" lowerBound="1" eType="ecore:EEnum /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier37">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="codec" lowerBound="1" eType="ecore:EEnum /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier37">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="default" value="&quot;lines&quot;"/>
       </eAnnotations>
@@ -3172,7 +3172,7 @@
       <details key="artificial" value="true"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="processors" lowerBound="1"
-        upperBound="-1" eType="ecore:EClass /home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode"
+        upperBound="-1" eType="ecore:EClass /opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ProcessorNode"
         containment="true">
       <eAnnotations source="http://fennec.eclipse.org/jsonschema">
         <details key="ref" value="#/$defs/processorNode"/>
@@ -3180,7 +3180,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Sql_selectProcessor_Form" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_selectBase">
+  <eClassifiers xsi:type="ecore:EClass" name="Sql_selectProcessor_Form" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//Sql_selectBase">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="sql_select"/>
       <details key="namespacePath" value="configs"/>
@@ -3203,7 +3203,7 @@
       <details key="name" value="ArtificialClassifier19"/>
     </eAnnotations>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier13Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier13Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier13Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier13Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier13"/>
       <details key="namespacePath" value="configs/sql_insert"/>
@@ -3215,7 +3215,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier30Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier30Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier30Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier30Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier30"/>
       <details key="namespacePath" value="configs/broker"/>
@@ -3227,7 +3227,7 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier13Variant0" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier13Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier13Variant0" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier13Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier13"/>
       <details key="namespacePath" value="configs/sql_insert"/>
@@ -3242,7 +3242,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="items" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier30Variant1" eSuperTypes="/home/grune/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier30Base">
+  <eClassifiers xsi:type="ecore:EClass" name="ArtificialClassifier30Variant1" eSuperTypes="/opt/git/fennec-codec/org.eclipse.fennec.codec.jsonschema.test/test-data/pipeline.ecore#//ArtificialClassifier30Base">
     <eAnnotations source="http://fennec.eclipse.org/jsonschema">
       <details key="originalName" value="ArtificialClassifier30"/>
       <details key="namespacePath" value="configs/broker"/>
