@@ -14,7 +14,9 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.osgi.test.junit5.cm,\
 	tools.jackson.core.jackson-core,\
 	org.eclipse.fennec.openapi.model;version=snapshot,\
-	org.eclipse.fennec.codec.info
+	org.eclipse.fennec.codec.info,\
+	org.eclipse.fennec.codec.jsonschema,\
+	org.eclipse.fennec.codec.json
 	
 Private-Package: org.eclipse.fennec.codec.jsonschema.test
 

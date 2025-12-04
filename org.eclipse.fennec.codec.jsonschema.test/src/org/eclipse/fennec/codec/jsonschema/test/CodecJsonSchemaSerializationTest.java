@@ -43,7 +43,6 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.fennec.codec.info.CodecModelInfo;
-import org.eclipse.fennec.codec.options.CodecModelInfoOptions;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
 import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
@@ -59,6 +58,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.osgi.framework.BundleContext;
 import org.osgi.test.common.annotation.InjectBundleContext;
 import org.osgi.test.common.annotation.InjectService;
+import org.osgi.test.common.annotation.Property;
+import org.osgi.test.common.annotation.config.WithFactoryConfiguration;
 import org.osgi.test.junit5.cm.ConfigurationExtension;
 import org.osgi.test.junit5.context.BundleContextExtension;
 import org.osgi.test.junit5.service.ServiceExtension;
@@ -101,8 +102,8 @@ public class CodecJsonSchemaSerializationTest {
 	
 //	@Test
 	public void topLevelEClass() throws IOException {
-		String file1 = System.getProperty("data")+"top-level-eclass.json";
-		file2 = System.getProperty("data")+"ser_top-level-eclass.json";
+		String file1 = System.getProperty("data")+"top-level-eclass.jsonschema";
+		file2 = System.getProperty("data")+"ser_top-level-eclass.jsonschema";
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
 		Map<String, Object> options = CodecOptionsBuilder.create(). 
 				rootObject(EcorePackage.Literals.EPACKAGE).
@@ -129,7 +130,7 @@ public class CodecJsonSchemaSerializationTest {
 	
 	@Test
 	public void meterReading() throws IOException {
-		String file1 = System.getProperty("data")+"meter-reading.json";
+		String file1 = System.getProperty("data")+"meter-reading.jsonschema";
 		file2 = System.getProperty("data")+"ser_meter-reading.ecore";
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
 
@@ -154,10 +155,19 @@ public class CodecJsonSchemaSerializationTest {
 		res.save(options);
 	}
 
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
 	@Test
 	public void meterReadingDataDeserialization() throws IOException {
 		// Step 1: Load JSON Schema and convert to EPackage
-		String schemaFile = System.getProperty("data")+"meter-reading.json";
+		String schemaFile = System.getProperty("data")+"meter-reading.jsonschema";
 		Resource schemaRes = resourceSet.createResource(URI.createURI(schemaFile), "application/schema+json");
 
 		Map<String, Object> schemaOptions = CodecOptionsBuilder.create().
@@ -222,7 +232,7 @@ public class CodecJsonSchemaSerializationTest {
 	
 	@Test
 	public void pipeline() throws IOException {
-		String file1 = System.getProperty("data")+"pipeline_schema.json";
+		String file1 = System.getProperty("data")+"pipeline_schema.jsonschema";
 		file2 = System.getProperty("data")+"pipeline.ecore";
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
 
@@ -247,11 +257,20 @@ public class CodecJsonSchemaSerializationTest {
 		res.save(options);
 	}
 
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecFactoryConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "DefaultObjectMapperConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
+	@WithFactoryConfiguration(factoryPid = "DefaultCodecModuleConfigurator", location = "?", name = "test", properties = {
+			@Property(key = "type", value="json")
+	})
 	@Test
 	@Disabled("This is disabled because w/o generating code for the pipeline model I do not know how to make it work")
 	public void pipelineDataDeserializationWithOneOf() throws IOException {
 		// Step 1: Load JSON Schema and convert to EPackage
-		String schemaFile = System.getProperty("data")+"pipeline_schema.json";
+		String schemaFile = System.getProperty("data")+"pipeline_schema.jsonschema";
 		Resource schemaRes = resourceSet.createResource(URI.createURI(schemaFile), "application/schema+json");
 
 		Map<String, Object> schemaOptions = CodecOptionsBuilder.create().
@@ -420,8 +439,8 @@ public class CodecJsonSchemaSerializationTest {
 
 	@Test
 	public void pipelineRoundTrip() throws IOException {
-		String file1 = System.getProperty("data")+"pipeline_schema.json";
-		file2 = System.getProperty("data")+"pipeline_schema2.json";
+		String file1 = System.getProperty("data")+"pipeline_schema.jsonschema";
+		file2 = System.getProperty("data")+"pipeline_schema2.jsonschema";
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
 
 		Map<String, Object> options = CodecOptionsBuilder.create().
@@ -454,8 +473,8 @@ public class CodecJsonSchemaSerializationTest {
 	
 //	@Test
 	public void openAPIJsonSchema() throws IOException {
-		String file1 = System.getProperty("data")+"open-api.json";
-		file2 = System.getProperty("data")+"ser_open-api.json";
+		String file1 = System.getProperty("data")+"open-api.jsonschema";
+		file2 = System.getProperty("data")+"ser_open-api.jsonschema";
 		
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/schema+json");
 		Map<String, Object> options = CodecOptionsBuilder.create(). 
@@ -484,8 +503,8 @@ public class CodecJsonSchemaSerializationTest {
 	@Disabled("This does not fully work, because of the emf model we have. Some features are deserialized as String and then serialized back as String. This is no jsonschema (de)serializer fault. It depends on the model!")
 	@Test
 	public void openAPIComplete() throws IOException {
-		String file1 = System.getProperty("data")+"openapi-complete.json";
-		file2 = System.getProperty("data")+"ser_openapi-complete.json";
+		String file1 = System.getProperty("data")+"openapi-complete.jsonschema";
+		file2 = System.getProperty("data")+"ser_openapi-complete.jsonschema";
 		
 		Resource res = resourceSet.createResource(URI.createURI(file1), "application/json");
 		Map<String, Object> options = new HashMap<>();
