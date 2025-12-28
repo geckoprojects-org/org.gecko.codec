@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="api" nsURI="https://eclipse.org/fennec/metadata/api/1.0.0" nsPrefix="metadata.api">
+  <eAnnotations source="Version">
+    <details key="value" value="1.0"/>
+  </eAnnotations>
+  <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="complianceLevel" value="17.0"/>
+    <details key="oSGiCompatible" value="true"/>
+    <details key="basePackage" value="org.eclipse.fennec.model.metadata"/>
+    <details key="copyrightText" value="Copyright (c) 2012 - 2026 Data In Motion and others.&#xA;All rights reserved.&#xA;&#xA;This program and the accompanying materials are made&#xA;available under the terms of the Eclipse Public License 2.0&#xA;which is available at https://www.eclipse.org/legal/epl-2.0/&#xA;&#xA;SPDX-License-Identifier: EPL-2.0&#xA;&#xA;Contributors:&#xA;    Data In Motion - initial API and implementation&#xA;"/>
+    <details key="rootExtendsInterface" value=""/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EClass" name="MetadataService" abstract="true" interface="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Main service interface for accessing pre-computed model metadata."/>
+    </eAnnotations>
+    <eOperations name="registerPackage" eType="ecore:EClass metadata.ecore#//PackageMetadata">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Register an EPackage and build metadata for all its classes."/>
+      </eAnnotations>
+      <eParameters name="ePackage" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EPackage"/>
+    </eOperations>
+    <eOperations name="unregisterPackage">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Unregister an EPackage and remove all associated metadata."/>
+      </eAnnotations>
+      <eParameters name="ePackage" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EPackage"/>
+    </eOperations>
+    <eOperations name="getPackageMetadata" eType="ecore:EClass metadata.ecore#//PackageMetadata">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get metadata for a package by namespace URI."/>
+      </eAnnotations>
+      <eParameters name="nsURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="getClassMetadata" eType="ecore:EClass metadata.ecore#//ClassMetadata">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get metadata for an EClass."/>
+      </eAnnotations>
+      <eParameters name="eClass" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+    </eOperations>
+    <eOperations name="getClassMetadataByURI" eType="ecore:EClass metadata.ecore#//ClassMetadata">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get metadata for an EClass by its full URI."/>
+      </eAnnotations>
+      <eParameters name="uri" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="getClassMetadataByName" eType="ecore:EClass metadata.ecore#//ClassMetadata">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get metadata for an EClass by name and package namespace URI."/>
+      </eAnnotations>
+      <eParameters name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="nsURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="getFeatureMetadata" eType="ecore:EClass metadata.ecore#//FeatureMetadata">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get metadata for an EStructuralFeature."/>
+      </eAnnotations>
+      <eParameters name="feature" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+    </eOperations>
+    <eOperations name="getFeatureMetadataByURI" eType="ecore:EClass metadata.ecore#//FeatureMetadata">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get metadata for an EStructuralFeature by its full URI."/>
+      </eAnnotations>
+      <eParameters name="uri" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="getFeatureMetadataByName" eType="ecore:EClass metadata.ecore#//FeatureMetadata">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get metadata for an EStructuralFeature by feature name, class name, and package namespace URI."/>
+      </eAnnotations>
+      <eParameters name="featureName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="nsURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="getFeatureMetadataFromClass" eType="ecore:EClass metadata.ecore#//FeatureMetadata">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get metadata for an EStructuralFeature by feature name and ClassMetadata."/>
+      </eAnnotations>
+      <eParameters name="featureName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eParameters name="classMetadata" eType="ecore:EClass metadata.ecore#//ClassMetadata"/>
+    </eOperations>
+    <eOperations name="getClassAspect" eType="ecore:EClass metadata.ecore#//ClassAspect">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get a specific aspect from an EClass by aspect type ID."/>
+      </eAnnotations>
+      <eParameters name="eClass" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+      <eParameters name="aspectTypeId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="getFeatureAspect" eType="ecore:EClass metadata.ecore#//FeatureAspect">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get a specific aspect from an EStructuralFeature by aspect type ID."/>
+      </eAnnotations>
+      <eParameters name="feature" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+      <eParameters name="aspectTypeId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="getRegistry" eType="ecore:EClass metadata.ecore#//MetadataRegistry">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get the full metadata registry for serialization/caching."/>
+      </eAnnotations>
+    </eOperations>
+    <eOperations name="registerAspectProvider">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Register an AspectProvider to contribute aspects when packages are registered."/>
+      </eAnnotations>
+      <eParameters name="provider" eType="#//AspectProvider"/>
+    </eOperations>
+    <eOperations name="unregisterAspectProvider">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Unregister an AspectProvider."/>
+      </eAnnotations>
+      <eParameters name="provider" eType="#//AspectProvider"/>
+    </eOperations>
+    <eOperations name="getAspectProviders" upperBound="-1" eType="#//AspectProvider">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Get all registered AspectProviders."/>
+      </eAnnotations>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AspectProvider" abstract="true" interface="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Extension point for contributing aspects to model metadata."/>
+    </eAnnotations>
+    <eOperations name="getAspectTypeId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Returns the unique identifier for this aspect type (e.g., 'codec', 'orm')."/>
+      </eAnnotations>
+    </eOperations>
+    <eOperations name="buildClassAspect" eType="ecore:EClass metadata.ecore#//ClassAspect">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Build a ClassAspect for the given EClass. Returns null if not applicable."/>
+      </eAnnotations>
+      <eParameters name="eClass" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EClass"/>
+    </eOperations>
+    <eOperations name="buildFeatureAspect" eType="ecore:EClass metadata.ecore#//FeatureAspect">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Build a FeatureAspect for the given EStructuralFeature. Returns null if not applicable."/>
+      </eAnnotations>
+      <eParameters name="feature" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature"/>
+    </eOperations>
+    <eOperations name="buildAttributeAspect" eType="ecore:EClass metadata.ecore#//FeatureAspect">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Build a FeatureAspect for an EAttribute. Override for attribute-specific logic."/>
+      </eAnnotations>
+      <eParameters name="attribute" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EAttribute"/>
+    </eOperations>
+    <eOperations name="buildReferenceAspect" eType="ecore:EClass metadata.ecore#//FeatureAspect">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Build a FeatureAspect for an EReference. Override for reference-specific logic."/>
+      </eAnnotations>
+      <eParameters name="reference" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EReference"/>
+    </eOperations>
+  </eClassifiers>
+</ecore:EPackage>

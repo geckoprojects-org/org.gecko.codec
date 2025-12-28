@@ -289,8 +289,8 @@ public class TestTypeAnnotationInheritancePackageImpl extends EPackageImpl imple
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(test1PersonEClass, Test1Person.class, "Test1Person", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getTest1Person_Name(), ecorePackage.getEString(), "name", null, 0, 1, Test1Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getTest1Person_LastName(), ecorePackage.getEString(), "lastName", null, 0, 1, Test1Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTest1Person_Name(), ecorePackage.getEString(), "name", null, 0, 1, Test1Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTest1Person_LastName(), ecorePackage.getEString(), "lastName", null, 0, 1, Test1Person.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(test1BusinessPersonEClass, Test1BusinessPerson.class, "Test1BusinessPerson", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTest1BusinessPerson_CompanyId(), ecorePackage.getEString(), "companyId", null, 1, 1, Test1BusinessPerson.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

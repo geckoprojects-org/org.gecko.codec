@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2012 - 2025 Data In Motion and others.&#xA;All rights reserved.&#xA;&#xA;This program and the accompanying materials are made&#xA;available under the terms of the Eclipse Public License 2.0&#xA;which is available at https://www.eclipse.org/legal/epl-2.0/&#xA;&#xA;SPDX-License-Identifier: EPL-2.0&#xA;&#xA;Contributors:&#xA;    Data In Motion - initial API and implementation&#xA;"
+    modelDirectory="/org.eclipse.fennec.model.metadata/src" modelPluginID="org.eclipse.fennec.model.metadata"
+    modelName="Metadata" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="17.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true" oSGiCompatible="true">
+  <foreignModel>metadata.ecore</foreignModel>
+  <genPackages prefix="Metadata" basePackage="org.eclipse.fennec.model" resource="XMI"
+      disposableProviderFactory="true" ecorePackage="metadata.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="metadata.ecore#//SerializationFormat">
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//SerializationFormat/PLAIN"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//SerializationFormat/STRUCTURED"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="metadata.ecore#//TypeStrategy">
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/NAME"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/CLASS"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/URI"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/MAPPED"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/STRUCTURED"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/SCHEMA_AND_TYPE"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/NUMERIC"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="metadata.ecore#//IdStrategy">
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdStrategy/ID_FIELD"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdStrategy/COMBINED"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdStrategy/NONE"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="metadata.ecore#//IdKeyMode">
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdKeyMode/ID_ONLY"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdKeyMode/BOTH"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdKeyMode/FEATURE_ONLY"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="metadata.ecore#//SuperTypeSelection">
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//SuperTypeSelection/ALL"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//SuperTypeSelection/ALL_EMF"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//SuperTypeSelection/SINGLE"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//SuperTypeSelection/NONE"/>
+    </genEnums>
+    <genClasses image="false" ecoreClass="metadata.ecore#//BaseTypeConfig">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/strategy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/include"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/typeKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/schemaKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/nameKey"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata.ecore#//BaseIdConfig">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseIdConfig/strategy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseIdConfig/keyMode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseIdConfig/format"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseIdConfig/idKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseIdConfig/separator"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata.ecore#//BaseReferenceConfig">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseReferenceConfig/format"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseReferenceConfig/typeKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseReferenceConfig/refKey"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata.ecore#//BaseSuperTypeConfig">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/enabled"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/selection"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/format"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/superTypeKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/schemaKey"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/nameKey"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata.ecore#//Aspect">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//Aspect/typeId"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata.ecore#//ClassAspect"/>
+    <genClasses image="false" ecoreClass="metadata.ecore#//FeatureAspect"/>
+    <genClasses image="false" ecoreClass="metadata.ecore#//BaseFeatureConfig">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serialize"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serializeNull"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serializeEmpty"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serializeDefaults"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//PackageMetadata">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//PackageMetadata/ePackage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//PackageMetadata/nsURI"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//PackageMetadata/classes"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//ClassMetadata">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference metadata.ecore#//ClassMetadata/package"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//ClassMetadata/eClass"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//ClassMetadata/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//ClassMetadata/classifierID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//ClassMetadata/typeURI"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//ClassMetadata/features"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//ClassMetadata/superTypes"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//ClassMetadata/allSuperTypes"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//ClassMetadata/idFeatures"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//ClassMetadata/hasId"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//ClassMetadata/aspects"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata.ecore#//FeatureMetadata">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference metadata.ecore#//FeatureMetadata/classMetadata"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//FeatureMetadata/eFeature"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//FeatureMetadata/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//FeatureMetadata/featureID"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//FeatureMetadata/aspects"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//AttributeMetadata">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//AttributeMetadata/eAttribute"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//AttributeMetadata/isId"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//AttributeMetadata/defaultValue"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//ReferenceMetadata">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//ReferenceMetadata/eReference"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//ReferenceMetadata/containment"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//ReferenceMetadata/targetClassMetadata"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//ReferenceMetadata/oppositeMetadata"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//ReferenceMetadata/hasBidirectional"/>
+    </genClasses>
+    <genClasses ecoreClass="metadata.ecore#//MetadataRegistry">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//MetadataRegistry/packages"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

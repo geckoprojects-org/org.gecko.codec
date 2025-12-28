@@ -1,0 +1,82 @@
+/**
+ * Copyright (c) 2012 - 2025 Data In Motion and others.
+ * All rights reserved.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ */
+package org.eclipse.fennec.codec.v2.value;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Tests for {@link CodecValueRegistry#registerWriter(String, CodecValueWriter)}.
+ *
+ * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
+ */
+@DisplayName("CodecValueRegistry registerWriter")
+class CodecValueRegistryRegisterWriterTest extends CodecValueRegistryTestBase {
+
+    @Test
+    @DisplayName("registers writer with valid name")
+    void registersWriterWithValidName() {
+        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        registry.registerWriter("testWriter", writer);
+
+        assertTrue(registry.hasWriter("testWriter"));
+        assertSame(writer, registry.getWriter("testWriter").orElse(null));
+    }
+
+    @Test
+    @DisplayName("throws exception for null name")
+    void throwsExceptionForNullName() {
+        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        assertThrows(IllegalArgumentException.class,
+                () -> registry.registerWriter(null, writer));
+    }
+
+    @Test
+    @DisplayName("throws exception for empty name")
+    void throwsExceptionForEmptyName() {
+        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        assertThrows(IllegalArgumentException.class,
+                () -> registry.registerWriter("", writer));
+    }
+
+    @Test
+    @DisplayName("throws exception for null writer")
+    void throwsExceptionForNullWriter() {
+        assertThrows(IllegalArgumentException.class,
+                () -> registry.registerWriter("test", null));
+    }
+
+    @Test
+    @DisplayName("returns registry for chaining")
+    void returnsRegistryForChaining() {
+        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        assertSame(registry, registry.registerWriter("test", writer));
+    }
+
+    @Test
+    @DisplayName("overwrites existing writer with same name")
+    void overwritesExistingWriter() {
+        CodecValueWriter<String> writer1 = (value, gen) -> gen.writeString(value);
+        CodecValueWriter<String> writer2 = (value, gen) -> gen.writeString(value.toUpperCase());
+
+        registry.registerWriter("test", writer1);
+        registry.registerWriter("test", writer2);
+
+        assertSame(writer2, registry.getWriter("test").orElse(null));
+    }
+}

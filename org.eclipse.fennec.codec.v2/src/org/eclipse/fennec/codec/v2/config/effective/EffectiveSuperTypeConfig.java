@@ -1,0 +1,160 @@
+/**
+ * Copyright (c) 2012 - 2025 Data In Motion and others.
+ * All rights reserved.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ */
+package org.eclipse.fennec.codec.v2.config.effective;
+
+import org.eclipse.fennec.model.metadata.SerializationFormat;
+import org.eclipse.fennec.model.metadata.SuperTypeSelection;
+
+/**
+ * Fully resolved, immutable supertype serialization configuration.
+ * <p>
+ * All properties are final and represent the effective merged values from
+ * all configuration sources (load/save options, module config, model aspects).
+ * No resolution logic is needed at serialization time.
+ * </p>
+ *
+ * @see <a href="docs/codec-v2-serialization-spec.md#7-supertype-serialization">Spec 7: SuperType Serialization</a>
+ * @author Mark Hoffmann
+ * @since 2025-12-16
+ */
+public final class EffectiveSuperTypeConfig {
+
+    private final boolean enabled;
+    private final SuperTypeSelection selection;
+    private final SerializationFormat format;
+    private final String superTypeKey;
+    private final String schemaKey;
+    private final String nameKey;
+    private final boolean useSmartCompression;
+
+    private EffectiveSuperTypeConfig(Builder builder) {
+        this.enabled = builder.enabled;
+        this.selection = builder.selection;
+        this.format = builder.format;
+        this.superTypeKey = builder.superTypeKey;
+        this.schemaKey = builder.schemaKey;
+        this.nameKey = builder.nameKey;
+        this.useSmartCompression = builder.useSmartCompression;
+    }
+
+    /**
+     * Returns whether supertype serialization is enabled.
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Returns which supertypes to include (ALL, ALL_EMF, SINGLE, NONE).
+     */
+    public SuperTypeSelection getSelection() {
+        return selection;
+    }
+
+    /**
+     * Returns the serialization format (PLAIN, STRUCTURED).
+     */
+    public SerializationFormat getFormat() {
+        return format;
+    }
+
+    /**
+     * Returns the JSON property key for supertype information.
+     */
+    public String getSuperTypeKey() {
+        return superTypeKey;
+    }
+
+    /**
+     * Returns the key for schema in STRUCTURED format.
+     */
+    public String getSchemaKey() {
+        return schemaKey;
+    }
+
+    /**
+     * Returns the key for name in STRUCTURED format.
+     */
+    public String getNameKey() {
+        return nameKey;
+    }
+
+    /**
+     * Returns whether to use smart compression (plain names for same-schema supertypes).
+     */
+    public boolean isUseSmartCompression() {
+        return useSmartCompression;
+    }
+
+    /**
+     * Creates a new builder with default values.
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Builder for EffectiveSuperTypeConfig.
+     */
+    public static final class Builder {
+        private boolean enabled = false;
+        private SuperTypeSelection selection = SuperTypeSelection.ALL;
+        private SerializationFormat format = SerializationFormat.PLAIN;
+        private String superTypeKey = "_supertype";
+        private String schemaKey = "schema";
+        private String nameKey = "name";
+        private boolean useSmartCompression = false;
+
+        private Builder() {}
+
+        public Builder enabled(boolean enabled) {
+            this.enabled = enabled;
+            return this;
+        }
+
+        public Builder selection(SuperTypeSelection selection) {
+            this.selection = selection;
+            return this;
+        }
+
+        public Builder format(SerializationFormat format) {
+            this.format = format;
+            return this;
+        }
+
+        public Builder superTypeKey(String superTypeKey) {
+            this.superTypeKey = superTypeKey;
+            return this;
+        }
+
+        public Builder schemaKey(String schemaKey) {
+            this.schemaKey = schemaKey;
+            return this;
+        }
+
+        public Builder nameKey(String nameKey) {
+            this.nameKey = nameKey;
+            return this;
+        }
+
+        public Builder useSmartCompression(boolean useSmartCompression) {
+            this.useSmartCompression = useSmartCompression;
+            return this;
+        }
+
+        public EffectiveSuperTypeConfig build() {
+            return new EffectiveSuperTypeConfig(this);
+        }
+    }
+}

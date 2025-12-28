@@ -1,0 +1,300 @@
+/**
+ * Copyright (c) 2012 - 2025 Data In Motion and others.
+ * All rights reserved.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ */
+package org.eclipse.fennec.codec.v2.ser;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
+
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Tests for {@link AttributeSerializationEntry}.
+ *
+ * @see <a href="docs/codec-v2-serialization-spec.md#64-attribute-serialization">Spec 6.4: Attribute Serialization</a>
+ */
+@DisplayName("AttributeSerializationEntry")
+class AttributeSerializationEntryTest extends SerializationEntryTestBase {
+
+    private EffectiveFeatureConfig createDefaultConfig(String key, EAttribute attribute) {
+        return EffectiveFeatureConfig.builder()
+                .feature(attribute)
+                .key(key)
+                .serialize(true)
+                .serializeNull(false)
+                .serializeEmpty(false)
+                .serializeDefaults(false)
+                .build();
+    }
+
+    @Nested
+    @DisplayName("getKey")
+    class GetKeyTests {
+
+        @Test
+        @DisplayName("returns key from config")
+        void returnsKeyFromConfig() {
+            EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+            assertEquals("name", entry.getKey());
+        }
+
+        @Test
+        @DisplayName("returns custom key from config")
+        void returnsCustomKeyFromConfig() {
+            EffectiveFeatureConfig config = createDefaultConfig("firstName", nameAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+            assertEquals("firstName", entry.getKey());
+        }
+    }
+
+    @Nested
+    @DisplayName("shouldSerialize")
+    class ShouldSerializeTests {
+
+        @Test
+        @DisplayName("returns false when serialize is false")
+        void returnsFalseWhenSerializeIsFalse() {
+            EffectiveFeatureConfig config = EffectiveFeatureConfig.builder()
+                    .feature(nameAttribute)
+                    .key("name")
+                    .serialize(false)
+                    .build();
+
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+            EObject person = createPerson();
+
+            assertFalse(entry.shouldSerialize(createState(person)));
+        }
+
+        @Test
+        @DisplayName("returns false for null value by default")
+        void returnsFalseForNullValueByDefault() {
+            EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+
+            EObject person = createPerson();
+            // name is null by default
+
+            assertFalse(entry.shouldSerialize(createState(person)));
+        }
+
+        @Test
+        @DisplayName("returns true for null value when serializeNull is true")
+        void returnsTrueForNullValueWhenConfigured() {
+            EffectiveFeatureConfig config = EffectiveFeatureConfig.builder()
+                    .feature(nameAttribute)
+                    .key("name")
+                    .serialize(true)
+                    .serializeNull(true)
+                    .build();
+
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+            EObject person = createPerson();
+            // name is null by default
+
+            assertTrue(entry.shouldSerialize(createState(person)));
+        }
+
+        @Test
+        @DisplayName("returns false for empty list by default")
+        void returnsFalseForEmptyListByDefault() {
+            EffectiveFeatureConfig config = createDefaultConfig("tags", tagsAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, tagsAttribute);
+
+            EObject person = createPerson();
+            // tags is empty by default
+
+            assertFalse(entry.shouldSerialize(createState(person)));
+        }
+
+        @Test
+        @DisplayName("returns true for empty list when serializeEmpty is true")
+        void returnsTrueForEmptyListWhenConfigured() {
+            EffectiveFeatureConfig config = EffectiveFeatureConfig.builder()
+                    .feature(tagsAttribute)
+                    .key("tags")
+                    .serialize(true)
+                    .serializeEmpty(true)
+                    .build();
+
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, tagsAttribute);
+            EObject person = createPerson();
+            // tags is empty by default
+
+            assertTrue(entry.shouldSerialize(createState(person)));
+        }
+
+        @Test
+        @DisplayName("returns false for default value by default")
+        void returnsFalseForDefaultValueByDefault() {
+            EffectiveFeatureConfig config = createDefaultConfig("age", ageAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, ageAttribute);
+
+            EObject person = createPerson();
+            // age defaults to 0
+
+            assertFalse(entry.shouldSerialize(createState(person)));
+        }
+
+        @Test
+        @DisplayName("returns true for default value when serializeDefaults is true")
+        void returnsTrueForDefaultValueWhenConfigured() {
+            EffectiveFeatureConfig config = EffectiveFeatureConfig.builder()
+                    .feature(ageAttribute)
+                    .key("age")
+                    .serialize(true)
+                    .serializeDefaults(true)
+                    .build();
+
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, ageAttribute);
+            EObject person = createPerson();
+            // age defaults to 0
+
+            assertTrue(entry.shouldSerialize(createState(person)));
+        }
+
+        @Test
+        @DisplayName("returns true for non-null, non-default value")
+        void returnsTrueForNonNullNonDefaultValue() {
+            EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+
+            EObject person = createPerson("John");
+
+            assertTrue(entry.shouldSerialize(createState(person)));
+        }
+    }
+
+    @Nested
+    @DisplayName("serialize")
+    class SerializeTests {
+
+        @Test
+        @DisplayName("writes string value")
+        void writesStringValue() {
+            EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+
+            EObject person = createPerson("John");
+
+            entry.serialize(createState(person), generator, null);
+
+            verify(generator).writeName("name");
+            verify(generator).writeString("John");
+        }
+
+        @Test
+        @DisplayName("writes integer value")
+        void writesIntegerValue() {
+            EffectiveFeatureConfig config = createDefaultConfig("age", ageAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, ageAttribute);
+
+            EObject person = createPerson();
+            person.eSet(ageAttribute, 25);
+
+            entry.serialize(createState(person), generator, null);
+
+            verify(generator).writeName("age");
+            verify(generator).writeNumber(25);
+        }
+
+        @Test
+        @DisplayName("writes null property when value is null")
+        void writesNullPropertyWhenValueNull() {
+            EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+
+            EObject person = createPerson();
+            // name is null by default
+
+            entry.serialize(createState(person), generator, null);
+
+            verify(generator).writeNullProperty("name");
+        }
+
+        @Test
+        @DisplayName("writes array for multi-valued attribute")
+        void writesArrayForMultiValued() {
+            EffectiveFeatureConfig config = createDefaultConfig("tags", tagsAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, tagsAttribute);
+
+            EObject person = createPerson();
+            @SuppressWarnings("unchecked")
+            EList<String> tags = (EList<String>) person.eGet(tagsAttribute);
+            tags.addAll(List.of("tag1", "tag2"));
+
+            entry.serialize(createState(person), generator, null);
+
+            verify(generator).writeName("tags");
+            verify(generator).writeStartArray();
+            verify(generator).writeString("tag1");
+            verify(generator).writeString("tag2");
+            verify(generator).writeEndArray();
+        }
+
+        @Test
+        @DisplayName("writes boolean value")
+        void writesBooleanValue() {
+            EffectiveFeatureConfig config = createDefaultConfig("active", activeAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, activeAttribute);
+
+            EObject person = createPerson();
+            person.eSet(activeAttribute, true);
+
+            entry.serialize(createState(person), generator, null);
+
+            verify(generator).writeName("active");
+            verify(generator).writeBoolean(true);
+        }
+
+        @Test
+        @DisplayName("writes double value")
+        void writesDoubleValue() {
+            EffectiveFeatureConfig config = createDefaultConfig("score", scoreAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, scoreAttribute);
+
+            EObject person = createPerson();
+            person.eSet(scoreAttribute, 19.99);
+
+            entry.serialize(createState(person), generator, null);
+
+            verify(generator).writeName("score");
+            verify(generator).writeNumber(19.99);
+        }
+
+        @Test
+        @DisplayName("writes custom key from config")
+        void writesCustomKeyFromConfig() {
+            EffectiveFeatureConfig config = createDefaultConfig("firstName", nameAttribute);
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+
+            EObject person = createPerson("John");
+
+            entry.serialize(createState(person), generator, null);
+
+            verify(generator).writeName("firstName");
+            verify(generator).writeString("John");
+        }
+    }
+}

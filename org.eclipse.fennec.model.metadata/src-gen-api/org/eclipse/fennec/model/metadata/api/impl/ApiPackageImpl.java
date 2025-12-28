@@ -1,0 +1,526 @@
+/**
+ * Copyright (c) 2012 - 2026 Data In Motion and others.
+ * All rights reserved.
+ * 
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ * 
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ * 
+ */
+package org.eclipse.fennec.model.metadata.api.impl;
+
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EPackage;
+
+import org.eclipse.emf.ecore.impl.EPackageImpl;
+
+import org.eclipse.fennec.model.metadata.MetadataPackage;
+
+import org.eclipse.fennec.model.metadata.api.ApiFactory;
+import org.eclipse.fennec.model.metadata.api.ApiPackage;
+import org.eclipse.fennec.model.metadata.api.AspectProvider;
+import org.eclipse.fennec.model.metadata.api.MetadataService;
+
+/**
+ * <!-- begin-user-doc -->
+ * An implementation of the model <b>Package</b>.
+ * <!-- end-user-doc -->
+ * @generated
+ */
+public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass metadataServiceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass aspectProviderEClass = null;
+
+	/**
+	 * Creates an instance of the model <b>Package</b>, registered with
+	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
+	 * package URI value.
+	 * <p>Note: the correct way to create the package is via the static
+	 * factory method {@link #init init()}, which also performs
+	 * initialization of the package, or returns the registered package,
+	 * if one already exists.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.emf.ecore.EPackage.Registry
+	 * @see org.eclipse.fennec.model.metadata.api.ApiPackage#eNS_URI
+	 * @see #init()
+	 * @generated
+	 */
+	private ApiPackageImpl() {
+		super(eNS_URI, ApiFactory.eINSTANCE);
+	}
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private static boolean isInited = false;
+
+	/**
+	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
+	 *
+	 * <p>This method is used to initialize {@link ApiPackage#eINSTANCE} when that field is accessed.
+	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #eNS_URI
+	 * @see #createPackageContents()
+	 * @see #initializePackageContents()
+	 * @generated
+	 */
+	public static ApiPackage init() {
+		if (isInited) return (ApiPackage)EPackage.Registry.INSTANCE.getEPackage(ApiPackage.eNS_URI);
+
+		// Obtain or create and register package
+		Object registeredApiPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		ApiPackageImpl theApiPackage = registeredApiPackage instanceof ApiPackageImpl ? (ApiPackageImpl)registeredApiPackage : new ApiPackageImpl();
+
+		isInited = true;
+
+		// Initialize simple dependencies
+		MetadataPackage.eINSTANCE.eClass();
+
+		// Create package meta-data objects
+		theApiPackage.createPackageContents();
+
+		// Initialize created meta-data
+		theApiPackage.initializePackageContents();
+
+		// Mark meta-data to indicate it can't be changed
+		theApiPackage.freeze();
+
+		// Update the registry and return the package
+		EPackage.Registry.INSTANCE.put(ApiPackage.eNS_URI, theApiPackage);
+		return theApiPackage;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getMetadataService() {
+		return metadataServiceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__RegisterPackage__EPackage() {
+		return metadataServiceEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__UnregisterPackage__EPackage() {
+		return metadataServiceEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetPackageMetadata__String() {
+		return metadataServiceEClass.getEOperations().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetClassMetadata__EClass() {
+		return metadataServiceEClass.getEOperations().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetClassMetadataByURI__String() {
+		return metadataServiceEClass.getEOperations().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetClassMetadataByName__String_String() {
+		return metadataServiceEClass.getEOperations().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetFeatureMetadata__EStructuralFeature() {
+		return metadataServiceEClass.getEOperations().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetFeatureMetadataByURI__String() {
+		return metadataServiceEClass.getEOperations().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetFeatureMetadataByName__String_String_String() {
+		return metadataServiceEClass.getEOperations().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetFeatureMetadataFromClass__String_ClassMetadata() {
+		return metadataServiceEClass.getEOperations().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetClassAspect__EClass_String() {
+		return metadataServiceEClass.getEOperations().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetFeatureAspect__EStructuralFeature_String() {
+		return metadataServiceEClass.getEOperations().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetRegistry() {
+		return metadataServiceEClass.getEOperations().get(12);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__RegisterAspectProvider__AspectProvider() {
+		return metadataServiceEClass.getEOperations().get(13);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__UnregisterAspectProvider__AspectProvider() {
+		return metadataServiceEClass.getEOperations().get(14);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataService__GetAspectProviders() {
+		return metadataServiceEClass.getEOperations().get(15);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getAspectProvider() {
+		return aspectProviderEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getAspectProvider__GetAspectTypeId() {
+		return aspectProviderEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getAspectProvider__BuildClassAspect__EClass() {
+		return aspectProviderEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getAspectProvider__BuildFeatureAspect__EStructuralFeature() {
+		return aspectProviderEClass.getEOperations().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getAspectProvider__BuildAttributeAspect__EAttribute() {
+		return aspectProviderEClass.getEOperations().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getAspectProvider__BuildReferenceAspect__EReference() {
+		return aspectProviderEClass.getEOperations().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public ApiFactory getApiFactory() {
+		return (ApiFactory)getEFactoryInstance();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private boolean isCreated = false;
+
+	/**
+	 * Creates the meta-model objects for the package.  This method is
+	 * guarded to have no affect on any invocation but its first.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void createPackageContents() {
+		if (isCreated) return;
+		isCreated = true;
+
+		// Create classes and their features
+		metadataServiceEClass = createEClass(METADATA_SERVICE);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___REGISTER_PACKAGE__EPACKAGE);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___UNREGISTER_PACKAGE__EPACKAGE);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_PACKAGE_METADATA__STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_CLASS_METADATA__ECLASS);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_CLASS_METADATA_BY_URI__STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_CLASS_METADATA_BY_NAME__STRING_STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_FEATURE_METADATA__ESTRUCTURALFEATURE);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_FEATURE_METADATA_BY_URI__STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_FEATURE_METADATA_BY_NAME__STRING_STRING_STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_FEATURE_METADATA_FROM_CLASS__STRING_CLASSMETADATA);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_CLASS_ASPECT__ECLASS_STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_FEATURE_ASPECT__ESTRUCTURALFEATURE_STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_REGISTRY);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___REGISTER_ASPECT_PROVIDER__ASPECTPROVIDER);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___UNREGISTER_ASPECT_PROVIDER__ASPECTPROVIDER);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_ASPECT_PROVIDERS);
+
+		aspectProviderEClass = createEClass(ASPECT_PROVIDER);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___GET_ASPECT_TYPE_ID);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_CLASS_ASPECT__ECLASS);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_FEATURE_ASPECT__ESTRUCTURALFEATURE);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_ATTRIBUTE_ASPECT__EATTRIBUTE);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_REFERENCE_ASPECT__EREFERENCE);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private boolean isInitialized = false;
+
+	/**
+	 * Complete the initialization of the package and its meta-model.  This
+	 * method is guarded to have no affect on any invocation but its first.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void initializePackageContents() {
+		if (isInitialized) return;
+		isInitialized = true;
+
+		// Initialize package
+		setName(eNAME);
+		setNsPrefix(eNS_PREFIX);
+		setNsURI(eNS_URI);
+
+		// Obtain other dependent packages
+		MetadataPackage theMetadataPackage = (MetadataPackage)EPackage.Registry.INSTANCE.getEPackage(MetadataPackage.eNS_URI);
+
+		// Create type parameters
+
+		// Set bounds for type parameters
+
+		// Add supertypes to classes
+
+		// Initialize classes, features, and operations; add parameters
+		initEClass(metadataServiceEClass, MetadataService.class, "MetadataService", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		EOperation op = initEOperation(getMetadataService__RegisterPackage__EPackage(), theMetadataPackage.getPackageMetadata(), "registerPackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEPackage(), "ePackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__UnregisterPackage__EPackage(), null, "unregisterPackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEPackage(), "ePackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetPackageMetadata__String(), theMetadataPackage.getPackageMetadata(), "getPackageMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "nsURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetClassMetadata__EClass(), theMetadataPackage.getClassMetadata(), "getClassMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEClass(), "eClass", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetClassMetadataByURI__String(), theMetadataPackage.getClassMetadata(), "getClassMetadataByURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "uri", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetClassMetadataByName__String_String(), theMetadataPackage.getClassMetadata(), "getClassMetadataByName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "className", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "nsURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetFeatureMetadata__EStructuralFeature(), theMetadataPackage.getFeatureMetadata(), "getFeatureMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEStructuralFeature(), "feature", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetFeatureMetadataByURI__String(), theMetadataPackage.getFeatureMetadata(), "getFeatureMetadataByURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "uri", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetFeatureMetadataByName__String_String_String(), theMetadataPackage.getFeatureMetadata(), "getFeatureMetadataByName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "featureName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "className", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "nsURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetFeatureMetadataFromClass__String_ClassMetadata(), theMetadataPackage.getFeatureMetadata(), "getFeatureMetadataFromClass", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "featureName", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theMetadataPackage.getClassMetadata(), "classMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetClassAspect__EClass_String(), theMetadataPackage.getClassAspect(), "getClassAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEClass(), "eClass", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "aspectTypeId", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetFeatureAspect__EStructuralFeature_String(), theMetadataPackage.getFeatureAspect(), "getFeatureAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEStructuralFeature(), "feature", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "aspectTypeId", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEOperation(getMetadataService__GetRegistry(), theMetadataPackage.getMetadataRegistry(), "getRegistry", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__RegisterAspectProvider__AspectProvider(), null, "registerAspectProvider", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAspectProvider(), "provider", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__UnregisterAspectProvider__AspectProvider(), null, "unregisterAspectProvider", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAspectProvider(), "provider", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEOperation(getMetadataService__GetAspectProviders(), this.getAspectProvider(), "getAspectProviders", 0, -1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(aspectProviderEClass, AspectProvider.class, "AspectProvider", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEOperation(getAspectProvider__GetAspectTypeId(), ecorePackage.getEString(), "getAspectTypeId", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getAspectProvider__BuildClassAspect__EClass(), theMetadataPackage.getClassAspect(), "buildClassAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEClass(), "eClass", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getAspectProvider__BuildFeatureAspect__EStructuralFeature(), theMetadataPackage.getFeatureAspect(), "buildFeatureAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEStructuralFeature(), "feature", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getAspectProvider__BuildAttributeAspect__EAttribute(), theMetadataPackage.getFeatureAspect(), "buildAttributeAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEAttribute(), "attribute", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getAspectProvider__BuildReferenceAspect__EReference(), theMetadataPackage.getFeatureAspect(), "buildReferenceAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEReference(), "reference", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		// Create resource
+		createResource(eNS_URI);
+
+		// Create annotations
+		// Version
+		createVersionAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>Version</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createVersionAnnotations() {
+		String source = "Version";
+		addAnnotation
+		  (this,
+		   source,
+		   new String[] {
+			   "value", "1.0"
+		   });
+	}
+
+} //ApiPackageImpl

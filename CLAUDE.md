@@ -101,3 +101,42 @@ Map<String, Object> options = CodecOptionsBuilder
     .idStrategy("ID_FIELD")
     .build();
 ```
+
+---
+
+## Codec V2 Development (Active)
+
+We are building a new codec implementation (codec.v2). For full context, see:
+
+- **`docs/codec-v2-development-guide.md`** - Current state, next steps, and session continuity
+- **`docs/codec-v2-serialization-spec.md`** - Complete specification (source of truth)
+- **`org.eclipse.fennec.model.metadata/model-metadata-architecture.md`** - MetadataService, Aspect pattern
+- **`org.eclipse.fennec.codec.metadata/codec-metadata-architecture.md`** - Codec aspects, EAnnotation mapping
+
+### New Projects (codec.v2 related)
+
+| Project | Purpose |
+|---------|---------|
+| `org.eclipse.fennec.model.metadata` | Generic MetadataService infrastructure |
+| `org.eclipse.fennec.codec.metadata` | Codec-specific aspects and annotation parsing |
+| `org.eclipse.fennec.codec.v2` | New codec implementation (not started) |
+
+### Key Concepts
+
+1. **MetadataService**: Dynamic component that parses EAnnotations when EPackages are registered and creates pre-computed aspect objects
+2. **Aspects**: EMF-based configuration objects attached to ClassMetadata/FeatureMetadata
+3. **Configuration Hierarchy**: 6 levels from Load/Save options (highest) to Built-in defaults (lowest)
+
+### Annotation Source
+
+All codec annotations use source: `http://eclipse.org/fennec/codec` with markers:
+- `codec.type`, `codec.id`, `codec.reference`, `codec.supertype`
+
+### Current Focus
+
+Building annotation parsing in `org.eclipse.fennec.codec.metadata` that:
+1. Reads EAnnotations from EPackage/EClass/EStructuralFeature
+2. Applies spec-defined defaults when annotations are missing
+3. Creates ClassCodecAspect, FeatureCodecAspect, ReferenceCodecAspect objects
+- java comments annotation with @claude or @CLAUDE are instructions for you, similar like a code review comment. please look at them
+- dont use full qualified class names in code. we use import instead

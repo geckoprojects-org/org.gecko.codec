@@ -1,0 +1,168 @@
+/*
+ * Copyright (c) 2012 - 2025 Data In Motion and others.
+ * All rights reserved.
+ * 
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ * 
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ * 
+ */
+package org.eclipse.fennec.model.metadata;
+
+import org.eclipse.emf.common.util.EList;
+
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+
+import org.osgi.annotation.versioning.ProviderType;
+
+/**
+ * <!-- begin-user-doc -->
+ * A representation of the model object '<em><b>Feature Metadata</b></em>'.
+ * <!-- end-user-doc -->
+ *
+ * <!-- begin-model-doc -->
+ * Base class for pre-computed metadata about an EStructuralFeature.
+ * <!-- end-model-doc -->
+ *
+ * <p>
+ * The following features are supported:
+ * </p>
+ * <ul>
+ *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getClassMetadata <em>Class Metadata</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getEFeature <em>EFeature</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getFeatureID <em>Feature ID</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getAspects <em>Aspects</em>}</li>
+ * </ul>
+ *
+ * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureMetadata()
+ * @model abstract="true"
+ * @generated
+ */
+@ProviderType
+public interface FeatureMetadata extends EObject {
+	/**
+	 * Returns the value of the '<em><b>Class Metadata</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link org.eclipse.fennec.model.metadata.ClassMetadata#getFeatures <em>Features</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * The parent class metadata.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Class Metadata</em>' container reference.
+	 * @see #setClassMetadata(ClassMetadata)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureMetadata_ClassMetadata()
+	 * @see org.eclipse.fennec.model.metadata.ClassMetadata#getFeatures
+	 * @model opposite="features" transient="false"
+	 * @generated
+	 */
+	ClassMetadata getClassMetadata();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getClassMetadata <em>Class Metadata</em>}' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Class Metadata</em>' container reference.
+	 * @see #getClassMetadata()
+	 * @generated
+	 */
+	void setClassMetadata(ClassMetadata value);
+
+	/**
+	 * Returns the value of the '<em><b>EFeature</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * The EStructuralFeature this metadata describes.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>EFeature</em>' reference.
+	 * @see #setEFeature(EStructuralFeature)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureMetadata_EFeature()
+	 * @model
+	 * @generated
+	 */
+	EStructuralFeature getEFeature();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getEFeature <em>EFeature</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>EFeature</em>' reference.
+	 * @see #getEFeature()
+	 * @generated
+	 */
+	void setEFeature(EStructuralFeature value);
+
+	/**
+	 * Returns the value of the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Cached feature name.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Name</em>' attribute.
+	 * @see #setName(String)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureMetadata_Name()
+	 * @model
+	 * @generated
+	 */
+	String getName();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getName <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Name</em>' attribute.
+	 * @see #getName()
+	 * @generated
+	 */
+	void setName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Feature ID</b></em>' attribute.
+	 * The default value is <code>"-1"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Cached feature ID for numeric serialization.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Feature ID</em>' attribute.
+	 * @see #setFeatureID(int)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureMetadata_FeatureID()
+	 * @model default="-1"
+	 * @generated
+	 */
+	int getFeatureID();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getFeatureID <em>Feature ID</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Feature ID</em>' attribute.
+	 * @see #getFeatureID()
+	 * @generated
+	 */
+	void setFeatureID(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Aspects</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.fennec.model.metadata.FeatureAspect}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Aspects attached to this feature (codec, ORM, etc.).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Aspects</em>' containment reference list.
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureMetadata_Aspects()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<FeatureAspect> getAspects();
+
+} // FeatureMetadata

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="testmapped" nsURI="http://test.example.org/mapped/1.0" nsPrefix="mapped">
+
+  <!--
+    Test model for MAPPED TypeStrategy.
+
+    Uses dynamic mode with mapId "iot-sensors":
+    - Base class defines the type configuration (strategy=MAPPED)
+    - Concrete classes register themselves with discriminator values
+
+    The _type field in JSON will contain the discriminator value instead of URI.
+  -->
+
+  <!-- Base Device class - abstract, defines type config -->
+  <eClassifiers xsi:type="ecore:EClass" name="Device" abstract="true">
+    <!-- Configure MAPPED strategy with mapId "iot-sensors" -->
+    <!-- The presence of codec.type.{mapId} implies MAPPED strategy -->
+    <eAnnotations source="codec.type.iot-sensors">
+      <details key="typeKey" value="_type"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="deviceId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="timestamp" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- TemperatureSensor - discriminator: "temp-sensor" -->
+  <eClassifiers xsi:type="ecore:EClass" name="TemperatureSensor" eSuperTypes="#//Device">
+    <!-- Register with discriminator value in "iot-sensors" mapId -->
+    <eAnnotations source="codec.type.iot-sensors">
+      <details key="typeDiscriminator" value="temp-sensor"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="temperature" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="unit" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- HumiditySensor - discriminator: "humidity-sensor" -->
+  <eClassifiers xsi:type="ecore:EClass" name="HumiditySensor" eSuperTypes="#//Device">
+    <!-- Register with discriminator value in "iot-sensors" mapId -->
+    <eAnnotations source="codec.type.iot-sensors">
+      <details key="typeDiscriminator" value="humidity-sensor"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="humidity" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+
+  <!-- GPSTracker - discriminator: "gps-tracker" -->
+  <eClassifiers xsi:type="ecore:EClass" name="GPSTracker" eSuperTypes="#//Device">
+    <!-- Register with discriminator value in "iot-sensors" mapId -->
+    <eAnnotations source="codec.type.iot-sensors">
+      <details key="typeDiscriminator" value="gps-tracker"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="latitude" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="longitude" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+
+  <!-- DeviceContainer - holds multiple devices -->
+  <eClassifiers xsi:type="ecore:EClass" name="DeviceContainer">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="devices" upperBound="-1" eType="#//Device" containment="true"/>
+  </eClassifiers>
+
+</ecore:EPackage>

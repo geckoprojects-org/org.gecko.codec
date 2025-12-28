@@ -44,7 +44,7 @@ public interface Test1Person extends EObject {
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getTest1Person_Name()
-	 * @model
+	 * @model id="true"
 	 * @generated
 	 */
 	String getName();
@@ -66,7 +66,7 @@ public interface Test1Person extends EObject {
 	 * @return the value of the '<em>Last Name</em>' attribute.
 	 * @see #setLastName(String)
 	 * @see org.eclipse.fennec.codec.demo.model.test1.TestTypeAnnotationInheritancePackage#getTest1Person_LastName()
-	 * @model
+	 * @model id="true"
 	 * @generated
 	 */
 	String getLastName();
