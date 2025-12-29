@@ -45,8 +45,9 @@ public final class MetadataServiceFactory {
      *
      * @return a new MetadataService configured for codec serialization
      */
-    public static MetadataService create() {
-        MetadataServiceImpl service = new MetadataServiceImpl();
+    @SuppressWarnings("restriction")
+	public static MetadataService create() {
+		MetadataServiceImpl service = new MetadataServiceImpl();
         service.registerAspectProvider(new CodecAspectProvider());
         return service;
     }

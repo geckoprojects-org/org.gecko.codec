@@ -44,7 +44,7 @@ class CodecValueRegistryGetAllTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("getReaders returns unmodifiable view")
     void getReadersReturnsUnmodifiableView() {
-        CodecValueReader<String> reader = parser -> parser.getText();
+        CodecValueReader<String> reader = parser -> parser.getString();
         registry.registerReader("test", reader);
 
         Map<String, CodecValueReader<?>> readers = registry.getReaders();

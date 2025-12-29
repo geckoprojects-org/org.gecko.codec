@@ -510,9 +510,10 @@ See **Spec Section 15.7** for detailed flow diagrams.
 
 3. ✅ **Smart Compression** - Omit `_type` when instance type == reference type
 
-4. **Pending Features** (see Section 11 for details)
+4. ✅ **Array Root Objects** - Multiple root objects serialize as JSON array
+
+5. **Pending Features** (see Section 11 for details)
    - Cross-resource references
-   - Array root objects
    - Custom value readers/writers
    - SuperType serialization
    - OSGi integration
@@ -721,6 +722,25 @@ When `typeDiscriminatorPath` is configured:
 - Root object: `_type` is omitted (discriminator value is in content)
 - Nested objects with smart compression ON: `_type` suppressed when instance == reference type
 
+### 10.4 Array Root Objects ✅
+
+**Completed:** 2025-12-29
+
+EMF Resources support multiple root elements. The codec now properly handles:
+
+**Serialization:**
+- Single root object → JSON object `{...}`
+- Multiple root objects → JSON array `[{...}, {...}]`
+
+**Deserialization:**
+- JSON object → Single root object in `resource.getContents()`
+- JSON array → Multiple root objects in `resource.getContents()`
+- Empty array `[]` → Empty contents
+
+**Implementation:** `CodecResource.doLoad()` peeks at first token (START_ARRAY vs START_OBJECT) and loops through array elements when needed.
+
+**Tests:** `CodecResourceArrayRootTest.java` - 10 tests covering serialization, deserialization, and round-trip
+
 ---
 
 ## 11. Pending Work (Next Session)
@@ -735,10 +755,6 @@ When `typeDiscriminatorPath` is configured:
 
 - Resolve references to objects in other EMF resources
 - Support ResourceSet-based resolution
-
-### 11.3 Array Root Objects
-
-- Support deserializing JSON arrays as multiple root objects
 
 ### 11.4 Custom Value Readers/Writers
 

@@ -55,8 +55,6 @@ public class ConfigurationMerger {
 
     private final CodecConfiguration moduleConfig;
     private final MetadataService metadataService;
-    private final Map<String, Object> factoryDefaults;
-    private final Map<String, Object> options;
 
     /**
      * Creates a new ConfigurationMerger.
@@ -73,8 +71,6 @@ public class ConfigurationMerger {
             Map<String, Object> options) {
         this.moduleConfig = moduleConfig != null ? moduleConfig : CodecConfiguration.builder().build();
         this.metadataService = metadataService;
-        this.factoryDefaults = factoryDefaults != null ? factoryDefaults : Map.of();
-        this.options = options != null ? options : Map.of();
     }
 
     /**

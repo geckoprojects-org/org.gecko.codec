@@ -30,7 +30,7 @@ class CodecValueRegistryClearTest extends CodecValueRegistryTestBase {
     @DisplayName("clears all writers and readers")
     void clearsAllWritersAndReaders() {
         CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
-        CodecValueReader<String> reader = parser -> parser.getText();
+        CodecValueReader<String> reader = parser -> parser.getString();
 
         registry.registerWriter("writer", writer);
         registry.registerReader("reader", reader);

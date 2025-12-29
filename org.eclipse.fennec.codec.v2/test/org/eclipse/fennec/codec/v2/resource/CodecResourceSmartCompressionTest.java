@@ -64,7 +64,6 @@ class CodecResourceSmartCompressionTest {
     private MetadataService metadataService;
 
     // EClasses
-    private EClass animalClass;
     private EClass dogClass;
     private EClass catClass;
     private EClass ownerClass;
@@ -87,7 +86,6 @@ class CodecResourceSmartCompressionTest {
         metadataService.registerPackage(testPackage);
 
         // Load EClasses
-        animalClass = ecoreHelper.getEClass(testPackage, "Animal");
         dogClass = ecoreHelper.getEClass(testPackage, "Dog");
         catClass = ecoreHelper.getEClass(testPackage, "Cat");
         ownerClass = ecoreHelper.getEClass(testPackage, "Owner");

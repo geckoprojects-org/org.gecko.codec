@@ -32,7 +32,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
-import org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect;
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.codec.v2.deser.DeserializationState.UnresolvedReference;
@@ -147,7 +146,6 @@ public class CodecResource extends ResourceImpl {
         }
 
         // Merge options with configuration hierarchy
-        @SuppressWarnings("unchecked")
         Map<String, Object> effectiveOptions = (Map<String, Object>) mergeOptions(options);
 
         // Create configured ObjectMapper with CodecModule
@@ -185,7 +183,6 @@ public class CodecResource extends ResourceImpl {
         }
 
         // Merge options with configuration hierarchy
-        @SuppressWarnings("unchecked")
         Map<String, Object> mergedOptions = (Map<String, Object>) mergeOptions(effectiveOptions);
 
         // Create configured ObjectMapper with CodecModule
@@ -206,9 +203,27 @@ public class CodecResource extends ResourceImpl {
             reader = reader.withAttribute(ContextHelper.EXPECTED_TYPE, rootEClassHint);
         }
 
-        EObject result = reader.readValue(inputStream);
-        if (nonNull(result)) {
-            getContents().add(result);
+        // Create parser to peek at first token and determine if array or object
+        try (tools.jackson.core.JsonParser parser = mapper.createParser(inputStream)) {
+            tools.jackson.core.JsonToken firstToken = parser.nextToken();
+
+            if (firstToken == tools.jackson.core.JsonToken.START_ARRAY) {
+                // Multiple root objects - read each element from the array
+                while (parser.nextToken() != tools.jackson.core.JsonToken.END_ARRAY) {
+                    EObject result = reader.readValue(parser);
+                    if (nonNull(result)) {
+                        getContents().add(result);
+                    }
+                }
+            } else if (firstToken == tools.jackson.core.JsonToken.START_OBJECT) {
+                // Single root object
+                EObject result = reader.readValue(parser);
+                if (nonNull(result)) {
+                    getContents().add(result);
+                }
+            } else if (firstToken != null) {
+                LOGGER.warning(() -> String.format("Unexpected token at root: %s", firstToken));
+            }
         }
 
         // Resolve unresolved references after deserialization
@@ -236,16 +251,6 @@ public class CodecResource extends ResourceImpl {
             metadata = metadataService.registerPackage(ePackage);
         }
         return metadata;
-    }
-
-    /**
-     * Gets the codec aspect for the given EClass.
-     *
-     * @param eClass the EClass
-     * @return the ClassCodecAspect, or null if not found
-     */
-    private ClassCodecAspect getCodecAspect(EClass eClass) {
-        return (ClassCodecAspect) metadataService.getClassAspect(eClass, "codec");
     }
 
     /**

@@ -98,7 +98,7 @@ public class IdDeserializationEntry implements DeserializationEntry {
             }
         } else {
             // No ID attribute - ID may be used for resource URI fragment
-            String idString = parser.getText();
+            String idString = parser.getString();
             LOGGER.fine("ID value without ID attribute: " + idString + " (may be used for URI fragment)");
         }
     }
@@ -116,7 +116,7 @@ public class IdDeserializationEntry implements DeserializationEntry {
 
         try {
             if (token == JsonToken.VALUE_STRING) {
-                String stringValue = parser.getText();
+                String stringValue = parser.getString();
                 // Use EMF's conversion for the attribute type
                 return EcoreUtil.createFromString(attribute.getEAttributeType(), stringValue);
             } else if (token == JsonToken.VALUE_NUMBER_INT) {

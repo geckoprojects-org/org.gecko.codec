@@ -25,6 +25,7 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.ObjectReadContext;
+import tools.jackson.core.ObjectWriteContext;
 import tools.jackson.core.StreamReadCapability;
 import tools.jackson.core.StreamReadConstraints;
 import tools.jackson.core.StreamReadFeature;
@@ -57,7 +58,7 @@ public class CodecTokenBuffer extends TokenBuffer {
 	}
 	
 	protected CodecTokenBuffer(TokenStreamContext parentContext) {
-		 super(false);
+		super(ObjectWriteContext.empty(), false);
 		_parentContext = parentContext;
 	}
 	
@@ -76,7 +77,7 @@ public class CodecTokenBuffer extends TokenBuffer {
     
     public CodecTokenBuffer(boolean hasNativeIds)
     {
-        super(hasNativeIds);
+    	super(ObjectWriteContext.empty(), hasNativeIds);
     }
     
     /* 

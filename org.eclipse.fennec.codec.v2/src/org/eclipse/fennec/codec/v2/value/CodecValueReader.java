@@ -34,7 +34,7 @@ import tools.jackson.core.JsonParser;
  * public class ISO8601DateReader implements CodecValueReader&lt;Date&gt; {
  *     &#64;Override
  *     public Date read(JsonParser parser) throws IOException {
- *         String text = parser.getText();
+ *         String text = parser.getString();
  *         return ISO8601_FORMAT.parse(text);
  *     }
  * }

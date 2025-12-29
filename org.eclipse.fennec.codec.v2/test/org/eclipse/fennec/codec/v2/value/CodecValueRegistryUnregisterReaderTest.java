@@ -30,7 +30,7 @@ class CodecValueRegistryUnregisterReaderTest extends CodecValueRegistryTestBase 
     @Test
     @DisplayName("removes registered reader")
     void removesRegisteredReader() {
-        CodecValueReader<String> reader = parser -> parser.getText();
+        CodecValueReader<String> reader = parser -> parser.getString();
         registry.registerReader("test", reader);
         registry.unregisterReader("test");
 

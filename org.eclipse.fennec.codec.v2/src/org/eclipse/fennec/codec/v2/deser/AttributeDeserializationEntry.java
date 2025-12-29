@@ -147,7 +147,7 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
             }
 
             if (token == JsonToken.VALUE_STRING) {
-                String stringValue = parser.getText();
+                String stringValue = parser.getString();
                 return convertFromString(stringValue, dataType, instanceClass);
             }
 

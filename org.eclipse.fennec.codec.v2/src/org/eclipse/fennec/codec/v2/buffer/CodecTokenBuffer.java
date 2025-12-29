@@ -15,6 +15,7 @@ package org.eclipse.fennec.codec.v2.buffer;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.ObjectReadContext;
+import tools.jackson.core.ObjectWriteContext;
 import tools.jackson.core.TokenStreamContext;
 import tools.jackson.databind.util.TokenBuffer;
 
@@ -55,7 +56,7 @@ public class CodecTokenBuffer extends TokenBuffer {
      * @param parentContext the parent token stream context
      */
     protected CodecTokenBuffer(TokenStreamContext parentContext) {
-        super(false);
+        super(ObjectWriteContext.empty(), false);
         _parentContext = parentContext;
     }
 
@@ -65,7 +66,7 @@ public class CodecTokenBuffer extends TokenBuffer {
      * @param hasNativeIds whether to track native IDs
      */
     protected CodecTokenBuffer(boolean hasNativeIds) {
-        super(hasNativeIds);
+        super(ObjectWriteContext.empty(), hasNativeIds);
     }
 
     /**

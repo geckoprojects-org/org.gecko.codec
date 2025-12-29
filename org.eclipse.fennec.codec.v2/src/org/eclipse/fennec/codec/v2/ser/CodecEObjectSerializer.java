@@ -16,7 +16,6 @@ package org.eclipse.fennec.codec.v2.ser;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -67,8 +66,6 @@ import tools.jackson.databind.ValueSerializer;
  * @since 2025-12-16
  */
 public class CodecEObjectSerializer extends ValueSerializer<EObject> {
-
-    private static final Logger LOGGER = Logger.getLogger(CodecEObjectSerializer.class.getName());
 
     private final EffectiveCodecConfig config;
 

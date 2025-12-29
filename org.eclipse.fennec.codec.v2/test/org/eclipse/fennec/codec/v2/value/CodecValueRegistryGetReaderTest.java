@@ -33,7 +33,7 @@ class CodecValueRegistryGetReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("returns reader when found")
     void returnsReaderWhenFound() {
-        CodecValueReader<String> reader = parser -> parser.getText();
+        CodecValueReader<String> reader = parser -> parser.getString();
         registry.registerReader("test", reader);
 
         Optional<CodecValueReader<?>> result = registry.getReader("test");
@@ -58,7 +58,7 @@ class CodecValueRegistryGetReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("getReader with type class returns typed reader")
     void getReaderWithTypeClassReturnsTypedReader() {
-        CodecValueReader<String> reader = parser -> parser.getText();
+        CodecValueReader<String> reader = parser -> parser.getString();
         registry.registerReader("test", reader);
 
         Optional<CodecValueReader<String>> result = registry.getReader("test", String.class);

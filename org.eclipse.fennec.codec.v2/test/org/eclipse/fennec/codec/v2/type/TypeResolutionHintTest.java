@@ -33,7 +33,6 @@ import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -58,7 +57,6 @@ class TypeResolutionHintTest {
     private EClass customerClass;
     private EClass productClass;
     private EClass orderClass;
-    private EClass vehicleClass;
     private EClass carClass;
     private EClass motorcycleClass;
     private EClass garageClass;
@@ -78,7 +76,6 @@ class TypeResolutionHintTest {
         customerClass = ecoreHelper.getEClass(testPackage, "Customer");
         productClass = ecoreHelper.getEClass(testPackage, "Product");
         orderClass = ecoreHelper.getEClass(testPackage, "Order");
-        vehicleClass = ecoreHelper.getEClass(testPackage, "Vehicle");
         carClass = ecoreHelper.getEClass(testPackage, "Car");
         motorcycleClass = ecoreHelper.getEClass(testPackage, "Motorcycle");
         garageClass = ecoreHelper.getEClass(testPackage, "Garage");

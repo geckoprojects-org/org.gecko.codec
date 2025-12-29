@@ -358,14 +358,6 @@ class CodecResourceCrossPackageTest {
             // Only register base package
             registerBasePackageOnly();
 
-            String json = """
-                {
-                    "_type": "pressure-sensor",
-                    "deviceId": "pressure-001",
-                    "pressure": 1013.25
-                }
-                """;
-
             // Discriminator "pressure-sensor" is not registered
             // The deserialization should not find the correct EClass
             assertNull(typeService.getEClassFromAny("pressure-sensor"),

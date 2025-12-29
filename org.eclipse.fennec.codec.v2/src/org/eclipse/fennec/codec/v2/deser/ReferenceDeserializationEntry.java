@@ -243,7 +243,7 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
             parser.nextToken(); // Move to value
 
             if (refKey.equals(fieldName)) {
-                uri = parser.getText();
+                uri = parser.getString();
             }
             // Skip other fields
         }
@@ -264,7 +264,7 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
             return readRefUri(parser);
         } else if (token == JsonToken.VALUE_STRING) {
             // Direct URI string (alternative format)
-            return parser.getText();
+            return parser.getString();
         }
 
         LOGGER.warning("Expected START_OBJECT or VALUE_STRING for non-containment ref, got: " + token);

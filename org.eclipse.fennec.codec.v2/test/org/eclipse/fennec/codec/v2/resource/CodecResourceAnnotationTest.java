@@ -131,10 +131,6 @@ class CodecResourceAnnotationTest {
         return testPackage.getEFactoryInstance().create(orderItemClass);
     }
 
-    private EObject createCustomer() {
-        return testPackage.getEFactoryInstance().create(customerClass);
-    }
-
     private EObject createVIPCustomer() {
         return testPackage.getEFactoryInstance().create(vipCustomerClass);
     }

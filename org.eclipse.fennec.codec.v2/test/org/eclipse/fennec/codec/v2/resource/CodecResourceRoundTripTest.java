@@ -70,7 +70,6 @@ class CodecResourceRoundTripTest {
 
     // EReferences on Person
     private EReference addressRef;
-    private EReference managerRef;
     private EReference friendsRef;
 
     // EReferences on Company
@@ -103,7 +102,6 @@ class CodecResourceRoundTripTest {
 
         // Load EReferences on Person
         addressRef = (EReference) ecoreHelper.getFeature(personClass, "address");
-        managerRef = (EReference) ecoreHelper.getFeature(personClass, "manager");
         friendsRef = (EReference) ecoreHelper.getFeature(personClass, "friends");
 
         // Load EReferences on Company

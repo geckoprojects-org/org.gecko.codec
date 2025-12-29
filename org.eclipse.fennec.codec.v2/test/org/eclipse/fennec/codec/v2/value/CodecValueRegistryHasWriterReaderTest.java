@@ -50,7 +50,7 @@ class CodecValueRegistryHasWriterReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("hasReader returns true for registered reader")
     void hasReaderReturnsTrueForRegistered() {
-        CodecValueReader<String> reader = parser -> parser.getText();
+        CodecValueReader<String> reader = parser -> parser.getString();
         registry.registerReader("test", reader);
         assertTrue(registry.hasReader("test"));
     }

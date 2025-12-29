@@ -19,8 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
-import java.util.List;
-
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.api.MetadataService;

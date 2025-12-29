@@ -105,7 +105,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
 
         if (token == JsonToken.VALUE_STRING) {
             // PLAIN format: "_type": "http://example.org/1.0#//Person" or "_type": "text"
-            typeValue = parser.getText();
+            typeValue = parser.getString();
         } else if (token == JsonToken.START_OBJECT) {
             // STRUCTURED format: "_type": {"schema": "...", "name": "..."}
             typeValue = parseStructuredType(parser);
@@ -148,9 +148,9 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             parser.nextToken(); // Move to value
 
             if ("schema".equals(fieldName) || "_schema".equals(fieldName)) {
-                schema = parser.getText();
+                schema = parser.getString();
             } else if ("name".equals(fieldName) || "_name".equals(fieldName)) {
-                name = parser.getText();
+                name = parser.getString();
             }
         }
 

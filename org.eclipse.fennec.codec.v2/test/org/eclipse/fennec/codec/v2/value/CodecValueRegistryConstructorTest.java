@@ -40,7 +40,7 @@ class CodecValueRegistryConstructorTest extends CodecValueRegistryTestBase {
     @DisplayName("constructor with maps initializes registry")
     void constructorWithMapsInitializesRegistry() {
         CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
-        CodecValueReader<String> reader = parser -> parser.getText();
+        CodecValueReader<String> reader = parser -> parser.getString();
 
         Map<String, CodecValueWriter<?>> writers = new HashMap<>();
         writers.put("stringWriter", writer);

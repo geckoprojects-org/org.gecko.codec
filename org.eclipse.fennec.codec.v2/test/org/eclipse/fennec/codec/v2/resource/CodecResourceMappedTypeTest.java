@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -68,7 +67,6 @@ class CodecResourceMappedTypeTest {
     private TypeDiscriminatorService typeService;
 
     // EClasses
-    private EClass deviceClass;
     private EClass temperatureSensorClass;
     private EClass humiditySensorClass;
     private EClass gpsTrackerClass;
@@ -90,7 +88,6 @@ class CodecResourceMappedTypeTest {
         typeService = TypeDiscriminatorService.fromMetadataService(metadataService);
 
         // Load EClasses
-        deviceClass = ecoreHelper.getEClass(testPackage, "Device");
         temperatureSensorClass = ecoreHelper.getEClass(testPackage, "TemperatureSensor");
         humiditySensorClass = ecoreHelper.getEClass(testPackage, "HumiditySensor");
         gpsTrackerClass = ecoreHelper.getEClass(testPackage, "GPSTracker");

@@ -65,7 +65,6 @@ class TypeResolutionCombinedTest {
     private EPackage testPackage;
     private EClass simpleDataClass;
     private EClass eventClass;
-    private EClass eventMetaClass;
     private EClass clickEventClass;
     private EClass scrollEventClass;
     private EClass eventLogClass;
@@ -84,7 +83,6 @@ class TypeResolutionCombinedTest {
 
         simpleDataClass = ecoreHelper.getEClass(testPackage, "SimpleData");
         eventClass = ecoreHelper.getEClass(testPackage, "Event");
-        eventMetaClass = ecoreHelper.getEClass(testPackage, "EventMeta");
         clickEventClass = ecoreHelper.getEClass(testPackage, "ClickEvent");
         scrollEventClass = ecoreHelper.getEClass(testPackage, "ScrollEvent");
         eventLogClass = ecoreHelper.getEClass(testPackage, "EventLog");

@@ -44,7 +44,8 @@ abstract class CodecResourceHelperTestBase {
     protected EClass abstractEntityClass;
     protected EClass namedInterface;
 
-    @BeforeEach
+    @SuppressWarnings("restriction")
+	@BeforeEach
     void setUp() throws IOException {
         metadataService = new MetadataServiceImpl();
         helper = new CodecResourceHelper(metadataService);
