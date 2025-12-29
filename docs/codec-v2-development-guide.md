@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2025-12-17
+**Last Updated:** 2025-12-29
 
 ---
 
@@ -383,33 +383,139 @@ All tests in `CodecResourceMappedTypeTest`:
 }
 ```
 
-### 5.5 Next Steps (Phase 2+)
+### 5.5 Type Resolution Flow (Deserialization)
+
+This section clearly documents how the deserializer determines the EClass for an object.
+
+#### 5.5.1 Primary Type Resolution: `_type` Field
+
+The default and primary way to determine type is via the `_type` field in JSON content:
+
+```json
+{
+  "_type": "http://example.org/1.0#//Person",
+  "name": "John"
+}
+```
+
+The `_type` value can be:
+- **Full URI** (e.g., `"http://example.org/1.0#//Person"`) → Resolved via EPackage registry
+- **Discriminator value** (e.g., `"temp-sensor"`) → Resolved via `TypeDiscriminatorService` (MAPPED strategy)
+
+This applies to **both root objects and nested/contained objects**.
+
+#### 5.5.2 Fallback: CODEC_ROOT_OBJECT Hint
+
+When `_type` is **missing** from the JSON content, the `CODEC_ROOT_OBJECT` load option provides the type hint:
+
+```java
+Map<String, Object> options = Map.of(
+    CodecResource.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson()
+);
+resource.load(inputStream, options);
+```
+
+The `CODEC_ROOT_OBJECT` value can be:
+- **EClass** → Used directly as the object's type
+- **String** → Interpreted as EClass URI, resolved to EClass
+
+**Important:** This hint is only for the **root object**. Nested objects must have their type information in the content (either `_type` field or via featurePath).
+
+#### 5.5.3 Nested Objects Type Resolution
+
+For nested/contained objects:
+1. **With `_type`**: Parse and resolve (URI or MAPPED discriminator)
+2. **Without `_type`**: Use the EReference's `eType` to determine expected type
+
+Example: A `DeviceContainer` with `devices: Device[*]` reference. Each device in the array should have `_type` to determine the concrete type (e.g., `"temp-sensor"` → `TemperatureSensor`).
+
+#### 5.5.4 MAPPED Strategy with featurePath
+
+For MAPPED strategy, type can also be determined from a content field instead of `_type`:
+
+```
+<eAnnotations source="codec.type.lorawan-uplink">
+  <details key="typeKeyFeaturePath" value="info.profileName"/>
+</eAnnotations>
+```
+
+This tells the deserializer to:
+1. Scan the content to find `info.profileName` value (e.g., `"temperature-profile"`)
+2. Use `TypeDiscriminatorService.getEClassFromAny("temperature-profile")` to resolve EClass
+3. Requires buffering since we may need to scan ahead before knowing the type
+
+**featurePath is ONLY applicable for MAPPED strategy** - it's an alternative location for the discriminator value.
+
+#### 5.5.5 Resolution Priority Summary
+
+| Priority | Source | Applies To |
+|----------|--------|------------|
+| 1 | `_type` field in content | Root + Nested |
+| 2 | `typeKeyFeaturePath` content (MAPPED) | Root + Nested (if configured) |
+| 3 | `CODEC_ROOT_OBJECT` hint | Root only |
+| 4 | EReference `eType` | Nested only (fallback) |
+
+#### 5.5.6 Internal Implementation: ContextHelper and EXPECTED_TYPE
+
+The type hint is passed through the deserialization tree using Jackson context attributes.
+
+**Key Class: `ContextHelper` (`org.eclipse.fennec.codec.v2.context.ContextHelper`)**
+
+```java
+// Get expected type (returns null if not set, throws if wrong type)
+EClass hint = ContextHelper.getExpectedType(ctxt);
+
+// Set expected type (throws if null)
+ContextHelper.setExpectedType(ctxt, eClass);
+
+// Clear expected type
+ContextHelper.clearExpectedType(ctxt);
+```
+
+**Context Attributes:**
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `CODEC_EXPECTED_TYPE` | `EClass` | Type hint for current object |
+| `CODEC_UNRESOLVED_REFERENCES` | `List<UnresolvedReference>` | Collector for cross-references |
+
+**Contract for `EXPECTED_TYPE`:**
+- **MUST** always be of type `EClass` (never a URI string)
+- URI resolution happens **before** setting the attribute
+- If non-`EClass` value is set → `IllegalStateException`
+
+**Flow:**
+1. `CodecResource.doLoad()`: Resolves `CODEC_ROOT_OBJECT` → sets `EXPECTED_TYPE`
+2. `CodecEObjectDeserializer`: Uses `ContextHelper.getExpectedType(ctxt)`
+3. `ReferenceDeserializationEntry`: Sets `reference.getEReferenceType()` as `EXPECTED_TYPE` for nested objects
+
+This enables:
+- **Concrete reference types**: No `_type` needed in nested objects
+- **Abstract reference types**: `_type` required to specify concrete subtype
+
+See **Spec Section 15.7** for detailed flow diagrams.
+
+### 5.6 Implementation Status
 
 1. ~~**EAnnotation-based configuration**~~ ✅ Complete
 
-2. **Additional TypeStrategies** (partially done)
+2. **TypeStrategies**
    - ✅ `NAME` - Simple class name
+   - ✅ `URI` - Full EClass URI (default)
    - ✅ `MAPPED` - Discriminator-based type resolution
-   - `SCHEMA_AND_TYPE` - Separate schema/type fields
-   - `STRUCTURED` - Nested object format
+   - ✅ `MAPPED` with featurePath - Type from content field
+   - `SCHEMA_AND_TYPE` - Separate schema/type fields (not started)
+   - `STRUCTURED` - Nested object format (not started)
+   - `NUMERIC` - Classifier IDs (not started)
 
-3. **Cross-resource references**
-   - Resolve references to objects in other resources
-   - Support ResourceSet-based resolution
+3. ✅ **Smart Compression** - Omit `_type` when instance type == reference type
 
-4. **Array root objects**
-   - Support deserializing JSON arrays as multiple root objects
-
-5. **Custom value readers/writers**
-   - `CodecValueRegistry` integration
-   - Support for `valueWriterName`/`valueReaderName` annotations
-
-6. **SuperType serialization**
-   - Implement when `superTypeConfig.enabled = true`
-
-7. **OSGi integration**
-   - Create ResourceFactory for OSGi registration
-   - Test with OSGi runtime
+4. **Pending Features** (see Section 11 for details)
+   - Cross-resource references
+   - Array root objects
+   - Custom value readers/writers
+   - SuperType serialization
+   - OSGi integration
 
 ---
 
@@ -522,72 +628,131 @@ Tests should NOT be trivial getter/setter tests. Instead:
 
 ---
 
-## 9. Pending Work (Next Session)
+## 9. Completed Work (Phase 2.3)
 
-### 9.1 Cross-Package Dynamic Registration Tests
+### 9.1 Cross-Package Dynamic Registration Tests ✅
 
-Test that MAPPED type discriminators work across multiple EPackages and handle dynamic registration/unregistration correctly.
+**Completed:** Tests for MAPPED type discriminators across multiple EPackages.
 
-**User's Requirements:**
-> "we have to test the dynamic, when the typemapping is going across multiple EPackages. when there is an Eclass in the new Epackage it can only serialized and de-serialized, when this package is registered. when its unregistered it shouldn't work anymore."
+**Files Created:**
+- `test-mapped-type-ext.ecore` - Extension package with PressureSensor and LightSensor
+- `CodecResourceCrossPackageTest.java` - Comprehensive tests
 
-**Test Scenarios:**
-1. **Cross-package discriminator registration**
-   - Base class in Package A defines `codec.type.{mapId}` with `typeKeyFeaturePath`
-   - Concrete classes in Package B extend base class and register discriminators
-   - Test that serialization/deserialization works when both packages are registered
+**Key Learning:** Cross-package ecore references must use namespace URI (e.g., `http://test.example.org/mapped/1.0#//Device`) instead of relative paths for proper EMF resolution.
 
-2. **Dynamic registration**
-   - Register Package A first (base class)
-   - Register Package B (concrete classes) - discriminators should become available
-   - Verify serialization now works for concrete classes
+**Added to TypeDiscriminatorService:**
+- `unregisterPackage(PackageMetadata)` - Removes discriminators for a package
+- `unregisterClass(ClassMetadata)` - Removes discriminator for a single class
 
-3. **Dynamic unregistration**
-   - Start with both packages registered and working
-   - Unregister Package B from MetadataService
-   - Verify that discriminators from Package B no longer resolve
-   - Re-register Package B, verify it works again
+**Test Coverage:**
+- Both packages registered - all discriminators available
+- Only base package registered - extension discriminators not available
+- Dynamic registration/unregistration
+- Re-registration restores discriminators
 
-4. **Edge cases**
-   - Same discriminator value in different mapIds (should work)
-   - Concurrent registration/unregistration (thread safety)
-   - Registering concrete class before base class
+### 9.2 FeaturePath-Based Type Discrimination Tests ✅ (Test Framework Ready)
 
-### 9.2 FeaturePath-Based Type Discrimination Tests
+**Completed:** Test model and test class structure for featurePath-based type discrimination.
 
-Test `typeKeyFeaturePath` annotation where discriminator value is read from an existing feature in content (not a dedicated `_type` field).
+**Files Created:**
+- `test-featurepath-type.ecore` - Test model with `typeKeyFeaturePath` annotations
+- `CodecResourceFeaturePathTypeTest.java` - Test class with disabled implementation tests
 
-**User's Requirements:**
-> "furthermore we should also test the handling of the featurePath, so reading and writing the type data from an existing feature or key in the content."
+**Test Model Demonstrates:**
+- **Nested path:** `info.profileName` for LoRaWAN-style messages
+- **Single-level path:** `messageType` for simple messages
 
-**Annotation Example:**
-```xml
-<eAnnotations source="codec.type.lorawan-dynamic">
-  <details key="typeKeyFeaturePath" value="deviceInfo.deviceProfileName"/>
-</eAnnotations>
-```
-
-**Test Scenarios:**
-1. **Simple feature path** - Single level path like `deviceType`
-2. **Nested feature path** - Dot-notation path like `deviceInfo.deviceProfileName`
-3. **Serialization** - Type discriminator should NOT be written as `_type`, value should come from the feature path
-4. **Deserialization** - Read discriminator from feature path, resolve EClass via TypeDiscriminatorService
-
-**Implementation Needed:**
-- `TypeSerializationEntry` needs to check `discriminatorPath` and write to that path instead of `_type`
-- `TypeDeserializationEntry` needs to read from `discriminatorPath` when strategy is MAPPED
-- May need buffering/lookahead for deserialization when discriminator appears after other fields
-
-### 9.3 Key Files for These Tests
-
-- `TypeDiscriminatorService.java` - Already supports multi-mapId registries
-- `TypeDiscriminatorRegistry.java` - Has `register()` and `unregister()` methods
-- `CodecResourceMappedTypeTest.java` - Existing MAPPED tests to extend
-- `test-mapped-type.ecore` - Test model to extend or create new test model
+**Annotation Parsing Tests Pass:** Discriminators are registered correctly from `typeKeyFeaturePath` annotations.
 
 ---
 
-## 10. Session Continuity Tips
+## 10. Completed Work (Phase 2.4)
+
+### 10.1 Smart Compression Implementation ✅
+
+**Completed:** 2025-12-29
+
+Smart compression is now fully implemented as a global feature that suppresses redundant `_type` information.
+
+**Behavior:**
+| Smart Compression | Instance Type == Reference Type | Action |
+|-------------------|--------------------------------|--------|
+| ON | Yes | Omit `_type` (can be inferred from reference declaration) |
+| ON | No | Write `_type` (polymorphic - concrete type differs) |
+| OFF | Yes/No | Always write `_type` |
+
+**Configuration:**
+```java
+CodecConfiguration config = CodecConfiguration.builder()
+    .smartCompression(true)  // Default is OFF per spec
+    .build();
+```
+
+**Key Files:**
+- `CodecConfiguration.java` - `smartCompression` setting
+- `EffectiveCodecConfig.java` - Runtime access
+- `ReferenceSerializationEntry.java` - Type suppression logic
+- `TypeSerializationEntry.java` - Context-aware `shouldSerialize()`
+- `ContextHelper.java` - `SUPPRESS_TYPE` context flag
+
+**Tests:** `CodecResourceSmartCompressionTest.java` - 11 tests covering ON/OFF behavior
+
+### 10.2 FeaturePath Deserialization Implementation ✅
+
+**Completed:** 2025-12-29
+
+FeaturePath-based type resolution is now fully implemented, including hint-free deserialization.
+
+**Key Components:**
+- `FeaturePathTypeResolver.java` - TokenBuffer-based content scanning
+- `CodecTokenBuffer.java` - Buffers JSON tokens for replay after type discovery
+- `CodecEObjectDeserializer.java` - Integrates featurePath resolution
+
+**Features:**
+- Nested paths: `info.profileName` navigates into nested objects
+- Single-level paths: `messageType` at root level
+- Hint-free: When no `CODEC_ROOT_OBJECT` is provided, searches all registered discriminatorPaths
+
+**Tests:** All tests in `CodecResourceFeaturePathTypeTest.java` now pass (previously 3 were disabled)
+
+### 10.3 FeaturePath Serialization ✅
+
+When `typeDiscriminatorPath` is configured:
+- Root object: `_type` is omitted (discriminator value is in content)
+- Nested objects with smart compression ON: `_type` suppressed when instance == reference type
+
+---
+
+## 11. Pending Work (Next Session)
+
+### 11.1 Additional TypeStrategies
+
+- `SCHEMA_AND_TYPE` - Separate schema/type fields
+- `STRUCTURED` - Nested object format
+- `NUMERIC` - Classifier IDs
+
+### 11.2 Cross-Resource References
+
+- Resolve references to objects in other EMF resources
+- Support ResourceSet-based resolution
+
+### 11.3 Array Root Objects
+
+- Support deserializing JSON arrays as multiple root objects
+
+### 11.4 Custom Value Readers/Writers
+
+- `CodecValueRegistry` integration
+- Support for `valueWriterName`/`valueReaderName` annotations
+
+### 11.5 OSGi Integration
+
+- Create ResourceFactory for OSGi registration
+- Test with OSGi runtime
+
+---
+
+## 12. Session Continuity Tips
 
 If context is lost:
 

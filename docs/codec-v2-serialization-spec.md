@@ -2702,6 +2702,118 @@ When both `CODEC_ROOT_OBJECT` AND type information in content are present:
 // Result: WARNING raised, deserialize as Address (content type)
 ```
 
+### 15.7 Internal Type Resolution Flow
+
+This section describes the internal implementation details for type resolution during deserialization.
+
+#### 15.7.1 Context Attributes
+
+The deserializer uses Jackson context attributes to pass type hints through the deserialization tree:
+
+| Attribute Key | Type | Purpose |
+|---------------|------|---------|
+| `CODEC_EXPECTED_TYPE` | `EClass` (required) | Expected type hint for current object |
+| `CODEC_UNRESOLVED_REFERENCES` | `List<UnresolvedReference>` | Collector for cross-references |
+
+**Contract for `EXPECTED_TYPE`:**
+- **MUST** always be of type `EClass` when set (never a URI string)
+- Resolution from URI string to `EClass` happens **before** setting the attribute
+- If a non-`EClass` value is set, `ContextHelper.getExpectedType()` throws `IllegalStateException`
+- Can be `null` if no hint is available
+
+#### 15.7.2 ContextHelper
+
+The `ContextHelper` class (`org.eclipse.fennec.codec.v2.context.ContextHelper`) provides type-safe access to context attributes:
+
+```java
+// Get expected type (returns null if not set, throws if wrong type)
+EClass hint = ContextHelper.getExpectedType(ctxt);
+
+// Set expected type (throws if null)
+ContextHelper.setExpectedType(ctxt, eClass);
+
+// Clear expected type
+ContextHelper.clearExpectedType(ctxt);
+```
+
+Works with both `DeserializationContext` and `SerializationContext`.
+
+#### 15.7.3 Type Resolution Flow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ CodecResource.doLoad()                                          │
+│                                                                 │
+│  1. Resolve CODEC_ROOT_OBJECT option:                          │
+│     - If EClass: use directly                                  │
+│     - If URI String: resolve to EClass via EPackage.Registry   │
+│                                                                 │
+│  2. Set EXPECTED_TYPE context attribute (if hint available)    │
+│     reader.withAttribute(EXPECTED_TYPE, resolvedEClass)        │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ CodecEObjectDeserializer.deserialize()                          │
+│                                                                 │
+│  1. Get hint: ContextHelper.getExpectedType(ctxt)              │
+│                                                                 │
+│  2. Read JSON properties:                                       │
+│     - If _type field found: resolve EClass from _type value    │
+│     - If no _type: use hint as fallback                        │
+│                                                                 │
+│  3. Create EObject from resolved EClass                        │
+│                                                                 │
+│  4. Deserialize properties (including containment references)  │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼ (for each containment reference)
+┌─────────────────────────────────────────────────────────────────┐
+│ ReferenceDeserializationEntry.deserializeContainedObject()      │
+│                                                                 │
+│  1. Save current: previousHint = getExpectedType(ctxt)         │
+│                                                                 │
+│  2. Set EReference.eType as hint for nested object:            │
+│     setExpectedType(ctxt, reference.getEReferenceType())       │
+│                                                                 │
+│  3. Delegate to CodecEObjectDeserializer                       │
+│                                                                 │
+│  4. Restore previous hint (or clear if was null)               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 15.7.4 EReference.eType Fallback
+
+For nested containment objects, the deserializer automatically uses `EReference.getEReferenceType()` as the type hint. This enables:
+
+- **Concrete reference types**: Nested objects don't need `_type` if the reference type is concrete
+- **Abstract reference types**: Nested objects need `_type` to specify which concrete subtype
+
+**Example - Concrete reference type (no _type needed):**
+```java
+// EClass Order has: EReference customer -> Customer (concrete)
+// JSON:
+{
+  "_type": "http://example.org#//Order",
+  "customer": {
+    "name": "Alice"   // No _type needed - Customer is concrete
+  }
+}
+```
+
+**Example - Abstract reference type (_type required):**
+```java
+// EClass Garage has: EReference vehicles -> Vehicle (abstract)
+// JSON:
+{
+  "_type": "http://example.org#//Garage",
+  "vehicles": [
+    { "_type": "http://example.org#//Car", "doors": 4 },
+    { "_type": "http://example.org#//Motorcycle", "engineCC": 750 }
+  ]
+}
+```
+
 ---
 
 ## 16. Configuration Hierarchy
