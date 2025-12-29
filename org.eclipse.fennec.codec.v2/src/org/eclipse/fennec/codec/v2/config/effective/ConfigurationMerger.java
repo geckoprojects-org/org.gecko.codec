@@ -97,6 +97,7 @@ public class ConfigurationMerger {
                 .globalTypeKey(moduleConfig.getTypeKey())
                 .globalTypeStrategy(TypeStrategy.URI)  // Module config default, can be enhanced later
                 .typeDiscriminatorService(typeDiscriminatorService)
+                .smartCompression(moduleConfig.isSmartCompression())
                 .classConfigFactory(this::buildClassConfig)
                 .featureConfigFactory(this::buildFeatureConfig)
                 .build();
@@ -152,7 +153,7 @@ public class ConfigurationMerger {
                 .typeKey(resolveTypeKey(aspectConfig))
                 .schemaKey(resolveSchemaKey(aspectConfig))
                 .nameKey(resolveNameKey(aspectConfig))
-                .discriminatorPath(aspectConfig != null ? aspectConfig.getDiscriminatorPath() : null)
+                .discriminatorPath(resolveDiscriminatorPath(eClass, aspectConfig))
                 .discriminatorValue(resolveDiscriminatorValue(aspect, aspectConfig))
                 .build();
     }
@@ -324,6 +325,39 @@ public class ConfigurationMerger {
         if (typeConfig != null && isNonEmpty(typeConfig.getDiscriminatorValue())) {
             return typeConfig.getDiscriminatorValue();
         }
+        return null;
+    }
+
+    /**
+     * Resolves the discriminator path for an EClass.
+     * <p>
+     * First checks the class's own typeConfig. If not found, walks up the
+     * supertype hierarchy looking for a discriminator path defined on an abstract base.
+     * </p>
+     *
+     * @param eClass the EClass to check
+     * @param typeConfig the current class's type config (may be null)
+     * @return the discriminator path, or null if not found
+     */
+    private String resolveDiscriminatorPath(EClass eClass, TypeSerializationConfig typeConfig) {
+        // First check the current class's typeConfig
+        if (typeConfig != null && isNonEmpty(typeConfig.getDiscriminatorPath())) {
+            return typeConfig.getDiscriminatorPath();
+        }
+
+        // Walk up the supertype hierarchy looking for discriminator path
+        if (metadataService != null && eClass != null) {
+            for (EClass superType : eClass.getEAllSuperTypes()) {
+                ClassCodecAspect superAspect = getClassCodecAspect(superType);
+                if (superAspect != null && superAspect.getTypeConfig() != null) {
+                    String path = superAspect.getTypeConfig().getDiscriminatorPath();
+                    if (isNonEmpty(path)) {
+                        return path;
+                    }
+                }
+            }
+        }
+
         return null;
     }
 

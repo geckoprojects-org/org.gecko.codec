@@ -74,4 +74,19 @@ public interface SerializationEntry {
     default boolean shouldSerialize(SerializationState state) {
         return true;
     }
+
+    /**
+     * Checks if this entry should be serialized, with access to serialization context.
+     * <p>
+     * This overload provides access to the serialization context for entries that
+     * need context information (e.g., smart compression suppress type flag).
+     * </p>
+     *
+     * @param state the serialization state containing the EObject and value cache
+     * @param ctxt the serialization context
+     * @return true if this entry should be serialized
+     */
+    default boolean shouldSerialize(SerializationState state, SerializationContext ctxt) {
+        return shouldSerialize(state);
+    }
 }

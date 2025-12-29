@@ -60,6 +60,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/enabled"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/selection"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/format"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/asArray"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/separator"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/superTypeKey"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/schemaKey"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseSuperTypeConfig/nameKey"/>

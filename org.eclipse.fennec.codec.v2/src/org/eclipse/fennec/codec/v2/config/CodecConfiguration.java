@@ -116,6 +116,25 @@ public class CodecConfiguration {
     private final boolean serializeNullValue;
 
     // ========================================================================
+    // Smart Compression Settings
+    // ========================================================================
+
+    /**
+     * Whether to use smart compression.
+     * <p>
+     * When enabled, type information (_type) is omitted when it can be inferred:
+     * <ul>
+     *   <li>For contained objects: omit _type when instance type == reference type</li>
+     *   <li>For non-contained refs: omit _type when instance type == reference type</li>
+     *   <li>For supertypes: use plain names instead of URIs for same-schema types</li>
+     * </ul>
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-serialization-spec.md#121-smart-compression">Spec 12.1: Smart Compression</a>
+     */
+    private final boolean smartCompression;
+
+    // ========================================================================
     // Misc Settings
     // ========================================================================
 
@@ -157,6 +176,7 @@ public class CodecConfiguration {
         this.serializeDefaultValue = builder.serializeDefaultValue;
         this.serializeEmptyValue = builder.serializeEmptyValue;
         this.serializeNullValue = builder.serializeNullValue;
+        this.smartCompression = builder.smartCompression;
         this.useNamesFromExtendedMetaData = builder.useNamesFromExtendedMetaData;
         this.writeEnumLiterals = builder.writeEnumLiterals;
         this.sortPropertiesAlphabetically = builder.sortPropertiesAlphabetically;
@@ -303,6 +323,20 @@ public class CodecConfiguration {
         return serializeNullValue;
     }
 
+    /**
+     * Returns whether smart compression is enabled.
+     * <p>
+     * When enabled, type information (_type) is omitted when it can be inferred
+     * from the reference declaration or context.
+     * </p>
+     *
+     * @return true if smart compression is enabled
+     * @see <a href="docs/codec-v2-serialization-spec.md#121-smart-compression">Spec 12.1: Smart Compression</a>
+     */
+    public boolean isSmartCompression() {
+        return smartCompression;
+    }
+
     public boolean isUseNamesFromExtendedMetaData() {
         return useNamesFromExtendedMetaData;
     }
@@ -389,6 +423,7 @@ public class CodecConfiguration {
         private boolean serializeDefaultValue = false;
         private boolean serializeEmptyValue = false;
         private boolean serializeNullValue = false;
+        private boolean smartCompression = false;
         private boolean useNamesFromExtendedMetaData = true;
         private boolean writeEnumLiterals = false;
         private boolean sortPropertiesAlphabetically = false;
@@ -491,6 +526,23 @@ public class CodecConfiguration {
 
         public Builder serializeNullValue(boolean serializeNullValue) {
             this.serializeNullValue = serializeNullValue;
+            return this;
+        }
+
+        // Smart Compression
+        /**
+         * Enables or disables smart compression.
+         * <p>
+         * When enabled, type information is omitted when it can be inferred.
+         * Default is OFF (false).
+         * </p>
+         *
+         * @param smartCompression true to enable smart compression
+         * @return this builder
+         * @see <a href="docs/codec-v2-serialization-spec.md#121-smart-compression">Spec 12.1: Smart Compression</a>
+         */
+        public Builder smartCompression(boolean smartCompression) {
+            this.smartCompression = smartCompression;
             return this;
         }
 

@@ -81,27 +81,45 @@ public class TypeDeserializationEntry implements DeserializationEntry {
 
     @Override
     public void deserialize(DeserializationState state, JsonParser parser, DeserializationContext ctxt) {
+        deserializeWithHint(state, parser, ctxt, null);
+    }
+
+    /**
+     * Deserializes type information with an optional hint EClass for context.
+     * <p>
+     * The hint EClass is used to provide context for MAPPED type resolution.
+     * If a hint is provided and has a mapId, that mapId is used to narrow
+     * the discriminator lookup.
+     * </p>
+     *
+     * @param state the deserialization state
+     * @param parser the JSON parser
+     * @param ctxt the deserialization context
+     * @param hintEClass optional hint EClass for MAPPED context (may be null)
+     */
+    public void deserializeWithHint(DeserializationState state, JsonParser parser,
+            DeserializationContext ctxt, EClass hintEClass) {
         JsonToken token = parser.currentToken();
 
-        String typeUri = null;
+        String typeValue = null;
 
         if (token == JsonToken.VALUE_STRING) {
-            // PLAIN format: "_type": "http://example.org/1.0#//Person"
-            typeUri = parser.getText();
+            // PLAIN format: "_type": "http://example.org/1.0#//Person" or "_type": "text"
+            typeValue = parser.getText();
         } else if (token == JsonToken.START_OBJECT) {
             // STRUCTURED format: "_type": {"schema": "...", "name": "..."}
-            typeUri = parseStructuredType(parser);
+            typeValue = parseStructuredType(parser);
         } else {
             LOGGER.warning("Unexpected token for _type: " + token);
             return;
         }
 
-        if (typeUri != null) {
-            EClass resolvedClass = resolveEClass(typeUri);
+        if (typeValue != null) {
+            EClass resolvedClass = resolveEClass(typeValue, hintEClass);
             if (resolvedClass != null) {
                 state.setResolvedEClass(resolvedClass);
             } else {
-                LOGGER.warning("Could not resolve EClass from type URI: " + typeUri);
+                LOGGER.warning("Could not resolve EClass from type value: " + typeValue);
             }
         }
     }
@@ -161,26 +179,30 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      * </p>
      *
      * @param typeValue the type value (format depends on strategy)
+     * @param hintEClass optional hint EClass for MAPPED context (may be null)
      * @return the resolved EClass, or null if not found
      */
-    private EClass resolveEClass(String typeValue) {
+    private EClass resolveEClass(String typeValue, EClass hintEClass) {
         if (typeValue == null || typeValue.isEmpty()) {
             return null;
         }
 
-        // First: try discriminator lookup via TypeDiscriminatorService.
-        // If a discriminator is registered, that's the definitive answer.
+        // First: check if it's a full URI (always highest priority)
+        if (typeValue.contains("#//")) {
+            EClass resolved = resolveFromUri(typeValue);
+            if (resolved != null) {
+                return resolved;
+            }
+        }
+
+        // Second: try discriminator lookup via TypeDiscriminatorService.
+        // Use the hint to provide context for MAPPED strategy.
         if (typeDiscriminatorService != null) {
             EClass resolved = typeDiscriminatorService.getEClassFromAny(typeValue);
             if (resolved != null) {
                 LOGGER.fine("Resolved type via discriminator: " + typeValue + " -> " + resolved.getName());
                 return resolved;
             }
-        }
-
-        // Second: check if it's a full URI
-        if (typeValue.contains("#//")) {
-            return resolveFromUri(typeValue);
         }
 
         // Third: handle based on configured strategy

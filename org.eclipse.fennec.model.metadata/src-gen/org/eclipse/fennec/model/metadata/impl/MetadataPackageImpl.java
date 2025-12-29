@@ -450,7 +450,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseSuperTypeConfig_SuperTypeKey() {
+	public EAttribute getBaseSuperTypeConfig_AsArray() {
 		return (EAttribute)baseSuperTypeConfigEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -460,7 +460,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseSuperTypeConfig_SchemaKey() {
+	public EAttribute getBaseSuperTypeConfig_Separator() {
 		return (EAttribute)baseSuperTypeConfigEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -470,8 +470,28 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseSuperTypeConfig_NameKey() {
+	public EAttribute getBaseSuperTypeConfig_SuperTypeKey() {
 		return (EAttribute)baseSuperTypeConfigEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseSuperTypeConfig_SchemaKey() {
+		return (EAttribute)baseSuperTypeConfigEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseSuperTypeConfig_NameKey() {
+		return (EAttribute)baseSuperTypeConfigEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -1016,6 +1036,8 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__ENABLED);
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__SELECTION);
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__FORMAT);
+		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__AS_ARRAY);
+		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__SEPARATOR);
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY);
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY);
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__NAME_KEY);
@@ -1139,6 +1161,8 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEAttribute(getBaseSuperTypeConfig_Enabled(), ecorePackage.getEBoolean(), "enabled", "false", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseSuperTypeConfig_Selection(), this.getSuperTypeSelection(), "selection", "ALL", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseSuperTypeConfig_Format(), this.getSerializationFormat(), "format", "PLAIN", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseSuperTypeConfig_AsArray(), ecorePackage.getEBoolean(), "asArray", "true", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseSuperTypeConfig_Separator(), ecorePackage.getEString(), "separator", ",", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseSuperTypeConfig_SuperTypeKey(), ecorePackage.getEString(), "superTypeKey", "_supertype", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseSuperTypeConfig_SchemaKey(), ecorePackage.getEString(), "schemaKey", "schema", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseSuperTypeConfig_NameKey(), ecorePackage.getEString(), "nameKey", "name", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

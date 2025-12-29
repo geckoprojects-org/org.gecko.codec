@@ -315,13 +315,31 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	int BASE_SUPER_TYPE_CONFIG__FORMAT = 2;
 
 	/**
+	 * The feature id for the '<em><b>As Array</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_SUPER_TYPE_CONFIG__AS_ARRAY = 3;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_SUPER_TYPE_CONFIG__SEPARATOR = 4;
+
+	/**
 	 * The feature id for the '<em><b>Super Type Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY = 3;
+	int BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY = 5;
 
 	/**
 	 * The feature id for the '<em><b>Schema Key</b></em>' attribute.
@@ -330,7 +348,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY = 4;
+	int BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY = 6;
 
 	/**
 	 * The feature id for the '<em><b>Name Key</b></em>' attribute.
@@ -339,7 +357,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_SUPER_TYPE_CONFIG__NAME_KEY = 5;
+	int BASE_SUPER_TYPE_CONFIG__NAME_KEY = 7;
 
 	/**
 	 * The number of structural features of the '<em>Base Super Type Config</em>' class.
@@ -348,7 +366,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_SUPER_TYPE_CONFIG_FEATURE_COUNT = 6;
+	int BASE_SUPER_TYPE_CONFIG_FEATURE_COUNT = 8;
 
 	/**
 	 * The number of operations of the '<em>Base Super Type Config</em>' class.
@@ -1321,6 +1339,28 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getBaseSuperTypeConfig_Format();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#isAsArray <em>As Array</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>As Array</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#isAsArray()
+	 * @see #getBaseSuperTypeConfig()
+	 * @generated
+	 */
+	EAttribute getBaseSuperTypeConfig_AsArray();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSeparator <em>Separator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Separator</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSeparator()
+	 * @see #getBaseSuperTypeConfig()
+	 * @generated
+	 */
+	EAttribute getBaseSuperTypeConfig_Separator();
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSuperTypeKey <em>Super Type Key</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2067,6 +2107,22 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute BASE_SUPER_TYPE_CONFIG__FORMAT = eINSTANCE.getBaseSuperTypeConfig_Format();
+
+		/**
+		 * The meta object literal for the '<em><b>As Array</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_SUPER_TYPE_CONFIG__AS_ARRAY = eINSTANCE.getBaseSuperTypeConfig_AsArray();
+
+		/**
+		 * The meta object literal for the '<em><b>Separator</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_SUPER_TYPE_CONFIG__SEPARATOR = eINSTANCE.getBaseSuperTypeConfig_Separator();
 
 		/**
 		 * The meta object literal for the '<em><b>Super Type Key</b></em>' attribute feature.

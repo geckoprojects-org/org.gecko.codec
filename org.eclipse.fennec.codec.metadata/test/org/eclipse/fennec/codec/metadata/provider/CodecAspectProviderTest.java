@@ -87,7 +87,8 @@ class CodecAspectProviderTest {
         assertNull(codecAspect.getIdConfig());
         assertNull(codecAspect.getTypeConfig());
         assertNull(codecAspect.getSuperTypeConfig());
-        assertFalse(codecAspect.isInheritFromParent());
+        // Default value for inheritFromParent is true (defined in codec.ecore)
+        assertTrue(codecAspect.isInheritFromParent());
     }
 
     @Test
@@ -270,6 +271,57 @@ class CodecAspectProviderTest {
 
         assertNotNull(aspect.getSuperTypeConfig());
         assertEquals(SuperTypeSelection.SINGLE, aspect.getSuperTypeConfig().getSelection());
+    }
+
+    @Test
+    void testBuildClassAspectWithSuperTypeAsArrayFalse() {
+        EClass entityClass = helper.getEClass(testPackage, "EntityWithSuperTypesNotAsArray");
+
+        ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+        assertNotNull(aspect.getSuperTypeConfig());
+        SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+        assertTrue(superConfig.isEnabled());
+        assertFalse(superConfig.isAsArray());
+    }
+
+    @Test
+    void testBuildClassAspectWithSuperTypeSeparator() {
+        EClass entityClass = helper.getEClass(testPackage, "EntityWithSuperTypesSeparator");
+
+        ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+        assertNotNull(aspect.getSuperTypeConfig());
+        SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+        assertTrue(superConfig.isEnabled());
+        assertFalse(superConfig.isAsArray());
+        assertEquals("|", superConfig.getSeparator());
+    }
+
+    @Test
+    void testBuildClassAspectWithSuperTypeDefaultAsArrayTrue() {
+        // EntityWithSuperTypes has superTypeSerialize=true but no asArray specified
+        // Default should be true (array format)
+        EClass entityClass = helper.getEClass(testPackage, "EntityWithSuperTypes");
+
+        ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+        assertNotNull(aspect.getSuperTypeConfig());
+        SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+        assertTrue(superConfig.isAsArray()); // Default is true
+    }
+
+    @Test
+    void testBuildClassAspectWithSuperTypeDefaultSeparator() {
+        // EntityWithSuperTypesNotAsArray has asArray=false but no separator specified
+        // Default separator should be ","
+        EClass entityClass = helper.getEClass(testPackage, "EntityWithSuperTypesNotAsArray");
+
+        ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+        assertNotNull(aspect.getSuperTypeConfig());
+        SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+        assertEquals(",", superConfig.getSeparator()); // Default is ","
     }
 
     // ========================================================================

@@ -34,7 +34,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect;
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.deser.CodecEObjectDeserializer;
+import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.codec.v2.deser.DeserializationState.UnresolvedReference;
 import org.eclipse.fennec.codec.v2.module.CodecModule;
 import org.eclipse.fennec.codec.v2.util.CodecResourceHelper;
@@ -196,10 +196,17 @@ public class CodecResource extends ResourceImpl {
 
         // Deserialize - the _type field in JSON provides type information
         // Disable FAIL_ON_TRAILING_TOKENS since our deserializer leaves parser at END_OBJECT
-        EObject result = mapper.readerFor(EObject.class)
-                .withAttribute(CodecEObjectDeserializer.UNRESOLVED_REFERENCES, unresolvedReferences)
-                .without(tools.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
-                .readValue(inputStream);
+        var reader = mapper.readerFor(EObject.class)
+                .withAttribute(ContextHelper.UNRESOLVED_REFERENCES, unresolvedReferences)
+                .without(tools.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
+
+        // Set expected type hint for deserializer if provided
+        // The hint is resolved from CODEC_ROOT_OBJECT option (EClass or URI string)
+        if (nonNull(rootEClassHint)) {
+            reader = reader.withAttribute(ContextHelper.EXPECTED_TYPE, rootEClassHint);
+        }
+
+        EObject result = reader.readValue(inputStream);
         if (nonNull(result)) {
             getContents().add(result);
         }

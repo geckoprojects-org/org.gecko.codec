@@ -14,9 +14,11 @@
 package org.eclipse.fennec.codec.v2.ser;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.eclipse.fennec.codec.v2.context.ContextHelper;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -40,6 +42,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
     private final EffectiveFeatureConfig config;
     private final EReference reference;
     private final String refKey;
+    private final boolean smartCompression;
 
     /**
      * Creates a new ReferenceSerializationEntry with the effective feature configuration.
@@ -49,9 +52,23 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      * @param refKey the JSON key to use for non-containment reference URIs
      */
     public ReferenceSerializationEntry(EffectiveFeatureConfig config, EReference reference, String refKey) {
+        this(config, reference, refKey, false);
+    }
+
+    /**
+     * Creates a new ReferenceSerializationEntry with smart compression support.
+     *
+     * @param config the effective (pre-merged) feature configuration
+     * @param reference the EReference to serialize
+     * @param refKey the JSON key to use for non-containment reference URIs
+     * @param smartCompression whether smart compression is enabled
+     */
+    public ReferenceSerializationEntry(EffectiveFeatureConfig config, EReference reference,
+            String refKey, boolean smartCompression) {
         this.config = config;
         this.reference = reference;
         this.refKey = refKey;
+        this.smartCompression = smartCompression;
     }
 
     @Override
@@ -113,6 +130,10 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      * Containment references are serialized inline (as nested objects),
      * non-containment references are serialized as URI references.
      * </p>
+     * <p>
+     * When smart compression is enabled, type information is suppressed if the
+     * instance type matches the declared reference type.
+     * </p>
      *
      * @param target the target EObject
      * @param gen the JSON generator
@@ -120,12 +141,32 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      */
     private void serializeReference(EObject target, JsonGenerator gen, SerializationContext ctxt) {
         if (reference.isContainment()) {
+            // Smart compression: suppress _type if instance type == reference type
+            if (smartCompression && shouldSuppressType(target)) {
+                ContextHelper.setSuppressType(ctxt, true);
+            }
             // Containment: serialize inline
             ctxt.writeValue(gen, target);
         } else {
             // Non-containment: serialize as reference
             writeReferenceObject(target, gen);
         }
+    }
+
+    /**
+     * Checks if type should be suppressed for smart compression.
+     * <p>
+     * Type is suppressed when the instance type exactly matches the declared
+     * reference type, as the type can be inferred from the reference declaration.
+     * </p>
+     *
+     * @param target the target EObject
+     * @return true if type should be suppressed
+     */
+    private boolean shouldSuppressType(EObject target) {
+        EClass instanceType = target.eClass();
+        EClass referenceType = reference.getEReferenceType();
+        return instanceType == referenceType;
     }
 
     /**

@@ -28,14 +28,11 @@ import org.eclipse.fennec.codec.metadata.model.codec.CodecFactory;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect;
-import org.eclipse.fennec.codec.metadata.model.codec.ReferenceSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.SuperTypeSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
 import org.eclipse.fennec.model.metadata.ClassAspect;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
-import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.IdStrategy;
-import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.SuperTypeSelection;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.eclipse.fennec.model.metadata.api.AspectProvider;
@@ -46,6 +43,10 @@ import org.eclipse.fennec.model.metadata.api.AspectProvider;
  * Parses EAnnotations from EMF model elements and creates codec-specific
  * aspects (ClassCodecAspect, FeatureCodecAspect, ReferenceCodecAspect)
  * with serialization configuration.
+ * </p>
+ * <p>
+ * All annotations use the unified source {@code http://eclipse.org/fennec/codec}
+ * with configuration specified through detail key-value pairs.
  * </p>
  *
  * @author Mark Hoffmann
@@ -68,44 +69,10 @@ public class CodecAspectProvider implements AspectProvider {
         ClassCodecAspect aspect = factory.createClassCodecAspect();
         aspect.setTypeId(ASPECT_TYPE_ID);
 
-        // Parse codec.id annotation
-        EAnnotation idAnnotation = eClass.getEAnnotation(CODEC_ID);
-        if (idAnnotation != null) {
-            aspect.setIdConfig(buildIdConfig(idAnnotation));
+        EAnnotation codecAnnotation = eClass.getEAnnotation(CODEC_SOURCE);
+        if (codecAnnotation != null) {
+            parseClassAnnotation(aspect, codecAnnotation);
         }
-
-        // Parse codec.type annotation (basic type config)
-        EAnnotation typeAnnotation = eClass.getEAnnotation(CODEC_TYPE);
-        if (typeAnnotation != null) {
-            aspect.setTypeConfig(buildTypeConfig(typeAnnotation));
-        }
-
-        // Parse mapId-scoped type annotations (codec.type.{mapId})
-        // The presence of codec.type.{mapId} implies MAPPED strategy
-        for (EAnnotation ann : eClass.getEAnnotations()) {
-            if (isTypeMapAnnotation(ann.getSource())) {
-                // Build type config - mapId-scoped annotations imply MAPPED strategy
-                if (aspect.getTypeConfig() == null) {
-                    aspect.setTypeConfig(buildMappedTypeConfig(ann));
-                }
-
-                // Extract discriminator value
-                String discriminator = getDetail(ann, KEY_TYPE_DISCRIMINATOR);
-                if (discriminator != null && aspect.getDiscriminatorValue() == null) {
-                    aspect.setDiscriminatorValue(discriminator);
-                }
-            }
-        }
-
-        // Parse codec.supertype annotation
-        EAnnotation superTypeAnnotation = eClass.getEAnnotation(CODEC_SUPERTYPE);
-        if (superTypeAnnotation != null) {
-            aspect.setSuperTypeConfig(buildSuperTypeConfig(superTypeAnnotation));
-        }
-
-        // Parse codec.inherit annotation
-        EAnnotation inheritAnnotation = eClass.getEAnnotation(CODEC_INHERIT);
-        aspect.setInheritFromParent(inheritAnnotation != null);
 
         return aspect;
     }
@@ -137,76 +104,115 @@ public class CodecAspectProvider implements AspectProvider {
 
         populateFeatureAspect(aspect, reference);
 
-        // Reference-specific: Parse codec.type annotation on reference
-        EAnnotation typeAnnotation = reference.getEAnnotation(CODEC_TYPE);
-        if (typeAnnotation != null) {
-            aspect.setTypeConfig(buildTypeConfig(typeAnnotation));
+        // Reference-specific: Parse type config (for polymorphic references)
+        EAnnotation codecAnnotation = reference.getEAnnotation(CODEC_SOURCE);
+        if (codecAnnotation != null) {
+            Map<String, String> details = codecAnnotation.getDetails().map();
+            if (hasTypeConfig(details)) {
+                aspect.setTypeConfig(buildTypeConfig(details));
+            }
         }
-
-        // Parse expand setting from reference if present
-        // (can be set via future annotation support)
 
         return aspect;
     }
 
     // ========================================================================
-    // Private Helper Methods
+    // Class Annotation Parsing
     // ========================================================================
 
     /**
-     * Populates common feature aspect properties from annotations.
+     * Parses codec annotation and populates the class aspect.
+     */
+    private void parseClassAnnotation(ClassCodecAspect aspect, EAnnotation annotation) {
+        Map<String, String> details = annotation.getDetails().map();
+
+        // Parse ID configuration (id* keys)
+        if (hasIdConfig(details)) {
+            aspect.setIdConfig(buildIdConfig(details));
+        }
+
+        // Parse type configuration (type* keys)
+        if (hasTypeConfig(details)) {
+            aspect.setTypeConfig(buildTypeConfig(details));
+        }
+
+        // Parse supertype configuration (superType* keys)
+        if (hasSuperTypeConfig(details)) {
+            aspect.setSuperTypeConfig(buildSuperTypeConfig(details));
+        }
+
+        // Parse inherit flag
+        String inherit = details.get(KEY_INHERIT);
+        if (inherit != null) {
+            aspect.setInheritFromParent(Boolean.parseBoolean(inherit));
+        }
+
+        // Parse type mapping discriminator (for concrete classes in MAPPED strategy)
+        String discriminator = details.get(KEY_TYPE_DISCRIMINATOR);
+        if (discriminator != null) {
+            aspect.setDiscriminatorValue(discriminator);
+        }
+    }
+
+    // ========================================================================
+    // Feature Annotation Parsing
+    // ========================================================================
+
+    /**
+     * Populates common feature aspect properties from annotation.
      */
     private void populateFeatureAspect(FeatureCodecAspect aspect, EStructuralFeature feature) {
         // Default: serialize = true
         aspect.setSerialize(true);
         aspect.setEffectiveKey(feature.getName());
 
-        // Parse codec.transient annotation
-        EAnnotation transientAnnotation = feature.getEAnnotation(CODEC_TRANSIENT);
-        if (transientAnnotation != null) {
-            aspect.setSerialize(false);
-        }
+        EAnnotation codecAnnotation = feature.getEAnnotation(CODEC_SOURCE);
+        if (codecAnnotation != null) {
+            Map<String, String> details = codecAnnotation.getDetails().map();
 
-        // Parse codec.value.writer.name annotation
-        EAnnotation writerAnnotation = feature.getEAnnotation(CODEC_VALUE_WRITER_NAME);
-        if (writerAnnotation != null) {
-            String writerName = getDetail(writerAnnotation, "name");
+            // Parse transient flag
+            String transientStr = details.get(KEY_TRANSIENT);
+            if (transientStr != null && Boolean.parseBoolean(transientStr)) {
+                aspect.setSerialize(false);
+            }
+
+            // Parse value writer/reader names
+            String writerName = details.get(KEY_VALUE_WRITER_NAME);
             if (writerName != null) {
                 aspect.setValueWriterName(writerName);
             }
-        }
 
-        // Parse codec.value.reader.name annotation
-        EAnnotation readerAnnotation = feature.getEAnnotation(CODEC_VALUE_READER_NAME);
-        if (readerAnnotation != null) {
-            String readerName = getDetail(readerAnnotation, "name");
+            String readerName = details.get(KEY_VALUE_READER_NAME);
             if (readerName != null) {
                 aspect.setValueReaderName(readerName);
             }
         }
     }
 
+    // ========================================================================
+    // Configuration Builders
+    // ========================================================================
+
     /**
-     * Builds IdSerializationConfig from codec.id annotation.
+     * Builds IdSerializationConfig from annotation details.
      */
-    private IdSerializationConfig buildIdConfig(EAnnotation annotation) {
+    private IdSerializationConfig buildIdConfig(Map<String, String> details) {
         IdSerializationConfig config = factory.createIdSerializationConfig();
-        Map<String, String> details = annotation.getDetails().map();
 
         // Strategy
-        String strategyStr = details.get(KEY_STRATEGY);
+        String strategyStr = details.get(KEY_ID_STRATEGY);
         if (strategyStr != null) {
             config.setStrategy(parseIdStrategy(strategyStr));
         }
 
         // Key (property name)
-        String key = details.get(KEY_KEY);
+        String key = details.get(KEY_ID_KEY);
         if (key != null) {
             config.setIdKey(key);
         }
 
         // Separator for combined IDs
-        String separator = details.get(KEY_SEPARATOR);
+        String separator = details.get(KEY_ID_SEPARATOR);
         if (separator != null) {
             config.setSeparator(separator);
         }
@@ -233,20 +239,24 @@ public class CodecAspectProvider implements AspectProvider {
     }
 
     /**
-     * Builds TypeSerializationConfig from codec.type annotation.
+     * Builds TypeSerializationConfig from annotation details.
      */
-    private TypeSerializationConfig buildTypeConfig(EAnnotation annotation) {
+    private TypeSerializationConfig buildTypeConfig(Map<String, String> details) {
         TypeSerializationConfig config = factory.createTypeSerializationConfig();
-        Map<String, String> details = annotation.getDetails().map();
 
-        // Strategy
-        String strategyStr = details.get(KEY_STRATEGY);
+        // Strategy - if typeMapId is present without explicit strategy, imply MAPPED
+        String strategyStr = details.get(KEY_TYPE_STRATEGY);
+        String mapId = details.get(KEY_TYPE_MAP_ID);
+
         if (strategyStr != null) {
             config.setStrategy(parseTypeStrategy(strategyStr));
+        } else if (mapId != null) {
+            // Presence of typeMapId implies MAPPED strategy
+            config.setStrategy(TypeStrategy.MAPPED);
         }
 
         // Include
-        String includeStr = details.get(KEY_INCLUDE);
+        String includeStr = details.get(KEY_TYPE_INCLUDE);
         if (includeStr != null) {
             config.setInclude(Boolean.parseBoolean(includeStr));
         }
@@ -258,7 +268,7 @@ public class CodecAspectProvider implements AspectProvider {
         }
 
         // Discriminator path (for MAPPED strategy)
-        String discriminatorPath = details.get(KEY_TYPE_KEY_FEATURE_PATH);
+        String discriminatorPath = details.get(KEY_TYPE_DISCRIMINATOR_PATH);
         if (discriminatorPath != null) {
             config.setDiscriminatorPath(discriminatorPath);
         }
@@ -267,47 +277,10 @@ public class CodecAspectProvider implements AspectProvider {
     }
 
     /**
-     * Builds TypeSerializationConfig from mapId-scoped annotation (codec.type.{mapId}).
-     * <p>
-     * The presence of a mapId-scoped annotation implies MAPPED strategy.
-     * </p>
+     * Builds SuperTypeSerializationConfig from annotation details.
      */
-    private TypeSerializationConfig buildMappedTypeConfig(EAnnotation annotation) {
-        TypeSerializationConfig config = factory.createTypeSerializationConfig();
-        Map<String, String> details = annotation.getDetails().map();
-
-        // MapId-scoped annotations imply MAPPED strategy
-        config.setStrategy(TypeStrategy.MAPPED);
-
-        // Include (default true for MAPPED)
-        String includeStr = details.get(KEY_INCLUDE);
-        if (includeStr != null) {
-            config.setInclude(Boolean.parseBoolean(includeStr));
-        } else {
-            config.setInclude(true);
-        }
-
-        // Type key
-        String typeKey = details.get(KEY_TYPE_KEY);
-        if (typeKey != null) {
-            config.setTypeKey(typeKey);
-        }
-
-        // Discriminator path (feature path for MAPPED strategy)
-        String discriminatorPath = details.get(KEY_TYPE_KEY_FEATURE_PATH);
-        if (discriminatorPath != null) {
-            config.setDiscriminatorPath(discriminatorPath);
-        }
-
-        return config;
-    }
-
-    /**
-     * Builds SuperTypeSerializationConfig from codec.supertype annotation.
-     */
-    private SuperTypeSerializationConfig buildSuperTypeConfig(EAnnotation annotation) {
+    private SuperTypeSerializationConfig buildSuperTypeConfig(Map<String, String> details) {
         SuperTypeSerializationConfig config = factory.createSuperTypeSerializationConfig();
-        Map<String, String> details = annotation.getDetails().map();
 
         // Enabled
         String serializeStr = details.get(KEY_SUPERTYPE_SERIALIZE);
@@ -327,15 +300,61 @@ public class CodecAspectProvider implements AspectProvider {
             config.setSelection(parseSuperTypeSelection(strategyStr));
         }
 
+        // As array
+        String asArrayStr = details.get(KEY_SUPERTYPE_AS_ARRAY);
+        if (asArrayStr != null) {
+            config.setAsArray(Boolean.parseBoolean(asArrayStr));
+        }
+
+        // Separator
+        String separator = details.get(KEY_SUPERTYPE_SEPARATOR);
+        if (separator != null) {
+            config.setSeparator(separator);
+        }
+
         return config;
     }
 
+    // ========================================================================
+    // Config Detection Helpers
+    // ========================================================================
+
     /**
-     * Gets a detail value from an annotation.
+     * Checks if the details map contains any ID configuration keys.
      */
-    private String getDetail(EAnnotation annotation, String key) {
-        return annotation.getDetails().get(key);
+    private boolean hasIdConfig(Map<String, String> details) {
+        return details.containsKey(KEY_ID_STRATEGY)
+                || details.containsKey(KEY_ID_KEY)
+                || details.containsKey(KEY_ID_SEPARATOR)
+                || details.containsKey(KEY_ID_FEATURES)
+                || details.containsKey(KEY_ID_VALUE_READER_NAME)
+                || details.containsKey(KEY_ID_VALUE_WRITER_NAME);
     }
+
+    /**
+     * Checks if the details map contains any type configuration keys.
+     */
+    private boolean hasTypeConfig(Map<String, String> details) {
+        return details.containsKey(KEY_TYPE_STRATEGY)
+                || details.containsKey(KEY_TYPE_KEY)
+                || details.containsKey(KEY_TYPE_INCLUDE)
+                || details.containsKey(KEY_TYPE_MAP_ID)
+                || details.containsKey(KEY_TYPE_DISCRIMINATOR_PATH);
+    }
+
+    /**
+     * Checks if the details map contains any supertype configuration keys.
+     */
+    private boolean hasSuperTypeConfig(Map<String, String> details) {
+        return details.containsKey(KEY_SUPERTYPE_SERIALIZE)
+                || details.containsKey(KEY_SUPERTYPE_KEY)
+                || details.containsKey(KEY_SUPERTYPE_STRATEGY)
+                || details.containsKey(KEY_SUPERTYPE_AS_ARRAY);
+    }
+
+    // ========================================================================
+    // Strategy Parsers
+    // ========================================================================
 
     /**
      * Parses IdStrategy from string value.

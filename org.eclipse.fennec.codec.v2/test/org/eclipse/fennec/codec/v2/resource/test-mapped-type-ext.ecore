@@ -17,8 +17,8 @@
   <!-- PressureSensor - extends Device from base package, discriminator: "pressure-sensor" -->
   <eClassifiers xsi:type="ecore:EClass" name="PressureSensor"
       eSuperTypes="http://test.example.org/mapped/1.0#//Device">
-    <!-- Register with discriminator value in same "iot-sensors" mapId as base package -->
-    <eAnnotations source="codec.type.iot-sensors">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="iot-sensors"/>
       <details key="typeDiscriminator" value="pressure-sensor"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="pressure" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
@@ -28,8 +28,8 @@
   <!-- LightSensor - extends Device from base package, discriminator: "light-sensor" -->
   <eClassifiers xsi:type="ecore:EClass" name="LightSensor"
       eSuperTypes="http://test.example.org/mapped/1.0#//Device">
-    <!-- Register with discriminator value in same "iot-sensors" mapId as base package -->
-    <eAnnotations source="codec.type.iot-sensors">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="iot-sensors"/>
       <details key="typeDiscriminator" value="light-sensor"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lux" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>

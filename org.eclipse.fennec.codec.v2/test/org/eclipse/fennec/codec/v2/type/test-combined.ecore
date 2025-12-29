@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="testcombined" nsURI="http://test.example.org/combined/1.0" nsPrefix="testcombined">
+
+  <!--
+    Model for testing combinations of type resolution strategies.
+    Tests priority: _type URI > _type MAPPED > featurePath > hint > EReference.eType
+    Uses unified annotation format.
+  -->
+
+  <!-- Plain classes for basic testing -->
+  <eClassifiers xsi:type="ecore:EClass" name="SimpleData">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- MAPPED hierarchy with featurePath -->
+  <eClassifiers xsi:type="ecore:EClass" name="Event" abstract="true">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="eventTypes"/>
+      <details key="typeDiscriminatorPath" value="meta.eventKind"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="meta" eType="#//EventMeta" containment="true"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="EventMeta">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="eventKind" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="source" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="ClickEvent" eSuperTypes="#//Event">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="eventTypes"/>
+      <details key="typeDiscriminator" value="click"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <eClassifiers xsi:type="ecore:EClass" name="ScrollEvent" eSuperTypes="#//Event">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="eventTypes"/>
+      <details key="typeDiscriminator" value="scroll"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="position" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+
+  <!-- Container with mixed reference types -->
+  <eClassifiers xsi:type="ecore:EClass" name="EventLog">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sessionId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <!-- Abstract reference - needs _type or featurePath for concrete type -->
+    <eStructuralFeatures xsi:type="ecore:EReference" name="events" upperBound="-1" eType="#//Event" containment="true"/>
+    <!-- Concrete reference - can use EReference.eType fallback -->
+    <eStructuralFeatures xsi:type="ecore:EReference" name="data" eType="#//SimpleData" containment="true"/>
+  </eClassifiers>
+
+</ecore:EPackage>

@@ -15,8 +15,8 @@
   <!-- Base Device class - abstract, defines type config -->
   <eClassifiers xsi:type="ecore:EClass" name="Device" abstract="true">
     <!-- Configure MAPPED strategy with mapId "iot-sensors" -->
-    <!-- The presence of codec.type.{mapId} implies MAPPED strategy -->
-    <eAnnotations source="codec.type.iot-sensors">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="iot-sensors"/>
       <details key="typeKey" value="_type"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="deviceId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -25,8 +25,8 @@
 
   <!-- TemperatureSensor - discriminator: "temp-sensor" -->
   <eClassifiers xsi:type="ecore:EClass" name="TemperatureSensor" eSuperTypes="#//Device">
-    <!-- Register with discriminator value in "iot-sensors" mapId -->
-    <eAnnotations source="codec.type.iot-sensors">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="iot-sensors"/>
       <details key="typeDiscriminator" value="temp-sensor"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="temperature" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
@@ -35,8 +35,8 @@
 
   <!-- HumiditySensor - discriminator: "humidity-sensor" -->
   <eClassifiers xsi:type="ecore:EClass" name="HumiditySensor" eSuperTypes="#//Device">
-    <!-- Register with discriminator value in "iot-sensors" mapId -->
-    <eAnnotations source="codec.type.iot-sensors">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="iot-sensors"/>
       <details key="typeDiscriminator" value="humidity-sensor"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="humidity" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
@@ -44,8 +44,8 @@
 
   <!-- GPSTracker - discriminator: "gps-tracker" -->
   <eClassifiers xsi:type="ecore:EClass" name="GPSTracker" eSuperTypes="#//Device">
-    <!-- Register with discriminator value in "iot-sensors" mapId -->
-    <eAnnotations source="codec.type.iot-sensors">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="iot-sensors"/>
       <details key="typeDiscriminator" value="gps-tracker"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="latitude" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>

@@ -47,6 +47,15 @@ public class TypeDiscriminatorRegistry {
     private final Map<EClass, String> classToValue = new ConcurrentHashMap<>();
 
     /**
+     * The discriminator path for this registry (e.g., "info.profileName" or "_type").
+     * <p>
+     * This is set when registering the first class with a discriminator path,
+     * and applies to all classes in this mapId scope.
+     * </p>
+     */
+    private volatile String discriminatorPath;
+
+    /**
      * Creates a new TypeDiscriminatorRegistry for the given mapId.
      *
      * @param mapId the namespace identifier for this registry
@@ -60,6 +69,51 @@ public class TypeDiscriminatorRegistry {
      */
     public String getMapId() {
         return mapId;
+    }
+
+    /**
+     * Returns the discriminator path for this registry.
+     * <p>
+     * The path can be a simple field name (e.g., "_type", "messageType") or
+     * a dot-separated feature path (e.g., "info.profileName", "deviceInfo.deviceProfileName").
+     * </p>
+     *
+     * @return the discriminator path, or null if not set
+     */
+    public String getDiscriminatorPath() {
+        return discriminatorPath;
+    }
+
+    /**
+     * Sets the discriminator path for this registry.
+     * <p>
+     * This is typically set when the first class with a discriminator path is registered.
+     * All classes in the same mapId scope share the same discriminator path.
+     * </p>
+     *
+     * @param discriminatorPath the path where discriminator values are found
+     */
+    public void setDiscriminatorPath(String discriminatorPath) {
+        String existing = this.discriminatorPath;
+        if (existing != null && !existing.equals(discriminatorPath)) {
+            LOGGER.warning("[" + mapId + "] Discriminator path changed from '" + existing
+                    + "' to '" + discriminatorPath + "'");
+        }
+        this.discriminatorPath = discriminatorPath;
+        LOGGER.fine("[" + mapId + "] Set discriminator path: " + discriminatorPath);
+    }
+
+    /**
+     * Checks if the discriminator path is a feature path (contains dots).
+     * <p>
+     * Feature paths like "info.profileName" require scanning nested objects,
+     * while simple field names like "_type" are found at the current level.
+     * </p>
+     *
+     * @return true if the path contains dots (is a nested path)
+     */
+    public boolean isFeaturePath() {
+        return discriminatorPath != null && discriminatorPath.contains(".");
     }
 
     /**

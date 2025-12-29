@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.v2.ser;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
+import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 
 import tools.jackson.core.JsonGenerator;
@@ -56,7 +57,38 @@ public class TypeSerializationEntry implements SerializationEntry {
 
     @Override
     public boolean shouldSerialize(SerializationState state) {
+        // Don't serialize _type when discriminatorPath is configured
+        // because the type info is already embedded in the content at the feature path
+        if (hasDiscriminatorPath()) {
+            return false;
+        }
         return config.isEnabled();
+    }
+
+    @Override
+    public boolean shouldSerialize(SerializationState state, SerializationContext ctxt) {
+        // Check for smart compression suppress flag (instance type == reference type)
+        if (ContextHelper.isSuppressType(ctxt)) {
+            // Clear the flag so it doesn't affect subsequent objects
+            ContextHelper.clearSuppressType(ctxt);
+            return false;
+        }
+        return shouldSerialize(state);
+    }
+
+    /**
+     * Checks if a discriminator path is configured.
+     * <p>
+     * When a discriminator path is set (e.g., "info.profileName"), the type
+     * information is already present in the content at that path. In this case,
+     * we should NOT write a separate "_type" field.
+     * </p>
+     *
+     * @return true if discriminatorPath is configured and non-empty
+     */
+    private boolean hasDiscriminatorPath() {
+        String path = config.getDiscriminatorPath();
+        return path != null && !path.isEmpty();
     }
 
     @Override

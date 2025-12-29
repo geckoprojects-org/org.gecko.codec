@@ -27,6 +27,7 @@ import org.eclipse.fennec.codec.v2.config.effective.EffectiveClassConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
+import org.eclipse.fennec.codec.v2.context.ContextHelper;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -61,11 +62,8 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
     private static final Logger LOGGER = Logger.getLogger(CodecEObjectDeserializer.class.getName());
 
-    /** Context attribute key for CODEC_ROOT_OBJECT option */
+    /** Context attribute key for CODEC_ROOT_OBJECT option (user-provided root hint) */
     public static final String CODEC_ROOT_OBJECT = "CODEC_ROOT_OBJECT";
-
-    /** Context attribute key for collecting unresolved references */
-    public static final String UNRESOLVED_REFERENCES = "CODEC_UNRESOLVED_REFERENCES";
 
     /** Default reference key for non-containment references */
     private static final String DEFAULT_REF_KEY = "$ref";
@@ -110,32 +108,60 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         // Get or create shared unresolved references list from context
         @SuppressWarnings("unchecked")
         java.util.List<DeserializationState.UnresolvedReference> unresolvedRefs =
-                (java.util.List<DeserializationState.UnresolvedReference>) ctxt.getAttribute(UNRESOLVED_REFERENCES);
+                (java.util.List<DeserializationState.UnresolvedReference>) ctxt.getAttribute(ContextHelper.UNRESOLVED_REFERENCES);
         if (unresolvedRefs != null) {
             // Use shared list for collecting unresolved references
             state.setSharedUnresolvedReferences(unresolvedRefs);
         }
 
-        // Check for CODEC_ROOT_OBJECT hint
-        Object rootObjectHint = ctxt.getAttribute(CODEC_ROOT_OBJECT);
-        if (rootObjectHint instanceof EClass) {
-            state.setResolvedEClass((EClass) rootObjectHint);
+        // Get the expected type hint (must be EClass if set)
+        // This is set by:
+        // - CodecResource (from CODEC_ROOT_OBJECT option, resolved before deserialization)
+        // - ReferenceDeserializationEntry (from EReference.eType for nested objects)
+        EClass hintEClass = ContextHelper.getExpectedType(ctxt);
+
+        // Check if we need to use featurePath-based type resolution
+        // featurePath is used when:
+        // 1. The hint class has a discriminatorPath configured (e.g., "info.profileName"), OR
+        // 2. No hint is provided but a discriminatorPath exists in any registered registry
+        //
+        // If no featurePath is configured, we use standard _type field resolution
+        // which may use MAPPED strategy (discriminator value lookup) or URI strategy
+        String discriminatorPath = getDiscriminatorPath(hintEClass);
+
+        // If no hint provided, try to find ANY discriminatorPath from registered types
+        if (!FeaturePathTypeResolver.hasDiscriminatorPath(discriminatorPath)
+                && hintEClass == null
+                && config.getTypeDiscriminatorService() != null) {
+            discriminatorPath = config.getTypeDiscriminatorService().getAnyDiscriminatorPath();
         }
+
+        if (FeaturePathTypeResolver.hasDiscriminatorPath(discriminatorPath)
+                && config.getTypeDiscriminatorService() != null) {
+            return deserializeWithFeaturePath(parser, ctxt, state, hintEClass, discriminatorPath);
+        }
+
+        // Standard deserialization flow
+        // Note: hintEClass is stored but NOT set as resolvedEClass yet
+        // We need to wait for _type field to potentially resolve to a more specific class
+        // The hint is used as context for MAPPED type resolution
 
         // Storage for deferred properties (those read before type is resolved)
         Map<String, Object> deferredProperties = new HashMap<>();
-        EClass resolvedEClass = state.getResolvedEClass();
+        EClass resolvedEClass = null;
         EObject eObject = null;
+        boolean typeFieldProcessed = false;
 
         // Read properties
         while (parser.nextToken() != JsonToken.END_OBJECT) {
             String propertyName = parser.currentName();
             parser.nextToken(); // Move to value
 
-            // Check if this is the type property
-            if (resolvedEClass == null && isTypeKey(propertyName)) {
-                resolvedEClass = resolveType(parser, state);
+            // Check if this is the type property - ALWAYS process it when present
+            if (isTypeKey(propertyName)) {
+                resolvedEClass = resolveType(parser, state, hintEClass);
                 state.setResolvedEClass(resolvedEClass);
+                typeFieldProcessed = true;
 
                 // Now we can create the object and process deferred properties
                 if (resolvedEClass != null) {
@@ -159,6 +185,12 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
             // Deserialize the property
             deserializeProperty(state, propertyName, parser, ctxt);
+        }
+
+        // If no _type field was found, fall back to hint
+        if (!typeFieldProcessed && hintEClass != null) {
+            resolvedEClass = hintEClass;
+            state.setResolvedEClass(resolvedEClass);
         }
 
         // Handle case where type was never found
@@ -196,10 +228,16 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
      * Resolves the EClass from the current parser position.
      * <p>
      * Uses the configured type strategy to interpret the type value.
-     * The strategy is determined from module config since we don't know the EClass yet.
+     * The hint EClass is used as context for MAPPED type resolution -
+     * it provides the mapId for discriminator lookup.
      * </p>
+     *
+     * @param parser the JSON parser positioned at the type value
+     * @param state the deserialization state
+     * @param hintEClass optional hint EClass for MAPPED context (may be null)
+     * @return the resolved EClass, or null if resolution fails
      */
-    private EClass resolveType(JsonParser parser, DeserializationState state) {
+    private EClass resolveType(JsonParser parser, DeserializationState state, EClass hintEClass) {
         // Build effective type config from module defaults
         // We use module config here since we don't know the EClass yet
         EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
@@ -210,7 +248,9 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
         TypeDeserializationEntry typeEntry = new TypeDeserializationEntry(
                 typeConfig, config.getTypeDiscriminatorService());
-        typeEntry.deserialize(state, parser, null);
+
+        // Pass the hint to the type entry for MAPPED context
+        typeEntry.deserializeWithHint(state, parser, null, hintEClass);
 
         return state.getResolvedEClass();
     }
@@ -379,5 +419,131 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         }
 
         return entries;
+    }
+
+    // ========================================================================
+    // FeaturePath-based deserialization
+    // ========================================================================
+
+    /**
+     * Gets the discriminator path from the EClass's type configuration.
+     *
+     * @param eClass the EClass to check (may be null)
+     * @return the discriminator path, or null if not configured
+     */
+    private String getDiscriminatorPath(EClass eClass) {
+        if (eClass == null) {
+            return null;
+        }
+        EffectiveClassConfig classConfig = config.getClassConfig(eClass);
+        if (classConfig == null || classConfig.getTypeConfig() == null) {
+            return null;
+        }
+        return classConfig.getTypeConfig().getDiscriminatorPath();
+    }
+
+    /**
+     * Deserializes an EObject using featurePath-based type resolution.
+     * <p>
+     * This method is used when the type information is embedded in the content
+     * at a specific path (e.g., "info.profileName") rather than in a dedicated
+     * "_type" field.
+     * </p>
+     *
+     * @param parser the JSON parser positioned at START_OBJECT
+     * @param ctxt the deserialization context
+     * @param state the deserialization state
+     * @param hintEClass the hint EClass (typically an abstract base class)
+     * @param discriminatorPath the path to the discriminator value
+     * @return the deserialized EObject, or null if deserialization failed
+     */
+    private EObject deserializeWithFeaturePath(
+            JsonParser parser,
+            DeserializationContext ctxt,
+            DeserializationState state,
+            EClass hintEClass,
+            String discriminatorPath) {
+
+        LOGGER.fine("Using featurePath-based type resolution: " + discriminatorPath);
+
+        // Create resolver and scan the content
+        FeaturePathTypeResolver resolver = new FeaturePathTypeResolver(
+                discriminatorPath, config.getTypeDiscriminatorService());
+        resolver.scan(parser, ctxt);
+
+        // Get the resolved EClass
+        EClass resolvedEClass = resolver.getResolvedEClass();
+        if (resolvedEClass == null) {
+            // Fall back to hint class if available and not abstract
+            if (hintEClass != null && !hintEClass.isAbstract()) {
+                LOGGER.fine("FeaturePath resolution failed, using hint class: " + hintEClass.getName());
+                resolvedEClass = hintEClass;
+            } else {
+                LOGGER.severe("Cannot deserialize: featurePath resolution failed for '" +
+                        discriminatorPath + "' and no concrete fallback available");
+                return null;
+            }
+        }
+
+        state.setResolvedEClass(resolvedEClass);
+
+        // Get the buffered parser for actual deserialization
+        JsonParser bufferedParser = resolver.getBufferedParser(ctxt, parser);
+        if (bufferedParser == null) {
+            LOGGER.severe("No buffered content available for deserialization");
+            return null;
+        }
+
+        // Deserialize using the buffered parser
+        return deserializeFromBufferedParser(bufferedParser, ctxt, state);
+    }
+
+    /**
+     * Deserializes an EObject from a buffered parser.
+     * <p>
+     * The parser should be positioned at START_OBJECT. This method processes
+     * all properties and returns the fully deserialized EObject.
+     * </p>
+     *
+     * @param parser the buffered JSON parser
+     * @param ctxt the deserialization context
+     * @param state the deserialization state (with EClass already resolved)
+     * @return the deserialized EObject
+     */
+    private EObject deserializeFromBufferedParser(
+            JsonParser parser,
+            DeserializationContext ctxt,
+            DeserializationState state) {
+
+        EClass resolvedEClass = state.getResolvedEClass();
+        if (resolvedEClass == null) {
+            LOGGER.severe("No resolved EClass in deserialization state");
+            return null;
+        }
+
+        // Create the EObject
+        EObject eObject = state.createEObject();
+        if (eObject == null) {
+            LOGGER.severe("Failed to create EObject for: " + resolvedEClass.getName());
+            return null;
+        }
+
+        // Parser should be at START_OBJECT, move into the object
+        JsonToken token = parser.currentToken();
+        if (token != JsonToken.START_OBJECT) {
+            LOGGER.warning("Expected START_OBJECT in buffered parser, got: " + token);
+            return eObject;
+        }
+
+        // Read all properties
+        while ((token = parser.nextToken()) != JsonToken.END_OBJECT && token != null) {
+            if (token == JsonToken.PROPERTY_NAME) {
+                String propertyName = parser.currentName();
+                parser.nextToken(); // Move to value
+                deserializeProperty(state, propertyName, parser, ctxt);
+            }
+        }
+
+        return eObject;
     }
 }

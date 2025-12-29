@@ -10,9 +10,9 @@
 
   <!-- Class with ID annotation (ID_FIELD strategy) -->
   <eClassifiers xsi:type="ecore:EClass" name="PersonWithIdField">
-    <eAnnotations source="codec.id">
-      <details key="strategy" value="ID_FIELD"/>
-      <details key="key" value="_id"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="idStrategy" value="ID_FIELD"/>
+      <details key="idKey" value="_id"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -20,10 +20,10 @@
 
   <!-- Class with ID annotation (COMBINED strategy) -->
   <eClassifiers xsi:type="ecore:EClass" name="PersonWithCombinedId">
-    <eAnnotations source="codec.id">
-      <details key="strategy" value="COMBINED"/>
-      <details key="key" value="_id"/>
-      <details key="separator" value="-"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="idStrategy" value="COMBINED"/>
+      <details key="idKey" value="_id"/>
+      <details key="idSeparator" value="-"/>
       <details key="idFeatures" value="firstName,lastName"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="firstName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -32,75 +32,97 @@
 
   <!-- Class with ID annotation (NONE strategy) -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithNoId">
-    <eAnnotations source="codec.id">
-      <details key="strategy" value="NONE"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="idStrategy" value="NONE"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="data" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
   <!-- Class with Type annotation (URI strategy) -->
   <eClassifiers xsi:type="ecore:EClass" name="TypedEntityUri">
-    <eAnnotations source="codec.type">
-      <details key="strategy" value="URI"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeStrategy" value="URI"/>
       <details key="typeKey" value="_type"/>
-      <details key="include" value="true"/>
+      <details key="typeInclude" value="true"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
   <!-- Class with Type annotation (NAME strategy) -->
   <eClassifiers xsi:type="ecore:EClass" name="TypedEntityName">
-    <eAnnotations source="codec.type">
-      <details key="strategy" value="NAME"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeStrategy" value="NAME"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
   <!-- Class with Type annotation (MAPPED strategy) -->
   <eClassifiers xsi:type="ecore:EClass" name="TypedEntityMapped">
-    <eAnnotations source="codec.type">
-      <details key="strategy" value="MAPPED"/>
-      <details key="typeKeyFeaturePath" value="deviceInfo.profileName"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeStrategy" value="MAPPED"/>
+      <details key="typeDiscriminatorPath" value="deviceInfo.profileName"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
   <!-- Class with Type include=false -->
   <eClassifiers xsi:type="ecore:EClass" name="TypedEntityNoInclude">
-    <eAnnotations source="codec.type">
-      <details key="include" value="false"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeInclude" value="false"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
   <!-- Class with SuperType annotation -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithSuperTypes">
-    <eAnnotations source="codec.supertype">
-      <details key="serialize" value="true"/>
-      <details key="key" value="_superTypes"/>
-      <details key="strategy" value="ALL"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="superTypeSerialize" value="true"/>
+      <details key="superTypeKey" value="_superTypes"/>
+      <details key="superTypeStrategy" value="ALL"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
   <!-- Class with SuperType annotation (SINGLE strategy) -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithSingleSuperType">
-    <eAnnotations source="codec.supertype">
-      <details key="serialize" value="true"/>
-      <details key="strategy" value="SINGLE"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="superTypeSerialize" value="true"/>
+      <details key="superTypeStrategy" value="SINGLE"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- Class with SuperType annotation (asArray=false) -->
+  <eClassifiers xsi:type="ecore:EClass" name="EntityWithSuperTypesNotAsArray">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="superTypeSerialize" value="true"/>
+      <details key="superTypeAsArray" value="false"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- Class with SuperType annotation (custom separator) -->
+  <eClassifiers xsi:type="ecore:EClass" name="EntityWithSuperTypesSeparator">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="superTypeSerialize" value="true"/>
+      <details key="superTypeAsArray" value="false"/>
+      <details key="superTypeSeparator" value="|"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
   <!-- Class with inherit annotation -->
   <eClassifiers xsi:type="ecore:EClass" name="InheritingEntity">
-    <eAnnotations source="codec.inherit"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="inherit" value="true"/>
+    </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
-  <!-- Class with discriminator value (mapId-scoped annotation) -->
+  <!-- Class with discriminator value (using typeMapId) -->
   <eClassifiers xsi:type="ecore:EClass" name="DraginoDevice">
-    <eAnnotations source="codec.type.lorawan-dynamic">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="typeMapId" value="lorawan-dynamic"/>
       <details key="typeDiscriminator" value="Dragino_LSE01"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -108,25 +130,21 @@
 
   <!-- Class with custom ID reader/writer -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithCustomIdHandlers">
-    <eAnnotations source="codec.id">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
       <details key="idValueReaderName" value="CustomIdReader"/>
       <details key="idValueWriterName" value="CustomIdWriter"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
   </eClassifiers>
 
-  <!-- Class with all configs combined -->
+  <!-- Class with all configs combined in single annotation -->
   <eClassifiers xsi:type="ecore:EClass" name="FullyConfiguredEntity">
-    <eAnnotations source="codec.id">
-      <details key="strategy" value="ID_FIELD"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="idStrategy" value="ID_FIELD"/>
+      <details key="typeStrategy" value="URI"/>
+      <details key="superTypeSerialize" value="true"/>
+      <details key="inherit" value="true"/>
     </eAnnotations>
-    <eAnnotations source="codec.type">
-      <details key="strategy" value="URI"/>
-    </eAnnotations>
-    <eAnnotations source="codec.supertype">
-      <details key="serialize" value="true"/>
-    </eAnnotations>
-    <eAnnotations source="codec.inherit"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString" iD="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -135,28 +153,28 @@
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithTransientField">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="publicData" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="secretData" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="codec.transient"/>
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="transient" value="true"/>
+      </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
 
   <!-- Class with value reader/writer on attributes -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithCustomValueHandlers">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="birthDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
-      <eAnnotations source="codec.value.writer.name">
-        <details key="name" value="ISO8601DateWriter"/>
-      </eAnnotations>
-      <eAnnotations source="codec.value.reader.name">
-        <details key="name" value="FlexibleDateReader"/>
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="valueWriterName" value="ISO8601DateWriter"/>
+        <details key="valueReaderName" value="FlexibleDateReader"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="onlyWriter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="codec.value.writer.name">
-        <details key="name" value="CustomWriter"/>
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="valueWriterName" value="CustomWriter"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="onlyReader" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="codec.value.reader.name">
-        <details key="name" value="CustomReader"/>
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="valueReaderName" value="CustomReader"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -171,8 +189,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="PersonWithTypedReference">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
-      <eAnnotations source="codec.type">
-        <details key="strategy" value="NAME"/>
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="typeStrategy" value="NAME"/>
         <details key="typeKey" value="_refType"/>
       </eAnnotations>
     </eStructuralFeatures>
@@ -182,7 +200,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithTransientReference">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="cachedAddress" eType="#//Address">
-      <eAnnotations source="codec.transient"/>
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="transient" value="true"/>
+      </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
 

@@ -44,27 +44,27 @@ import org.eclipse.fennec.model.metadata.api.MetadataService;
  * A mapId identifies a specific type discrimination context. Common patterns:
  * </p>
  * <ul>
- *   <li>{@code "lorawan-dynamic"} - LoRaWAN devices with dynamic type discovery</li>
- *   <li>{@code "lorawan-static"} - LoRaWAN devices with predefined mappings</li>
+ *   <li>{@code "iot-sensors"} - IoT sensor devices</li>
+ *   <li>{@code "lorawan-devices"} - LoRaWAN devices</li>
  *   <li>Package nsURI - Using the EPackage namespace as mapId</li>
  * </ul>
  *
  * <h3>Population from MetadataService</h3>
  * <p>
  * The service can be populated automatically from a {@link MetadataService} by
- * scanning all registered packages for {@code codec.type.{mapId}} annotations
- * with discriminator values.
+ * scanning all registered packages for codec annotations with {@code typeMapId}
+ * and discriminator values.
  * </p>
  *
  * <h3>Usage Example</h3>
  * <pre>{@code
  * TypeDiscriminatorService service = TypeDiscriminatorService.fromMetadataService(metadataService);
  *
- * // Resolve type in "lorawan-dynamic" context
- * EClass deviceClass = service.getEClass("lorawan-dynamic", "Dragino_LSE01");
+ * // Resolve type in "iot-sensors" context
+ * EClass sensorClass = service.getEClass("iot-sensors", "temp-sensor");
  *
  * // Get discriminator for serialization
- * String discriminator = service.getDiscriminatorValue("lorawan-dynamic", deviceClass);
+ * String discriminator = service.getDiscriminatorValue("iot-sensors", sensorClass);
  * }</pre>
  *
  * @see TypeDiscriminatorRegistry
@@ -118,7 +118,13 @@ public class TypeDiscriminatorService {
     /**
      * Registers discriminator mappings from a ClassMetadata.
      * <p>
-     * Extracts the discriminator value from the {@link ClassCodecAspect} if present.
+     * Extracts the discriminator value and path from the {@link ClassCodecAspect} if present.
+     * The discriminator path (e.g., "info.sensorType") is set at the registry level since
+     * all classes in the same mapId share the same path.
+     * </p>
+     * <p>
+     * If the concrete class doesn't have a discriminatorPath in its typeConfig, we look
+     * at the supertype hierarchy to find it (typically defined on an abstract base class).
      * </p>
      *
      * @param classMetadata the class metadata to process
@@ -141,16 +147,61 @@ public class TypeDiscriminatorService {
                     if (discriminator != null && !discriminator.isEmpty()) {
                         // Determine mapId from EClass annotations
                         String mapId = resolveMapId(aspect, eClass);
-                        getOrCreateRegistry(mapId).register(discriminator, eClass);
+                        TypeDiscriminatorRegistry registry = getOrCreateRegistry(mapId);
+                        registry.register(discriminator, eClass);
+
+                        // Set discriminator path if present (from typeConfig or inherited)
+                        String discriminatorPath = resolveDiscriminatorPath(eClass, aspect, mapId);
+                        if (discriminatorPath != null && !discriminatorPath.isEmpty()
+                                && registry.getDiscriminatorPath() == null) {
+                            registry.setDiscriminatorPath(discriminatorPath);
+                        }
                     }
                 });
     }
 
     /**
+     * Resolves the discriminator path for an EClass.
+     * <p>
+     * First checks the class's own typeConfig. If not found, walks up the
+     * supertype hierarchy looking for a discriminator path defined on an abstract base.
+     * </p>
+     *
+     * @param eClass the EClass to check
+     * @param aspect the current class's aspect (may be null)
+     * @param mapId the mapId context to search within
+     * @return the discriminator path, or null if not found
+     */
+    private String resolveDiscriminatorPath(EClass eClass, ClassCodecAspect aspect, String mapId) {
+        // First check the current class's typeConfig
+        if (aspect != null && aspect.getTypeConfig() != null) {
+            String path = aspect.getTypeConfig().getDiscriminatorPath();
+            if (path != null && !path.isEmpty()) {
+                return path;
+            }
+        }
+
+        // Walk up the supertype hierarchy looking for discriminator path annotation
+        for (EClass superType : eClass.getEAllSuperTypes()) {
+            EAnnotation ann = superType.getEAnnotation(CODEC_SOURCE);
+            if (ann != null) {
+                String annotationMapId = ann.getDetails().get(KEY_TYPE_MAP_ID);
+                if (mapId.equals(annotationMapId)) {
+                    String path = ann.getDetails().get(KEY_TYPE_DISCRIMINATOR_PATH);
+                    if (path != null && !path.isEmpty()) {
+                        return path;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Resolves the mapId for a ClassCodecAspect by looking at the EClass annotations.
      * <p>
-     * Scans the EClass's annotations for mapId-scoped type annotations
-     * (e.g., {@code codec.type.iot-sensors}) that contain a {@code typeDiscriminator}.
+     * Scans the EClass's codec annotation for the {@code typeMapId} detail key.
      * </p>
      *
      * @param aspect the codec aspect
@@ -158,19 +209,11 @@ public class TypeDiscriminatorService {
      * @return the mapId to use, or DEFAULT_MAP_ID if not found
      */
     private String resolveMapId(ClassCodecAspect aspect, EClass eClass) {
-        // Scan annotations for mapId-scoped type annotations
-        for (EAnnotation ann : eClass.getEAnnotations()) {
-            String source = ann.getSource();
-            if (isTypeMapAnnotation(source)) {
-                // Check if this annotation has a typeDiscriminator
-                String discriminator = ann.getDetails().get(KEY_TYPE_DISCRIMINATOR);
-                if (discriminator != null && discriminator.equals(aspect.getDiscriminatorValue())) {
-                    // Extract mapId from annotation source
-                    String mapId = extractMapId(source);
-                    if (mapId != null) {
-                        return mapId;
-                    }
-                }
+        EAnnotation ann = eClass.getEAnnotation(CODEC_SOURCE);
+        if (ann != null) {
+            String mapId = ann.getDetails().get(KEY_TYPE_MAP_ID);
+            if (mapId != null && !mapId.isEmpty()) {
+                return mapId;
             }
         }
         return DEFAULT_MAP_ID;
@@ -271,6 +314,54 @@ public class TypeDiscriminatorService {
             String discriminator = registry.getDiscriminatorValue(eClass);
             if (discriminator != null) {
                 return discriminator;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the discriminator path for a specific mapId.
+     *
+     * @param mapId the namespace identifier
+     * @return the discriminator path, or null if not set
+     */
+    public String getDiscriminatorPath(String mapId) {
+        TypeDiscriminatorRegistry registry = getRegistry(mapId);
+        return registry != null ? registry.getDiscriminatorPath() : null;
+    }
+
+    /**
+     * Gets the first available discriminator path from any registry.
+     * <p>
+     * This is useful when the mapId is unknown and you need to find
+     * the discriminator path to scan the JSON content.
+     * </p>
+     *
+     * @return the first non-null discriminator path, or null if none found
+     */
+    public String getAnyDiscriminatorPath() {
+        for (TypeDiscriminatorRegistry registry : registries.values()) {
+            String path = registry.getDiscriminatorPath();
+            if (path != null) {
+                return path;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds a registry that has a discriminator path set.
+     * <p>
+     * Used for hint-free deserialization where we need to find which registry
+     * can be used for type resolution.
+     * </p>
+     *
+     * @return the first registry with a discriminator path, or null if none
+     */
+    public TypeDiscriminatorRegistry findRegistryWithPath() {
+        for (TypeDiscriminatorRegistry registry : registries.values()) {
+            if (registry.getDiscriminatorPath() != null) {
+                return registry;
             }
         }
         return null;

@@ -379,6 +379,24 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int SUPER_TYPE_SERIALIZATION_CONFIG__FORMAT = MetadataPackage.BASE_SUPER_TYPE_CONFIG__FORMAT;
 
 	/**
+	 * The feature id for the '<em><b>As Array</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_SERIALIZATION_CONFIG__AS_ARRAY = MetadataPackage.BASE_SUPER_TYPE_CONFIG__AS_ARRAY;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SUPER_TYPE_SERIALIZATION_CONFIG__SEPARATOR = MetadataPackage.BASE_SUPER_TYPE_CONFIG__SEPARATOR;
+
+	/**
 	 * The feature id for the '<em><b>Super Type Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

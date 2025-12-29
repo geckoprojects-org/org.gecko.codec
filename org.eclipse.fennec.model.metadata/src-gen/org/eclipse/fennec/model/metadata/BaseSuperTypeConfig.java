@@ -34,6 +34,8 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSelection <em>Selection</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getFormat <em>Format</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#isAsArray <em>As Array</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSeparator <em>Separator</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSuperTypeKey <em>Super Type Key</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSchemaKey <em>Schema Key</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getNameKey <em>Name Key</em>}</li>
@@ -128,6 +130,58 @@ public interface BaseSuperTypeConfig extends EObject {
 	 * @generated
 	 */
 	void setFormat(SerializationFormat value);
+
+	/**
+	 * Returns the value of the '<em><b>As Array</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Store supertypes as JSON array (true) or as separator-joined string (false).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>As Array</em>' attribute.
+	 * @see #setAsArray(boolean)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseSuperTypeConfig_AsArray()
+	 * @model default="true"
+	 * @generated
+	 */
+	boolean isAsArray();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#isAsArray <em>As Array</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>As Array</em>' attribute.
+	 * @see #isAsArray()
+	 * @generated
+	 */
+	void setAsArray(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Separator</b></em>' attribute.
+	 * The default value is <code>","</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Separator character when asArray=false. Default is comma.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Separator</em>' attribute.
+	 * @see #setSeparator(String)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseSuperTypeConfig_Separator()
+	 * @model default=","
+	 * @generated
+	 */
+	String getSeparator();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSeparator <em>Separator</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Separator</em>' attribute.
+	 * @see #getSeparator()
+	 * @generated
+	 */
+	void setSeparator(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Super Type Key</b></em>' attribute.

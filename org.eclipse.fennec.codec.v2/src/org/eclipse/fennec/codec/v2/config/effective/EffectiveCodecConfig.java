@@ -59,6 +59,7 @@ public final class EffectiveCodecConfig {
     private final String globalTypeKey;
     private final TypeStrategy globalTypeStrategy;
     private final TypeDiscriminatorService typeDiscriminatorService;
+    private final boolean smartCompression;
 
     // ========================================================================
     // Class and feature config factories (for lazy building)
@@ -82,6 +83,7 @@ public final class EffectiveCodecConfig {
         this.globalTypeKey = builder.globalTypeKey;
         this.globalTypeStrategy = builder.globalTypeStrategy;
         this.typeDiscriminatorService = builder.typeDiscriminatorService;
+        this.smartCompression = builder.smartCompression;
         this.classConfigFactory = Objects.requireNonNull(builder.classConfigFactory,
                 "classConfigFactory must not be null");
         this.featureConfigFactory = Objects.requireNonNull(builder.featureConfigFactory,
@@ -156,6 +158,20 @@ public final class EffectiveCodecConfig {
      */
     public TypeDiscriminatorService getTypeDiscriminatorService() {
         return typeDiscriminatorService;
+    }
+
+    /**
+     * Returns whether smart compression is enabled.
+     * <p>
+     * When enabled, type information (_type) is omitted when it can be inferred
+     * from the reference declaration (instance type == reference type).
+     * </p>
+     *
+     * @return true if smart compression is enabled
+     * @see <a href="docs/codec-v2-serialization-spec.md#121-smart-compression">Spec 12.1: Smart Compression</a>
+     */
+    public boolean isSmartCompression() {
+        return smartCompression;
     }
 
     // ========================================================================
@@ -242,6 +258,7 @@ public final class EffectiveCodecConfig {
         private String globalTypeKey = "_type";
         private TypeStrategy globalTypeStrategy = TypeStrategy.URI;
         private TypeDiscriminatorService typeDiscriminatorService;
+        private boolean smartCompression = false;
         private Function<EClass, EffectiveClassConfig> classConfigFactory;
         private Function<EStructuralFeature, EffectiveFeatureConfig> featureConfigFactory;
 
@@ -279,6 +296,11 @@ public final class EffectiveCodecConfig {
 
         public Builder typeDiscriminatorService(TypeDiscriminatorService typeDiscriminatorService) {
             this.typeDiscriminatorService = typeDiscriminatorService;
+            return this;
+        }
+
+        public Builder smartCompression(boolean smartCompression) {
+            this.smartCompression = smartCompression;
             return this;
         }
 

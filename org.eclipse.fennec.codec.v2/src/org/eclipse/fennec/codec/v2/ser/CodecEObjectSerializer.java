@@ -116,7 +116,7 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
         gen.writeStartObject(value);
         for (Map.Entry<String, SerializationEntry> entry : entries.entrySet()) {
             SerializationEntry serEntry = entry.getValue();
-            if (serEntry.shouldSerialize(state)) {
+            if (serEntry.shouldSerialize(state, ctxt)) {
                 serEntry.serialize(state, gen, ctxt);
             }
         }
@@ -166,7 +166,7 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
                 featureEntry = new AttributeSerializationEntry(featureConfig, attribute);
             } else if (feature instanceof EReference reference) {
                 featureEntry = new ReferenceSerializationEntry(
-                        featureConfig, reference, config.getRefKey());
+                        featureConfig, reference, config.getRefKey(), config.isSmartCompression());
             } else {
                 continue;
             }

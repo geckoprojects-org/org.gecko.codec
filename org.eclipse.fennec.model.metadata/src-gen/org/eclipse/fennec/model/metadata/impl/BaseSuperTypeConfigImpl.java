@@ -37,6 +37,8 @@ import org.eclipse.fennec.model.metadata.SuperTypeSelection;
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getSelection <em>Selection</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getFormat <em>Format</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#isAsArray <em>As Array</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getSeparator <em>Separator</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getSuperTypeKey <em>Super Type Key</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getSchemaKey <em>Schema Key</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getNameKey <em>Name Key</em>}</li>
@@ -104,6 +106,46 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 	 * @ordered
 	 */
 	protected SerializationFormat format = FORMAT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isAsArray() <em>As Array</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isAsArray()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean AS_ARRAY_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isAsArray() <em>As Array</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isAsArray()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean asArray = AS_ARRAY_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSeparator() <em>Separator</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSeparator()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String SEPARATOR_EDEFAULT = ",";
+
+	/**
+	 * The cached value of the '{@link #getSeparator() <em>Separator</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSeparator()
+	 * @generated
+	 * @ordered
+	 */
+	protected String separator = SEPARATOR_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getSuperTypeKey() <em>Super Type Key</em>}' attribute.
@@ -259,6 +301,52 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 	 * @generated
 	 */
 	@Override
+	public boolean isAsArray() {
+		return asArray;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setAsArray(boolean newAsArray) {
+		boolean oldAsArray = asArray;
+		asArray = newAsArray;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_SUPER_TYPE_CONFIG__AS_ARRAY, oldAsArray, asArray));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getSeparator() {
+		return separator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setSeparator(String newSeparator) {
+		String oldSeparator = separator;
+		separator = newSeparator;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_SUPER_TYPE_CONFIG__SEPARATOR, oldSeparator, separator));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String getSuperTypeKey() {
 		return superTypeKey;
 	}
@@ -336,6 +424,10 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 				return getSelection();
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__FORMAT:
 				return getFormat();
+			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__AS_ARRAY:
+				return isAsArray();
+			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SEPARATOR:
+				return getSeparator();
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY:
 				return getSuperTypeKey();
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY:
@@ -362,6 +454,12 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 				return;
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__FORMAT:
 				setFormat((SerializationFormat)newValue);
+				return;
+			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__AS_ARRAY:
+				setAsArray((Boolean)newValue);
+				return;
+			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SEPARATOR:
+				setSeparator((String)newValue);
 				return;
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY:
 				setSuperTypeKey((String)newValue);
@@ -393,6 +491,12 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__FORMAT:
 				setFormat(FORMAT_EDEFAULT);
 				return;
+			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__AS_ARRAY:
+				setAsArray(AS_ARRAY_EDEFAULT);
+				return;
+			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SEPARATOR:
+				setSeparator(SEPARATOR_EDEFAULT);
+				return;
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY:
 				setSuperTypeKey(SUPER_TYPE_KEY_EDEFAULT);
 				return;
@@ -420,6 +524,10 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 				return selection != SELECTION_EDEFAULT;
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__FORMAT:
 				return format != FORMAT_EDEFAULT;
+			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__AS_ARRAY:
+				return asArray != AS_ARRAY_EDEFAULT;
+			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SEPARATOR:
+				return SEPARATOR_EDEFAULT == null ? separator != null : !SEPARATOR_EDEFAULT.equals(separator);
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY:
 				return SUPER_TYPE_KEY_EDEFAULT == null ? superTypeKey != null : !SUPER_TYPE_KEY_EDEFAULT.equals(superTypeKey);
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY:
@@ -446,6 +554,10 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 		result.append(selection);
 		result.append(", format: ");
 		result.append(format);
+		result.append(", asArray: ");
+		result.append(asArray);
+		result.append(", separator: ");
+		result.append(separator);
 		result.append(", superTypeKey: ");
 		result.append(superTypeKey);
 		result.append(", schemaKey: ");

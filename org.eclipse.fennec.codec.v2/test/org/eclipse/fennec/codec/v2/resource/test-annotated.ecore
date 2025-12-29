@@ -9,14 +9,10 @@
 
   <!-- Product - class with custom ID configuration -->
   <eClassifiers xsi:type="ecore:EClass" name="Product">
-    <!-- codec.id annotation: use "id" key instead of default "_id" -->
-    <eAnnotations source="codec.id">
-      <details key="strategy" value="ID_FIELD"/>
-      <details key="key" value="id"/>
-    </eAnnotations>
-    <!-- codec.type annotation: use NAME strategy instead of URI -->
-    <eAnnotations source="codec.type">
-      <details key="strategy" value="NAME"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="idStrategy" value="ID_FIELD"/>
+      <details key="idKey" value="id"/>
+      <details key="typeStrategy" value="NAME"/>
       <details key="typeKey" value="type"/>
     </eAnnotations>
 
@@ -26,17 +22,18 @@
 
     <!-- Transient feature - should not be serialized -->
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="internalCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="codec.transient"/>
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="transient" value="true"/>
+      </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
 
   <!-- Order - class with combined ID -->
   <eClassifiers xsi:type="ecore:EClass" name="Order">
-    <!-- codec.id annotation: combined ID from customerId and orderDate -->
-    <eAnnotations source="codec.id">
-      <details key="strategy" value="COMBINED"/>
-      <details key="key" value="orderId"/>
-      <details key="separator" value="-"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="idStrategy" value="COMBINED"/>
+      <details key="idKey" value="orderId"/>
+      <details key="idSeparator" value="-"/>
       <details key="idFeatures" value="customerId,orderDate"/>
     </eAnnotations>
 
@@ -57,11 +54,10 @@
 
   <!-- Customer - class with supertype serialization enabled -->
   <eClassifiers xsi:type="ecore:EClass" name="Customer">
-    <!-- codec.supertype annotation: serialize supertypes -->
-    <eAnnotations source="codec.supertype">
-      <details key="serialize" value="true"/>
-      <details key="key" value="_extends"/>
-      <details key="strategy" value="ALL"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="superTypeSerialize" value="true"/>
+      <details key="superTypeKey" value="_extends"/>
+      <details key="superTypeStrategy" value="ALL"/>
     </eAnnotations>
 
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="email" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

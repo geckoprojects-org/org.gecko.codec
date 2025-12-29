@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.codec.v2.deser.DeserializationState.UnresolvedReference;
 
 import tools.jackson.core.JsonParser;
@@ -181,7 +183,8 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      * Deserializes a contained object.
      * <p>
      * Creates a nested deserialization state and recursively deserializes
-     * the contained object.
+     * the contained object. The EReference's eType is passed as a hint
+     * to allow deserialization of nested objects without explicit _type.
      * </p>
      *
      * @param parentState the parent state
@@ -194,13 +197,29 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
         // The actual deserialization is handled by CodecEObjectDeserializer
         // We delegate to the deserializer directly
         try {
-            tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
-                    ctxt.constructType(EObject.class));
-            if (deser != null) {
-                return (EObject) deser.deserialize(parser, ctxt);
+            // Save the current expected type hint
+            EClass previousExpectedType = ContextHelper.getExpectedType(ctxt);
+
+            // Set the EReference's eType as hint for nested deserialization
+            // This allows concrete types to be instantiated without explicit _type
+            ContextHelper.setExpectedType(ctxt, reference.getEReferenceType());
+
+            try {
+                tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
+                        ctxt.constructType(EObject.class));
+                if (deser != null) {
+                    return (EObject) deser.deserialize(parser, ctxt);
+                }
+                LOGGER.warning("No deserializer found for EObject");
+                return null;
+            } finally {
+                // Restore the previous hint
+                if (previousExpectedType != null) {
+                    ContextHelper.setExpectedType(ctxt, previousExpectedType);
+                } else {
+                    ContextHelper.clearExpectedType(ctxt);
+                }
             }
-            LOGGER.warning("No deserializer found for EObject");
-            return null;
         } catch (Exception e) {
             LOGGER.warning("Error deserializing contained object for " + reference.getName() + ": " + e.getMessage());
             return null;
