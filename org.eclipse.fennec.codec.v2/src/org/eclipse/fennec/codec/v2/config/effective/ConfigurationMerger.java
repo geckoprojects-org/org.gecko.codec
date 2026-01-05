@@ -94,6 +94,7 @@ public class ConfigurationMerger {
                 .globalTypeStrategy(TypeStrategy.URI)  // Module config default, can be enhanced later
                 .typeDiscriminatorService(typeDiscriminatorService)
                 .smartCompression(moduleConfig.isSmartCompression())
+                .metadataService(metadataService)
                 .classConfigFactory(this::buildClassConfig)
                 .featureConfigFactory(this::buildFeatureConfig)
                 .build();

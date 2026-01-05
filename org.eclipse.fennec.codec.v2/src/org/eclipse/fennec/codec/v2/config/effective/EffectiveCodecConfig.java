@@ -22,7 +22,9 @@ import java.util.function.Function;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
+import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
+import org.eclipse.fennec.model.metadata.api.MetadataService;
 
 /**
  * Fully resolved codec configuration for a single serialization/deserialization operation.
@@ -60,6 +62,7 @@ public final class EffectiveCodecConfig {
     private final TypeStrategy globalTypeStrategy;
     private final TypeDiscriminatorService typeDiscriminatorService;
     private final boolean smartCompression;
+    private final MetadataService metadataService;
 
     // ========================================================================
     // Class and feature config factories (for lazy building)
@@ -84,6 +87,7 @@ public final class EffectiveCodecConfig {
         this.globalTypeStrategy = builder.globalTypeStrategy;
         this.typeDiscriminatorService = builder.typeDiscriminatorService;
         this.smartCompression = builder.smartCompression;
+        this.metadataService = builder.metadataService;
         this.classConfigFactory = Objects.requireNonNull(builder.classConfigFactory,
                 "classConfigFactory must not be null");
         this.featureConfigFactory = Objects.requireNonNull(builder.featureConfigFactory,
@@ -174,6 +178,43 @@ public final class EffectiveCodecConfig {
         return smartCompression;
     }
 
+    /**
+     * Returns the metadata service for EClass resolution and aspect lookups.
+     * <p>
+     * This service provides access to ClassMetadata and FeatureMetadata
+     * parsed from EAnnotations. May be null if no metadata service was configured.
+     * </p>
+     *
+     * @return the metadata service, or null if not configured
+     */
+    public MetadataService getMetadataService() {
+        return metadataService;
+    }
+
+    /**
+     * Convenience method to get ClassMetadata for an EClass.
+     *
+     * @param eClass the EClass
+     * @return the class metadata, or null if not found or no metadata service
+     */
+    public ClassMetadata getClassMetadata(EClass eClass) {
+        return metadataService != null ? metadataService.getClassMetadata(eClass) : null;
+    }
+
+    /**
+     * Resolves an EClass from its URI string using the metadata service.
+     *
+     * @param uri the EClass URI (e.g., "http://example.org/model#//MyClass")
+     * @return the resolved EClass, or null if not found or no metadata service
+     */
+    public EClass resolveEClassByURI(String uri) {
+        if (uri == null || uri.isEmpty() || metadataService == null) {
+            return null;
+        }
+        ClassMetadata metadata = metadataService.getClassMetadataByURI(uri);
+        return metadata != null ? metadata.getEClass() : null;
+    }
+
     // ========================================================================
     // Class config (cached)
     // ========================================================================
@@ -259,6 +300,7 @@ public final class EffectiveCodecConfig {
         private TypeStrategy globalTypeStrategy = TypeStrategy.URI;
         private TypeDiscriminatorService typeDiscriminatorService;
         private boolean smartCompression = false;
+        private MetadataService metadataService;
         private Function<EClass, EffectiveClassConfig> classConfigFactory;
         private Function<EStructuralFeature, EffectiveFeatureConfig> featureConfigFactory;
 
@@ -301,6 +343,11 @@ public final class EffectiveCodecConfig {
 
         public Builder smartCompression(boolean smartCompression) {
             this.smartCompression = smartCompression;
+            return this;
+        }
+
+        public Builder metadataService(MetadataService metadataService) {
+            this.metadataService = metadataService;
             return this;
         }
 

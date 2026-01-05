@@ -15,6 +15,7 @@ package org.eclipse.fennec.codec.v2.context;
 
 import static org.mockito.Mockito.mock;
 
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -29,11 +30,24 @@ import org.junit.jupiter.api.BeforeEach;
 abstract class CodecReadContextTestBase {
 
     protected MetadataService metadataService;
+    protected EffectiveCodecConfig effectiveConfig;
     protected CodecReadContext context;
 
     @BeforeEach
     void setUp() {
         metadataService = mock(MetadataService.class);
-        context = CodecReadContext.createRootContext(metadataService);
+        effectiveConfig = createTestEffectiveConfig(metadataService);
+        context = CodecReadContext.createRootContext(effectiveConfig);
+    }
+
+    /**
+     * Creates an EffectiveCodecConfig for testing with the given MetadataService.
+     */
+    protected static EffectiveCodecConfig createTestEffectiveConfig(MetadataService metadataService) {
+        return EffectiveCodecConfig.builder()
+                .metadataService(metadataService)
+                .classConfigFactory(eClass -> null)
+                .featureConfigFactory(feature -> null)
+                .build();
     }
 }

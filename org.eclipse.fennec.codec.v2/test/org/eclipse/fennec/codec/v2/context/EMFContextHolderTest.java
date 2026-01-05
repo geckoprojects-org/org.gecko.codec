@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,23 +35,31 @@ class EMFContextHolderTest {
 
     private EMFContextHolder holder;
     private MetadataService metadataService;
+    private EffectiveCodecConfig effectiveConfig;
 
     @BeforeEach
     void setUp() {
         metadataService = mock(MetadataService.class);
-        holder = new EMFContextHolder(metadataService);
+        effectiveConfig = EffectiveCodecConfig.builder()
+                .metadataService(metadataService)
+                .classConfigFactory(eClass -> null)
+                .featureConfigFactory(feature -> null)
+                .build();
+        holder = new EMFContextHolder(effectiveConfig);
     }
 
     @Test
-    @DisplayName("default constructor creates holder with null metadata service")
-    void defaultConstructorNullMetadataService() {
+    @DisplayName("default constructor creates holder with null effective config")
+    void defaultConstructorNullEffectiveConfig() {
         EMFContextHolder defaultHolder = new EMFContextHolder();
+        assertNull(defaultHolder.getEffectiveConfig());
         assertNull(defaultHolder.getMetadataService());
     }
 
     @Test
-    @DisplayName("constructor with metadata service stores service")
-    void constructorWithMetadataService() {
+    @DisplayName("constructor with effective config stores config")
+    void constructorWithEffectiveConfig() {
+        assertSame(effectiveConfig, holder.getEffectiveConfig());
         assertSame(metadataService, holder.getMetadataService());
     }
 
@@ -106,11 +115,14 @@ class EMFContextHolderTest {
     }
 
     @Test
-    @DisplayName("setMetadataService and getMetadataService")
-    void setAndGetMetadataService() {
-        MetadataService newService = mock(MetadataService.class);
-        holder.setMetadataService(newService);
-        assertSame(newService, holder.getMetadataService());
+    @DisplayName("setEffectiveConfig and getEffectiveConfig")
+    void setAndGetEffectiveConfig() {
+        EffectiveCodecConfig newConfig = EffectiveCodecConfig.builder()
+                .classConfigFactory(eClass -> null)
+                .featureConfigFactory(feature -> null)
+                .build();
+        holder.setEffectiveConfig(newConfig);
+        assertSame(newConfig, holder.getEffectiveConfig());
     }
 
     @Test

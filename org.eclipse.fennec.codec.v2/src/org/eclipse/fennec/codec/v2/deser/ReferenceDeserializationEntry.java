@@ -22,10 +22,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
+import org.eclipse.fennec.codec.v2.context.EMFCodecReadContext;
 import org.eclipse.fennec.codec.v2.deser.DeserializationState.UnresolvedReference;
+import org.eclipse.fennec.codec.v2.jackson.CodecJsonReadContext;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.TokenStreamContext;
 import tools.jackson.databind.DeserializationContext;
 
 /**
@@ -182,9 +185,16 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     /**
      * Deserializes a contained object.
      * <p>
-     * Creates a nested deserialization state and recursively deserializes
-     * the contained object. The EReference's eType is passed as a hint
-     * to allow deserialization of nested objects without explicit _type.
+     * Creates a child context for nested deserialization and recursively deserializes
+     * the contained object. The EReference's eType is passed as a hint via the child
+     * context to allow deserialization of nested objects without explicit _type.
+     * </p>
+     * <p>
+     * This method uses proper context isolation:
+     * <ul>
+     *   <li>If using CodecJsonReadContext: creates child context with type hint</li>
+     *   <li>Falls back to ContextHelper for backwards compatibility</li>
+     * </ul>
      * </p>
      *
      * @param parentState the parent state
@@ -194,35 +204,95 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      */
     private EObject deserializeContainedObject(DeserializationState parentState, JsonParser parser,
             DeserializationContext ctxt) {
-        // The actual deserialization is handled by CodecEObjectDeserializer
-        // We delegate to the deserializer directly
         try {
-            // Save the current expected type hint
-            EClass previousExpectedType = ContextHelper.getExpectedType(ctxt);
+            // Check if we have an EMF-aware context from the parser
+            TokenStreamContext streamContext = parser.streamReadContext();
 
-            // Set the EReference's eType as hint for nested deserialization
-            // This allows concrete types to be instantiated without explicit _type
-            ContextHelper.setExpectedType(ctxt, reference.getEReferenceType());
+            if (streamContext instanceof CodecJsonReadContext codecContext) {
+                // Create a child context for this nested object
+                // The child context inherits the metadata service but gets its own type hint
+                CodecJsonReadContext childContext = codecContext.createChildObjectContext(
+                        parser.currentLocation().getLineNr(),
+                        parser.currentLocation().getColumnNr());
 
-            try {
-                tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
-                        ctxt.constructType(EObject.class));
-                if (deser != null) {
-                    return (EObject) deser.deserialize(parser, ctxt);
+                // Set the reference type as hint for the nested deserialization
+                childContext.setCurrentTypeHint(reference.getEReferenceType());
+
+                // Set the current feature being deserialized
+                childContext.setCurrentFeature(reference);
+
+                // Note: The parser's _streamReadContext is managed internally by Jackson
+                // We're setting up the context but the actual context switching happens
+                // when the parser processes tokens. For now we also use ContextHelper
+                // for the actual hint passing until we fully integrate context management.
+
+                // Also set via ContextHelper for backwards compatibility
+                EClass previousExpectedType = ContextHelper.getExpectedType(ctxt);
+                ContextHelper.setExpectedType(ctxt, reference.getEReferenceType());
+
+                try {
+                    tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
+                            ctxt.constructType(EObject.class));
+                    if (deser != null) {
+                        return (EObject) deser.deserialize(parser, ctxt);
+                    }
+                    LOGGER.warning("No deserializer found for EObject");
+                    return null;
+                } finally {
+                    // Restore the previous hint
+                    if (previousExpectedType != null) {
+                        ContextHelper.setExpectedType(ctxt, previousExpectedType);
+                    } else {
+                        ContextHelper.clearExpectedType(ctxt);
+                    }
                 }
-                LOGGER.warning("No deserializer found for EObject");
-                return null;
-            } finally {
-                // Restore the previous hint
-                if (previousExpectedType != null) {
-                    ContextHelper.setExpectedType(ctxt, previousExpectedType);
-                } else {
-                    ContextHelper.clearExpectedType(ctxt);
+            } else if (streamContext instanceof EMFCodecReadContext emfContext) {
+                // Generic EMF context (non-JSON format) - set hint directly
+                EClass previousHint = emfContext.getCurrentTypeHint();
+                emfContext.setCurrentTypeHint(reference.getEReferenceType());
+
+                try {
+                    tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
+                            ctxt.constructType(EObject.class));
+                    if (deser != null) {
+                        return (EObject) deser.deserialize(parser, ctxt);
+                    }
+                    LOGGER.warning("No deserializer found for EObject");
+                    return null;
+                } finally {
+                    emfContext.setCurrentTypeHint(previousHint);
                 }
+            } else {
+                // Fall back to ContextHelper for non-EMF-aware parsers
+                return deserializeWithContextHelper(parser, ctxt);
             }
         } catch (Exception e) {
             LOGGER.warning("Error deserializing contained object for " + reference.getName() + ": " + e.getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Fallback deserialization using ContextHelper for non-EMF-aware parsers.
+     */
+    private EObject deserializeWithContextHelper(JsonParser parser, DeserializationContext ctxt) {
+        EClass previousExpectedType = ContextHelper.getExpectedType(ctxt);
+        ContextHelper.setExpectedType(ctxt, reference.getEReferenceType());
+
+        try {
+            tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
+                    ctxt.constructType(EObject.class));
+            if (deser != null) {
+                return (EObject) deser.deserialize(parser, ctxt);
+            }
+            LOGGER.warning("No deserializer found for EObject");
+            return null;
+        } finally {
+            if (previousExpectedType != null) {
+                ContextHelper.setExpectedType(ctxt, previousExpectedType);
+            } else {
+                ContextHelper.clearExpectedType(ctxt);
+            }
         }
     }
 

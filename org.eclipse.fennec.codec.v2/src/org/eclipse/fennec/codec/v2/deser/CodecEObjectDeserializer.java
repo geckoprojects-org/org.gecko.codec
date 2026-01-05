@@ -28,6 +28,7 @@ import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
+import org.eclipse.fennec.codec.v2.context.EMFCodecReadContext;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -102,8 +103,16 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             return null;
         }
 
-        // Create deserialization state
-        DeserializationState state = new DeserializationState(null); // TODO: get resource from context
+        // Try to get EMF context from parser's stream context (preferred)
+        // This provides access to resource, type hints, and metadata service
+        EMFCodecReadContext emfContext = null;
+        if (parser.streamReadContext() instanceof EMFCodecReadContext ctx) {
+            emfContext = ctx;
+        }
+
+        // Create deserialization state with resource from context
+        org.eclipse.emf.ecore.resource.Resource resource = emfContext != null ? emfContext.getResource() : null;
+        DeserializationState state = new DeserializationState(resource);
 
         // Get or create shared unresolved references list from context
         @SuppressWarnings("unchecked")
@@ -115,10 +124,17 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         }
 
         // Get the expected type hint (must be EClass if set)
-        // This is set by:
-        // - CodecResource (from CODEC_ROOT_OBJECT option, resolved before deserialization)
-        // - ReferenceDeserializationEntry (from EReference.eType for nested objects)
-        EClass hintEClass = ContextHelper.getExpectedType(ctxt);
+        // Priority:
+        // 1. Parser's stream context (CodecJsonReadContext) - for nested objects
+        // 2. Jackson's DeserializationContext.getAttribute() - for backwards compatibility
+        EClass hintEClass = null;
+        if (emfContext != null) {
+            hintEClass = emfContext.getCurrentTypeHint();
+        }
+        if (hintEClass == null) {
+            // Fall back to ContextHelper for backwards compatibility
+            hintEClass = ContextHelper.getExpectedType(ctxt);
+        }
 
         // Check if we need to use featurePath-based type resolution
         // featurePath is used when:

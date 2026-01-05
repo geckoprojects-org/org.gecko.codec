@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 
@@ -79,11 +80,28 @@ public interface EMFCodecContext {
     void setResource(Resource resource);
 
     /**
-     * Returns the MetadataService for aspect lookups.
+     * Returns the effective codec configuration.
+     * <p>
+     * This provides access to all merged configuration including global settings,
+     * class configs, feature configs, and the MetadataService.
+     * </p>
      *
-     * @return the metadata service
+     * @return the effective configuration, or null if not configured
      */
-    MetadataService getMetadataService();
+    EffectiveCodecConfig getEffectiveConfig();
+
+    /**
+     * Returns the MetadataService for aspect lookups.
+     * <p>
+     * This is a convenience method that delegates to the EffectiveCodecConfig.
+     * </p>
+     *
+     * @return the metadata service, or null if not configured
+     */
+    default MetadataService getMetadataService() {
+        EffectiveCodecConfig config = getEffectiveConfig();
+        return config != null ? config.getMetadataService() : null;
+    }
 
     /**
      * Convenience method to get ClassMetadata for an EClass.
@@ -92,8 +110,8 @@ public interface EMFCodecContext {
      * @return the class metadata, or null if not found
      */
     default ClassMetadata getClassMetadata(EClass eClass) {
-        MetadataService service = getMetadataService();
-        return service != null ? service.getClassMetadata(eClass) : null;
+        EffectiveCodecConfig config = getEffectiveConfig();
+        return config != null ? config.getClassMetadata(eClass) : null;
     }
 
     /**

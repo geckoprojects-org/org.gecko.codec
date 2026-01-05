@@ -17,13 +17,20 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 
 /**
  * Holds EMF state during serialization/deserialization operations.
  * <p>
- * This class stores the current EObject, feature, resource, and metadata service
- * that are needed by serializers and deserializers to properly process EMF objects.
+ * This class stores the current EObject, feature, resource, and effective codec
+ * configuration that are needed by serializers and deserializers to properly
+ * process EMF objects.
+ * </p>
+ * <p>
+ * The {@link EffectiveCodecConfig} provides a single source of truth for all
+ * configuration, including access to the {@link MetadataService} for type
+ * resolution and aspect lookups.
  * </p>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
@@ -33,7 +40,7 @@ public class EMFContextHolder {
     private EStructuralFeature currentFeature;
     private EObject currentEObject;
     private Resource resource;
-    private MetadataService metadataService;
+    private EffectiveCodecConfig effectiveConfig;
     private EClass currentTypeHint;
 
     /**
@@ -43,12 +50,12 @@ public class EMFContextHolder {
     }
 
     /**
-     * Creates a new context holder with the specified metadata service.
+     * Creates a new context holder with the specified effective configuration.
      *
-     * @param metadataService the metadata service
+     * @param effectiveConfig the effective codec configuration
      */
-    public EMFContextHolder(MetadataService metadataService) {
-        this.metadataService = metadataService;
+    public EMFContextHolder(EffectiveCodecConfig effectiveConfig) {
+        this.effectiveConfig = effectiveConfig;
     }
 
     /**
@@ -113,21 +120,33 @@ public class EMFContextHolder {
     }
 
     /**
-     * Returns the MetadataService for aspect lookups.
+     * Returns the effective codec configuration.
      *
-     * @return the metadata service, or null if none
+     * @return the effective configuration, or null if none
      */
-    public MetadataService getMetadataService() {
-        return metadataService;
+    public EffectiveCodecConfig getEffectiveConfig() {
+        return effectiveConfig;
     }
 
     /**
-     * Sets the MetadataService for aspect lookups.
+     * Sets the effective codec configuration.
      *
-     * @param metadataService the metadata service
+     * @param effectiveConfig the effective configuration
      */
-    public void setMetadataService(MetadataService metadataService) {
-        this.metadataService = metadataService;
+    public void setEffectiveConfig(EffectiveCodecConfig effectiveConfig) {
+        this.effectiveConfig = effectiveConfig;
+    }
+
+    /**
+     * Returns the MetadataService for aspect lookups.
+     * <p>
+     * This is a convenience method that delegates to the {@link EffectiveCodecConfig}.
+     * </p>
+     *
+     * @return the metadata service, or null if no config or no service configured
+     */
+    public MetadataService getMetadataService() {
+        return effectiveConfig != null ? effectiveConfig.getMetadataService() : null;
     }
 
     /**

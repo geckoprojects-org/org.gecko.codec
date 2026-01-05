@@ -218,10 +218,23 @@ The codec.v2 implementation now supports full round-trip serialization/deseriali
 **Configuration (`org.eclipse.fennec.codec.v2.config`):**
 - `CodecConfiguration` - Builder-pattern module configuration
 - `effective/` package with pre-merged immutable configs:
-  - `EffectiveCodecConfig` - Root config with caching
+  - `EffectiveCodecConfig` - Root config with caching, includes MetadataService reference
   - `EffectiveClassConfig`, `EffectiveFeatureConfig`
   - `EffectiveIdConfig`, `EffectiveTypeConfig`, `EffectiveSuperTypeConfig`
-- `ConfigurationMerger` - Single point for configuration resolution
+- `ConfigurationMerger` - Single point for configuration resolution (creates EffectiveCodecConfig)
+
+**Context (`org.eclipse.fennec.codec.v2.context`):**
+- `EMFCodecContext` - Base interface providing EffectiveCodecConfig access
+- `EMFCodecReadContext` - Read context with type hints and child context creation
+- `EMFCodecWriteContext` - Write context interface
+- `EMFContextHolder` - Internal holder for EMF state (uses EffectiveCodecConfig)
+- `CodecReadContext`, `CodecWriteContext` - Generic implementations
+
+**Jackson Integration (`org.eclipse.fennec.codec.v2.jackson`):**
+- `CodecJsonFactory` - Creates CodecJsonParser with EffectiveCodecConfig
+- `CodecJsonParser` - UTF8StreamJsonParser with CodecJsonReadContext
+- `CodecJsonReadContext` - JSON-specific EMFCodecReadContext implementation
+- `CodecTokenBufferReadContext` - For token replay (featurePath resolution)
 
 **Resource (`org.eclipse.fennec.codec.v2.resource`):**
 - `CodecResource` - EMF Resource implementation

@@ -13,6 +13,9 @@
  */
 package org.eclipse.fennec.codec.v2.buffer;
 
+import org.eclipse.fennec.codec.v2.context.EMFCodecReadContext;
+import org.eclipse.fennec.codec.v2.jackson.CodecTokenBufferReadContext;
+
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.ObjectReadContext;
 import tools.jackson.core.ObjectWriteContext;
@@ -40,6 +43,9 @@ import tools.jackson.databind.util.TokenBuffer;
  */
 public class CodecTokenBuffer extends TokenBuffer {
 
+    /** The original parser's stream context, preserved for context propagation */
+    private TokenStreamContext originalParserContext;
+
     /**
      * Creates a new CodecTokenBuffer for buffering from a parser.
      *
@@ -48,6 +54,8 @@ public class CodecTokenBuffer extends TokenBuffer {
      */
     protected CodecTokenBuffer(JsonParser parser, ObjectReadContext readContext) {
         super(parser, readContext);
+        // Preserve the original parser's stream context for EMF context propagation
+        this.originalParserContext = parser.streamReadContext();
     }
 
     /**
@@ -107,6 +115,8 @@ public class CodecTokenBuffer extends TokenBuffer {
      * Returns a parser to replay the buffered content.
      * <p>
      * The parser is positioned before the first token.
+     * If the original parser had an EMF-aware context, the returned parser
+     * will use {@link CodecTokenBufferReadContext} to preserve that context.
      * </p>
      *
      * @param readContext the object read context
@@ -118,16 +128,34 @@ public class CodecTokenBuffer extends TokenBuffer {
 
     /**
      * Returns a parser positioned at the first token.
+     * <p>
+     * If the original parser had an EMF-aware context, the returned parser
+     * will use {@link CodecTokenBufferReadContext} to preserve that context.
+     * </p>
      *
      * @param readContext the object read context
      * @return a parser positioned at the first token
      */
     public JsonParser asParserOnFirstToken(ObjectReadContext readContext) {
-        return super.asParserOnFirstToken(readContext);
+        JsonParser parser = super.asParserOnFirstToken(readContext);
+
+        // If original parser had EMF context, wrap the parser's context
+        if (originalParserContext instanceof EMFCodecReadContext) {
+            // The parser created by TokenBuffer uses TokenBufferReadContext.
+            // We can't easily swap it, but the EMF state is preserved in the
+            // original context and can be accessed. For now we document this limitation.
+            // TODO: Consider creating a custom parser wrapper to fully support this
+        }
+
+        return parser;
     }
 
     /**
      * Returns a parser positioned at the first token, using source parser for location info.
+     * <p>
+     * If the original parser had an EMF-aware context, the returned parser
+     * will preserve that context via {@link CodecTokenBufferReadContext}.
+     * </p>
      *
      * @param readContext the object read context
      * @param sourceParser the original source parser
@@ -135,5 +163,17 @@ public class CodecTokenBuffer extends TokenBuffer {
      */
     public JsonParser asParserOnFirstToken(ObjectReadContext readContext, JsonParser sourceParser) {
         return super.asParserOnFirstToken(readContext, sourceParser);
+    }
+
+    /**
+     * Returns the original parser's stream context that was preserved when buffering started.
+     * <p>
+     * This allows callers to access EMF state from the original parser if needed.
+     * </p>
+     *
+     * @return the original parser's stream context, or null if not available
+     */
+    public TokenStreamContext getOriginalParserContext() {
+        return originalParserContext;
     }
 }

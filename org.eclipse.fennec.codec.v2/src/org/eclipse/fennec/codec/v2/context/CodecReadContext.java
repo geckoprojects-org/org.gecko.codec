@@ -17,8 +17,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.fennec.model.metadata.ClassMetadata;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 
 import tools.jackson.core.TokenStreamContext;
 import tools.jackson.core.exc.StreamReadException;
@@ -52,11 +51,11 @@ public class CodecReadContext extends TokenStreamContext implements EMFCodecRead
     /**
      * Creates a root read context.
      *
-     * @param metadataService the metadata service for aspect lookups and type resolution
+     * @param effectiveConfig the effective codec configuration
      */
-    public CodecReadContext(MetadataService metadataService) {
+    public CodecReadContext(EffectiveCodecConfig effectiveConfig) {
         super(TYPE_ROOT, -1);
-        this.holder = new EMFContextHolder(metadataService);
+        this.holder = new EMFContextHolder(effectiveConfig);
     }
 
     /**
@@ -69,18 +68,18 @@ public class CodecReadContext extends TokenStreamContext implements EMFCodecRead
     protected CodecReadContext(CodecReadContext parent, int nestingDepth, int type) {
         super(type, -1);
         this.parent = parent;
-        // Share the metadata service from parent
-        this.holder = new EMFContextHolder(parent.holder.getMetadataService());
+        // Share the effective config from parent
+        this.holder = new EMFContextHolder(parent.holder.getEffectiveConfig());
     }
 
     /**
      * Creates a root read context.
      *
-     * @param metadataService the metadata service for aspect lookups and type resolution
+     * @param effectiveConfig the effective codec configuration
      * @return the root context
      */
-    public static CodecReadContext createRootContext(MetadataService metadataService) {
-        return new CodecReadContext(metadataService);
+    public static CodecReadContext createRootContext(EffectiveCodecConfig effectiveConfig) {
+        return new CodecReadContext(effectiveConfig);
     }
 
     @Override
@@ -119,14 +118,8 @@ public class CodecReadContext extends TokenStreamContext implements EMFCodecRead
     }
 
     @Override
-    public MetadataService getMetadataService() {
-        return holder.getMetadataService();
-    }
-
-    @Override
-    public ClassMetadata getClassMetadata(EClass eClass) {
-        MetadataService service = getMetadataService();
-        return service != null ? service.getClassMetadata(eClass) : null;
+    public EffectiveCodecConfig getEffectiveConfig() {
+        return holder.getEffectiveConfig();
     }
 
     @Override
@@ -227,21 +220,13 @@ public class CodecReadContext extends TokenStreamContext implements EMFCodecRead
             return null;
         }
 
-        MetadataService service = getMetadataService();
-        if (service == null) {
+        EffectiveCodecConfig config = getEffectiveConfig();
+        if (config == null) {
             return null;
         }
 
-        // Try as full URI first
-        ClassMetadata metadata = service.getClassMetadataByURI(typeValue);
-        if (metadata != null) {
-            return metadata.getEClass();
-        }
-
-        // TODO: Support SIMPLE_NAME and MAPPED strategies
-        // This will require additional configuration from ClassCodecAspect
-
-        return null;
+        // Try as full URI first using the effective config
+        return config.resolveEClassByURI(typeValue);
     }
 
     @Override

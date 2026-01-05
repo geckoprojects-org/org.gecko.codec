@@ -33,13 +33,20 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
+import org.eclipse.fennec.codec.v2.config.effective.ConfigurationMerger;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.codec.v2.deser.DeserializationState.UnresolvedReference;
+import org.eclipse.fennec.codec.v2.jackson.CodecJsonFactory;
+import org.eclipse.fennec.codec.v2.jackson.CodecJsonReadContext;
 import org.eclipse.fennec.codec.v2.module.CodecModule;
 import org.eclipse.fennec.codec.v2.util.CodecResourceHelper;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.ObjectReadContext;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -188,6 +195,14 @@ public class CodecResource extends ResourceImpl {
         // Create configured ObjectMapper with CodecModule
         mapper = createObjectMapper(mergedOptions);
 
+        // Create EffectiveCodecConfig by merging all configuration sources
+        ConfigurationMerger merger = new ConfigurationMerger(
+                configuration, metadataService, null, mergedOptions);
+        EffectiveCodecConfig effectiveConfig = merger.merge();
+
+        // Create CodecJsonFactory to produce EMF-aware parsers
+        CodecJsonFactory codecFactory = new CodecJsonFactory(effectiveConfig);
+
         // Create shared list to collect unresolved references during deserialization
         List<UnresolvedReference> unresolvedReferences = new ArrayList<>();
 
@@ -197,25 +212,34 @@ public class CodecResource extends ResourceImpl {
                 .withAttribute(ContextHelper.UNRESOLVED_REFERENCES, unresolvedReferences)
                 .without(tools.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 
-        // Set expected type hint for deserializer if provided
+        // Set expected type hint for deserializer if provided (still needed for backwards compatibility)
         // The hint is resolved from CODEC_ROOT_OBJECT option (EClass or URI string)
         if (nonNull(rootEClassHint)) {
             reader = reader.withAttribute(ContextHelper.EXPECTED_TYPE, rootEClassHint);
         }
 
-        // Create parser to peek at first token and determine if array or object
-        try (tools.jackson.core.JsonParser parser = mapper.createParser(inputStream)) {
-            tools.jackson.core.JsonToken firstToken = parser.nextToken();
+        // Create parser using CodecJsonFactory - this produces a CodecJsonParser
+        // with CodecJsonReadContext that carries EMF state
+        try (JsonParser parser = codecFactory.createParser(ObjectReadContext.empty(), inputStream)) {
+            // Set up the context with resource and type hint
+            if (parser.streamReadContext() instanceof CodecJsonReadContext ctx) {
+                ctx.setResource(this);
+                if (nonNull(rootEClassHint)) {
+                    ctx.setCurrentTypeHint(rootEClassHint);
+                }
+            }
 
-            if (firstToken == tools.jackson.core.JsonToken.START_ARRAY) {
+            JsonToken firstToken = parser.nextToken();
+
+            if (firstToken == JsonToken.START_ARRAY) {
                 // Multiple root objects - read each element from the array
-                while (parser.nextToken() != tools.jackson.core.JsonToken.END_ARRAY) {
+                while (parser.nextToken() != JsonToken.END_ARRAY) {
                     EObject result = reader.readValue(parser);
                     if (nonNull(result)) {
                         getContents().add(result);
                     }
                 }
-            } else if (firstToken == tools.jackson.core.JsonToken.START_OBJECT) {
+            } else if (firstToken == JsonToken.START_OBJECT) {
                 // Single root object
                 EObject result = reader.readValue(parser);
                 if (nonNull(result)) {

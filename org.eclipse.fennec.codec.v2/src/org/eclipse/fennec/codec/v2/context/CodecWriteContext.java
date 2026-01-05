@@ -16,12 +16,10 @@ package org.eclipse.fennec.codec.v2.context;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.fennec.model.metadata.ClassMetadata;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.TokenStreamContext;
@@ -34,7 +32,7 @@ import tools.jackson.core.json.JsonWriteContext;
  * <p>
  * This class extends {@link TokenStreamContext} and implements {@link EMFCodecWriteContext}
  * to provide EMF-aware context during Jackson serialization. It tracks the current
- * EObject, feature, resource, and provides access to the metadata service.
+ * EObject, feature, resource, and provides access to the effective configuration.
  * </p>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
@@ -81,10 +79,10 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
      * @param parent the parent context, or null for root
      * @param dups the duplicate detector, or null
      * @param currentValue the current value being serialized
-     * @param metadataService the metadata service for aspect lookups
+     * @param effectiveConfig the effective codec configuration
      */
     protected CodecWriteContext(int type, CodecWriteContext parent, DupDetector dups,
-                                 Object currentValue, MetadataService metadataService) {
+                                 Object currentValue, EffectiveCodecConfig effectiveConfig) {
         super();
         _type = type;
         this.parent = parent;
@@ -92,18 +90,18 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
         this.dups = dups;
         _index = -1;
         this.currentValue = currentValue;
-        this.holder = new EMFContextHolder(metadataService);
+        this.holder = new EMFContextHolder(effectiveConfig);
     }
 
     /**
      * Creates a root codec write context.
      *
      * @param dd the duplicate detector, or null
-     * @param metadataService the metadata service for aspect lookups
+     * @param effectiveConfig the effective codec configuration
      * @return the root context
      */
-    public static CodecWriteContext createRootContext(DupDetector dd, MetadataService metadataService) {
-        return new CodecWriteContext(TYPE_ROOT, null, dd, null, metadataService);
+    public static CodecWriteContext createRootContext(DupDetector dd, EffectiveCodecConfig effectiveConfig) {
+        return new CodecWriteContext(TYPE_ROOT, null, dd, null, effectiveConfig);
     }
 
     /**
@@ -188,14 +186,8 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
     }
 
     @Override
-    public MetadataService getMetadataService() {
-        return holder.getMetadataService();
-    }
-
-    @Override
-    public ClassMetadata getClassMetadata(EClass eClass) {
-        MetadataService service = getMetadataService();
-        return service != null ? service.getClassMetadata(eClass) : null;
+    public EffectiveCodecConfig getEffectiveConfig() {
+        return holder.getEffectiveConfig();
     }
 
     @Override
@@ -231,7 +223,7 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
         CodecWriteContext ctxt = child;
         if (ctxt == null) {
             child = ctxt = new CodecWriteContext(TYPE_ARRAY, this,
-                    (dups == null) ? null : dups.child(), null, holder.getMetadataService());
+                    (dups == null) ? null : dups.child(), null, holder.getEffectiveConfig());
             return ctxt;
         }
         return ctxt.reset(TYPE_ARRAY, null);
@@ -242,7 +234,7 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
         CodecWriteContext ctxt = child;
         if (ctxt == null) {
             child = ctxt = new CodecWriteContext(TYPE_ARRAY, this,
-                    (dups == null) ? null : dups.child(), currValue, holder.getMetadataService());
+                    (dups == null) ? null : dups.child(), currValue, holder.getEffectiveConfig());
             return ctxt;
         }
         return ctxt.reset(TYPE_ARRAY, currValue);
@@ -253,7 +245,7 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
         CodecWriteContext ctxt = child;
         if (ctxt == null) {
             child = ctxt = new CodecWriteContext(TYPE_OBJECT, this,
-                    (dups == null) ? null : dups.child(), null, holder.getMetadataService());
+                    (dups == null) ? null : dups.child(), null, holder.getEffectiveConfig());
             return ctxt;
         }
         return ctxt.reset(TYPE_OBJECT, null);
@@ -264,7 +256,7 @@ public class CodecWriteContext extends TokenStreamContext implements EMFCodecWri
         CodecWriteContext ctxt = child;
         if (ctxt == null) {
             child = ctxt = new CodecWriteContext(TYPE_OBJECT, this,
-                    (dups == null) ? null : dups.child(), currValue, holder.getMetadataService());
+                    (dups == null) ? null : dups.child(), currValue, holder.getEffectiveConfig());
             return ctxt;
         }
         return ctxt.reset(TYPE_OBJECT, currValue);

@@ -3295,14 +3295,71 @@ The codec uses custom Jackson `StreamWriteContext` and `StreamReadContext` imple
 - The current EObject being processed
 - The current EStructuralFeature being processed
 - The EMF Resource
-- Metadata and aspects for type resolution
+- **EffectiveCodecConfig** - merged configuration from all sources (the single source of truth)
+- Type resolution via the MetadataService (accessible through EffectiveCodecConfig)
+
+#### Configuration Architecture
+
+The context uses `EffectiveCodecConfig` as the single source of truth for all configuration:
+
+```
+Load/Save Options (Level 3)     ─┐
+Static Config (Level 2)          ├──► ConfigurationMerger ──► EffectiveCodecConfig
+MetadataService (Level 1)       ─┘                                    │
+                                                                      ▼
+                                                              EMFContextHolder
+                                                                      │
+                                                        ┌─────────────┴─────────────┐
+                                                        ▼                           ▼
+                                            CodecJsonReadContext         CodecWriteContext
+```
+
+**Benefits:**
+- **Single source of truth**: One merged config instead of multiple scattered sources
+- **Flexibility**: Live MetadataService OR immutable snapshot
+- **Cleaner API**: Contexts ask the config, not multiple services
+- **Testability**: Easy to mock one config object
+- **Consistency**: Same pattern for read and write contexts
+
+#### EMFCodecContext (Base Interface)
+
+Common interface for both read and write contexts:
+
+```java
+public interface EMFCodecContext {
+
+    /**
+     * Returns the EffectiveCodecConfig - the single source of truth for all merged configuration.
+     */
+    EffectiveCodecConfig getEffectiveConfig();
+
+    /**
+     * Returns the MetadataService for aspect lookups.
+     * Convenience method that delegates to EffectiveCodecConfig.
+     */
+    default MetadataService getMetadataService() {
+        EffectiveCodecConfig config = getEffectiveConfig();
+        return config != null ? config.getMetadataService() : null;
+    }
+
+    /**
+     * Convenience method to get ClassMetadata for an EClass.
+     */
+    default ClassMetadata getClassMetadata(EClass eClass) {
+        EffectiveCodecConfig config = getEffectiveConfig();
+        return config != null ? config.getClassMetadata(eClass) : null;
+    }
+
+    // ... EObject, Feature, Resource accessors
+}
+```
 
 #### EMFCodecWriteContext (Serialization)
 
-Used during serialization to track state and provide access to metadata.
+Used during serialization to track state and provide access to configuration.
 
 ```java
-public interface EMFCodecWriteContext extends JsonStreamContext {
+public interface EMFCodecWriteContext extends EMFCodecContext {
 
     /**
      * Returns the EObject currently being serialized.
@@ -3333,27 +3390,15 @@ public interface EMFCodecWriteContext extends JsonStreamContext {
      * Sets the EMF Resource being serialized.
      */
     void setResource(Resource resource);
-
-    /**
-     * Returns the MetadataService for aspect lookups.
-     */
-    MetadataService getMetadataService();
-
-    /**
-     * Convenience method to get ClassMetadata for an EClass.
-     */
-    default ClassMetadata getClassMetadata(EClass eClass) {
-        return getMetadataService().getClassMetadata(eClass);
-    }
 }
 ```
 
 #### EMFCodecReadContext (Deserialization)
 
-Used during deserialization to track state and resolve types.
+Used during deserialization to track state, resolve types, and manage nested context.
 
 ```java
-public interface EMFCodecReadContext extends JsonStreamContext {
+public interface EMFCodecReadContext extends EMFCodecContext {
 
     /**
      * Returns the EObject currently being populated.
@@ -3386,9 +3431,27 @@ public interface EMFCodecReadContext extends JsonStreamContext {
     void setResource(Resource resource);
 
     /**
-     * Returns the MetadataService for aspect lookups and type resolution.
+     * Returns the type hint for the current context.
+     * Used for nested object deserialization when featurePath resolution needs context.
      */
-    MetadataService getMetadataService();
+    EClass getCurrentTypeHint();
+
+    /**
+     * Sets the type hint for the current context.
+     */
+    void setCurrentTypeHint(EClass typeHint);
+
+    /**
+     * Creates a child context for nested array deserialization.
+     * Child inherits EffectiveCodecConfig but gets fresh EMF state.
+     */
+    EMFCodecReadContext createChildArrayContext(int lineNr, int colNr);
+
+    /**
+     * Creates a child context for nested object deserialization.
+     * Child inherits EffectiveCodecConfig but gets fresh EMF state.
+     */
+    EMFCodecReadContext createChildObjectContext(int lineNr, int colNr);
 
     /**
      * Resolves an EClass from a type value (URI, name, discriminator, etc.).
@@ -3399,13 +3462,86 @@ public interface EMFCodecReadContext extends JsonStreamContext {
     EClass resolveEClass(String typeValue);
 
     /**
-     * Resolves an EClass from a type value with a hint from CODEC_ROOT_OBJECT.
+     * Resolves an EClass from a type value with a hint.
      *
      * @param typeValue the type value from JSON (may be null)
-     * @param hint the CODEC_ROOT_OBJECT hint (may be null)
+     * @param hint the type hint from parent context or CODEC_ROOT_OBJECT option
      * @return the resolved EClass
      */
     EClass resolveEClass(String typeValue, EClass hint);
+}
+```
+
+#### EMFContextHolder
+
+Internal holder class that stores EMF state for a context. Used by context implementations to delegate state management:
+
+```java
+public class EMFContextHolder {
+    private EStructuralFeature currentFeature;
+    private EObject currentEObject;
+    private Resource resource;
+    private EffectiveCodecConfig effectiveConfig;
+    private EClass currentTypeHint;
+
+    public EMFContextHolder(EffectiveCodecConfig effectiveConfig) {
+        this.effectiveConfig = effectiveConfig;
+    }
+
+    // Getters and setters for all fields
+    // MetadataService is accessed via effectiveConfig.getMetadataService()
+}
+```
+
+#### JSON-Specific Implementation
+
+For JSON format, the codec provides specialized context classes:
+
+- **CodecJsonFactory**: Creates CodecJsonParser instances with EffectiveCodecConfig
+- **CodecJsonParser**: Extends UTF8StreamJsonParser, uses CodecJsonReadContext
+- **CodecJsonReadContext**: Extends JsonReadContext, implements EMFCodecReadContext
+- **CodecTokenBufferReadContext**: For token replay scenarios (featurePath resolution)
+
+```java
+// Creating a parser with codec context
+EffectiveCodecConfig config = ConfigurationMerger.merge(
+    moduleConfig, metadataService, factoryDefaults, loadOptions);
+
+CodecJsonFactory factory = new CodecJsonFactory(config);
+try (JsonParser parser = factory.createParser(inputStream)) {
+    if (parser.streamReadContext() instanceof CodecJsonReadContext ctx) {
+        ctx.setResource(resource);
+        ctx.setCurrentTypeHint(rootEClassHint);
+    }
+    // Parse...
+}
+```
+
+#### Child Context Pattern
+
+Jackson pools child contexts for performance. When deserializing nested objects:
+
+1. Parent creates child context via `createChildObjectContext()`
+2. Child inherits `EffectiveCodecConfig` from parent (same instance)
+3. Child gets fresh EMF state (null EObject, Feature, TypeHint)
+4. When reused (pooling), child's EMF state is reset but config remains
+
+```java
+// In CodecJsonReadContext.createChildObjectContext()
+@Override
+public CodecJsonReadContext createChildObjectContext(int lineNr, int colNr) {
+    CodecJsonReadContext ctxt = (CodecJsonReadContext) _child;
+    if (ctxt == null) {
+        _child = ctxt = new CodecJsonReadContext(this, ...);
+        ctxt.holder = new EMFContextHolder(this.holder.getEffectiveConfig());
+    } else {
+        ctxt.reset(TYPE_OBJECT, lineNr, colNr);
+        // Reset EMF state but keep config
+        ctxt.holder.setCurrentEObject(null);
+        ctxt.holder.setCurrentFeature(null);
+        ctxt.holder.setCurrentTypeHint(null);
+    }
+    return ctxt;
 }
 ```
 
@@ -3423,13 +3559,16 @@ public class MyCustomSerializer extends ValueSerializer<EObject> {
             EObject parent = ctx.getCurrentEObject();
             Resource resource = ctx.getResource();
 
-            // Access metadata
-            ClassMetadata metadata = ctx.getClassMetadata(value.eClass());
-            ClassCodecAspect aspect = metadata.getAspect(ClassCodecAspect.class).orElse(null);
+            // Access effective config for merged settings
+            EffectiveCodecConfig config = ctx.getEffectiveConfig();
+            EffectiveClassConfig classConfig = config.getClassConfig(value.eClass());
 
-            // Serialize with aspect configuration
-            if (aspect != null && aspect.getTypeConfig().isSerialize()) {
-                gen.writeStringProperty("_type", aspect.getTypeConfig().getTypeKey());
+            // Access metadata (convenience method)
+            ClassMetadata metadata = ctx.getClassMetadata(value.eClass());
+
+            // Serialize with config
+            if (classConfig.getTypeConfig().isEnabled()) {
+                gen.writeStringProperty("_type", classConfig.getTypeConfig().getTypeKey());
             }
             // ...
         }
@@ -3447,18 +3586,27 @@ public class MyCustomDeserializer extends ValueDeserializer<EObject> {
     @Override
     public EObject deserialize(JsonParser p, DeserializationContext ctxt) {
         if (p.streamReadContext() instanceof EMFCodecReadContext ctx) {
-            // Read type value
+            // Get type hint from context (for nested objects)
+            EClass typeHint = ctx.getCurrentTypeHint();
+
+            // Read type value from JSON
             String typeValue = // ... read from JSON
 
-            // Resolve EClass using context
-            EClass eClass = ctx.resolveEClass(typeValue);
+            // Resolve EClass using context (considers hint)
+            EClass eClass = ctx.resolveEClass(typeValue, typeHint);
 
             // Create EObject
             EObject result = EcoreUtil.create(eClass);
             ctx.setCurrentEObject(result);
 
-            // Access metadata for deserialization hints
-            ClassMetadata metadata = ctx.getMetadataService().getClassMetadata(eClass);
+            // For nested object deserialization, create child context
+            EMFCodecReadContext childCtx = ctx.createChildObjectContext(
+                p.currentLocation().lineNr(), p.currentLocation().columnNr());
+            childCtx.setCurrentTypeHint(nestedType);
+
+            // Access effective config for deserialization settings
+            EffectiveCodecConfig config = ctx.getEffectiveConfig();
+            EffectiveClassConfig classConfig = config.getClassConfig(eClass);
             // ...
 
             return result;
@@ -3470,32 +3618,38 @@ public class MyCustomDeserializer extends ValueDeserializer<EObject> {
 
 #### Custom Generator/Parser Implementation
 
-When creating a custom Jackson generator (e.g., for MongoDB BSON), implement the context interfaces:
+When creating a custom Jackson generator (e.g., for MongoDB BSON), implement the context interfaces using `EMFContextHolder` for state management:
 
 ```java
 public class BsonCodecWriteContext extends JsonWriteContext implements EMFCodecWriteContext {
 
-    private EObject currentEObject;
-    private EStructuralFeature currentFeature;
-    private Resource resource;
-    private final MetadataService metadataService;
+    private final EMFContextHolder holder;
 
-    public BsonCodecWriteContext(MetadataService metadataService, int type, JsonWriteContext parent) {
+    public BsonCodecWriteContext(EffectiveCodecConfig config, int type, JsonWriteContext parent) {
         super(type, parent);
-        this.metadataService = metadataService;
+        this.holder = new EMFContextHolder(config);
     }
 
     @Override
-    public EObject getCurrentEObject() { return currentEObject; }
+    public EffectiveCodecConfig getEffectiveConfig() {
+        return holder.getEffectiveConfig();
+    }
 
     @Override
-    public void setCurrentEObject(EObject eObject) { this.currentEObject = eObject; }
+    public EObject getCurrentEObject() {
+        return holder.getCurrentEObject();
+    }
 
-    // ... implement other methods
+    @Override
+    public void setCurrentEObject(EObject eObject) {
+        holder.setCurrentEObject(eObject);
+    }
+
+    // ... delegate other methods to holder
 }
 ```
 
-This allows your custom format to integrate seamlessly with the codec's serialization pipeline while maintaining access to EMF metadata.
+This allows your custom format to integrate seamlessly with the codec's serialization pipeline while maintaining access to the merged configuration.
 
 ---
 

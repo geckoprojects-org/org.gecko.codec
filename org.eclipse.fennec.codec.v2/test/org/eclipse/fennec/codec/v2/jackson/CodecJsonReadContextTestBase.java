@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.v2.context;
+package org.eclipse.fennec.codec.v2.jackson;
 
 import static org.mockito.Mockito.mock;
 
@@ -20,24 +20,22 @@ import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * Base class for {@link CodecWriteContext} tests.
+ * Base class for {@link CodecJsonReadContext} tests.
  * <p>
  * Provides common setup for creating a root context with a mocked metadata service.
  * </p>
- *
- * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
  */
-abstract class CodecWriteContextTestBase {
+abstract class CodecJsonReadContextTestBase {
 
     protected MetadataService metadataService;
     protected EffectiveCodecConfig effectiveConfig;
-    protected CodecWriteContext context;
+    protected CodecJsonReadContext context;
 
     @BeforeEach
     void setUp() {
         metadataService = mock(MetadataService.class);
         effectiveConfig = createTestEffectiveConfig(metadataService);
-        context = CodecWriteContext.createRootContext(null, effectiveConfig);
+        context = CodecJsonReadContext.createRootContext(null, effectiveConfig);
     }
 
     /**
