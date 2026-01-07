@@ -63,7 +63,8 @@
 - [x] PLAIN format
 - [x] Cross-document containment detection
 - [x] Proxy creation
-- [ ] Expand feature
+- [x] Expand feature (serialization + deserialization)
+- [x] Proxy with projection
 
 ### Features
 - [x] EAttribute serialization
@@ -102,13 +103,23 @@
 
 ---
 
-## 4. Next Steps
+## 4. Next Steps (Priority Order)
 
 1. ~~**Cross-Document Containment**: Detect and serialize as reference~~ ✅
 2. ~~**Proxy Factory**: Create EMF proxies for non-containment references~~ ✅
-3. **Cross-Resource References**: ResourceSet-based resolution
-4. **Expand Feature**: Inline serialization of non-containment references
-5. **OSGi Integration**: CodecResourceFactory for service registration
+3. ~~**Expand Feature**: Inline serialization of non-containment references~~ ✅
+4. **Additional TypeStrategies**: SCHEMA_AND_TYPE, STRUCTURED, NUMERIC
+5. **Custom Value Readers/Writers**: CodecValueRegistry integration
+6. **OSGi Integration**: CodecResourceFactory for service registration
+
+**Deferred:**
+- Cross-Resource References (ResourceSet-based resolution)
+- Expand Depth > 1
+- SuperType serialization
+- ID STRUCTURED format
+- Smart compression (same-schema names)
+- Field ordering options
+- Enum serialization options
 
 ---
 

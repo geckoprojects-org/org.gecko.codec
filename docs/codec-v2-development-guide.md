@@ -821,35 +821,61 @@ Cross-document containment occurs when a contained object is stored in a differe
 
 ---
 
-## 11. Pending Work (Next Session)
+## 11. Pending Work (Priority Order)
 
-### 11.1 Additional TypeStrategies
+### 11.1 Additional TypeStrategies (Priority 1 - Next)
 
 - `SCHEMA_AND_TYPE` - Separate schema/type fields
 - `STRUCTURED` - Nested object format
 - `NUMERIC` - Classifier IDs
 
-### 11.2 Expand Depth > 1
+### 11.2 SuperType Serialization (Priority 2)
 
-- Support `expandDepth` values greater than 1
-- Nested expansion (expanded objects also expand their references)
-- Currently only depth=1 is implemented
+- `_superTypes` field support
+- Selection modes: ALL, SINGLE, CUSTOM
 
-### 11.3 Cross-Resource References
+### 11.3 ID STRUCTURED Format (Priority 3)
 
-- Resolve references to objects in other EMF resources
-- Support ResourceSet-based resolution
-- Resolve cross-document containment proxies
+- Nested ID object format (schema + value)
 
-### 11.5 Custom Value Readers/Writers
+### 11.4 Enum Serialization Options (Priority 4)
+
+- NAME, ORDINAL, LITERAL strategies
+
+### 11.5 Extended Metadata Names (Priority 5)
+
+- Use ExtendedMetaData for JSON keys (aspects integration)
+
+### 11.6 Global Feature Ignore List (Priority 6)
+
+- Configuration-based feature exclusion
+
+### 11.7 Error Handling Improvements (Priority 7)
+
+- Better diagnostics and recovery
+- EMF Resource error/warning collection
+
+### 11.8 Custom Value Readers/Writers (Priority 8)
 
 - `CodecValueRegistry` integration
 - Support for `valueWriterName`/`valueReaderName` annotations
 
-### 11.6 OSGi Integration
+### 11.9 OSGi Integration (Priority 9)
 
 - Create ResourceFactory for OSGi registration
 - Test with OSGi runtime
+
+### Deferred Items
+
+The following items are lower priority and deferred for later:
+
+| Item | Description |
+|------|-------------|
+| **Expand Depth > 1** | Nested expansion (expandDepth > 1) |
+| **Cross-Resource References** | ResourceSet-based resolution |
+| **Smart compression (same-schema)** | Omit schema when same as context |
+| **Field ordering options** | ALPHABETICAL, DECLARATION order |
+| **Annotation inheritance** | Inherit annotations from supertypes |
 
 ---
 
