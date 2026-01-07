@@ -246,6 +246,23 @@ FeatureSerializationConfig featureConfig = FeatureSerializationConfig.builder()
     .build();
 ```
 
+### 4.3 Deserialization Behavior
+
+Deserialization automatically detects and handles the serialization format:
+
+| Input Type | Handling |
+|------------|----------|
+| String | First tries `EEnum.getEEnumLiteral(name)`, then `EEnum.getEEnumLiteralByLiteral(literal)` |
+| Integer | Looked up by enum value using `EEnum.getEEnumLiteral(int)` |
+
+All three strategies round-trip correctly:
+
+- **LITERAL strategy**: Uses literal lookup
+- **NAME strategy**: Uses name lookup
+- **VALUE strategy**: Uses integer value lookup
+
+The deserializer tries name lookup first, then falls back to literal lookup, so both NAME and LITERAL serialized values are properly deserialized.
+
 ---
 
 ## 5. Default Feature Settings

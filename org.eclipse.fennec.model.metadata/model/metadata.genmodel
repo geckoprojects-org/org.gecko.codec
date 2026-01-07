@@ -37,6 +37,11 @@
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//SuperTypeSelection/SINGLE"/>
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//SuperTypeSelection/NONE"/>
     </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="metadata.ecore#//EnumSerializationStrategy">
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//EnumSerializationStrategy/LITERAL"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//EnumSerializationStrategy/VALUE"/>
+      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//EnumSerializationStrategy/NAME"/>
+    </genEnums>
     <genClasses image="false" ecoreClass="metadata.ecore#//BaseTypeConfig">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/strategy"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/include"/>
@@ -77,6 +82,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serializeNull"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serializeEmpty"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serializeDefaults"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/enumSerialization"/>
     </genClasses>
     <genClasses ecoreClass="metadata.ecore#//PackageMetadata">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//PackageMetadata/ePackage"/>

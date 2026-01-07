@@ -71,7 +71,7 @@
 - [x] EReference serialization
 - [x] Null/default/empty handling
 - [x] Key customization
-- [ ] Enum serialization options
+- [x] Enum serialization options (LITERAL, NAME, VALUE strategies)
 - [ ] Extended metadata names
 
 ### Global Options
@@ -119,7 +119,6 @@
 - ID STRUCTURED format
 - Smart compression (same-schema names)
 - Field ordering options
-- Enum serialization options
 
 ---
 

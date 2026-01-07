@@ -132,6 +132,26 @@
       </eAnnotations>
     </eLiterals>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="EnumSerializationStrategy">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Strategy for serializing enum values."/>
+    </eAnnotations>
+    <eLiterals name="LITERAL" literal="LITERAL">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Use the enum literal name (e.g., 'ACTIVE'). This is the default."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="VALUE" value="1" literal="VALUE">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Use the enum ordinal value (e.g., 1)."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="NAME" value="2" literal="NAME">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Use the enum name (e.g., 'Active')."/>
+      </eAnnotations>
+    </eLiterals>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BaseTypeConfig" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Base configuration for type information serialization."/>
@@ -325,6 +345,11 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="serializeDefaults" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Serialize default values (null = use codec default)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="enumSerialization" eType="#//EnumSerializationStrategy">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Strategy for serializing enum values (null = use LITERAL default)."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

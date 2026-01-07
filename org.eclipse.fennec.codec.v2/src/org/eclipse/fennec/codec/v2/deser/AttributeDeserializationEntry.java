@@ -21,9 +21,12 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -152,6 +155,10 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
             }
 
             if (token == JsonToken.VALUE_NUMBER_INT) {
+                // Check if this is an enum with VALUE strategy
+                if (dataType instanceof EEnum eEnum) {
+                    return convertEnumFromInteger(parser, eEnum);
+                }
                 return convertFromInteger(parser, instanceClass);
             }
 
@@ -183,8 +190,35 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
         if (instanceClass == String.class) {
             return stringValue;
         }
-        // Use EMF's conversion mechanism
+        // For enums, try both name and literal lookup for better compatibility
+        if (dataType instanceof EEnum eEnum) {
+            return convertEnumFromString(stringValue, eEnum);
+        }
+        // Use EMF's conversion mechanism for other data types
         return EcoreUtil.createFromString(dataType, stringValue);
+    }
+
+    /**
+     * Converts a string value to an enum literal.
+     * Tries name lookup first (for NAME strategy), then literal lookup (for LITERAL strategy).
+     *
+     * @param stringValue the string value
+     * @param eEnum the target EEnum type
+     * @return the enum literal's instance, or null if not found
+     */
+    private Object convertEnumFromString(String stringValue, EEnum eEnum) {
+        // Try name lookup first (for NAME strategy serialization)
+        EEnumLiteral literal = eEnum.getEEnumLiteral(stringValue);
+        if (literal != null) {
+            return literal.getInstance();
+        }
+        // Try literal lookup (for LITERAL strategy serialization)
+        literal = eEnum.getEEnumLiteralByLiteral(stringValue);
+        if (literal != null) {
+            return literal.getInstance();
+        }
+        LOGGER.warning("No enum literal found for '" + stringValue + "' in " + eEnum.getName());
+        return null;
     }
 
     /**
@@ -217,6 +251,24 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
         }
         // Default: return as long
         return parser.getLongValue();
+    }
+
+    /**
+     * Converts an integer value to an enum literal.
+     * Used when enums are serialized with VALUE strategy.
+     *
+     * @param parser the JSON parser
+     * @param eEnum the target EEnum type
+     * @return the enum literal's instance, or null if not found
+     */
+    private Object convertEnumFromInteger(JsonParser parser, EEnum eEnum) {
+        int value = parser.getIntValue();
+        EEnumLiteral literal = eEnum.getEEnumLiteral(value);
+        if (literal != null) {
+            return literal.getInstance();
+        }
+        LOGGER.warning("No enum literal found for value " + value + " in " + eEnum.getName());
+        return null;
     }
 
     /**

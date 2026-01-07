@@ -506,6 +506,15 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_SERIALIZATION_CONFIG__SERIALIZE_DEFAULTS = MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS;
 
 	/**
+	 * The feature id for the '<em><b>Enum Serialization</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_SERIALIZATION_CONFIG__ENUM_SERIALIZATION = MetadataPackage.BASE_FEATURE_CONFIG__ENUM_SERIALIZATION;
+
+	/**
 	 * The feature id for the '<em><b>Feature Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -742,13 +751,22 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_CODEC_ASPECT__VALUE_READER_NAME = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 6;
 
 	/**
+	 * The feature id for the '<em><b>Enum Serialization</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 7;
+
+	/**
 	 * The number of structural features of the '<em>Feature Codec Aspect</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT_FEATURE_COUNT = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 7;
+	int FEATURE_CODEC_ASPECT_FEATURE_COUNT = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 8;
 
 	/**
 	 * The number of operations of the '<em>Feature Codec Aspect</em>' class.
@@ -840,6 +858,15 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int REFERENCE_CODEC_ASPECT__VALUE_READER_NAME = FEATURE_CODEC_ASPECT__VALUE_READER_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Enum Serialization</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_CODEC_ASPECT__ENUM_SERIALIZATION = FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION;
 
 	/**
 	 * The feature id for the '<em><b>Reference Config</b></em>' containment reference.
@@ -1416,6 +1443,17 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getFeatureCodecAspect_ValueReaderName();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#getEnumSerialization <em>Enum Serialization</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Enum Serialization</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#getEnumSerialization()
+	 * @see #getFeatureCodecAspect()
+	 * @generated
+	 */
+	EAttribute getFeatureCodecAspect_EnumSerialization();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect <em>Reference Codec Aspect</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1944,6 +1982,14 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute FEATURE_CODEC_ASPECT__VALUE_READER_NAME = eINSTANCE.getFeatureCodecAspect_ValueReaderName();
+
+		/**
+		 * The meta object literal for the '<em><b>Enum Serialization</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION = eINSTANCE.getFeatureCodecAspect_EnumSerialization();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ReferenceCodecAspectImpl <em>Reference Codec Aspect</em>}' class.

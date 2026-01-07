@@ -14,6 +14,7 @@
  */
 package org.eclipse.fennec.codec.metadata.model.codec;
 
+import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -38,6 +39,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isSerializeDefaults <em>Serialize Defaults</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#getValueWriterName <em>Value Writer Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#getValueReaderName <em>Value Reader Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#getEnumSerialization <em>Enum Serialization</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getFeatureCodecAspect()
@@ -224,5 +226,33 @@ public interface FeatureCodecAspect extends FeatureAspect {
 	 * @generated
 	 */
 	void setValueReaderName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Enum Serialization</b></em>' attribute.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.model.metadata.EnumSerializationStrategy}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Strategy for serializing enum values (null = use LITERAL default).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Enum Serialization</em>' attribute.
+	 * @see org.eclipse.fennec.model.metadata.EnumSerializationStrategy
+	 * @see #setEnumSerialization(EnumSerializationStrategy)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getFeatureCodecAspect_EnumSerialization()
+	 * @model
+	 * @generated
+	 */
+	EnumSerializationStrategy getEnumSerialization();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#getEnumSerialization <em>Enum Serialization</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Enum Serialization</em>' attribute.
+	 * @see org.eclipse.fennec.model.metadata.EnumSerializationStrategy
+	 * @see #getEnumSerialization()
+	 * @generated
+	 */
+	void setEnumSerialization(EnumSerializationStrategy value);
 
 } // FeatureCodecAspect

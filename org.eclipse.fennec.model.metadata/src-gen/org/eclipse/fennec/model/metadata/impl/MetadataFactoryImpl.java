@@ -97,6 +97,8 @@ public class MetadataFactoryImpl extends EFactoryImpl implements MetadataFactory
 				return createIdKeyModeFromString(eDataType, initialValue);
 			case MetadataPackage.SUPER_TYPE_SELECTION:
 				return createSuperTypeSelectionFromString(eDataType, initialValue);
+			case MetadataPackage.ENUM_SERIALIZATION_STRATEGY:
+				return createEnumSerializationStrategyFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -120,6 +122,8 @@ public class MetadataFactoryImpl extends EFactoryImpl implements MetadataFactory
 				return convertIdKeyModeToString(eDataType, instanceValue);
 			case MetadataPackage.SUPER_TYPE_SELECTION:
 				return convertSuperTypeSelectionToString(eDataType, instanceValue);
+			case MetadataPackage.ENUM_SERIALIZATION_STRATEGY:
+				return convertEnumSerializationStrategyToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -277,6 +281,26 @@ public class MetadataFactoryImpl extends EFactoryImpl implements MetadataFactory
 	 * @generated
 	 */
 	public String convertSuperTypeSelectionToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EnumSerializationStrategy createEnumSerializationStrategyFromString(EDataType eDataType, String initialValue) {
+		EnumSerializationStrategy result = EnumSerializationStrategy.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertEnumSerializationStrategyToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

@@ -31,6 +31,7 @@ import org.eclipse.fennec.model.metadata.BaseSuperTypeConfig;
 import org.eclipse.fennec.model.metadata.BaseTypeConfig;
 import org.eclipse.fennec.model.metadata.ClassAspect;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
+import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.IdKeyMode;
@@ -183,6 +184,13 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	private EEnum superTypeSelectionEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum enumSerializationStrategyEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -600,6 +608,16 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
+	public EAttribute getBaseFeatureConfig_EnumSerialization() {
+		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getPackageMetadata() {
 		return packageMetadataEClass;
 	}
@@ -990,6 +1008,16 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
+	public EEnum getEnumSerializationStrategy() {
+		return enumSerializationStrategyEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public MetadataFactory getMetadataFactory() {
 		return (MetadataFactory)getEFactoryInstance();
 	}
@@ -1055,6 +1083,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__SERIALIZE_NULL);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__SERIALIZE_EMPTY);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS);
+		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__ENUM_SERIALIZATION);
 
 		packageMetadataEClass = createEClass(PACKAGE_METADATA);
 		createEReference(packageMetadataEClass, PACKAGE_METADATA__EPACKAGE);
@@ -1102,6 +1131,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		idStrategyEEnum = createEEnum(ID_STRATEGY);
 		idKeyModeEEnum = createEEnum(ID_KEY_MODE);
 		superTypeSelectionEEnum = createEEnum(SUPER_TYPE_SELECTION);
+		enumSerializationStrategyEEnum = createEEnum(ENUM_SERIALIZATION_STRATEGY);
 	}
 
 	/**
@@ -1180,6 +1210,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEAttribute(getBaseFeatureConfig_SerializeNull(), ecorePackage.getEBooleanObject(), "serializeNull", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseFeatureConfig_SerializeEmpty(), ecorePackage.getEBooleanObject(), "serializeEmpty", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseFeatureConfig_SerializeDefaults(), ecorePackage.getEBooleanObject(), "serializeDefaults", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseFeatureConfig_EnumSerialization(), this.getEnumSerializationStrategy(), "enumSerialization", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(packageMetadataEClass, PackageMetadata.class, "PackageMetadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPackageMetadata_EPackage(), ecorePackage.getEPackage(), null, "ePackage", null, 0, 1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1250,6 +1281,11 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		addEEnumLiteral(superTypeSelectionEEnum, SuperTypeSelection.ALL_EMF);
 		addEEnumLiteral(superTypeSelectionEEnum, SuperTypeSelection.SINGLE);
 		addEEnumLiteral(superTypeSelectionEEnum, SuperTypeSelection.NONE);
+
+		initEEnum(enumSerializationStrategyEEnum, EnumSerializationStrategy.class, "EnumSerializationStrategy");
+		addEEnumLiteral(enumSerializationStrategyEEnum, EnumSerializationStrategy.LITERAL);
+		addEEnumLiteral(enumSerializationStrategyEEnum, EnumSerializationStrategy.VALUE);
+		addEEnumLiteral(enumSerializationStrategyEEnum, EnumSerializationStrategy.NAME);
 
 		// Create resource
 		createResource(eNS_URI);

@@ -36,6 +36,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerializeNull <em>Serialize Null</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerializeEmpty <em>Serialize Empty</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerializeDefaults <em>Serialize Defaults</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getEnumSerialization <em>Enum Serialization</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseFeatureConfig()
@@ -168,5 +169,33 @@ public interface BaseFeatureConfig extends EObject {
 	 * @generated
 	 */
 	void setSerializeDefaults(Boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Enum Serialization</b></em>' attribute.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.model.metadata.EnumSerializationStrategy}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Strategy for serializing enum values (null = use LITERAL default).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Enum Serialization</em>' attribute.
+	 * @see org.eclipse.fennec.model.metadata.EnumSerializationStrategy
+	 * @see #setEnumSerialization(EnumSerializationStrategy)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseFeatureConfig_EnumSerialization()
+	 * @model
+	 * @generated
+	 */
+	EnumSerializationStrategy getEnumSerialization();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getEnumSerialization <em>Enum Serialization</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Enum Serialization</em>' attribute.
+	 * @see org.eclipse.fennec.model.metadata.EnumSerializationStrategy
+	 * @see #getEnumSerialization()
+	 * @generated
+	 */
+	void setEnumSerialization(EnumSerializationStrategy value);
 
 } // BaseFeatureConfig

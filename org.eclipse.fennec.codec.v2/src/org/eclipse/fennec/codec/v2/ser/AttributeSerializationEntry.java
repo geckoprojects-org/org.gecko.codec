@@ -14,8 +14,10 @@
 package org.eclipse.fennec.codec.v2.ser;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -125,11 +127,57 @@ public class AttributeSerializationEntry implements SerializationEntry {
             gen.writeNumber(f);
         } else if (value instanceof Boolean b) {
             gen.writeBoolean(b);
+        } else if (value instanceof Enumerator e) {
+            // EMF enums implement Enumerator
+            writeEnumValue(gen, e);
         } else if (value instanceof Enum<?> e) {
-            // TODO: Add enum literal setting to EffectiveFeatureConfig if needed
-            gen.writeString(e.name());
+            // Java enums (non-EMF)
+            writeJavaEnumValue(gen, e);
         } else {
             gen.writeString(value.toString());
+        }
+    }
+
+    /**
+     * Writes an EMF enum (Enumerator) value based on the configured strategy.
+     *
+     * @param gen the JSON generator
+     * @param e the EMF enumerator value
+     */
+    private void writeEnumValue(JsonGenerator gen, Enumerator e) {
+        EnumSerializationStrategy strategy = config.getEnumSerialization();
+        switch (strategy) {
+            case VALUE:
+                gen.writeNumber(e.getValue());
+                break;
+            case NAME:
+                gen.writeString(e.getName());
+                break;
+            case LITERAL:
+            default:
+                gen.writeString(e.getLiteral());
+                break;
+        }
+    }
+
+    /**
+     * Writes a Java enum value based on the configured strategy.
+     *
+     * @param gen the JSON generator
+     * @param e the Java enum value
+     */
+    private void writeJavaEnumValue(JsonGenerator gen, Enum<?> e) {
+        EnumSerializationStrategy strategy = config.getEnumSerialization();
+        switch (strategy) {
+            case VALUE:
+                gen.writeNumber(e.ordinal());
+                break;
+            case NAME:
+            case LITERAL:
+            default:
+                // For Java enums, NAME and LITERAL are the same
+                gen.writeString(e.name());
+                break;
         }
     }
 }

@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.fennec.model.metadata.BaseFeatureConfig;
+import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.MetadataPackage;
 
 /**
@@ -37,6 +38,7 @@ import org.eclipse.fennec.model.metadata.MetadataPackage;
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getSerializeNull <em>Serialize Null</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getSerializeEmpty <em>Serialize Empty</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getSerializeDefaults <em>Serialize Defaults</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getEnumSerialization <em>Enum Serialization</em>}</li>
  * </ul>
  *
  * @generated
@@ -141,6 +143,26 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 	 * @ordered
 	 */
 	protected Boolean serializeDefaults = SERIALIZE_DEFAULTS_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getEnumSerialization() <em>Enum Serialization</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getEnumSerialization()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final EnumSerializationStrategy ENUM_SERIALIZATION_EDEFAULT = EnumSerializationStrategy.LITERAL;
+
+	/**
+	 * The cached value of the '{@link #getEnumSerialization() <em>Enum Serialization</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getEnumSerialization()
+	 * @generated
+	 * @ordered
+	 */
+	protected EnumSerializationStrategy enumSerialization = ENUM_SERIALIZATION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -282,6 +304,29 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 	 * @generated
 	 */
 	@Override
+	public EnumSerializationStrategy getEnumSerialization() {
+		return enumSerialization;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setEnumSerialization(EnumSerializationStrategy newEnumSerialization) {
+		EnumSerializationStrategy oldEnumSerialization = enumSerialization;
+		enumSerialization = newEnumSerialization == null ? ENUM_SERIALIZATION_EDEFAULT : newEnumSerialization;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_FEATURE_CONFIG__ENUM_SERIALIZATION, oldEnumSerialization, enumSerialization));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case MetadataPackage.BASE_FEATURE_CONFIG__KEY:
@@ -294,6 +339,8 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 				return getSerializeEmpty();
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS:
 				return getSerializeDefaults();
+			case MetadataPackage.BASE_FEATURE_CONFIG__ENUM_SERIALIZATION:
+				return getEnumSerialization();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -320,6 +367,9 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 				return;
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS:
 				setSerializeDefaults((Boolean)newValue);
+				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__ENUM_SERIALIZATION:
+				setEnumSerialization((EnumSerializationStrategy)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -348,6 +398,9 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS:
 				setSerializeDefaults(SERIALIZE_DEFAULTS_EDEFAULT);
 				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__ENUM_SERIALIZATION:
+				setEnumSerialization(ENUM_SERIALIZATION_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -370,6 +423,8 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 				return SERIALIZE_EMPTY_EDEFAULT == null ? serializeEmpty != null : !SERIALIZE_EMPTY_EDEFAULT.equals(serializeEmpty);
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS:
 				return SERIALIZE_DEFAULTS_EDEFAULT == null ? serializeDefaults != null : !SERIALIZE_DEFAULTS_EDEFAULT.equals(serializeDefaults);
+			case MetadataPackage.BASE_FEATURE_CONFIG__ENUM_SERIALIZATION:
+				return enumSerialization != ENUM_SERIALIZATION_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -394,6 +449,8 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 		result.append(serializeEmpty);
 		result.append(", serializeDefaults: ");
 		result.append(serializeDefaults);
+		result.append(", enumSerialization: ");
+		result.append(enumSerialization);
 		result.append(')');
 		return result.toString();
 	}

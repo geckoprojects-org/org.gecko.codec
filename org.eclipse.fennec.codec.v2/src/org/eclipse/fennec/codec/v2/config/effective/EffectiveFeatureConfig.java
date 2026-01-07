@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.v2.config.effective;
 import java.util.Objects;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 
 /**
  * Fully resolved, immutable feature-level codec configuration.
@@ -39,6 +40,7 @@ public final class EffectiveFeatureConfig {
     private final boolean serializeDefaults;
     private final String valueWriterName;
     private final String valueReaderName;
+    private final EnumSerializationStrategy enumSerialization;
 
     private EffectiveFeatureConfig(Builder builder) {
         this.feature = Objects.requireNonNull(builder.feature, "feature must not be null");
@@ -49,6 +51,7 @@ public final class EffectiveFeatureConfig {
         this.serializeDefaults = builder.serializeDefaults;
         this.valueWriterName = builder.valueWriterName;
         this.valueReaderName = builder.valueReaderName;
+        this.enumSerialization = builder.enumSerialization;
     }
 
     /**
@@ -109,6 +112,14 @@ public final class EffectiveFeatureConfig {
     }
 
     /**
+     * Returns the enum serialization strategy.
+     * Defaults to LITERAL if not explicitly set.
+     */
+    public EnumSerializationStrategy getEnumSerialization() {
+        return enumSerialization != null ? enumSerialization : EnumSerializationStrategy.LITERAL;
+    }
+
+    /**
      * Creates a new builder.
      */
     public static Builder builder() {
@@ -127,6 +138,7 @@ public final class EffectiveFeatureConfig {
         private boolean serializeDefaults = false;
         private String valueWriterName;
         private String valueReaderName;
+        private EnumSerializationStrategy enumSerialization;
 
         private Builder() {}
 
@@ -167,6 +179,11 @@ public final class EffectiveFeatureConfig {
 
         public Builder valueReaderName(String valueReaderName) {
             this.valueReaderName = valueReaderName;
+            return this;
+        }
+
+        public Builder enumSerialization(EnumSerializationStrategy enumSerialization) {
+            this.enumSerialization = enumSerialization;
             return this;
         }
 

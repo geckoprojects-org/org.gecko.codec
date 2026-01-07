@@ -23,6 +23,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecPackage;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect;
 
+import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
+
 import org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl;
 
 /**
@@ -40,6 +42,7 @@ import org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isSerializeDefaults <em>Serialize Defaults</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#getValueWriterName <em>Value Writer Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#getValueReaderName <em>Value Reader Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#getEnumSerialization <em>Enum Serialization</em>}</li>
  * </ul>
  *
  * @generated
@@ -184,6 +187,26 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 	 * @ordered
 	 */
 	protected String valueReaderName = VALUE_READER_NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getEnumSerialization() <em>Enum Serialization</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getEnumSerialization()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final EnumSerializationStrategy ENUM_SERIALIZATION_EDEFAULT = EnumSerializationStrategy.LITERAL;
+
+	/**
+	 * The cached value of the '{@link #getEnumSerialization() <em>Enum Serialization</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getEnumSerialization()
+	 * @generated
+	 * @ordered
+	 */
+	protected EnumSerializationStrategy enumSerialization = ENUM_SERIALIZATION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -371,6 +394,29 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 	 * @generated
 	 */
 	@Override
+	public EnumSerializationStrategy getEnumSerialization() {
+		return enumSerialization;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setEnumSerialization(EnumSerializationStrategy newEnumSerialization) {
+		EnumSerializationStrategy oldEnumSerialization = enumSerialization;
+		enumSerialization = newEnumSerialization == null ? ENUM_SERIALIZATION_EDEFAULT : newEnumSerialization;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION, oldEnumSerialization, enumSerialization));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case CodecPackage.FEATURE_CODEC_ASPECT__EFFECTIVE_KEY:
@@ -387,6 +433,8 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 				return getValueWriterName();
 			case CodecPackage.FEATURE_CODEC_ASPECT__VALUE_READER_NAME:
 				return getValueReaderName();
+			case CodecPackage.FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION:
+				return getEnumSerialization();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -419,6 +467,9 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 				return;
 			case CodecPackage.FEATURE_CODEC_ASPECT__VALUE_READER_NAME:
 				setValueReaderName((String)newValue);
+				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION:
+				setEnumSerialization((EnumSerializationStrategy)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -453,6 +504,9 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 			case CodecPackage.FEATURE_CODEC_ASPECT__VALUE_READER_NAME:
 				setValueReaderName(VALUE_READER_NAME_EDEFAULT);
 				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION:
+				setEnumSerialization(ENUM_SERIALIZATION_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -479,6 +533,8 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 				return VALUE_WRITER_NAME_EDEFAULT == null ? valueWriterName != null : !VALUE_WRITER_NAME_EDEFAULT.equals(valueWriterName);
 			case CodecPackage.FEATURE_CODEC_ASPECT__VALUE_READER_NAME:
 				return VALUE_READER_NAME_EDEFAULT == null ? valueReaderName != null : !VALUE_READER_NAME_EDEFAULT.equals(valueReaderName);
+			case CodecPackage.FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION:
+				return enumSerialization != ENUM_SERIALIZATION_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -507,6 +563,8 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 		result.append(valueWriterName);
 		result.append(", valueReaderName: ");
 		result.append(valueReaderName);
+		result.append(", enumSerialization: ");
+		result.append(enumSerialization);
 		result.append(')');
 		return result.toString();
 	}

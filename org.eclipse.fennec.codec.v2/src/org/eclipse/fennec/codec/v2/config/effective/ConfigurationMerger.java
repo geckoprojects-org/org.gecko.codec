@@ -26,6 +26,7 @@ import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
+import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.IdStrategy;
@@ -197,6 +198,7 @@ public class ConfigurationMerger {
                 .serializeDefaults(resolveSerializeDefaults(aspect))
                 .valueWriterName(aspect != null ? aspect.getValueWriterName() : null)
                 .valueReaderName(aspect != null ? aspect.getValueReaderName() : null)
+                .enumSerialization(resolveEnumSerialization(aspect))
                 .build();
     }
 
@@ -457,6 +459,14 @@ public class ConfigurationMerger {
             return aspect.isSerializeDefaults();
         }
         return moduleConfig.isSerializeDefaultValue();
+    }
+
+    private EnumSerializationStrategy resolveEnumSerialization(FeatureCodecAspect aspect) {
+        if (aspect != null && aspect.getEnumSerialization() != null) {
+            return aspect.getEnumSerialization();
+        }
+        // Default to LITERAL
+        return EnumSerializationStrategy.LITERAL;
     }
 
     // ========================================================================

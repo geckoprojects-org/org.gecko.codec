@@ -544,13 +544,22 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	int BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS = 4;
 
 	/**
+	 * The feature id for the '<em><b>Enum Serialization</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_FEATURE_CONFIG__ENUM_SERIALIZATION = 5;
+
+	/**
 	 * The number of structural features of the '<em>Base Feature Config</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_FEATURE_CONFIG_FEATURE_COUNT = 5;
+	int BASE_FEATURE_CONFIG_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Base Feature Config</em>' class.
@@ -1121,6 +1130,16 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 */
 	int SUPER_TYPE_SELECTION = 18;
 
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.EnumSerializationStrategy <em>Enum Serialization Strategy</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.EnumSerializationStrategy
+	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getEnumSerializationStrategy()
+	 * @generated
+	 */
+	int ENUM_SERIALIZATION_STRATEGY = 19;
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.BaseTypeConfig <em>Base Type Config</em>}'.
@@ -1498,6 +1517,17 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getBaseFeatureConfig_SerializeDefaults();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getEnumSerialization <em>Enum Serialization</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Enum Serialization</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseFeatureConfig#getEnumSerialization()
+	 * @see #getBaseFeatureConfig()
+	 * @generated
+	 */
+	EAttribute getBaseFeatureConfig_EnumSerialization();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.PackageMetadata <em>Package Metadata</em>}'.
@@ -1918,6 +1948,16 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	EEnum getSuperTypeSelection();
 
 	/**
+	 * Returns the meta object for enum '{@link org.eclipse.fennec.model.metadata.EnumSerializationStrategy <em>Enum Serialization Strategy</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Enum Serialization Strategy</em>'.
+	 * @see org.eclipse.fennec.model.metadata.EnumSerializationStrategy
+	 * @generated
+	 */
+	EEnum getEnumSerializationStrategy();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2235,6 +2275,14 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS = eINSTANCE.getBaseFeatureConfig_SerializeDefaults();
+
+		/**
+		 * The meta object literal for the '<em><b>Enum Serialization</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_FEATURE_CONFIG__ENUM_SERIALIZATION = eINSTANCE.getBaseFeatureConfig_EnumSerialization();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.PackageMetadataImpl <em>Package Metadata</em>}' class.
@@ -2569,6 +2617,16 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EEnum SUPER_TYPE_SELECTION = eINSTANCE.getSuperTypeSelection();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.EnumSerializationStrategy <em>Enum Serialization Strategy</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.EnumSerializationStrategy
+		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getEnumSerializationStrategy()
+		 * @generated
+		 */
+		EEnum ENUM_SERIALIZATION_STRATEGY = eINSTANCE.getEnumSerializationStrategy();
 
 	}
 
