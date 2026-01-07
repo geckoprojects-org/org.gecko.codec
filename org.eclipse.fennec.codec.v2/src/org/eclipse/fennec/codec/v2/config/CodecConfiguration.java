@@ -15,8 +15,11 @@ package org.eclipse.fennec.codec.v2.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 
 /**
@@ -85,6 +88,55 @@ public class CodecConfiguration {
 
     /** Key for proxy objects */
     private final String proxyKey;
+
+    // ========================================================================
+    // Expand Settings (for non-containment references)
+    // ========================================================================
+
+    /**
+     * Whether to expand ALL non-containment references inline.
+     * <p>
+     * When enabled, all non-containment references are serialized as full objects
+     * instead of proxy references. This is a global flag that affects all references.
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/07-reference.md#42-expand-inline-serialization">Spec: Expand Inline Serialization</a>
+     */
+    private final boolean expandGlobal;
+
+    /**
+     * Set of specific EReferences to expand inline (by EReference object).
+     * <p>
+     * Only these references will be expanded, regardless of expandGlobal setting.
+     * </p>
+     */
+    private final Set<EReference> expandReferences;
+
+    /**
+     * Set of reference names to expand inline (by String name).
+     * <p>
+     * At runtime, these names are resolved against the current EClass to find
+     * the matching EReference.
+     * </p>
+     */
+    private final Set<String> expandReferenceNames;
+
+    /**
+     * Maximum depth for nested expansion.
+     * <p>
+     * When expanding references, this limits how deep the expansion goes.
+     * Default is 1 (only immediate references).
+     * </p>
+     */
+    private final int expandDepth;
+
+    /**
+     * Whether to skip bi-directional (opposite) references during expansion.
+     * <p>
+     * When true (default), opposite references are not expanded to prevent cycles.
+     * </p>
+     */
+    private final boolean expandIgnoreBidirectional;
 
     // ========================================================================
     // SuperType Serialization Settings
@@ -169,6 +221,15 @@ public class CodecConfiguration {
         this.idKey = builder.idKey;
         this.refKey = builder.refKey;
         this.proxyKey = builder.proxyKey;
+        this.expandGlobal = builder.expandGlobal;
+        this.expandReferences = builder.expandReferences != null
+                ? Set.copyOf(builder.expandReferences)
+                : Collections.emptySet();
+        this.expandReferenceNames = builder.expandReferenceNames != null
+                ? Set.copyOf(builder.expandReferenceNames)
+                : Collections.emptySet();
+        this.expandDepth = builder.expandDepth;
+        this.expandIgnoreBidirectional = builder.expandIgnoreBidirectional;
         this.serializeSuperTypes = builder.serializeSuperTypes;
         this.serializeAllSuperTypes = builder.serializeAllSuperTypes;
         this.serializeSuperTypesAsArray = builder.serializeSuperTypesAsArray;
@@ -263,6 +324,84 @@ public class CodecConfiguration {
     public String getProxyKey() {
         return proxyKey;
     }
+
+    // ========================================================================
+    // Expand Getters
+    // ========================================================================
+
+    /**
+     * Returns whether all non-containment references should be expanded globally.
+     *
+     * @return true if all references should be expanded inline
+     * @see <a href="docs/codec-v2-spec/07-reference.md#42-expand-inline-serialization">Spec: Expand Inline Serialization</a>
+     */
+    public boolean isExpandGlobal() {
+        return expandGlobal;
+    }
+
+    /**
+     * Returns the set of specific EReferences to expand.
+     *
+     * @return unmodifiable set of EReferences to expand
+     */
+    public Set<EReference> getExpandReferences() {
+        return expandReferences;
+    }
+
+    /**
+     * Returns the set of reference names to expand.
+     *
+     * @return unmodifiable set of reference names to expand
+     */
+    public Set<String> getExpandReferenceNames() {
+        return expandReferenceNames;
+    }
+
+    /**
+     * Checks if a specific EReference should be expanded.
+     * <p>
+     * A reference is expanded if:
+     * <ul>
+     *   <li>{@link #isExpandGlobal()} returns true, OR</li>
+     *   <li>the reference is in {@link #getExpandReferences()}, OR</li>
+     *   <li>the reference name is in {@link #getExpandReferenceNames()}</li>
+     * </ul>
+     * </p>
+     *
+     * @param reference the EReference to check
+     * @return true if the reference should be expanded
+     */
+    public boolean shouldExpand(EReference reference) {
+        if (expandGlobal) {
+            return true;
+        }
+        if (expandReferences.contains(reference)) {
+            return true;
+        }
+        return expandReferenceNames.contains(reference.getName());
+    }
+
+    /**
+     * Returns the maximum depth for nested expansion.
+     *
+     * @return the expand depth (default 1)
+     */
+    public int getExpandDepth() {
+        return expandDepth;
+    }
+
+    /**
+     * Returns whether bi-directional references should be ignored during expansion.
+     *
+     * @return true if opposite references should be skipped
+     */
+    public boolean isExpandIgnoreBidirectional() {
+        return expandIgnoreBidirectional;
+    }
+
+    // ========================================================================
+    // SuperType Getters
+    // ========================================================================
 
     /**
      * Returns whether supertypes should be serialized.
@@ -416,6 +555,12 @@ public class CodecConfiguration {
         private String idKey = "_id";
         private String refKey = "$ref";
         private String proxyKey = "_proxy";
+        // Expand settings
+        private boolean expandGlobal = false;
+        private Set<EReference> expandReferences;
+        private Set<String> expandReferenceNames;
+        private int expandDepth = 1;
+        private boolean expandIgnoreBidirectional = true;
         private boolean serializeSuperTypes = false;
         private boolean serializeAllSuperTypes = false;
         private boolean serializeSuperTypesAsArray = true;
@@ -489,6 +634,128 @@ public class CodecConfiguration {
 
         public Builder proxyKey(String proxyKey) {
             this.proxyKey = proxyKey;
+            return this;
+        }
+
+        // Expand
+
+        /**
+         * Enables or disables global expansion of all non-containment references.
+         * <p>
+         * When enabled, all non-containment references are serialized inline
+         * as full objects instead of proxy references.
+         * </p>
+         *
+         * @param expandGlobal true to expand all references globally
+         * @return this builder
+         * @see <a href="docs/codec-v2-spec/07-reference.md#42-expand-inline-serialization">Spec: Expand Inline Serialization</a>
+         */
+        public Builder expandGlobal(boolean expandGlobal) {
+            this.expandGlobal = expandGlobal;
+            return this;
+        }
+
+        /**
+         * Sets the maximum depth for nested expansion.
+         *
+         * @param depth the maximum expansion depth (default 1)
+         * @return this builder
+         */
+        public Builder expandDepth(int depth) {
+            this.expandDepth = depth;
+            return this;
+        }
+
+        /**
+         * Sets whether to ignore bi-directional references during expansion.
+         *
+         * @param ignore true to skip opposite references (default true)
+         * @return this builder
+         */
+        public Builder expandIgnoreBidirectional(boolean ignore) {
+            this.expandIgnoreBidirectional = ignore;
+            return this;
+        }
+
+        /**
+         * Adds specific EReferences to expand inline.
+         * <p>
+         * These references will be expanded regardless of the expandGlobal setting.
+         * </p>
+         *
+         * @param references the EReferences to expand
+         * @return this builder
+         */
+        public Builder expand(EReference... references) {
+            if (references != null && references.length > 0) {
+                if (this.expandReferences == null) {
+                    this.expandReferences = new HashSet<>();
+                }
+                for (EReference ref : references) {
+                    if (ref != null) {
+                        this.expandReferences.add(ref);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Adds specific reference names to expand inline.
+         * <p>
+         * At runtime, these names are resolved against the current EClass.
+         * </p>
+         *
+         * @param names the reference names to expand
+         * @return this builder
+         */
+        public Builder expand(String... names) {
+            if (names != null && names.length > 0) {
+                if (this.expandReferenceNames == null) {
+                    this.expandReferenceNames = new HashSet<>();
+                }
+                for (String name : names) {
+                    if (name != null && !name.isEmpty()) {
+                        this.expandReferenceNames.add(name);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Adds a list of EReferences to expand inline.
+         *
+         * @param references the list of EReferences to expand
+         * @return this builder
+         */
+        public Builder expand(List<EReference> references) {
+            if (references != null && !references.isEmpty()) {
+                if (this.expandReferences == null) {
+                    this.expandReferences = new HashSet<>();
+                }
+                for (EReference ref : references) {
+                    if (ref != null) {
+                        this.expandReferences.add(ref);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Adds a set of reference names to expand inline.
+         *
+         * @param names the set of reference names to expand
+         * @return this builder
+         */
+        public Builder expandNames(Set<String> names) {
+            if (names != null && !names.isEmpty()) {
+                if (this.expandReferenceNames == null) {
+                    this.expandReferenceNames = new HashSet<>();
+                }
+                this.expandReferenceNames.addAll(names);
+            }
             return this;
         }
 

@@ -31,7 +31,10 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.codec.v2.config.effective.ConfigurationMerger;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
@@ -337,30 +340,100 @@ public class CodecResource extends ResourceImpl {
     private void resolveReferences(List<UnresolvedReference> unresolvedReferences) {
         for (UnresolvedReference unresolved : unresolvedReferences) {
             EObject target = resolveReference(unresolved.getTargetUri());
-            if (nonNull(target)) {
-                EObject source = unresolved.getSource();
-                org.eclipse.emf.ecore.EReference reference = unresolved.getReference();
 
-                if (unresolved.isMultiValued()) {
-                    // Multi-valued reference - add at specific index
-                    List<EObject> list = (List<EObject>) source.eGet(reference);
-                    int index = unresolved.getIndex();
-                    if (index < list.size()) {
-                        list.set(index, target);
-                    } else {
-                        list.add(target);
-                    }
+            // If resolution fails, create a proxy
+            if (isNull(target)) {
+                target = createProxy(unresolved);
+                if (isNull(target)) {
+                    LOGGER.warning(() -> String.format(
+                            "Could not resolve or create proxy for reference %s -> %s",
+                            unresolved.getReference().getName(),
+                            unresolved.getTargetUri()));
+                    continue;
+                }
+            }
+
+            EObject source = unresolved.getSource();
+            EReference reference = unresolved.getReference();
+
+            if (unresolved.isMultiValued()) {
+                // Multi-valued reference - add at specific index
+                List<EObject> list = (List<EObject>) source.eGet(reference);
+                int index = unresolved.getIndex();
+                if (index < list.size()) {
+                    list.set(index, target);
                 } else {
-                    // Single-valued reference
-                    source.eSet(reference, target);
+                    list.add(target);
                 }
             } else {
-                LOGGER.warning(() -> String.format(
-                        "Could not resolve reference %s -> %s",
-                        unresolved.getReference().getName(),
-                        unresolved.getTargetUri()));
+                // Single-valued reference
+                source.eSet(reference, target);
             }
         }
+    }
+
+    /**
+     * Creates a proxy EObject for an unresolved reference.
+     * <p>
+     * The proxy can be lazily resolved by EMF when the object is accessed.
+     * Uses the explicit type from the reference if available, otherwise
+     * falls back to the reference's declared type.
+     * </p>
+     *
+     * @param unresolved the unresolved reference information
+     * @return the created proxy, or null if proxy creation fails
+     * @see <a href="docs/codec-v2-spec/07-reference.md#8-deserialization">Spec: Reference Deserialization</a>
+     */
+    private EObject createProxy(UnresolvedReference unresolved) {
+        EClass eClass = unresolved.getEffectiveType();
+
+        if (isNull(eClass) || eClass.isAbstract() || eClass.isInterface()) {
+            LOGGER.warning(() -> String.format(
+                    "Cannot create proxy for reference %s: type %s is abstract or interface",
+                    unresolved.getReference().getName(),
+                    eClass != null ? eClass.getName() : "null"));
+            return null;
+        }
+
+        try {
+            // Create an instance of the EClass
+            EObject proxy = EcoreUtil.create(eClass);
+
+            // Set the proxy URI
+            if (proxy instanceof InternalEObject internalObject) {
+                URI proxyUri = resolveProxyUri(unresolved.getTargetUri());
+                internalObject.eSetProxyURI(proxyUri);
+            }
+
+            return proxy;
+        } catch (Exception e) {
+            LOGGER.warning(() -> String.format(
+                    "Error creating proxy for reference %s -> %s: %s",
+                    unresolved.getReference().getName(),
+                    unresolved.getTargetUri(),
+                    e.getMessage()));
+            return null;
+        }
+    }
+
+    /**
+     * Resolves a reference URI string to an EMF URI suitable for proxy resolution.
+     * <p>
+     * Handles relative URIs by resolving them against this resource's URI.
+     * </p>
+     *
+     * @param uriString the reference URI string
+     * @return the resolved EMF URI
+     */
+    private URI resolveProxyUri(String uriString) {
+        URI targetUri = URI.createURI(uriString);
+
+        // If it's a relative URI and we have a base URI, resolve it
+        if (targetUri.isRelative() && nonNull(getURI())) {
+            targetUri = targetUri.resolve(getURI());
+        }
+
+        return targetUri;
     }
 
     /**

@@ -240,18 +240,41 @@ public class DeserializationState {
 
     /**
      * Represents an unresolved non-containment reference.
+     * <p>
+     * Stores all information needed to either resolve the reference to an existing
+     * EObject or create a proxy if resolution fails.
+     * </p>
      */
     public static class UnresolvedReference {
         private final EObject source;
         private final EReference reference;
         private final String targetUri;
         private final int index; // -1 for single-valued
+        private final EClass targetType; // Optional: type from _type field, null if not specified
 
+        /**
+         * Creates an unresolved reference without explicit type information.
+         * The reference type (from EReference.getEReferenceType()) will be used for proxy creation.
+         */
         public UnresolvedReference(EObject source, EReference reference, String targetUri, int index) {
+            this(source, reference, targetUri, index, null);
+        }
+
+        /**
+         * Creates an unresolved reference with explicit type information.
+         *
+         * @param source the source EObject containing the reference
+         * @param reference the EReference to set
+         * @param targetUri the URI of the target object
+         * @param index the index for multi-valued references (-1 for single-valued)
+         * @param targetType the explicit target type from _type field, or null to use reference type
+         */
+        public UnresolvedReference(EObject source, EReference reference, String targetUri, int index, EClass targetType) {
             this.source = source;
             this.reference = reference;
             this.targetUri = targetUri;
             this.index = index;
+            this.targetType = targetType;
         }
 
         public EObject getSource() {
@@ -272,6 +295,25 @@ public class DeserializationState {
 
         public boolean isMultiValued() {
             return index >= 0;
+        }
+
+        /**
+         * Returns the explicit target type from the _type field, or null if not specified.
+         *
+         * @return the target EClass, or null
+         */
+        public EClass getTargetType() {
+            return targetType;
+        }
+
+        /**
+         * Returns the effective type for proxy creation.
+         * Uses the explicit target type if available, otherwise falls back to the reference type.
+         *
+         * @return the EClass to use for proxy creation
+         */
+        public EClass getEffectiveType() {
+            return targetType != null ? targetType : reference.getEReferenceType();
         }
     }
 }

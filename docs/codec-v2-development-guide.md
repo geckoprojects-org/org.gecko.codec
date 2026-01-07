@@ -2,13 +2,21 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2025-12-29
+**Last Updated:** 2026-01-07
 
 ---
 
 ## 1. Project Overview
 
-We are building **codec.v2**, a new EMF serialization codec based on the specification document `codec-v2-serialization-spec.md`. The goal is to create a clean, well-structured implementation that follows the configuration hierarchy defined in the spec.
+We are building **codec.v2**, a new EMF serialization codec based on the specification in the [`codec-v2-spec/`](codec-v2-spec/) folder. The goal is to create a clean, well-structured implementation that follows the configuration hierarchy defined in the spec.
+
+**Specification Documents:**
+- [Overview & TOC](codec-v2-spec/00-overview.md) - Start here
+- [Serialization Strategies](codec-v2-spec/01-strategies.md) - PLAIN vs STRUCTURED
+- [Configuration Hierarchy](codec-v2-spec/02-config-hierarchy.md) - How config is resolved (foundational)
+- [Global Options](codec-v2-spec/03-global-options.md) - Smart compression, field ordering
+- [Type](codec-v2-spec/04-type.md), [SuperType](codec-v2-spec/05-supertype.md), [ID](codec-v2-spec/06-id.md), [Reference](codec-v2-spec/07-reference.md) - Core serialization targets
+- [Architecture](codec-v2-spec/13-architecture.md) - Component overview
 
 ### Key Projects
 
@@ -756,6 +764,63 @@ EMF Resources support multiple root elements. The codec now properly handles:
 
 ---
 
+## 10.5 Expand Reference Serialization ✅
+
+**Completed:** 2026-01-07
+
+Non-containment references can now be serialized inline (expanded) instead of as proxy references.
+
+**Configuration:**
+```java
+// Expand ALL non-containment references
+CodecConfiguration.builder()
+    .expandGlobal(true)
+    .build();
+
+// Expand SPECIFIC references
+CodecConfiguration.builder()
+    .expand(PersonPackage.eINSTANCE.getPerson_Employer())
+    .expand("manager")
+    .build();
+```
+
+**Key Behavior:**
+- Expanded objects are serialized WITHOUT `_ref` field
+- This distinguishes them from proxy references during deserialization:
+  - With `_ref` → proxy (resolve via URI)
+  - Without `_ref` → orphan object (fully deserialized, not contained)
+- Proxy objects are NOT expanded (cannot expand what isn't resolved)
+- Bi-directional references are skipped by default to prevent cycles
+
+**Implementation Limitations:**
+- `expandDepth` only supports depth=1 (no nested expansion)
+- Expand deserialization not yet implemented (pending)
+
+**Key Files:**
+- `CodecConfiguration.java` - expand settings
+- `EffectiveCodecConfig.java` - runtime access
+- `ReferenceSerializationEntry.java` - expansion logic
+- `ExpandReferenceTest.java` - serialization tests
+
+### 10.6 Cross-Document Containment ⚠️ Partial
+
+**Status:** Serialization works, deserialization creates proxies
+
+Cross-document containment occurs when a contained object is stored in a different EMF resource. The serializer correctly detects this and serializes as `_ref`:
+
+```json
+{
+  "address": {
+    "_type": "http://example.org/address/1.0#//Address",
+    "_ref": "addresses.json#//@addresses.0"
+  }
+}
+```
+
+**Not Implemented:** Deserialization resolution. Cross-document containments are deserialized as proxy objects that require manual resolution via the ResourceSet.
+
+---
+
 ## 11. Pending Work (Next Session)
 
 ### 11.1 Additional TypeStrategies
@@ -764,17 +829,24 @@ EMF Resources support multiple root elements. The codec now properly handles:
 - `STRUCTURED` - Nested object format
 - `NUMERIC` - Classifier IDs
 
-### 11.2 Cross-Resource References
+### 11.2 Expand Deserialization
+
+- Detect orphan objects (objects without `_ref` in non-containment reference context)
+- Deserialize expanded references as fully populated orphan objects
+- Orphan objects are not contained and have no resource assigned
+
+### 11.3 Cross-Resource References
 
 - Resolve references to objects in other EMF resources
 - Support ResourceSet-based resolution
+- Resolve cross-document containment proxies
 
-### 11.4 Custom Value Readers/Writers
+### 11.5 Custom Value Readers/Writers
 
 - `CodecValueRegistry` integration
 - Support for `valueWriterName`/`valueReaderName` annotations
 
-### 11.5 OSGi Integration
+### 11.6 OSGi Integration
 
 - Create ResourceFactory for OSGi registration
 - Test with OSGi runtime

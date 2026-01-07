@@ -1,5 +1,9 @@
 # Codec V2 Serialization Feature Specification
 
+> **⚠️ ARCHIVED**: This document has been superseded by the modular spec in [`codec-v2-spec/`](codec-v2-spec/00-overview.md). Please refer to the new location for the current specification.
+
+---
+
 ## Overview
 
 This document defines the serialization features for codec.v2, including configurable strategies for type information, identity, references, and supertype serialization.
@@ -900,11 +904,11 @@ The configuration defines **keys and format**, not actual values.
 #### EAnnotation (on EReference)
 
 ```xml
-<!-- Switch to STRUCTURED format (PLAIN is default) -->
+<!-- Switch to PLAIN format (STRUCTURED is default) -->
 <eStructuralFeatures xsi:type="ecore:EReference" name="employer" eType="#//Company">
   <eAnnotations source="http://eclipse.org/fennec/codec">
     <details key="codec.reference"/>
-    <details key="format" value="STRUCTURED"/>
+    <details key="format" value="PLAIN"/>
   </eAnnotations>
 </eStructuralFeatures>
 ```
@@ -912,32 +916,20 @@ The configuration defines **keys and format**, not actual values.
 **Annotation Details:**
 | Key | Values | Default | Description |
 |-----|--------|---------|-------------|
-| `format` | PLAIN, STRUCTURED | PLAIN | SerializationFormat (Section 2.1) |
+| `format` | PLAIN, STRUCTURED | STRUCTURED | SerializationFormat (Section 2.1) |
 | `typeKey` | any string | `_type` | Key for type in STRUCTURED |
 | `refKey` | any string | `_ref` | Key for reference value |
-| `includeType` | true, false | true | Include type info in STRUCTURED |
 | `expand` | true, false | false | Serialize full object instead of proxy |
+
+**Note:** Type information in STRUCTURED format follows the type configuration (Section 3). With smart compression enabled, type is omitted when instance type equals reference type (see Section 12.1).
 
 **Note:** For numeric type IDs in references, use the codec-wide `useNumericIds` option (Section 2.2).
 
 #### Java Builder (Runtime Override)
 
-**Minimal (default: PLAIN):**
+**Minimal (default: STRUCTURED):**
 ```java
 ReferenceSerializationConfig config = ReferenceSerializationConfig.builder().build();
-```
-**Resulting JSON:**
-```json
-{
-  "employer": "acme-corp"
-}
-```
-
-**STRUCTURED format:**
-```java
-ReferenceSerializationConfig config = ReferenceSerializationConfig.builder()
-    .structured()
-    .build();
 ```
 **Resulting JSON:**
 ```json
@@ -946,6 +938,19 @@ ReferenceSerializationConfig config = ReferenceSerializationConfig.builder()
     "_type": "http://example.org/company/1.0#//Company",
     "_ref": "acme-corp"
   }
+}
+```
+
+**PLAIN format:**
+```java
+ReferenceSerializationConfig config = ReferenceSerializationConfig.builder()
+    .plain()
+    .build();
+```
+**Resulting JSON:**
+```json
+{
+  "employer": "acme-corp"
 }
 ```
 
@@ -1190,7 +1195,11 @@ Or with STRUCTURED type:
 
 ### 6.2 Cross-Document Containment Configuration
 
-Cross-document containments use the same configuration as non-containment references (see Section 5.3 and 5.4).
+Cross-document containments use the same configuration as non-containment references (see Section 5.3 and 5.4). This includes:
+- **Format**: PLAIN or STRUCTURED (default: STRUCTURED)
+- **Type configuration**: Same type strategy options
+- **Smart compression**: Type omitted when instance type equals declared reference type (see Section 12.1)
+- **Expand**: Serialize full object instead of reference (if resolved and in memory)
 
 **Detection:** The serializer detects cross-document containment when:
 - The EReference is containment (`isContainment() == true`)
@@ -1209,6 +1218,15 @@ CodecConfig.builder()
 {
   "address": {
     "_type": "http://example.org/address/1.0#//Address",
+    "_ref": "addresses.json#//@addresses.0"
+  }
+}
+```
+
+**With smart compression (when instance type equals declared reference type):**
+```json
+{
+  "address": {
     "_ref": "addresses.json#//@addresses.0"
   }
 }
@@ -2043,14 +2061,39 @@ When the same annotation exists at multiple levels, the most specific (closest t
 
 ### 12.1 Smart Compression
 
-Smart Compression reduces redundancy by omitting schema information when it can be derived from context.
+Smart Compression reduces redundancy by omitting type information when it can be derived from context. This applies consistently across all serialization features.
 
-**Behavior:**
-- Same-package references: use simple name instead of full URI
-- Same-schema supertypes: use simple name instead of full URI
-- Cross-package references: always include full URI
+#### 12.1.1 Core Principle
 
-**Configuration Levels:**
+When smart compression is enabled, type information is omitted whenever the **instance type equals the declared type**. The deserializer can infer the type from the model definition.
+
+| Feature | Declared Type | Instance Type | Smart Compression Action |
+|---------|---------------|---------------|--------------------------|
+| Root Object | `CODEC_ROOT_OBJECT` hint | `eObject.eClass()` | Omit `_type` if equal |
+| Containment Reference | `reference.getEReferenceType()` | `target.eClass()` | Omit `_type` if equal |
+| Non-Containment Reference | `reference.getEReferenceType()` | `target.eClass()` | Omit `_type` if equal |
+| Cross-Document Containment | `reference.getEReferenceType()` | `target.eClass()` | Omit `_type` if equal |
+
+**Key Rule:** Always serialize the **instance type** (from `eObject.eClass()`), never the declared type. Smart compression only affects whether to write it, not what value to write.
+
+#### 12.1.2 Smart Compression Behavior Matrix
+
+| Smart Compression | Instance Type == Declared Type | Action |
+|-------------------|-------------------------------|--------|
+| ON | Yes | Omit `_type` (inferable from context) |
+| ON | No | Write `_type` with instance type |
+| OFF | Yes | Write `_type` with instance type |
+| OFF | No | Write `_type` with instance type |
+
+#### 12.1.3 Additional Compression: Same-Schema Names
+
+When using STRUCTURED type format with smart compression, schema information can also be compressed:
+
+- **Same-package references**: Use simple name instead of full URI
+- **Same-schema supertypes**: Use simple name instead of full URI
+- **Cross-package references**: Always include full URI
+
+#### 12.1.4 Configuration
 
 ```java
 // Global - applies to ALL serialization targets
@@ -2070,22 +2113,47 @@ CodecConfig.builder()
     .build();
 ```
 
-**Example with Smart Compression ON:**
+#### 12.1.5 Examples
+
+**Containment reference with smart compression ON:**
+
+```java
+// EReference employees: Person[*]  (declared type = Person)
+// Contains: Person, Person, FancyPerson instances
+```
+```json
+{
+  "employees": [
+    { "name": "John" },
+    { "name": "Jane" },
+    { "_type": "http://example.org/1.0#//FancyPerson", "name": "Bob", "fancyLevel": 5 }
+  ]
+}
+```
+Note: First two omit `_type` (Person == Person), third includes it (FancyPerson != Person).
+
+**Non-containment reference with smart compression ON:**
 
 ```json
 {
-  "_type": {
-    "schema": "http://example.org/company/1.0",
-    "name": "Company"
-  },
   "employees": [
-    { "_type": "Employee", "_ref": "john" },
-    { "_type": "Employee", "_ref": "jane" },
+    { "_ref": "john" },
+    { "_ref": "jane" },
     { "_type": "http://external.org/hr/1.0#//Contractor", "_ref": "bob" }
-  ],
-  "headquarters": { "_type": "Address", "_ref": "addr1" }
+  ]
 }
 ```
+
+**Cross-document containment with smart compression ON:**
+
+```json
+{
+  "address": {
+    "_ref": "addresses.json#//@addresses.0"
+  }
+}
+```
+Note: `_type` omitted because instance type equals declared reference type.
 
 ### 12.2 NUMERIC/INDEXED Strategy
 

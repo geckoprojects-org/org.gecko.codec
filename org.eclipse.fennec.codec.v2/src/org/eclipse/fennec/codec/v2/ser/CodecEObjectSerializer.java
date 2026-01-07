@@ -163,7 +163,7 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
                 featureEntry = new AttributeSerializationEntry(featureConfig, attribute);
             } else if (feature instanceof EReference reference) {
                 featureEntry = new ReferenceSerializationEntry(
-                        featureConfig, reference, config.getRefKey(), config.isSmartCompression());
+                        featureConfig, reference, config.getRefKey(), config.isSmartCompression(), config);
             } else {
                 continue;
             }

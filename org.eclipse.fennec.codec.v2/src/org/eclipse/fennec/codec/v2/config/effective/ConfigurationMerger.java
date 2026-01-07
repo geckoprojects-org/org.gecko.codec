@@ -95,6 +95,12 @@ public class ConfigurationMerger {
                 .typeDiscriminatorService(typeDiscriminatorService)
                 .smartCompression(moduleConfig.isSmartCompression())
                 .metadataService(metadataService)
+                // Expand settings
+                .expandGlobal(moduleConfig.isExpandGlobal())
+                .expandReferences(moduleConfig.getExpandReferences())
+                .expandReferenceNames(moduleConfig.getExpandReferenceNames())
+                .expandDepth(moduleConfig.getExpandDepth())
+                .expandIgnoreBidirectional(moduleConfig.isExpandIgnoreBidirectional())
                 .classConfigFactory(this::buildClassConfig)
                 .featureConfigFactory(this::buildFeatureConfig)
                 .build();

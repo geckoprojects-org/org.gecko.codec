@@ -13,13 +13,17 @@
  */
 package org.eclipse.fennec.codec.v2.config.effective;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
@@ -64,6 +68,13 @@ public final class EffectiveCodecConfig {
     private final boolean smartCompression;
     private final MetadataService metadataService;
 
+    // Expand settings
+    private final boolean expandGlobal;
+    private final Set<EReference> expandReferences;
+    private final Set<String> expandReferenceNames;
+    private final int expandDepth;
+    private final boolean expandIgnoreBidirectional;
+
     // ========================================================================
     // Class and feature config factories (for lazy building)
     // ========================================================================
@@ -88,6 +99,15 @@ public final class EffectiveCodecConfig {
         this.typeDiscriminatorService = builder.typeDiscriminatorService;
         this.smartCompression = builder.smartCompression;
         this.metadataService = builder.metadataService;
+        this.expandGlobal = builder.expandGlobal;
+        this.expandReferences = builder.expandReferences != null
+                ? Set.copyOf(builder.expandReferences)
+                : Collections.emptySet();
+        this.expandReferenceNames = builder.expandReferenceNames != null
+                ? Set.copyOf(builder.expandReferenceNames)
+                : Collections.emptySet();
+        this.expandDepth = builder.expandDepth;
+        this.expandIgnoreBidirectional = builder.expandIgnoreBidirectional;
         this.classConfigFactory = Objects.requireNonNull(builder.classConfigFactory,
                 "classConfigFactory must not be null");
         this.featureConfigFactory = Objects.requireNonNull(builder.featureConfigFactory,
@@ -216,6 +236,83 @@ public final class EffectiveCodecConfig {
     }
 
     // ========================================================================
+    // Expand settings
+    // ========================================================================
+
+    /**
+     * Returns whether all non-containment references should be expanded globally.
+     *
+     * @return true if all references should be expanded inline
+     * @see <a href="docs/codec-v2-spec/07-reference.md#42-expand-inline-serialization">Spec: Expand Inline Serialization</a>
+     */
+    public boolean isExpandGlobal() {
+        return expandGlobal;
+    }
+
+    /**
+     * Returns the set of specific EReferences to expand.
+     *
+     * @return unmodifiable set of EReferences to expand
+     */
+    public Set<EReference> getExpandReferences() {
+        return expandReferences;
+    }
+
+    /**
+     * Returns the set of reference names to expand.
+     *
+     * @return unmodifiable set of reference names to expand
+     */
+    public Set<String> getExpandReferenceNames() {
+        return expandReferenceNames;
+    }
+
+    /**
+     * Checks if a specific EReference should be expanded.
+     * <p>
+     * A reference is expanded if:
+     * <ul>
+     *   <li>{@link #isExpandGlobal()} returns true, OR</li>
+     *   <li>the reference is in {@link #getExpandReferences()}, OR</li>
+     *   <li>the reference name is in {@link #getExpandReferenceNames()}</li>
+     * </ul>
+     * </p>
+     *
+     * @param reference the EReference to check
+     * @return true if the reference should be expanded
+     */
+    public boolean shouldExpand(EReference reference) {
+        if (reference == null) {
+            return false;
+        }
+        if (expandGlobal) {
+            return true;
+        }
+        if (expandReferences.contains(reference)) {
+            return true;
+        }
+        return expandReferenceNames.contains(reference.getName());
+    }
+
+    /**
+     * Returns the maximum depth for nested expansion.
+     *
+     * @return the expand depth (default 1)
+     */
+    public int getExpandDepth() {
+        return expandDepth;
+    }
+
+    /**
+     * Returns whether bi-directional references should be ignored during expansion.
+     *
+     * @return true if opposite references should be skipped
+     */
+    public boolean isExpandIgnoreBidirectional() {
+        return expandIgnoreBidirectional;
+    }
+
+    // ========================================================================
     // Class config (cached)
     // ========================================================================
 
@@ -301,6 +398,12 @@ public final class EffectiveCodecConfig {
         private TypeDiscriminatorService typeDiscriminatorService;
         private boolean smartCompression = false;
         private MetadataService metadataService;
+        // Expand settings
+        private boolean expandGlobal = false;
+        private Set<EReference> expandReferences;
+        private Set<String> expandReferenceNames;
+        private int expandDepth = 1;
+        private boolean expandIgnoreBidirectional = true;
         private Function<EClass, EffectiveClassConfig> classConfigFactory;
         private Function<EStructuralFeature, EffectiveFeatureConfig> featureConfigFactory;
 
@@ -348,6 +451,59 @@ public final class EffectiveCodecConfig {
 
         public Builder metadataService(MetadataService metadataService) {
             this.metadataService = metadataService;
+            return this;
+        }
+
+        public Builder expandGlobal(boolean expandGlobal) {
+            this.expandGlobal = expandGlobal;
+            return this;
+        }
+
+        public Builder expandReferences(Set<EReference> expandReferences) {
+            this.expandReferences = expandReferences;
+            return this;
+        }
+
+        public Builder expandReferenceNames(Set<String> expandReferenceNames) {
+            this.expandReferenceNames = expandReferenceNames;
+            return this;
+        }
+
+        public Builder expand(EReference... references) {
+            if (references != null && references.length > 0) {
+                if (this.expandReferences == null) {
+                    this.expandReferences = new HashSet<>();
+                }
+                for (EReference ref : references) {
+                    if (ref != null) {
+                        this.expandReferences.add(ref);
+                    }
+                }
+            }
+            return this;
+        }
+
+        public Builder expand(String... names) {
+            if (names != null && names.length > 0) {
+                if (this.expandReferenceNames == null) {
+                    this.expandReferenceNames = new HashSet<>();
+                }
+                for (String name : names) {
+                    if (name != null && !name.isEmpty()) {
+                        this.expandReferenceNames.add(name);
+                    }
+                }
+            }
+            return this;
+        }
+
+        public Builder expandDepth(int expandDepth) {
+            this.expandDepth = expandDepth;
+            return this;
+        }
+
+        public Builder expandIgnoreBidirectional(boolean expandIgnoreBidirectional) {
+            this.expandIgnoreBidirectional = expandIgnoreBidirectional;
             return this;
         }
 
