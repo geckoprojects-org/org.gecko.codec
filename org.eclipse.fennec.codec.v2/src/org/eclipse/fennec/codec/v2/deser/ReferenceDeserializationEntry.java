@@ -30,6 +30,7 @@ import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
 import tools.jackson.core.TokenStreamContext;
 import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.util.TokenBuffer;
 
 /**
  * Deserialization entry that handles EReference values.
@@ -37,18 +38,23 @@ import tools.jackson.databind.DeserializationContext;
  * Supports:
  * <ul>
  *   <li>Containment references (inline objects)</li>
- *   <li>Non-containment references ($ref objects)</li>
+ *   <li>Non-containment references ($ref objects) - creates proxies</li>
+ *   <li>Expanded non-containment references (no $ref) - creates orphan objects</li>
  *   <li>Multi-valued references (arrays)</li>
  *   <li>Null values</li>
  * </ul>
  * </p>
  * <p>
- * Non-containment references are stored as {@link UnresolvedReference} objects
- * for later resolution after all objects are deserialized.
+ * Non-containment reference handling depends on the presence of the {@code _ref} field:
+ * <ul>
+ *   <li>With {@code _ref}: Creates a proxy that can be resolved later</li>
+ *   <li>Without {@code _ref}: Deserializes as an orphan object (expanded reference)</li>
+ * </ul>
+ * Orphan objects are fully deserialized but not contained - they have no resource assigned.
  * </p>
  *
  * @see EffectiveFeatureConfig
- * @see <a href="docs/codec-v2-serialization-spec.md#5-reference-serialization">Spec 5: Reference Serialization</a>
+ * @see <a href="docs/codec-v2-spec/07-reference.md">Spec: Reference Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
  */
@@ -118,11 +124,8 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                     eObject.eSet(reference, child);
                 }
             } else {
-                // Non-containment: read $ref
-                String refUri = readRefUri(parser);
-                if (refUri != null) {
-                    state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, -1));
-                }
+                // Non-containment: check for $ref to determine proxy vs orphan
+                deserializeNonContainmentObject(state, parser, ctxt, eObject, -1);
             }
         } else {
             LOGGER.warning("Expected START_OBJECT for reference " + reference.getName() + ", got: " + token);
@@ -153,11 +156,8 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                     values.add(child);
                 }
             } else {
-                // Non-containment: read $ref
-                String refUri = readRefObjectUri(parser);
-                if (refUri != null) {
-                    state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, index));
-                }
+                // Non-containment: check for $ref to determine proxy vs orphan
+                deserializeNonContainmentElement(state, parser, ctxt, eObject, values, index);
             }
             index++;
         }
@@ -175,10 +175,8 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 ((List<EObject>) eObject.eGet(reference)).add(child);
             }
         } else {
-            String refUri = readRefObjectUri(parser);
-            if (refUri != null) {
-                state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, index));
-            }
+            List<EObject> values = (List<EObject>) eObject.eGet(reference);
+            deserializeNonContainmentElement(state, parser, ctxt, eObject, values, index);
         }
     }
 
@@ -270,6 +268,280 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
             LOGGER.warning("Error deserializing contained object for " + reference.getName() + ": " + e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Deserializes a non-containment reference object (single-valued).
+     * <p>
+     * Determines whether this is a proxy reference (has {@code _ref}) or an orphan object
+     * (expanded reference without {@code _ref}) by buffering and inspecting the content.
+     * </p>
+     *
+     * @param state the deserialization state
+     * @param parser the JSON parser at START_OBJECT
+     * @param ctxt the deserialization context
+     * @param eObject the parent EObject
+     * @param index the index for multi-valued references (-1 for single-valued)
+     */
+    private void deserializeNonContainmentObject(DeserializationState state, JsonParser parser,
+            DeserializationContext ctxt, EObject eObject, int index) {
+        // If no DeserializationContext, use simple approach (for backwards compatibility with tests)
+        if (ctxt == null) {
+            String refUri = readRefUri(parser);
+            if (refUri != null) {
+                state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, index));
+            }
+            return;
+        }
+
+        try {
+            // Buffer the object to inspect for _ref and check for additional fields
+            TokenBuffer buffer = ctxt.bufferForInputBuffering(parser);
+            buffer.copyCurrentStructure(parser);
+
+            // Parse the buffered content to check for _ref and count other fields
+            JsonParser bufferParser = buffer.asParser(ctxt, parser);
+            bufferParser.nextToken(); // START_OBJECT
+
+            String refUri = null;
+            EClass typeFromContent = null;
+            boolean hasOtherFields = false;
+
+            while (bufferParser.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = bufferParser.currentName();
+                bufferParser.nextToken(); // Move to value
+
+                if (refKey.equals(fieldName)) {
+                    refUri = bufferParser.getString();
+                } else if ("_type".equals(fieldName)) {
+                    // Try to resolve the type from _type field
+                    String typeValue = bufferParser.getString();
+                    typeFromContent = resolveTypeFromValue(typeValue, ctxt);
+                } else if (!"_id".equals(fieldName)) {
+                    // Has fields other than _ref, _type, _id -> potential projection
+                    hasOtherFields = true;
+                    bufferParser.skipChildren();
+                } else {
+                    bufferParser.skipChildren();
+                }
+            }
+            bufferParser.close();
+
+            if (refUri != null && hasOtherFields) {
+                // Has _ref AND other fields: proxy with projection
+                // Deserialize the full object and then set proxy URI
+                JsonParser replayParser = buffer.asParser(ctxt, parser);
+                replayParser.nextToken(); // Move to START_OBJECT
+                EObject proxyWithProjection = deserializeFullObject(state, replayParser, ctxt);
+                replayParser.close();
+
+                if (proxyWithProjection != null) {
+                    // Set the proxy URI on the deserialized object
+                    org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createURI(refUri);
+                    ((org.eclipse.emf.ecore.InternalEObject) proxyWithProjection).eSetProxyURI(uri);
+
+                    if (reference.isChangeable()) {
+                        eObject.eSet(reference, proxyWithProjection);
+                    }
+                }
+            } else if (refUri != null) {
+                // Has _ref only: create simple proxy reference (resolve later)
+                state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, index, typeFromContent));
+            } else {
+                // No _ref: deserialize as orphan object (expanded reference)
+                JsonParser replayParser = buffer.asParser(ctxt, parser);
+                replayParser.nextToken(); // Move to START_OBJECT
+                EObject orphan = deserializeOrphanObject(state, replayParser, ctxt);
+                replayParser.close();
+
+                if (orphan != null && reference.isChangeable()) {
+                    eObject.eSet(reference, orphan);
+                }
+            }
+
+            buffer.close();
+        } catch (Exception e) {
+            LOGGER.warning("Error deserializing non-containment reference " + reference.getName() + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deserializes a non-containment reference element for multi-valued references.
+     * <p>
+     * Similar to {@link #deserializeNonContainmentObject} but adds to a list instead of setting directly.
+     * Supports:
+     * <ul>
+     *   <li>Simple proxy (_ref only)</li>
+     *   <li>Proxy with projection (_ref + additional fields)</li>
+     *   <li>Orphan object (no _ref, expanded reference)</li>
+     * </ul>
+     * </p>
+     */
+    private void deserializeNonContainmentElement(DeserializationState state, JsonParser parser,
+            DeserializationContext ctxt, EObject eObject, List<EObject> values, int index) {
+        JsonToken token = parser.currentToken();
+
+        if (token == JsonToken.VALUE_STRING) {
+            // Direct URI string (PLAIN format)
+            String refUri = parser.getString();
+            state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, index));
+            return;
+        }
+
+        if (token != JsonToken.START_OBJECT) {
+            LOGGER.warning("Expected START_OBJECT or VALUE_STRING for non-containment ref element, got: " + token);
+            return;
+        }
+
+        // If no DeserializationContext, use simple approach (for backwards compatibility with tests)
+        if (ctxt == null) {
+            String refUri = readRefUri(parser);
+            if (refUri != null) {
+                state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, index));
+            }
+            return;
+        }
+
+        try {
+            // Buffer the object to inspect for _ref and check for additional fields
+            TokenBuffer buffer = ctxt.bufferForInputBuffering(parser);
+            buffer.copyCurrentStructure(parser);
+
+            // Parse the buffered content to check for _ref and count other fields
+            JsonParser bufferParser = buffer.asParser(ctxt, parser);
+            bufferParser.nextToken(); // START_OBJECT
+
+            String refUri = null;
+            EClass typeFromContent = null;
+            boolean hasOtherFields = false;
+
+            while (bufferParser.nextToken() != JsonToken.END_OBJECT) {
+                String fieldName = bufferParser.currentName();
+                bufferParser.nextToken(); // Move to value
+
+                if (refKey.equals(fieldName)) {
+                    refUri = bufferParser.getString();
+                } else if ("_type".equals(fieldName)) {
+                    String typeValue = bufferParser.getString();
+                    typeFromContent = resolveTypeFromValue(typeValue, ctxt);
+                } else if (!"_id".equals(fieldName)) {
+                    // Has fields other than _ref, _type, _id -> potential projection
+                    hasOtherFields = true;
+                    bufferParser.skipChildren();
+                } else {
+                    bufferParser.skipChildren();
+                }
+            }
+            bufferParser.close();
+
+            if (refUri != null && hasOtherFields) {
+                // Has _ref AND other fields: proxy with projection
+                JsonParser replayParser = buffer.asParser(ctxt, parser);
+                replayParser.nextToken(); // Move to START_OBJECT
+                EObject proxyWithProjection = deserializeFullObject(state, replayParser, ctxt);
+                replayParser.close();
+
+                if (proxyWithProjection != null) {
+                    // Set the proxy URI on the deserialized object
+                    org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createURI(refUri);
+                    ((org.eclipse.emf.ecore.InternalEObject) proxyWithProjection).eSetProxyURI(uri);
+                    values.add(proxyWithProjection);
+                }
+            } else if (refUri != null) {
+                // Has _ref only: create simple proxy reference (resolve later)
+                state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, index, typeFromContent));
+            } else {
+                // No _ref: deserialize as orphan object (expanded reference)
+                JsonParser replayParser = buffer.asParser(ctxt, parser);
+                replayParser.nextToken(); // Move to START_OBJECT
+                EObject orphan = deserializeOrphanObject(state, replayParser, ctxt);
+                replayParser.close();
+
+                if (orphan != null) {
+                    values.add(orphan);
+                }
+            }
+
+            buffer.close();
+        } catch (Exception e) {
+            LOGGER.warning("Error deserializing non-containment reference element " + reference.getName() + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deserializes an orphan object (expanded non-containment reference).
+     * <p>
+     * Creates a fully populated EObject that is not contained by its parent.
+     * The object has no resource assigned and exists only in memory.
+     * </p>
+     *
+     * @param parentState the parent deserialization state
+     * @param parser the JSON parser at START_OBJECT
+     * @param ctxt the deserialization context
+     * @return the deserialized orphan EObject, or null on error
+     */
+    private EObject deserializeOrphanObject(DeserializationState parentState, JsonParser parser,
+            DeserializationContext ctxt) {
+        // Orphan objects are deserialized similarly to contained objects,
+        // but they are not added to the parent's containment.
+        // They just have the non-containment reference set to them.
+        return deserializeFullObject(parentState, parser, ctxt);
+    }
+
+    /**
+     * Deserializes a full EObject using the standard deserializer.
+     */
+    private EObject deserializeFullObject(DeserializationState parentState, JsonParser parser,
+            DeserializationContext ctxt) {
+        try {
+            // Set the reference type as hint for the nested deserialization
+            EClass previousExpectedType = ContextHelper.getExpectedType(ctxt);
+            ContextHelper.setExpectedType(ctxt, reference.getEReferenceType());
+
+            try {
+                tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
+                        ctxt.constructType(EObject.class));
+                if (deser != null) {
+                    return (EObject) deser.deserialize(parser, ctxt);
+                }
+                LOGGER.warning("No deserializer found for EObject");
+                return null;
+            } finally {
+                // Restore the previous hint
+                if (previousExpectedType != null) {
+                    ContextHelper.setExpectedType(ctxt, previousExpectedType);
+                } else {
+                    ContextHelper.clearExpectedType(ctxt);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warning("Error deserializing object for " + reference.getName() + ": " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Resolves an EClass from a type value string.
+     *
+     * @param typeValue the type value (URI or discriminator)
+     * @param ctxt the deserialization context
+     * @return the resolved EClass, or null if not found
+     */
+    private EClass resolveTypeFromValue(String typeValue, DeserializationContext ctxt) {
+        // Try to resolve as URI first
+        if (typeValue != null && typeValue.contains("#")) {
+            org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createURI(typeValue);
+            org.eclipse.emf.ecore.EPackage.Registry registry = org.eclipse.emf.ecore.EPackage.Registry.INSTANCE;
+            String nsUri = uri.trimFragment().toString();
+            org.eclipse.emf.ecore.EPackage ePackage = registry.getEPackage(nsUri);
+            if (ePackage != null) {
+                org.eclipse.emf.ecore.EClassifier classifier = ePackage.getEClassifier(uri.fragment().replace("//", ""));
+                if (classifier instanceof EClass) {
+                    return (EClass) classifier;
+                }
+            }
+        }
+        return null;
     }
 
     /**

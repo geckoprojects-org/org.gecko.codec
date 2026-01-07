@@ -794,13 +794,13 @@ CodecConfiguration.builder()
 
 **Implementation Limitations:**
 - `expandDepth` only supports depth=1 (no nested expansion)
-- Expand deserialization not yet implemented (pending)
 
 **Key Files:**
 - `CodecConfiguration.java` - expand settings
 - `EffectiveCodecConfig.java` - runtime access
-- `ReferenceSerializationEntry.java` - expansion logic
-- `ExpandReferenceTest.java` - serialization tests
+- `ReferenceSerializationEntry.java` - expansion logic (serialization)
+- `ReferenceDeserializationEntry.java` - orphan/projection detection (deserialization)
+- `ExpandReferenceTest.java` - full round-trip tests
 
 ### 10.6 Cross-Document Containment ⚠️ Partial
 
@@ -829,11 +829,11 @@ Cross-document containment occurs when a contained object is stored in a differe
 - `STRUCTURED` - Nested object format
 - `NUMERIC` - Classifier IDs
 
-### 11.2 Expand Deserialization
+### 11.2 Expand Depth > 1
 
-- Detect orphan objects (objects without `_ref` in non-containment reference context)
-- Deserialize expanded references as fully populated orphan objects
-- Orphan objects are not contained and have no resource assigned
+- Support `expandDepth` values greater than 1
+- Nested expansion (expanded objects also expand their references)
+- Currently only depth=1 is implemented
 
 ### 11.3 Cross-Resource References
 

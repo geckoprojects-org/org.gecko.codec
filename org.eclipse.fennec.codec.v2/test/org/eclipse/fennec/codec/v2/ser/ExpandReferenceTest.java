@@ -326,7 +326,6 @@ class ExpandReferenceTest {
 
     @Nested
     @DisplayName("Expand Deserialization")
-    @org.junit.jupiter.api.Disabled("Expand deserialization not yet implemented")
     class ExpandDeserialization {
 
         @Test
@@ -481,7 +480,6 @@ class ExpandReferenceTest {
 
     @Nested
     @DisplayName("Expand Round-Trip")
-    @org.junit.jupiter.api.Disabled("Expand deserialization not yet implemented")
     class ExpandRoundTrip {
 
         @Test
@@ -513,6 +511,55 @@ class ExpandReferenceTest {
             EObject loadedCeo = (EObject) loaded.eGet(ceoRef);
             assertNotNull(loadedCeo, "CEO should be deserialized");
             assertEquals("Alice", loadedCeo.eGet(personNameAttribute));
+        }
+
+        @Test
+        @DisplayName("round-trips expanded multi-valued non-containment reference")
+        @SuppressWarnings("unchecked")
+        void roundTripsExpandedMultiValuedReference() throws IOException {
+            // Create Alice with friends Bob and Charlie
+            EObject alice = createPerson("Alice");
+            EObject bob = createPerson("Bob");
+            EObject charlie = createPerson("Charlie");
+
+            List<EObject> friends = (List<EObject>) alice.eGet(friendsRef);
+            friends.add(bob);
+            friends.add(charlie);
+
+            // Serialize with friends expanded
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .expand("friends")
+                    .build();
+
+            String json = serialize(alice, config);
+            System.out.println("Multi-valued expand JSON:\n" + json);
+
+            // Verify serialized JSON has no $ref
+            assertFalse(json.contains("$ref"), "Expanded friends should not have $ref");
+            assertTrue(json.contains("\"Bob\""), "JSON should contain Bob");
+            assertTrue(json.contains("\"Charlie\""), "JSON should contain Charlie");
+
+            // Deserialize (auto-detects expanded)
+            EObject loaded = deserialize(json, personClass);
+
+            assertNotNull(loaded);
+            assertEquals("Alice", loaded.eGet(personNameAttribute));
+
+            // Friends should be orphan objects with correct data
+            List<EObject> loadedFriends = (List<EObject>) loaded.eGet(friendsRef);
+            assertEquals(2, loadedFriends.size(), "Should have 2 friends");
+
+            EObject loadedBob = loadedFriends.get(0);
+            EObject loadedCharlie = loadedFriends.get(1);
+
+            assertEquals("Bob", loadedBob.eGet(personNameAttribute));
+            assertEquals("Charlie", loadedCharlie.eGet(personNameAttribute));
+
+            // Both should be orphans (not proxies, no container)
+            assertFalse(loadedBob.eIsProxy(), "Bob should not be a proxy");
+            assertFalse(loadedCharlie.eIsProxy(), "Charlie should not be a proxy");
+            assertNull(loadedBob.eContainer(), "Bob should be an orphan");
+            assertNull(loadedCharlie.eContainer(), "Charlie should be an orphan");
         }
     }
 }
