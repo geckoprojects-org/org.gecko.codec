@@ -76,7 +76,7 @@ class IdSerializationEntryTest {
     @DisplayName("getKey returns default _id key")
     void getKeyReturnsDefaultIdKey() {
         EffectiveIdConfig config = createDefaultConfig();
-        IdSerializationEntry entry = new IdSerializationEntry(config);
+        IdSerializationEntry entry = new IdSerializationEntry(config, testEClass);
         assertEquals("_id", entry.getKey());
     }
 
@@ -88,7 +88,7 @@ class IdSerializationEntryTest {
                 .key("customId")
                 .build();
 
-        IdSerializationEntry entry = new IdSerializationEntry(config);
+        IdSerializationEntry entry = new IdSerializationEntry(config, testEClass);
         assertEquals("customId", entry.getKey());
     }
 
@@ -100,8 +100,9 @@ class IdSerializationEntryTest {
                 .key("_id")
                 .build();
 
-        IdSerializationEntry entry = new IdSerializationEntry(config);
+        IdSerializationEntry entry = new IdSerializationEntry(config, testEClass);
         EObject eObject = mock(EObject.class);
+        when(eObject.eClass()).thenReturn(testEClass);
 
         assertFalse(entry.shouldSerialize(createState(eObject)));
     }
@@ -114,7 +115,7 @@ class IdSerializationEntryTest {
         when(eObject.eGet(idAttribute)).thenReturn("test-id-123");
 
         EffectiveIdConfig config = createDefaultConfig();
-        IdSerializationEntry entry = new IdSerializationEntry(config);
+        IdSerializationEntry entry = new IdSerializationEntry(config, testEClass);
 
         assertTrue(entry.shouldSerialize(createState(eObject)));
     }
@@ -128,7 +129,7 @@ class IdSerializationEntryTest {
         when(eObject.eResource()).thenReturn(null);
 
         EffectiveIdConfig config = createDefaultConfig();
-        IdSerializationEntry entry = new IdSerializationEntry(config);
+        IdSerializationEntry entry = new IdSerializationEntry(config, testEClass);
 
         assertFalse(entry.shouldSerialize(createState(eObject)));
     }
@@ -147,7 +148,7 @@ class IdSerializationEntryTest {
         when(resource.getURIFragment(eObject)).thenReturn("//@items.0");
 
         EffectiveIdConfig config = createDefaultConfig();
-        IdSerializationEntry entry = new IdSerializationEntry(config);
+        IdSerializationEntry entry = new IdSerializationEntry(config, noIdClass);
 
         assertTrue(entry.shouldSerialize(createState(eObject)));
     }
@@ -160,7 +161,7 @@ class IdSerializationEntryTest {
         when(eObject.eGet(idAttribute)).thenReturn("my-id-value");
 
         EffectiveIdConfig config = createDefaultConfig();
-        IdSerializationEntry entry = new IdSerializationEntry(config);
+        IdSerializationEntry entry = new IdSerializationEntry(config, testEClass);
         entry.serialize(createState(eObject), generator, null);
 
         verify(generator).writeStringProperty("_id", "my-id-value");
@@ -179,7 +180,7 @@ class IdSerializationEntryTest {
         when(resource.getURIFragment(eObject)).thenReturn("//@items.0");
 
         EffectiveIdConfig config = createDefaultConfig();
-        IdSerializationEntry entry = new IdSerializationEntry(config);
+        IdSerializationEntry entry = new IdSerializationEntry(config, noIdClass);
         entry.serialize(createState(eObject), generator, null);
 
         verify(generator).writeStringProperty("_id", "//@items.0");

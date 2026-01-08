@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 
 /**
@@ -78,6 +79,24 @@ public class CodecConfiguration {
 
     /** Default key for ID property */
     private final String idKey;
+
+    /** ID serialization format (PLAIN or STRUCTURED) */
+    private final SerializationFormat idFormat;
+
+    /** Separator for combining multiple ID features (PLAIN format) */
+    private final String idSeparator;
+
+    /** List of feature names to use as combined ID */
+    private final List<String> idFeatures;
+
+    /** ID key mode (ID_ONLY, BOTH, FEATURE_ONLY) */
+    private final IdKeyMode idKeyMode;
+
+    /** Whether to serialize separator in STRUCTURED ID format */
+    private final boolean idSerializeSeparator;
+
+    /** Key for separator field in STRUCTURED ID format */
+    private final String idSeparatorKey;
 
     // ========================================================================
     // Reference Serialization Settings
@@ -219,6 +238,12 @@ public class CodecConfiguration {
         this.serializeIdField = builder.serializeIdField;
         this.idFeatureAsPrimaryKey = builder.idFeatureAsPrimaryKey;
         this.idKey = builder.idKey;
+        this.idFormat = builder.idFormat;
+        this.idSeparator = builder.idSeparator;
+        this.idFeatures = builder.idFeatures != null ? List.copyOf(builder.idFeatures) : List.of();
+        this.idKeyMode = builder.idKeyMode;
+        this.idSerializeSeparator = builder.idSerializeSeparator;
+        this.idSeparatorKey = builder.idSeparatorKey;
         this.refKey = builder.refKey;
         this.proxyKey = builder.proxyKey;
         this.expandGlobal = builder.expandGlobal;
@@ -315,6 +340,45 @@ public class CodecConfiguration {
 
     public String getIdKey() {
         return idKey;
+    }
+
+    public SerializationFormat getIdFormat() {
+        return idFormat;
+    }
+
+    public String getIdSeparator() {
+        return idSeparator;
+    }
+
+    public List<String> getIdFeatures() {
+        return idFeatures;
+    }
+
+    public IdKeyMode getIdKeyMode() {
+        return idKeyMode;
+    }
+
+    /**
+     * Returns whether the separator should be serialized in STRUCTURED ID format.
+     * <p>
+     * When true (default), the separator is included in the JSON output,
+     * allowing deserialization without pre-configured separator knowledge.
+     * When false, the separator must be configured for deserialization.
+     * </p>
+     *
+     * @return true if separator should be serialized
+     */
+    public boolean isIdSerializeSeparator() {
+        return idSerializeSeparator;
+    }
+
+    /**
+     * Returns the JSON key for the separator field in STRUCTURED ID format.
+     *
+     * @return the separator key (default "_separator")
+     */
+    public String getIdSeparatorKey() {
+        return idSeparatorKey;
     }
 
     public String getRefKey() {
@@ -553,6 +617,12 @@ public class CodecConfiguration {
         private boolean serializeIdField = false;
         private boolean idFeatureAsPrimaryKey = true;
         private String idKey = "_id";
+        private SerializationFormat idFormat = SerializationFormat.PLAIN;
+        private String idSeparator = "-";
+        private List<String> idFeatures;
+        private IdKeyMode idKeyMode = IdKeyMode.ID_ONLY;
+        private boolean idSerializeSeparator = true;
+        private String idSeparatorKey = "_separator";
         private String refKey = "$ref";
         private String proxyKey = "_proxy";
         // Expand settings
@@ -623,6 +693,58 @@ public class CodecConfiguration {
 
         public Builder idKey(String idKey) {
             this.idKey = idKey;
+            return this;
+        }
+
+        public Builder idFormat(SerializationFormat idFormat) {
+            this.idFormat = idFormat;
+            return this;
+        }
+
+        public Builder idSeparator(String idSeparator) {
+            this.idSeparator = idSeparator;
+            return this;
+        }
+
+        public Builder idFeatures(List<String> idFeatures) {
+            this.idFeatures = idFeatures;
+            return this;
+        }
+
+        public Builder idKeyMode(IdKeyMode idKeyMode) {
+            this.idKeyMode = idKeyMode;
+            return this;
+        }
+
+        /**
+         * Sets whether to serialize the separator in STRUCTURED ID format.
+         * <p>
+         * When true (default), the separator is included in the JSON output
+         * as a separate field (e.g., "_separator": "-"), allowing deserialization
+         * without pre-configured separator knowledge.
+         * When false, the separator is not serialized and must be configured
+         * for deserialization.
+         * </p>
+         *
+         * @param idSerializeSeparator true to serialize the separator
+         * @return this builder
+         */
+        public Builder idSerializeSeparator(boolean idSerializeSeparator) {
+            this.idSerializeSeparator = idSerializeSeparator;
+            return this;
+        }
+
+        /**
+         * Sets the JSON key for the separator field in STRUCTURED ID format.
+         * <p>
+         * Default is "_separator".
+         * </p>
+         *
+         * @param idSeparatorKey the key for the separator field
+         * @return this builder
+         */
+        public Builder idSeparatorKey(String idSeparatorKey) {
+            this.idSeparatorKey = idSeparatorKey;
             return this;
         }
 

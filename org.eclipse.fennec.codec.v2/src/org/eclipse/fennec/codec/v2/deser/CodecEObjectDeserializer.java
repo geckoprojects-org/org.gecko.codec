@@ -294,17 +294,50 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             case VALUE_NULL:
                 return null;
             case START_OBJECT:
+                return readObjectAsMap(parser);
             case START_ARRAY:
-                // Skip complex values - they'll need to be re-parsed
-                parser.skipChildren();
-                return null;
+                return readArrayAsList(parser);
             default:
                 return null;
         }
     }
 
     /**
+     * Reads a JSON object into a Map.
+     */
+    private Map<String, Object> readObjectAsMap(JsonParser parser) {
+        Map<String, Object> result = new java.util.LinkedHashMap<>();
+
+        while (parser.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = parser.currentName();
+            parser.nextToken(); // Move to value
+            Object value = readCurrentValue(parser);
+            result.put(fieldName, value);
+        }
+
+        return result;
+    }
+
+    /**
+     * Reads a JSON array into a List.
+     */
+    private java.util.List<Object> readArrayAsList(JsonParser parser) {
+        java.util.List<Object> result = new java.util.ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            Object value = readCurrentValue(parser);
+            result.add(value);
+        }
+
+        return result;
+    }
+
+    /**
      * Processes deferred properties after the type is resolved.
+     * <p>
+     * Deferred properties are those that were encountered before the type was resolved.
+     * This includes ID, type entries, and regular features.
+     * </p>
      */
     private void processDeferredProperties(DeserializationState state,
             Map<String, Object> deferredProperties, DeserializationContext ctxt) {
@@ -321,9 +354,88 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
             DeserializationEntry deserEntry = entries.get(propertyName);
             if (deserEntry != null && value != null) {
-                // Set the value directly on the EObject
-                setDeferredValue(state, propertyName, value);
+                // For special entries (ID, Type), replay the value through a TokenBuffer
+                if (deserEntry instanceof IdDeserializationEntry
+                        || deserEntry instanceof TypeDeserializationEntry) {
+                    replayDeferredValue(state, deserEntry, value, ctxt);
+                } else {
+                    // For regular features, set the value directly
+                    setDeferredValue(state, propertyName, value);
+                }
             }
+        }
+    }
+
+    /**
+     * Replays a deferred value through a TokenBuffer for special entries.
+     */
+    private void replayDeferredValue(DeserializationState state, DeserializationEntry entry,
+            Object value, DeserializationContext ctxt) {
+        try {
+            // Create a TokenBuffer and write the value to it
+            tools.jackson.databind.util.TokenBuffer buffer = ctxt.bufferForInputBuffering(ctxt.getParser());
+
+            // Write the appropriate token based on value type
+            if (value instanceof String s) {
+                buffer.writeString(s);
+            } else if (value instanceof Number n) {
+                if (n instanceof Integer i) {
+                    buffer.writeNumber(i);
+                } else if (n instanceof Long l) {
+                    buffer.writeNumber(l);
+                } else if (n instanceof Double d) {
+                    buffer.writeNumber(d);
+                } else {
+                    buffer.writeNumber(n.doubleValue());
+                }
+            } else if (value instanceof Boolean b) {
+                buffer.writeBoolean(b);
+            } else if (value instanceof java.util.Map<?, ?> map) {
+                // For structured ID, write as object
+                buffer.writeStartObject();
+                for (var e : map.entrySet()) {
+                    buffer.writeName(String.valueOf(e.getKey()));
+                    writeValueToBuffer(buffer, e.getValue());
+                }
+                buffer.writeEndObject();
+            } else if (value == null) {
+                buffer.writeNull();
+            } else {
+                buffer.writeString(value.toString());
+            }
+
+            // Replay through the entry
+            try (tools.jackson.core.JsonParser bufferParser = buffer.asParser(ctxt)) {
+                bufferParser.nextToken(); // Move to first token
+                entry.deserialize(state, bufferParser, ctxt);
+            }
+        } catch (Exception e) {
+            LOGGER.fine("Could not replay deferred value for " + entry.getKey() + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Writes a value to the TokenBuffer.
+     */
+    private void writeValueToBuffer(tools.jackson.databind.util.TokenBuffer buffer, Object value) {
+        if (value instanceof String s) {
+            buffer.writeString(s);
+        } else if (value instanceof Number n) {
+            if (n instanceof Integer i) {
+                buffer.writeNumber(i);
+            } else if (n instanceof Long l) {
+                buffer.writeNumber(l);
+            } else if (n instanceof Double d) {
+                buffer.writeNumber(d);
+            } else {
+                buffer.writeNumber(n.doubleValue());
+            }
+        } else if (value instanceof Boolean b) {
+            buffer.writeBoolean(b);
+        } else if (value == null) {
+            buffer.writeNull();
+        } else {
+            buffer.writeString(value.toString());
         }
     }
 

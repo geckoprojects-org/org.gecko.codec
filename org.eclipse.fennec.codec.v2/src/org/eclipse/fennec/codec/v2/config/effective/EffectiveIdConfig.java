@@ -40,6 +40,8 @@ public final class EffectiveIdConfig {
     private final IdKeyMode keyMode;
     private final SerializationFormat format;
     private final String separator;
+    private final boolean serializeSeparator;
+    private final String separatorKey;
     private final List<String> idFeatures;
     private final String valueWriterName;
     private final String valueReaderName;
@@ -52,6 +54,8 @@ public final class EffectiveIdConfig {
         this.keyMode = builder.keyMode;
         this.format = builder.format;
         this.separator = builder.separator;
+        this.serializeSeparator = builder.serializeSeparator;
+        this.separatorKey = builder.separatorKey;
         this.idFeatures = List.copyOf(builder.idFeatures);
         this.valueWriterName = builder.valueWriterName;
         this.valueReaderName = builder.valueReaderName;
@@ -107,6 +111,27 @@ public final class EffectiveIdConfig {
     }
 
     /**
+     * Returns whether the separator should be serialized in STRUCTURED format.
+     * <p>
+     * When true, the separator is included in the JSON output as a separate field,
+     * allowing deserialization without pre-configured separator knowledge.
+     * When false, the separator must be configured for deserialization.
+     * </p>
+     * <p>Default: true</p>
+     */
+    public boolean isSerializeSeparator() {
+        return serializeSeparator;
+    }
+
+    /**
+     * Returns the JSON key for the separator field in STRUCTURED format.
+     * <p>Default: "_separator"</p>
+     */
+    public String getSeparatorKey() {
+        return separatorKey;
+    }
+
+    /**
      * Returns the list of feature names for combined ID strategy.
      */
     public List<String> getIdFeatures() {
@@ -145,6 +170,8 @@ public final class EffectiveIdConfig {
         private IdKeyMode keyMode = IdKeyMode.ID_ONLY;
         private SerializationFormat format = SerializationFormat.PLAIN;
         private String separator = "-";
+        private boolean serializeSeparator = true;
+        private String separatorKey = "_separator";
         private List<String> idFeatures = List.of();
         private String valueWriterName;
         private String valueReaderName;
@@ -183,6 +210,16 @@ public final class EffectiveIdConfig {
 
         public Builder separator(String separator) {
             this.separator = separator;
+            return this;
+        }
+
+        public Builder serializeSeparator(boolean serializeSeparator) {
+            this.serializeSeparator = serializeSeparator;
+            return this;
+        }
+
+        public Builder separatorKey(String separatorKey) {
+            this.separatorKey = separatorKey;
             return this;
         }
 

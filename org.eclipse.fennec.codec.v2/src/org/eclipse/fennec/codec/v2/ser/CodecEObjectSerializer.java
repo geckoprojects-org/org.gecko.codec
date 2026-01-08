@@ -135,7 +135,7 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
 
         // Add ID entry (if enabled in effective config)
         if (classConfig.isIdEnabled()) {
-            IdSerializationEntry idEntry = new IdSerializationEntry(classConfig.getIdConfig());
+            IdSerializationEntry idEntry = new IdSerializationEntry(classConfig.getIdConfig(), eClass);
             entries.put(idEntry.getKey(), idEntry);
         }
 

@@ -140,6 +140,8 @@ public class ConfigurationMerger {
                 .keyMode(resolveIdKeyMode(aspectConfig))
                 .format(resolveIdFormat(aspectConfig))
                 .separator(resolveIdSeparator(aspectConfig))
+                .serializeSeparator(moduleConfig.isIdSerializeSeparator())
+                .separatorKey(moduleConfig.getIdSeparatorKey())
                 .idFeatures(resolveIdFeatures(aspectConfig))
                 .valueWriterName(aspectConfig != null ? aspectConfig.getIdValueWriterName() : null)
                 .valueReaderName(aspectConfig != null ? aspectConfig.getIdValueReaderName() : null)
@@ -259,26 +261,30 @@ public class ConfigurationMerger {
         if (aspectConfig != null && aspectConfig.getKeyMode() != null) {
             return aspectConfig.getKeyMode();
         }
-        return IdKeyMode.ID_ONLY;
+        return moduleConfig.getIdKeyMode();
     }
 
     private SerializationFormat resolveIdFormat(IdSerializationConfig aspectConfig) {
         if (aspectConfig != null && aspectConfig.getFormat() != null) {
             return aspectConfig.getFormat();
         }
-        return SerializationFormat.PLAIN;
+        return moduleConfig.getIdFormat();
     }
 
     private String resolveIdSeparator(IdSerializationConfig aspectConfig) {
         if (aspectConfig != null && isNonEmpty(aspectConfig.getSeparator())) {
             return aspectConfig.getSeparator();
         }
-        return "-";
+        return moduleConfig.getIdSeparator();
     }
 
     private List<String> resolveIdFeatures(IdSerializationConfig aspectConfig) {
-        if (aspectConfig != null && aspectConfig.getIdFeatures() != null) {
+        if (aspectConfig != null && aspectConfig.getIdFeatures() != null && !aspectConfig.getIdFeatures().isEmpty()) {
             return List.copyOf(aspectConfig.getIdFeatures());
+        }
+        List<String> configFeatures = moduleConfig.getIdFeatures();
+        if (configFeatures != null && !configFeatures.isEmpty()) {
+            return configFeatures;
         }
         return List.of();
     }
