@@ -899,7 +899,7 @@ CodecConfiguration.builder()
 - `EffectiveSuperTypeConfig.java` - pre-merged config
 - `CodecResourceSuperTypeTest.java` - integration tests
 
-**Note:** STRUCTURED format support is pending (part of Priority 1).
+**Note:** STRUCTURED format for SuperType is pending (part of Priority 1). ID STRUCTURED format is complete (see Section 10.11).
 
 ### 10.10 Global Feature Ignore List ✅
 
@@ -938,6 +938,74 @@ CodecConfiguration.builder()
 - `ConfigurationMerger.java` - `resolveFeatureSerialize()` checks global ignore
 - `GlobalIgnoreFeatureTest.java` - integration tests
 
+### 10.11 ID STRUCTURED Format ✅
+
+**Completed:** 2026-01-08
+
+ID serialization now supports STRUCTURED format where ID is serialized as a nested object with individual fields.
+
+**Configuration:**
+```java
+CodecConfiguration.builder()
+    .idFormat(SerializationFormat.STRUCTURED)
+    .idFeatures(List.of("firstName", "lastName", "sequence"))
+    .idSeparator("-")  // Used when combining values for EIDAttribute
+    .idSerializeSeparator(true)  // Include separator in JSON (default: true)
+    .idSeparatorKey("_separator")  // Key for separator field (default: "_separator")
+    .idKeyMode(IdKeyMode.ID_ONLY)  // ID_ONLY, BOTH, FEATURE_ONLY
+    .build();
+```
+
+**Serialization Formats:**
+
+| Format | JSON Output |
+|--------|-------------|
+| `PLAIN` (single ID) | `"_id": "john-123"` |
+| `PLAIN` (multiple features) | `"_id": "John-Doe-42"` (separator-joined) |
+| `STRUCTURED` (serializeSeparator=true) | `"_id": {"_separator": "-", "firstName": "John", ...}` |
+| `STRUCTURED` (serializeSeparator=false) | `"_id": {"firstName": "John", ...}` |
+
+**Separator Serialization Options:**
+- `idSerializeSeparator(true)` (default) - Include separator in JSON, no config needed for deserialization
+- `idSerializeSeparator(false)` - Compact JSON, separator must be configured for deserialization
+- `idSeparatorKey("_separator")` (default) - Customize the JSON key for separator
+
+**IdKeyMode Values:**
+- `ID_ONLY` - Only `_id` key is serialized (default)
+- `BOTH` - Both `_id` and individual features serialized
+- `FEATURE_ONLY` - No `_id`, individual features only
+
+**Deserialization Implementation:**
+
+Uses TokenBuffer approach for STRUCTURED format:
+1. Capture nested object content into TokenBuffer
+2. Parse buffered content to extract field values (including separator if present)
+3. Set feature values on EObject
+4. Optionally set combined value on EIDAttribute using separator (from JSON or config)
+
+**Key Files:**
+- `IdSerializationEntry.java` - STRUCTURED format serialization
+- `IdDeserializationEntry.java` - TokenBuffer-based STRUCTURED deserialization
+- `CodecEObjectDeserializer.java` - Deferred property replay for ID entries
+- `CodecResourceIdTest.java` - 27 comprehensive tests
+
+**Test Coverage:**
+| Feature | Status |
+|---------|--------|
+| PLAIN single ID | ✅ |
+| PLAIN multiple features with separator | ✅ |
+| PLAIN custom separator | ✅ |
+| STRUCTURED single ID | ✅ |
+| STRUCTURED multiple features (with separator) | ✅ |
+| STRUCTURED multiple features (without separator) | ✅ |
+| STRUCTURED custom separator key | ✅ |
+| STRUCTURED custom ID key | ✅ |
+| IdKeyMode.ID_ONLY | ✅ |
+| IdKeyMode.BOTH | ✅ |
+| IdKeyMode.FEATURE_ONLY | ✅ |
+| Round-trip PLAIN | ✅ |
+| Round-trip STRUCTURED (with/without separator) | ✅ |
+
 ---
 
 ## 11. Pending Work (Priority Order)
@@ -945,7 +1013,7 @@ CodecConfiguration.builder()
 ### 11.1 Additional TypeStrategies (Priority 1 - Next)
 
 - `SCHEMA_AND_TYPE` - Separate schema/type fields
-- `STRUCTURED` - Nested object format (applies to type, supertype, ID)
+- `STRUCTURED` - Nested object format (applies to type, supertype) - **ID STRUCTURED is done (see 10.11)**
 - `NUMERIC` - Classifier IDs
 
 ### 11.2 Error Handling Improvements (Priority 2)
