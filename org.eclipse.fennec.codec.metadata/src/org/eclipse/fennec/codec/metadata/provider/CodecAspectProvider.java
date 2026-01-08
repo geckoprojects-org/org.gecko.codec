@@ -160,15 +160,25 @@ public class CodecAspectProvider implements AspectProvider {
 
     /**
      * Populates common feature aspect properties from annotation.
+     * <p>
+     * Note: effectiveKey is only set if there's an explicit "key" annotation.
+     * If not set, the ConfigurationMerger will use ExtendedMetaData name (if enabled)
+     * or fall back to the feature name.
+     * </p>
      */
     private void populateFeatureAspect(FeatureCodecAspect aspect, EStructuralFeature feature) {
         // Default: serialize = true
         aspect.setSerialize(true);
-        aspect.setEffectiveKey(feature.getName());
 
         EAnnotation codecAnnotation = feature.getEAnnotation(CODEC_SOURCE);
         if (codecAnnotation != null) {
             Map<String, String> details = codecAnnotation.getDetails().map();
+
+            // Parse explicit key override - only set effectiveKey if explicitly specified
+            String explicitKey = details.get(KEY_KEY);
+            if (explicitKey != null && !explicitKey.isEmpty()) {
+                aspect.setEffectiveKey(explicitKey);
+            }
 
             // Parse transient flag
             String transientStr = details.get(KEY_TRANSIENT);

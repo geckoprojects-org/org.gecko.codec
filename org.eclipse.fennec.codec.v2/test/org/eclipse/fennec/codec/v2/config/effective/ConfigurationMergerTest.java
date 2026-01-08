@@ -311,7 +311,8 @@ class ConfigurationMergerTest {
             EffectiveSuperTypeConfig superTypeConfig = classConfig.getSuperTypeConfig();
 
             assertFalse(superTypeConfig.isEnabled());
-            assertEquals(SuperTypeSelection.ALL, superTypeConfig.getSelection());
+            // Default serializeAllSuperTypes=false maps to SINGLE selection
+            assertEquals(SuperTypeSelection.SINGLE, superTypeConfig.getSelection());
             assertEquals(SerializationFormat.PLAIN, superTypeConfig.getFormat());
             assertEquals("_supertype", superTypeConfig.getSuperTypeKey());
         }

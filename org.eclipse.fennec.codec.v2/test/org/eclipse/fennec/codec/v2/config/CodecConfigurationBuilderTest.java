@@ -19,8 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -245,5 +248,131 @@ class CodecConfigurationBuilderTest {
         assertTrue(config.isWriteEnumLiterals());
         assertTrue(config.isSortPropertiesAlphabetically());
         assertEquals("ts", config.getTimestampKey());
+    }
+
+    // ========================================================================
+    // Global Ignore Feature Methods
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Global Ignore Feature Builder Methods")
+    class GlobalIgnoreFeatureMethods {
+
+        @Test
+        @DisplayName("globalIgnore(String) adds single feature to ignore list")
+        void globalIgnoreAddsSingleFeature() {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .globalIgnore("password")
+                    .build();
+
+            assertEquals(1, config.getGlobalIgnoreFeatureNames().size());
+            assertTrue(config.getGlobalIgnoreFeatureNames().contains("password"));
+            assertTrue(config.isGloballyIgnored("password"));
+        }
+
+        @Test
+        @DisplayName("globalIgnore(String) can be chained multiple times")
+        void globalIgnoreCanBeChained() {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .globalIgnore("password")
+                    .globalIgnore("secret")
+                    .globalIgnore("internal")
+                    .build();
+
+            assertEquals(3, config.getGlobalIgnoreFeatureNames().size());
+            assertTrue(config.isGloballyIgnored("password"));
+            assertTrue(config.isGloballyIgnored("secret"));
+            assertTrue(config.isGloballyIgnored("internal"));
+        }
+
+        @Test
+        @DisplayName("globalIgnoreFeatures(String...) adds multiple features at once")
+        void globalIgnoreFeaturesVarargs() {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .globalIgnoreFeatures("createdAt", "updatedAt", "version")
+                    .build();
+
+            assertEquals(3, config.getGlobalIgnoreFeatureNames().size());
+            assertTrue(config.isGloballyIgnored("createdAt"));
+            assertTrue(config.isGloballyIgnored("updatedAt"));
+            assertTrue(config.isGloballyIgnored("version"));
+        }
+
+        @Test
+        @DisplayName("globalIgnoreFeatures(String...) ignores null and empty strings")
+        void globalIgnoreFeaturesIgnoresNullAndEmpty() {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .globalIgnoreFeatures("valid", null, "", "alsoValid")
+                    .build();
+
+            assertEquals(2, config.getGlobalIgnoreFeatureNames().size());
+            assertTrue(config.isGloballyIgnored("valid"));
+            assertTrue(config.isGloballyIgnored("alsoValid"));
+            assertFalse(config.isGloballyIgnored(""));
+            assertFalse(config.isGloballyIgnored(null));
+        }
+
+        @Test
+        @DisplayName("globalIgnoreFeatures(String...) with null array does nothing")
+        void globalIgnoreFeaturesWithNullArray() {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .globalIgnoreFeatures((String[]) null)
+                    .build();
+
+            assertTrue(config.getGlobalIgnoreFeatureNames().isEmpty());
+        }
+
+        @Test
+        @DisplayName("globalIgnoreFeatures(String...) with empty array does nothing")
+        void globalIgnoreFeaturesWithEmptyArray() {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .globalIgnoreFeatures()
+                    .build();
+
+            assertTrue(config.getGlobalIgnoreFeatureNames().isEmpty());
+        }
+
+        @Test
+        @DisplayName("globalIgnoreFeatureNames(List) sets entire list")
+        void globalIgnoreFeatureNamesSetsList() {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .globalIgnoreFeatureNames(List.of("a", "b", "c"))
+                    .build();
+
+            assertEquals(3, config.getGlobalIgnoreFeatureNames().size());
+            assertTrue(config.isGloballyIgnored("a"));
+            assertTrue(config.isGloballyIgnored("b"));
+            assertTrue(config.isGloballyIgnored("c"));
+        }
+
+        @Test
+        @DisplayName("methods can be combined")
+        void methodsCanBeCombined() {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .globalIgnore("first")
+                    .globalIgnoreFeatures("second", "third")
+                    .globalIgnore("fourth")
+                    .build();
+
+            assertEquals(4, config.getGlobalIgnoreFeatureNames().size());
+            assertTrue(config.isGloballyIgnored("first"));
+            assertTrue(config.isGloballyIgnored("second"));
+            assertTrue(config.isGloballyIgnored("third"));
+            assertTrue(config.isGloballyIgnored("fourth"));
+        }
+
+        @Test
+        @DisplayName("globalIgnoreFeatureNames(List) replaces previous ignore settings")
+        void globalIgnoreFeatureNamesReplacesAll() {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .globalIgnore("willBeReplaced")
+                    .globalIgnoreFeatureNames(List.of("newOne", "newTwo"))
+                    .build();
+
+            assertEquals(2, config.getGlobalIgnoreFeatureNames().size());
+            assertFalse(config.isGloballyIgnored("willBeReplaced"));
+            assertTrue(config.isGloballyIgnored("newOne"));
+            assertTrue(config.isGloballyIgnored("newTwo"));
+        }
     }
 }

@@ -34,6 +34,7 @@ import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.SuperTypeSelection;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.codec.v2.util.AnnotationHelper;
 
 /**
  * Merges configuration from all sources into effective configurations.
@@ -381,7 +382,8 @@ public class ConfigurationMerger {
         if (aspectConfig != null && aspectConfig.getSelection() != null) {
             return aspectConfig.getSelection();
         }
-        return SuperTypeSelection.ALL;
+        // Map from CodecConfiguration's boolean API to SuperTypeSelection enum
+        return moduleConfig.isSerializeAllSuperTypes() ? SuperTypeSelection.ALL : SuperTypeSelection.SINGLE;
     }
 
     private SerializationFormat resolveSuperTypeFormat(SuperTypeSerializationConfig aspectConfig) {
@@ -417,11 +419,39 @@ public class ConfigurationMerger {
     // ========================================================================
 
     private String resolveFeatureKey(EStructuralFeature feature, FeatureCodecAspect aspect) {
+        // 1. Highest priority: explicit codec annotation key (via effectiveKey)
         if (aspect != null && isNonEmpty(aspect.getEffectiveKey())) {
             return aspect.getEffectiveKey();
         }
-        // TODO: Check ExtendedMetaData if useNamesFromExtendedMetaData is true
+
+        // 2. Medium priority: ExtendedMetaData name (if enabled)
+        if (moduleConfig.isUseNamesFromExtendedMetaData()) {
+            String extendedMetaDataName = getExtendedMetaDataName(feature);
+            if (extendedMetaDataName != null) {
+                return extendedMetaDataName;
+            }
+        }
+
+        // 3. Lowest priority: feature name
         return feature.getName();
+    }
+
+    /**
+     * Gets the ExtendedMetaData name for a feature.
+     * <p>
+     * First checks the MetadataService (if available), then falls back to AnnotationHelper.
+     * </p>
+     */
+    private String getExtendedMetaDataName(EStructuralFeature feature) {
+        // Prefer metadata from MetadataService (already pre-computed)
+        if (metadataService != null) {
+            FeatureMetadata featureMeta = metadataService.getFeatureMetadata(feature);
+            if (featureMeta != null) {
+                return featureMeta.getExtendedMetaDataName();
+            }
+        }
+        // Fall back to direct annotation lookup
+        return AnnotationHelper.getExtendedMetaDataName(feature);
     }
 
     private boolean resolveFeatureSerialize(EStructuralFeature feature, FeatureCodecAspect aspect) {

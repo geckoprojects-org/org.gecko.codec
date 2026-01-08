@@ -37,6 +37,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getClassMetadata <em>Class Metadata</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getEFeature <em>EFeature</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getExtendedMetaDataName <em>Extended Meta Data Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getFeatureID <em>Feature ID</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getAspects <em>Aspects</em>}</li>
  * </ul>
@@ -123,6 +124,31 @@ public interface FeatureMetadata extends EObject {
 	 * @generated
 	 */
 	void setName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Extended Meta Data Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Alternative name from EMF ExtendedMetaData annotation. Used for XSD-generated models where the XML element/attribute name differs from the Java-friendly EMF feature name. Null if no ExtendedMetaData annotation present.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Extended Meta Data Name</em>' attribute.
+	 * @see #setExtendedMetaDataName(String)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureMetadata_ExtendedMetaDataName()
+	 * @model
+	 * @generated
+	 */
+	String getExtendedMetaDataName();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getExtendedMetaDataName <em>Extended Meta Data Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Extended Meta Data Name</em>' attribute.
+	 * @see #getExtendedMetaDataName()
+	 * @generated
+	 */
+	void setExtendedMetaDataName(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Feature ID</b></em>' attribute.

@@ -20,6 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -343,6 +344,7 @@ public class MetadataServiceImpl implements MetadataService {
         featureMetadata.setEFeature(feature);
         featureMetadata.setName(feature.getName());
         featureMetadata.setFeatureID(feature.getFeatureID());
+        featureMetadata.setExtendedMetaDataName(getExtendedMetaDataName(feature));
 
         // Add to lookup maps
         String featureURI = buildFeatureURI(feature);
@@ -485,5 +487,27 @@ public class MetadataServiceImpl implements MetadataService {
 
     private String buildFeatureURI(EStructuralFeature feature) {
         return EcoreUtil.getURI(feature).toString();
+    }
+
+    /**
+     * Extracts the ExtendedMetaData name from a feature's annotation.
+     * <p>
+     * ExtendedMetaData annotations are used by XSD-generated models where
+     * the XML element/attribute name differs from the Java-friendly EMF feature name.
+     * </p>
+     *
+     * @param feature the structural feature
+     * @return the ExtendedMetaData name, or null if not present
+     */
+    private String getExtendedMetaDataName(EStructuralFeature feature) {
+        EAnnotation annotation = feature.getEAnnotation(
+                "http:///org/eclipse/emf/ecore/util/ExtendedMetaData");
+        if (annotation != null) {
+            String name = annotation.getDetails().get("name");
+            if (name != null && !name.isEmpty()) {
+                return name;
+            }
+        }
+        return null;
     }
 }

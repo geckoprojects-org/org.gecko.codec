@@ -818,7 +818,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureMetadata_FeatureID() {
+	public EAttribute getFeatureMetadata_ExtendedMetaDataName() {
 		return (EAttribute)featureMetadataEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -828,8 +828,18 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
+	public EAttribute getFeatureMetadata_FeatureID() {
+		return (EAttribute)featureMetadataEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EReference getFeatureMetadata_Aspects() {
-		return (EReference)featureMetadataEClass.getEStructuralFeatures().get(4);
+		return (EReference)featureMetadataEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -1107,6 +1117,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		createEReference(featureMetadataEClass, FEATURE_METADATA__CLASS_METADATA);
 		createEReference(featureMetadataEClass, FEATURE_METADATA__EFEATURE);
 		createEAttribute(featureMetadataEClass, FEATURE_METADATA__NAME);
+		createEAttribute(featureMetadataEClass, FEATURE_METADATA__EXTENDED_META_DATA_NAME);
 		createEAttribute(featureMetadataEClass, FEATURE_METADATA__FEATURE_ID);
 		createEReference(featureMetadataEClass, FEATURE_METADATA__ASPECTS);
 
@@ -1234,6 +1245,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEReference(getFeatureMetadata_ClassMetadata(), this.getClassMetadata(), this.getClassMetadata_Features(), "classMetadata", null, 0, 1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getFeatureMetadata_EFeature(), ecorePackage.getEStructuralFeature(), null, "eFeature", null, 0, 1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureMetadata_Name(), ecorePackage.getEString(), "name", null, 0, 1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureMetadata_ExtendedMetaDataName(), ecorePackage.getEString(), "extendedMetaDataName", null, 0, 1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureMetadata_FeatureID(), ecorePackage.getEInt(), "featureID", "-1", 0, 1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getFeatureMetadata_Aspects(), this.getFeatureAspect(), null, "aspects", null, 0, -1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

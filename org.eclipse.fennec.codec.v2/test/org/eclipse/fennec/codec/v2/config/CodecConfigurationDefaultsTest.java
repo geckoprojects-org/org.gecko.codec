@@ -188,10 +188,12 @@ class CodecConfigurationDefaultsTest {
     // ========================================================================
 
     @Test
-    @DisplayName("default useNamesFromExtendedMetaData is true")
-    void defaultUseNamesFromExtendedMetaDataIsTrue() {
+    @DisplayName("default useNamesFromExtendedMetaData is false")
+    void defaultUseNamesFromExtendedMetaDataIsFalse() {
+        // Changed in v2: default is now false (was true in v1)
+        // See spec docs/codec-v2-spec/08-feature.md#3-extended-metadata-names
         CodecConfiguration config = CodecConfiguration.defaults();
-        assertTrue(config.isUseNamesFromExtendedMetaData());
+        assertFalse(config.isUseNamesFromExtendedMetaData());
     }
 
     @Test

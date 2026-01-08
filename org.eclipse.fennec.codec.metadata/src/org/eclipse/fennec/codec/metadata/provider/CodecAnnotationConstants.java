@@ -292,8 +292,17 @@ public final class CodecAnnotationConstants {
     public static final String KEY_SUPERTYPE_WRITER_NAME = "superTypeWriterName";
 
     // ------------------------------------------------------------------------
-    // Feature configuration detail keys (prefix: value*)
+    // Feature configuration detail keys
     // ------------------------------------------------------------------------
+
+    /**
+     * Detail key for custom JSON property name override on a feature.
+     * <p>
+     * If specified, this key is used instead of the feature name or ExtendedMetaData name.
+     * This is the highest priority source for the JSON property key.
+     * </p>
+     */
+    public static final String KEY_KEY = "key";
 
     /**
      * Detail key for custom value reader name on a feature.

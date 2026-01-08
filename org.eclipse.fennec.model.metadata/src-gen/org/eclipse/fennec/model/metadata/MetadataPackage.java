@@ -790,13 +790,22 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_METADATA__NAME = 2;
 
 	/**
+	 * The feature id for the '<em><b>Extended Meta Data Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_METADATA__EXTENDED_META_DATA_NAME = 3;
+
+	/**
 	 * The feature id for the '<em><b>Feature ID</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_METADATA__FEATURE_ID = 3;
+	int FEATURE_METADATA__FEATURE_ID = 4;
 
 	/**
 	 * The feature id for the '<em><b>Aspects</b></em>' containment reference list.
@@ -805,7 +814,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_METADATA__ASPECTS = 4;
+	int FEATURE_METADATA__ASPECTS = 5;
 
 	/**
 	 * The number of structural features of the '<em>Feature Metadata</em>' class.
@@ -814,7 +823,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_METADATA_FEATURE_COUNT = 5;
+	int FEATURE_METADATA_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Feature Metadata</em>' class.
@@ -861,6 +870,15 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int ATTRIBUTE_METADATA__NAME = FEATURE_METADATA__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Extended Meta Data Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ATTRIBUTE_METADATA__EXTENDED_META_DATA_NAME = FEATURE_METADATA__EXTENDED_META_DATA_NAME;
 
 	/**
 	 * The feature id for the '<em><b>Feature ID</b></em>' attribute.
@@ -961,6 +979,15 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int REFERENCE_METADATA__NAME = FEATURE_METADATA__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Extended Meta Data Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_METADATA__EXTENDED_META_DATA_NAME = FEATURE_METADATA__EXTENDED_META_DATA_NAME;
 
 	/**
 	 * The feature id for the '<em><b>Feature ID</b></em>' attribute.
@@ -1747,6 +1774,17 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getFeatureMetadata_Name();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getExtendedMetaDataName <em>Extended Meta Data Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Extended Meta Data Name</em>'.
+	 * @see org.eclipse.fennec.model.metadata.FeatureMetadata#getExtendedMetaDataName()
+	 * @see #getFeatureMetadata()
+	 * @generated
+	 */
+	EAttribute getFeatureMetadata_ExtendedMetaDataName();
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getFeatureID <em>Feature ID</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2449,6 +2487,14 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute FEATURE_METADATA__NAME = eINSTANCE.getFeatureMetadata_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Extended Meta Data Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute FEATURE_METADATA__EXTENDED_META_DATA_NAME = eINSTANCE.getFeatureMetadata_ExtendedMetaDataName();
 
 		/**
 		 * The meta object literal for the '<em><b>Feature ID</b></em>' attribute feature.

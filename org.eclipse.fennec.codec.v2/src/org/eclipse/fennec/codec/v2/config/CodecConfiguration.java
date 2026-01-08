@@ -569,7 +569,7 @@ public class CodecConfiguration {
         private boolean serializeEmptyValue = false;
         private boolean serializeNullValue = false;
         private boolean smartCompression = false;
-        private boolean useNamesFromExtendedMetaData = true;
+        private boolean useNamesFromExtendedMetaData = false;  // Changed to false in v2 (was true in v1)
         private boolean writeEnumLiterals = false;
         private boolean sortPropertiesAlphabetically = false;
         private String timestampKey = "_timestamp";
@@ -856,6 +856,26 @@ public class CodecConfiguration {
                 this.globalIgnoreFeatureNames = new ArrayList<>();
             }
             this.globalIgnoreFeatureNames.add(featureName);
+            return this;
+        }
+
+        /**
+         * Adds multiple feature names to the global ignore list.
+         *
+         * @param featureNames the feature names to ignore
+         * @return this builder
+         */
+        public Builder globalIgnoreFeatures(String... featureNames) {
+            if (featureNames != null && featureNames.length > 0) {
+                if (this.globalIgnoreFeatureNames == null) {
+                    this.globalIgnoreFeatureNames = new ArrayList<>();
+                }
+                for (String name : featureNames) {
+                    if (name != null && !name.isEmpty()) {
+                        this.globalIgnoreFeatureNames.add(name);
+                    }
+                }
+            }
             return this;
         }
 

@@ -106,6 +106,7 @@
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference metadata.ecore#//FeatureMetadata/classMetadata"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference metadata.ecore#//FeatureMetadata/eFeature"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//FeatureMetadata/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//FeatureMetadata/extendedMetaDataName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//FeatureMetadata/featureID"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference metadata.ecore#//FeatureMetadata/aspects"/>
     </genClasses>

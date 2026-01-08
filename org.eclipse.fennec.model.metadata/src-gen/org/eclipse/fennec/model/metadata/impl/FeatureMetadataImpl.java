@@ -48,6 +48,7 @@ import org.eclipse.fennec.model.metadata.MetadataPackage;
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getClassMetadata <em>Class Metadata</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getEFeature <em>EFeature</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getExtendedMetaDataName <em>Extended Meta Data Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getFeatureID <em>Feature ID</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getAspects <em>Aspects</em>}</li>
  * </ul>
@@ -84,6 +85,26 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	 * @ordered
 	 */
 	protected String name = NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getExtendedMetaDataName() <em>Extended Meta Data Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getExtendedMetaDataName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String EXTENDED_META_DATA_NAME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getExtendedMetaDataName() <em>Extended Meta Data Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getExtendedMetaDataName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String extendedMetaDataName = EXTENDED_META_DATA_NAME_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getFeatureID() <em>Feature ID</em>}' attribute.
@@ -246,6 +267,29 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	 * @generated
 	 */
 	@Override
+	public String getExtendedMetaDataName() {
+		return extendedMetaDataName;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setExtendedMetaDataName(String newExtendedMetaDataName) {
+		String oldExtendedMetaDataName = extendedMetaDataName;
+		extendedMetaDataName = newExtendedMetaDataName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.FEATURE_METADATA__EXTENDED_META_DATA_NAME, oldExtendedMetaDataName, extendedMetaDataName));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public int getFeatureID() {
 		return featureID;
 	}
@@ -337,6 +381,8 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 				return basicGetEFeature();
 			case MetadataPackage.FEATURE_METADATA__NAME:
 				return getName();
+			case MetadataPackage.FEATURE_METADATA__EXTENDED_META_DATA_NAME:
+				return getExtendedMetaDataName();
 			case MetadataPackage.FEATURE_METADATA__FEATURE_ID:
 				return getFeatureID();
 			case MetadataPackage.FEATURE_METADATA__ASPECTS:
@@ -362,6 +408,9 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 				return;
 			case MetadataPackage.FEATURE_METADATA__NAME:
 				setName((String)newValue);
+				return;
+			case MetadataPackage.FEATURE_METADATA__EXTENDED_META_DATA_NAME:
+				setExtendedMetaDataName((String)newValue);
 				return;
 			case MetadataPackage.FEATURE_METADATA__FEATURE_ID:
 				setFeatureID((Integer)newValue);
@@ -391,6 +440,9 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 			case MetadataPackage.FEATURE_METADATA__NAME:
 				setName(NAME_EDEFAULT);
 				return;
+			case MetadataPackage.FEATURE_METADATA__EXTENDED_META_DATA_NAME:
+				setExtendedMetaDataName(EXTENDED_META_DATA_NAME_EDEFAULT);
+				return;
 			case MetadataPackage.FEATURE_METADATA__FEATURE_ID:
 				setFeatureID(FEATURE_ID_EDEFAULT);
 				return;
@@ -415,6 +467,8 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 				return eFeature != null;
 			case MetadataPackage.FEATURE_METADATA__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case MetadataPackage.FEATURE_METADATA__EXTENDED_META_DATA_NAME:
+				return EXTENDED_META_DATA_NAME_EDEFAULT == null ? extendedMetaDataName != null : !EXTENDED_META_DATA_NAME_EDEFAULT.equals(extendedMetaDataName);
 			case MetadataPackage.FEATURE_METADATA__FEATURE_ID:
 				return this.featureID != FEATURE_ID_EDEFAULT;
 			case MetadataPackage.FEATURE_METADATA__ASPECTS:
@@ -435,6 +489,8 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: ");
 		result.append(name);
+		result.append(", extendedMetaDataName: ");
+		result.append(extendedMetaDataName);
 		result.append(", featureID: ");
 		result.append(featureID);
 		result.append(')');

@@ -594,26 +594,6 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     }
 
     /**
-     * Reads a reference URI, handling both object format and potentially direct URI.
-     *
-     * @param parser the JSON parser
-     * @return the reference URI, or null if not found
-     */
-    private String readRefObjectUri(JsonParser parser) {
-        JsonToken token = parser.currentToken();
-
-        if (token == JsonToken.START_OBJECT) {
-            return readRefUri(parser);
-        } else if (token == JsonToken.VALUE_STRING) {
-            // Direct URI string (alternative format)
-            return parser.getString();
-        }
-
-        LOGGER.warning("Expected START_OBJECT or VALUE_STRING for non-containment ref, got: " + token);
-        return null;
-    }
-
-    /**
      * Returns the reference being deserialized.
      *
      * @return the EReference

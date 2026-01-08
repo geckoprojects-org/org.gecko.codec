@@ -62,7 +62,6 @@ class ExpandReferenceTest {
 
     // EClasses
     private EClass personClass;
-    private EClass addressClass;
     private EClass companyClass;
 
     // EAttributes
@@ -70,7 +69,6 @@ class ExpandReferenceTest {
     private EAttribute companyNameAttribute;
 
     // EReferences
-    private EReference managerRef;
     private EReference friendsRef;
     private EReference employeesRef;
     private EReference ceoRef;
@@ -89,7 +87,6 @@ class ExpandReferenceTest {
 
         // Load EClasses
         personClass = ecoreHelper.getEClass(testPackage, "Person");
-        addressClass = ecoreHelper.getEClass(testPackage, "Address");
         companyClass = ecoreHelper.getEClass(testPackage, "Company");
 
         // Load EAttributes
@@ -97,7 +94,6 @@ class ExpandReferenceTest {
         companyNameAttribute = (EAttribute) ecoreHelper.getFeature(companyClass, "name");
 
         // Load EReferences
-        managerRef = (EReference) ecoreHelper.getFeature(personClass, "manager");
         friendsRef = (EReference) ecoreHelper.getFeature(personClass, "friends");
         employeesRef = (EReference) ecoreHelper.getFeature(companyClass, "employees");
         ceoRef = (EReference) ecoreHelper.getFeature(companyClass, "ceo");
@@ -267,7 +263,6 @@ class ExpandReferenceTest {
 
         @Test
         @DisplayName("does not expand proxy objects")
-        @SuppressWarnings("unchecked")
         void doesNotExpandProxies() throws IOException {
             // Create company
             EObject company = createCompany("Acme Inc");
@@ -304,7 +299,6 @@ class ExpandReferenceTest {
             employees.add(bob);
 
             // Set Alice's friends to Bob (multi-valued non-containment)
-            @SuppressWarnings("unchecked")
             List<EObject> friends = (List<EObject>) alice.eGet(friendsRef);
             friends.add(bob);
 

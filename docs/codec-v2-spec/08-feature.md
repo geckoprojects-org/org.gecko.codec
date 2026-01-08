@@ -130,8 +130,9 @@ Override the JSON property name for a feature. Names can be customized at multip
 
 **Resolution Order (highest to lowest priority):**
 1. **Config Builder** - Runtime configuration override
-2. **Model Annotation** - `@CODEC_KEY` annotation on EStructuralFeature
-3. **Feature Name** - Default EMF feature name
+2. **Model Annotation** - `@CODEC_KEY` or `<details key="key" value="..."/>` on EStructuralFeature
+3. **ExtendedMetaData name** - Only when `useNamesFromExtendedMetadata=true` (see [Section 3](#3-extended-metadata-names))
+4. **Feature Name** - Default EMF feature name
 
 ### 2.1 Model Annotation
 
@@ -186,7 +187,9 @@ This allows models to define sensible defaults via annotations while still permi
 
 ## 3. Extended Metadata Names
 
-Use names from XSD extended metadata annotations instead of EMF feature names:
+Use names from XSD extended metadata annotations instead of EMF feature names.
+
+### 3.1 Configuration
 
 **Java Builder:**
 ```java
@@ -195,7 +198,46 @@ CodecConfig config = CodecConfig.builder()
     .build();
 ```
 
+**Default:** `false`
+
+### 3.2 Resolution Priority
+
+When resolving the JSON key for a feature, the following priority applies:
+
+1. **Explicit codec annotation `key`** - From `@CODEC_KEY` or `<details key="key" value="..."/>` (highest priority)
+2. **ExtendedMetaData `name`** - Only when `useNamesFromExtendedMetadata=true`
+3. **Feature name** - Default EMF feature name (fallback)
+
+### 3.3 EAnnotation Format
+
+The ExtendedMetaData annotation uses the standard EMF format:
+
+```xml
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="titles" upperBound="-1"
+    eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+  <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+    <details key="name" value="title"/>
+  </eAnnotations>
+</eStructuralFeatures>
+```
+
+With `useNamesFromExtendedMetadata=true`, the feature `titles` serializes as `"title"` in JSON.
+
+### 3.4 Use Case
+
 This is useful when EMF models are generated from XSD and you want to preserve the original XML element/attribute names.
+
+### 3.5 Migration Note
+
+> **Breaking change from v1:** The previous codec defaulted `useNamesFromExtendedMetadata` to `true`.
+> In v2, the default is `false` for the following reasons:
+>
+> - **Principle of least surprise** - JSON keys match EMF feature names unless explicitly configured
+> - **Explicit over implicit** - ExtendedMetaData usage is opt-in
+> - **Simpler mental model** - Feature name in code matches JSON key by default
+> - **Performance** - No annotation lookup overhead by default
+>
+> If migrating from v1 and relying on ExtendedMetaData names, add `.useNamesFromExtendedMetadata(true)` to your configuration.
 
 ---
 
@@ -274,6 +316,7 @@ The deserializer tries name lookup first, then falls back to literal lookup, so 
 | Serialize Defaults | `false` |
 | Serialize Empty | `true` |
 | Enum Serialization | `LITERAL` |
+| Use Names From ExtendedMetaData | `false` |
 
 ---
 

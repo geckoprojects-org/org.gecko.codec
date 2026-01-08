@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-07
+**Last Updated:** 2026-01-08
 
 ---
 
@@ -819,6 +819,125 @@ Cross-document containment occurs when a contained object is stored in a differe
 
 **Not Implemented:** Deserialization resolution. Cross-document containments are deserialized as proxy objects that require manual resolution via the ResourceSet.
 
+### 10.7 Enum Serialization ✅
+
+**Completed:** 2026-01-07
+
+Enum values can be serialized using different strategies:
+
+| Strategy | Output Example |
+|----------|----------------|
+| `LITERAL` | `"status": "ACTIVE"` (uses `EEnumLiteral.getLiteral()`) |
+| `NAME` | `"status": "Active"` (uses `EEnumLiteral.getName()`) |
+| `VALUE` | `"status": 1` (uses `EEnumLiteral.getValue()`) |
+
+**Configuration:**
+```java
+CodecConfiguration.builder()
+    .enumSerialization(EnumSerializationStrategy.LITERAL)  // Default
+    .build();
+```
+
+**Key Files:**
+- `CodecConfiguration.java` - `enumSerialization` setting
+- `AttributeSerializationEntry.java` - enum writing logic
+- `AttributeDeserializationEntry.java` - enum reading logic
+- `EnumSerializationTest.java` - round-trip tests
+
+### 10.8 Extended Metadata Names ✅
+
+**Completed:** 2026-01-08
+
+Feature JSON keys can use names from XSD ExtendedMetaData annotations instead of EMF feature names.
+
+**Configuration:**
+```java
+CodecConfiguration.builder()
+    .useNamesFromExtendedMetaData(true)  // Default: false
+    .build();
+```
+
+**Resolution Priority:**
+1. Explicit codec annotation `key` (highest priority)
+2. ExtendedMetaData `name` (when enabled)
+3. Feature name (default fallback)
+
+**Key Changes:**
+- Added `extendedMetaDataName` to `FeatureMetadata` in metadata.ecore
+- `MetadataServiceImpl` populates the field on package registration
+- `ConfigurationMerger.resolveFeatureKey()` uses the pre-computed value
+
+**Key Files:**
+- `FeatureMetadata` - `extendedMetaDataName` attribute
+- `MetadataServiceImpl.java` - extraction on registration
+- `ConfigurationMerger.java` - key resolution with ExtendedMetaData support
+- `AnnotationHelper.java` - fallback for direct annotation lookup
+- `ExtendedMetaDataTest.java` - round-trip tests
+
+### 10.9 SuperType Serialization ✅
+
+**Completed:** 2026-01-08
+
+SuperType information can be serialized as PLAIN format (array of URIs or single string).
+
+**Configuration:**
+```java
+CodecConfiguration.builder()
+    .serializeSuperTypes(true)        // Enable supertype serialization
+    .serializeAllSuperTypes(true)     // ALL selection (false = SINGLE)
+    .superTypeKey("_supertype")       // Custom key
+    .build();
+```
+
+**Selection Modes:**
+- `ALL` - All supertypes in hierarchy (excluding EMF base types)
+- `ALL_EMF` - All supertypes including EMF base types
+- `SINGLE` - Only direct supertype
+
+**Key Files:**
+- `SuperTypeSerializationEntry.java` - serialization logic
+- `EffectiveSuperTypeConfig.java` - pre-merged config
+- `CodecResourceSuperTypeTest.java` - integration tests
+
+**Note:** STRUCTURED format support is pending (part of Priority 1).
+
+### 10.10 Global Feature Ignore List ✅
+
+**Completed:** 2026-01-08
+
+A codec-wide list of feature names to skip during both serialization and deserialization.
+
+**Configuration:**
+```java
+// Varargs method:
+CodecConfiguration.builder()
+    .globalIgnoreFeatures("createdAt", "updatedAt", "version")
+    .build();
+
+// Or add one at a time:
+CodecConfiguration.builder()
+    .globalIgnore("createdAt")
+    .globalIgnore("updatedAt")
+    .build();
+```
+
+**Behavior:**
+| Operation | Behavior |
+|-----------|----------|
+| Serialization | Feature is omitted from output |
+| Deserialization | Feature value in JSON is ignored (not set on EObject) |
+
+**Use Cases:**
+- Skip audit fields across all EClasses
+- API versioning (V1 ignores V2 fields)
+- Temporary exclusion without model changes
+
+**Key Files:**
+- `CodecConfiguration.java` - `globalIgnore()` builder method
+- `EffectiveCodecConfig.java` - `isGloballyIgnored()` check
+- `ConfigurationMerger.java` - `resolveFeatureSerialize()` checks global ignore
+- `GlobalIgnoreFeatureTest.java` - integration tests
+
 ---
 
 ## 11. Pending Work (Priority Order)
@@ -826,41 +945,20 @@ Cross-document containment occurs when a contained object is stored in a differe
 ### 11.1 Additional TypeStrategies (Priority 1 - Next)
 
 - `SCHEMA_AND_TYPE` - Separate schema/type fields
-- `STRUCTURED` - Nested object format
+- `STRUCTURED` - Nested object format (applies to type, supertype, ID)
 - `NUMERIC` - Classifier IDs
 
-### 11.2 SuperType Serialization (Priority 2)
-
-- `_superTypes` field support
-- Selection modes: ALL, SINGLE, CUSTOM
-
-### 11.3 ID STRUCTURED Format (Priority 3)
-
-- Nested ID object format (schema + value)
-
-### 11.4 Enum Serialization Options (Priority 4)
-
-- NAME, ORDINAL, LITERAL strategies
-
-### 11.5 Extended Metadata Names (Priority 5)
-
-- Use ExtendedMetaData for JSON keys (aspects integration)
-
-### 11.6 Global Feature Ignore List (Priority 6)
-
-- Configuration-based feature exclusion
-
-### 11.7 Error Handling Improvements (Priority 7)
+### 11.2 Error Handling Improvements (Priority 2)
 
 - Better diagnostics and recovery
 - EMF Resource error/warning collection
 
-### 11.8 Custom Value Readers/Writers (Priority 8)
+### 11.3 Custom Value Readers/Writers (Priority 3)
 
 - `CodecValueRegistry` integration
 - Support for `valueWriterName`/`valueReaderName` annotations
 
-### 11.9 OSGi Integration (Priority 9)
+### 11.4 OSGi Integration (Priority 4)
 
 - Create ResourceFactory for OSGi registration
 - Test with OSGi runtime

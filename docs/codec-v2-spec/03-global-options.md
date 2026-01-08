@@ -239,7 +239,7 @@ CodecConfig alphabetical = CodecConfig.builder()
 
 ## 4. Global Feature Ignore List
 
-A codec-wide list of feature names to skip during serialization, regardless of individual feature configuration.
+A codec-wide list of feature names to skip during **both serialization and deserialization**, regardless of individual feature configuration.
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
@@ -252,8 +252,14 @@ This is useful for:
 
 **Java Builder:**
 ```java
-CodecConfig config = CodecConfig.builder()
+CodecConfiguration config = CodecConfiguration.builder()
     .globalIgnoreFeatures("createdAt", "updatedAt", "version", "internalId")
+    .build();
+
+// Or add one at a time:
+CodecConfiguration config = CodecConfiguration.builder()
+    .globalIgnore("createdAt")
+    .globalIgnore("updatedAt")
     .build();
 ```
 
@@ -264,7 +270,34 @@ CodecConfig config = CodecConfig.builder()
 </eAnnotations>
 ```
 
+### 4.1 Behavior
+
+| Operation | Behavior |
+|-----------|----------|
+| **Serialization** | Feature is omitted from output |
+| **Deserialization** | Feature value in JSON is ignored (not set on EObject) |
+
 **Precedence:** Global ignore list takes precedence over feature-level `serialize=true`. If a feature name is in the global ignore list, it will not be serialized even if explicitly enabled.
+
+### 4.2 Use Case: API Versioning
+
+Global ignore is useful for API versioning where certain fields should not be exposed:
+
+```java
+// V1 API - hide new fields
+CodecConfiguration v1Config = CodecConfiguration.builder()
+    .globalIgnoreFeatures("newFieldAddedInV2", "anotherV2Field")
+    .build();
+
+// V2 API - expose all fields
+CodecConfiguration v2Config = CodecConfiguration.builder()
+    .build();
+```
+
+When deserializing with global ignore:
+- If the JSON contains an ignored field, it is silently skipped
+- The EObject's feature retains its default value
+- No error or warning is raised
 
 ---
 

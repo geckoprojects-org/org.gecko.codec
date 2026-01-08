@@ -104,7 +104,9 @@ class CodecAspectProviderTest {
 
         FeatureCodecAspect codecAspect = (FeatureCodecAspect) aspect;
         assertTrue(codecAspect.isSerialize());
-        assertEquals("name", codecAspect.getEffectiveKey());
+        // effectiveKey is null when no explicit "key" annotation - ConfigurationMerger falls back
+        // to ExtendedMetaData name or feature name
+        assertNull(codecAspect.getEffectiveKey());
         assertNull(codecAspect.getValueWriterName());
         assertNull(codecAspect.getValueReaderName());
     }
@@ -125,7 +127,9 @@ class CodecAspectProviderTest {
 
         ReferenceCodecAspect codecAspect = (ReferenceCodecAspect) aspect;
         assertTrue(codecAspect.isSerialize());
-        assertEquals("address", codecAspect.getEffectiveKey());
+        // effectiveKey is null when no explicit "key" annotation - ConfigurationMerger falls back
+        // to ExtendedMetaData name or feature name
+        assertNull(codecAspect.getEffectiveKey());
     }
 
     @Test
