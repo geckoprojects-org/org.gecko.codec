@@ -1,6 +1,8 @@
 # Type Serialization
 
-[← Back to Overview](00-overview.md) | [← Global Configuration Options](03-global-options.md)
+[← Back to Overview](00-overview.md) | [← Global Configuration Options](04-global-options.md)
+
+> **See also:** [Key Configuration](02-key-configuration.md) for the complete key naming conventions.
 
 ---
 
@@ -101,17 +103,17 @@ Nested object containing type details:
 {
   "_type": {
     "schema": "http://example.org/person/1.0",
-    "name": "Person",
+    "type": "Person",
     "supertype": ["Entity", "Auditable"]
   }
 }
 ```
 
 **Configurable keys:**
-- `typeKey`: outer key (default: `_type`)
+- `rootTypeKey`: outer container key (default: `_type`)
 - `schemaKey`: schema field inside object (default: `schema`)
-- `nameKey`: name field inside object (default: `name`)
-- `supertypeKey`: supertype field inside object (default: `supertype`, optional)
+- `typeKey`: type name field inside object (default: `type`)
+- `superTypeKey`: supertype field inside object (default: `supertype`, optional)
 
 #### NUMERIC Strategy
 
@@ -142,7 +144,7 @@ In STRUCTURED format, supertypes use a **smart format**:
 {
   "_type": {
     "schema": "http://example.org/person/1.0",
-    "name": "Person",
+    "type": "Person",
     "supertype": ["Entity", "http://audit.org/1.0#//Auditable"]
   }
 }
@@ -173,10 +175,10 @@ The configuration defines **keys and format**, not actual values. Values come fr
 | Key | Values | Default | Description |
 |-----|--------|---------|-------------|
 | `strategy` | NAME, CLASS, URI, MAPPED, STRUCTURED, SCHEMA_AND_TYPE, NUMERIC | URI | Type serialization strategy |
-| `typeKey` | any string | `_type` | JSON property name for type |
+| `rootTypeKey` | any string | `_type` | Container key (STRUCTURED) / type key (PLAIN) |
 | `include` | true, false | true | Whether to include type info |
-| `schemaKey` | any string | `schema` | Key for schema in STRUCTURED |
-| `nameKey` | any string | `name` | Key for name in STRUCTURED |
+| `schemaKey` | any string | `_schema` (PLAIN) / `schema` (STRUCTURED) | Key for schema |
+| `typeKey` | any string | `_type` (PLAIN) / `type` (STRUCTURED) | Key for type name |
 
 ### 3.2 Java Builder (Runtime Override)
 
@@ -202,7 +204,7 @@ TypeSerializationConfig config = TypeSerializationConfig.builder()
 {
   "_type": {
     "schema": "http://example.org/person/1.0",
-    "name": "Person"
+    "type": "Person"
   }
 }
 ```
@@ -219,7 +221,7 @@ TypeSerializationConfig config = TypeSerializationConfig.builder()
 {
   "_type": {
     "schema": "http://example.org/person/1.0",
-    "name": "Person",
+    "type": "Person",
     "supertype": ["Entity", "Auditable"]
   }
 }
@@ -229,17 +231,17 @@ TypeSerializationConfig config = TypeSerializationConfig.builder()
 ```java
 TypeSerializationConfig config = TypeSerializationConfig.builder()
     .structured()
-    .typeKey("$type")
-    .schemaKey("ns")
-    .nameKey("class")
+    .rootTypeKey("@context")
+    .schemaKey("@vocab")
+    .typeKey("@type")
     .build();
 ```
 **Resulting JSON:**
 ```json
 {
-  "$type": {
-    "ns": "http://example.org/person/1.0",
-    "class": "Person"
+  "@context": {
+    "@vocab": "http://example.org/person/1.0",
+    "@type": "Person"
   }
 }
 ```
@@ -253,13 +255,13 @@ TypeSerializationConfig config = TypeSerializationConfig.builder()
 
 ## 4. Default Type Settings
 
-| Setting | Default Value |
-|---------|---------------|
-| Strategy | `URI` |
-| Type Key | `_type` |
-| Include | `true` |
-| Schema Key | `schema` |
-| Name Key | `name` |
+| Setting | PLAIN Default | STRUCTURED Default |
+|---------|---------------|-------------------|
+| Strategy | `URI` | `STRUCTURED` |
+| Root Type Key | - | `_type` |
+| Type Key | `_type` | `type` |
+| Schema Key | `_schema` | `schema` |
+| Include | `true` | `true` |
 
 **Default Output:**
 ```json
@@ -353,4 +355,4 @@ When both content type and hint are present but differ:
 
 ---
 
-[Next: SuperType Serialization →](05-supertype.md)
+[Next: SuperType Serialization →](06-supertype.md)

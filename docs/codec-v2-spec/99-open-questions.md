@@ -1,6 +1,6 @@
 # Open Questions
 
-[← Back to Overview](00-overview.md) | [← Implementation](13-implementation.md)
+[← Back to Overview](00-overview.md) | [← Implementation](14-implementation.md)
 
 ---
 
@@ -52,7 +52,7 @@ The spec previously said PLAIN was default for references, but this contradicts 
 ### Issue 2: Smart Compression Documentation
 Smart compression was documented in multiple places with slightly different descriptions.
 
-**Resolution:** Consolidated in Section 03-global-options.md.
+**Resolution:** Consolidated in Section 04-global-options.md.
 
 ---
 

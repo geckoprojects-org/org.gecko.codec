@@ -10,18 +10,19 @@ This document defines the serialization features for codec.v2, including configu
 |---|----------|-------------|
 | 00 | [Overview](00-overview.md) | This document - TOC and Serialization Targets |
 | 01 | [Serialization Strategies](01-strategies.md) | PLAIN vs STRUCTURED format, strategy classification |
-| 02 | [Configuration Hierarchy](02-config-hierarchy.md) | Configuration levels and resolution order |
-| 03 | [Global Configuration Options](03-global-options.md) | Smart Compression, Numeric IDs, Field Ordering, Global Ignore |
-| 04 | [Type Serialization](04-type.md) | Type strategies (URI, NAME, MAPPED, etc.) and configuration |
-| 05 | [SuperType Serialization](05-supertype.md) | SuperType hierarchy serialization |
-| 06 | [ID Serialization](06-id.md) | ID strategies and combined ID configuration |
-| 07 | [Reference Serialization](07-reference.md) | Non-containment references and cross-document containment |
-| 08 | [Feature Serialization](08-feature.md) | EAttribute and EReference feature handling |
-| 09 | [Custom Value Readers/Writers](09-custom-values.md) | Custom serialization for specific types |
-| 10 | [Polymorphism and Inheritance](10-polymorphism.md) | Type resolution and inheritance handling |
-| 11 | [Configuration Scenarios](11-scenarios.md) | Complete configuration examples and test scenarios |
-| 12 | [Architecture](12-architecture.md) | Serialization architecture and design |
-| 13 | [Implementation](13-implementation.md) | Implementation strategy and checklist |
+| 02 | [Key Configuration](02-key-configuration.md) | Key naming conventions for PLAIN/STRUCTURED formats |
+| 03 | [Configuration Hierarchy](03-config-hierarchy.md) | Configuration levels and resolution order |
+| 04 | [Global Configuration Options](04-global-options.md) | Smart Compression, Numeric IDs, Field Ordering, Global Ignore |
+| 05 | [Type Serialization](05-type.md) | Type strategies (URI, NAME, MAPPED, etc.) and configuration |
+| 06 | [SuperType Serialization](06-supertype.md) | SuperType hierarchy serialization |
+| 07 | [ID Serialization](07-id.md) | ID strategies and combined ID configuration |
+| 08 | [Reference Serialization](08-reference.md) | Non-containment references and cross-document containment |
+| 09 | [Feature Serialization](09-feature.md) | EAttribute and EReference feature handling |
+| 10 | [Custom Value Readers/Writers](10-custom-values.md) | Custom serialization for specific types |
+| 11 | [Polymorphism and Inheritance](11-polymorphism.md) | Type resolution and inheritance handling |
+| 12 | [Configuration Scenarios](12-scenarios.md) | Complete configuration examples and test scenarios |
+| 13 | [Architecture](13-architecture.md) | Serialization architecture and design |
+| 14 | [Implementation](14-implementation.md) | Implementation strategy and checklist |
 | 99 | [Open Questions](99-open-questions.md) | Open questions and issues to resolve |
 
 ---

@@ -1,6 +1,6 @@
 # Feature Serialization
 
-[← Back to Overview](00-overview.md) | [← Reference Serialization](07-reference.md)
+[← Back to Overview](00-overview.md) | [← Reference Serialization](08-reference.md)
 
 ---
 
@@ -320,4 +320,4 @@ The deserializer tries name lookup first, then falls back to literal lookup, so 
 
 ---
 
-[Next: Custom Value Readers/Writers →](09-custom-values.md)
+[Next: Custom Value Readers/Writers →](10-custom-values.md)

@@ -1,6 +1,6 @@
 # Custom Value Readers/Writers
 
-[← Back to Overview](00-overview.md) | [← Feature Serialization](08-feature.md)
+[← Back to Overview](00-overview.md) | [← Feature Serialization](09-feature.md)
 
 ---
 
@@ -92,4 +92,4 @@ public class ISO8601DateWriter implements CodecValueWriter<Date> {
 
 ---
 
-[Next: Polymorphism and Inheritance →](10-polymorphism.md)
+[Next: Polymorphism and Inheritance →](11-polymorphism.md)

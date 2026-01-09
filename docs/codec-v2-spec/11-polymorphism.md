@@ -1,6 +1,6 @@
 # Polymorphism and Inheritance
 
-[← Back to Overview](00-overview.md) | [← Custom Value Readers/Writers](09-custom-values.md)
+[← Back to Overview](00-overview.md) | [← Custom Value Readers/Writers](10-custom-values.md)
 
 ---
 
@@ -160,4 +160,4 @@ When the same annotation exists at multiple levels, the most specific (closest t
 
 ---
 
-[Next: Configuration Scenarios →](11-scenarios.md)
+[Next: Configuration Scenarios →](12-scenarios.md)

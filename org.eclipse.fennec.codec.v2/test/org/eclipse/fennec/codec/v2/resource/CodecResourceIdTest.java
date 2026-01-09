@@ -234,7 +234,7 @@ class CodecResourceIdTest {
             assertTrue(json.contains("\"_id\":{"), "Should have _id as object");
             assertTrue(json.contains("\"personId\":\"john-123\""), "Should have personId inside _id");
             // Should NOT have separator for single ID (only for multiple)
-            assertFalse(json.contains("\"_separator\""), "Should not have separator for single ID");
+            assertFalse(json.contains("\"separator\""), "Should not have separator for single ID");
         }
 
         @Test
@@ -252,9 +252,9 @@ class CodecResourceIdTest {
 
             String json = serialize(obj, config);
 
-            // Should be: "_id": { "_separator": "-", "firstName": "John", "lastName": "Doe", "sequence": 42 }
+            // Should be: "_id": { "separator": "-", "firstName": "John", "lastName": "Doe", "sequence": 42 }
             assertTrue(json.contains("\"_id\":{"), "Should have _id as object");
-            assertTrue(json.contains("\"_separator\":\"-\""), "Separator SHOULD be serialized (default)");
+            assertTrue(json.contains("\"separator\":\"-\""), "Separator SHOULD be serialized (default)");
             assertTrue(json.contains("\"firstName\":\"John\""), "Should have firstName");
             assertTrue(json.contains("\"lastName\":\"Doe\""), "Should have lastName");
             assertTrue(json.contains("\"sequence\":42"), "Should have sequence as number");
@@ -277,7 +277,7 @@ class CodecResourceIdTest {
 
             // Should be: "_id": { "firstName": "John", "lastName": "Doe", "sequence": 42 }
             assertTrue(json.contains("\"_id\":{"), "Should have _id as object");
-            assertFalse(json.contains("\"_separator\""), "Separator should NOT be serialized");
+            assertFalse(json.contains("\"separator\""), "Separator should NOT be serialized");
             assertTrue(json.contains("\"firstName\":\"John\""), "Should have firstName");
             assertTrue(json.contains("\"lastName\":\"Doe\""), "Should have lastName");
             assertTrue(json.contains("\"sequence\":42"), "Should have sequence as number");
@@ -299,7 +299,7 @@ class CodecResourceIdTest {
             String json = serialize(obj, config);
 
             assertTrue(json.contains("\"sep\":\"|\""), "Should use custom separator key");
-            assertFalse(json.contains("\"_separator\""), "Should not use default key");
+            assertFalse(json.contains("\"separator\""), "Should not use default key");
         }
 
         @Test
@@ -540,7 +540,7 @@ class CodecResourceIdTest {
         @DisplayName("STRUCTURED format with separator in JSON")
         void deserializeStructuredWithSeparatorInJson() throws IOException {
             // JSON includes the separator - deserializer should read it and use it
-            String json = "{\"_id\":{\"_separator\":\"-\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"sequence\":42}}";
+            String json = "{\"_id\":{\"separator\":\"-\",\"firstName\":\"John\",\"lastName\":\"Doe\",\"sequence\":42}}";
 
             CodecConfiguration config = CodecConfiguration.builder()
                     .useId(true)
@@ -654,7 +654,7 @@ class CodecResourceIdTest {
             String json = serialize(original, config);
 
             // Verify separator is in the JSON
-            assertTrue(json.contains("\"_separator\":\"-\""), "Separator should be in JSON");
+            assertTrue(json.contains("\"separator\":\"-\""), "Separator should be in JSON");
 
             EObject result = deserialize(json, multiIdClass, config);
             assertNotNull(result, "Result should not be null. JSON was: " + json);
@@ -681,7 +681,7 @@ class CodecResourceIdTest {
             String json = serialize(original, config);
 
             // Verify separator is NOT in the JSON
-            assertFalse(json.contains("\"_separator\""), "Separator should NOT be in JSON");
+            assertFalse(json.contains("\"separator\""), "Separator should NOT be in JSON");
 
             EObject result = deserialize(json, multiIdClass, config);
             assertNotNull(result, "Result should not be null. JSON was: " + json);

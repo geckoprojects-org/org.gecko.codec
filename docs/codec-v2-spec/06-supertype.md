@@ -1,6 +1,8 @@
 # SuperType Serialization
 
-[← Back to Overview](00-overview.md) | [← Type Serialization](04-type.md)
+[← Back to Overview](00-overview.md) | [← Type Serialization](05-type.md)
+
+> **See also:** [Key Configuration](02-key-configuration.md) for the complete key naming conventions.
 
 ---
 
@@ -37,8 +39,8 @@ Array of structured type objects:
 ```json
 {
   "_supertype": [
-    { "schema": "http://example.org/base/1.0", "name": "Entity" },
-    { "schema": "http://example.org/audit/1.0", "name": "Auditable" }
+    { "schema": "http://example.org/base/1.0", "type": "Entity" },
+    { "schema": "http://example.org/audit/1.0", "type": "Auditable" }
   ]
 }
 ```
@@ -83,10 +85,10 @@ The configuration defines **keys and format**, not actual values.
 |-----|--------|---------|-------------|
 | `enabled` | true, false | false | Enable supertype serialization |
 | `selection` | ALL, ALL_EMF, SINGLE, NONE | ALL (when enabled) | Which supertypes to include |
-| `supertypeKey` | any string | `_supertype` | JSON property name |
+| `superTypeKey` | any string | `_supertype` (PLAIN) / `supertype` (STRUCTURED in type container) | JSON property name |
 | `format` | PLAIN, STRUCTURED | PLAIN | SerializationFormat |
 | `schemaKey` | any string | `schema` | Key for schema in STRUCTURED |
-| `nameKey` | any string | `name` | Key for name in STRUCTURED |
+| `typeKey` | any string | `type` | Key for type name in STRUCTURED |
 
 **Selection Values:**
 | Value | Description |
@@ -122,8 +124,8 @@ SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
 ```json
 {
   "_supertype": [
-    { "schema": "http://example.org/base/1.0", "name": "Entity" },
-    { "schema": "http://example.org/audit/1.0", "name": "Auditable" }
+    { "schema": "http://example.org/base/1.0", "type": "Entity" },
+    { "schema": "http://example.org/audit/1.0", "type": "Auditable" }
   ]
 }
 ```
@@ -134,15 +136,15 @@ SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
     .enabled(true)
     .structured()
     .schemaKey("ns")
-    .nameKey("type")
+    .typeKey("class")
     .build();
 ```
 **Resulting JSON:**
 ```json
 {
   "_supertype": [
-    { "ns": "http://example.org/base/1.0", "type": "Entity" },
-    { "ns": "http://example.org/audit/1.0", "type": "Auditable" }
+    { "ns": "http://example.org/base/1.0", "class": "Entity" },
+    { "ns": "http://example.org/audit/1.0", "class": "Auditable" }
   ]
 }
 ```
@@ -171,12 +173,14 @@ SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
 
 ## 4. Default SuperType Settings
 
-| Setting | Default Value |
-|---------|---------------|
-| Enabled | `false` (disabled by default) |
-| Selection | `ALL` (when enabled) |
-| SuperType Key | `_supertype` |
-| Format | `PLAIN` |
+| Setting | PLAIN Default | STRUCTURED Default |
+|---------|---------------|-------------------|
+| Enabled | `false` | `false` |
+| Selection | `ALL` (when enabled) | `ALL` (when enabled) |
+| SuperType Key | `_supertype` | `supertype` (inside type container) |
+| Schema Key | - | `schema` |
+| Type Key | - | `type` |
+| Format | `PLAIN` | `STRUCTURED` |
 
 **When enabled, default output:**
 ```json
@@ -187,4 +191,4 @@ SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
 
 ---
 
-[Next: ID Serialization →](06-id.md)
+[Next: ID Serialization →](07-id.md)

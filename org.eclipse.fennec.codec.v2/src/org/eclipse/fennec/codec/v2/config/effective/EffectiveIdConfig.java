@@ -171,7 +171,7 @@ public final class EffectiveIdConfig {
         private SerializationFormat format = SerializationFormat.PLAIN;
         private String separator = "-";
         private boolean serializeSeparator = true;
-        private String separatorKey = "_separator";
+        private String separatorKey = "separator";
         private List<String> idFeatures = List.of();
         private String valueWriterName;
         private String valueReaderName;

@@ -1,6 +1,8 @@
 # Reference Serialization
 
-[← Back to Overview](00-overview.md) | [← ID Serialization](06-id.md)
+[← Back to Overview](00-overview.md) | [← ID Serialization](07-id.md)
+
+> **See also:** [Key Configuration](02-key-configuration.md) for the complete key naming conventions.
 
 ---
 
@@ -32,15 +34,15 @@ Nested object with type and reference:
 ```json
 {
   "employer": {
-    "_type": "http://example.org/company/1.0#//Company",
-    "_ref": "datainmotion"
+    "type": "http://example.org/company/1.0#//Company",
+    "ref": "datainmotion"
   }
 }
 ```
 
 **Configurable keys:**
-- `typeKey`: type field (default: `_type`)
-- `refKey`: reference field (default: `_ref`)
+- `typeKey`: type field (default: `type` in STRUCTURED)
+- `refKey`: reference field (default: `ref` in STRUCTURED)
 
 ---
 
@@ -57,9 +59,9 @@ Nested object with type and reference:
 ```json
 {
   "employees": [
-    { "_type": "http://example.org/person/1.0#//Employee", "_ref": "john-doe" },
-    { "_type": "http://example.org/person/1.0#//Employee", "_ref": "jane-smith" },
-    { "_type": "http://example.org/person/1.0#//Manager", "_ref": "bob-wilson" }
+    { "type": "http://example.org/person/1.0#//Employee", "ref": "john-doe" },
+    { "type": "http://example.org/person/1.0#//Employee", "ref": "jane-smith" },
+    { "type": "http://example.org/person/1.0#//Manager", "ref": "bob-wilson" }
   ]
 }
 ```
@@ -86,8 +88,8 @@ The configuration defines **keys and format**, not actual values.
 | Key | Values | Default | Description |
 |-----|--------|---------|-------------|
 | `format` | PLAIN, STRUCTURED | STRUCTURED | SerializationFormat |
-| `typeKey` | any string | `_type` | Key for type in STRUCTURED |
-| `refKey` | any string | `_ref` | Key for reference value |
+| `typeKey` | any string | `type` (STRUCTURED) | Key for type in STRUCTURED |
+| `refKey` | any string | `_ref` (PLAIN) / `ref` (STRUCTURED) | Key for reference value |
 | `expand` | true, false | false | Serialize full object instead of proxy |
 
 **Note:** Type information in STRUCTURED format follows the type configuration (see [Type Serialization](03-type.md)). With smart compression enabled, type is omitted when instance type equals reference type (see [Global Options - Smart Compression](02-global-options.md#1-smart-compression)).
@@ -102,8 +104,8 @@ ReferenceSerializationConfig config = ReferenceSerializationConfig.builder().bui
 ```json
 {
   "employer": {
-    "_type": "http://example.org/company/1.0#//Company",
-    "_ref": "acme-corp"
+    "type": "http://example.org/company/1.0#//Company",
+    "ref": "acme-corp"
   }
 }
 ```
@@ -121,20 +123,20 @@ ReferenceSerializationConfig config = ReferenceSerializationConfig.builder()
 }
 ```
 
-**STRUCTURED with custom keys:**
+**STRUCTURED with custom keys (JSON-LD style):**
 ```java
 ReferenceSerializationConfig config = ReferenceSerializationConfig.builder()
     .structured()
-    .typeKey("$type")
-    .refKey("$ref")
+    .typeKey("@type")
+    .refKey("@id")
     .build();
 ```
 **Resulting JSON:**
 ```json
 {
   "employer": {
-    "$type": "http://example.org/company/1.0#//Company",
-    "$ref": "acme-corp"
+    "@type": "http://example.org/company/1.0#//Company",
+    "@id": "acme-corp"
   }
 }
 ```
@@ -146,17 +148,17 @@ ReferenceSerializationConfig config = ReferenceSerializationConfig.builder()
 ### 4.1 Default Behavior: Proxy Serialization
 
 Non-containment references are serialized as **proxies by default**. This requires:
-- `_type`: Type information (proxy URI doesn't always indicate type)
-- `_ref`: Proxy URI for resolution
+- `type`: Type information (proxy URI doesn't always indicate type)
+- `ref`: Proxy URI for resolution
 
 Only objects with a URI can be serialized as references (standard EMF behavior).
 
-**Default proxy output:**
+**Default proxy output (STRUCTURED):**
 ```json
 {
   "employer": {
-    "_type": "http://example.org/company/1.0#//Company",
-    "_ref": "companies.json#//@companies.0"
+    "type": "http://example.org/company/1.0#//Company",
+    "ref": "companies.json#//@companies.0"
   }
 }
 ```
@@ -165,9 +167,9 @@ Only objects with a URI can be serialized as references (standard EMF behavior).
 
 When expand is enabled and the reference is **resolved** (not a proxy), the referenced object is serialized inline instead of as a proxy reference.
 
-**Important:** Expanded objects are serialized **without `_ref`**. This distinguishes them from proxy references during deserialization:
-- With `_ref` → proxy (resolve via URI)
-- Without `_ref` → orphan object (fully deserialized, not contained)
+**Important:** Expanded objects are serialized **without `ref`**. This distinguishes them from proxy references during deserialization:
+- With `ref` → proxy (resolve via URI)
+- Without `ref` → orphan object (fully deserialized, not contained)
 
 **Expanded output:**
 ```json
@@ -181,7 +183,7 @@ When expand is enabled and the reference is **resolved** (not a proxy), the refe
 }
 ```
 
-Note: No `_ref` field is present. The object is serialized with its full data, and on deserialization it becomes an orphan object (not a proxy).
+Note: No `ref` field is present. The object is serialized with its full data, and on deserialization it becomes an orphan object (not a proxy).
 
 **Expand Configuration:**
 
@@ -516,4 +518,4 @@ When a reference URI points to another resource:
 
 ---
 
-[Next: Feature Serialization →](08-feature.md)
+[Next: Feature Serialization →](09-feature.md)

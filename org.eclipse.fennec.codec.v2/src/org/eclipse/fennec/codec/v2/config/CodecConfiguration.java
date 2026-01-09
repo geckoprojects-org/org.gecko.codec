@@ -622,8 +622,8 @@ public class CodecConfiguration {
         private List<String> idFeatures;
         private IdKeyMode idKeyMode = IdKeyMode.ID_ONLY;
         private boolean idSerializeSeparator = true;
-        private String idSeparatorKey = "_separator";
-        private String refKey = "$ref";
+        private String idSeparatorKey = "separator";
+        private String refKey = "_ref";
         private String proxyKey = "_proxy";
         // Expand settings
         private boolean expandGlobal = false;

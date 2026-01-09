@@ -1,6 +1,6 @@
 # Serialization Architecture
 
-[← Back to Overview](00-overview.md) | [← Configuration Scenarios](11-scenarios.md)
+[← Back to Overview](00-overview.md) | [← Configuration Scenarios](12-scenarios.md)
 
 ---
 
@@ -119,4 +119,4 @@ EMFContextHolder (internal holder)
 
 ---
 
-[Next: Implementation →](13-implementation.md)
+[Next: Implementation →](14-implementation.md)

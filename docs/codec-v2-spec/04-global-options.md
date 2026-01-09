@@ -1,6 +1,6 @@
 # Global Configuration Options
 
-[← Back to Overview](00-overview.md) | [← Configuration Hierarchy](02-config-hierarchy.md)
+[← Back to Overview](00-overview.md) | [← Configuration Hierarchy](03-config-hierarchy.md)
 
 ---
 
@@ -313,4 +313,4 @@ When deserializing with global ignore:
 
 ---
 
-[Next: Type Serialization →](04-type.md)
+[Next: Type Serialization →](05-type.md)

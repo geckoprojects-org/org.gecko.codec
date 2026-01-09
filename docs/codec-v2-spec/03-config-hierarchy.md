@@ -192,4 +192,4 @@ The codec applies its serializers/deserializers on top of the provided base conf
 
 ---
 
-[Next: Global Configuration Options →](03-global-options.md)
+[Next: Global Configuration Options →](04-global-options.md)

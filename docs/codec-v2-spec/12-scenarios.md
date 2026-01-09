@@ -1,6 +1,6 @@
 # Configuration Scenarios
 
-[← Back to Overview](00-overview.md) | [← Polymorphism and Inheritance](10-polymorphism.md)
+[← Back to Overview](00-overview.md) | [← Polymorphism and Inheritance](11-polymorphism.md)
 
 ---
 
@@ -167,4 +167,4 @@ CodecConfig config = CodecConfig.builder()
 
 ---
 
-[Next: Architecture →](12-architecture.md)
+[Next: Architecture →](13-architecture.md)

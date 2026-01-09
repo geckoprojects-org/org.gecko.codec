@@ -156,4 +156,4 @@ For **Type**, the specific strategy (NAME, CLASS, URI, MAPPED, SCHEMA_AND_TYPE) 
 
 ---
 
-[Next: Configuration Hierarchy →](02-config-hierarchy.md)
+[Next: Key Configuration →](02-key-configuration.md)
