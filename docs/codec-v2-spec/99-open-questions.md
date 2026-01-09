@@ -16,29 +16,35 @@
 
 ## Open Questions
 
-### Q1: SuperType Selection Default
+*All questions resolved - see Resolved Questions below.*
+
+---
+
+## Recently Resolved
+
+### Q1: SuperType Selection Default ✅
 When supertypes are enabled, should ALL or SINGLE be the default?
 
-**Current:** ALL (full hierarchy excluding EMF base)
-**Alternative:** SINGLE (only direct parent)
+**Resolution:** SINGLE (only direct parent) - simpler default, ALL can be explicitly enabled.
 
-### Q2: Error Recovery
+### Q2: Error Recovery ✅
 Should deserialization continue on type resolution errors?
 
-**Option A:** Fail fast on first error
-**Option B:** Collect all errors, fail at end
-**Option C:** Create placeholder objects, report warnings
+**Resolution:** Fail fast on first error (Option A). This aligns with Jackson's default behavior
+(`DeserializationFeature.FAIL_ON_*` options) and provides clear error messages.
 
-### Q3: Circular Reference Detection
+### Q3: Circular Reference Detection ✅
 How to handle circular references during expansion?
 
-**Current:** expandIgnoreBidirectional=true prevents most cycles
-**Issue:** Non-opposite circular refs still possible
+**Resolution:** No opposite expansion. The `expandIgnoreBidirectional=true` default prevents cycles
+through bidirectional references. Non-opposite circular references are the user's responsibility
+to avoid in their expand configuration.
 
-### Q4: Feature Order Guarantee
+### Q4: Feature Order Guarantee ✅
 Should DECLARATION order be guaranteed across JVM restarts?
 
-**Note:** EMF feature order depends on model declaration order, which should be stable.
+**Resolution:** Yes, inherently stable. EMF feature order is determined by the model declaration
+order in the .ecore file, which is stable across JVM restarts. No special handling needed.
 
 ---
 

@@ -155,7 +155,7 @@ public final class EffectiveSuperTypeConfig {
      */
     public static final class Builder {
         private boolean enabled = false;
-        private SuperTypeSelection selection = SuperTypeSelection.ALL;
+        private SuperTypeSelection selection = SuperTypeSelection.SINGLE;
         private SerializationFormat format = SerializationFormat.PLAIN;
         private boolean asArray = true;
         private String separator = ",";

@@ -133,7 +133,7 @@ SuperType values follow namespace matching rules based on the root EClass's EPac
 | Key | Values | Default | Description |
 |-----|--------|---------|-------------|
 | `enabled` | true, false | false | Enable supertype serialization |
-| `selection` | ALL, ALL_EMF, SINGLE, NONE | ALL (when enabled) | Which supertypes to include |
+| `selection` | ALL, ALL_EMF, SINGLE, NONE | SINGLE (when enabled) | Which supertypes to include |
 | `asArray` | true, false | true | Array (true) or separator-joined string (false) |
 | `separator` | any string | `,` | Separator for STRING presentation (when asArray=false) |
 | `superTypeKey` | any string | `_supertype` (PLAIN) / `supertype` (STRUCTURED) | JSON property name |
