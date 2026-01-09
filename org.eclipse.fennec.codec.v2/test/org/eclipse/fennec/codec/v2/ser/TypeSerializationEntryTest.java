@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.v2.ser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -24,9 +25,12 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
+import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import tools.jackson.core.JsonGenerator;
 
@@ -156,5 +160,76 @@ class TypeSerializationEntryTest {
         entry.serialize(createState(eObject), generator, null);
 
         verify(generator).writeStringProperty("_type", "http://example.org/test#//Person");
+    }
+
+    // ========================================================================
+    // STRUCTURED Format Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("STRUCTURED format")
+    class StructuredFormatTests {
+
+        @Test
+        @DisplayName("serializes type as nested object with schema and type")
+        void serializesTypeAsNestedObject() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify order: writeName, writeStartObject, schema, type, writeEndObject
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("schema", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("type", "Person");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("uses custom keys for structured output")
+        void usesCustomKeysForStructuredOutput() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .typeKey("@context")
+                    .schemaKey("@vocab")
+                    .nameKey("@type")
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("@context");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("@vocab", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("@type", "Person");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("getKey returns root type key for STRUCTURED format")
+        void getKeyReturnsRootTypeKeyForStructured() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .typeKey("_type")
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            assertEquals("_type", entry.getKey());
+        }
     }
 }

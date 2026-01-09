@@ -30,7 +30,7 @@ import tools.jackson.core.JsonParser;
 @DisplayName("ReferenceDeserializationEntry")
 class ReferenceDeserializationEntryTest extends DeserializationEntryTestBase {
 
-    private static final String DEFAULT_REF_KEY = "$ref";
+    private static final String DEFAULT_REF_KEY = "_ref";
 
     @Nested
     @DisplayName("Construction")
@@ -104,8 +104,8 @@ class ReferenceDeserializationEntryTest extends DeserializationEntryTestBase {
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
 
-            // JSON: {"$ref": "#/persons/1"}
-            try (JsonParser parser = createParser("{\"$ref\": \"#/persons/1\"}")) {
+            // JSON: {"_ref": "#/persons/1"}
+            try (JsonParser parser = createParser("{\"_ref\": \"#/persons/1\"}")) {
                 EffectiveFeatureConfig config = createDefaultConfig("manager", managerRef);
                 ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(config, managerRef, DEFAULT_REF_KEY);
 
@@ -126,8 +126,8 @@ class ReferenceDeserializationEntryTest extends DeserializationEntryTestBase {
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
 
-            // JSON: [{"$ref": "#/persons/1"}, {"$ref": "#/persons/2"}]
-            try (JsonParser parser = createParser("[{\"$ref\": \"#/persons/1\"}, {\"$ref\": \"#/persons/2\"}]")) {
+            // JSON: [{"_ref": "#/persons/1"}, {"_ref": "#/persons/2"}]
+            try (JsonParser parser = createParser("[{\"_ref\": \"#/persons/1\"}, {\"_ref\": \"#/persons/2\"}]")) {
                 EffectiveFeatureConfig config = createDefaultConfig("colleagues", colleaguesRef);
                 ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(config, colleaguesRef, DEFAULT_REF_KEY);
 
@@ -152,7 +152,7 @@ class ReferenceDeserializationEntryTest extends DeserializationEntryTestBase {
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
 
-            // JSON: ["#/persons/1", "#/persons/2"] - direct URI strings instead of {$ref: ...}
+            // JSON: ["#/persons/1", "#/persons/2"] - direct URI strings instead of {_ref: ...}
             try (JsonParser parser = createParser("[\"#/persons/1\", \"#/persons/2\"]")) {
                 EffectiveFeatureConfig config = createDefaultConfig("colleagues", colleaguesRef);
                 ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(config, colleaguesRef, DEFAULT_REF_KEY);
@@ -176,7 +176,7 @@ class ReferenceDeserializationEntryTest extends DeserializationEntryTestBase {
             DeserializationState state = createState(personClass);
             // Note: EObject not created yet
 
-            try (JsonParser parser = createParser("{\"$ref\": \"#/persons/1\"}")) {
+            try (JsonParser parser = createParser("{\"_ref\": \"#/persons/1\"}")) {
                 EffectiveFeatureConfig config = createDefaultConfig("manager", managerRef);
                 ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(config, managerRef, DEFAULT_REF_KEY);
 

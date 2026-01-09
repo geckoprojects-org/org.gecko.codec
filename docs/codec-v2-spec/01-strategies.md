@@ -4,9 +4,18 @@
 
 ---
 
-## 1. SerializationFormat: The Codec-Wide Format Strategy
+## 1. Two Orthogonal Dimensions: Format × Strategy
 
-This is a **fundamental, codec-wide concept** that applies uniformly to all serialization targets (type, ID, reference, supertype). Instead of defining separate format enums per target, we use a single `SerializationFormat` enum.
+Serialization is controlled by **two independent dimensions** that can be combined:
+
+1. **Format** (PLAIN | STRUCTURED) - **HOW** the data is presented
+2. **Strategy** - **WHAT** information is transported
+
+These dimensions are orthogonal and can be multiplied to produce all valid combinations.
+
+**Important:** Each serialization target (Type, ID, Reference, SuperType) has its own independent format and strategy settings. This allows mixing, e.g., Type in STRUCTURED + ID in PLAIN.
+
+### 1.1 SerializationFormat Enum
 
 ```java
 public enum SerializationFormat {
@@ -33,60 +42,67 @@ public enum SerializationFormat {
 | Format | Single Value | Array Value |
 |--------|--------------|-------------|
 | PLAIN | `"_type": "Person"` | `"_supertype": ["Entity", "Auditable"]` |
-| STRUCTURED | `"_type": { "schema": "...", "name": "..." }` | `"_supertype": [{"schema": "...", "name": "Entity"}, {"name": "Auditable"}]` |
+| STRUCTURED | `"_type": { "schema": "...", "type": "..." }` | `"_supertype": [{"schema": "...", "type": "Entity"}, {"type": "Auditable"}]` |
 
-**Format applies to each element, not the container:**
-
-The format determines how each *individual value* is represented, independent of whether it's a single value or part of an array:
-
-```json
-// PLAIN format (array of strings)
-"_supertype": ["Entity", "Auditable"]
-
-// STRUCTURED format (array of objects)
-"_supertype": [
-  { "schema": "http://example.org/base/1.0", "name": "Entity" },
-  { "name": "Auditable" }
-]
-```
-
-**Codec-wide default with per-target override:**
+### 1.2 TypeStrategy Enum
 
 ```java
-// Set codec-wide default
-CodecConfig.builder()
-    .format(SerializationFormat.STRUCTURED)  // default for all targets
-    .build();
-
-// Override for specific target
-IdSerializationConfig.builder()
-    .format(SerializationFormat.PLAIN)  // IDs stay plain
-    .build();
+public enum TypeStrategy {
+    URI,            // Full EClass URI
+    NAME,           // EClass simple name
+    CLASS,          // Java instance class name
+    NUMERIC,        // EMF classifier ID
+    MAPPED,         // Discriminator value
+    SCHEMA_AND_TYPE // Schema URI + type name (two pieces of info)
+}
 ```
 
-**Why this matters for the serializer:**
+---
 
-When the serializer builds the property map:
-- **PLAIN**: Write simple value(s) directly to the output
-- **STRUCTURED**: Create a nested map/object as the property value
+## 2. Format × Strategy Matrix for Type
 
-**Example - Type with supertypes enabled:**
+The Format and Strategy dimensions are **orthogonal** - every combination is valid:
 
-*PLAIN (SCHEMA_AND_TYPE) - each property has a simple value:*
+### 2.1 PLAIN Format
+
+| Strategy | Output Example |
+|----------|----------------|
+| URI | `"_type": "http://example.org/1.0#//Person"` |
+| NAME | `"_type": "Person"` |
+| CLASS | `"_type": "org.example.Person"` |
+| NUMERIC | `"_type": "3"` |
+| MAPPED | `"_type": "customer"` |
+| SCHEMA_AND_TYPE | `"_schema": "http://example.org/1.0", "_type": "Person"` |
+
+### 2.2 STRUCTURED Format
+
+| Strategy | Output Example |
+|----------|----------------|
+| URI | `"_type": { "uri": "http://example.org/1.0#//Person" }` |
+| NAME | `"_type": { "type": "Person" }` |
+| CLASS | `"_type": { "class": "org.example.Person" }` |
+| NUMERIC | `"_type": { "schema": "http://example.org/1.0", "classifier": 3 }` |
+| MAPPED | `"_type": { "discriminator": "customer" }` |
+| SCHEMA_AND_TYPE | `"_type": { "schema": "http://example.org/1.0", "type": "Person" }` |
+
+### 2.3 With Supertype (Optional Addition)
+
+Supertype is an **optional addition** that can be combined with any Format × Strategy:
+
+**PLAIN format with supertype:**
 ```json
 {
-  "_schema": "http://example.org/person/1.0",
   "_type": "Person",
   "_supertype": ["Entity", "Auditable"]
 }
 ```
 
-*STRUCTURED - `_type` value is a nested object containing all info:*
+**STRUCTURED format with supertype:**
 ```json
 {
   "_type": {
-    "schema": "http://example.org/person/1.0",
-    "name": "Person",
+    "schema": "http://example.org/1.0",
+    "type": "Person",
     "supertype": ["Entity", "Auditable"]
   }
 }
@@ -94,65 +110,93 @@ When the serializer builds the property map:
 
 ---
 
-## 2. Numeric IDs (Optional Optimization)
+## 3. Format × Strategy Matrix for ID
 
-NUMERIC is an optimization that can be applied **on top of** STRUCTURED format. It uses EMF classifier IDs instead of names for maximum compactness.
+The same pattern applies to ID serialization:
 
-| Setting | Output |
-|---------|--------|
-| STRUCTURED | `"_type": { "schema": "...", "name": "Person" }` |
-| STRUCTURED + numeric | `"_type": { "s": "...", "c": 3 }` |
+### 3.1 ID Strategies
 
-**Configuration:**
+| Strategy | Description |
+|----------|-------------|
+| ID_FIELD | Use features marked with `eID="true"` |
+| COMBINED | Combine multiple features with separator |
+
+### 3.2 ID Format Examples
+
+| Format | Single Feature | Multiple Features |
+|--------|----------------|-------------------|
+| PLAIN | `"_id": "john"` | `"_id": "John-Doe-1"` |
+| STRUCTURED | `"_id": { "myId": "john" }` | `"_id": { "separator": "-", "firstName": "John", "lastName": "Doe", "sequence": "1" }` |
+
+---
+
+## 4. Per-Target Format Configuration
+
+Each serialization target (Type, ID, Reference, SuperType) has its **own independent format setting**. This allows mixing formats, e.g., Type in STRUCTURED format while ID stays in PLAIN format.
+
 ```java
-CodecConfig.builder()
+// Type in STRUCTURED format
+TypeSerializationConfig typeConfig = TypeSerializationConfig.builder()
     .format(SerializationFormat.STRUCTURED)
-    .useNumericIds(true)  // applies to type and reference
+    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+    .build();
+
+// ID in PLAIN format (independent of Type)
+IdSerializationConfig idConfig = IdSerializationConfig.builder()
+    .format(SerializationFormat.PLAIN)  // default
     .build();
 ```
 
-**WARNING:** Classifier IDs are assigned based on declaration order and can change when the model evolves. Only use for transient data, not persistent storage.
+**Resulting JSON:**
+```json
+{
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person"
+  },
+  "_id": "John-Doe",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+```
+
+**Default format for all targets is PLAIN.**
 
 ---
 
-## 3. Strategy Classification
+## 5. Format Applicability per Target
 
-Strategies are classified by their output format:
-
-| Strategy | Output Format | Description |
-|----------|---------------|-------------|
-| `NAME` | Plain | EClass simple name as string |
-| `CLASS` | Plain | Instance class name as string |
-| `URI` | Plain | Full EClass URI as string |
-| `MAPPED` | Plain | Discriminator value as string |
-| `SCHEMA_AND_TYPE` | Plain | Separate top-level fields, each with simple values |
-| `STRUCTURED` | Structured | Nested object with schema, name, etc. |
-| `NUMERIC` | Structured | Nested object with numeric IDs |
+| Target | PLAIN Output | STRUCTURED Output |
+|--------|--------------|-------------------|
+| Type | `"_type": "Person"` | `"_type": {"schema": "...", "type": "..."}` |
+| ID | `"_id": "John-Doe"` | `"_id": {"firstName": "John", ...}` |
+| Reference | `"_ref": "acme-corp"` | `"_ref": {"_type": "...", "uri": "..."}` |
+| SuperType | `["Entity", "Auditable"]` | `[{"schema": "...", "type": "Entity"}, ...]` |
 
 ---
 
-## 4. Format Applicability per Target
+## 6. Numeric Optimization
 
-All targets use the unified `SerializationFormat` enum (PLAIN, STRUCTURED). The table below shows what each format produces:
+NUMERIC strategy uses EMF classifier IDs instead of names for compactness:
 
-| Target | PLAIN Output | STRUCTURED Output | Numeric Option |
-|--------|--------------|-------------------|----------------|
-| Type | `"_type": "Person"` | `"_type": {"schema": "...", "name": "..."}` | `{"s": "...", "c": 3}` |
-| ID | `"_id": "John-Doe"` | `"_id": {"firstName": "John", ...}` | N/A |
-| Reference | `"employer": "acme-corp"` | `"employer": {"_type": "...", "_ref": "..."}` | Uses numeric type |
-| SuperType | `["Entity", "Auditable"]` | `[{"schema": "...", "name": "Entity"}, ...]` | N/A |
+| Format | Strategy | Output |
+|--------|----------|--------|
+| PLAIN | NUMERIC | `"_type": "3"` |
+| STRUCTURED | NUMERIC | `"_type": { "schema": "http://...", "classifier": 3 }` |
 
-**Type strategies vs SerializationFormat:**
+**WARNING:** Classifier IDs are positional and can change when the model evolves. Only use for transient data, not persistent storage.
 
-For **Type**, the specific strategy (NAME, CLASS, URI, MAPPED, SCHEMA_AND_TYPE) determines *what* plain string to use. These are all PLAIN format variations. STRUCTURED format uses schema+name objects.
+---
 
-| Strategy | Format | Output |
-|----------|--------|--------|
-| NAME | PLAIN | `"_type": "Person"` |
-| CLASS | PLAIN | `"_type": "org.example.Person"` |
-| URI | PLAIN | `"_type": "http://...#//Person"` |
-| SCHEMA_AND_TYPE | PLAIN | `"_schema": "...", "_type": "Person"` |
-| STRUCTURED | STRUCTURED | `"_type": {"schema": "...", "name": "..."}` |
+## 7. Key Configuration
+
+Keys differ between PLAIN and STRUCTURED format per [Key Configuration](02-key-configuration.md):
+
+| Target | PLAIN Key | STRUCTURED Outer Key | STRUCTURED Inner Keys |
+|--------|-----------|---------------------|----------------------|
+| Type | `_type` | `_type` | `schema`, `type`, `supertype` |
+| ID | `_id` | `_id` | feature names, `separator` |
+| Reference | `_ref` | `_ref` | `uri`, `_type` |
 
 ---
 

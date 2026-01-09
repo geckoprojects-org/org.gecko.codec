@@ -349,7 +349,7 @@ class CodecResourceRoundTripTest {
             // Serialize
             String json = serialize(company);
             assertTrue(json.contains("\"ceo\""), "JSON should contain ceo field");
-            assertTrue(json.contains("$ref"), "JSON should contain $ref for non-containment reference");
+            assertTrue(json.contains("_ref"), "JSON should contain $ref for non-containment reference");
 
             // Deserialize
             EObject loaded = deserialize(json, companyClass);

@@ -401,8 +401,6 @@ public class CodecAspectProvider implements AspectProvider {
                 return TypeStrategy.URI;
             case "MAPPED":
                 return TypeStrategy.MAPPED;
-            case "STRUCTURED":
-                return TypeStrategy.STRUCTURED;
             case "SCHEMA_AND_TYPE":
                 return TypeStrategy.SCHEMA_AND_TYPE;
             case "NUMERIC":

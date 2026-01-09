@@ -2,23 +2,42 @@
 
 [← Back to Overview](00-overview.md) | [← Global Configuration Options](04-global-options.md)
 
-> **See also:** [Key Configuration](02-key-configuration.md) for the complete key naming conventions.
+> **See also:**
+> - [Serialization Strategies](01-strategies.md) for the Format × Strategy matrix
+> - [Key Configuration](02-key-configuration.md) for the complete key naming conventions
 
 ---
 
-## 1. Type Strategies
+## 1. Format × Strategy for Type
 
-### 1.1 Plain Strategies (string value for `_type`)
+Type serialization uses **two orthogonal dimensions** (see [Serialization Strategies](01-strategies.md)):
 
-| Strategy | Value | Example |
-|----------|-------|---------|
-| `NAME` | EClass name | `"_type": "Person"` |
-| `CLASS` | Instance class name | `"_type": "org.example.Person"` |
-| `URI` | Full EClass URI | `"_type": "http://example.org/person/1.0#//Person"` |
-| `MAPPED` | Discriminator value | `"_type": "customer"` |
-| `SCHEMA_AND_TYPE` | Name + separate schema field | `"_schema": "...", "_type": "Person"` |
+1. **Format**: PLAIN | STRUCTURED - how the data is presented
+2. **Strategy**: URI | NAME | CLASS | NUMERIC | MAPPED | SCHEMA_AND_TYPE - what information is transported
 
-### 1.2 MAPPED Strategy (Discriminator-Based Polymorphism)
+### 1.1 PLAIN Format Examples
+
+| Strategy | Output Example |
+|----------|----------------|
+| URI | `"_type": "http://example.org/person/1.0#//Person"` |
+| NAME | `"_type": "Person"` |
+| CLASS | `"_type": "org.example.Person"` |
+| NUMERIC | `"_type": "3"` |
+| MAPPED | `"_type": "customer"` |
+| SCHEMA_AND_TYPE | `"_schema": "http://example.org/person/1.0", "_type": "Person"` |
+
+### 1.2 STRUCTURED Format Examples
+
+| Strategy | Output Example |
+|----------|----------------|
+| URI | `"_type": { "uri": "http://example.org/person/1.0#//Person" }` |
+| NAME | `"_type": { "type": "Person" }` |
+| CLASS | `"_type": { "class": "org.example.Person" }` |
+| NUMERIC | `"_type": { "schema": "http://example.org/person/1.0", "classifier": 3 }` |
+| MAPPED | `"_type": { "discriminator": "customer" }` |
+| SCHEMA_AND_TYPE | `"_type": { "schema": "http://example.org/person/1.0", "type": "Person" }` |
+
+### 1.3 MAPPED Strategy (Discriminator-Based Polymorphism)
 
 The MAPPED strategy enables type discrimination based on a value found within the data itself, rather than an explicit type field. This is particularly useful for:
 - **IoT/LoRaWAN devices** - where device type is embedded in payload metadata
@@ -78,10 +97,11 @@ TypeResolutionConfig.builder()
 
 The deserializer checks which features are present and matches against the type map.
 
-### 1.3 SCHEMA_AND_TYPE Strategy (Plain)
+### 1.4 SCHEMA_AND_TYPE Strategy
 
-Split into separate top-level fields (each value is a simple string):
+The SCHEMA_AND_TYPE strategy transports both schema URI and type name as separate pieces of information.
 
+**PLAIN format** - two separate top-level fields:
 ```json
 {
   "_schema": "http://example.org/person/1.0",
@@ -89,46 +109,48 @@ Split into separate top-level fields (each value is a simple string):
 }
 ```
 
-**Configurable keys:**
-- `schemaKey`: schema field (default: `_schema`)
-- `typeKey`: type field (default: `_type`)
-
-### 1.4 Structured Strategies (object value for `_type`)
-
-#### STRUCTURED Strategy
-
-Nested object containing type details:
-
+**STRUCTURED format** - nested object with both:
 ```json
 {
   "_type": {
     "schema": "http://example.org/person/1.0",
-    "type": "Person",
-    "supertype": ["Entity", "Auditable"]
+    "type": "Person"
   }
 }
 ```
 
-**Configurable keys:**
-- `rootTypeKey`: outer container key (default: `_type`)
+**Configurable keys (PLAIN):**
+- `schemaKey`: schema field (default: `_schema`)
+- `typeKey`: type field (default: `_type`)
+
+**Configurable keys (STRUCTURED):**
+- `typeKey`: outer container key (default: `_type`)
 - `schemaKey`: schema field inside object (default: `schema`)
-- `typeKey`: type name field inside object (default: `type`)
+- `nameKey`: type name field inside object (default: `type`)
 - `superTypeKey`: supertype field inside object (default: `supertype`, optional)
 
-#### NUMERIC Strategy
+### 1.5 NUMERIC Strategy
 
-Nested object with schema URI and numeric classifier ID:
+The NUMERIC strategy uses EMF classifier IDs instead of type names for compactness.
 
+**PLAIN format** - just the classifier ID as string:
 ```json
 {
-  "_type": { "s": "http://example.org/person/1.0", "c": 3 }
+  "_type": "3"
 }
 ```
 
-**Configurable keys:**
+**STRUCTURED format** - schema + classifier ID:
+```json
+{
+  "_type": { "schema": "http://example.org/person/1.0", "classifier": 3 }
+}
+```
+
+**Configurable keys (STRUCTURED):**
 - `typeKey`: outer key (default: `_type`)
-- `schemaKey`: schema field (default: `s`)
-- `classifierKey`: classifier ID field (default: `c`)
+- `schemaKey`: schema field (default: `schema`)
+- `classifierKey`: classifier ID field (default: `classifier`)
 
 > **Warning:** Classifier IDs are positional and can change when the model evolves. See [Global Options - NUMERIC Strategy](02-global-options.md#21-numeric-strategy---compatibility-warning) for details.
 
@@ -156,7 +178,7 @@ This is compact yet unambiguous - `Entity` is from `http://example.org/person/1.
 
 ## 3. Type Configuration
 
-The configuration defines **keys and format**, not actual values. Values come from the EObject at runtime.
+The configuration defines **format, strategy, and keys** - not actual values. Values come from the EObject at runtime.
 
 ### 3.1 EAnnotation (on EClass)
 
@@ -164,7 +186,8 @@ The configuration defines **keys and format**, not actual values. Values come fr
 <eClassifiers xsi:type="ecore:EClass" name="Person">
   <eAnnotations source="http://eclipse.org/fennec/codec">
     <details key="codec.type"/>
-    <details key="strategy" value="STRUCTURED"/>
+    <details key="format" value="STRUCTURED"/>
+    <details key="strategy" value="SCHEMA_AND_TYPE"/>
     <details key="typeKey" value="_type"/>
     <details key="include" value="true"/>
   </eAnnotations>
@@ -174,15 +197,18 @@ The configuration defines **keys and format**, not actual values. Values come fr
 **Annotation Details:**
 | Key | Values | Default | Description |
 |-----|--------|---------|-------------|
-| `strategy` | NAME, CLASS, URI, MAPPED, STRUCTURED, SCHEMA_AND_TYPE, NUMERIC | URI | Type serialization strategy |
-| `rootTypeKey` | any string | `_type` | Container key (STRUCTURED) / type key (PLAIN) |
+| `format` | PLAIN, STRUCTURED | PLAIN | How data is presented (flat vs nested) |
+| `strategy` | URI, NAME, CLASS, NUMERIC, MAPPED, SCHEMA_AND_TYPE | URI | What type information to transport |
 | `include` | true, false | true | Whether to include type info |
+| `includeSupertypes` | true, false | false | Whether to include supertype info |
+| `typeKey` | any string | `_type` | Outer key (both formats) |
 | `schemaKey` | any string | `_schema` (PLAIN) / `schema` (STRUCTURED) | Key for schema |
-| `typeKey` | any string | `_type` (PLAIN) / `type` (STRUCTURED) | Key for type name |
+| `nameKey` | any string | `type` (STRUCTURED only) | Key for type name inside object |
+| `superTypeKey` | any string | `supertype` | Key for supertype array |
 
 ### 3.2 Java Builder (Runtime Override)
 
-**Minimal (default: URI strategy):**
+**Minimal (default: PLAIN format, URI strategy):**
 ```java
 TypeSerializationConfig config = TypeSerializationConfig.builder().build();
 ```
@@ -193,10 +219,25 @@ TypeSerializationConfig config = TypeSerializationConfig.builder().build();
 }
 ```
 
-**STRUCTURED format:**
+**PLAIN format with NAME strategy:**
 ```java
 TypeSerializationConfig config = TypeSerializationConfig.builder()
-    .structured()
+    .format(SerializationFormat.PLAIN)
+    .strategy(TypeStrategy.NAME)
+    .build();
+```
+**Resulting JSON:**
+```json
+{
+  "_type": "Person"
+}
+```
+
+**STRUCTURED format with SCHEMA_AND_TYPE strategy:**
+```java
+TypeSerializationConfig config = TypeSerializationConfig.builder()
+    .format(SerializationFormat.STRUCTURED)
+    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
     .build();
 ```
 **Resulting JSON:**
@@ -209,10 +250,11 @@ TypeSerializationConfig config = TypeSerializationConfig.builder()
 }
 ```
 
-**STRUCTURED with supertypes:**
+**STRUCTURED format with supertypes:**
 ```java
 TypeSerializationConfig config = TypeSerializationConfig.builder()
-    .structured()
+    .format(SerializationFormat.STRUCTURED)
+    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
     .includeSupertypes(true)
     .build();
 ```
@@ -230,10 +272,11 @@ TypeSerializationConfig config = TypeSerializationConfig.builder()
 **With custom keys:**
 ```java
 TypeSerializationConfig config = TypeSerializationConfig.builder()
-    .structured()
-    .rootTypeKey("@context")
+    .format(SerializationFormat.STRUCTURED)
+    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+    .typeKey("@context")
     .schemaKey("@vocab")
-    .typeKey("@type")
+    .nameKey("@type")
     .build();
 ```
 **Resulting JSON:**
@@ -248,25 +291,39 @@ TypeSerializationConfig config = TypeSerializationConfig.builder()
 
 **At serialization time:**
 1. Serializer reads `TypeSerializationConfig` from options (Java or JSON)
-2. Extracts actual values from EObject's EClass (schema URI, name, supertypes)
-3. Combines config (keys/format) + EObject data (values) → JSON output
+2. Determines output structure from `format` (PLAIN vs STRUCTURED)
+3. Determines content from `strategy` (URI, NAME, SCHEMA_AND_TYPE, etc.)
+4. Extracts actual values from EObject's EClass (schema URI, name, supertypes)
+5. Combines config (format/strategy/keys) + EObject data (values) → JSON output
 
 ---
 
 ## 4. Default Type Settings
 
-| Setting | PLAIN Default | STRUCTURED Default |
-|---------|---------------|-------------------|
-| Strategy | `URI` | `STRUCTURED` |
-| Root Type Key | - | `_type` |
-| Type Key | `_type` | `type` |
-| Schema Key | `_schema` | `schema` |
-| Include | `true` | `true` |
+| Setting | Default Value | Description |
+|---------|---------------|-------------|
+| Format | `PLAIN` | Output as flat key-value |
+| Strategy | `URI` | Full EClass URI |
+| Type Key | `_type` | Outer key for type info |
+| Schema Key | `_schema` (PLAIN) / `schema` (STRUCTURED) | Key for schema |
+| Name Key | `type` (STRUCTURED only) | Key for type name inside object |
+| Include | `true` | Whether to include type info |
+| Include Supertypes | `false` | Whether to include supertype info |
 
-**Default Output:**
+**Default Output (PLAIN + URI):**
 ```json
 {
   "_type": "http://example.org/person/1.0#//Person"
+}
+```
+
+**STRUCTURED + SCHEMA_AND_TYPE Output:**
+```json
+{
+  "_type": {
+    "schema": "http://example.org/person/1.0",
+    "type": "Person"
+  }
 }
 ```
 
@@ -276,37 +333,25 @@ TypeSerializationConfig config = TypeSerializationConfig.builder()
 
 ### 5.1 Format Detection
 
-Deserializers MUST detect the format used and handle accordingly:
+Deserializers detect the format from the JSON structure:
 
-| Input | Detection |
-|-------|-----------|
-| `"_type": "string"` | PLAIN (detect NAME/CLASS/URI/MAPPED by content) |
-| `"_type": { ... }` | STRUCTURED |
-| `"_schema": ..., "_type": ...` | SCHEMA_AND_TYPE |
+| Input | Detected Format | Strategy Detection |
+|-------|-----------------|-------------------|
+| `"_type": "string"` | PLAIN | Detect by content: URI (contains `#//`), CLASS (contains `.`), NAME/MAPPED (simple string) |
+| `"_type": { ... }` | STRUCTURED | Read inner keys to determine strategy |
+| `"_schema": ..., "_type": "string"` | PLAIN | SCHEMA_AND_TYPE strategy (two separate fields) |
 
-### 5.2 Backward Compatibility
+### 5.2 Type Resolution
 
-Deserializers MUST support reading:
-- V1 format (always PLAIN)
-- V2 PLAIN format
-- V2 STRUCTURED format
-- V2 SCHEMA_AND_TYPE format
+The deserializer resolves the EClass based on the detected format and strategy:
 
-The deserializer should auto-detect the format regardless of codec configuration.
-
-### 5.3 Type Resolution
-
-**Default Behavior (URI strategy):**
-
-When type information IS present in the content (the default case with `include=true` and `strategy=URI`), the deserializer resolves the EClass automatically:
-
-1. Read type information (any format: PLAIN, STRUCTURED, SCHEMA_AND_TYPE)
-2. Extract schema/namespace URI and class name
+1. Detect format (PLAIN or STRUCTURED) from JSON structure
+2. Extract type information based on strategy
 3. Lookup EPackage in MetadataService by namespace URI
 4. Resolve EClass by name within the package
 5. Create and populate EObject
 
-**Example with URI strategy (default):**
+**Example (PLAIN + URI):**
 ```json
 {
   "_type": "http://example.org/person/1.0#//Person",
@@ -315,14 +360,23 @@ When type information IS present in the content (the default case with `include=
 ```
 The deserializer extracts `http://example.org/person/1.0` as namespace URI and `Person` as class name.
 
-### 5.4 CODEC_ROOT_OBJECT Option
+**Example (STRUCTURED + SCHEMA_AND_TYPE):**
+```json
+{
+  "_type": {
+    "schema": "http://example.org/person/1.0",
+    "type": "Person"
+  },
+  "name": "John"
+}
+```
 
-The `CODEC_ROOT_OBJECT` option specifies the expected root EClass for deserialization. This option is:
+### 5.3 CODEC_ROOT_OBJECT Option
+
+The `CODEC_ROOT_OBJECT` option specifies the expected root EClass for deserialization.
 
 **Required when:**
 - Type information is NOT present in the content (`include=false` was used during serialization)
-- Type serialization is globally disabled
-- The content was produced by a system that doesn't include type metadata
 
 **Optional when:**
 - Type information IS present in the content (default behavior)
@@ -335,9 +389,7 @@ options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getP
 resource.load(inputStream, options);
 ```
 
-### 5.5 Type Resolution Rules
-
-#### Content Type vs Hint Type
+### 5.4 Type Resolution Rules
 
 | Content has `_type` | `CODEC_ROOT_OBJECT` set | Behavior |
 |---------------------|-------------------------|----------|
@@ -345,8 +397,6 @@ resource.load(inputStream, options);
 | Yes | Yes | Use content type, warn if differs from hint |
 | No | Yes | Use hint type |
 | No | No | **ERROR**: Cannot determine type |
-
-#### Type Collision Warning
 
 When both content type and hint are present but differ:
 - Log a WARNING

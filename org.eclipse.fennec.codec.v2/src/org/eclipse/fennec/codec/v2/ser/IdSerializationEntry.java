@@ -95,11 +95,27 @@ public class IdSerializationEntry implements SerializationEntry {
 
     /**
      * Serializes ID in PLAIN format (combined string with separator).
+     * <p>
+     * Output format (with serializeSeparator=true, multiple features):
+     * <pre>
+     * "_id": "John-Doe",
+     * "_separator": "-"
+     * </pre>
+     * Output format (with serializeSeparator=false or single feature):
+     * <pre>
+     * "_id": "John-Doe"
+     * </pre>
+     * </p>
      */
     private void serializePlain(JsonGenerator gen, Map<String, Object> idValues) {
         String combinedValue = combineValues(idValues);
         if (combinedValue != null) {
             gen.writeStringProperty(config.getKey(), combinedValue);
+
+            // Write separator field if enabled and multiple features
+            if (config.isSerializeSeparator() && idValues.size() > 1) {
+                gen.writeStringProperty(config.getEffectiveSeparatorKey(), config.getSeparator());
+            }
         }
     }
 
@@ -109,7 +125,7 @@ public class IdSerializationEntry implements SerializationEntry {
      * Output format (with serializeSeparator=true, multiple features):
      * <pre>
      * "_id": {
-     *   "_separator": "-",
+     *   "separator": "-",
      *   "firstName": "John",
      *   "lastName": "Doe"
      * }
@@ -129,7 +145,7 @@ public class IdSerializationEntry implements SerializationEntry {
 
         // Write separator first if enabled and multiple features
         if (config.isSerializeSeparator() && idValues.size() > 1) {
-            gen.writeStringProperty(config.getSeparatorKey(), config.getSeparator());
+            gen.writeStringProperty(config.getEffectiveSeparatorKey(), config.getSeparator());
         }
 
         // Write each ID feature

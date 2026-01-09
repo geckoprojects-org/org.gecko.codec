@@ -88,6 +88,15 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int TYPE_SERIALIZATION_CONFIG = 0;
 
 	/**
+	 * The feature id for the '<em><b>Format</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TYPE_SERIALIZATION_CONFIG__FORMAT = MetadataPackage.BASE_TYPE_CONFIG__FORMAT;
+
+	/**
 	 * The feature id for the '<em><b>Strategy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -52,7 +52,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("returns key from config")
         void returnsKeyFromConfig() {
             EffectiveFeatureConfig config = createDefaultConfig("address", addressRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "_ref");
             assertEquals("address", entry.getKey());
         }
 
@@ -60,7 +60,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("returns custom key from config")
         void returnsCustomKeyFromConfig() {
             EffectiveFeatureConfig config = createDefaultConfig("homeAddress", addressRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "_ref");
             assertEquals("homeAddress", entry.getKey());
         }
     }
@@ -78,7 +78,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
                     .serialize(false)
                     .build();
 
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "_ref");
             EObject person = createPerson();
 
             assertFalse(entry.shouldSerialize(createState(person)));
@@ -88,7 +88,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("returns false for null value by default")
         void returnsFalseForNullValueByDefault() {
             EffectiveFeatureConfig config = createDefaultConfig("address", addressRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "_ref");
 
             EObject person = createPerson();
             // address is null by default
@@ -106,7 +106,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
                     .serializeNull(true)
                     .build();
 
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "_ref");
 
             EObject person = createPerson();
             // address is null by default
@@ -118,7 +118,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("returns false for empty list by default")
         void returnsFalseForEmptyListByDefault() {
             EffectiveFeatureConfig config = createDefaultConfig("friends", friendsRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, friendsRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, friendsRef, "_ref");
 
             EObject person = createPerson();
             // friends is empty by default
@@ -136,7 +136,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
                     .serializeEmpty(true)
                     .build();
 
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, friendsRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, friendsRef, "_ref");
 
             EObject person = createPerson();
             // friends is empty by default
@@ -148,7 +148,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("returns true for non-null reference")
         void returnsTrueForNonNullReference() {
             EffectiveFeatureConfig config = createDefaultConfig("address", addressRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "_ref");
 
             EObject person = createPerson();
             EObject address = createAddress("123 Main St", "Springfield");
@@ -161,7 +161,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("returns true for non-empty list")
         void returnsTrueForNonEmptyList() {
             EffectiveFeatureConfig config = createDefaultConfig("friends", friendsRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, friendsRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, friendsRef, "_ref");
 
             EObject person = createPerson("John");
             EObject friend = createPerson("Jane");
@@ -181,7 +181,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("writes null property when value is null")
         void writesNullPropertyWhenValueNull() {
             EffectiveFeatureConfig config = createDefaultConfig("address", addressRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "_ref");
 
             EObject person = createPerson();
             // address is null by default
@@ -195,7 +195,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("serializes containment reference inline")
         void serializesContainmentReferenceInline() {
             EffectiveFeatureConfig config = createDefaultConfig("address", addressRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "_ref");
 
             EObject person = createPerson();
             EObject address = createAddress("123 Main St", "Springfield");
@@ -208,10 +208,10 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         }
 
         @Test
-        @DisplayName("serializes non-containment reference as $ref object")
+        @DisplayName("serializes non-containment reference as _ref object")
         void serializesNonContainmentAsRef() {
             EffectiveFeatureConfig config = createDefaultConfig("manager", managerRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, managerRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, managerRef, "_ref");
 
             EObject person = createPerson("John");
             EObject manager = createPerson("Boss");
@@ -223,7 +223,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
             verify(generator).writeName("manager");
             verify(generator).writeStartObject();
             // The ref will be the EClass URI since there's no resource
-            verify(generator).writeStringProperty("$ref", "http://test.example.org/serialization/1.0#//Person");
+            verify(generator).writeStringProperty("_ref", "http://test.example.org/serialization/1.0#//Person");
             verify(generator).writeEndObject();
         }
 
@@ -231,7 +231,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("serializes multi-valued containment as array")
         void serializesMultiValuedContainmentAsArray() {
             EffectiveFeatureConfig config = createDefaultConfig("friends", friendsRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, friendsRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, friendsRef, "_ref");
 
             EObject person = createPerson("John");
             EObject friend1 = createPerson("Jane");
@@ -255,7 +255,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("serializes multi-valued non-containment as array of refs")
         void serializesMultiValuedNonContainmentAsArrayOfRefs() {
             EffectiveFeatureConfig config = createDefaultConfig("colleagues", colleaguesRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, colleaguesRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, colleaguesRef, "_ref");
 
             EObject person = createPerson("John");
             EObject colleague1 = createPerson("Alice");
@@ -293,7 +293,7 @@ class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
         @DisplayName("writes custom key from config")
         void writesCustomKeyFromConfig() {
             EffectiveFeatureConfig config = createDefaultConfig("homeAddress", addressRef);
-            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "$ref");
+            ReferenceSerializationEntry entry = new ReferenceSerializationEntry(config, addressRef, "_ref");
 
             EObject person = createPerson();
             EObject address = createAddress("456 Oak Ave", "Shelbyville");

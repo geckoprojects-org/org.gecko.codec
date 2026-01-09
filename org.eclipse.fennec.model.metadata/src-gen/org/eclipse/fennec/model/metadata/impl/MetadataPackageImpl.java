@@ -268,7 +268,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseTypeConfig_Strategy() {
+	public EAttribute getBaseTypeConfig_Format() {
 		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -278,7 +278,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseTypeConfig_Include() {
+	public EAttribute getBaseTypeConfig_Strategy() {
 		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -288,7 +288,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseTypeConfig_TypeKey() {
+	public EAttribute getBaseTypeConfig_Include() {
 		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -298,7 +298,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseTypeConfig_SchemaKey() {
+	public EAttribute getBaseTypeConfig_TypeKey() {
 		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -308,8 +308,18 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseTypeConfig_NameKey() {
+	public EAttribute getBaseTypeConfig_SchemaKey() {
 		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseTypeConfig_NameKey() {
+		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -1052,6 +1062,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 
 		// Create classes and their features
 		baseTypeConfigEClass = createEClass(BASE_TYPE_CONFIG);
+		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__FORMAT);
 		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__STRATEGY);
 		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__INCLUDE);
 		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__TYPE_KEY);
@@ -1180,6 +1191,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(baseTypeConfigEClass, BaseTypeConfig.class, "BaseTypeConfig", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getBaseTypeConfig_Format(), this.getSerializationFormat(), "format", "PLAIN", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseTypeConfig_Strategy(), this.getTypeStrategy(), "strategy", "URI", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseTypeConfig_Include(), ecorePackage.getEBoolean(), "include", "true", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseTypeConfig_TypeKey(), ecorePackage.getEString(), "typeKey", "_type", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1274,7 +1286,6 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.CLASS);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.URI);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.MAPPED);
-		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.STRUCTURED);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.SCHEMA_AND_TYPE);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.NUMERIC);
 

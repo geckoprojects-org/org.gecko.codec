@@ -6,8 +6,11 @@
     Test model for deserialization entry tests.
 
     Classes:
-      - Person (main test class with attributes)
+      - Person (main test class with attributes, single string ID)
       - Address (for containment reference)
+      - MultiIdPerson (for combined ID tests with firstName + lastName)
+      - IntIdEntity (for integer ID type conversion)
+      - LongIdEntity (for long ID type conversion)
 
     Features tested:
       - Single-valued attributes (name, age, active, score)
@@ -16,6 +19,8 @@
       - Multi-valued containment reference (friends)
       - Non-containment reference (manager)
       - Multi-valued non-containment reference (colleagues)
+      - Combined ID (firstName + lastName)
+      - ID type conversion (int, long)
   -->
 
   <!-- Address - target for containment references -->
@@ -49,6 +54,25 @@
 
     <!-- Non-containment reference (multi-valued) -->
     <eStructuralFeatures xsi:type="ecore:EReference" name="colleagues" upperBound="-1" eType="#//Person"/>
+  </eClassifiers>
+
+  <!-- MultiIdPerson - for combined ID tests (firstName + lastName) -->
+  <eClassifiers xsi:type="ecore:EClass" name="MultiIdPerson">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="firstName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="email" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- IntIdEntity - for integer ID type conversion tests -->
+  <eClassifiers xsi:type="ecore:EClass" name="IntIdEntity">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- LongIdEntity - for long ID type conversion tests -->
+  <eClassifiers xsi:type="ecore:EClass" name="LongIdEntity">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong" iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
 </ecore:EPackage>

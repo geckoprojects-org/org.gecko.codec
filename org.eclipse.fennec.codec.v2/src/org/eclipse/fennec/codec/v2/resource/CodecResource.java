@@ -331,24 +331,29 @@ public class CodecResource extends ResourceImpl {
      * Resolves unresolved non-containment references after deserialization.
      * <p>
      * References can be resolved within this resource (using URI fragments)
-     * or to external resources (using full URIs).
+     * or to external resources (using full URIs). Proxies with the same URI
+     * share the same instance to ensure consistent object identity.
      * </p>
      *
      * @param unresolvedReferences the list of unresolved references to resolve
      */
     @SuppressWarnings("unchecked")
     private void resolveReferences(List<UnresolvedReference> unresolvedReferences) {
-        for (UnresolvedReference unresolved : unresolvedReferences) {
-            EObject target = resolveReference(unresolved.getTargetUri());
+        // Cache for proxy instances - ensures same URI yields same proxy instance
+        Map<String, EObject> proxyCache = new HashMap<>();
 
-            // If resolution fails, create a proxy
+        for (UnresolvedReference unresolved : unresolvedReferences) {
+            String targetUri = unresolved.getTargetUri();
+            EObject target = resolveReference(targetUri);
+
+            // If resolution fails, create or reuse a proxy
             if (isNull(target)) {
-                target = createProxy(unresolved);
+                target = proxyCache.computeIfAbsent(targetUri, uri -> createProxy(unresolved));
                 if (isNull(target)) {
                     LOGGER.warning(() -> String.format(
                             "Could not resolve or create proxy for reference %s -> %s",
                             unresolved.getReference().getName(),
-                            unresolved.getTargetUri()));
+                            targetUri));
                     continue;
                 }
             }

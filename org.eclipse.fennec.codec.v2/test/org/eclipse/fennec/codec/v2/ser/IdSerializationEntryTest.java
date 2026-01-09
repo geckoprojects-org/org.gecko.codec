@@ -16,9 +16,13 @@ package org.eclipse.fennec.codec.v2.ser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -27,9 +31,12 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveIdConfig;
+import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import tools.jackson.core.JsonGenerator;
 
@@ -184,5 +191,239 @@ class IdSerializationEntryTest {
         entry.serialize(createState(eObject), generator, null);
 
         verify(generator).writeStringProperty("_id", "//@items.0");
+    }
+
+    // ========================================================================
+    // Multiple ID Features Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Multiple ID Features")
+    class MultipleIdFeaturesTests {
+
+        private EClass multiIdClass;
+        private EAttribute firstNameAttr;
+        private EAttribute lastNameAttr;
+
+        @BeforeEach
+        void setUpMultiId() {
+            multiIdClass = EcoreFactory.eINSTANCE.createEClass();
+            multiIdClass.setName("Person");
+
+            firstNameAttr = EcoreFactory.eINSTANCE.createEAttribute();
+            firstNameAttr.setName("firstName");
+            firstNameAttr.setEType(EcorePackage.Literals.ESTRING);
+            multiIdClass.getEStructuralFeatures().add(firstNameAttr);
+
+            lastNameAttr = EcoreFactory.eINSTANCE.createEAttribute();
+            lastNameAttr.setName("lastName");
+            lastNameAttr.setEType(EcorePackage.Literals.ESTRING);
+            multiIdClass.getEStructuralFeatures().add(lastNameAttr);
+        }
+
+        @Test
+        @DisplayName("PLAIN format combines multiple features with separator")
+        void plainFormatCombinesMultipleFeaturesWithSeparator() {
+            EObject eObject = mock(EObject.class);
+            when(eObject.eClass()).thenReturn(multiIdClass);
+            when(eObject.eGet(firstNameAttr)).thenReturn("John");
+            when(eObject.eGet(lastNameAttr)).thenReturn("Doe");
+
+            EffectiveIdConfig config = EffectiveIdConfig.builder()
+                    .enabled(true)
+                    .key("_id")
+                    .format(SerializationFormat.PLAIN)
+                    .separator("-")
+                    .idFeatures(List.of("firstName", "lastName"))
+                    .build();
+
+            IdSerializationEntry entry = new IdSerializationEntry(config, multiIdClass);
+            entry.serialize(createState(eObject), generator, null);
+
+            verify(generator).writeStringProperty("_id", "John-Doe");
+        }
+
+        @Test
+        @DisplayName("PLAIN format writes separator field when serializeSeparator=true")
+        void plainFormatWritesSeparatorField() {
+            EObject eObject = mock(EObject.class);
+            when(eObject.eClass()).thenReturn(multiIdClass);
+            when(eObject.eGet(firstNameAttr)).thenReturn("John");
+            when(eObject.eGet(lastNameAttr)).thenReturn("Doe");
+
+            EffectiveIdConfig config = EffectiveIdConfig.builder()
+                    .enabled(true)
+                    .key("_id")
+                    .format(SerializationFormat.PLAIN)
+                    .separator("-")
+                    .serializeSeparator(true)
+                    .idFeatures(List.of("firstName", "lastName"))
+                    .build();
+
+            IdSerializationEntry entry = new IdSerializationEntry(config, multiIdClass);
+            entry.serialize(createState(eObject), generator, null);
+
+            verify(generator).writeStringProperty("_id", "John-Doe");
+            verify(generator).writeStringProperty("_separator", "-");
+        }
+
+        @Test
+        @DisplayName("PLAIN format does not write separator field when serializeSeparator=false")
+        void plainFormatDoesNotWriteSeparatorFieldWhenDisabled() {
+            EObject eObject = mock(EObject.class);
+            when(eObject.eClass()).thenReturn(multiIdClass);
+            when(eObject.eGet(firstNameAttr)).thenReturn("John");
+            when(eObject.eGet(lastNameAttr)).thenReturn("Doe");
+
+            EffectiveIdConfig config = EffectiveIdConfig.builder()
+                    .enabled(true)
+                    .key("_id")
+                    .format(SerializationFormat.PLAIN)
+                    .separator("-")
+                    .serializeSeparator(false)
+                    .idFeatures(List.of("firstName", "lastName"))
+                    .build();
+
+            IdSerializationEntry entry = new IdSerializationEntry(config, multiIdClass);
+            entry.serialize(createState(eObject), generator, null);
+
+            verify(generator).writeStringProperty("_id", "John-Doe");
+            verify(generator, never()).writeStringProperty("_separator", "-");
+        }
+    }
+
+    // ========================================================================
+    // STRUCTURED Format Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("STRUCTURED format")
+    class StructuredFormatTests {
+
+        private EClass multiIdClass;
+        private EAttribute firstNameAttr;
+        private EAttribute lastNameAttr;
+
+        @BeforeEach
+        void setUpMultiId() {
+            multiIdClass = EcoreFactory.eINSTANCE.createEClass();
+            multiIdClass.setName("Person");
+
+            firstNameAttr = EcoreFactory.eINSTANCE.createEAttribute();
+            firstNameAttr.setName("firstName");
+            firstNameAttr.setEType(EcorePackage.Literals.ESTRING);
+            multiIdClass.getEStructuralFeatures().add(firstNameAttr);
+
+            lastNameAttr = EcoreFactory.eINSTANCE.createEAttribute();
+            lastNameAttr.setName("lastName");
+            lastNameAttr.setEType(EcorePackage.Literals.ESTRING);
+            multiIdClass.getEStructuralFeatures().add(lastNameAttr);
+        }
+
+        @Test
+        @DisplayName("serializes single ID as nested object")
+        void serializesSingleIdAsNestedObject() {
+            EObject eObject = mock(EObject.class);
+            when(eObject.eClass()).thenReturn(testEClass);
+            when(eObject.eGet(idAttribute)).thenReturn("john");
+
+            EffectiveIdConfig config = EffectiveIdConfig.builder()
+                    .enabled(true)
+                    .key("_id")
+                    .format(SerializationFormat.STRUCTURED)
+                    .build();
+
+            IdSerializationEntry entry = new IdSerializationEntry(config, testEClass);
+            entry.serialize(createState(eObject), generator, null);
+
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_id");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("id", "john");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("serializes multiple IDs as nested object with separator")
+        void serializesMultipleIdsAsNestedObjectWithSeparator() {
+            EObject eObject = mock(EObject.class);
+            when(eObject.eClass()).thenReturn(multiIdClass);
+            when(eObject.eGet(firstNameAttr)).thenReturn("John");
+            when(eObject.eGet(lastNameAttr)).thenReturn("Doe");
+
+            EffectiveIdConfig config = EffectiveIdConfig.builder()
+                    .enabled(true)
+                    .key("_id")
+                    .format(SerializationFormat.STRUCTURED)
+                    .separator("-")
+                    .serializeSeparator(true)
+                    .idFeatures(List.of("firstName", "lastName"))
+                    .build();
+
+            IdSerializationEntry entry = new IdSerializationEntry(config, multiIdClass);
+            entry.serialize(createState(eObject), generator, null);
+
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_id");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("separator", "-");
+            inOrder.verify(generator).writeStringProperty("firstName", "John");
+            inOrder.verify(generator).writeStringProperty("lastName", "Doe");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("does not write separator when serializeSeparator=false")
+        void doesNotWriteSeparatorWhenDisabled() {
+            EObject eObject = mock(EObject.class);
+            when(eObject.eClass()).thenReturn(multiIdClass);
+            when(eObject.eGet(firstNameAttr)).thenReturn("John");
+            when(eObject.eGet(lastNameAttr)).thenReturn("Doe");
+
+            EffectiveIdConfig config = EffectiveIdConfig.builder()
+                    .enabled(true)
+                    .key("_id")
+                    .format(SerializationFormat.STRUCTURED)
+                    .separator("-")
+                    .serializeSeparator(false)
+                    .idFeatures(List.of("firstName", "lastName"))
+                    .build();
+
+            IdSerializationEntry entry = new IdSerializationEntry(config, multiIdClass);
+            entry.serialize(createState(eObject), generator, null);
+
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_id");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("firstName", "John");
+            inOrder.verify(generator).writeStringProperty("lastName", "Doe");
+            inOrder.verify(generator).writeEndObject();
+
+            verify(generator, never()).writeStringProperty("separator", "-");
+        }
+
+        @Test
+        @DisplayName("uses custom separator key")
+        void usesCustomSeparatorKey() {
+            EObject eObject = mock(EObject.class);
+            when(eObject.eClass()).thenReturn(multiIdClass);
+            when(eObject.eGet(firstNameAttr)).thenReturn("John");
+            when(eObject.eGet(lastNameAttr)).thenReturn("Doe");
+
+            EffectiveIdConfig config = EffectiveIdConfig.builder()
+                    .enabled(true)
+                    .key("_id")
+                    .format(SerializationFormat.STRUCTURED)
+                    .separator("-")
+                    .serializeSeparator(true)
+                    .separatorKey("sep")
+                    .idFeatures(List.of("firstName", "lastName"))
+                    .build();
+
+            IdSerializationEntry entry = new IdSerializationEntry(config, multiIdClass);
+            entry.serialize(createState(eObject), generator, null);
+
+            verify(generator).writeStringProperty("sep", "-");
+        }
     }
 }

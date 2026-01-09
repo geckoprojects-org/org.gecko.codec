@@ -17,7 +17,6 @@
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/CLASS"/>
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/URI"/>
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/MAPPED"/>
-      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/STRUCTURED"/>
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/SCHEMA_AND_TYPE"/>
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//TypeStrategy/NUMERIC"/>
     </genEnums>
@@ -43,6 +42,7 @@
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//EnumSerializationStrategy/NAME"/>
     </genEnums>
     <genClasses image="false" ecoreClass="metadata.ecore#//BaseTypeConfig">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/format"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/strategy"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/include"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseTypeConfig/typeKey"/>

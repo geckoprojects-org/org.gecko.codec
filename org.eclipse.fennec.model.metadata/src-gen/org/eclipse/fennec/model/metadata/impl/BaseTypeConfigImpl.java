@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.fennec.model.metadata.BaseTypeConfig;
 import org.eclipse.fennec.model.metadata.MetadataPackage;
+import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 
 /**
@@ -33,6 +34,7 @@ import org.eclipse.fennec.model.metadata.TypeStrategy;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseTypeConfigImpl#getFormat <em>Format</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseTypeConfigImpl#getStrategy <em>Strategy</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseTypeConfigImpl#isInclude <em>Include</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseTypeConfigImpl#getTypeKey <em>Type Key</em>}</li>
@@ -43,6 +45,26 @@ import org.eclipse.fennec.model.metadata.TypeStrategy;
  * @generated
  */
 public abstract class BaseTypeConfigImpl extends MinimalEObjectImpl.Container implements BaseTypeConfig {
+	/**
+	 * The default value of the '{@link #getFormat() <em>Format</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFormat()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final SerializationFormat FORMAT_EDEFAULT = SerializationFormat.PLAIN;
+
+	/**
+	 * The cached value of the '{@link #getFormat() <em>Format</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFormat()
+	 * @generated
+	 * @ordered
+	 */
+	protected SerializationFormat format = FORMAT_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #getStrategy() <em>Strategy</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -168,6 +190,29 @@ public abstract class BaseTypeConfigImpl extends MinimalEObjectImpl.Container im
 	 * @generated
 	 */
 	@Override
+	public SerializationFormat getFormat() {
+		return format;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setFormat(SerializationFormat newFormat) {
+		SerializationFormat oldFormat = format;
+		format = newFormat == null ? FORMAT_EDEFAULT : newFormat;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_TYPE_CONFIG__FORMAT, oldFormat, format));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public TypeStrategy getStrategy() {
 		return strategy;
 	}
@@ -285,6 +330,8 @@ public abstract class BaseTypeConfigImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case MetadataPackage.BASE_TYPE_CONFIG__FORMAT:
+				return getFormat();
 			case MetadataPackage.BASE_TYPE_CONFIG__STRATEGY:
 				return getStrategy();
 			case MetadataPackage.BASE_TYPE_CONFIG__INCLUDE:
@@ -307,6 +354,9 @@ public abstract class BaseTypeConfigImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case MetadataPackage.BASE_TYPE_CONFIG__FORMAT:
+				setFormat((SerializationFormat)newValue);
+				return;
 			case MetadataPackage.BASE_TYPE_CONFIG__STRATEGY:
 				setStrategy((TypeStrategy)newValue);
 				return;
@@ -334,6 +384,9 @@ public abstract class BaseTypeConfigImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case MetadataPackage.BASE_TYPE_CONFIG__FORMAT:
+				setFormat(FORMAT_EDEFAULT);
+				return;
 			case MetadataPackage.BASE_TYPE_CONFIG__STRATEGY:
 				setStrategy(STRATEGY_EDEFAULT);
 				return;
@@ -361,6 +414,8 @@ public abstract class BaseTypeConfigImpl extends MinimalEObjectImpl.Container im
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case MetadataPackage.BASE_TYPE_CONFIG__FORMAT:
+				return format != FORMAT_EDEFAULT;
 			case MetadataPackage.BASE_TYPE_CONFIG__STRATEGY:
 				return strategy != STRATEGY_EDEFAULT;
 			case MetadataPackage.BASE_TYPE_CONFIG__INCLUDE:
@@ -385,7 +440,9 @@ public abstract class BaseTypeConfigImpl extends MinimalEObjectImpl.Container im
 		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (strategy: ");
+		result.append(" (format: ");
+		result.append(format);
+		result.append(", strategy: ");
 		result.append(strategy);
 		result.append(", include: ");
 		result.append(include);

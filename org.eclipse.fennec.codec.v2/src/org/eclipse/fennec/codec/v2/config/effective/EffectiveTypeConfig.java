@@ -13,6 +13,7 @@
  */
 package org.eclipse.fennec.codec.v2.config.effective;
 
+import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 
 /**
@@ -22,6 +23,13 @@ import org.eclipse.fennec.model.metadata.TypeStrategy;
  * all configuration sources (load/save options, module config, model aspects).
  * No resolution logic is needed at serialization time.
  * </p>
+ * <p>
+ * Type serialization uses two orthogonal dimensions:
+ * <ul>
+ *   <li><b>Format</b> (PLAIN | STRUCTURED) - how data is presented</li>
+ *   <li><b>Strategy</b> (URI | NAME | CLASS | NUMERIC | MAPPED | SCHEMA_AND_TYPE) - what information is transported</li>
+ * </ul>
+ * </p>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#3-type-serialization">Spec 3: Type Serialization</a>
  * @author Mark Hoffmann
@@ -30,6 +38,7 @@ import org.eclipse.fennec.model.metadata.TypeStrategy;
 public final class EffectiveTypeConfig {
 
     private final boolean enabled;
+    private final SerializationFormat format;
     private final TypeStrategy strategy;
     private final String typeKey;
     private final String schemaKey;
@@ -39,6 +48,7 @@ public final class EffectiveTypeConfig {
 
     private EffectiveTypeConfig(Builder builder) {
         this.enabled = builder.enabled;
+        this.format = builder.format;
         this.strategy = builder.strategy;
         this.typeKey = builder.typeKey;
         this.schemaKey = builder.schemaKey;
@@ -52,6 +62,13 @@ public final class EffectiveTypeConfig {
      */
     public boolean isEnabled() {
         return enabled;
+    }
+
+    /**
+     * Returns the serialization format (PLAIN or STRUCTURED).
+     */
+    public SerializationFormat getFormat() {
+        return format;
     }
 
     /**
@@ -108,10 +125,11 @@ public final class EffectiveTypeConfig {
      */
     public static final class Builder {
         private boolean enabled = true;
+        private SerializationFormat format = SerializationFormat.PLAIN;
         private TypeStrategy strategy = TypeStrategy.URI;
         private String typeKey = "_type";
         private String schemaKey = "schema";
-        private String nameKey = "name";
+        private String nameKey = "type";  // Inner type key in STRUCTURED format (default: "type")
         private String discriminatorPath;
         private String discriminatorValue;
 
@@ -119,6 +137,11 @@ public final class EffectiveTypeConfig {
 
         public Builder enabled(boolean enabled) {
             this.enabled = enabled;
+            return this;
+        }
+
+        public Builder format(SerializationFormat format) {
+            this.format = format;
             return this;
         }
 

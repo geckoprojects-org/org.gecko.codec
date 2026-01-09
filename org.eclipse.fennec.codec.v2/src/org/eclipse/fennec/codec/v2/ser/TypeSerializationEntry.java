@@ -14,9 +14,11 @@
 package org.eclipse.fennec.codec.v2.ser;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
+import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 
 import tools.jackson.core.JsonGenerator;
@@ -37,6 +39,7 @@ import tools.jackson.databind.SerializationContext;
 public class TypeSerializationEntry implements SerializationEntry {
 
     private final EffectiveTypeConfig config;
+    private final EClass eClass;
     private final String typeValue;
 
     /**
@@ -47,6 +50,7 @@ public class TypeSerializationEntry implements SerializationEntry {
      */
     public TypeSerializationEntry(EffectiveTypeConfig config, EClass eClass) {
         this.config = config;
+        this.eClass = eClass;
         this.typeValue = resolveTypeValue(eClass);
     }
 
@@ -93,7 +97,45 @@ public class TypeSerializationEntry implements SerializationEntry {
 
     @Override
     public void serialize(SerializationState state, JsonGenerator gen, SerializationContext ctxt) {
-        gen.writeStringProperty(config.getTypeKey(), typeValue);
+        SerializationFormat format = config.getFormat();
+
+        if (format == SerializationFormat.STRUCTURED) {
+            serializeStructured(gen);
+        } else {
+            // PLAIN format: write type value as simple string property
+            gen.writeStringProperty(config.getTypeKey(), typeValue);
+        }
+    }
+
+    /**
+     * Serializes type information in STRUCTURED format.
+     * <p>
+     * Output format:
+     * <pre>
+     * "_type": {
+     *   "schema": "http://example.org/person/1.0",
+     *   "type": "Person"
+     * }
+     * </pre>
+     * </p>
+     *
+     * @param gen the JSON generator
+     * @see <a href="docs/codec-v2-spec/05-type.md#14-structured-strategies">Spec: STRUCTURED Strategy</a>
+     */
+    private void serializeStructured(JsonGenerator gen) {
+        gen.writeName(config.getTypeKey());
+        gen.writeStartObject();
+
+        // Write schema (EPackage nsURI)
+        EPackage ePackage = eClass.getEPackage();
+        if (ePackage != null) {
+            gen.writeStringProperty(config.getSchemaKey(), ePackage.getNsURI());
+        }
+
+        // Write type name
+        gen.writeStringProperty(config.getNameKey(), eClass.getName());
+
+        gen.writeEndObject();
     }
 
     /**
@@ -106,7 +148,7 @@ public class TypeSerializationEntry implements SerializationEntry {
      *   <li>CLASS - Java instance class name</li>
      *   <li>URI - Full EClass URI (default)</li>
      *   <li>NUMERIC - EClass classifier ID</li>
-     *   <li>STRUCTURED/SCHEMA_AND_TYPE - Handled separately in serialize()</li>
+     *   <li>SCHEMA_AND_TYPE - Schema URI + type name</li>
      * </ul>
      * </p>
      *

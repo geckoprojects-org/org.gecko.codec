@@ -25,13 +25,14 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.fennec.codec.v2.buffer.CodecTokenBuffer;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveIdConfig;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
+import tools.jackson.core.ObjectReadContext;
 import tools.jackson.databind.DeserializationContext;
-import tools.jackson.databind.util.TokenBuffer;
 
 /**
  * Deserialization entry that handles ID property (_id).
@@ -165,8 +166,11 @@ public class IdDeserializationEntry implements DeserializationEntry {
             return;
         }
 
-        // Capture the _id object content into a TokenBuffer
-        TokenBuffer buffer = ctxt.bufferForInputBuffering(parser);
+        // Use ObjectReadContext - prefer ctxt if available, otherwise use empty context
+        ObjectReadContext readContext = ctxt != null ? ctxt : ObjectReadContext.empty();
+
+        // Capture the _id object content into a CodecTokenBuffer
+        CodecTokenBuffer buffer = CodecTokenBuffer.forBuffering(parser, readContext);
         try {
             buffer.copyCurrentStructure(parser);
         } catch (Exception e) {
@@ -177,10 +181,10 @@ public class IdDeserializationEntry implements DeserializationEntry {
         // Parse the buffered content to extract field values
         Map<String, Object> idValues = new LinkedHashMap<>();
         List<String> featuresToRead = getIdFeatureNames();
-        String separatorKey = config.getSeparatorKey();
+        String separatorKey = config.getEffectiveSeparatorKey();
         String effectiveSeparator = config.getSeparator(); // Default from config
 
-        try (JsonParser bufferParser = buffer.asParser(ctxt)) {
+        try (JsonParser bufferParser = buffer.asParser(readContext)) {
             bufferParser.nextToken(); // Move to START_OBJECT
 
             while (bufferParser.nextToken() != JsonToken.END_OBJECT) {

@@ -46,13 +46,26 @@ abstract class DeserializationEntryTestBase {
     // EClasses
     protected EClass personClass;
     protected EClass addressClass;
+    protected EClass multiIdPersonClass;
+    protected EClass intIdEntityClass;
+    protected EClass longIdEntityClass;
 
     // EAttributes on Person
+    protected EAttribute idAttribute;
     protected EAttribute nameAttribute;
     protected EAttribute ageAttribute;
     protected EAttribute activeAttribute;
     protected EAttribute scoreAttribute;
     protected EAttribute tagsAttribute;
+
+    // EAttributes on MultiIdPerson (for combined ID tests)
+    protected EAttribute firstNameAttribute;
+    protected EAttribute lastNameAttribute;
+    protected EAttribute emailAttribute;
+
+    // EAttributes on IntIdEntity / LongIdEntity (for type conversion tests)
+    protected EAttribute intIdAttribute;
+    protected EAttribute longIdAttribute;
 
     // EReferences on Person
     protected EReference addressRef;       // containment, single
@@ -70,13 +83,26 @@ abstract class DeserializationEntryTestBase {
         // Load EClasses
         personClass = ecoreHelper.getEClass(testPackage, "Person");
         addressClass = ecoreHelper.getEClass(testPackage, "Address");
+        multiIdPersonClass = ecoreHelper.getEClass(testPackage, "MultiIdPerson");
+        intIdEntityClass = ecoreHelper.getEClass(testPackage, "IntIdEntity");
+        longIdEntityClass = ecoreHelper.getEClass(testPackage, "LongIdEntity");
 
-        // Load EAttributes
+        // Load EAttributes on Person
+        idAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "id");
         nameAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "name");
         ageAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "age");
         activeAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "active");
         scoreAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "score");
         tagsAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "tags");
+
+        // Load EAttributes on MultiIdPerson
+        firstNameAttribute = (EAttribute) ecoreHelper.getFeature(multiIdPersonClass, "firstName");
+        lastNameAttribute = (EAttribute) ecoreHelper.getFeature(multiIdPersonClass, "lastName");
+        emailAttribute = (EAttribute) ecoreHelper.getFeature(multiIdPersonClass, "email");
+
+        // Load EAttributes on IntIdEntity / LongIdEntity
+        intIdAttribute = (EAttribute) ecoreHelper.getFeature(intIdEntityClass, "id");
+        longIdAttribute = (EAttribute) ecoreHelper.getFeature(longIdEntityClass, "id");
 
         // Load EReferences
         addressRef = (EReference) ecoreHelper.getFeature(personClass, "address");
@@ -125,6 +151,33 @@ abstract class DeserializationEntryTestBase {
     }
 
     /**
+     * Creates a new MultiIdPerson EObject instance.
+     *
+     * @return a new MultiIdPerson instance
+     */
+    protected EObject createMultiIdPerson() {
+        return testPackage.getEFactoryInstance().create(multiIdPersonClass);
+    }
+
+    /**
+     * Creates a new IntIdEntity EObject instance.
+     *
+     * @return a new IntIdEntity instance
+     */
+    protected EObject createIntIdEntity() {
+        return testPackage.getEFactoryInstance().create(intIdEntityClass);
+    }
+
+    /**
+     * Creates a new LongIdEntity EObject instance.
+     *
+     * @return a new LongIdEntity instance
+     */
+    protected EObject createLongIdEntity() {
+        return testPackage.getEFactoryInstance().create(longIdEntityClass);
+    }
+
+    /**
      * Creates a DeserializationState for the given EClass.
      *
      * @param eClass the EClass for the state
@@ -168,4 +221,5 @@ abstract class DeserializationEntryTestBase {
             throw new RuntimeException("Failed to create parser for: " + json, e);
         }
     }
+
 }

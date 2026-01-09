@@ -87,13 +87,22 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	int BASE_TYPE_CONFIG = 0;
 
 	/**
+	 * The feature id for the '<em><b>Format</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_TYPE_CONFIG__FORMAT = 0;
+
+	/**
 	 * The feature id for the '<em><b>Strategy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_TYPE_CONFIG__STRATEGY = 0;
+	int BASE_TYPE_CONFIG__STRATEGY = 1;
 
 	/**
 	 * The feature id for the '<em><b>Include</b></em>' attribute.
@@ -102,7 +111,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_TYPE_CONFIG__INCLUDE = 1;
+	int BASE_TYPE_CONFIG__INCLUDE = 2;
 
 	/**
 	 * The feature id for the '<em><b>Type Key</b></em>' attribute.
@@ -111,7 +120,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_TYPE_CONFIG__TYPE_KEY = 2;
+	int BASE_TYPE_CONFIG__TYPE_KEY = 3;
 
 	/**
 	 * The feature id for the '<em><b>Schema Key</b></em>' attribute.
@@ -120,7 +129,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_TYPE_CONFIG__SCHEMA_KEY = 3;
+	int BASE_TYPE_CONFIG__SCHEMA_KEY = 4;
 
 	/**
 	 * The feature id for the '<em><b>Name Key</b></em>' attribute.
@@ -129,7 +138,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_TYPE_CONFIG__NAME_KEY = 4;
+	int BASE_TYPE_CONFIG__NAME_KEY = 5;
 
 	/**
 	 * The number of structural features of the '<em>Base Type Config</em>' class.
@@ -138,7 +147,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_TYPE_CONFIG_FEATURE_COUNT = 5;
+	int BASE_TYPE_CONFIG_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Base Type Config</em>' class.
@@ -1179,6 +1188,17 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	EClass getBaseTypeConfig();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getFormat <em>Format</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Format</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseTypeConfig#getFormat()
+	 * @see #getBaseTypeConfig()
+	 * @generated
+	 */
+	EAttribute getBaseTypeConfig_Format();
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getStrategy <em>Strategy</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2027,6 +2047,14 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EClass BASE_TYPE_CONFIG = eINSTANCE.getBaseTypeConfig();
+
+		/**
+		 * The meta object literal for the '<em><b>Format</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_TYPE_CONFIG__FORMAT = eINSTANCE.getBaseTypeConfig_Format();
 
 		/**
 		 * The meta object literal for the '<em><b>Strategy</b></em>' attribute feature.

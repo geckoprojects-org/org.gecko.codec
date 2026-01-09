@@ -391,7 +391,7 @@ public final class EffectiveCodecConfig {
     public static final class Builder {
         private List<String> globalIgnoreFeatures = List.of();
         private boolean sortPropertiesAlphabetically = false;
-        private String refKey = "$ref";
+        private String refKey = "_ref";
         private boolean useNamesFromExtendedMetaData = false;
         private String globalTypeKey = "_type";
         private TypeStrategy globalTypeStrategy = TypeStrategy.URI;

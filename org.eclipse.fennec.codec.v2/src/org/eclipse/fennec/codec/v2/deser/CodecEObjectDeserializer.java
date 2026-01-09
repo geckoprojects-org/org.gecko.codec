@@ -67,7 +67,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
     public static final String CODEC_ROOT_OBJECT = "CODEC_ROOT_OBJECT";
 
     /** Default reference key for non-containment references */
-    private static final String DEFAULT_REF_KEY = "$ref";
+    private static final String DEFAULT_REF_KEY = "_ref";
 
     /** Default type key */
     private static final String DEFAULT_TYPE_KEY = "_type";

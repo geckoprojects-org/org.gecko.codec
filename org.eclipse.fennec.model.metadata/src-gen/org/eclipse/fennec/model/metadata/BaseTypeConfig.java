@@ -31,6 +31,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getFormat <em>Format</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getStrategy <em>Strategy</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#isInclude <em>Include</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getTypeKey <em>Type Key</em>}</li>
@@ -45,13 +46,42 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface BaseTypeConfig extends EObject {
 	/**
+	 * Returns the value of the '<em><b>Format</b></em>' attribute.
+	 * The default value is <code>"PLAIN"</code>.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.model.metadata.SerializationFormat}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Serialization format (PLAIN or STRUCTURED).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Format</em>' attribute.
+	 * @see org.eclipse.fennec.model.metadata.SerializationFormat
+	 * @see #setFormat(SerializationFormat)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseTypeConfig_Format()
+	 * @model default="PLAIN"
+	 * @generated
+	 */
+	SerializationFormat getFormat();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getFormat <em>Format</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Format</em>' attribute.
+	 * @see org.eclipse.fennec.model.metadata.SerializationFormat
+	 * @see #getFormat()
+	 * @generated
+	 */
+	void setFormat(SerializationFormat value);
+
+	/**
 	 * Returns the value of the '<em><b>Strategy</b></em>' attribute.
 	 * The default value is <code>"URI"</code>.
 	 * The literals are from the enumeration {@link org.eclipse.fennec.model.metadata.TypeStrategy}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Type serialization strategy.
+	 * Type serialization strategy (what information to transport).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Strategy</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.TypeStrategy

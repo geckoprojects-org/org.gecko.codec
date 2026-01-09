@@ -113,10 +113,10 @@ class CodecConfigurationDefaultsTest {
     // ========================================================================
 
     @Test
-    @DisplayName("default refKey is $ref")
-    void defaultRefKeyIsDollarRef() {
+    @DisplayName("default refKey is _ref")
+    void defaultRefKeyIsUnderscoreRef() {
         CodecConfiguration config = CodecConfiguration.defaults();
-        assertEquals("$ref", config.getRefKey());
+        assertEquals("_ref", config.getRefKey());
     }
 
     @Test

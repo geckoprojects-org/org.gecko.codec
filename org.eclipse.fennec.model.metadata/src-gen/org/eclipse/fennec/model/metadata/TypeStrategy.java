@@ -89,19 +89,6 @@ public enum TypeStrategy implements Enumerator {
 	MAPPED(3, "MAPPED", "MAPPED"),
 
 	/**
-	 * The '<em><b>STRUCTURED</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Use a structured object with schema and name keys.
-	 * <!-- end-model-doc -->
-	 * @see #STRUCTURED_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	STRUCTURED(4, "STRUCTURED", "STRUCTURED"),
-
-	/**
 	 * The '<em><b>SCHEMA AND TYPE</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -112,7 +99,7 @@ public enum TypeStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	SCHEMA_AND_TYPE(5, "SCHEMA_AND_TYPE", "SCHEMA_AND_TYPE"),
+	SCHEMA_AND_TYPE(4, "SCHEMA_AND_TYPE", "SCHEMA_AND_TYPE"),
 
 	/**
 	 * The '<em><b>NUMERIC</b></em>' literal object.
@@ -125,7 +112,7 @@ public enum TypeStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	NUMERIC(6, "NUMERIC", "NUMERIC");
+	NUMERIC(5, "NUMERIC", "NUMERIC");
 
 	/**
 	 * The '<em><b>NAME</b></em>' literal value.
@@ -184,20 +171,6 @@ public enum TypeStrategy implements Enumerator {
 	public static final int MAPPED_VALUE = 3;
 
 	/**
-	 * The '<em><b>STRUCTURED</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Use a structured object with schema and name keys.
-	 * <!-- end-model-doc -->
-	 * @see #STRUCTURED
-	 * @model
-	 * @generated
-	 * @ordered
-	 */
-	public static final int STRUCTURED_VALUE = 4;
-
-	/**
 	 * The '<em><b>SCHEMA AND TYPE</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -209,7 +182,7 @@ public enum TypeStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int SCHEMA_AND_TYPE_VALUE = 5;
+	public static final int SCHEMA_AND_TYPE_VALUE = 4;
 
 	/**
 	 * The '<em><b>NUMERIC</b></em>' literal value.
@@ -223,7 +196,7 @@ public enum TypeStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int NUMERIC_VALUE = 6;
+	public static final int NUMERIC_VALUE = 5;
 
 	/**
 	 * An array of all the '<em><b>Type Strategy</b></em>' enumerators.
@@ -237,7 +210,6 @@ public enum TypeStrategy implements Enumerator {
 			CLASS,
 			URI,
 			MAPPED,
-			STRUCTURED,
 			SCHEMA_AND_TYPE,
 			NUMERIC,
 		};
@@ -300,7 +272,6 @@ public enum TypeStrategy implements Enumerator {
 			case CLASS_VALUE: return CLASS;
 			case URI_VALUE: return URI;
 			case MAPPED_VALUE: return MAPPED;
-			case STRUCTURED_VALUE: return STRUCTURED;
 			case SCHEMA_AND_TYPE_VALUE: return SCHEMA_AND_TYPE;
 			case NUMERIC_VALUE: return NUMERIC;
 		}

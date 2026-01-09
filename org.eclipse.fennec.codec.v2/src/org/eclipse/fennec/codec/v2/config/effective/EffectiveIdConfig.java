@@ -124,11 +124,35 @@ public final class EffectiveIdConfig {
     }
 
     /**
-     * Returns the JSON key for the separator field in STRUCTURED format.
-     * <p>Default: "_separator"</p>
+     * Returns the JSON key for the separator field.
+     * <p>
+     * Default depends on format:
+     * <ul>
+     *   <li>PLAIN format: "_separator" (underscore prefix for root-level key)</li>
+     *   <li>STRUCTURED format: "separator" (no prefix for inner key)</li>
+     * </ul>
+     * </p>
      */
     public String getSeparatorKey() {
         return separatorKey;
+    }
+
+    /**
+     * Returns the effective separator key based on the current format.
+     * <p>
+     * If separatorKey was explicitly set, returns that value.
+     * Otherwise, returns the format-appropriate default:
+     * <ul>
+     *   <li>PLAIN: "_separator"</li>
+     *   <li>STRUCTURED: "separator"</li>
+     * </ul>
+     * </p>
+     */
+    public String getEffectiveSeparatorKey() {
+        if (separatorKey != null) {
+            return separatorKey;
+        }
+        return format == SerializationFormat.STRUCTURED ? "separator" : "_separator";
     }
 
     /**
@@ -171,7 +195,7 @@ public final class EffectiveIdConfig {
         private SerializationFormat format = SerializationFormat.PLAIN;
         private String separator = "-";
         private boolean serializeSeparator = true;
-        private String separatorKey = "separator";
+        private String separatorKey = null;  // null = use format-appropriate default
         private List<String> idFeatures = List.of();
         private String valueWriterName;
         private String valueReaderName;

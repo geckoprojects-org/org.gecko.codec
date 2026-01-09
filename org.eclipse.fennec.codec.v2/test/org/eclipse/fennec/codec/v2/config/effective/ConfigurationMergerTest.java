@@ -86,7 +86,7 @@ class ConfigurationMergerTest {
 
             assertNotNull(config);
             assertFalse(config.isSortPropertiesAlphabetically());
-            assertEquals("$ref", config.getRefKey());
+            assertEquals("_ref", config.getRefKey());
         }
 
         @Test

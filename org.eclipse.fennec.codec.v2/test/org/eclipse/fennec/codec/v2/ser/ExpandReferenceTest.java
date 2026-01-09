@@ -178,7 +178,7 @@ class ExpandReferenceTest {
 
             // CEO should be serialized as $ref (proxy reference)
             assertTrue(json.contains("\"ceo\""), "JSON should contain ceo field");
-            assertTrue(json.contains("\"$ref\""), "CEO should be serialized with $ref key");
+            assertTrue(json.contains("\"_ref\""), "CEO should be serialized with $ref key");
 
             // The CEO object should NOT contain inline data like "name":"Alice" outside of employees
             // We need to check that the ceo field has $ref and not the full object
@@ -186,7 +186,7 @@ class ExpandReferenceTest {
             int ceoIndex = json.indexOf("\"ceo\"");
             int ceoEndIndex = json.indexOf("}", ceoIndex);
             String ceoJson = json.substring(ceoIndex, ceoEndIndex + 1);
-            assertTrue(ceoJson.contains("$ref"), "CEO should contain $ref");
+            assertTrue(ceoJson.contains("_ref"), "CEO should contain $ref");
             assertFalse(ceoJson.contains("\"name\""), "CEO should NOT contain name (not expanded)");
         }
 
@@ -280,9 +280,9 @@ class ExpandReferenceTest {
 
             String json = serialize(company, config);
 
-            // Proxy CEO should still be serialized as $ref (not expanded)
+            // Proxy CEO should still be serialized as _ref (not expanded)
             assertTrue(json.contains("\"ceo\""), "JSON should contain ceo field");
-            assertTrue(json.contains("$ref"), "Proxy CEO should be serialized as $ref");
+            assertTrue(json.contains("_ref"), "Proxy CEO should be serialized as _ref");
         }
 
         @Test
@@ -361,7 +361,7 @@ class ExpandReferenceTest {
         @Test
         @DisplayName("deserializes proxy reference with _ref")
         void deserializesProxyReference() throws IOException {
-            // JSON with proxy CEO (has $ref)
+            // JSON with proxy CEO (has _ref)
             String json = """
                 {
                   "_type": "http://test.example.org/roundtrip/1.0#//Company",
@@ -374,7 +374,7 @@ class ExpandReferenceTest {
                   ],
                   "ceo": {
                     "_type": "http://test.example.org/roundtrip/1.0#//Person",
-                    "$ref": "//@employees.0"
+                    "_ref": "//@employees.0"
                   }
                 }
                 """;
@@ -405,7 +405,7 @@ class ExpandReferenceTest {
                   "employees": [],
                   "ceo": {
                     "_type": "http://test.example.org/roundtrip/1.0#//Person",
-                    "$ref": "other.json#//@employees.0",
+                    "_ref": "other.json#//@employees.0",
                     "name": "Alice"
                   }
                 }
@@ -418,7 +418,7 @@ class ExpandReferenceTest {
             // CEO should be a proxy with populated name field
             EObject ceo = (EObject) loaded.eGet(ceoRef);
             assertNotNull(ceo, "CEO should be created");
-            assertTrue(ceo.eIsProxy(), "CEO should be a proxy (has $ref)");
+            assertTrue(ceo.eIsProxy(), "CEO should be a proxy (has _ref)");
             assertEquals("Alice", ceo.eGet(personNameAttribute),
                     "Proxy should have projected name populated");
         }
