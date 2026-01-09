@@ -175,6 +175,8 @@ public class ConfigurationMerger {
                 .enabled(resolveSuperTypeEnabled(aspectConfig))
                 .selection(resolveSuperTypeSelection(aspectConfig))
                 .format(resolveSuperTypeFormat(aspectConfig))
+                .asArray(resolveSuperTypeAsArray(aspectConfig))
+                .separator(resolveSuperTypeSeparator(aspectConfig))
                 .superTypeKey(resolveSuperTypeKey(aspectConfig))
                 .schemaKey(resolveSuperTypeSchemaKey(aspectConfig))
                 .nameKey(resolveSuperTypeNameKey(aspectConfig))
@@ -418,6 +420,21 @@ public class ConfigurationMerger {
             return aspectConfig.getNameKey();
         }
         return "name";
+    }
+
+    private boolean resolveSuperTypeAsArray(SuperTypeSerializationConfig aspectConfig) {
+        if (aspectConfig != null) {
+            return aspectConfig.isAsArray();
+        }
+        return moduleConfig.isSerializeSuperTypesAsArray();
+    }
+
+    private String resolveSuperTypeSeparator(SuperTypeSerializationConfig aspectConfig) {
+        if (aspectConfig != null && isNonEmpty(aspectConfig.getSeparator())) {
+            return aspectConfig.getSeparator();
+        }
+        // Default separator is comma
+        return ",";
     }
 
     // ========================================================================

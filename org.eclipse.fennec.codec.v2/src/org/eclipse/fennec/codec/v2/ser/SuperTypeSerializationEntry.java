@@ -30,8 +30,22 @@ import tools.jackson.databind.SerializationContext;
  * (pre-merged) supertype configuration. No fallback logic is needed as all
  * configuration resolution happens in the {@link org.eclipse.fennec.codec.v2.config.effective.ConfigurationMerger}.
  * </p>
+ * <p>
+ * SuperType format follows Type format:
+ * <ul>
+ *   <li>Type PLAIN → SuperType as standalone {@code _supertype} field</li>
+ *   <li>Type STRUCTURED → SuperType inside {@code _type} object (handled by TypeSerializationEntry)</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Presentation options:
+ * <ul>
+ *   <li>ARRAY (asArray=true): {@code ["Entity", "http://audit.org/1.0#//Auditable"]}</li>
+ *   <li>STRING (asArray=false): {@code "Entity,http://audit.org/1.0#//Auditable"}</li>
+ * </ul>
+ * </p>
  *
- * @see <a href="docs/codec-v2-serialization-spec.md#7-supertype-serialization">Spec 7: SuperType Serialization</a>
+ * @see <a href="docs/codec-v2-spec/06-supertype.md">Spec: SuperType Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
  */
@@ -39,6 +53,7 @@ public class SuperTypeSerializationEntry implements SerializationEntry {
 
     private final EffectiveSuperTypeConfig config;
     private final EClass eClass;
+    private final String rootNamespaceUri;
 
     /**
      * Creates a new SuperTypeSerializationEntry with the effective supertype configuration.
@@ -49,6 +64,7 @@ public class SuperTypeSerializationEntry implements SerializationEntry {
     public SuperTypeSerializationEntry(EffectiveSuperTypeConfig config, EClass eClass) {
         this.config = config;
         this.eClass = eClass;
+        this.rootNamespaceUri = eClass.getEPackage() != null ? eClass.getEPackage().getNsURI() : null;
     }
 
     @Override
@@ -72,24 +88,54 @@ public class SuperTypeSerializationEntry implements SerializationEntry {
             return;
         }
 
-        SuperTypeSelection selection = config.getSelection();
-        if (selection == SuperTypeSelection.SINGLE) {
-            // Single value: use first supertype
-            gen.writeStringProperty(config.getSuperTypeKey(), superTypes.get(0));
-        } else {
-            // Array of supertypes
+        if (config.isAsArray()) {
+            // ARRAY presentation: ["Entity", "http://audit.org/1.0#//Auditable"]
             gen.writeArrayPropertyStart(config.getSuperTypeKey());
             for (String superType : superTypes) {
                 gen.writeString(superType);
             }
             gen.writeEndArray();
+        } else {
+            // STRING presentation: "Entity,http://audit.org/1.0#//Auditable"
+            String joined = String.join(config.getSeparator(), superTypes);
+            gen.writeStringProperty(config.getSuperTypeKey(), joined);
         }
     }
 
     /**
-     * Resolves the list of supertypes to serialize.
+     * Returns the resolved supertype values for use by TypeSerializationEntry
+     * when embedding supertypes in STRUCTURED format.
      *
-     * @return list of supertype URIs
+     * @return list of supertype values (URIs or simple names based on smart compression)
+     */
+    public List<String> getSuperTypeValues() {
+        return resolveSuperTypes();
+    }
+
+    /**
+     * Returns the effective supertype configuration.
+     * <p>
+     * Used by TypeSerializationEntry when embedding supertypes in STRUCTURED format.
+     * </p>
+     *
+     * @return the effective supertype configuration
+     */
+    public EffectiveSuperTypeConfig getConfig() {
+        return config;
+    }
+
+    /**
+     * Resolves the list of supertypes to serialize.
+     * <p>
+     * Applies namespace matching rules:
+     * <ul>
+     *   <li>Same namespace as root → simple EClass name</li>
+     *   <li>Different namespace → full EClass URI</li>
+     *   <li>Smart compression OFF → always full URI</li>
+     * </ul>
+     * </p>
+     *
+     * @return list of supertype values (URIs or simple names)
      */
     private List<String> resolveSuperTypes() {
         List<String> superTypes = new ArrayList<>();
@@ -106,7 +152,7 @@ public class SuperTypeSerializationEntry implements SerializationEntry {
             if (!includeEmf && isEmfBaseType(superType)) {
                 continue;
             }
-            superTypes.add(getEClassUri(superType));
+            superTypes.add(getSuperTypeValue(superType));
 
             // For SINGLE, only include the first matching supertype
             if (selection == SuperTypeSelection.SINGLE && !superTypes.isEmpty()) {
@@ -117,7 +163,30 @@ public class SuperTypeSerializationEntry implements SerializationEntry {
     }
 
     /**
-     * Gets the URI for an EClass.
+     * Gets the value for a supertype EClass.
+     * <p>
+     * Applies namespace matching: same namespace as root type returns simple name,
+     * different namespace returns full URI. Smart compression must be enabled
+     * for simple names; otherwise always returns full URI.
+     * </p>
+     *
+     * @param superType the supertype EClass
+     * @return the supertype value (simple name or full URI)
+     */
+    private String getSuperTypeValue(EClass superType) {
+        String superTypeNsUri = superType.getEPackage() != null ? superType.getEPackage().getNsURI() : null;
+
+        // Smart compression: same namespace → simple name
+        if (config.isUseSmartCompression() && rootNamespaceUri != null && rootNamespaceUri.equals(superTypeNsUri)) {
+            return superType.getName();
+        }
+
+        // Different namespace or no smart compression → full URI
+        return getEClassUri(superType);
+    }
+
+    /**
+     * Gets the full URI for an EClass.
      *
      * @param eClass the EClass
      * @return the EClass URI (nsURI#//className)

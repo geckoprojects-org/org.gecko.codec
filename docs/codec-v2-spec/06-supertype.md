@@ -7,67 +7,142 @@
 ---
 
 SuperType serialization has two orthogonal dimensions:
-- **Selection** (ALL, SINGLE, NONE) - which supertypes to include
-- **Format** (PLAIN, STRUCTURED) - per [Serialization Strategies](01-strategies.md), how to represent each entry
+- **Selection** (ALL, ALL_EMF, SINGLE, NONE) - which supertypes to include
+- **Presentation** (ARRAY, STRING) - how to present multiple values
 
-## 1. SuperType Format
+**Important:** SuperType format (PLAIN or STRUCTURED) follows the Type format configuration. There is no independent format setting for SuperType.
 
-### 1.1 PLAIN Format
+---
 
-Array of plain type identifiers (strings):
+## 1. Format Follows Type
+
+| Type Format | SuperType Output Location |
+|-------------|---------------------------|
+| PLAIN | Standalone `_supertype` field at root level |
+| STRUCTURED | Inside `_type` object as `supertype` field |
+
+---
+
+## 2. PLAIN Format (Type is PLAIN)
+
+When Type format is PLAIN, SuperType is a standalone field at root level.
+
+### 2.1 ARRAY Presentation (Default)
+
+Array of URI strings:
 
 ```json
 {
-  "_supertype": ["Entity", "Auditable", "Timestamped"]
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": ["http://example.org/1.0#//Entity", "http://audit.org/1.0#//Auditable"]
 }
 ```
 
-Or as URIs:
+With smart compression (same namespace → simple name):
+
 ```json
 {
-  "_supertype": [
-    "http://example.org/base/1.0#//Entity",
-    "http://example.org/audit/1.0#//Auditable"
-  ]
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": ["Entity", "http://audit.org/1.0#//Auditable"]
 }
 ```
 
-### 1.2 STRUCTURED Format
+### 2.2 STRING Presentation
 
-Array of structured type objects:
+Separator-joined URI string (default separator is `,`):
 
 ```json
 {
-  "_supertype": [
-    { "schema": "http://example.org/base/1.0", "type": "Entity" },
-    { "schema": "http://example.org/audit/1.0", "type": "Auditable" }
-  ]
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": "http://example.org/1.0#//Entity,http://audit.org/1.0#//Auditable"
+}
+```
+
+With smart compression:
+
+```json
+{
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": "Entity,http://audit.org/1.0#//Auditable"
 }
 ```
 
 ---
 
-## 2. Mixed Format (Smart Compression)
+## 3. STRUCTURED Format (Type is STRUCTURED)
 
-Similar to type info, supertypes use a **smart format**:
-- Supertypes from **same schema** as the object: plain name only
-- Supertypes from **different schema**: full URI
+When Type format is STRUCTURED, SuperType is included **inside** the `_type` object as a `supertype` field. Presentation (ARRAY or STRING) still applies.
+
+### 3.1 ARRAY Presentation (Default)
 
 ```json
 {
-  "_supertype": ["Entity", "NamedElement", "http://audit.org/1.0#//Auditable"]
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person",
+    "supertype": ["Entity", "http://audit.org/1.0#//Auditable"]
+  }
 }
 ```
 
-See [Global Options - Smart Compression](02-global-options.md#1-smart-compression) for details.
+### 3.2 STRING Presentation
+
+```json
+{
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person",
+    "supertype": "Entity,http://audit.org/1.0#//Auditable"
+  }
+}
+```
 
 ---
 
-## 3. SuperType Configuration
+## 4. Value Resolution Rules
 
-The configuration defines **keys and format**, not actual values.
+SuperType values follow namespace matching rules based on the root EClass's EPackage:
 
-### 3.1 EAnnotation (on EClass)
+| Condition | SuperType Value |
+|-----------|-----------------|
+| Supertype from **same namespace** as root EClass | Simple EClass name (e.g., `"Entity"`) |
+| Supertype from **different namespace** | Full EClass URI (e.g., `"http://audit.org/1.0#//Auditable"`) |
+| Smart compression **OFF** | Always full EClass URI |
+
+**Example:** If root type is `http://example.org/1.0#//Person`:
+- `Entity` from `http://example.org/1.0` → `"Entity"` (same namespace)
+- `Auditable` from `http://audit.org/1.0` → `"http://audit.org/1.0#//Auditable"` (different namespace)
+
+---
+
+## 5. Selection Modes
+
+| Value | Description |
+|-------|-------------|
+| `ALL` | All domain model supertypes (excludes EMF base classes like EObject, EModelElement) |
+| `ALL_EMF` | All supertypes including EMF base classes |
+| `SINGLE` | Only the immediate/direct supertype |
+| `NONE` | No supertypes (equivalent to `enabled=false`) |
+
+---
+
+## 6. SuperType Configuration
+
+### 6.1 Configuration Options
+
+| Key | Values | Default | Description |
+|-----|--------|---------|-------------|
+| `enabled` | true, false | false | Enable supertype serialization |
+| `selection` | ALL, ALL_EMF, SINGLE, NONE | ALL (when enabled) | Which supertypes to include |
+| `asArray` | true, false | true | Array (true) or separator-joined string (false) |
+| `separator` | any string | `,` | Separator for STRING presentation (when asArray=false) |
+| `superTypeKey` | any string | `_supertype` (PLAIN) / `supertype` (STRUCTURED) | JSON property name |
+| `useSmartCompression` | true, false | false | Use simple names for same-namespace supertypes |
+
+**Notes:**
+- Format (PLAIN/STRUCTURED) is inherited from Type configuration
+
+### 6.2 EAnnotation (on EClass)
 
 ```xml
 <eClassifiers xsi:type="ecore:EClass" name="Person">
@@ -75,119 +150,128 @@ The configuration defines **keys and format**, not actual values.
     <details key="codec.supertype"/>
     <details key="enabled" value="true"/>
     <details key="selection" value="ALL"/>
-    <details key="supertypeKey" value="_supertype"/>
+    <details key="asArray" value="true"/>
+    <details key="separator" value=","/>
+    <details key="superTypeKey" value="_supertype"/>
+    <details key="useSmartCompression" value="true"/>
   </eAnnotations>
 </eClassifiers>
 ```
 
-**Annotation Details:**
-| Key | Values | Default | Description |
-|-----|--------|---------|-------------|
-| `enabled` | true, false | false | Enable supertype serialization |
-| `selection` | ALL, ALL_EMF, SINGLE, NONE | ALL (when enabled) | Which supertypes to include |
-| `superTypeKey` | any string | `_supertype` (PLAIN) / `supertype` (STRUCTURED in type container) | JSON property name |
-| `format` | PLAIN, STRUCTURED | PLAIN | SerializationFormat |
-| `schemaKey` | any string | `schema` | Key for schema in STRUCTURED |
-| `typeKey` | any string | `type` | Key for type name in STRUCTURED |
+### 6.3 Java Builder (Runtime Override)
 
-**Selection Values:**
-| Value | Description |
-|-------|-------------|
-| `ALL` | All domain model supertypes (excludes EMF base classes like EObject) |
-| `ALL_EMF` | All supertypes including EMF base classes (EObject, EModelElement, etc.) |
-| `SINGLE` | Only the immediate/direct supertype |
-| `NONE` | No supertypes (equivalent to enabled=false) |
-
-### 3.2 Java Builder (Runtime Override)
-
-**Minimal (all defaults: PLAIN format, ALL selection):**
+**Minimal (defaults: asArray=true, ALL selection):**
 ```java
 SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
     .enabled(true)
     .build();
 ```
-**Resulting JSON:**
-```json
-{
-  "_supertype": ["Entity", "Auditable"]
-}
-```
 
-**STRUCTURED format:**
+**With STRING presentation:**
 ```java
 SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
     .enabled(true)
-    .structured()
+    .asArray(false)
+    .separator("|")  // Custom separator
     .build();
 ```
-**Resulting JSON:**
-```json
-{
-  "_supertype": [
-    { "schema": "http://example.org/base/1.0", "type": "Entity" },
-    { "schema": "http://example.org/audit/1.0", "type": "Auditable" }
-  ]
-}
-```
 
-**With custom keys:**
+**With SINGLE selection:**
 ```java
 SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
     .enabled(true)
-    .structured()
-    .schemaKey("ns")
-    .typeKey("class")
+    .selection(Selection.SINGLE)
     .build();
 ```
-**Resulting JSON:**
-```json
-{
-  "_supertype": [
-    { "ns": "http://example.org/base/1.0", "class": "Entity" },
-    { "ns": "http://example.org/audit/1.0", "class": "Auditable" }
-  ]
-}
-```
 
-**Smart compression (same-schema supertypes as plain names):**
+**With smart compression:**
 ```java
 SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
     .enabled(true)
     .useSmartCompression(true)
     .build();
 ```
-**Resulting JSON:** (Entity from same schema, Auditable from different)
-```json
-{
-  "_supertype": ["Entity", "http://audit.org/1.0#//Auditable"]
-}
-```
-
-**At serialization time:**
-1. Serializer reads `SuperTypeSerializationConfig` from options (Java or JSON)
-2. Extracts supertypes from EObject's EClass
-3. Applies smart compression (same schema → name only)
-4. Combines config (keys/format) + supertype data → JSON output
 
 ---
 
-## 4. Default SuperType Settings
+## 7. Examples by Configuration
 
-| Setting | PLAIN Default | STRUCTURED Default |
-|---------|---------------|-------------------|
-| Enabled | `false` | `false` |
-| Selection | `ALL` (when enabled) | `ALL` (when enabled) |
-| SuperType Key | `_supertype` | `supertype` (inside type container) |
-| Schema Key | - | `schema` |
-| Type Key | - | `type` |
-| Format | `PLAIN` | `STRUCTURED` |
+### 7.1 Type PLAIN + SuperType ARRAY (most common)
 
-**When enabled, default output:**
 ```json
 {
-  "_supertype": ["Entity", "Auditable"]
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": ["Entity", "http://audit.org/1.0#//Auditable"],
+  "name": "John"
 }
 ```
+
+### 7.2 Type PLAIN + SuperType STRING
+
+```json
+{
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": "Entity,http://audit.org/1.0#//Auditable",
+  "name": "John"
+}
+```
+
+### 7.3 Type STRUCTURED + SuperType ARRAY
+
+```json
+{
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person",
+    "supertype": ["Entity", "http://audit.org/1.0#//Auditable"]
+  },
+  "name": "John"
+}
+```
+
+### 7.4 Type STRUCTURED + SuperType STRING
+
+```json
+{
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person",
+    "supertype": "Entity,http://audit.org/1.0#//Auditable"
+  },
+  "name": "John"
+}
+```
+
+### 7.5 SINGLE Selection
+
+```json
+{
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": ["Entity"],
+  "name": "John"
+}
+```
+
+Or with STRING presentation (single value, no separator needed):
+
+```json
+{
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": "Entity",
+  "name": "John"
+}
+```
+
+---
+
+## 8. Deserialization
+
+SuperType information is typically **not needed for deserialization** since the concrete type (`_type`) fully determines the EClass to instantiate. The inheritance hierarchy is already defined in the EMF model.
+
+However, if present in the JSON, the deserializer should:
+1. Parse the supertype field (array or comma-separated string)
+2. Optionally validate that declared supertypes match the resolved EClass's actual supertypes
+3. Log a warning if there's a mismatch (but continue with the resolved type)
 
 ---
 

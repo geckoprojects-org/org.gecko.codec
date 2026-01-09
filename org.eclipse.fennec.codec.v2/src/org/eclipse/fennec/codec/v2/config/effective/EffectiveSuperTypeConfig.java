@@ -33,6 +33,8 @@ public final class EffectiveSuperTypeConfig {
     private final boolean enabled;
     private final SuperTypeSelection selection;
     private final SerializationFormat format;
+    private final boolean asArray;
+    private final String separator;
     private final String superTypeKey;
     private final String schemaKey;
     private final String nameKey;
@@ -42,6 +44,8 @@ public final class EffectiveSuperTypeConfig {
         this.enabled = builder.enabled;
         this.selection = builder.selection;
         this.format = builder.format;
+        this.asArray = builder.asArray;
+        this.separator = builder.separator;
         this.superTypeKey = builder.superTypeKey;
         this.schemaKey = builder.schemaKey;
         this.nameKey = builder.nameKey;
@@ -64,9 +68,34 @@ public final class EffectiveSuperTypeConfig {
 
     /**
      * Returns the serialization format (PLAIN, STRUCTURED).
+     * <p>
+     * Note: SuperType format follows Type format. When Type is STRUCTURED,
+     * supertype is written inside the _type object.
+     * </p>
      */
     public SerializationFormat getFormat() {
         return format;
+    }
+
+    /**
+     * Returns whether to serialize supertypes as JSON array (true) or
+     * as separator-joined string (false).
+     * <p>
+     * Default is true (array presentation).
+     * </p>
+     */
+    public boolean isAsArray() {
+        return asArray;
+    }
+
+    /**
+     * Returns the separator character for STRING presentation (when asArray=false).
+     * <p>
+     * Default is comma (",").
+     * </p>
+     */
+    public String getSeparator() {
+        return separator;
     }
 
     /**
@@ -111,6 +140,8 @@ public final class EffectiveSuperTypeConfig {
         private boolean enabled = false;
         private SuperTypeSelection selection = SuperTypeSelection.ALL;
         private SerializationFormat format = SerializationFormat.PLAIN;
+        private boolean asArray = true;
+        private String separator = ",";
         private String superTypeKey = "_supertype";
         private String schemaKey = "schema";
         private String nameKey = "name";
@@ -130,6 +161,16 @@ public final class EffectiveSuperTypeConfig {
 
         public Builder format(SerializationFormat format) {
             this.format = format;
+            return this;
+        }
+
+        public Builder asArray(boolean asArray) {
+            this.asArray = asArray;
+            return this;
+        }
+
+        public Builder separator(String separator) {
+            this.separator = separator;
             return this;
         }
 

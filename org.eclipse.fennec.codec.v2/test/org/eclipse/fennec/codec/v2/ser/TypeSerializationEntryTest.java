@@ -24,8 +24,10 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
+import org.eclipse.fennec.model.metadata.SuperTypeSelection;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -429,6 +431,297 @@ class TypeSerializationEntryTest {
 
             TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
             assertEquals("_type", entry.getKey());
+        }
+    }
+
+    // ========================================================================
+    // STRUCTURED Format with SuperType Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("STRUCTURED format with SuperType")
+    class StructuredFormatWithSuperTypeTests {
+
+        private EClass superClass;
+        private EClass testClassWithSuper;
+        private EPackage anotherPackage;
+        private EClass externalSuperClass;
+
+        @BeforeEach
+        void setUpInheritance() {
+            // Create a superclass in the same package
+            superClass = EcoreFactory.eINSTANCE.createEClass();
+            superClass.setName("Entity");
+            testPackage.getEClassifiers().add(superClass);
+
+            // Create test class that extends superClass
+            testClassWithSuper = EcoreFactory.eINSTANCE.createEClass();
+            testClassWithSuper.setName("Customer");
+            testClassWithSuper.getESuperTypes().add(superClass);
+            testPackage.getEClassifiers().add(testClassWithSuper);
+
+            // Create an external package with another superclass
+            anotherPackage = EcoreFactory.eINSTANCE.createEPackage();
+            anotherPackage.setName("auditpackage");
+            anotherPackage.setNsURI("http://audit.org/1.0");
+            anotherPackage.setNsPrefix("audit");
+
+            externalSuperClass = EcoreFactory.eINSTANCE.createEClass();
+            externalSuperClass.setName("Auditable");
+            anotherPackage.getEClassifiers().add(externalSuperClass);
+        }
+
+        @Test
+        @DisplayName("STRUCTURED with SuperType ARRAY: includes supertype array inside _type object")
+        void structuredWithSuperTypeArray() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .enabled(true)
+                    .selection(SuperTypeSelection.ALL)
+                    .asArray(true)
+                    .superTypeKey("supertype")
+                    .useSmartCompression(true)
+                    .build();
+
+            SuperTypeSerializationEntry superTypeEntry = new SuperTypeSerializationEntry(superTypeConfig, testClassWithSuper);
+            TypeSerializationEntry entry = new TypeSerializationEntry(typeConfig, testClassWithSuper, superTypeEntry);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"schema": "...", "type": "Customer", "supertype": ["Entity"]}
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("schema", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("type", "Customer");
+            inOrder.verify(generator).writeArrayPropertyStart("supertype");
+            inOrder.verify(generator).writeString("Entity");  // Same namespace, smart compression
+            inOrder.verify(generator).writeEndArray();
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("STRUCTURED with SuperType STRING: includes supertype string inside _type object")
+        void structuredWithSuperTypeString() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .enabled(true)
+                    .selection(SuperTypeSelection.ALL)
+                    .asArray(false)
+                    .separator(",")
+                    .superTypeKey("supertype")
+                    .useSmartCompression(true)
+                    .build();
+
+            SuperTypeSerializationEntry superTypeEntry = new SuperTypeSerializationEntry(superTypeConfig, testClassWithSuper);
+            TypeSerializationEntry entry = new TypeSerializationEntry(typeConfig, testClassWithSuper, superTypeEntry);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"schema": "...", "type": "Customer", "supertype": "Entity"}
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("schema", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("type", "Customer");
+            inOrder.verify(generator).writeStringProperty("supertype", "Entity");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("STRUCTURED with SuperType: multiple supertypes with different namespaces")
+        void structuredWithMultipleSuperTypes() {
+            // Add external supertype
+            testClassWithSuper.getESuperTypes().add(externalSuperClass);
+
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .enabled(true)
+                    .selection(SuperTypeSelection.ALL)
+                    .asArray(true)
+                    .superTypeKey("supertype")
+                    .useSmartCompression(true)
+                    .build();
+
+            SuperTypeSerializationEntry superTypeEntry = new SuperTypeSerializationEntry(superTypeConfig, testClassWithSuper);
+            TypeSerializationEntry entry = new TypeSerializationEntry(typeConfig, testClassWithSuper, superTypeEntry);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"schema": "...", "type": "Customer", "supertype": ["Entity", "http://audit.org/1.0#//Auditable"]}
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("schema", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("type", "Customer");
+            inOrder.verify(generator).writeArrayPropertyStart("supertype");
+            inOrder.verify(generator).writeString("Entity");  // Same namespace
+            inOrder.verify(generator).writeString("http://audit.org/1.0#//Auditable");  // Different namespace
+            inOrder.verify(generator).writeEndArray();
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("STRUCTURED with no supertypes: does not write supertype field")
+        void structuredWithNoSuperTypes() {
+            // testEClass has no supertypes
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .enabled(true)
+                    .selection(SuperTypeSelection.ALL)
+                    .asArray(true)
+                    .superTypeKey("supertype")
+                    .build();
+
+            SuperTypeSerializationEntry superTypeEntry = new SuperTypeSerializationEntry(superTypeConfig, testEClass);
+            TypeSerializationEntry entry = new TypeSerializationEntry(typeConfig, testEClass, superTypeEntry);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"schema": "...", "type": "Person"} - no supertype field
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("schema", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("type", "Person");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("STRUCTURED with null superTypeEntry: no supertype field")
+        void structuredWithNullSuperTypeEntry() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            // No superTypeEntry passed
+            TypeSerializationEntry entry = new TypeSerializationEntry(typeConfig, testClassWithSuper);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"schema": "...", "type": "Customer"} - no supertype field
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("schema", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("type", "Customer");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("STRUCTURED URI strategy with SuperType: includes supertype")
+        void structuredUriWithSuperType() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.URI)
+                    .typeKey("_type")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .enabled(true)
+                    .selection(SuperTypeSelection.SINGLE)
+                    .asArray(true)
+                    .superTypeKey("supertype")
+                    .useSmartCompression(true)
+                    .build();
+
+            SuperTypeSerializationEntry superTypeEntry = new SuperTypeSerializationEntry(superTypeConfig, testClassWithSuper);
+            TypeSerializationEntry entry = new TypeSerializationEntry(typeConfig, testClassWithSuper, superTypeEntry);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"type": "http://example.org/test#//Customer", "supertype": ["Entity"]}
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("type", "http://example.org/test#//Customer");
+            inOrder.verify(generator).writeArrayPropertyStart("supertype");
+            inOrder.verify(generator).writeString("Entity");
+            inOrder.verify(generator).writeEndArray();
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("STRUCTURED with custom supertype key")
+        void structuredWithCustomSuperTypeKey() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .enabled(true)
+                    .selection(SuperTypeSelection.ALL)
+                    .asArray(true)
+                    .superTypeKey("extends")
+                    .useSmartCompression(true)
+                    .build();
+
+            SuperTypeSerializationEntry superTypeEntry = new SuperTypeSerializationEntry(superTypeConfig, testClassWithSuper);
+            TypeSerializationEntry entry = new TypeSerializationEntry(typeConfig, testClassWithSuper, superTypeEntry);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify custom key "extends" is used
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("schema", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("type", "Customer");
+            inOrder.verify(generator).writeArrayPropertyStart("extends");
+            inOrder.verify(generator).writeString("Entity");
+            inOrder.verify(generator).writeEndArray();
+            inOrder.verify(generator).writeEndObject();
         }
     }
 }

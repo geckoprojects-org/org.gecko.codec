@@ -13,9 +13,12 @@
  */
 package org.eclipse.fennec.codec.v2.ser;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
@@ -41,6 +44,7 @@ public class TypeSerializationEntry implements SerializationEntry {
     private final EffectiveTypeConfig config;
     private final EClass eClass;
     private final String typeValue;
+    private final SuperTypeSerializationEntry superTypeEntry;
 
     /**
      * Creates a new TypeSerializationEntry with the effective type configuration.
@@ -49,9 +53,22 @@ public class TypeSerializationEntry implements SerializationEntry {
      * @param eClass the EClass being serialized (for computing type value if no discriminator)
      */
     public TypeSerializationEntry(EffectiveTypeConfig config, EClass eClass) {
+        this(config, eClass, null);
+    }
+
+    /**
+     * Creates a new TypeSerializationEntry with the effective type configuration
+     * and optional supertype entry for STRUCTURED format embedding.
+     *
+     * @param config the effective (pre-merged) type configuration
+     * @param eClass the EClass being serialized (for computing type value if no discriminator)
+     * @param superTypeEntry optional supertype entry to embed in STRUCTURED format
+     */
+    public TypeSerializationEntry(EffectiveTypeConfig config, EClass eClass, SuperTypeSerializationEntry superTypeEntry) {
         this.config = config;
         this.eClass = eClass;
         this.typeValue = resolveTypeValue(eClass);
+        this.superTypeEntry = superTypeEntry;
     }
 
     @Override
@@ -170,9 +187,18 @@ public class TypeSerializationEntry implements SerializationEntry {
      *   <li>SCHEMA_AND_TYPE: {@code {"schema": "http://...", "type": "Person"}}</li>
      * </ul>
      * </p>
+     * <p>
+     * When supertype is enabled and Type format is STRUCTURED, supertype is included
+     * inside the _type object:
+     * <ul>
+     *   <li>ARRAY: {@code {"schema": "...", "type": "Person", "supertype": ["Entity", "..."]}}</li>
+     *   <li>STRING: {@code {"schema": "...", "type": "Person", "supertype": "Entity,..."}}</li>
+     * </ul>
+     * </p>
      *
      * @param gen the JSON generator
      * @see <a href="docs/codec-v2-spec/05-type.md#14-structured-strategies">Spec: STRUCTURED Strategy</a>
+     * @see <a href="docs/codec-v2-spec/06-supertype.md#3-structured-format">Spec: SuperType STRUCTURED</a>
      */
     private void serializeStructured(JsonGenerator gen) {
         gen.writeName(config.getTypeKey());
@@ -209,7 +235,50 @@ public class TypeSerializationEntry implements SerializationEntry {
                 break;
         }
 
+        // Include supertype inside the _type object when STRUCTURED format
+        serializeSuperTypeInStructured(gen);
+
         gen.writeEndObject();
+    }
+
+    /**
+     * Serializes supertype information inside the STRUCTURED _type object.
+     * <p>
+     * Only writes supertype if:
+     * <ul>
+     *   <li>SuperTypeSerializationEntry is provided</li>
+     *   <li>SuperType is enabled in config</li>
+     *   <li>There are actual supertypes to serialize</li>
+     * </ul>
+     * </p>
+     *
+     * @param gen the JSON generator
+     */
+    private void serializeSuperTypeInStructured(JsonGenerator gen) {
+        if (superTypeEntry == null) {
+            return;
+        }
+
+        List<String> superTypes = superTypeEntry.getSuperTypeValues();
+        if (superTypes.isEmpty()) {
+            return;
+        }
+
+        EffectiveSuperTypeConfig superTypeConfig = superTypeEntry.getConfig();
+        String superTypeKey = superTypeConfig.getSuperTypeKey();
+
+        if (superTypeConfig.isAsArray()) {
+            // ARRAY presentation: "supertype": ["Entity", "http://audit.org/1.0#//Auditable"]
+            gen.writeArrayPropertyStart(superTypeKey);
+            for (String superType : superTypes) {
+                gen.writeString(superType);
+            }
+            gen.writeEndArray();
+        } else {
+            // STRING presentation: "supertype": "Entity,http://audit.org/1.0#//Auditable"
+            String joined = String.join(superTypeConfig.getSeparator(), superTypes);
+            gen.writeStringProperty(superTypeKey, joined);
+        }
     }
 
     /**

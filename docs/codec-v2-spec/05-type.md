@@ -156,11 +156,9 @@ The NUMERIC strategy uses EMF classifier IDs instead of type names for compactne
 
 ---
 
-## 2. Mixed Supertype Format
+## 2. SuperType in STRUCTURED Format
 
-In STRUCTURED format, supertypes use a **smart format**:
-- Supertypes from **same schema**: plain name only
-- Supertypes from **different schema**: full URI
+When Type format is STRUCTURED and SuperType is enabled, supertype information is included **inside** the `_type` object as a `supertype` field:
 
 ```json
 {
@@ -172,7 +170,11 @@ In STRUCTURED format, supertypes use a **smart format**:
 }
 ```
 
-This is compact yet unambiguous - `Entity` is from `http://example.org/person/1.0`, while `Auditable` includes its full URI.
+SuperType values follow namespace matching rules:
+- **Same namespace** as schema: simple EClass name (e.g., `"Entity"`)
+- **Different namespace**: full EClass URI (e.g., `"http://audit.org/1.0#//Auditable"`)
+
+> **See [SuperType Serialization](06-supertype.md)** for complete SuperType configuration including selection modes, presentation styles, and PLAIN format examples.
 
 ---
 

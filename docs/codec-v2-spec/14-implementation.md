@@ -92,12 +92,31 @@
 - [ ] NUMERIC mode
 
 ### SuperType Serialization
-- [x] PLAIN format - array of names/URIs
+
+**Format follows Type format** (no independent format setting):
+- Type PLAIN → SuperType as standalone `_supertype` field
+- Type STRUCTURED → SuperType inside `_type` object as `supertype` field
+
+**Selection modes:**
 - [x] ALL selection
 - [x] SINGLE selection
 - [x] ALL_EMF selection
-- [ ] STRUCTURED format - array of `{"schema":"...","type":"..."}`
-- [ ] Deserialization (not typically needed - type determines class)
+- [x] NONE selection
+
+**Presentation:**
+- [x] ARRAY presentation (default) - array of URI strings
+- [x] STRING presentation - separator-joined URI string (configurable separator, default `,`)
+
+**Value resolution (namespace matching):**
+- [x] Same namespace as root → simple EClass name
+- [x] Different namespace → full EClass URI
+
+**STRUCTURED format (inside `_type` object):**
+- [x] ARRAY presentation inside `_type` object
+- [x] STRING presentation inside `_type` object
+
+**Deserialization:**
+- [ ] Parse and validate (not typically needed - type determines class)
 
 ### Advanced
 - [ ] Cross-resource references

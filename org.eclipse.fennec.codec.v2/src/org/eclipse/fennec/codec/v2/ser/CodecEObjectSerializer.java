@@ -26,6 +26,7 @@ import org.eclipse.fennec.codec.v2.config.effective.EffectiveClassConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.eclipse.fennec.codec.v2.context.EMFCodecWriteContext;
+import org.eclipse.fennec.model.metadata.SerializationFormat;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.SerializationContext;
@@ -139,17 +140,35 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
             entries.put(idEntry.getKey(), idEntry);
         }
 
+        // Determine if type format is STRUCTURED
+        boolean isStructuredFormat = classConfig.isTypeEnabled()
+                && classConfig.getTypeConfig().getFormat() == SerializationFormat.STRUCTURED;
+
+        // Create supertype entry if enabled
+        SuperTypeSerializationEntry superTypeEntry = null;
+        if (classConfig.isSuperTypeEnabled()) {
+            superTypeEntry = new SuperTypeSerializationEntry(
+                    classConfig.getSuperTypeConfig(), eClass);
+        }
+
         // Add type entry (if enabled in effective config)
         if (classConfig.isTypeEnabled()) {
-            TypeSerializationEntry typeEntry = new TypeSerializationEntry(
-                    classConfig.getTypeConfig(), eClass);
+            TypeSerializationEntry typeEntry;
+            if (isStructuredFormat && superTypeEntry != null) {
+                // STRUCTURED format: supertype is embedded inside _type object
+                typeEntry = new TypeSerializationEntry(
+                        classConfig.getTypeConfig(), eClass, superTypeEntry);
+            } else {
+                // PLAIN format: supertype is a separate field
+                typeEntry = new TypeSerializationEntry(
+                        classConfig.getTypeConfig(), eClass);
+            }
             entries.put(typeEntry.getKey(), typeEntry);
         }
 
-        // Add supertype entry (if enabled in effective config)
-        if (classConfig.isSuperTypeEnabled()) {
-            SuperTypeSerializationEntry superTypeEntry = new SuperTypeSerializationEntry(
-                    classConfig.getSuperTypeConfig(), eClass);
+        // Add supertype entry as separate field only when Type format is PLAIN
+        // (for STRUCTURED format, supertype is embedded inside _type object)
+        if (superTypeEntry != null && !isStructuredFormat) {
             entries.put(superTypeEntry.getKey(), superTypeEntry);
         }
 
