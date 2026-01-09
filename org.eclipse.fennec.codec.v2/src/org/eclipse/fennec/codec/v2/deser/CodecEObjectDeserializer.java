@@ -72,6 +72,9 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
     /** Default type key */
     private static final String DEFAULT_TYPE_KEY = "_type";
 
+    /** Default schema key for PLAIN SCHEMA_AND_TYPE format */
+    private static final String DEFAULT_SCHEMA_KEY = "_schema";
+
     private final EffectiveCodecConfig config;
 
     /**
@@ -167,15 +170,22 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         EClass resolvedEClass = null;
         EObject eObject = null;
         boolean typeFieldProcessed = false;
+        String schemaValue = null;  // For PLAIN SCHEMA_AND_TYPE format
 
         // Read properties
         while (parser.nextToken() != JsonToken.END_OBJECT) {
             String propertyName = parser.currentName();
             parser.nextToken(); // Move to value
 
+            // Check if this is the schema property (for PLAIN SCHEMA_AND_TYPE)
+            if (isSchemaKey(propertyName)) {
+                schemaValue = parser.getString();
+                continue;
+            }
+
             // Check if this is the type property - ALWAYS process it when present
             if (isTypeKey(propertyName)) {
-                resolvedEClass = resolveType(parser, state, hintEClass);
+                resolvedEClass = resolveType(parser, state, hintEClass, schemaValue);
                 state.setResolvedEClass(resolvedEClass);
                 typeFieldProcessed = true;
 
@@ -241,19 +251,38 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
     }
 
     /**
+     * Checks if the property name is a schema key (for PLAIN SCHEMA_AND_TYPE format).
+     * <p>
+     * Supports common schema keys as well as custom keys.
+     * </p>
+     */
+    private boolean isSchemaKey(String propertyName) {
+        // Common schema keys for PLAIN SCHEMA_AND_TYPE format
+        return DEFAULT_SCHEMA_KEY.equals(propertyName)
+            || "@vocab".equals(propertyName)
+            || "schema".equals(propertyName);
+    }
+
+    /**
      * Resolves the EClass from the current parser position.
      * <p>
      * Uses the configured type strategy to interpret the type value.
      * The hint EClass is used as context for MAPPED type resolution -
      * it provides the mapId for discriminator lookup.
      * </p>
+     * <p>
+     * For PLAIN SCHEMA_AND_TYPE format, the schemaValue parameter provides
+     * the schema (EPackage nsURI) which is combined with the type name
+     * to resolve the EClass.
+     * </p>
      *
      * @param parser the JSON parser positioned at the type value
      * @param state the deserialization state
      * @param hintEClass optional hint EClass for MAPPED context (may be null)
+     * @param schemaValue optional schema value for PLAIN SCHEMA_AND_TYPE (may be null)
      * @return the resolved EClass, or null if resolution fails
      */
-    private EClass resolveType(JsonParser parser, DeserializationState state, EClass hintEClass) {
+    private EClass resolveType(JsonParser parser, DeserializationState state, EClass hintEClass, String schemaValue) {
         // Build effective type config from module defaults
         // We use module config here since we don't know the EClass yet
         EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
@@ -265,8 +294,8 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         TypeDeserializationEntry typeEntry = new TypeDeserializationEntry(
                 typeConfig, config.getTypeDiscriminatorService());
 
-        // Pass the hint to the type entry for MAPPED context
-        typeEntry.deserializeWithHint(state, parser, null, hintEClass);
+        // Pass the hint and schema to the type entry
+        typeEntry.deserializeWithSchemaHint(state, parser, null, hintEClass, schemaValue);
 
         return state.getResolvedEClass();
     }

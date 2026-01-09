@@ -102,21 +102,73 @@ public class TypeSerializationEntry implements SerializationEntry {
         if (format == SerializationFormat.STRUCTURED) {
             serializeStructured(gen);
         } else {
-            // PLAIN format: write type value as simple string property
+            serializePlain(gen);
+        }
+    }
+
+    /**
+     * Serializes type information in PLAIN format.
+     * <p>
+     * Output format varies by strategy:
+     * <ul>
+     *   <li>URI: {@code "_type": "http://example.org/1.0#//Person"}</li>
+     *   <li>NAME: {@code "_type": "Person"}</li>
+     *   <li>CLASS: {@code "_type": "org.example.Person"}</li>
+     *   <li>MAPPED: {@code "_type": "customer"}</li>
+     *   <li>NUMERIC: {@code "_type": "3"}</li>
+     *   <li>SCHEMA_AND_TYPE: {@code "_schema": "http://...", "_type": "Person"} (two fields)</li>
+     * </ul>
+     * </p>
+     *
+     * @param gen the JSON generator
+     */
+    private void serializePlain(JsonGenerator gen) {
+        TypeStrategy strategy = config.getStrategy();
+        if (strategy == TypeStrategy.SCHEMA_AND_TYPE) {
+            // SCHEMA_AND_TYPE in PLAIN format writes TWO separate fields
+            EPackage ePackage = eClass.getEPackage();
+            if (ePackage != null) {
+                // For PLAIN format, ensure schema key has underscore prefix
+                String plainSchemaKey = getPlainSchemaKey();
+                gen.writeStringProperty(plainSchemaKey, ePackage.getNsURI());
+            }
+            gen.writeStringProperty(config.getTypeKey(), eClass.getName());
+        } else {
+            // All other strategies: single field with typeValue
             gen.writeStringProperty(config.getTypeKey(), typeValue);
         }
     }
 
     /**
+     * Gets the schema key for PLAIN format.
+     * <p>
+     * PLAIN format keys should have underscore prefix at root level.
+     * If the configured schemaKey doesn't start with underscore, prefix it.
+     * </p>
+     *
+     * @return the schema key with underscore prefix for PLAIN format
+     */
+    private String getPlainSchemaKey() {
+        String schemaKey = config.getSchemaKey();
+        if (schemaKey.startsWith("_") || schemaKey.startsWith("@")) {
+            // Already has prefix (underscore or custom like @vocab)
+            return schemaKey;
+        }
+        return "_" + schemaKey;
+    }
+
+    /**
      * Serializes type information in STRUCTURED format.
      * <p>
-     * Output format:
-     * <pre>
-     * "_type": {
-     *   "schema": "http://example.org/person/1.0",
-     *   "type": "Person"
-     * }
-     * </pre>
+     * Output format varies by strategy (all use unified "type" key except NUMERIC):
+     * <ul>
+     *   <li>URI: {@code {"type": "http://example.org/1.0#//Person"}}</li>
+     *   <li>NAME: {@code {"type": "Person"}}</li>
+     *   <li>CLASS: {@code {"type": "org.example.Person"}}</li>
+     *   <li>MAPPED: {@code {"type": "customer"}}</li>
+     *   <li>NUMERIC: {@code {"schema": "http://...", "classifier": 3}}</li>
+     *   <li>SCHEMA_AND_TYPE: {@code {"schema": "http://...", "type": "Person"}}</li>
+     * </ul>
      * </p>
      *
      * @param gen the JSON generator
@@ -126,14 +178,36 @@ public class TypeSerializationEntry implements SerializationEntry {
         gen.writeName(config.getTypeKey());
         gen.writeStartObject();
 
-        // Write schema (EPackage nsURI)
-        EPackage ePackage = eClass.getEPackage();
-        if (ePackage != null) {
-            gen.writeStringProperty(config.getSchemaKey(), ePackage.getNsURI());
+        TypeStrategy strategy = config.getStrategy();
+        if (strategy == null) {
+            strategy = TypeStrategy.URI;
         }
 
-        // Write type name
-        gen.writeStringProperty(config.getNameKey(), eClass.getName());
+        switch (strategy) {
+            case NUMERIC:
+                // NUMERIC: {"schema": "...", "classifier": N}
+                EPackage numericPkg = eClass.getEPackage();
+                if (numericPkg != null) {
+                    gen.writeStringProperty(config.getSchemaKey(), numericPkg.getNsURI());
+                }
+                gen.writeNumberProperty("classifier", eClass.getClassifierID());
+                break;
+
+            case SCHEMA_AND_TYPE:
+                // SCHEMA_AND_TYPE: {"schema": "...", "type": "..."}
+                EPackage schemaPkg = eClass.getEPackage();
+                if (schemaPkg != null) {
+                    gen.writeStringProperty(config.getSchemaKey(), schemaPkg.getNsURI());
+                }
+                gen.writeStringProperty(config.getNameKey(), eClass.getName());
+                break;
+
+            default:
+                // URI, NAME, CLASS, MAPPED: {"type": "<value>"}
+                // All use the unified "type" key with the pre-computed typeValue
+                gen.writeStringProperty(config.getNameKey(), typeValue);
+                break;
+        }
 
         gen.writeEndObject();
     }

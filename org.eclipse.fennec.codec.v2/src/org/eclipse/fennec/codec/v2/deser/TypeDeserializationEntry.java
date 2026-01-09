@@ -99,15 +99,42 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      */
     public void deserializeWithHint(DeserializationState state, JsonParser parser,
             DeserializationContext ctxt, EClass hintEClass) {
+        deserializeWithSchemaHint(state, parser, ctxt, hintEClass, null);
+    }
+
+    /**
+     * Deserializes type information with optional hint EClass and schema value.
+     * <p>
+     * The hint EClass is used to provide context for MAPPED type resolution.
+     * The schemaValue is used for PLAIN SCHEMA_AND_TYPE format where schema
+     * is provided as a separate field.
+     * </p>
+     *
+     * @param state the deserialization state
+     * @param parser the JSON parser
+     * @param ctxt the deserialization context
+     * @param hintEClass optional hint EClass for MAPPED context (may be null)
+     * @param schemaValue optional schema value for PLAIN SCHEMA_AND_TYPE (may be null)
+     */
+    public void deserializeWithSchemaHint(DeserializationState state, JsonParser parser,
+            DeserializationContext ctxt, EClass hintEClass, String schemaValue) {
         JsonToken token = parser.currentToken();
 
         String typeValue = null;
 
         if (token == JsonToken.VALUE_STRING) {
-            // PLAIN format: "_type": "http://example.org/1.0#//Person" or "_type": "text"
-            typeValue = parser.getString();
+            // PLAIN format: "_type": "http://example.org/1.0#//Person" or "_type": "Person"
+            String rawTypeValue = parser.getString();
+
+            // If we have a schema value (PLAIN SCHEMA_AND_TYPE), combine them
+            if (schemaValue != null && !schemaValue.isEmpty() && !rawTypeValue.contains("#//")) {
+                // Schema + simple name -> compose URI
+                typeValue = schemaValue + "#//" + rawTypeValue;
+            } else {
+                typeValue = rawTypeValue;
+            }
         } else if (token == JsonToken.START_OBJECT) {
-            // STRUCTURED format: "_type": {"schema": "...", "name": "..."}
+            // STRUCTURED format: "_type": {"schema": "...", "type": "..."}
             typeValue = parseStructuredType(parser);
         } else {
             LOGGER.warning("Unexpected token for _type: " + token);
@@ -127,42 +154,81 @@ public class TypeDeserializationEntry implements DeserializationEntry {
     /**
      * Parses a structured type object.
      * <p>
-     * Expected format:
-     * <pre>
-     * {
-     *   "schema": "http://example.org/1.0",
-     *   "name": "Person"
-     * }
-     * </pre>
+     * Supports multiple formats based on strategy (all use unified "type" key except NUMERIC):
+     * <ul>
+     *   <li>URI: {@code {"type": "http://example.org/1.0#//Person"}}</li>
+     *   <li>NAME: {@code {"type": "Person"}}</li>
+     *   <li>CLASS: {@code {"type": "org.example.Person"}}</li>
+     *   <li>MAPPED: {@code {"type": "customer"}}</li>
+     *   <li>NUMERIC: {@code {"schema": "http://...", "classifier": 3}}</li>
+     *   <li>SCHEMA_AND_TYPE: {@code {"schema": "http://...", "type": "Person"}}</li>
+     * </ul>
      * </p>
      *
      * @param parser the JSON parser positioned at START_OBJECT
-     * @return the composed URI string, or null if parsing fails
+     * @return the type value to resolve, or null if parsing fails
      */
     private String parseStructuredType(JsonParser parser) {
         String schema = null;
-        String name = null;
+        String typeValue = null;
+        Integer classifier = null;
 
         while (parser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = parser.currentName();
             parser.nextToken(); // Move to value
 
-            if ("schema".equals(fieldName) || "_schema".equals(fieldName)) {
+            if (config.getSchemaKey().equals(fieldName)) {
                 schema = parser.getString();
-            } else if ("name".equals(fieldName) || "_name".equals(fieldName)) {
-                name = parser.getString();
+            } else if (config.getNameKey().equals(fieldName)) {
+                // "type" key - contains the type value (URI, name, class, discriminator)
+                typeValue = parser.getString();
+            } else if ("classifier".equals(fieldName)) {
+                // NUMERIC strategy: classifier ID
+                classifier = parser.getIntValue();
             }
         }
 
-        if (schema != null && name != null) {
-            return schema + "#//" + name;
-        } else if (name != null) {
-            // Name only - may need context to resolve
-            LOGGER.fine("Structured type with name only: " + name);
-            return name;
+        // NUMERIC strategy: schema + classifier
+        if (classifier != null && schema != null) {
+            return buildNumericTypeValue(schema, classifier);
         }
 
+        // SCHEMA_AND_TYPE: schema + type name -> compose URI
+        if (schema != null && typeValue != null && !typeValue.contains("#//")) {
+            return schema + "#//" + typeValue;
+        }
+
+        // URI, NAME, CLASS, MAPPED: just return the type value
+        if (typeValue != null) {
+            return typeValue;
+        }
+
+        LOGGER.warning("Could not parse structured type: schema=" + schema + ", type=" + typeValue + ", classifier=" + classifier);
         return null;
+    }
+
+    /**
+     * Builds a type value for NUMERIC strategy (schema + classifier).
+     * <p>
+     * Looks up the EPackage and finds the EClass by classifier ID.
+     * Returns the composed URI if found.
+     * </p>
+     *
+     * @param schema the EPackage nsURI
+     * @param classifier the classifier ID
+     * @return the composed URI string, or the classifier as string if not found
+     */
+    private String buildNumericTypeValue(String schema, int classifier) {
+        EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(schema);
+        if (ePackage != null) {
+            for (EClassifier eClassifier : ePackage.getEClassifiers()) {
+                if (eClassifier instanceof EClass && eClassifier.getClassifierID() == classifier) {
+                    return schema + "#//" + eClassifier.getName();
+                }
+            }
+        }
+        LOGGER.warning("Could not find EClass for schema=" + schema + ", classifier=" + classifier);
+        return String.valueOf(classifier);
     }
 
     /**
@@ -217,7 +283,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             case CLASS:
                 return resolveFromClassName(typeValue);
             case NUMERIC:
-                return resolveFromNumeric(typeValue);
+                return resolveFromNumeric(typeValue, hintEClass);
             case MAPPED:
             case URI:
             default:
@@ -279,26 +345,58 @@ public class TypeDeserializationEntry implements DeserializationEntry {
 
     /**
      * Resolves an EClass by its classifier ID.
+     * <p>
+     * For PLAIN NUMERIC format, the classifier ID alone is ambiguous since
+     * different packages can have the same classifier IDs. If a hint EClass
+     * is provided, its package is used for lookup first. Otherwise, all
+     * registered packages are searched.
+     * </p>
      *
      * @param numericValue the classifier ID as string
+     * @param hintEClass optional hint EClass for package context (may be null)
      * @return the resolved EClass, or null if not found
      */
-    private EClass resolveFromNumeric(String numericValue) {
+    private EClass resolveFromNumeric(String numericValue, EClass hintEClass) {
         try {
             int classifierId = Integer.parseInt(numericValue);
-            // Search through all registered packages
+
+            // If we have a hint, try its package first (most reliable)
+            if (hintEClass != null && hintEClass.getEPackage() != null) {
+                EPackage hintPackage = hintEClass.getEPackage();
+                EClass resolved = findClassifierInPackage(hintPackage, classifierId);
+                if (resolved != null) {
+                    return resolved;
+                }
+            }
+
+            // Fallback: search through all registered packages
             for (Object key : EPackage.Registry.INSTANCE.keySet()) {
                 EPackage pkg = EPackage.Registry.INSTANCE.getEPackage((String) key);
                 if (pkg != null) {
-                    for (EClassifier classifier : pkg.getEClassifiers()) {
-                        if (classifier instanceof EClass && classifier.getClassifierID() == classifierId) {
-                            return (EClass) classifier;
-                        }
+                    EClass resolved = findClassifierInPackage(pkg, classifierId);
+                    if (resolved != null) {
+                        return resolved;
                     }
                 }
             }
         } catch (NumberFormatException e) {
             LOGGER.warning("Invalid numeric classifier ID: " + numericValue);
+        }
+        return null;
+    }
+
+    /**
+     * Finds an EClass by classifier ID within a specific package.
+     *
+     * @param pkg the EPackage to search
+     * @param classifierId the classifier ID
+     * @return the EClass if found, null otherwise
+     */
+    private EClass findClassifierInPackage(EPackage pkg, int classifierId) {
+        for (EClassifier classifier : pkg.getEClassifiers()) {
+            if (classifier instanceof EClass && classifier.getClassifierID() == classifierId) {
+                return (EClass) classifier;
+            }
         }
         return null;
     }

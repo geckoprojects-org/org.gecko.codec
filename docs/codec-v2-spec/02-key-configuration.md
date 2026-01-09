@@ -24,7 +24,7 @@ The codec uses special JSON keys to represent metadata (type, schema, supertype,
 | Type | `_type` | `type` | EClass name |
 | SuperType | `_supertype` | `supertype` | Parent type(s) |
 | ID | `_id` | (feature names) | Object identifier |
-| Separator | - | `separator` | ID feature separator |
+| Separator | `_separator` | `separator` | ID feature separator (for combined IDs) |
 | Reference | `_ref` | `ref` | Non-containment reference |
 
 ### 2.2 Container Keys (STRUCTURED only)
@@ -183,8 +183,8 @@ All keys are configurable via annotations or CodecConfiguration.
 | `typeKey` | `_type` | `type` | Type name key |
 | `rootTypeKey` | - | `_type` | Root container key (STRUCTURED only) |
 | `superTypeKey` | `_supertype` | `supertype` | SuperType key |
-| `idKey` | `_id` | - | ID container key |
-| `separatorKey` | - | `separator` | Separator key (STRUCTURED ID only) |
+| `idKey` | `_id` | `_id` | ID container key |
+| `separatorKey` | `_separator` | `separator` | Separator key (format-aware default) |
 | `refKey` | `_ref` | `ref` | Reference key |
 
 ### 5.2 CodecConfiguration Builder

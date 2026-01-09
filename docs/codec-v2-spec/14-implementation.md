@@ -41,21 +41,31 @@
 - [x] EMFContextHolder using EffectiveCodecConfig
 - [x] Jackson context integration
 
-### Type Serialization
-- [x] URI strategy (default)
-- [x] NAME strategy
-- [x] CLASS strategy
-- [x] MAPPED strategy with discriminators
-- [ ] SCHEMA_AND_TYPE strategy
-- [ ] STRUCTURED strategy
-- [ ] NUMERIC strategy
+### Type Serialization (Format × Strategy Matrix)
+
+**PLAIN format:**
+- [x] URI strategy (default) - ser + deser
+- [x] NAME strategy - ser + deser
+- [x] CLASS strategy - ser only
+- [x] MAPPED strategy - ser + deser
+- [x] NUMERIC strategy - ser + deser (uses hint package for disambiguation)
+- [x] SCHEMA_AND_TYPE strategy - two separate fields (`_schema` + `_type`) - ser + deser
+
+**STRUCTURED format:** (all use unified `type` key except NUMERIC)
+- [x] SCHEMA_AND_TYPE - `{"schema":"...","type":"..."}` - ser + deser
+- [x] URI - `{"type":"<uri>"}` - ser + deser
+- [x] NAME - `{"type":"<name>"}` - ser + deser
+- [x] CLASS - `{"type":"<class>"}` - ser only
+- [x] NUMERIC - `{"schema":"...","classifier":N}` - ser + deser
+- [x] MAPPED - `{"type":"<discriminator>"}` - ser + deser
 
 ### ID Serialization
 - [x] Single ID field
 - [x] Multiple ID fields with separator
 - [x] PLAIN format
-- [ ] STRUCTURED format
+- [x] STRUCTURED format
 - [x] ID_ONLY, BOTH, FEATURE_ONLY modes
+- [x] Separator serialization (both formats)
 
 ### Reference Serialization
 - [x] Non-containment references
@@ -72,19 +82,26 @@
 - [x] Null/default/empty handling
 - [x] Key customization
 - [x] Enum serialization options (LITERAL, NAME, VALUE strategies)
-- [ ] Extended metadata names
+- [x] Extended metadata names
 
 ### Global Options
 - [x] Smart compression (type omission)
 - [ ] Smart compression (same-schema names)
 - [ ] Field ordering
-- [ ] Global feature ignore list
+- [x] Global feature ignore list
 - [ ] NUMERIC mode
+
+### SuperType Serialization
+- [x] PLAIN format - array of names/URIs
+- [x] ALL selection
+- [x] SINGLE selection
+- [x] ALL_EMF selection
+- [ ] STRUCTURED format - array of `{"schema":"...","type":"..."}`
+- [ ] Deserialization (not typically needed - type determines class)
 
 ### Advanced
 - [ ] Cross-resource references
 - [ ] Custom value readers/writers
-- [ ] SuperType serialization
 - [ ] Annotation inheritance
 
 ---
@@ -94,11 +111,15 @@
 | Area | Status |
 |------|--------|
 | Round-trip serialization | ✅ |
-| Type strategies | Partial |
-| ID strategies | Partial |
-| Reference handling | Partial |
+| Type strategies (URI, NAME, MAPPED) | ✅ |
+| ID strategies (PLAIN, STRUCTURED) | ✅ |
+| Reference handling | ✅ |
 | Configuration merging | ✅ |
-| Smart compression | Partial |
+| Smart compression | ✅ |
+| Enum serialization | ✅ |
+| SuperType serialization | ✅ |
+| Expand references | ✅ |
+| Global ignore features | ✅ |
 | Error handling | TODO |
 
 ---
@@ -108,15 +129,20 @@
 1. ~~**Cross-Document Containment**: Detect and serialize as reference~~ ✅
 2. ~~**Proxy Factory**: Create EMF proxies for non-containment references~~ ✅
 3. ~~**Expand Feature**: Inline serialization of non-containment references~~ ✅
-4. **Additional TypeStrategies**: SCHEMA_AND_TYPE, STRUCTURED, NUMERIC
-5. **Custom Value Readers/Writers**: CodecValueRegistry integration
-6. **OSGi Integration**: CodecResourceFactory for service registration
+4. ~~**Enum Serialization**: LITERAL, NAME, VALUE strategies~~ ✅
+5. ~~**SuperType Serialization**: PLAIN format~~ ✅
+6. ~~**ID STRUCTURED Format**: Nested object with individual fields~~ ✅
+7. ~~**Global Ignore Features**: Codec-wide feature exclusion~~ ✅
+8. ~~**Extended Metadata Names**: XSD annotation support~~ ✅
+9. **Additional TypeStrategies**: SCHEMA_AND_TYPE, STRUCTURED, NUMERIC
+10. **Custom Value Readers/Writers**: CodecValueRegistry integration
+11. **OSGi Integration**: CodecResourceFactory for service registration
 
 **Deferred:**
 - Cross-Resource References (ResourceSet-based resolution)
 - Expand Depth > 1
-- SuperType serialization
-- ID STRUCTURED format
+- SuperType STRUCTURED format
+- Type STRUCTURED format
 - Smart compression (same-schema names)
 - Field ordering options
 

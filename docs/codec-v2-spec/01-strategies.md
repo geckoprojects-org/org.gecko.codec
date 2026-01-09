@@ -76,14 +76,18 @@ The Format and Strategy dimensions are **orthogonal** - every combination is val
 
 ### 2.2 STRUCTURED Format
 
+All strategies use the standard `type` key - the **value semantics** differ, not the key name:
+
 | Strategy | Output Example |
 |----------|----------------|
-| URI | `"_type": { "uri": "http://example.org/1.0#//Person" }` |
+| URI | `"_type": { "type": "http://example.org/1.0#//Person" }` |
 | NAME | `"_type": { "type": "Person" }` |
-| CLASS | `"_type": { "class": "org.example.Person" }` |
+| CLASS | `"_type": { "type": "org.example.Person" }` |
 | NUMERIC | `"_type": { "schema": "http://example.org/1.0", "classifier": 3 }` |
-| MAPPED | `"_type": { "discriminator": "customer" }` |
+| MAPPED | `"_type": { "type": "customer" }` |
 | SCHEMA_AND_TYPE | `"_type": { "schema": "http://example.org/1.0", "type": "Person" }` |
+
+**Note:** NUMERIC is the only strategy that uses a different key (`classifier`) because the value is a number, not a type identifier string.
 
 ### 2.3 With Supertype (Optional Addition)
 

@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
+import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -163,6 +164,80 @@ class TypeSerializationEntryTest {
     }
 
     // ========================================================================
+    // PLAIN SCHEMA_AND_TYPE Format Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("PLAIN SCHEMA_AND_TYPE format")
+    class PlainSchemaAndTypeTests {
+
+        @Test
+        @DisplayName("SCHEMA_AND_TYPE strategy: writes two separate fields (_schema and _type)")
+        void schemaAndTypeStrategy_writesTwoFields() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.PLAIN)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")  // Will be prefixed with _ for PLAIN
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify TWO properties are written: _schema and _type
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeStringProperty("_schema", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("_type", "Person");
+        }
+
+        @Test
+        @DisplayName("SCHEMA_AND_TYPE strategy: uses custom schema key with prefix")
+        void schemaAndTypeStrategy_usesCustomSchemaKeyWithPrefix() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.PLAIN)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("@type")
+                    .schemaKey("@vocab")  // Already has @ prefix, won't add _
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Custom keys should be used as-is
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeStringProperty("@vocab", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("@type", "Person");
+        }
+
+        @Test
+        @DisplayName("SCHEMA_AND_TYPE strategy: already-prefixed schema key preserved")
+        void schemaAndTypeStrategy_preservesAlreadyPrefixedSchemaKey() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.PLAIN)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("_schema")  // Already has _ prefix
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeStringProperty("_schema", "http://example.org/test");
+            inOrder.verify(generator).writeStringProperty("_type", "Person");
+        }
+    }
+
+    // ========================================================================
     // STRUCTURED Format Tests
     // ========================================================================
 
@@ -171,11 +246,12 @@ class TypeSerializationEntryTest {
     class StructuredFormatTests {
 
         @Test
-        @DisplayName("serializes type as nested object with schema and type")
-        void serializesTypeAsNestedObject() {
+        @DisplayName("SCHEMA_AND_TYPE strategy: serializes type as nested object with schema and type")
+        void schemaAndTypeStrategy_serializesTypeAsNestedObject() {
             EffectiveTypeConfig config = EffectiveTypeConfig.builder()
                     .enabled(true)
                     .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
                     .typeKey("_type")
                     .schemaKey("schema")
                     .nameKey("type")
@@ -186,7 +262,7 @@ class TypeSerializationEntryTest {
 
             entry.serialize(createState(eObject), generator, null);
 
-            // Verify order: writeName, writeStartObject, schema, type, writeEndObject
+            // Verify: {"schema": "http://example.org/test", "type": "Person"}
             InOrder inOrder = inOrder(generator);
             inOrder.verify(generator).writeName("_type");
             inOrder.verify(generator).writeStartObject();
@@ -196,11 +272,110 @@ class TypeSerializationEntryTest {
         }
 
         @Test
-        @DisplayName("uses custom keys for structured output")
-        void usesCustomKeysForStructuredOutput() {
+        @DisplayName("URI strategy: serializes type as nested object with type key containing full URI")
+        void uriStrategy_serializesTypeWithUri() {
             EffectiveTypeConfig config = EffectiveTypeConfig.builder()
                     .enabled(true)
                     .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.URI)
+                    .typeKey("_type")
+                    .nameKey("type")
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"type": "http://example.org/test#//Person"}
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("type", "http://example.org/test#//Person");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("NAME strategy: serializes type as nested object with simple class name")
+        void nameStrategy_serializesTypeWithName() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.NAME)
+                    .typeKey("_type")
+                    .nameKey("type")
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"type": "Person"}
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("type", "Person");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("MAPPED strategy: serializes type as nested object with discriminator value")
+        void mappedStrategy_serializesTypeWithDiscriminator() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.MAPPED)
+                    .typeKey("_type")
+                    .nameKey("type")
+                    .discriminatorValue("person-entity")
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"type": "person-entity"}
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("type", "person-entity");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("NUMERIC strategy: serializes type with schema and classifier ID")
+        void numericStrategy_serializesTypeWithClassifierId() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.NUMERIC)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify: {"schema": "http://example.org/test", "classifier": N}
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("_type");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("schema", "http://example.org/test");
+            inOrder.verify(generator).writeNumberProperty("classifier", testEClass.getClassifierID());
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("SCHEMA_AND_TYPE strategy: uses custom keys for structured output")
+        void schemaAndTypeStrategy_usesCustomKeysForStructuredOutput() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
                     .typeKey("@context")
                     .schemaKey("@vocab")
                     .nameKey("@type")
@@ -216,6 +391,30 @@ class TypeSerializationEntryTest {
             inOrder.verify(generator).writeStartObject();
             inOrder.verify(generator).writeStringProperty("@vocab", "http://example.org/test");
             inOrder.verify(generator).writeStringProperty("@type", "Person");
+            inOrder.verify(generator).writeEndObject();
+        }
+
+        @Test
+        @DisplayName("URI strategy: uses custom type key for structured output")
+        void uriStrategy_usesCustomTypeKey() {
+            EffectiveTypeConfig config = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .format(SerializationFormat.STRUCTURED)
+                    .strategy(TypeStrategy.URI)
+                    .typeKey("@context")
+                    .nameKey("@type")
+                    .build();
+
+            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
+            EObject eObject = mock(EObject.class);
+
+            entry.serialize(createState(eObject), generator, null);
+
+            // Verify custom keys are used: {"@type": "http://example.org/test#//Person"}
+            InOrder inOrder = inOrder(generator);
+            inOrder.verify(generator).writeName("@context");
+            inOrder.verify(generator).writeStartObject();
+            inOrder.verify(generator).writeStringProperty("@type", "http://example.org/test#//Person");
             inOrder.verify(generator).writeEndObject();
         }
 

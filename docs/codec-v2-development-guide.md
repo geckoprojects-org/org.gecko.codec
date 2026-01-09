@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-08
+**Last Updated:** 2026-01-09
 
 ---
 
@@ -940,9 +940,9 @@ CodecConfiguration.builder()
 
 ### 10.11 ID STRUCTURED Format ✅
 
-**Completed:** 2026-01-08
+**Completed:** 2026-01-09
 
-ID serialization now supports STRUCTURED format where ID is serialized as a nested object with individual fields.
+ID serialization now supports both PLAIN and STRUCTURED formats with full round-trip serialization and deserialization.
 
 **Configuration:**
 ```java
@@ -951,7 +951,7 @@ CodecConfiguration.builder()
     .idFeatures(List.of("firstName", "lastName", "sequence"))
     .idSeparator("-")  // Used when combining values for EIDAttribute
     .idSerializeSeparator(true)  // Include separator in JSON (default: true)
-    .idSeparatorKey("_separator")  // Key for separator field (default: "_separator")
+    .idSeparatorKey("_separator")  // Key for separator field (default varies by format)
     .idKeyMode(IdKeyMode.ID_ONLY)  // ID_ONLY, BOTH, FEATURE_ONLY
     .build();
 ```
@@ -962,13 +962,21 @@ CodecConfiguration.builder()
 |--------|-------------|
 | `PLAIN` (single ID) | `"_id": "john-123"` |
 | `PLAIN` (multiple features) | `"_id": "John-Doe-42"` (separator-joined) |
-| `STRUCTURED` (serializeSeparator=true) | `"_id": {"_separator": "-", "firstName": "John", ...}` |
+| `PLAIN` (with separator field) | `"_id": "John-Doe", "_separator": "-"` |
+| `STRUCTURED` (single ID) | `"_id": {"id": "john-123"}` |
+| `STRUCTURED` (multiple features) | `"_id": {"separator": "-", "firstName": "John", ...}` |
 | `STRUCTURED` (serializeSeparator=false) | `"_id": {"firstName": "John", ...}` |
+
+**Format-Aware Separator Key:**
+
+Per [Key Configuration](codec-v2-spec/02-key-configuration.md), separator key varies by format:
+- **PLAIN format**: Uses underscore prefix → `_separator` (top-level field)
+- **STRUCTURED format**: No prefix (inner key) → `separator`
 
 **Separator Serialization Options:**
 - `idSerializeSeparator(true)` (default) - Include separator in JSON, no config needed for deserialization
 - `idSerializeSeparator(false)` - Compact JSON, separator must be configured for deserialization
-- `idSeparatorKey("_separator")` (default) - Customize the JSON key for separator
+- `idSeparatorKey()` - Override the default format-aware key
 
 **IdKeyMode Values:**
 - `ID_ONLY` - Only `_id` key is serialized (default)
@@ -977,44 +985,130 @@ CodecConfiguration.builder()
 
 **Deserialization Implementation:**
 
-Uses TokenBuffer approach for STRUCTURED format:
-1. Capture nested object content into TokenBuffer
+Uses `CodecTokenBuffer` for STRUCTURED format:
+1. Capture nested object content into CodecTokenBuffer (works without DeserializationContext)
 2. Parse buffered content to extract field values (including separator if present)
 3. Set feature values on EObject
 4. Optionally set combined value on EIDAttribute using separator (from JSON or config)
 
 **Key Files:**
-- `IdSerializationEntry.java` - STRUCTURED format serialization
-- `IdDeserializationEntry.java` - TokenBuffer-based STRUCTURED deserialization
-- `CodecEObjectDeserializer.java` - Deferred property replay for ID entries
-- `CodecResourceIdTest.java` - 27 comprehensive tests
+- `IdSerializationEntry.java` - PLAIN and STRUCTURED format serialization
+- `IdDeserializationEntry.java` - PLAIN and STRUCTURED deserialization (uses CodecTokenBuffer)
+- `IdSerializationEntryTest.java` - Serialization unit tests (PLAIN + STRUCTURED)
+- `IdDeserializationEntryTest.java` - Deserialization unit tests (PLAIN + STRUCTURED)
+- `CodecResourceIdTest.java` - Integration round-trip tests
 
-**Test Coverage:**
-| Feature | Status |
-|---------|--------|
-| PLAIN single ID | ✅ |
-| PLAIN multiple features with separator | ✅ |
-| PLAIN custom separator | ✅ |
-| STRUCTURED single ID | ✅ |
-| STRUCTURED multiple features (with separator) | ✅ |
-| STRUCTURED multiple features (without separator) | ✅ |
-| STRUCTURED custom separator key | ✅ |
-| STRUCTURED custom ID key | ✅ |
-| IdKeyMode.ID_ONLY | ✅ |
-| IdKeyMode.BOTH | ✅ |
-| IdKeyMode.FEATURE_ONLY | ✅ |
-| Round-trip PLAIN | ✅ |
-| Round-trip STRUCTURED (with/without separator) | ✅ |
+**Test Coverage (Unit Tests):**
+
+| Category | Test | Status |
+|----------|------|--------|
+| **Serialization - PLAIN** | Single ID | ✅ |
+| | Multiple features with separator | ✅ |
+| | Separator field (serializeSeparator=true) | ✅ |
+| | No separator field (serializeSeparator=false) | ✅ |
+| **Serialization - STRUCTURED** | Single ID as nested object | ✅ |
+| | Multiple IDs with separator | ✅ |
+| | Without separator | ✅ |
+| | Custom separator key | ✅ |
+| **Deserialization - PLAIN** | Single string ID | ✅ |
+| | Splits combined ID by separator | ✅ |
+| | Custom separator | ✅ |
+| | More/fewer parts than features | ✅ |
+| | Type conversion (int, long) | ✅ |
+| | Null handling | ✅ |
+| **Deserialization - STRUCTURED** | Single ID as nested object | ✅ |
+| | Multiple IDs as nested object | ✅ |
+| | Reads separator from JSON | ✅ |
+| | Type conversion (int, long) | ✅ |
+| | Ignores unknown fields | ✅ |
+| | Partial ID fields | ✅ |
+| | Null handling | ✅ |
 
 ---
 
 ## 11. Pending Work (Priority Order)
 
-### 11.1 Additional TypeStrategies (Priority 1 - Next)
+### 11.1 Type Strategy × Format Matrix (Priority 1 - Next)
 
-- `SCHEMA_AND_TYPE` - Separate schema/type fields
-- `STRUCTURED` - Nested object format (applies to type, supertype) - **ID STRUCTURED is done (see 10.11)**
-- `NUMERIC` - Classifier IDs
+The spec defines a **Format × Strategy** matrix for Type serialization. Each combination should work independently.
+
+**TypeStrategy enum values:**
+- `URI` - Full EClass URI (default)
+- `NAME` - Simple EClass name
+- `CLASS` - Java instance class name
+- `NUMERIC` - EMF classifier ID
+- `MAPPED` - Discriminator value
+- `SCHEMA_AND_TYPE` - Schema URI + type name (two pieces of info)
+
+**SerializationFormat enum values:**
+- `PLAIN` - Simple string value(s)
+- `STRUCTURED` - Nested object
+
+#### 11.1.1 Type Serialization Status
+
+| Strategy | PLAIN Ser | PLAIN Deser | STRUCTURED Ser | STRUCTURED Deser |
+|----------|:---------:|:-----------:|:--------------:|:----------------:|
+| URI | ✅ | ✅ | ✅ `{"type":"<uri>"}` | ✅ |
+| NAME | ✅ | ✅ | ✅ `{"type":"<name>"}` | ✅ |
+| CLASS | ✅ | ❌ | ✅ `{"type":"<class>"}` | ❌ |
+| NUMERIC | ✅ | ✅ | ✅ `{"schema":"...","classifier":N}` | ✅ |
+| MAPPED | ✅ | ✅ | ✅ `{"type":"<discriminator>"}` | ✅ |
+| SCHEMA_AND_TYPE | ✅ two fields | ✅ | ✅ `{"schema":"...","type":"..."}` | ✅ |
+
+**PLAIN SCHEMA_AND_TYPE format:**
+```json
+{
+  "_schema": "http://example.org/1.0",
+  "_type": "Person"
+}
+```
+
+**Expected STRUCTURED outputs per strategy** (unified `type` key):
+```
+URI:            {"type": "http://example.org/1.0#//Person"}
+NAME:           {"type": "Person"}
+CLASS:          {"type": "org.example.Person"}
+NUMERIC:        {"schema": "http://example.org/1.0", "classifier": 3}
+MAPPED:         {"type": "customer"}
+SCHEMA_AND_TYPE: {"schema": "http://example.org/1.0", "type": "Person"}
+```
+**Note:** All strategies use `type` key except NUMERIC which uses `classifier` (numeric value).
+
+**PLAIN SCHEMA_AND_TYPE** should output TWO separate fields:
+```json
+{
+  "_schema": "http://example.org/1.0",
+  "_type": "Person"
+}
+```
+
+#### 11.1.2 SuperType Serialization Status
+
+| Feature | PLAIN Ser | PLAIN Deser | STRUCTURED Ser | STRUCTURED Deser |
+|---------|:---------:|:-----------:|:--------------:|:----------------:|
+| Array of names/URIs | ✅ | ❌ | ❌ | ❌ |
+| ALL selection | ✅ | - | ❌ | - |
+| SINGLE selection | ✅ | - | ❌ | - |
+| ALL_EMF selection | ✅ | - | ❌ | - |
+
+**Note:** No `SuperTypeDeserializationEntry` exists - supertype info is typically not needed for deserialization (type determines the class).
+
+**STRUCTURED SuperType format:**
+```json
+{
+  "_supertype": [
+    {"schema": "http://example.org/base/1.0", "type": "Entity"},
+    {"schema": "http://example.org/audit/1.0", "type": "Auditable"}
+  ]
+}
+```
+
+#### 11.1.3 Implementation Tasks
+
+1. ~~**Type STRUCTURED format** - Refactor `TypeSerializationEntry.serializeStructured()` to respect strategy~~ ✅
+2. ~~**Type SCHEMA_AND_TYPE PLAIN** - Write two separate fields (`_schema` + `_type`)~~ ✅
+3. ~~**Type deserialization** - Update `TypeDeserializationEntry` to handle all STRUCTURED variants~~ ✅
+4. **SuperType STRUCTURED** - Add STRUCTURED format support to `SuperTypeSerializationEntry`
 
 ### 11.2 Error Handling Improvements (Priority 2)
 
