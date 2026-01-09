@@ -173,6 +173,9 @@ public class CodecConfiguration {
     /** Key for supertypes property */
     private final String superTypeKey;
 
+    /** Whether to validate supertype hierarchy on deserialization */
+    private final boolean validateSuperTypeHierarchy;
+
     // ========================================================================
     // Value Serialization Settings
     // ========================================================================
@@ -259,6 +262,7 @@ public class CodecConfiguration {
         this.serializeAllSuperTypes = builder.serializeAllSuperTypes;
         this.serializeSuperTypesAsArray = builder.serializeSuperTypesAsArray;
         this.superTypeKey = builder.superTypeKey;
+        this.validateSuperTypeHierarchy = builder.validateSuperTypeHierarchy;
         this.serializeDefaultValue = builder.serializeDefaultValue;
         this.serializeEmptyValue = builder.serializeEmptyValue;
         this.serializeNullValue = builder.serializeNullValue;
@@ -514,6 +518,23 @@ public class CodecConfiguration {
         return superTypeKey;
     }
 
+    /**
+     * Returns whether to validate supertype hierarchy during deserialization.
+     * <p>
+     * When true, the deserializer validates that declared supertypes in JSON
+     * match the resolved EClass's actual supertypes. Deserialization fails
+     * if there's a mismatch.
+     * </p>
+     * <p>
+     * Default is false (no validation - supertypes are ignored during deserialization).
+     * </p>
+     *
+     * @return true if supertype hierarchy should be validated
+     */
+    public boolean isValidateSuperTypeHierarchy() {
+        return validateSuperTypeHierarchy;
+    }
+
     public boolean isSerializeDefaultValue() {
         return serializeDefaultValue;
     }
@@ -635,6 +656,7 @@ public class CodecConfiguration {
         private boolean serializeAllSuperTypes = false;
         private boolean serializeSuperTypesAsArray = true;
         private String superTypeKey = "_supertype";
+        private boolean validateSuperTypeHierarchy = false;
         private boolean serializeDefaultValue = false;
         private boolean serializeEmptyValue = false;
         private boolean serializeNullValue = false;
@@ -899,6 +921,22 @@ public class CodecConfiguration {
 
         public Builder superTypeKey(String superTypeKey) {
             this.superTypeKey = superTypeKey;
+            return this;
+        }
+
+        /**
+         * Sets whether to validate supertype hierarchy during deserialization.
+         * <p>
+         * When true, the deserializer validates that declared supertypes in JSON
+         * match the resolved EClass's actual supertypes. Deserialization fails
+         * if there's a mismatch.
+         * </p>
+         *
+         * @param validateSuperTypeHierarchy true to enable validation
+         * @return this builder
+         */
+        public Builder validateSuperTypeHierarchy(boolean validateSuperTypeHierarchy) {
+            this.validateSuperTypeHierarchy = validateSuperTypeHierarchy;
             return this;
         }
 

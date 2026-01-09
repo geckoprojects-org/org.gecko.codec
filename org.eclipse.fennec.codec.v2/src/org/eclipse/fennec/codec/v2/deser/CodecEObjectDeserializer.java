@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveClassConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.codec.v2.context.EMFCodecReadContext;
@@ -291,8 +292,15 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                 .strategy(config.getGlobalTypeStrategy())  // Use global strategy for deserialization
                 .build();
 
+        // Build supertype config for STRUCTURED format validation
+        // Use defaults when we don't have a specific EClass config yet
+        EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                .validateSuperTypeHierarchy(config.isValidateSuperTypeHierarchy())
+                .superTypeKey(config.getGlobalSuperTypeKey())
+                .build();
+
         TypeDeserializationEntry typeEntry = new TypeDeserializationEntry(
-                typeConfig, config.getTypeDiscriminatorService());
+                typeConfig, config.getTypeDiscriminatorService(), superTypeConfig);
 
         // Pass the hint and schema to the type entry
         typeEntry.deserializeWithSchemaHint(state, parser, null, hintEClass, schemaValue);
@@ -536,10 +544,11 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
         EffectiveClassConfig classConfig = config.getClassConfig(eClass);
 
-        // Add type entry
+        // Add type entry (with supertype config for STRUCTURED format validation)
         if (classConfig.getTypeConfig() != null && classConfig.getTypeConfig().isEnabled()) {
             TypeDeserializationEntry typeEntry = new TypeDeserializationEntry(
-                    classConfig.getTypeConfig(), config.getTypeDiscriminatorService());
+                    classConfig.getTypeConfig(), config.getTypeDiscriminatorService(),
+                    classConfig.getSuperTypeConfig());
             entries.put(typeEntry.getKey(), typeEntry);
         }
 
@@ -547,6 +556,13 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         if (classConfig.getIdConfig() != null && classConfig.getIdConfig().isEnabled()) {
             IdDeserializationEntry idEntry = new IdDeserializationEntry(classConfig.getIdConfig(), eClass);
             entries.put(idEntry.getKey(), idEntry);
+        }
+
+        // Add supertype entry (for validation if enabled, otherwise just parses and ignores)
+        if (classConfig.getSuperTypeConfig() != null) {
+            SuperTypeDeserializationEntry superTypeEntry = new SuperTypeDeserializationEntry(
+                    classConfig.getSuperTypeConfig());
+            entries.put(superTypeEntry.getKey(), superTypeEntry);
         }
 
         // Add feature entries

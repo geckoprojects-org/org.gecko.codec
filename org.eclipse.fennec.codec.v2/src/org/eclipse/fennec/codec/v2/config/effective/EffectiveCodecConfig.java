@@ -68,6 +68,10 @@ public final class EffectiveCodecConfig {
     private final boolean smartCompression;
     private final MetadataService metadataService;
 
+    // SuperType global settings
+    private final String globalSuperTypeKey;
+    private final boolean validateSuperTypeHierarchy;
+
     // Expand settings
     private final boolean expandGlobal;
     private final Set<EReference> expandReferences;
@@ -99,6 +103,8 @@ public final class EffectiveCodecConfig {
         this.typeDiscriminatorService = builder.typeDiscriminatorService;
         this.smartCompression = builder.smartCompression;
         this.metadataService = builder.metadataService;
+        this.globalSuperTypeKey = builder.globalSuperTypeKey;
+        this.validateSuperTypeHierarchy = builder.validateSuperTypeHierarchy;
         this.expandGlobal = builder.expandGlobal;
         this.expandReferences = builder.expandReferences != null
                 ? Set.copyOf(builder.expandReferences)
@@ -196,6 +202,33 @@ public final class EffectiveCodecConfig {
      */
     public boolean isSmartCompression() {
         return smartCompression;
+    }
+
+    /**
+     * Returns the global supertype key used for deserialization.
+     * <p>
+     * This is the key used to identify supertype fields in JSON when
+     * deserializing before the EClass is known.
+     * </p>
+     *
+     * @return the global supertype key, defaults to "_supertype"
+     */
+    public String getGlobalSuperTypeKey() {
+        return globalSuperTypeKey;
+    }
+
+    /**
+     * Returns whether to validate supertype hierarchy during deserialization.
+     * <p>
+     * When true, the deserializer validates that declared supertypes in JSON
+     * match the resolved EClass's actual supertypes. Deserialization fails
+     * if there's a mismatch.
+     * </p>
+     *
+     * @return true if supertype hierarchy should be validated
+     */
+    public boolean isValidateSuperTypeHierarchy() {
+        return validateSuperTypeHierarchy;
     }
 
     /**
@@ -398,6 +431,9 @@ public final class EffectiveCodecConfig {
         private TypeDiscriminatorService typeDiscriminatorService;
         private boolean smartCompression = false;
         private MetadataService metadataService;
+        // SuperType global settings
+        private String globalSuperTypeKey = "_supertype";
+        private boolean validateSuperTypeHierarchy = false;
         // Expand settings
         private boolean expandGlobal = false;
         private Set<EReference> expandReferences;
@@ -451,6 +487,16 @@ public final class EffectiveCodecConfig {
 
         public Builder metadataService(MetadataService metadataService) {
             this.metadataService = metadataService;
+            return this;
+        }
+
+        public Builder globalSuperTypeKey(String globalSuperTypeKey) {
+            this.globalSuperTypeKey = globalSuperTypeKey;
+            return this;
+        }
+
+        public Builder validateSuperTypeHierarchy(boolean validateSuperTypeHierarchy) {
+            this.validateSuperTypeHierarchy = validateSuperTypeHierarchy;
             return this;
         }
 

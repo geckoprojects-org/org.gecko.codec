@@ -13,6 +13,8 @@
  */
 package org.eclipse.fennec.codec.v2.deser;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -21,6 +23,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 
@@ -53,6 +56,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
 
     private final EffectiveTypeConfig config;
     private final TypeDiscriminatorService typeDiscriminatorService;
+    private final EffectiveSuperTypeConfig superTypeConfig;
 
     /**
      * Creates a new TypeDeserializationEntry.
@@ -60,7 +64,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      * @param config the effective type configuration
      */
     public TypeDeserializationEntry(EffectiveTypeConfig config) {
-        this(config, null);
+        this(config, null, null);
     }
 
     /**
@@ -70,8 +74,21 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      * @param typeDiscriminatorService the service for MAPPED strategy type resolution (may be null)
      */
     public TypeDeserializationEntry(EffectiveTypeConfig config, TypeDiscriminatorService typeDiscriminatorService) {
+        this(config, typeDiscriminatorService, null);
+    }
+
+    /**
+     * Creates a new TypeDeserializationEntry with SuperType configuration for STRUCTURED format.
+     *
+     * @param config the effective type configuration
+     * @param typeDiscriminatorService the service for MAPPED strategy type resolution (may be null)
+     * @param superTypeConfig the supertype configuration for validation (may be null)
+     */
+    public TypeDeserializationEntry(EffectiveTypeConfig config, TypeDiscriminatorService typeDiscriminatorService,
+            EffectiveSuperTypeConfig superTypeConfig) {
         this.config = Objects.requireNonNull(config, "config must not be null");
         this.typeDiscriminatorService = typeDiscriminatorService;
+        this.superTypeConfig = superTypeConfig;
     }
 
     @Override
@@ -134,8 +151,25 @@ public class TypeDeserializationEntry implements DeserializationEntry {
                 typeValue = rawTypeValue;
             }
         } else if (token == JsonToken.START_OBJECT) {
-            // STRUCTURED format: "_type": {"schema": "...", "type": "..."}
-            typeValue = parseStructuredType(parser);
+            // STRUCTURED format: "_type": {"schema": "...", "type": "...", "supertype": [...]}
+            StructuredTypeResult result = parseStructuredType(parser);
+            typeValue = result.typeValue;
+
+            // Store parsed supertypes for validation after EClass is resolved
+            if (result.superTypes != null && !result.superTypes.isEmpty()) {
+                // We'll validate after resolving the EClass
+                if (typeValue != null) {
+                    EClass resolvedClass = resolveEClass(typeValue, hintEClass);
+                    if (resolvedClass != null) {
+                        state.setResolvedEClass(resolvedClass);
+                        // Validate supertype hierarchy if enabled
+                        validateSuperTypes(resolvedClass, result.superTypes);
+                    } else {
+                        LOGGER.warning("Could not resolve EClass from type value: " + typeValue);
+                    }
+                }
+                return;
+            }
         } else {
             LOGGER.warning("Unexpected token for _type: " + token);
             return;
@@ -152,6 +186,35 @@ public class TypeDeserializationEntry implements DeserializationEntry {
     }
 
     /**
+     * Validates supertype hierarchy if validation is enabled.
+     *
+     * @param resolvedEClass the resolved EClass
+     * @param declaredSuperTypes the supertypes declared in JSON
+     */
+    private void validateSuperTypes(EClass resolvedEClass, List<String> declaredSuperTypes) {
+        if (superTypeConfig == null || !superTypeConfig.isValidateSuperTypeHierarchy()) {
+            LOGGER.fine("SuperType validation disabled for STRUCTURED format");
+            return;
+        }
+
+        if (declaredSuperTypes.isEmpty()) {
+            return;
+        }
+
+        // Delegate to SuperTypeDeserializationEntry's validation logic
+        SuperTypeDeserializationEntry.validateSuperTypeHierarchyStatic(
+                resolvedEClass, declaredSuperTypes, superTypeConfig);
+    }
+
+    /**
+     * Result holder for parsed structured type information.
+     */
+    private static class StructuredTypeResult {
+        String typeValue;
+        List<String> superTypes = new ArrayList<>();
+    }
+
+    /**
      * Parses a structured type object.
      * <p>
      * Supports multiple formats based on strategy (all use unified "type" key except NUMERIC):
@@ -163,12 +226,18 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      *   <li>NUMERIC: {@code {"schema": "http://...", "classifier": 3}}</li>
      *   <li>SCHEMA_AND_TYPE: {@code {"schema": "http://...", "type": "Person"}}</li>
      * </ul>
+     * Also extracts optional supertype field if present:
+     * <ul>
+     *   <li>Array: {@code "supertype": ["Entity", "http://audit.org/1.0#//Auditable"]}</li>
+     *   <li>String: {@code "supertype": "Entity,Auditable"}</li>
+     * </ul>
      * </p>
      *
      * @param parser the JSON parser positioned at START_OBJECT
-     * @return the type value to resolve, or null if parsing fails
+     * @return the structured type result containing type value and optional supertypes
      */
-    private String parseStructuredType(JsonParser parser) {
+    private StructuredTypeResult parseStructuredType(JsonParser parser) {
+        StructuredTypeResult result = new StructuredTypeResult();
         String schema = null;
         String typeValue = null;
         Integer classifier = null;
@@ -185,26 +254,89 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             } else if ("classifier".equals(fieldName)) {
                 // NUMERIC strategy: classifier ID
                 classifier = parser.getIntValue();
+            } else if (getSuperTypeKey().equals(fieldName)) {
+                // Parse supertype (ARRAY or STRING presentation)
+                result.superTypes = parseSuperTypesFromStructured(parser);
             }
         }
 
         // NUMERIC strategy: schema + classifier
         if (classifier != null && schema != null) {
-            return buildNumericTypeValue(schema, classifier);
+            result.typeValue = buildNumericTypeValue(schema, classifier);
+            return result;
         }
 
         // SCHEMA_AND_TYPE: schema + type name -> compose URI
         if (schema != null && typeValue != null && !typeValue.contains("#//")) {
-            return schema + "#//" + typeValue;
+            result.typeValue = schema + "#//" + typeValue;
+            return result;
         }
 
         // URI, NAME, CLASS, MAPPED: just return the type value
         if (typeValue != null) {
-            return typeValue;
+            result.typeValue = typeValue;
+            return result;
         }
 
         LOGGER.warning("Could not parse structured type: schema=" + schema + ", type=" + typeValue + ", classifier=" + classifier);
-        return null;
+        return result;
+    }
+
+    /**
+     * Gets the supertype key for STRUCTURED format.
+     * <p>
+     * In STRUCTURED format, the key is "supertype" (without underscore prefix)
+     * since it's nested inside the _type object.
+     * </p>
+     *
+     * @return the supertype key for STRUCTURED format
+     */
+    private String getSuperTypeKey() {
+        // In STRUCTURED format, use "supertype" (not "_supertype")
+        // as it's inside the _type object
+        return superTypeConfig != null ? superTypeConfig.getSuperTypeKey().replace("_", "") : "supertype";
+    }
+
+    /**
+     * Parses supertype values from within a structured type object.
+     * <p>
+     * Handles both ARRAY and STRING presentation:
+     * <ul>
+     *   <li>ARRAY: {@code ["Entity", "http://audit.org/1.0#//Auditable"]}</li>
+     *   <li>STRING: {@code "Entity,http://audit.org/1.0#//Auditable"}</li>
+     * </ul>
+     * </p>
+     *
+     * @param parser the JSON parser positioned at the supertype value
+     * @return list of declared supertype values
+     */
+    private List<String> parseSuperTypesFromStructured(JsonParser parser) {
+        List<String> superTypes = new ArrayList<>();
+        JsonToken token = parser.currentToken();
+
+        if (token == JsonToken.START_ARRAY) {
+            // ARRAY presentation
+            JsonToken arrayToken;
+            while ((arrayToken = parser.nextToken()) != JsonToken.END_ARRAY) {
+                if (arrayToken == JsonToken.VALUE_STRING) {
+                    superTypes.add(parser.getString());
+                }
+            }
+        } else if (token == JsonToken.VALUE_STRING) {
+            // STRING presentation - split by separator
+            String value = parser.getString();
+            if (value != null && !value.isEmpty()) {
+                String separator = superTypeConfig != null ? superTypeConfig.getSeparator() : ",";
+                for (String part : value.split(java.util.regex.Pattern.quote(separator))) {
+                    String trimmed = part.trim();
+                    if (!trimmed.isEmpty()) {
+                        superTypes.add(trimmed);
+                    }
+                }
+            }
+        }
+
+        return superTypes;
     }
 
     /**

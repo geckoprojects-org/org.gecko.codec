@@ -116,7 +116,8 @@
 - [x] STRING presentation inside `_type` object
 
 **Deserialization:**
-- [ ] Parse and validate (not typically needed - type determines class)
+- [x] Parse supertype values (ARRAY and STRING presentation)
+- [x] Optional validation with `validateSuperTypeHierarchy` option
 
 ### Advanced
 - [ ] Cross-resource references
@@ -160,8 +161,6 @@
 **Deferred:**
 - Cross-Resource References (ResourceSet-based resolution)
 - Expand Depth > 1
-- SuperType STRUCTURED format
-- Type STRUCTURED format
 - Smart compression (same-schema names)
 - Field ordering options
 

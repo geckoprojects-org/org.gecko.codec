@@ -13,11 +13,18 @@
  */
 package org.eclipse.fennec.codec.v2.deser;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
+import org.eclipse.fennec.codec.v2.deser.SuperTypeDeserializationEntry.SuperTypeValidationException;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -413,6 +420,286 @@ class TypeDeserializationEntryTest extends DeserializationEntryTestBase {
             try (JsonParser parser = createParser(json)) {
                 entry.deserialize(state, parser, null);
                 assertNull(state.getResolvedEClass());
+            }
+        }
+    }
+
+    // ========================================================================
+    // STRUCTURED Format with SuperType Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("STRUCTURED format with supertype")
+    class StructuredFormatWithSuperTypeTests {
+
+        private EClass baseClass;
+        private EClass derivedClass;
+        private EPackage externalPackage;
+        private EClass externalClass;
+
+        @BeforeEach
+        void setUpHierarchy() {
+            // Create base class
+            baseClass = EcoreFactory.eINSTANCE.createEClass();
+            baseClass.setName("Entity");
+            testPackage.getEClassifiers().add(baseClass);
+
+            // Create derived class that extends Person and Entity
+            derivedClass = EcoreFactory.eINSTANCE.createEClass();
+            derivedClass.setName("Employee");
+            derivedClass.getESuperTypes().add(personClass);
+            derivedClass.getESuperTypes().add(baseClass);
+            testPackage.getEClassifiers().add(derivedClass);
+
+            // Create external package and class
+            externalPackage = EcoreFactory.eINSTANCE.createEPackage();
+            externalPackage.setName("auditpackage");
+            externalPackage.setNsURI("http://audit.org/1.0");
+            externalPackage.setNsPrefix("audit");
+
+            externalClass = EcoreFactory.eINSTANCE.createEClass();
+            externalClass.setName("Auditable");
+            externalPackage.getEClassifiers().add(externalClass);
+
+            // Register external package
+            EPackage.Registry.INSTANCE.put(externalPackage.getNsURI(), externalPackage);
+        }
+
+        @AfterEach
+        void cleanUpHierarchy() {
+            EPackage.Registry.INSTANCE.remove(externalPackage.getNsURI());
+            testPackage.getEClassifiers().remove(baseClass);
+            testPackage.getEClassifiers().remove(derivedClass);
+        }
+
+        @Test
+        @DisplayName("parses supertype array in STRUCTURED format (validation disabled)")
+        void parsesSuperTypeArrayValidationDisabled() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .validateSuperTypeHierarchy(false)
+                    .superTypeKey("_supertype")
+                    .build();
+
+            TypeDeserializationEntry entry = new TypeDeserializationEntry(
+                    typeConfig, null, superTypeConfig);
+            DeserializationState state = createState(null);
+
+            // STRUCTURED with supertype array: {"schema": "...", "type": "Employee", "supertype": ["Person", "Entity"]}
+            String json = "{\"schema\": \"" + testPackage.getNsURI() + "\", \"type\": \"Employee\", \"supertype\": [\"Person\", \"Entity\"]}";
+            try (JsonParser parser = createParser(json)) {
+                assertDoesNotThrow(() -> entry.deserialize(state, parser, null));
+                assertEquals(derivedClass, state.getResolvedEClass());
+            }
+        }
+
+        @Test
+        @DisplayName("validates valid supertype hierarchy in STRUCTURED format")
+        void validatesValidSuperTypeHierarchy() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .validateSuperTypeHierarchy(true)
+                    .superTypeKey("_supertype")
+                    .build();
+
+            TypeDeserializationEntry entry = new TypeDeserializationEntry(
+                    typeConfig, null, superTypeConfig);
+            DeserializationState state = createState(null);
+
+            // Valid supertypes
+            String json = "{\"schema\": \"" + testPackage.getNsURI() + "\", \"type\": \"Employee\", \"supertype\": [\"Person\", \"Entity\"]}";
+            try (JsonParser parser = createParser(json)) {
+                assertDoesNotThrow(() -> entry.deserialize(state, parser, null));
+                assertEquals(derivedClass, state.getResolvedEClass());
+            }
+        }
+
+        @Test
+        @DisplayName("throws on invalid supertype in STRUCTURED format when validation enabled")
+        void throwsOnInvalidSuperTypeWhenValidationEnabled() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .validateSuperTypeHierarchy(true)
+                    .superTypeKey("_supertype")
+                    .build();
+
+            TypeDeserializationEntry entry = new TypeDeserializationEntry(
+                    typeConfig, null, superTypeConfig);
+            DeserializationState state = createState(null);
+
+            // Invalid supertype "NonExistent" not in hierarchy
+            String json = "{\"schema\": \"" + testPackage.getNsURI() + "\", \"type\": \"Employee\", \"supertype\": [\"Person\", \"NonExistent\"]}";
+            try (JsonParser parser = createParser(json)) {
+                SuperTypeValidationException ex = assertThrows(
+                        SuperTypeValidationException.class,
+                        () -> entry.deserialize(state, parser, null));
+                assertTrue(ex.getInvalidSuperTypes().contains("NonExistent"));
+            }
+        }
+
+        @Test
+        @DisplayName("ignores invalid supertype in STRUCTURED format when validation disabled")
+        void ignoresInvalidSuperTypeWhenValidationDisabled() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .validateSuperTypeHierarchy(false)  // Disabled
+                    .superTypeKey("_supertype")
+                    .build();
+
+            TypeDeserializationEntry entry = new TypeDeserializationEntry(
+                    typeConfig, null, superTypeConfig);
+            DeserializationState state = createState(null);
+
+            // Invalid supertype but validation disabled
+            String json = "{\"schema\": \"" + testPackage.getNsURI() + "\", \"type\": \"Employee\", \"supertype\": [\"NonExistent\"]}";
+            try (JsonParser parser = createParser(json)) {
+                assertDoesNotThrow(() -> entry.deserialize(state, parser, null));
+                assertEquals(derivedClass, state.getResolvedEClass());
+            }
+        }
+
+        @Test
+        @DisplayName("parses supertype STRING presentation in STRUCTURED format")
+        void parsesSuperTypeStringPresentation() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .validateSuperTypeHierarchy(true)
+                    .superTypeKey("_supertype")
+                    .separator(",")
+                    .build();
+
+            TypeDeserializationEntry entry = new TypeDeserializationEntry(
+                    typeConfig, null, superTypeConfig);
+            DeserializationState state = createState(null);
+
+            // STRING presentation: "Person,Entity"
+            String json = "{\"schema\": \"" + testPackage.getNsURI() + "\", \"type\": \"Employee\", \"supertype\": \"Person,Entity\"}";
+            try (JsonParser parser = createParser(json)) {
+                assertDoesNotThrow(() -> entry.deserialize(state, parser, null));
+                assertEquals(derivedClass, state.getResolvedEClass());
+            }
+        }
+
+        @Test
+        @DisplayName("validates full URI supertypes in STRUCTURED format")
+        void validatesFullUriSuperTypes() {
+            // Add external class as supertype
+            derivedClass.getESuperTypes().add(externalClass);
+
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .validateSuperTypeHierarchy(true)
+                    .superTypeKey("_supertype")
+                    .build();
+
+            TypeDeserializationEntry entry = new TypeDeserializationEntry(
+                    typeConfig, null, superTypeConfig);
+            DeserializationState state = createState(null);
+
+            // Mix of simple names and full URIs
+            String externalUri = externalPackage.getNsURI() + "#//Auditable";
+            String json = "{\"schema\": \"" + testPackage.getNsURI() + "\", \"type\": \"Employee\", \"supertype\": [\"Person\", \"" + externalUri + "\"]}";
+            try (JsonParser parser = createParser(json)) {
+                assertDoesNotThrow(() -> entry.deserialize(state, parser, null));
+                assertEquals(derivedClass, state.getResolvedEClass());
+            }
+        }
+
+        @Test
+        @DisplayName("handles empty supertype array in STRUCTURED format")
+        void handlesEmptySuperTypeArray() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .validateSuperTypeHierarchy(true)
+                    .superTypeKey("_supertype")
+                    .build();
+
+            TypeDeserializationEntry entry = new TypeDeserializationEntry(
+                    typeConfig, null, superTypeConfig);
+            DeserializationState state = createState(null);
+
+            // Empty supertype array
+            String json = "{\"schema\": \"" + testPackage.getNsURI() + "\", \"type\": \"Employee\", \"supertype\": []}";
+            try (JsonParser parser = createParser(json)) {
+                assertDoesNotThrow(() -> entry.deserialize(state, parser, null));
+                assertEquals(derivedClass, state.getResolvedEClass());
+            }
+        }
+
+        @Test
+        @DisplayName("handles missing supertype field in STRUCTURED format")
+        void handlesMissingSuperTypeField() {
+            EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
+                    .enabled(true)
+                    .strategy(TypeStrategy.SCHEMA_AND_TYPE)
+                    .typeKey("_type")
+                    .schemaKey("schema")
+                    .nameKey("type")
+                    .build();
+
+            EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
+                    .validateSuperTypeHierarchy(true)
+                    .superTypeKey("_supertype")
+                    .build();
+
+            TypeDeserializationEntry entry = new TypeDeserializationEntry(
+                    typeConfig, null, superTypeConfig);
+            DeserializationState state = createState(null);
+
+            // No supertype field at all
+            String json = "{\"schema\": \"" + testPackage.getNsURI() + "\", \"type\": \"Employee\"}";
+            try (JsonParser parser = createParser(json)) {
+                assertDoesNotThrow(() -> entry.deserialize(state, parser, null));
+                assertEquals(derivedClass, state.getResolvedEClass());
             }
         }
     }

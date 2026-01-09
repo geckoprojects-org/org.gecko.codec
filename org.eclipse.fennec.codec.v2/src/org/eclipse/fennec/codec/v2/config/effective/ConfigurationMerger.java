@@ -97,6 +97,9 @@ public class ConfigurationMerger {
                 .typeDiscriminatorService(typeDiscriminatorService)
                 .smartCompression(moduleConfig.isSmartCompression())
                 .metadataService(metadataService)
+                // SuperType global settings
+                .globalSuperTypeKey(moduleConfig.getSuperTypeKey())
+                .validateSuperTypeHierarchy(moduleConfig.isValidateSuperTypeHierarchy())
                 // Expand settings
                 .expandGlobal(moduleConfig.isExpandGlobal())
                 .expandReferences(moduleConfig.getExpandReferences())
@@ -181,6 +184,7 @@ public class ConfigurationMerger {
                 .schemaKey(resolveSuperTypeSchemaKey(aspectConfig))
                 .nameKey(resolveSuperTypeNameKey(aspectConfig))
                 .useSmartCompression(aspectConfig != null && aspectConfig.isUseSmartCompression())
+                .validateSuperTypeHierarchy(resolveSuperTypeValidation())
                 .build();
     }
 
@@ -435,6 +439,12 @@ public class ConfigurationMerger {
         }
         // Default separator is comma
         return ",";
+    }
+
+    private boolean resolveSuperTypeValidation() {
+        // Currently only from CodecConfiguration (module config)
+        // Model aspect support can be added when BaseSuperTypeConfig is updated
+        return moduleConfig.isValidateSuperTypeHierarchy();
     }
 
     // ========================================================================

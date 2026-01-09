@@ -138,6 +138,7 @@ SuperType values follow namespace matching rules based on the root EClass's EPac
 | `separator` | any string | `,` | Separator for STRING presentation (when asArray=false) |
 | `superTypeKey` | any string | `_supertype` (PLAIN) / `supertype` (STRUCTURED) | JSON property name |
 | `useSmartCompression` | true, false | false | Use simple names for same-namespace supertypes |
+| `validateSuperTypeHierarchy` | true, false | false | Validate hierarchy on deserialization (fail if mismatch) |
 
 **Notes:**
 - Format (PLAIN/STRUCTURED) is inherited from Type configuration
@@ -154,6 +155,7 @@ SuperType values follow namespace matching rules based on the root EClass's EPac
     <details key="separator" value=","/>
     <details key="superTypeKey" value="_supertype"/>
     <details key="useSmartCompression" value="true"/>
+    <details key="validateSuperTypeHierarchy" value="false"/>
   </eAnnotations>
 </eClassifiers>
 ```
@@ -189,6 +191,14 @@ SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
 SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
     .enabled(true)
     .useSmartCompression(true)
+    .build();
+```
+
+**With strict validation (deserialization):**
+```java
+SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
+    .enabled(true)
+    .validateSuperTypeHierarchy(true)  // Fail if hierarchy doesn't match
     .build();
 ```
 
@@ -268,10 +278,113 @@ Or with STRING presentation (single value, no separator needed):
 
 SuperType information is typically **not needed for deserialization** since the concrete type (`_type`) fully determines the EClass to instantiate. The inheritance hierarchy is already defined in the EMF model.
 
-However, if present in the JSON, the deserializer should:
-1. Parse the supertype field (array or comma-separated string)
-2. Optionally validate that declared supertypes match the resolved EClass's actual supertypes
-3. Log a warning if there's a mismatch (but continue with the resolved type)
+**Both PLAIN and STRUCTURED formats are supported for deserialization:**
+
+| Format | SuperType Location | Handled By |
+|--------|-------------------|------------|
+| PLAIN | Standalone `_supertype` field | `SuperTypeDeserializationEntry` |
+| STRUCTURED | Inside `_type` object as `supertype` field | `TypeDeserializationEntry` |
+
+### 8.1 Default Behavior (No Validation)
+
+By default (`validateSuperTypeHierarchy=false`), the deserializer:
+1. Parses the supertype field (for both PLAIN and STRUCTURED formats)
+2. Ignores the parsed values (no validation)
+3. Resolves the EClass from the `_type` field only
+4. Creates the EObject based on the resolved type
+
+### 8.2 Validation Mode
+
+When `validateSuperTypeHierarchy=true`, the deserializer:
+1. Parses the supertype field (array or separator-joined string)
+2. Resolves the EClass from the `_type` field
+3. Validates that declared supertypes match the resolved EClass's actual supertypes
+4. **Fails deserialization** if hierarchy doesn't match
+
+**This validation applies to both formats:**
+- **PLAIN format**: Validation occurs after the `_supertype` field is parsed
+- **STRUCTURED format**: Validation occurs while parsing the `_type` object, after extracting the `supertype` field
+
+**Validation Rules:**
+- Each declared supertype must exist in the EClass's `getEAllSuperTypes()` hierarchy
+- Supertypes can be declared as simple names (same namespace) or full URIs (different namespace)
+- Order of supertypes is not significant for validation
+- Missing supertypes in JSON (subset) is acceptable
+- Extra supertypes in JSON (not in actual hierarchy) causes validation failure
+
+### 8.3 Configuration
+
+| Key | Values | Default | Description |
+|-----|--------|---------|-------------|
+| `validateSuperTypeHierarchy` | true, false | false | Validate supertype hierarchy on deserialization |
+
+**Java Builder:**
+```java
+SuperTypeSerializationConfig config = SuperTypeSerializationConfig.builder()
+    .enabled(true)
+    .validateSuperTypeHierarchy(true)  // Enable strict validation
+    .build();
+```
+
+### 8.4 Deserialization Examples
+
+**PLAIN format with ARRAY presentation:**
+```json
+{
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": ["Entity", "http://audit.org/1.0#//Auditable"],
+  "name": "John"
+}
+```
+
+**PLAIN format with STRING presentation:**
+```json
+{
+  "_type": "http://example.org/1.0#//Person",
+  "_supertype": "Entity,http://audit.org/1.0#//Auditable",
+  "name": "John"
+}
+```
+
+**STRUCTURED format with ARRAY presentation:**
+```json
+{
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person",
+    "supertype": ["Entity", "http://audit.org/1.0#//Auditable"]
+  },
+  "name": "John"
+}
+```
+
+**STRUCTURED format with STRING presentation:**
+```json
+{
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person",
+    "supertype": "Entity,http://audit.org/1.0#//Auditable"
+  },
+  "name": "John"
+}
+```
+
+### 8.5 Error Handling
+
+When validation fails:
+- Throw `SuperTypeValidationException` with descriptive message
+- Include expected supertypes (from model)
+- Include declared supertypes (from JSON)
+- Include resolved EClass name
+
+**Example error:**
+```
+SuperType hierarchy validation failed for EClass 'Person':
+  Declared supertypes: [Entity, InvalidType]
+  Expected supertypes: [Entity, NamedElement]
+  Invalid supertype(s): [InvalidType] not found in hierarchy
+```
 
 ---
 

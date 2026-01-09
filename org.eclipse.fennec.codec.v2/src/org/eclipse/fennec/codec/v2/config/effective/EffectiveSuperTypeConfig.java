@@ -39,6 +39,7 @@ public final class EffectiveSuperTypeConfig {
     private final String schemaKey;
     private final String nameKey;
     private final boolean useSmartCompression;
+    private final boolean validateSuperTypeHierarchy;
 
     private EffectiveSuperTypeConfig(Builder builder) {
         this.enabled = builder.enabled;
@@ -50,6 +51,7 @@ public final class EffectiveSuperTypeConfig {
         this.schemaKey = builder.schemaKey;
         this.nameKey = builder.nameKey;
         this.useSmartCompression = builder.useSmartCompression;
+        this.validateSuperTypeHierarchy = builder.validateSuperTypeHierarchy;
     }
 
     /**
@@ -127,6 +129,21 @@ public final class EffectiveSuperTypeConfig {
     }
 
     /**
+     * Returns whether to validate supertype hierarchy during deserialization.
+     * <p>
+     * When true, the deserializer validates that declared supertypes in JSON
+     * match the resolved EClass's actual supertypes. Deserialization fails
+     * if there's a mismatch.
+     * </p>
+     * <p>
+     * Default is false (no validation - supertypes are ignored during deserialization).
+     * </p>
+     */
+    public boolean isValidateSuperTypeHierarchy() {
+        return validateSuperTypeHierarchy;
+    }
+
+    /**
      * Creates a new builder with default values.
      */
     public static Builder builder() {
@@ -146,6 +163,7 @@ public final class EffectiveSuperTypeConfig {
         private String schemaKey = "schema";
         private String nameKey = "name";
         private boolean useSmartCompression = false;
+        private boolean validateSuperTypeHierarchy = false;
 
         private Builder() {}
 
@@ -191,6 +209,11 @@ public final class EffectiveSuperTypeConfig {
 
         public Builder useSmartCompression(boolean useSmartCompression) {
             this.useSmartCompression = useSmartCompression;
+            return this;
+        }
+
+        public Builder validateSuperTypeHierarchy(boolean validateSuperTypeHierarchy) {
+            this.validateSuperTypeHierarchy = validateSuperTypeHierarchy;
             return this;
         }
 
