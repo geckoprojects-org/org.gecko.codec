@@ -24,6 +24,7 @@ This document defines the serialization features for codec.v2, including configu
 | 13 | [Architecture](13-architecture.md) | Serialization architecture and design |
 | 14 | [Implementation](14-implementation.md) | Implementation strategy and checklist |
 | 15 | [Test Coverage](15-test-coverage.md) | Test coverage matrix and spec-to-test mapping |
+| 16 | [Format Abstraction](16-format-abstraction.md) | Multi-format support (JSON, BSON, CSV) and custom parsers/generators |
 | 99 | [Open Questions](99-open-questions.md) | Open questions and issues to resolve |
 
 ---

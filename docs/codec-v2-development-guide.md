@@ -17,6 +17,7 @@ We are building **codec.v2**, a new EMF serialization codec based on the specifi
 - [Global Options](codec-v2-spec/03-global-options.md) - Smart compression, field ordering
 - [Type](codec-v2-spec/04-type.md), [SuperType](codec-v2-spec/05-supertype.md), [ID](codec-v2-spec/06-id.md), [Reference](codec-v2-spec/07-reference.md) - Core serialization targets
 - [Architecture](codec-v2-spec/13-architecture.md) - Component overview
+- [Format Abstraction](codec-v2-spec/16-format-abstraction.md) - Multi-format support (JSON, BSON, CSV, custom)
 
 ### Key Projects
 
