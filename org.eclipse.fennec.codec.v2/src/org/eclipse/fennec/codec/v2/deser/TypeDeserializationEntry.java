@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
+import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 
 import tools.jackson.core.JsonParser;
@@ -126,6 +127,11 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      * The schemaValue is used for PLAIN SCHEMA_AND_TYPE format where schema
      * is provided as a separate field.
      * </p>
+     * <p>
+     * Supports smart compression: when encountering a simple name (e.g., "Person"),
+     * the method first tries to resolve it using the context schema (if set).
+     * The context schema is established from the root object's full type URI.
+     * </p>
      *
      * @param state the deserialization state
      * @param parser the JSON parser
@@ -159,7 +165,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             if (result.superTypes != null && !result.superTypes.isEmpty()) {
                 // We'll validate after resolving the EClass
                 if (typeValue != null) {
-                    EClass resolvedClass = resolveEClass(typeValue, hintEClass);
+                    EClass resolvedClass = resolveEClass(typeValue, hintEClass, ctxt);
                     if (resolvedClass != null) {
                         state.setResolvedEClass(resolvedClass);
                         // Validate supertype hierarchy if enabled
@@ -176,7 +182,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
         }
 
         if (typeValue != null) {
-            EClass resolvedClass = resolveEClass(typeValue, hintEClass);
+            EClass resolvedClass = resolveEClass(typeValue, hintEClass, ctxt);
             if (resolvedClass != null) {
                 state.setResolvedEClass(resolvedClass);
             } else {
@@ -375,12 +381,18 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      *   <li>MAPPED: Uses discriminator value mapping</li>
      * </ul>
      * </p>
+     * <p>
+     * Supports smart compression: when encountering a full URI, the context schema
+     * is established (if not already set). When encountering a simple name, it is
+     * first resolved using the context schema before falling back to searching all packages.
+     * </p>
      *
      * @param typeValue the type value (format depends on strategy)
      * @param hintEClass optional hint EClass for MAPPED context (may be null)
+     * @param ctxt the deserialization context (for smart compression context schema)
      * @return the resolved EClass, or null if not found
      */
-    private EClass resolveEClass(String typeValue, EClass hintEClass) {
+    private EClass resolveEClass(String typeValue, EClass hintEClass, DeserializationContext ctxt) {
         if (typeValue == null || typeValue.isEmpty()) {
             return null;
         }
@@ -389,11 +401,27 @@ public class TypeDeserializationEntry implements DeserializationEntry {
         if (typeValue.contains("#//")) {
             EClass resolved = resolveFromUri(typeValue);
             if (resolved != null) {
+                // Establish context schema for smart compression (root object)
+                initializeContextSchemaIfNeeded(typeValue, ctxt);
                 return resolved;
             }
         }
 
-        // Second: try discriminator lookup via TypeDiscriminatorService.
+        // Second: try smart compression - resolve simple name using context schema
+        if (!typeValue.contains("#//") && ctxt != null) {
+            String contextSchema = ContextHelper.getContextSchemaUri(ctxt);
+            if (contextSchema != null) {
+                // Try to resolve using context schema first
+                String composedUri = contextSchema + "#//" + typeValue;
+                EClass resolved = resolveFromUri(composedUri);
+                if (resolved != null) {
+                    LOGGER.fine("Resolved type via smart compression: " + typeValue + " -> " + resolved.getName());
+                    return resolved;
+                }
+            }
+        }
+
+        // Third: try discriminator lookup via TypeDiscriminatorService.
         // Use the hint to provide context for MAPPED strategy.
         if (typeDiscriminatorService != null) {
             EClass resolved = typeDiscriminatorService.getEClassFromAny(typeValue);
@@ -403,7 +431,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             }
         }
 
-        // Third: handle based on configured strategy
+        // Fourth: handle based on configured strategy
         TypeStrategy strategy = config.getStrategy();
         if (strategy == null) {
             strategy = TypeStrategy.URI;
@@ -421,6 +449,34 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             default:
                 // Fallback to simple name resolution
                 return resolveFromSimpleName(typeValue);
+        }
+    }
+
+    /**
+     * Initializes the context schema for smart compression.
+     * <p>
+     * The context schema is extracted from the first full URI encountered (root object).
+     * It is used to resolve simple names in subsequent (contained) objects.
+     * </p>
+     *
+     * @param fullUri the full type URI (e.g., "http://example.org/1.0#//Company")
+     * @param ctxt the deserialization context
+     */
+    private void initializeContextSchemaIfNeeded(String fullUri, DeserializationContext ctxt) {
+        if (ctxt == null) {
+            return;
+        }
+
+        // Only set context schema once (for root object)
+        if (ContextHelper.getContextSchemaUri(ctxt) != null) {
+            return;
+        }
+
+        // Extract schema from full URI
+        String schemaUri = ContextHelper.extractSchemaUri(fullUri);
+        if (schemaUri != null) {
+            ContextHelper.setContextSchemaUri(ctxt, schemaUri);
+            LOGGER.fine("Established context schema for smart compression: " + schemaUri);
         }
     }
 

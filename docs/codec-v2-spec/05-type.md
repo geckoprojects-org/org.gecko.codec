@@ -129,7 +129,97 @@ The SCHEMA_AND_TYPE strategy transports both schema URI and type name as separat
 - `nameKey`: type name field inside object (default: `type`)
 - `superTypeKey`: supertype field inside object (default: `supertype`, optional)
 
-### 1.5 NUMERIC Strategy
+### 1.5 Type Strategy Scope and Containment Behavior
+
+Type strategy configuration applies **per-class**, not globally to all objects in a hierarchy. This has important implications for containment references.
+
+#### 1.5.1 Strategy Scope Rules
+
+| Strategy | Applies To | Children Behavior |
+|----------|-----------|-------------------|
+| **URI** | Configured class | Children use their own configured strategy (or default URI) |
+| **SCHEMA_AND_TYPE** | **Root object only** | Children fall back to default (URI) |
+| **NAME** | Configured class | Children use their own configured strategy (or default URI) |
+| **MAPPED** | Configured class | Children use their own configured strategy |
+| **NUMERIC** | Configured class | Children use their own configured strategy |
+
+**Key Rule:** SCHEMA_AND_TYPE is a **root-only strategy**. It establishes a context schema at the root level but does not propagate to contained objects.
+
+#### 1.5.2 Example: SCHEMA_AND_TYPE with Containments
+
+**Model:**
+- `Company` (configured with SCHEMA_AND_TYPE)
+- `Person` (no configuration → uses default URI)
+- `Company.employees: Person[*]` (containment)
+
+**Configuration on Company:**
+```xml
+<eClassifiers xsi:type="ecore:EClass" name="Company">
+  <eAnnotations source="http://eclipse.org/fennec/codec">
+    <details key="typeStrategy" value="SCHEMA_AND_TYPE"/>
+  </eAnnotations>
+  ...
+</eClassifiers>
+```
+
+**Output:**
+```json
+{
+  "_schema": "http://example.org/1.0",
+  "_type": "Company",
+  "name": "Acme Inc",
+  "employees": [
+    {
+      "_type": "http://example.org/1.0#//Person",
+      "name": "Alice"
+    },
+    {
+      "_type": "http://example.org/1.0#//Person",
+      "name": "Bob"
+    }
+  ]
+}
+```
+
+**Observations:**
+- Root `Company`: uses `_schema` + simple `_type` (SCHEMA_AND_TYPE strategy)
+- Contained `Person`: uses full URI (default strategy, not inherited from parent)
+
+#### 1.5.3 Combining with Smart Compression
+
+To achieve compact output where contained objects use simple type names, enable **Smart Compression** (see [Global Options - Smart Compression](04-global-options.md#1-smart-compression)).
+
+**With Smart Compression enabled:**
+```json
+{
+  "_schema": "http://example.org/1.0",
+  "_type": "Company",
+  "name": "Acme Inc",
+  "employees": [
+    {
+      "_type": "Person",
+      "name": "Alice"
+    }
+  ]
+}
+```
+
+Smart Compression uses the root's schema context to simplify same-schema types to simple names.
+
+#### 1.5.4 Why No Per-Reference Strategy Override?
+
+Per-reference type strategy configuration is intentionally **not supported**. Reasons:
+
+1. **Complexity vs. Value**: Adds significant configuration complexity for edge cases
+2. **Consistency**: Same class appearing differently in different contexts is confusing
+3. **Smart Compression Alternative**: Most use cases for per-reference configuration are better served by Smart Compression
+4. **Deserialization Ambiguity**: Would require knowing which strategy was used per-reference during deserialization
+
+If you need custom type handling for specific references, consider using custom value readers/writers at the reference level (see [Custom Value Readers/Writers](10-custom-values.md)).
+
+---
+
+### 1.6 NUMERIC Strategy
 
 The NUMERIC strategy uses EMF classifier IDs instead of type names for compactness.
 
@@ -152,7 +242,7 @@ The NUMERIC strategy uses EMF classifier IDs instead of type names for compactne
 - `schemaKey`: schema field (default: `schema`)
 - `classifierKey`: classifier ID field (default: `classifier`)
 
-> **Warning:** Classifier IDs are positional and can change when the model evolves. See [Global Options - NUMERIC Strategy](02-global-options.md#21-numeric-strategy---compatibility-warning) for details.
+> **Warning:** Classifier IDs are positional and can change when the model evolves. See [Global Options - NUMERIC Strategy](04-global-options.md#2-numericindexed-strategy) for details.
 
 ---
 

@@ -14,10 +14,12 @@
 package org.eclipse.fennec.codec.v2.ser;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
@@ -42,6 +44,7 @@ import tools.jackson.databind.SerializationContext;
 public class TypeSerializationEntry implements SerializationEntry {
 
     private final EffectiveTypeConfig config;
+    private final EffectiveCodecConfig codecConfig;
     private final EClass eClass;
     private final String typeValue;
     private final SuperTypeSerializationEntry superTypeEntry;
@@ -53,7 +56,7 @@ public class TypeSerializationEntry implements SerializationEntry {
      * @param eClass the EClass being serialized (for computing type value if no discriminator)
      */
     public TypeSerializationEntry(EffectiveTypeConfig config, EClass eClass) {
-        this(config, eClass, null);
+        this(config, eClass, null, null);
     }
 
     /**
@@ -65,10 +68,25 @@ public class TypeSerializationEntry implements SerializationEntry {
      * @param superTypeEntry optional supertype entry to embed in STRUCTURED format
      */
     public TypeSerializationEntry(EffectiveTypeConfig config, EClass eClass, SuperTypeSerializationEntry superTypeEntry) {
-        this.config = config;
-        this.eClass = eClass;
+        this(config, eClass, superTypeEntry, null);
+    }
+
+    /**
+     * Creates a new TypeSerializationEntry with the effective type configuration,
+     * optional supertype entry, and codec configuration for smart compression.
+     *
+     * @param config the effective (pre-merged) type configuration
+     * @param eClass the EClass being serialized (for computing type value if no discriminator)
+     * @param superTypeEntry optional supertype entry to embed in STRUCTURED format
+     * @param codecConfig the codec configuration for smart compression (may be null)
+     */
+    public TypeSerializationEntry(EffectiveTypeConfig config, EClass eClass,
+            SuperTypeSerializationEntry superTypeEntry, EffectiveCodecConfig codecConfig) {
+        this.config = Objects.requireNonNull(config, "config must not be null");
+        this.eClass = Objects.requireNonNull(eClass, "eClass must not be null");
         this.typeValue = resolveTypeValue(eClass);
         this.superTypeEntry = superTypeEntry;
+        this.codecConfig = codecConfig;
     }
 
     @Override
@@ -117,9 +135,9 @@ public class TypeSerializationEntry implements SerializationEntry {
         SerializationFormat format = config.getFormat();
 
         if (format == SerializationFormat.STRUCTURED) {
-            serializeStructured(gen);
+            serializeStructured(gen, ctxt);
         } else {
-            serializePlain(gen);
+            serializePlain(gen, ctxt);
         }
     }
 
@@ -136,10 +154,16 @@ public class TypeSerializationEntry implements SerializationEntry {
      *   <li>SCHEMA_AND_TYPE: {@code "_schema": "http://...", "_type": "Person"} (two fields)</li>
      * </ul>
      * </p>
+     * <p>
+     * When smart compression is enabled and the type belongs to the same schema
+     * as the root object, a simple name is written instead of a full URI.
+     * </p>
      *
      * @param gen the JSON generator
+     * @param ctxt the serialization context (for smart compression)
+     * @see <a href="docs/codec-v2-spec/04-global-options.md#1-smart-compression">Spec: Smart Compression</a>
      */
-    private void serializePlain(JsonGenerator gen) {
+    private void serializePlain(JsonGenerator gen, SerializationContext ctxt) {
         TypeStrategy strategy = config.getStrategy();
         if (strategy == TypeStrategy.SCHEMA_AND_TYPE) {
             // SCHEMA_AND_TYPE in PLAIN format writes TWO separate fields
@@ -152,7 +176,9 @@ public class TypeSerializationEntry implements SerializationEntry {
             gen.writeStringProperty(config.getTypeKey(), eClass.getName());
         } else {
             // All other strategies: single field with typeValue
-            gen.writeStringProperty(config.getTypeKey(), typeValue);
+            // Apply smart compression if enabled and same schema
+            String effectiveTypeValue = applySmartCompression(typeValue, ctxt);
+            gen.writeStringProperty(config.getTypeKey(), effectiveTypeValue);
         }
     }
 
@@ -195,12 +221,18 @@ public class TypeSerializationEntry implements SerializationEntry {
      *   <li>STRING: {@code {"schema": "...", "type": "Person", "supertype": "Entity,..."}}</li>
      * </ul>
      * </p>
+     * <p>
+     * When smart compression is enabled and the type belongs to the same schema
+     * as the root object, a simple name is written instead of a full URI.
+     * </p>
      *
      * @param gen the JSON generator
+     * @param ctxt the serialization context (for smart compression)
      * @see <a href="docs/codec-v2-spec/05-type.md#14-structured-strategies">Spec: STRUCTURED Strategy</a>
      * @see <a href="docs/codec-v2-spec/06-supertype.md#3-structured-format">Spec: SuperType STRUCTURED</a>
+     * @see <a href="docs/codec-v2-spec/04-global-options.md#1-smart-compression">Spec: Smart Compression</a>
      */
-    private void serializeStructured(JsonGenerator gen) {
+    private void serializeStructured(JsonGenerator gen, SerializationContext ctxt) {
         gen.writeName(config.getTypeKey());
         gen.writeStartObject();
 
@@ -231,7 +263,9 @@ public class TypeSerializationEntry implements SerializationEntry {
             default:
                 // URI, NAME, CLASS, MAPPED: {"type": "<value>"}
                 // All use the unified "type" key with the pre-computed typeValue
-                gen.writeStringProperty(config.getNameKey(), typeValue);
+                // Apply smart compression if enabled and same schema
+                String effectiveTypeValue = applySmartCompression(typeValue, ctxt);
+                gen.writeStringProperty(config.getNameKey(), effectiveTypeValue);
                 break;
         }
 
@@ -324,5 +358,43 @@ public class TypeSerializationEntry implements SerializationEntry {
                 // Full EMF URI: nsURI#//className
                 return EcoreUtil.getURI(eClass).toString();
         }
+    }
+
+    /**
+     * Applies smart compression to a type value if enabled.
+     * <p>
+     * When smart compression is enabled and the type belongs to the same schema
+     * as the context (root object), the full URI is replaced with a simple name.
+     * </p>
+     * <p>
+     * The root object always uses a full URI to establish the context schema.
+     * Only contained objects (after root serialization) use simple names.
+     * </p>
+     *
+     * @param typeValue the original type value (may be a full URI)
+     * @param ctxt the serialization context
+     * @return the compressed type value (simple name) or original value
+     * @see <a href="docs/codec-v2-spec/04-global-options.md#1-smart-compression">Spec: Smart Compression</a>
+     */
+    private String applySmartCompression(String typeValue, SerializationContext ctxt) {
+        // Check if smart compression is enabled
+        if (codecConfig == null || !codecConfig.isSmartCompression()) {
+            return typeValue;
+        }
+
+        // Root object must use full URI to establish context
+        // Only apply compression after root is serialized
+        if (!ContextHelper.isRootSerialized(ctxt)) {
+            // Mark root as serialized for subsequent objects
+            ContextHelper.setRootSerialized(ctxt);
+            return typeValue;
+        }
+
+        // Check if type belongs to same schema as context
+        if (ContextHelper.isSameSchema(ctxt, typeValue)) {
+            return ContextHelper.extractSimpleName(typeValue);
+        }
+
+        return typeValue;
     }
 }

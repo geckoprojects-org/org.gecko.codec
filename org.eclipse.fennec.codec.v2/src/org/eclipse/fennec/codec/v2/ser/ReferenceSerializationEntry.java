@@ -15,7 +15,6 @@ package org.eclipse.fennec.codec.v2.ser;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -174,13 +173,10 @@ public class ReferenceSerializationEntry implements SerializationEntry {
         // Check for cross-document containment: containment reference where target is in different resource
         if (reference.isContainment() && isCrossDocument(gen, target)) {
             // Cross-document containment: serialize as reference (like non-containment)
-            writeReferenceObject(target, gen, true);
+            writeReferenceObject(target, gen, true, ctxt);
         } else if (reference.isContainment()) {
             // Standard containment: serialize inline
-            // Smart compression: suppress _type if instance type == reference type
-            if (smartCompression && shouldSuppressType(target)) {
-                ContextHelper.setSuppressType(ctxt, true);
-            }
+            // Smart compression is handled by TypeSerializationEntry (same-schema simple names)
             ctxt.writeValue(gen, target);
         } else if (shouldExpandReference(target)) {
             // Non-containment with expand enabled: serialize inline (like containment)
@@ -188,7 +184,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
             serializeExpandedReference(target, gen, ctxt);
         } else {
             // Non-containment: serialize as reference
-            writeReferenceObject(target, gen, false);
+            writeReferenceObject(target, gen, false, ctxt);
         }
     }
 
@@ -234,7 +230,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      * Serializes an expanded non-containment reference as an inline object.
      * <p>
      * The object is serialized similarly to a containment, with smart compression
-     * applied if enabled.
+     * handled by TypeSerializationEntry (same-schema simple names).
      * </p>
      *
      * @param target the target EObject (must not be a proxy)
@@ -242,10 +238,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      * @param ctxt the serialization context
      */
     private void serializeExpandedReference(EObject target, JsonGenerator gen, SerializationContext ctxt) {
-        // Smart compression: suppress _type if instance type == reference type
-        if (smartCompression && shouldSuppressType(target)) {
-            ContextHelper.setSuppressType(ctxt, true);
-        }
+        // Smart compression is handled by TypeSerializationEntry (same-schema simple names)
         ctxt.writeValue(gen, target);
     }
 
@@ -281,46 +274,56 @@ public class ReferenceSerializationEntry implements SerializationEntry {
     }
 
     /**
-     * Checks if type should be suppressed for smart compression.
-     * <p>
-     * Type is suppressed when the instance type exactly matches the declared
-     * reference type, as the type can be inferred from the reference declaration.
-     * </p>
-     *
-     * @param target the target EObject
-     * @return true if type should be suppressed
-     */
-    private boolean shouldSuppressType(EObject target) {
-        EClass instanceType = target.eClass();
-        EClass referenceType = reference.getEReferenceType();
-        return instanceType == referenceType;
-    }
-
-    /**
      * Writes a reference object with the configured reference key.
      * <p>
      * For cross-document references, generates an absolute or relative URI
      * depending on whether the target is in a different resource.
      * </p>
+     * <p>
+     * Type is always written. When smart compression is enabled and the type
+     * is from the same schema as the root, a simple name is used.
+     * </p>
      *
      * @param target the target EObject
      * @param gen the JSON generator
      * @param crossDocument true if this is a cross-document reference
+     * @param ctxt the serialization context for smart compression
      */
-    private void writeReferenceObject(EObject target, JsonGenerator gen, boolean crossDocument) {
+    private void writeReferenceObject(EObject target, JsonGenerator gen, boolean crossDocument,
+            SerializationContext ctxt) {
         gen.writeStartObject();
 
-        // Write type if smart compression is off, or if type differs from reference type
-        if (!smartCompression || !shouldSuppressType(target)) {
-            // @CLAUDE: type serialization will need to be integrated with TypeSerializationEntry
-            // For now, write the full URI as type
-            String typeUri = EcoreUtil.getURI(target.eClass()).toString();
-            gen.writeStringProperty("_type", typeUri);
-        }
+        // @CLAUDE: type serialization will need to be integrated with TypeSerializationEntry
+        // For now, write the type (with smart compression if enabled)
+        String typeUri = EcoreUtil.getURI(target.eClass()).toString();
+        String effectiveType = applySmartCompressionToRef(typeUri, ctxt);
+        gen.writeStringProperty("_type", effectiveType);
 
         String uri = getReferenceUri(gen, target, crossDocument);
         gen.writeStringProperty(refKey, uri);
         gen.writeEndObject();
+    }
+
+    /**
+     * Applies smart compression to a type value for reference serialization.
+     * <p>
+     * Similar to TypeSerializationEntry.applySmartCompression but simplified
+     * for non-containment references.
+     * </p>
+     *
+     * @param typeUri the full type URI
+     * @param ctxt the serialization context
+     * @return the simple name if same schema, otherwise the full URI
+     */
+    private String applySmartCompressionToRef(String typeUri, SerializationContext ctxt) {
+        if (!smartCompression) {
+            return typeUri;
+        }
+        // For references, root is already serialized so smart compression can apply
+        if (ContextHelper.isSameSchema(ctxt, typeUri)) {
+            return ContextHelper.extractSimpleName(typeUri);
+        }
+        return typeUri;
     }
 
     /**

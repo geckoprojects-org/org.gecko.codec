@@ -45,6 +45,27 @@ public final class ContextHelper {
      */
     public static final String SUPPRESS_TYPE = "CODEC_SUPPRESS_TYPE";
 
+    /**
+     * Context attribute key for the context schema URI (root namespace).
+     * <p>
+     * Used by same-schema smart compression to determine if a type belongs
+     * to the same schema as the root object. When set, types from this
+     * schema will be written as simple names instead of full URIs.
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/04-global-options.md#1-smart-compression">Spec: Smart Compression</a>
+     */
+    public static final String CONTEXT_SCHEMA_URI = "CODEC_CONTEXT_SCHEMA_URI";
+
+    /**
+     * Context attribute key indicating if root object serialization is complete.
+     * <p>
+     * Used by smart compression to ensure the root object always uses a full URI
+     * (to establish the context schema), while contained objects can use simple names.
+     * </p>
+     */
+    public static final String ROOT_SERIALIZED = "CODEC_ROOT_SERIALIZED";
+
     private ContextHelper() {
         // Static helper class
     }
@@ -163,6 +184,145 @@ public final class ContextHelper {
      */
     public static void clearSuppressType(SerializationContext ctxt) {
         ctxt.setAttribute(SUPPRESS_TYPE, null);
+    }
+
+    // ========================================================================
+    // Context Schema Methods (for smart compression)
+    // ========================================================================
+
+    /**
+     * Gets the context schema URI from the serialization context.
+     * <p>
+     * The context schema is derived from the root object and used by smart
+     * compression to determine if a type belongs to the same schema.
+     * </p>
+     *
+     * @param ctxt the serialization context
+     * @return the context schema URI, or null if not set
+     */
+    public static String getContextSchemaUri(SerializationContext ctxt) {
+        Object value = ctxt.getAttribute(CONTEXT_SCHEMA_URI);
+        return value instanceof String ? (String) value : null;
+    }
+
+    /**
+     * Gets the context schema URI from the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @return the context schema URI, or null if not set
+     */
+    public static String getContextSchemaUri(DeserializationContext ctxt) {
+        Object value = ctxt.getAttribute(CONTEXT_SCHEMA_URI);
+        return value instanceof String ? (String) value : null;
+    }
+
+    /**
+     * Sets the context schema URI in the serialization context.
+     *
+     * @param ctxt the serialization context
+     * @param schemaUri the context schema URI
+     */
+    public static void setContextSchemaUri(SerializationContext ctxt, String schemaUri) {
+        ctxt.setAttribute(CONTEXT_SCHEMA_URI, schemaUri);
+    }
+
+    /**
+     * Sets the context schema URI in the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @param schemaUri the context schema URI
+     */
+    public static void setContextSchemaUri(DeserializationContext ctxt, String schemaUri) {
+        ctxt.setAttribute(CONTEXT_SCHEMA_URI, schemaUri);
+    }
+
+    /**
+     * Checks if root object serialization is complete.
+     * <p>
+     * Smart compression should only apply simple names after the root object
+     * has been serialized (root must use full URI to establish context).
+     * </p>
+     *
+     * @param ctxt the serialization context
+     * @return true if root object serialization is complete
+     */
+    public static boolean isRootSerialized(SerializationContext ctxt) {
+        Object value = ctxt.getAttribute(ROOT_SERIALIZED);
+        return Boolean.TRUE.equals(value);
+    }
+
+    /**
+     * Marks root object serialization as complete.
+     * <p>
+     * Called after the root object's type is serialized to enable
+     * smart compression for contained objects.
+     * </p>
+     *
+     * @param ctxt the serialization context
+     */
+    public static void setRootSerialized(SerializationContext ctxt) {
+        ctxt.setAttribute(ROOT_SERIALIZED, Boolean.TRUE);
+    }
+
+    /**
+     * Checks if a type URI belongs to the context schema.
+     * <p>
+     * Used by smart compression to determine if a type should be written
+     * as a simple name instead of a full URI.
+     * </p>
+     *
+     * @param ctxt the serialization context
+     * @param typeUri the full type URI (e.g., "http://example.org/1.0#//Person")
+     * @return true if the type belongs to the context schema
+     */
+    public static boolean isSameSchema(SerializationContext ctxt, String typeUri) {
+        String contextSchema = getContextSchemaUri(ctxt);
+        if (contextSchema == null || typeUri == null) {
+            return false;
+        }
+        // Type URI format: "http://example.org/1.0#//Person"
+        // Context schema: "http://example.org/1.0"
+        return typeUri.startsWith(contextSchema + "#");
+    }
+
+    /**
+     * Extracts the simple type name from a full URI.
+     * <p>
+     * Example: "http://example.org/1.0#//Person" → "Person"
+     * </p>
+     *
+     * @param typeUri the full type URI
+     * @return the simple type name, or the original URI if not in expected format
+     */
+    public static String extractSimpleName(String typeUri) {
+        if (typeUri == null) {
+            return null;
+        }
+        int fragmentIndex = typeUri.indexOf("#//");
+        if (fragmentIndex >= 0) {
+            return typeUri.substring(fragmentIndex + 3);
+        }
+        return typeUri;
+    }
+
+    /**
+     * Extracts the schema URI from a full type URI.
+     * <p>
+     * Example: "http://example.org/1.0#//Person" → "http://example.org/1.0"
+     * </p>
+     *
+     * @param typeUri the full type URI
+     * @return the schema URI, or null if not in expected format
+     */
+    public static String extractSchemaUri(String typeUri) {
+        if (typeUri == null) {
+            return null;
+        }
+        int fragmentIndex = typeUri.indexOf("#//");
+        if (fragmentIndex >= 0) {
+            return typeUri.substring(0, fragmentIndex);
+        }
+        return null;
     }
 
     /**

@@ -20,11 +20,13 @@ import java.util.TreeMap;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveClassConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.codec.v2.context.EMFCodecWriteContext;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 
@@ -98,6 +100,9 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
 
         EClass eClass = value.eClass();
 
+        // Set context schema for smart compression (only for root object)
+        initializeContextSchemaIfNeeded(eClass, ctxt);
+
         // Get effective class configuration (cached)
         EffectiveClassConfig classConfig = config.getClassConfig(eClass);
 
@@ -157,11 +162,11 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
             if (isStructuredFormat && superTypeEntry != null) {
                 // STRUCTURED format: supertype is embedded inside _type object
                 typeEntry = new TypeSerializationEntry(
-                        classConfig.getTypeConfig(), eClass, superTypeEntry);
+                        classConfig.getTypeConfig(), eClass, superTypeEntry, config);
             } else {
                 // PLAIN format: supertype is a separate field
                 typeEntry = new TypeSerializationEntry(
-                        classConfig.getTypeConfig(), eClass);
+                        classConfig.getTypeConfig(), eClass, null, config);
             }
             entries.put(typeEntry.getKey(), typeEntry);
         }
@@ -240,5 +245,37 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
         }
 
         return ordered;
+    }
+
+    /**
+     * Initializes the context schema URI for smart compression.
+     * <p>
+     * The context schema is set once from the first (root) object and used
+     * to determine if subsequent objects belong to the same schema.
+     * Only initializes if smart compression is enabled and context schema
+     * is not already set.
+     * </p>
+     *
+     * @param eClass the EClass of the current object
+     * @param ctxt the serialization context
+     * @see <a href="docs/codec-v2-spec/04-global-options.md#1-smart-compression">Spec: Smart Compression</a>
+     */
+    private void initializeContextSchemaIfNeeded(EClass eClass, SerializationContext ctxt) {
+        // Only initialize if smart compression is enabled
+        if (!config.isSmartCompression()) {
+            return;
+        }
+
+        // Only set context schema once (for root object)
+        if (ContextHelper.getContextSchemaUri(ctxt) != null) {
+            return;
+        }
+
+        // Get schema URI from the EClass's package
+        EPackage ePackage = eClass.getEPackage();
+        if (ePackage != null) {
+            String schemaUri = ePackage.getNsURI();
+            ContextHelper.setContextSchemaUri(ctxt, schemaUri);
+        }
     }
 }

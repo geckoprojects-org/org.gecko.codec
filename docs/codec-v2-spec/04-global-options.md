@@ -8,99 +8,293 @@ These options apply globally across all serialization targets (type, ID, referen
 
 ## 1. Smart Compression
 
-Smart Compression reduces redundancy by omitting type information when it can be derived from context. This applies consistently across all serialization features.
+Smart Compression reduces redundancy by using **simple type names** instead of full URIs when the type belongs to the same schema as the root object.
 
 ### 1.1 Core Principle
 
-When smart compression is enabled, type information is omitted whenever the **instance type equals the declared type**. The deserializer can infer the type from the model definition.
+When smart compression is enabled, type values are written as **simple names** (e.g., `"Manager"`) instead of **full URIs** (e.g., `"http://example.org/1.0#//Manager"`) when the type's schema matches the root object's schema.
 
-| Feature | Declared Type | Instance Type | Smart Compression Action |
-|---------|---------------|---------------|--------------------------|
-| Root Object | `CODEC_ROOT_OBJECT` hint | `eObject.eClass()` | Omit `_type` if equal |
-| Containment Reference | `reference.getEReferenceType()` | `target.eClass()` | Omit `_type` if equal |
-| Non-Containment Reference | `reference.getEReferenceType()` | `target.eClass()` | Omit `_type` if equal |
-| Cross-Document Containment | `reference.getEReferenceType()` | `target.eClass()` | Omit `_type` if equal |
+| Scenario | Smart Compression OFF | Smart Compression ON |
+|----------|----------------------|----------------------|
+| Type same schema as root | Write full URI | Write simple name |
+| Type different schema | Write full URI | Write full URI |
+| SuperType same schema | Write full URI | Write simple name |
+| SuperType different schema | Write full URI | Write full URI |
 
-**Key Rule:** Always serialize the **instance type** (from `eObject.eClass()`), never the declared type. Smart compression only affects whether to write it, not what value to write.
+**Key Rule:** `_type` is always written when type information is enabled. Smart compression only affects the **format** of the type value (simple name vs full URI), not whether to write it.
 
-### 1.2 Smart Compression Behavior Matrix
+### 1.2 Context Schema
 
-| Smart Compression | Instance Type == Declared Type | Action |
-|-------------------|-------------------------------|--------|
-| ON | Yes | Omit `_type` (inferable from context) |
-| ON | No | Write `_type` with instance type |
-| OFF | Yes | Write `_type` with instance type |
-| OFF | No | Write `_type` with instance type |
+The "context schema" (root schema) is derived from the root object's type declaration:
 
-### 1.3 Additional Compression: Same-Schema Names
+| Type Strategy | Context Schema Source |
+|---------------|----------------------|
+| URI | Parsed from `_type` URI (e.g., `"http://example.org/1.0#//Company"` → `http://example.org/1.0`) |
+| SCHEMA_AND_TYPE | Explicitly from `_schema` field |
+| NAME | From root object's EPackage nsURI |
+| MAPPED | From root object's EPackage nsURI |
 
-When using STRUCTURED type format with smart compression, schema information can also be compressed:
+### 1.3 Applicability by Type Strategy
 
-- **Same-package references**: Use simple name instead of full URI
-- **Same-schema supertypes**: Use simple name instead of full URI
-- **Cross-package references**: Always include full URI
+Smart compression requires a **context schema** to be established from the root object. This means smart compression only applies when the root object writes a `_type` field.
+
+| Type Strategy | Smart Compression Applies? | Reason |
+|---------------|---------------------------|--------|
+| **URI** | ✅ Yes | Root `_type` establishes context schema |
+| **SCHEMA_AND_TYPE** | ✅ Yes | Root `_schema` establishes context schema |
+| **NAME** | ✅ Yes | Root `_type` + EPackage establishes context |
+| **MAPPED** | ✅ Yes | Root `_type` + EPackage establishes context |
+| **NUMERIC** | ✅ Yes | Root `_type` + schema establishes context |
+| **DiscriminatorPath** | ❌ No | No root `_type` field to establish context |
+
+> **Note:** When using `discriminatorPath` (featurePath-based type resolution), the root object does not write a `_type` field. Without a root `_type`, there is no context schema, and smart compression cannot determine which types are "same schema". In this case, all contained objects will use full URIs regardless of the smart compression setting.
 
 ### 1.4 Configuration
 
 ```java
-// Global - applies to ALL serialization targets
-CodecConfig.builder()
-    .smartCompression(true)  // Global default
-    .build();
-
-// Per-target override
-CodecConfig.builder()
-    .smartCompression(false)  // Global default OFF
-    .type(TypeSerializationConfig.builder()
-        .smartCompression(true)  // But ON for type info
-        .build())
-    .reference(ReferenceSerializationConfig.builder()
-        .smartCompression(true)  // And ON for references
-        .build())
+CodecConfiguration.builder()
+    .smartCompression(true)
     .build();
 ```
 
 ### 1.5 Examples
 
-**Containment reference with smart compression ON:**
+#### Example 1: URI Strategy with Containment References
 
-```java
-// EReference employees: Person[*]  (declared type = Person)
-// Contains: Person, Person, FancyPerson instances
-```
+**Model:**
+- `http://example.org/1.0`: `Company`, `Person`, `Manager` (Manager extends Person)
+- `http://external.org/hr/1.0`: `Contractor`
+- `Company.employees: Person[*]` (containment)
+
+**Without smart compression:**
 ```json
 {
+  "_type": "http://example.org/1.0#//Company",
   "employees": [
-    { "name": "John" },
-    { "name": "Jane" },
-    { "_type": "http://example.org/1.0#//FancyPerson", "name": "Bob", "fancyLevel": 5 }
-  ]
-}
-```
-Note: First two omit `_type` (Person == Person), third includes it (FancyPerson != Person).
-
-**Non-containment reference with smart compression ON:**
-
-```json
-{
-  "employees": [
-    { "_ref": "john" },
-    { "_ref": "jane" },
-    { "_type": "http://external.org/hr/1.0#//Contractor", "_ref": "bob" }
+    { "_type": "http://example.org/1.0#//Person", "name": "John" },
+    { "_type": "http://example.org/1.0#//Manager", "name": "Jane" },
+    { "_type": "http://external.org/hr/1.0#//Contractor", "name": "Bob" }
   ]
 }
 ```
 
-**Cross-document containment with smart compression ON:**
-
+**With smart compression:**
 ```json
 {
-  "address": {
-    "_ref": "addresses.json#//@addresses.0"
-  }
+  "_type": "http://example.org/1.0#//Company",
+  "employees": [
+    { "_type": "Person", "name": "John" },
+    { "_type": "Manager", "name": "Jane" },
+    { "_type": "http://external.org/hr/1.0#//Contractor", "name": "Bob" }
+  ]
 }
 ```
-Note: `_type` omitted because instance type equals declared reference type.
+
+Note: `Person` and `Manager` use simple names (same schema), `Contractor` uses full URI (different schema).
+
+#### Example 2: SCHEMA_AND_TYPE Strategy with Containment References
+
+**Without smart compression:**
+```json
+{
+  "_schema": "http://example.org/1.0",
+  "_type": "Company",
+  "employees": [
+    { "_type": "http://example.org/1.0#//Person", "name": "John" },
+    { "_type": "http://example.org/1.0#//Manager", "name": "Jane" },
+    { "_type": "http://external.org/hr/1.0#//Contractor", "name": "Bob" }
+  ]
+}
+```
+
+**With smart compression:**
+```json
+{
+  "_schema": "http://example.org/1.0",
+  "_type": "Company",
+  "employees": [
+    { "_type": "Person", "name": "John" },
+    { "_type": "Manager", "name": "Jane" },
+    { "_type": "http://external.org/hr/1.0#//Contractor", "name": "Bob" }
+  ]
+}
+```
+
+#### Example 3: Non-Containment References
+
+**Model:**
+- `Company.ceo: Person` (non-containment, single)
+- `Company.partners: Company[*]` (non-containment, multi)
+
+**Without smart compression:**
+```json
+{
+  "_type": "http://example.org/1.0#//Company",
+  "name": "Acme",
+  "ceo": { "_type": "http://example.org/1.0#//Manager", "_ref": "jane-123" },
+  "partners": [
+    { "_type": "http://example.org/1.0#//Company", "_ref": "partner-1" },
+    { "_type": "http://external.org/biz/1.0#//Corporation", "_ref": "corp-99" }
+  ]
+}
+```
+
+**With smart compression:**
+```json
+{
+  "_type": "http://example.org/1.0#//Company",
+  "name": "Acme",
+  "ceo": { "_type": "Manager", "_ref": "jane-123" },
+  "partners": [
+    { "_type": "Company", "_ref": "partner-1" },
+    { "_type": "http://external.org/biz/1.0#//Corporation", "_ref": "corp-99" }
+  ]
+}
+```
+
+#### Example 4: SuperTypes with STRUCTURED Format
+
+**Model:**
+- `http://example.org/1.0`: `Person` extends `Entity`
+- `http://audit.org/1.0`: `Auditable` (external supertype)
+
+**Without smart compression:**
+```json
+{
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person",
+    "supertype": [
+      "http://example.org/1.0#//Entity",
+      "http://audit.org/1.0#//Auditable"
+    ]
+  },
+  "name": "John"
+}
+```
+
+**With smart compression:**
+```json
+{
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person",
+    "supertype": [
+      "Entity",
+      "http://audit.org/1.0#//Auditable"
+    ]
+  },
+  "name": "John"
+}
+```
+
+Note: `Entity` uses simple name (same schema), `Auditable` uses full URI (different schema).
+
+#### Example 5: SuperTypes with PLAIN Format
+
+**Without smart compression:**
+```json
+{
+  "_schema": "http://example.org/1.0",
+  "_type": "Person",
+  "_supertype": [
+    "http://example.org/1.0#//Entity",
+    "http://audit.org/1.0#//Auditable"
+  ],
+  "name": "John"
+}
+```
+
+**With smart compression:**
+```json
+{
+  "_schema": "http://example.org/1.0",
+  "_type": "Person",
+  "_supertype": [
+    "Entity",
+    "http://audit.org/1.0#//Auditable"
+  ],
+  "name": "John"
+}
+```
+
+#### Example 6: Nested Containment (3 Levels Deep)
+
+**Model:**
+- `http://example.org/1.0`: `Company`, `Department`, `Person`, `Manager` (Manager extends Person)
+- `Company.departments: Department[*]` (containment)
+- `Department.manager: Person` (containment)
+
+This example demonstrates that the context schema from the root object propagates to all nested levels.
+
+**Without smart compression:**
+```json
+{
+  "_type": "http://example.org/1.0#//Company",
+  "name": "Acme",
+  "departments": [
+    {
+      "_type": "http://example.org/1.0#//Department",
+      "name": "Engineering",
+      "manager": {
+        "_type": "http://example.org/1.0#//Manager",
+        "name": "Jane"
+      }
+    },
+    {
+      "_type": "http://example.org/1.0#//Department",
+      "name": "Sales",
+      "manager": {
+        "_type": "http://example.org/1.0#//Person",
+        "name": "Bob"
+      }
+    }
+  ]
+}
+```
+
+**With smart compression:**
+```json
+{
+  "_type": "http://example.org/1.0#//Company",
+  "name": "Acme",
+  "departments": [
+    {
+      "_type": "Department",
+      "name": "Engineering",
+      "manager": {
+        "_type": "Manager",
+        "name": "Jane"
+      }
+    },
+    {
+      "_type": "Department",
+      "name": "Sales",
+      "manager": {
+        "_type": "Person",
+        "name": "Bob"
+      }
+    }
+  ]
+}
+```
+
+Note: All nested objects (`Department`, `Manager`, `Person`) use simple names because they all belong to the same schema as the root `Company`.
+
+### 1.6 Deserialization
+
+When parsing `_type` or `_supertype` values during deserialization:
+
+1. **Contains `#`** → Full URI, resolve directly
+2. **Simple name** → Combine with root schema: `rootSchema + "#//" + simpleName`
+
+The root schema is derived from:
+- `_schema` field (if SCHEMA_AND_TYPE strategy)
+- Parsed from root `_type` URI (if URI strategy)
+
+**Example resolution:**
+- Root: `"_type": "http://example.org/1.0#//Company"` → context schema = `http://example.org/1.0`
+- Child: `"_type": "Manager"` → resolved as `http://example.org/1.0#//Manager`
 
 ---
 

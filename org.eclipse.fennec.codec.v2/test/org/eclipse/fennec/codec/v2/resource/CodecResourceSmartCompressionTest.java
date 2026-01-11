@@ -39,20 +39,30 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests for smart compression behavior.
  * <p>
- * Smart compression suppresses the `_type` field when the instance type equals
- * the reference type (redundant type information). This is controlled by the
+ * Smart compression uses <b>simple type names</b> instead of full URIs when the type
+ * belongs to the same schema as the root object. This is controlled by the
  * global {@code smartCompression} setting in {@link CodecConfiguration}.
+ * </p>
+ * <p>
+ * <b>Key Rules:</b>
+ * <ul>
+ *   <li>`_type` is ALWAYS written (smart compression does not suppress types)</li>
+ *   <li>Smart compression only affects the <b>format</b> of the type value</li>
+ *   <li>Root object always uses full URI (to establish context schema)</li>
+ *   <li>Contained objects use simple name when same schema as root</li>
+ * </ul>
  * </p>
  * <p>
  * Test scenarios:
  * <ul>
- *   <li><b>Smart compression OFF</b>: `_type` is always written for contained objects</li>
- *   <li><b>Smart compression ON (same type)</b>: `_type` is suppressed when instance type == reference type</li>
- *   <li><b>Smart compression ON (polymorphic)</b>: `_type` is written when instance type != reference type</li>
+ *   <li><b>Smart compression OFF</b>: All types use full URIs</li>
+ *   <li><b>Smart compression ON (same schema)</b>: Contained types use simple names</li>
+ *   <li><b>Smart compression ON (different schema)</b>: Types use full URIs</li>
  * </ul>
  * </p>
  *
  * @see CodecConfiguration#isSmartCompression()
+ * @see <a href="docs/codec-v2-spec/04-global-options.md#1-smart-compression">Spec: Smart Compression</a>
  */
 @DisplayName("CodecResource Smart Compression Tests")
 class CodecResourceSmartCompressionTest {
@@ -225,16 +235,16 @@ class CodecResourceSmartCompressionTest {
     }
 
     // ========================================================================
-    // Smart Compression ON with Same Type - _type suppressed
+    // Smart Compression ON - Same Schema uses simple names
     // ========================================================================
 
     @Nested
-    @DisplayName("Smart Compression ON - Same Type")
-    class SmartCompressionOnSameType {
+    @DisplayName("Smart Compression ON - Same Schema")
+    class SmartCompressionOnSameSchema {
 
         @Test
-        @DisplayName("same-type reference suppresses _type")
-        void sameType_smartCompressionOn_suppressesType() throws IOException {
+        @DisplayName("same-schema contained object uses simple type name")
+        void sameSchema_smartCompressionOn_usesSimpleName() throws IOException {
             // Kennel.dog is typed as Dog, holding a Dog instance
             EObject kennel = createKennel("Happy Paws");
             EObject dog = createDog("Buddy", "Golden Retriever");
@@ -243,18 +253,19 @@ class CodecResourceSmartCompressionTest {
             String json = serialize(kennel, true);
             System.out.println("Kennel with Dog (smart compression ON):\n" + json);
 
-            // With smart compression ON and same type, _type should be suppressed
-            // Count _type occurrences in the nested dog object (not root)
-            // Root may still have _type, so we check the dog section
-            String dogSection = extractSection(json, "dog");
-            assertFalse(dogSection.contains("\"_type\""),
-                    "Dog section should NOT contain _type when smart compression is ON and types match.\n" +
-                    "Dog section: " + dogSection);
+            // Root should have full URI, contained dog should have simple name
+            String nsUri = testPackage.getNsURI();
+            assertTrue(json.contains("\"_type\":\"" + nsUri + "#//Kennel\""),
+                    "Root Kennel should use full URI");
+            assertTrue(json.contains("\"_type\":\"Dog\""),
+                    "Contained Dog should use simple name 'Dog'");
+            assertFalse(json.contains("\"_type\":\"" + nsUri + "#//Dog\""),
+                    "Contained Dog should NOT use full URI");
         }
 
         @Test
-        @DisplayName("same-type list suppresses _type for each element")
-        void sameType_list_smartCompressionOn_suppressesType() throws IOException {
+        @DisplayName("same-schema list elements use simple type names")
+        void sameSchema_list_smartCompressionOn_usesSimpleNames() throws IOException {
             // Kennel.dogs is typed as Dog[], holding Dog instances
             EObject kennel = createKennel("Happy Paws");
             EObject dog1 = createDog("Buddy", "Golden Retriever");
@@ -268,11 +279,10 @@ class CodecResourceSmartCompressionTest {
             String json = serialize(kennel, true);
             System.out.println("Kennel with Dogs list (smart compression ON):\n" + json);
 
-            // Extract dogs array section
-            String dogsSection = extractSection(json, "dogs");
-            assertFalse(dogsSection.contains("\"_type\""),
-                    "Dogs section should NOT contain _type when smart compression is ON and types match.\n" +
-                    "Dogs section: " + dogsSection);
+            // Both dogs should use simple names
+            int simpleNameCount = countOccurrences(json, "\"_type\":\"Dog\"");
+            assertEquals(2, simpleNameCount,
+                    "Both Dog elements should use simple name 'Dog'");
         }
     }
 
@@ -377,9 +387,9 @@ class CodecResourceSmartCompressionTest {
         }
 
         @Test
-        @DisplayName("nested containment with smart compression")
+        @DisplayName("nested containment with smart compression uses simple names")
         void nestedContainment_smartCompressionOn() throws IOException {
-            // Test nested containment: Kennel → Dog (same type)
+            // Test nested containment: Kennel → Dog (same schema)
             EObject kennel = createKennel("Happy Paws");
             EObject dog = createDog("Buddy", "Golden Retriever");
             kennel.eSet(kennelDogRef, dog);
@@ -387,13 +397,16 @@ class CodecResourceSmartCompressionTest {
             String json = serialize(kennel, true);
             System.out.println("Nested Kennel→Dog (smart compression ON):\n" + json);
 
-            // Root (Kennel) should have _type, nested Dog should NOT
-            assertTrue(json.startsWith("{") && json.contains("\"_type\":"),
-                    "Root kennel should have _type");
+            String nsUri = testPackage.getNsURI();
+            // Root (Kennel) should have full URI
+            assertTrue(json.contains("\"_type\":\"" + nsUri + "#//Kennel\""),
+                    "Root Kennel should have full URI");
 
-            String dogSection = extractSection(json, "dog");
-            assertFalse(dogSection.contains("\"_type\""),
-                    "Nested dog should NOT have _type when types match");
+            // Nested Dog should have simple name (same schema as root)
+            assertTrue(json.contains("\"_type\":\"Dog\""),
+                    "Nested Dog should use simple name 'Dog'");
+            assertFalse(json.contains("\"_type\":\"" + nsUri + "#//Dog\""),
+                    "Nested Dog should NOT use full URI");
         }
     }
 

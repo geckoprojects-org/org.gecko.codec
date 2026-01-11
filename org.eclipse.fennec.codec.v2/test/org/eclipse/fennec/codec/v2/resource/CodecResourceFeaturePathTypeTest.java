@@ -240,16 +240,20 @@ class CodecResourceFeaturePathTypeTest {
         void serializesNestedPath_discriminatorFromInfoProfileName() throws IOException {
             EObject msg = createTemperatureMessage("device-001", "temperature-profile", 23.5, "celsius");
 
-            // Use smart compression to suppress _type for nested DeviceInfo
-            // (instance type == reference type)
+            // Note: Smart compression doesn't apply to discriminatorPath/featurePath strategy
+            // because there's no root _type to establish context schema
             String json = serialize(msg, true);
             System.out.println("TemperatureMessage JSON:\n" + json);
 
-            // Should NOT contain "_type" field:
-            // - Root object: discriminator is in info.profileName (featurePath)
-            // - Nested info: smart compression suppresses _type (instance == reference type)
-            assertFalse(json.contains("\"_type\""),
-                    "JSON should NOT contain _type field when using featurePath and smart compression");
+            // Root object uses discriminatorPath - should NOT have _type at root level
+            assertFalse(json.startsWith("{\"_type\":"),
+                    "Root should NOT start with _type when using featurePath");
+
+            // Nested DeviceInfo should have _type (with full URI since smart compression
+            // doesn't apply to featurePath strategy)
+            String nsUri = testPackage.getNsURI();
+            assertTrue(json.contains("\"_type\":\"" + nsUri + "#//DeviceInfo\""),
+                    "Nested DeviceInfo should have _type with full URI");
 
             // Should contain the discriminator value in the feature path
             assertTrue(json.contains("\"profileName\"") && json.contains("\"temperature-profile\""),
@@ -454,23 +458,29 @@ class CodecResourceFeaturePathTypeTest {
         }
 
         @Test
-        @DisplayName("round-trips temperature message with smart compression (no _type in JSON)")
+        @DisplayName("round-trips temperature message with featurePath (smart compression N/A)")
         void roundTripsTemperatureMessage_withSmartCompression() throws IOException {
             EObject original = createTemperatureMessage("device-001", "temperature-profile", 23.5, "celsius");
 
-            // Serialize with smart compression - NO _type fields written
+            // Note: Smart compression doesn't apply to featurePath strategy
+            // because there's no root _type to establish context schema
             String json = serialize(original, true);
-            System.out.println("Round-trip JSON (smart compression ON):\n" + json);
+            System.out.println("Round-trip JSON (smart compression ON but N/A for featurePath):\n" + json);
 
-            // Verify no _type in serialized JSON
-            assertFalse(json.contains("\"_type\""),
-                    "JSON should NOT contain _type when using smart compression");
+            // Root should NOT have _type (featurePath based)
+            assertFalse(json.startsWith("{\"_type\":"),
+                    "Root should NOT start with _type when using featurePath");
+
+            // Nested DeviceInfo should have _type with full URI (smart compression N/A)
+            String nsUri = testPackage.getNsURI();
+            assertTrue(json.contains("\"_type\":\"" + nsUri + "#//DeviceInfo\""),
+                    "Nested DeviceInfo should have _type with full URI");
 
             // Deserialize - type must be resolved from featurePath (info.profileName)
             EObject loaded = deserialize(json, uplinkMessageClass);
 
             // Verify correct type resolution
-            assertNotNull(loaded, "Should deserialize without _type field");
+            assertNotNull(loaded, "Should deserialize with featurePath");
             assertEquals(temperatureMessageClass, loaded.eClass(),
                     "Should resolve to TemperatureMessage via featurePath");
             assertEquals(23.5, (Double) loaded.eGet(temperatureMessageClass.getEStructuralFeature("temperature")), 0.001);
