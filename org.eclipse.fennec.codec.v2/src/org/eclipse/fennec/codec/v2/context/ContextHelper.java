@@ -14,7 +14,9 @@
 package org.eclipse.fennec.codec.v2.context;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
 
+import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.SerializationContext;
 
@@ -35,6 +37,9 @@ public final class ContextHelper {
 
     /** Context attribute key for collecting unresolved references */
     public static final String UNRESOLVED_REFERENCES = "CODEC_UNRESOLVED_REFERENCES";
+
+    /** Context attribute key for the diagnostic collector */
+    public static final String DIAGNOSTIC_COLLECTOR = "CODEC_DIAGNOSTIC_COLLECTOR";
 
     /**
      * Context attribute key for suppressing type serialization.
@@ -341,5 +346,163 @@ public final class ContextHelper {
         }
         throw new IllegalStateException(
                 EXPECTED_TYPE + " must be of type EClass, but was: " + value.getClass().getName());
+    }
+
+    // ========================================================================
+    // Diagnostic Collector Methods
+    // ========================================================================
+
+    /**
+     * Gets the diagnostic collector from the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @return the diagnostic collector, or null if not set
+     */
+    public static DiagnosticCollector getDiagnosticCollector(DeserializationContext ctxt) {
+        Object value = ctxt.getAttribute(DIAGNOSTIC_COLLECTOR);
+        return value instanceof DiagnosticCollector ? (DiagnosticCollector) value : null;
+    }
+
+    /**
+     * Gets the diagnostic collector from the serialization context.
+     *
+     * @param ctxt the serialization context
+     * @return the diagnostic collector, or null if not set
+     */
+    public static DiagnosticCollector getDiagnosticCollector(SerializationContext ctxt) {
+        Object value = ctxt.getAttribute(DIAGNOSTIC_COLLECTOR);
+        return value instanceof DiagnosticCollector ? (DiagnosticCollector) value : null;
+    }
+
+    /**
+     * Sets the diagnostic collector in the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @param collector the diagnostic collector
+     */
+    public static void setDiagnosticCollector(DeserializationContext ctxt, DiagnosticCollector collector) {
+        ctxt.setAttribute(DIAGNOSTIC_COLLECTOR, collector);
+    }
+
+    /**
+     * Sets the diagnostic collector in the serialization context.
+     *
+     * @param ctxt the serialization context
+     * @param collector the diagnostic collector
+     */
+    public static void setDiagnosticCollector(SerializationContext ctxt, DiagnosticCollector collector) {
+        ctxt.setAttribute(DIAGNOSTIC_COLLECTOR, collector);
+    }
+
+    /**
+     * Adds a warning diagnostic to the deserialization context.
+     * <p>
+     * If context is null or no diagnostic collector is set, this method does nothing.
+     * This allows safe usage in unit tests where context may not be available.
+     * </p>
+     *
+     * @param ctxt the deserialization context (may be null)
+     * @param message the warning message
+     * @param parser the JSON parser for location info (may be null)
+     * @param source the source component name (e.g., "TypeDeserializationEntry")
+     */
+    public static void addWarning(DeserializationContext ctxt, String message, JsonParser parser, String source) {
+        if (ctxt == null) {
+            return;
+        }
+        DiagnosticCollector collector = getDiagnosticCollector(ctxt);
+        if (collector != null) {
+            collector.addWarning(message, parser != null ? parser.currentLocation() : null, source);
+        }
+    }
+
+    /**
+     * Adds an error diagnostic to the deserialization context.
+     * <p>
+     * If context is null or no diagnostic collector is set, this method does nothing.
+     * This allows safe usage in unit tests where context may not be available.
+     * </p>
+     *
+     * @param ctxt the deserialization context (may be null)
+     * @param message the error message
+     * @param parser the JSON parser for location info (may be null)
+     * @param source the source component name (e.g., "TypeDeserializationEntry")
+     */
+    public static void addError(DeserializationContext ctxt, String message, JsonParser parser, String source) {
+        if (ctxt == null) {
+            return;
+        }
+        DiagnosticCollector collector = getDiagnosticCollector(ctxt);
+        if (collector != null) {
+            collector.addError(message, parser != null ? parser.currentLocation() : null, source);
+        }
+    }
+
+    /**
+     * Adds a warning diagnostic to the serialization context.
+     * <p>
+     * If context is null or no diagnostic collector is set, this method does nothing.
+     * </p>
+     *
+     * @param ctxt the serialization context (may be null)
+     * @param message the warning message
+     * @param source the source component name (e.g., "TypeSerializationEntry")
+     */
+    public static void addWarning(SerializationContext ctxt, String message, String source) {
+        if (ctxt == null) {
+            return;
+        }
+        DiagnosticCollector collector = getDiagnosticCollector(ctxt);
+        if (collector != null) {
+            collector.addWarning(message, source);
+        }
+    }
+
+    /**
+     * Adds an error diagnostic to the serialization context.
+     * <p>
+     * If context is null or no diagnostic collector is set, this method does nothing.
+     * </p>
+     *
+     * @param ctxt the serialization context (may be null)
+     * @param message the error message
+     * @param source the source component name (e.g., "TypeSerializationEntry")
+     */
+    public static void addError(SerializationContext ctxt, String message, String source) {
+        if (ctxt == null) {
+            return;
+        }
+        DiagnosticCollector collector = getDiagnosticCollector(ctxt);
+        if (collector != null) {
+            collector.addError(message, source);
+        }
+    }
+
+    /**
+     * Adds a warning diagnostic without location information.
+     * <p>
+     * Convenience method for cases where parser location is not available.
+     * </p>
+     *
+     * @param ctxt the deserialization context (may be null)
+     * @param message the warning message
+     * @param source the source component name
+     */
+    public static void addWarning(DeserializationContext ctxt, String message, String source) {
+        addWarning(ctxt, message, (JsonParser) null, source);
+    }
+
+    /**
+     * Adds an error diagnostic without location information.
+     * <p>
+     * Convenience method for cases where parser location is not available.
+     * </p>
+     *
+     * @param ctxt the deserialization context (may be null)
+     * @param message the error message
+     * @param source the source component name
+     */
+    public static void addError(DeserializationContext ctxt, String message, String source) {
+        addError(ctxt, message, (JsonParser) null, source);
     }
 }

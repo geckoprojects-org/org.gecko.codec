@@ -112,3 +112,31 @@ if (!resource.getErrors().isEmpty()) {
     // Operation failed - handle appropriately
 }
 ```
+
+**Implementation Details:**
+
+The codec uses a `DiagnosticCollector` internally to aggregate errors and warnings during serialization/deserialization:
+
+1. **Initialization:** A `DiagnosticCollector` is created at the start of each load/save operation
+2. **Propagation:** The collector is passed through Jackson's context attributes and accessible via `ContextHelper`
+3. **Collection:** Each deserialization/serialization entry adds diagnostics via `ContextHelper.addError()`/`addWarning()`
+4. **Finalization:** After the operation completes, `collector.addToResource(resource)` transfers all diagnostics to the EMF Resource
+
+**Diagnostic Sources:**
+
+| Component | Error Examples | Warning Examples |
+|-----------|----------------|------------------|
+| `CodecEObjectDeserializer` | No type info and no hint, failed EObject creation | Unexpected token |
+| `TypeDeserializationEntry` | - | Could not resolve EClass, unexpected token |
+| `IdDeserializationEntry` | EObject not yet created | STRUCTURED ID format mismatch, parse errors |
+| `ReferenceDeserializationEntry` | EObject not yet created, no deserializer found, deserialization exception | Unexpected token |
+| `AttributeDeserializationEntry` | EObject not yet created | Value conversion failure, unexpected token |
+| `CodecResource` | Proxy creation failure | Unexpected root token |
+
+**Null-Safety:**
+
+All diagnostic methods are null-safe. When context is null (e.g., in unit tests), diagnostics are silently skipped:
+```java
+// Safe to call even if ctxt is null
+ContextHelper.addWarning(ctxt, "message", parser, "Source");
+```

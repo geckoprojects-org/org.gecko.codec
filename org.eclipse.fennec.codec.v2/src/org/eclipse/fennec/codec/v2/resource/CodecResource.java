@@ -44,6 +44,7 @@ import org.eclipse.fennec.codec.v2.jackson.CodecJsonFactory;
 import org.eclipse.fennec.codec.v2.jackson.CodecJsonReadContext;
 import org.eclipse.fennec.codec.v2.module.CodecModule;
 import org.eclipse.fennec.codec.v2.util.CodecResourceHelper;
+import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
 import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
@@ -226,10 +227,14 @@ public class CodecResource extends ResourceImpl {
         // Create shared list to collect unresolved references during deserialization
         List<UnresolvedReference> unresolvedReferences = new ArrayList<>();
 
+        // Create diagnostic collector for errors and warnings
+        DiagnosticCollector diagnosticCollector = new DiagnosticCollector();
+
         // Deserialize - the _type field in JSON provides type information
         // Disable FAIL_ON_TRAILING_TOKENS since our deserializer leaves parser at END_OBJECT
         var reader = mapper.readerFor(EObject.class)
                 .withAttribute(ContextHelper.UNRESOLVED_REFERENCES, unresolvedReferences)
+                .withAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR, diagnosticCollector)
                 .without(tools.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 
         // Set expected type hint for deserializer if provided (still needed for backwards compatibility)
@@ -272,11 +277,15 @@ public class CodecResource extends ResourceImpl {
 
         // Resolve unresolved references after deserialization
         if (!unresolvedReferences.isEmpty()) {
-            resolveReferences(unresolvedReferences);
+            resolveReferences(unresolvedReferences, diagnosticCollector);
         }
 
-        LOGGER.fine(() -> String.format("Loaded %d objects from %s",
-            getContents().size(), getURI()));
+        // Transfer collected diagnostics to resource
+        diagnosticCollector.addToResource(this);
+
+        LOGGER.fine(() -> String.format("Loaded %d objects from %s (errors=%d, warnings=%d)",
+            getContents().size(), getURI(),
+            getErrors().size(), getWarnings().size()));
     }
 
     // ========================================================================
@@ -358,9 +367,11 @@ public class CodecResource extends ResourceImpl {
      * </p>
      *
      * @param unresolvedReferences the list of unresolved references to resolve
+     * @param diagnosticCollector the collector for diagnostics
      */
     @SuppressWarnings("unchecked")
-    private void resolveReferences(List<UnresolvedReference> unresolvedReferences) {
+    private void resolveReferences(List<UnresolvedReference> unresolvedReferences,
+            DiagnosticCollector diagnosticCollector) {
         // Cache for proxy instances - ensures same URI yields same proxy instance
         Map<String, EObject> proxyCache = new HashMap<>();
 
@@ -370,12 +381,14 @@ public class CodecResource extends ResourceImpl {
 
             // If resolution fails, create or reuse a proxy
             if (isNull(target)) {
-                target = proxyCache.computeIfAbsent(targetUri, uri -> createProxy(unresolved));
+                target = proxyCache.computeIfAbsent(targetUri, uri -> createProxy(unresolved, diagnosticCollector));
                 if (isNull(target)) {
-                    LOGGER.warning(() -> String.format(
+                    String msg = String.format(
                             "Could not resolve or create proxy for reference %s -> %s",
                             unresolved.getReference().getName(),
-                            targetUri));
+                            targetUri);
+                    LOGGER.warning(msg);
+                    diagnosticCollector.addWarning(msg, "CodecResource");
                     continue;
                 }
             }
@@ -408,17 +421,20 @@ public class CodecResource extends ResourceImpl {
      * </p>
      *
      * @param unresolved the unresolved reference information
+     * @param diagnosticCollector the collector for diagnostics
      * @return the created proxy, or null if proxy creation fails
      * @see <a href="docs/codec-v2-spec/07-reference.md#8-deserialization">Spec: Reference Deserialization</a>
      */
-    private EObject createProxy(UnresolvedReference unresolved) {
+    private EObject createProxy(UnresolvedReference unresolved, DiagnosticCollector diagnosticCollector) {
         EClass eClass = unresolved.getEffectiveType();
 
         if (isNull(eClass) || eClass.isAbstract() || eClass.isInterface()) {
-            LOGGER.warning(() -> String.format(
+            String msg = String.format(
                     "Cannot create proxy for reference %s: type %s is abstract or interface",
                     unresolved.getReference().getName(),
-                    eClass != null ? eClass.getName() : "null"));
+                    eClass != null ? eClass.getName() : "null");
+            LOGGER.warning(msg);
+            diagnosticCollector.addWarning(msg, "CodecResource");
             return null;
         }
 
@@ -434,11 +450,13 @@ public class CodecResource extends ResourceImpl {
 
             return proxy;
         } catch (Exception e) {
-            LOGGER.warning(() -> String.format(
+            String msg = String.format(
                     "Error creating proxy for reference %s -> %s: %s",
                     unresolved.getReference().getName(),
                     unresolved.getTargetUri(),
-                    e.getMessage()));
+                    e.getMessage());
+            LOGGER.warning(msg);
+            diagnosticCollector.addWarning(msg, "CodecResource");
             return null;
         }
     }

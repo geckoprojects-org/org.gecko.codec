@@ -171,13 +171,17 @@ public class TypeDeserializationEntry implements DeserializationEntry {
                         // Validate supertype hierarchy if enabled
                         validateSuperTypes(resolvedClass, result.superTypes);
                     } else {
-                        LOGGER.warning("Could not resolve EClass from type value: " + typeValue);
+                        String msg = "Could not resolve EClass from type value: " + typeValue;
+                        LOGGER.warning(msg);
+                        ContextHelper.addWarning(ctxt, msg, parser, "TypeDeserializationEntry");
                     }
                 }
                 return;
             }
         } else {
-            LOGGER.warning("Unexpected token for _type: " + token);
+            String msg = "Unexpected token for _type: " + token;
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "TypeDeserializationEntry");
             return;
         }
 
@@ -186,7 +190,9 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             if (resolvedClass != null) {
                 state.setResolvedEClass(resolvedClass);
             } else {
-                LOGGER.warning("Could not resolve EClass from type value: " + typeValue);
+                String msg = "Could not resolve EClass from type value: " + typeValue;
+                LOGGER.warning(msg);
+                ContextHelper.addWarning(ctxt, msg, parser, "TypeDeserializationEntry");
             }
         }
     }

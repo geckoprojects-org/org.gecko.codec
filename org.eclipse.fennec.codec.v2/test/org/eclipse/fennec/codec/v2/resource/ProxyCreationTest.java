@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.fennec.codec.v2.deser.DeserializationState.UnresolvedReference;
 import org.eclipse.fennec.codec.v2.ser.SerializationState;
+import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -371,10 +373,10 @@ class ProxyCreationTest {
      */
     private void invokeResolveReferences(CodecResource resource, List<UnresolvedReference> unresolvedRefs) {
         try {
-            java.lang.reflect.Method method = CodecResource.class.getDeclaredMethod(
-                    "resolveReferences", List.class);
+            Method method = CodecResource.class.getDeclaredMethod(
+                    "resolveReferences", List.class, DiagnosticCollector.class);
             method.setAccessible(true);
-            method.invoke(resource, unresolvedRefs);
+            method.invoke(resource, unresolvedRefs, new DiagnosticCollector());
         } catch (Exception e) {
             throw new RuntimeException("Failed to invoke resolveReferences", e);
         }

@@ -19,9 +19,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.codec.v2.context.EMFCodecReadContext;
@@ -115,7 +119,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     public void deserialize(DeserializationState state, JsonParser parser, DeserializationContext ctxt) {
         EObject eObject = state.getEObject();
         if (eObject == null) {
-            LOGGER.warning("Cannot set reference: EObject not yet created");
+            String msg = "Cannot set reference '" + reference.getName() + "': EObject not yet created";
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
             return;
         }
 
@@ -155,7 +161,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 deserializeNonContainmentObject(state, parser, ctxt, eObject, -1);
             }
         } else {
-            LOGGER.warning("Expected START_OBJECT for reference " + reference.getName() + ", got: " + token);
+            String msg = "Expected START_OBJECT for reference '" + reference.getName() + "', got: " + token;
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "ReferenceDeserializationEntry");
         }
     }
 
@@ -261,7 +269,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                     if (deser != null) {
                         return (EObject) deser.deserialize(parser, ctxt);
                     }
-                    LOGGER.warning("No deserializer found for EObject");
+                    String msg = "No deserializer found for EObject";
+                    LOGGER.severe(msg);
+                    ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
                     return null;
                 } finally {
                     // Restore the previous hint
@@ -282,7 +292,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                     if (deser != null) {
                         return (EObject) deser.deserialize(parser, ctxt);
                     }
-                    LOGGER.warning("No deserializer found for EObject");
+                    String msg = "No deserializer found for EObject";
+                    LOGGER.severe(msg);
+                    ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
                     return null;
                 } finally {
                     emfContext.setCurrentTypeHint(previousHint);
@@ -292,7 +304,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 return deserializeWithContextHelper(parser, ctxt);
             }
         } catch (Exception e) {
-            LOGGER.warning("Error deserializing contained object for " + reference.getName() + ": " + e.getMessage());
+            String msg = "Error deserializing contained object for " + reference.getName() + ": " + e.getMessage();
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
             return null;
         }
     }
@@ -364,8 +378,8 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
 
                 if (proxyWithProjection != null) {
                     // Set the proxy URI on the deserialized object
-                    org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createURI(refUri);
-                    ((org.eclipse.emf.ecore.InternalEObject) proxyWithProjection).eSetProxyURI(uri);
+                    URI uri = URI.createURI(refUri);
+                    ((InternalEObject) proxyWithProjection).eSetProxyURI(uri);
 
                     if (reference.isChangeable()) {
                         eObject.eSet(reference, proxyWithProjection);
@@ -388,7 +402,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
 
             buffer.close();
         } catch (Exception e) {
-            LOGGER.warning("Error deserializing non-containment reference " + reference.getName() + ": " + e.getMessage());
+            String msg = "Error deserializing non-containment reference '" + reference.getName() + "': " + e.getMessage();
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
         }
     }
 
@@ -416,7 +432,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
         }
 
         if (token != JsonToken.START_OBJECT) {
-            LOGGER.warning("Expected START_OBJECT or VALUE_STRING for non-containment ref element, got: " + token);
+            String msg = "Expected START_OBJECT or VALUE_STRING for non-containment ref element '" + reference.getName() + "', got: " + token;
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "ReferenceDeserializationEntry");
             return;
         }
 
@@ -470,8 +488,8 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
 
                 if (proxyWithProjection != null) {
                     // Set the proxy URI on the deserialized object
-                    org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createURI(refUri);
-                    ((org.eclipse.emf.ecore.InternalEObject) proxyWithProjection).eSetProxyURI(uri);
+                    URI uri = URI.createURI(refUri);
+                    ((InternalEObject) proxyWithProjection).eSetProxyURI(uri);
                     values.add(proxyWithProjection);
                 }
             } else if (refUri != null) {
@@ -491,7 +509,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
 
             buffer.close();
         } catch (Exception e) {
-            LOGGER.warning("Error deserializing non-containment reference element " + reference.getName() + ": " + e.getMessage());
+            String msg = "Error deserializing non-containment reference element '" + reference.getName() + "': " + e.getMessage();
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
         }
     }
 
@@ -531,7 +551,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 if (deser != null) {
                     return (EObject) deser.deserialize(parser, ctxt);
                 }
-                LOGGER.warning("No deserializer found for EObject");
+                String msg = "No deserializer found for EObject";
+                LOGGER.severe(msg);
+                ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
                 return null;
             } finally {
                 // Restore the previous hint
@@ -542,7 +564,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 }
             }
         } catch (Exception e) {
-            LOGGER.warning("Error deserializing object for " + reference.getName() + ": " + e.getMessage());
+            String msg = "Error deserializing object for " + reference.getName() + ": " + e.getMessage();
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
             return null;
         }
     }
@@ -557,12 +581,12 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     private EClass resolveTypeFromValue(String typeValue, DeserializationContext ctxt) {
         // Try to resolve as URI first
         if (typeValue != null && typeValue.contains("#")) {
-            org.eclipse.emf.common.util.URI uri = org.eclipse.emf.common.util.URI.createURI(typeValue);
-            org.eclipse.emf.ecore.EPackage.Registry registry = org.eclipse.emf.ecore.EPackage.Registry.INSTANCE;
+            URI uri = URI.createURI(typeValue);
+            EPackage.Registry registry = EPackage.Registry.INSTANCE;
             String nsUri = uri.trimFragment().toString();
-            org.eclipse.emf.ecore.EPackage ePackage = registry.getEPackage(nsUri);
+            EPackage ePackage = registry.getEPackage(nsUri);
             if (ePackage != null) {
-                org.eclipse.emf.ecore.EClassifier classifier = ePackage.getEClassifier(uri.fragment().replace("//", ""));
+                EClassifier classifier = ePackage.getEClassifier(uri.fragment().replace("//", ""));
                 if (classifier instanceof EClass) {
                     return (EClass) classifier;
                 }
@@ -584,7 +608,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
             if (deser != null) {
                 return (EObject) deser.deserialize(parser, ctxt);
             }
-            LOGGER.warning("No deserializer found for EObject");
+            String msg = "No deserializer found for EObject";
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
             return null;
         } finally {
             if (previousExpectedType != null) {

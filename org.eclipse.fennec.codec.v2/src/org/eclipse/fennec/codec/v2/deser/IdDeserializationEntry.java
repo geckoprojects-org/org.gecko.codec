@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.v2.buffer.CodecTokenBuffer;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveIdConfig;
+import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 
 import tools.jackson.core.JsonParser;
@@ -88,7 +89,9 @@ public class IdDeserializationEntry implements DeserializationEntry {
     public void deserialize(DeserializationState state, JsonParser parser, DeserializationContext ctxt) {
         EObject eObject = state.getEObject();
         if (eObject == null) {
-            LOGGER.warning("Cannot set ID: EObject not yet created");
+            String msg = "Cannot set ID: EObject not yet created";
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "IdDeserializationEntry");
             return;
         }
 
@@ -162,7 +165,9 @@ public class IdDeserializationEntry implements DeserializationEntry {
     private void deserializeStructured(EObject eObject, JsonParser parser, DeserializationContext ctxt) {
         JsonToken token = parser.currentToken();
         if (token != JsonToken.START_OBJECT) {
-            LOGGER.warning("Expected START_OBJECT for STRUCTURED ID, got: " + token);
+            String msg = "Expected START_OBJECT for STRUCTURED ID, got: " + token;
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "IdDeserializationEntry");
             return;
         }
 
@@ -174,7 +179,9 @@ public class IdDeserializationEntry implements DeserializationEntry {
         try {
             buffer.copyCurrentStructure(parser);
         } catch (Exception e) {
-            LOGGER.warning("Error buffering STRUCTURED ID content: " + e.getMessage());
+            String msg = "Error buffering STRUCTURED ID content: " + e.getMessage();
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "IdDeserializationEntry");
             return;
         }
 
@@ -209,7 +216,9 @@ public class IdDeserializationEntry implements DeserializationEntry {
                 // Skip unknown fields (bufferParser will advance past them)
             }
         } catch (Exception e) {
-            LOGGER.warning("Error parsing STRUCTURED ID content: " + e.getMessage());
+            String msg = "Error parsing STRUCTURED ID content: " + e.getMessage();
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "IdDeserializationEntry");
             return;
         }
 

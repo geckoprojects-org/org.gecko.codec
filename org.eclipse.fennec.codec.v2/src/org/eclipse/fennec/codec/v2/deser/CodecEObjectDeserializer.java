@@ -13,7 +13,9 @@
  */
 package org.eclipse.fennec.codec.v2.deser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -23,6 +25,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveClassConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
@@ -103,7 +106,9 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
         // Must be at START_OBJECT
         if (token != JsonToken.START_OBJECT) {
-            LOGGER.warning("Expected START_OBJECT, got: " + token);
+            String msg = "Expected START_OBJECT, got: " + token;
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "CodecEObjectDeserializer");
             return null;
         }
 
@@ -115,13 +120,13 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         }
 
         // Create deserialization state with resource from context
-        org.eclipse.emf.ecore.resource.Resource resource = emfContext != null ? emfContext.getResource() : null;
+        Resource resource = emfContext != null ? emfContext.getResource() : null;
         DeserializationState state = new DeserializationState(resource);
 
         // Get or create shared unresolved references list from context
         @SuppressWarnings("unchecked")
-        java.util.List<DeserializationState.UnresolvedReference> unresolvedRefs =
-                (java.util.List<DeserializationState.UnresolvedReference>) ctxt.getAttribute(ContextHelper.UNRESOLVED_REFERENCES);
+        List<DeserializationState.UnresolvedReference> unresolvedRefs =
+                (List<DeserializationState.UnresolvedReference>) ctxt.getAttribute(ContextHelper.UNRESOLVED_REFERENCES);
         if (unresolvedRefs != null) {
             // Use shared list for collecting unresolved references
             state.setSharedUnresolvedReferences(unresolvedRefs);
@@ -227,7 +232,9 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         }
 
         if (eObject == null) {
-            LOGGER.severe("Cannot deserialize: no type information found and no CODEC_ROOT_OBJECT hint");
+            String msg = "Cannot deserialize: no type information found and no CODEC_ROOT_OBJECT hint";
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "CodecEObjectDeserializer");
         }
 
         return eObject;
@@ -358,8 +365,8 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
     /**
      * Reads a JSON array into a List.
      */
-    private java.util.List<Object> readArrayAsList(JsonParser parser) {
-        java.util.List<Object> result = new java.util.ArrayList<>();
+    private List<Object> readArrayAsList(JsonParser parser) {
+        List<Object> result = new ArrayList<>();
 
         while (parser.nextToken() != JsonToken.END_ARRAY) {
             Object value = readCurrentValue(parser);
@@ -653,8 +660,10 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                 LOGGER.fine("FeaturePath resolution failed, using hint class: " + hintEClass.getName());
                 resolvedEClass = hintEClass;
             } else {
-                LOGGER.severe("Cannot deserialize: featurePath resolution failed for '" +
-                        discriminatorPath + "' and no concrete fallback available");
+                String msg = "Cannot deserialize: featurePath resolution failed for '" +
+                        discriminatorPath + "' and no concrete fallback available";
+                LOGGER.severe(msg);
+                ContextHelper.addError(ctxt, msg, parser, "CodecEObjectDeserializer");
                 return null;
             }
         }
@@ -664,7 +673,9 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         // Get the buffered parser for actual deserialization
         JsonParser bufferedParser = resolver.getBufferedParser(ctxt, parser);
         if (bufferedParser == null) {
-            LOGGER.severe("No buffered content available for deserialization");
+            String msg = "No buffered content available for deserialization";
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "CodecEObjectDeserializer");
             return null;
         }
 
@@ -691,21 +702,27 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
         EClass resolvedEClass = state.getResolvedEClass();
         if (resolvedEClass == null) {
-            LOGGER.severe("No resolved EClass in deserialization state");
+            String msg = "No resolved EClass in deserialization state";
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "CodecEObjectDeserializer");
             return null;
         }
 
         // Create the EObject
         EObject eObject = state.createEObject();
         if (eObject == null) {
-            LOGGER.severe("Failed to create EObject for: " + resolvedEClass.getName());
+            String msg = "Failed to create EObject for: " + resolvedEClass.getName();
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "CodecEObjectDeserializer");
             return null;
         }
 
         // Parser should be at START_OBJECT, move into the object
         JsonToken token = parser.currentToken();
         if (token != JsonToken.START_OBJECT) {
-            LOGGER.warning("Expected START_OBJECT in buffered parser, got: " + token);
+            String msg = "Expected START_OBJECT in buffered parser, got: " + token;
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "CodecEObjectDeserializer");
             return eObject;
         }
 

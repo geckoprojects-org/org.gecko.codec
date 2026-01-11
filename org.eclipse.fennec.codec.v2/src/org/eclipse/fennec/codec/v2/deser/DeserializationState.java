@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
 
 /**
  * Maintains state during deserialization of a single EObject.
@@ -34,6 +35,7 @@ import org.eclipse.emf.ecore.resource.Resource;
  *   <li>The containing feature (for nested objects)</li>
  *   <li>Unresolved references for later resolution</li>
  *   <li>The target resource (for adding root objects)</li>
+ *   <li>Diagnostic collector for errors and warnings</li>
  * </ul>
  * </p>
  *
@@ -50,6 +52,7 @@ public class DeserializationState {
     private final EReference containingFeature;
     private final Resource resource;
     private List<UnresolvedReference> unresolvedReferences;
+    private DiagnosticCollector diagnosticCollector;
     private boolean isRootObject;
 
     /**
@@ -62,6 +65,7 @@ public class DeserializationState {
         this.parent = null;
         this.containingFeature = null;
         this.unresolvedReferences = new ArrayList<>();
+        this.diagnosticCollector = new DiagnosticCollector();
         this.isRootObject = true;
     }
 
@@ -76,6 +80,7 @@ public class DeserializationState {
         this.containingFeature = Objects.requireNonNull(containingFeature, "containingFeature must not be null");
         this.resource = parent.resource;
         this.unresolvedReferences = parent.unresolvedReferences; // Share with root
+        this.diagnosticCollector = parent.diagnosticCollector; // Share with root
         this.isRootObject = false;
     }
 
@@ -187,6 +192,32 @@ public class DeserializationState {
      */
     public void setSharedUnresolvedReferences(List<UnresolvedReference> sharedList) {
         this.unresolvedReferences = sharedList;
+    }
+
+    /**
+     * Returns the diagnostic collector for this deserialization.
+     * <p>
+     * The collector is shared across all nested deserialization states within the same
+     * root deserialization, allowing errors and warnings to be aggregated centrally.
+     * </p>
+     *
+     * @return the diagnostic collector
+     */
+    public DiagnosticCollector getDiagnosticCollector() {
+        return diagnosticCollector;
+    }
+
+    /**
+     * Sets a shared diagnostic collector.
+     * <p>
+     * This allows multiple DeserializationState instances to share the same
+     * collector for aggregating diagnostics during nested deserialization.
+     * </p>
+     *
+     * @param collector the shared collector to use
+     */
+    public void setSharedDiagnosticCollector(DiagnosticCollector collector) {
+        this.diagnosticCollector = collector;
     }
 
     /**

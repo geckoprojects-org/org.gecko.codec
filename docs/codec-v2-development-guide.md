@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-11 (Phase 3 Complete)
+**Last Updated:** 2026-01-11 (Phase 3 Complete + Error Handling)
 
 ---
 
@@ -218,7 +218,7 @@ The codec.v2 implementation is feature-complete with 774+ tests passing:
 | Bidirectional references | ✅ |
 | Circular references | ✅ |
 | Null/default value handling | ✅ |
-| Error handling | ✅ |
+| Error handling (EMF Resource diagnostics) | ✅ |
 | Enum serialization (LITERAL, NAME, VALUE) | ✅ |
 | Extended metadata names | ✅ |
 | Global feature ignore | ✅ |
@@ -277,6 +277,9 @@ The codec.v2 implementation is feature-complete with 774+ tests passing:
 
 **Utilities:**
 - `org.eclipse.fennec.codec.v2.util.MetadataServiceFactory` - Factory for creating MetadataService with CodecAspectProvider
+- `org.eclipse.fennec.codec.v2.util.CodecDiagnostic` - EMF Resource.Diagnostic implementation for error/warning reporting
+- `org.eclipse.fennec.codec.v2.util.DiagnosticCollector` - Aggregates diagnostics during serialization/deserialization
+- `org.eclipse.fennec.codec.v2.context.ContextHelper` - Context attribute management and diagnostic helper methods
 
 **Tests:**
 - `org.eclipse.fennec.codec.v2.resource.CodecResourceRoundTripTest` - Round-trip integration tests

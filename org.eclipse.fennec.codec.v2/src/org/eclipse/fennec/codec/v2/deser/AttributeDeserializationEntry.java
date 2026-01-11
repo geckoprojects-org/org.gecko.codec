@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.codec.v2.value.CodecValueReader;
 import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
 
@@ -101,7 +102,9 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
     public void deserialize(DeserializationState state, JsonParser parser, DeserializationContext ctxt) {
         EObject eObject = state.getEObject();
         if (eObject == null) {
-            LOGGER.warning("Cannot set attribute: EObject not yet created");
+            String msg = "Cannot set attribute '" + attribute.getName() + "': EObject not yet created";
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "AttributeDeserializationEntry");
             return;
         }
 
@@ -217,11 +220,15 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
                 return EcoreUtil.createFromString(dataType, String.valueOf(boolValue));
             }
 
-            LOGGER.warning("Unexpected token type for attribute " + attribute.getName() + ": " + token);
+            String msg = "Unexpected token type for attribute '" + attribute.getName() + "': " + token;
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "AttributeDeserializationEntry");
             return null;
 
         } catch (Exception e) {
-            LOGGER.warning("Error converting value for attribute " + attribute.getName() + ": " + e.getMessage());
+            String msg = "Error converting value for attribute '" + attribute.getName() + "': " + e.getMessage();
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "AttributeDeserializationEntry");
             return null;
         }
     }

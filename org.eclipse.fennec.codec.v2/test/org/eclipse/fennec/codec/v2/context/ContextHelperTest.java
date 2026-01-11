@@ -13,18 +13,29 @@
  */
 package org.eclipse.fennec.codec.v2.context;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.TokenStreamLocation;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.SerializationContext;
 
@@ -233,6 +244,297 @@ class ContextHelperTest {
             ContextHelper.clearExpectedType(serCtxt);
 
             verify(serCtxt).setAttribute(ContextHelper.EXPECTED_TYPE, null);
+        }
+    }
+
+    // ========================================================================
+    // Diagnostic Collector Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("DiagnosticCollector constant")
+    class DiagnosticCollectorConstantTest {
+
+        @Test
+        @DisplayName("DIAGNOSTIC_COLLECTOR constant is defined")
+        void diagnosticCollectorConstant() {
+            assertEquals("CODEC_DIAGNOSTIC_COLLECTOR", ContextHelper.DIAGNOSTIC_COLLECTOR);
+        }
+    }
+
+    @Nested
+    @DisplayName("getDiagnosticCollector(DeserializationContext)")
+    class GetDiagnosticCollectorDeserializationTest {
+
+        @Test
+        @DisplayName("returns null when attribute is not set")
+        void returnsNullWhenNotSet() {
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(null);
+
+            DiagnosticCollector result = ContextHelper.getDiagnosticCollector(deserCtxt);
+
+            assertNull(result);
+        }
+
+        @Test
+        @DisplayName("returns DiagnosticCollector when attribute is set")
+        void returnsDiagnosticCollectorWhenSet() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(collector);
+
+            DiagnosticCollector result = ContextHelper.getDiagnosticCollector(deserCtxt);
+
+            assertSame(collector, result);
+        }
+
+        @Test
+        @DisplayName("returns null when attribute is wrong type")
+        void returnsNullWhenWrongType() {
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn("NotACollector");
+
+            DiagnosticCollector result = ContextHelper.getDiagnosticCollector(deserCtxt);
+
+            assertNull(result);
+        }
+    }
+
+    @Nested
+    @DisplayName("getDiagnosticCollector(SerializationContext)")
+    class GetDiagnosticCollectorSerializationTest {
+
+        @Test
+        @DisplayName("returns null when attribute is not set")
+        void returnsNullWhenNotSet() {
+            when(serCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(null);
+
+            DiagnosticCollector result = ContextHelper.getDiagnosticCollector(serCtxt);
+
+            assertNull(result);
+        }
+
+        @Test
+        @DisplayName("returns DiagnosticCollector when attribute is set")
+        void returnsDiagnosticCollectorWhenSet() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            when(serCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(collector);
+
+            DiagnosticCollector result = ContextHelper.getDiagnosticCollector(serCtxt);
+
+            assertSame(collector, result);
+        }
+    }
+
+    @Nested
+    @DisplayName("setDiagnosticCollector(DeserializationContext)")
+    class SetDiagnosticCollectorDeserializationTest {
+
+        @Test
+        @DisplayName("sets attribute on context")
+        void setsAttribute() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            when(deserCtxt.setAttribute(any(), any())).thenReturn(deserCtxt);
+
+            ContextHelper.setDiagnosticCollector(deserCtxt, collector);
+
+            verify(deserCtxt).setAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR, collector);
+        }
+    }
+
+    @Nested
+    @DisplayName("setDiagnosticCollector(SerializationContext)")
+    class SetDiagnosticCollectorSerializationTest {
+
+        @Test
+        @DisplayName("sets attribute on context")
+        void setsAttribute() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            when(serCtxt.setAttribute(any(), any())).thenReturn(serCtxt);
+
+            ContextHelper.setDiagnosticCollector(serCtxt, collector);
+
+            verify(serCtxt).setAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR, collector);
+        }
+    }
+
+    @Nested
+    @DisplayName("addWarning(DeserializationContext)")
+    class AddWarningDeserializationTest {
+
+        @Test
+        @DisplayName("does nothing when context is null")
+        void doesNothingWhenContextNull() {
+            // Should not throw
+            assertDoesNotThrow(() ->
+                ContextHelper.addWarning((DeserializationContext) null, "message", "source"));
+        }
+
+        @Test
+        @DisplayName("does nothing when collector is not set")
+        void doesNothingWhenCollectorNotSet() {
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(null);
+
+            // Should not throw
+            assertDoesNotThrow(() ->
+                ContextHelper.addWarning(deserCtxt, "message", "source"));
+        }
+
+        @Test
+        @DisplayName("adds warning to collector")
+        void addsWarningToCollector() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(collector);
+
+            ContextHelper.addWarning(deserCtxt, "Test warning", "TestSource");
+
+            assertEquals(1, collector.getWarningCount());
+            assertEquals("Test warning", collector.getWarnings().get(0).getMessage());
+        }
+
+        @Test
+        @DisplayName("adds warning with parser location")
+        void addsWarningWithParserLocation() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            JsonParser parser = mock(JsonParser.class);
+            TokenStreamLocation location = mock(TokenStreamLocation.class);
+            when(location.getLineNr()).thenReturn(10);
+            when(location.getColumnNr()).thenReturn(5);
+            when(parser.currentLocation()).thenReturn(location);
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(collector);
+
+            ContextHelper.addWarning(deserCtxt, "Test warning", parser, "TestSource");
+
+            assertEquals(1, collector.getWarningCount());
+            assertEquals(10, collector.getWarnings().get(0).getLine());
+            assertEquals(5, collector.getWarnings().get(0).getColumn());
+        }
+
+        @Test
+        @DisplayName("handles null parser gracefully")
+        void handlesNullParser() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(collector);
+
+            assertDoesNotThrow(() ->
+                ContextHelper.addWarning(deserCtxt, "Test warning", (JsonParser) null, "TestSource"));
+
+            assertEquals(1, collector.getWarningCount());
+        }
+    }
+
+    @Nested
+    @DisplayName("addError(DeserializationContext)")
+    class AddErrorDeserializationTest {
+
+        @Test
+        @DisplayName("does nothing when context is null")
+        void doesNothingWhenContextNull() {
+            assertDoesNotThrow(() ->
+                ContextHelper.addError((DeserializationContext) null, "message", "source"));
+        }
+
+        @Test
+        @DisplayName("does nothing when collector is not set")
+        void doesNothingWhenCollectorNotSet() {
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(null);
+
+            assertDoesNotThrow(() ->
+                ContextHelper.addError(deserCtxt, "message", "source"));
+        }
+
+        @Test
+        @DisplayName("adds error to collector")
+        void addsErrorToCollector() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(collector);
+
+            ContextHelper.addError(deserCtxt, "Test error", "TestSource");
+
+            assertEquals(1, collector.getErrorCount());
+            assertEquals("Test error", collector.getErrors().get(0).getMessage());
+        }
+
+        @Test
+        @DisplayName("adds error with parser location")
+        void addsErrorWithParserLocation() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            JsonParser parser = mock(JsonParser.class);
+            TokenStreamLocation location = mock(TokenStreamLocation.class);
+            when(location.getLineNr()).thenReturn(20);
+            when(location.getColumnNr()).thenReturn(15);
+            when(parser.currentLocation()).thenReturn(location);
+            when(deserCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(collector);
+
+            ContextHelper.addError(deserCtxt, "Test error", parser, "TestSource");
+
+            assertEquals(1, collector.getErrorCount());
+            assertEquals(20, collector.getErrors().get(0).getLine());
+            assertEquals(15, collector.getErrors().get(0).getColumn());
+        }
+    }
+
+    @Nested
+    @DisplayName("addWarning(SerializationContext)")
+    class AddWarningSerializationTest {
+
+        @Test
+        @DisplayName("does nothing when context is null")
+        void doesNothingWhenContextNull() {
+            assertDoesNotThrow(() ->
+                ContextHelper.addWarning((SerializationContext) null, "message", "source"));
+        }
+
+        @Test
+        @DisplayName("does nothing when collector is not set")
+        void doesNothingWhenCollectorNotSet() {
+            when(serCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(null);
+
+            assertDoesNotThrow(() ->
+                ContextHelper.addWarning(serCtxt, "message", "source"));
+        }
+
+        @Test
+        @DisplayName("adds warning to collector")
+        void addsWarningToCollector() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            when(serCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(collector);
+
+            ContextHelper.addWarning(serCtxt, "Serialization warning", "SerSource");
+
+            assertEquals(1, collector.getWarningCount());
+            assertEquals("Serialization warning", collector.getWarnings().get(0).getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("addError(SerializationContext)")
+    class AddErrorSerializationTest {
+
+        @Test
+        @DisplayName("does nothing when context is null")
+        void doesNothingWhenContextNull() {
+            assertDoesNotThrow(() ->
+                ContextHelper.addError((SerializationContext) null, "message", "source"));
+        }
+
+        @Test
+        @DisplayName("does nothing when collector is not set")
+        void doesNothingWhenCollectorNotSet() {
+            when(serCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(null);
+
+            assertDoesNotThrow(() ->
+                ContextHelper.addError(serCtxt, "message", "source"));
+        }
+
+        @Test
+        @DisplayName("adds error to collector")
+        void addsErrorToCollector() {
+            DiagnosticCollector collector = new DiagnosticCollector();
+            when(serCtxt.getAttribute(ContextHelper.DIAGNOSTIC_COLLECTOR)).thenReturn(collector);
+
+            ContextHelper.addError(serCtxt, "Serialization error", "SerSource");
+
+            assertEquals(1, collector.getErrorCount());
+            assertEquals("Serialization error", collector.getErrors().get(0).getMessage());
         }
     }
 }
