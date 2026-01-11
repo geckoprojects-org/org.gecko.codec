@@ -298,30 +298,32 @@ public final class EffectiveCodecConfig {
      * Gets a custom value writer by name from the registry.
      *
      * @param <T> the value type
+     * @param <F> the feature type
      * @param name the writer name
      * @return the writer, or null if not found or no registry
      */
     @SuppressWarnings("unchecked")
-    public <T> CodecValueWriter<T> getValueWriter(String name) {
+    public <T, F extends org.eclipse.emf.ecore.EStructuralFeature> CodecValueWriter<T, F> getValueWriter(String name) {
         if (valueRegistry == null || name == null || name.isEmpty()) {
             return null;
         }
-        return (CodecValueWriter<T>) valueRegistry.getWriter(name).orElse(null);
+        return (CodecValueWriter<T, F>) valueRegistry.getWriter(name).orElse(null);
     }
 
     /**
      * Gets a custom value reader by name from the registry.
      *
      * @param <T> the value type
+     * @param <F> the feature type
      * @param name the reader name
      * @return the reader, or null if not found or no registry
      */
     @SuppressWarnings("unchecked")
-    public <T> CodecValueReader<T> getValueReader(String name) {
+    public <T, F extends org.eclipse.emf.ecore.EStructuralFeature> CodecValueReader<T, F> getValueReader(String name) {
         if (valueRegistry == null || name == null || name.isEmpty()) {
             return null;
         }
-        return (CodecValueReader<T>) valueRegistry.getReader(name).orElse(null);
+        return (CodecValueReader<T, F>) valueRegistry.getReader(name).orElse(null);
     }
 
     // ========================================================================

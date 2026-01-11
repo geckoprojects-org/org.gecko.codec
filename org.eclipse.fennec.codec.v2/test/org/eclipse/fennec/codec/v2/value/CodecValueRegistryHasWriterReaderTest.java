@@ -30,7 +30,7 @@ class CodecValueRegistryHasWriterReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("hasWriter returns true for registered writer")
     void hasWriterReturnsTrueForRegistered() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        var writer = createStringWriter();
         registry.registerWriter("test", writer);
         assertTrue(registry.hasWriter("test"));
     }
@@ -50,7 +50,7 @@ class CodecValueRegistryHasWriterReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("hasReader returns true for registered reader")
     void hasReaderReturnsTrueForRegistered() {
-        CodecValueReader<String> reader = parser -> parser.getString();
+        var reader = createStringReader();
         registry.registerReader("test", reader);
         assertTrue(registry.hasReader("test"));
     }

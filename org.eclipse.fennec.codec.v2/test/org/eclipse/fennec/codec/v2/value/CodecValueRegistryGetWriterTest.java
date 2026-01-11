@@ -33,10 +33,10 @@ class CodecValueRegistryGetWriterTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("returns writer when found")
     void returnsWriterWhenFound() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        var writer = createStringWriter();
         registry.registerWriter("test", writer);
 
-        Optional<CodecValueWriter<?>> result = registry.getWriter("test");
+        Optional<CodecValueWriter<?, ?>> result = registry.getWriter("test");
         assertTrue(result.isPresent());
         assertSame(writer, result.get());
     }
@@ -44,31 +44,32 @@ class CodecValueRegistryGetWriterTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("returns empty when not found")
     void returnsEmptyWhenNotFound() {
-        Optional<CodecValueWriter<?>> result = registry.getWriter("nonexistent");
+        Optional<CodecValueWriter<?, ?>> result = registry.getWriter("nonexistent");
         assertFalse(result.isPresent());
     }
 
     @Test
     @DisplayName("returns empty for null name")
     void returnsEmptyForNullName() {
-        Optional<CodecValueWriter<?>> result = registry.getWriter(null);
+        Optional<CodecValueWriter<?, ?>> result = registry.getWriter(null);
         assertFalse(result.isPresent());
     }
 
     @Test
     @DisplayName("returns empty for empty name")
     void returnsEmptyForEmptyName() {
-        Optional<CodecValueWriter<?>> result = registry.getWriter("");
+        Optional<CodecValueWriter<?, ?>> result = registry.getWriter("");
         assertFalse(result.isPresent());
     }
 
     @Test
-    @DisplayName("getWriter with type class returns typed writer")
-    void getWriterWithTypeClassReturnsTypedWriter() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+    @DisplayName("getWriter with type and feature class returns typed writer")
+    void getWriterWithTypeAndFeatureClassReturnsTypedWriter() {
+        var writer = createStringWriter();
         registry.registerWriter("test", writer);
 
-        Optional<CodecValueWriter<String>> result = registry.getWriter("test", String.class);
+        Optional<CodecValueWriter<String, org.eclipse.emf.ecore.EAttribute>> result =
+            registry.getWriter("test", String.class, org.eclipse.emf.ecore.EAttribute.class);
         assertTrue(result.isPresent());
     }
 }

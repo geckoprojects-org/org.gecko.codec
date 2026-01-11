@@ -136,7 +136,7 @@ class CodecResourceCustomValueTest {
         @DisplayName("Should register and retrieve custom writer")
         void shouldRegisterAndRetrieveCustomWriter() {
             // Create a custom writer that doubles integer values
-            CodecValueWriter<Integer> doublingWriter = (value, gen) -> {
+            CodecValueWriter<Integer, EAttribute> doublingWriter = (value, feature, gen, ctxt) -> {
                 gen.writeNumber(value * 2);
             };
 
@@ -150,7 +150,7 @@ class CodecResourceCustomValueTest {
         @DisplayName("Custom writer should be available after registration")
         void customWriterAvailableAfterRegistration() {
             // Create a writer that prefixes strings with "PREFIX_"
-            CodecValueWriter<String> prefixWriter = (value, gen) -> {
+            CodecValueWriter<String, EAttribute> prefixWriter = (value, feature, gen, ctxt) -> {
                 gen.writeString("PREFIX_" + value);
             };
 
@@ -170,7 +170,7 @@ class CodecResourceCustomValueTest {
         @DisplayName("Should register and retrieve custom reader")
         void shouldRegisterAndRetrieveCustomReader() {
             // Create a custom reader that halves integer values
-            CodecValueReader<Integer> halvingReader = parser -> {
+            CodecValueReader<Integer, EAttribute> halvingReader = (parser, feature, ctxt) -> {
                 return parser.getIntValue() / 2;
             };
 
@@ -212,8 +212,10 @@ class CodecResourceCustomValueTest {
         @DisplayName("Registry should be properly passed through the configuration chain")
         void registryPassedThroughConfigChain() throws IOException {
             // Register some handlers
-            valueRegistry.registerWriter("testWriter", (v, g) -> g.writeString("TEST"));
-            valueRegistry.registerReader("testReader", p -> "RESULT");
+            CodecValueWriter<String, EAttribute> testWriter = (v, f, g, c) -> g.writeString("TEST");
+            CodecValueReader<String, EAttribute> testReader = (p, f, c) -> "RESULT";
+            valueRegistry.registerWriter("testWriter", testWriter);
+            valueRegistry.registerReader("testReader", testReader);
 
             EObject person = createPerson("Bob", 25);
 
@@ -237,9 +239,9 @@ class CodecResourceCustomValueTest {
         @Test
         @DisplayName("Multiple writers can be registered")
         void multipleWritersRegistered() {
-            CodecValueWriter<String> writer1 = (v, g) -> g.writeString(v.toUpperCase());
-            CodecValueWriter<Integer> writer2 = (v, g) -> g.writeNumber(v * 10);
-            CodecValueWriter<Boolean> writer3 = (v, g) -> g.writeString(v ? "yes" : "no");
+            CodecValueWriter<String, EAttribute> writer1 = (v, f, g, c) -> g.writeString(v.toUpperCase());
+            CodecValueWriter<Integer, EAttribute> writer2 = (v, f, g, c) -> g.writeNumber(v * 10);
+            CodecValueWriter<Boolean, EAttribute> writer3 = (v, f, g, c) -> g.writeString(v ? "yes" : "no");
 
             valueRegistry.registerWriter("upperWriter", writer1);
             valueRegistry.registerWriter("timesTeWriter", writer2);
@@ -254,8 +256,8 @@ class CodecResourceCustomValueTest {
         @Test
         @DisplayName("Multiple readers can be registered")
         void multipleReadersRegistered() {
-            CodecValueReader<String> reader1 = p -> p.getString().toLowerCase();
-            CodecValueReader<Integer> reader2 = p -> p.getIntValue() / 10;
+            CodecValueReader<String, EAttribute> reader1 = (p, f, c) -> p.getString().toLowerCase();
+            CodecValueReader<Integer, EAttribute> reader2 = (p, f, c) -> p.getIntValue() / 10;
 
             valueRegistry.registerReader("lowerReader", reader1);
             valueRegistry.registerReader("divideReader", reader2);

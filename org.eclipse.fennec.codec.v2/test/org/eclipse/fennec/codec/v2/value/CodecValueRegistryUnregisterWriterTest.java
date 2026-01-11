@@ -30,7 +30,7 @@ class CodecValueRegistryUnregisterWriterTest extends CodecValueRegistryTestBase 
     @Test
     @DisplayName("removes registered writer")
     void removesRegisteredWriter() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        var writer = createStringWriter();
         registry.registerWriter("test", writer);
         registry.unregisterWriter("test");
 

@@ -40,8 +40,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CodecValueRegistry {
 
-    private final Map<String, CodecValueWriter<?>> writers = new ConcurrentHashMap<>();
-    private final Map<String, CodecValueReader<?>> readers = new ConcurrentHashMap<>();
+    private final Map<String, CodecValueWriter<?, ?>> writers = new ConcurrentHashMap<>();
+    private final Map<String, CodecValueReader<?, ?>> readers = new ConcurrentHashMap<>();
 
     /**
      * Creates an empty registry.
@@ -55,8 +55,8 @@ public class CodecValueRegistry {
      * @param writers the initial writers (name -> writer)
      * @param readers the initial readers (name -> reader)
      */
-    public CodecValueRegistry(Map<String, CodecValueWriter<?>> writers,
-                               Map<String, CodecValueReader<?>> readers) {
+    public CodecValueRegistry(Map<String, CodecValueWriter<?, ?>> writers,
+                               Map<String, CodecValueReader<?, ?>> readers) {
         if (writers != null) {
             this.writers.putAll(writers);
         }
@@ -73,7 +73,7 @@ public class CodecValueRegistry {
      * @return this registry for chaining
      * @throws IllegalArgumentException if name or writer is null
      */
-    public CodecValueRegistry registerWriter(String name, CodecValueWriter<?> writer) {
+    public CodecValueRegistry registerWriter(String name, CodecValueWriter<?, ?> writer) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Writer name must not be null or empty");
         }
@@ -92,7 +92,7 @@ public class CodecValueRegistry {
      * @return this registry for chaining
      * @throws IllegalArgumentException if name or reader is null
      */
-    public CodecValueRegistry registerReader(String name, CodecValueReader<?> reader) {
+    public CodecValueRegistry registerReader(String name, CodecValueReader<?, ?> reader) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Reader name must not be null or empty");
         }
@@ -135,7 +135,7 @@ public class CodecValueRegistry {
      * @param name the writer name
      * @return the writer if found, or empty if not found
      */
-    public Optional<CodecValueWriter<?>> getWriter(String name) {
+    public Optional<CodecValueWriter<?, ?>> getWriter(String name) {
         if (name == null || name.isEmpty()) {
             return Optional.empty();
         }
@@ -143,16 +143,19 @@ public class CodecValueRegistry {
     }
 
     /**
-     * Gets a value writer by name, cast to the expected type.
+     * Gets a value writer by name, cast to the expected types.
      *
      * @param <T> the expected value type
+     * @param <F> the expected feature type
      * @param name the writer name
      * @param valueType the expected value type (for type safety)
+     * @param featureType the expected feature type (for type safety)
      * @return the writer if found, or empty if not found
      */
     @SuppressWarnings("unchecked")
-    public <T> Optional<CodecValueWriter<T>> getWriter(String name, Class<T> valueType) {
-        return getWriter(name).map(w -> (CodecValueWriter<T>) w);
+    public <T, F extends org.eclipse.emf.ecore.EStructuralFeature> Optional<CodecValueWriter<T, F>> getWriter(
+            String name, Class<T> valueType, Class<F> featureType) {
+        return getWriter(name).map(w -> (CodecValueWriter<T, F>) w);
     }
 
     /**
@@ -161,7 +164,7 @@ public class CodecValueRegistry {
      * @param name the reader name
      * @return the reader if found, or empty if not found
      */
-    public Optional<CodecValueReader<?>> getReader(String name) {
+    public Optional<CodecValueReader<?, ?>> getReader(String name) {
         if (name == null || name.isEmpty()) {
             return Optional.empty();
         }
@@ -169,16 +172,19 @@ public class CodecValueRegistry {
     }
 
     /**
-     * Gets a value reader by name, cast to the expected type.
+     * Gets a value reader by name, cast to the expected types.
      *
      * @param <T> the expected value type
+     * @param <F> the expected feature type
      * @param name the reader name
      * @param valueType the expected value type (for type safety)
+     * @param featureType the expected feature type (for type safety)
      * @return the reader if found, or empty if not found
      */
     @SuppressWarnings("unchecked")
-    public <T> Optional<CodecValueReader<T>> getReader(String name, Class<T> valueType) {
-        return getReader(name).map(r -> (CodecValueReader<T>) r);
+    public <T, F extends org.eclipse.emf.ecore.EStructuralFeature> Optional<CodecValueReader<T, F>> getReader(
+            String name, Class<T> valueType, Class<F> featureType) {
+        return getReader(name).map(r -> (CodecValueReader<T, F>) r);
     }
 
     /**
@@ -206,7 +212,7 @@ public class CodecValueRegistry {
      *
      * @return map of writer name to writer
      */
-    public Map<String, CodecValueWriter<?>> getWriters() {
+    public Map<String, CodecValueWriter<?, ?>> getWriters() {
         return Collections.unmodifiableMap(writers);
     }
 
@@ -215,7 +221,7 @@ public class CodecValueRegistry {
      *
      * @return map of reader name to reader
      */
-    public Map<String, CodecValueReader<?>> getReaders() {
+    public Map<String, CodecValueReader<?, ?>> getReaders() {
         return Collections.unmodifiableMap(readers);
     }
 

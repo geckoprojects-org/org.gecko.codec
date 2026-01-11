@@ -13,6 +13,9 @@
  */
 package org.eclipse.fennec.codec.v2.ser;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -24,6 +27,8 @@ import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.eclipse.fennec.codec.v2.context.CodecWriteContext;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
+import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.v2.value.CodecValueWriter;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.TokenStreamContext;
@@ -50,6 +55,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
     private final String refKey;
     private final boolean smartCompression;
     private final EffectiveCodecConfig codecConfig;
+    private final CodecValueWriter<EObject, EReference> customWriter;
 
     /**
      * Creates a new ReferenceSerializationEntry with the effective feature configuration.
@@ -59,7 +65,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      * @param refKey the JSON key to use for non-containment reference URIs
      */
     public ReferenceSerializationEntry(EffectiveFeatureConfig config, EReference reference, String refKey) {
-        this(config, reference, refKey, false, null);
+        this(config, reference, refKey, false, null, null);
     }
 
     /**
@@ -72,7 +78,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      */
     public ReferenceSerializationEntry(EffectiveFeatureConfig config, EReference reference,
             String refKey, boolean smartCompression) {
-        this(config, reference, refKey, smartCompression, null);
+        this(config, reference, refKey, smartCompression, null, null);
     }
 
     /**
@@ -86,11 +92,36 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      */
     public ReferenceSerializationEntry(EffectiveFeatureConfig config, EReference reference,
             String refKey, boolean smartCompression, EffectiveCodecConfig codecConfig) {
+        this(config, reference, refKey, smartCompression, codecConfig, null);
+    }
+
+    /**
+     * Creates a new ReferenceSerializationEntry with full configuration and custom writer support.
+     *
+     * @param config the effective (pre-merged) feature configuration
+     * @param reference the EReference to serialize
+     * @param refKey the JSON key to use for non-containment reference URIs
+     * @param smartCompression whether smart compression is enabled
+     * @param codecConfig the effective codec configuration (for expand settings)
+     * @param valueRegistry the registry for custom value writers (may be null)
+     */
+    @SuppressWarnings("unchecked")
+    public ReferenceSerializationEntry(EffectiveFeatureConfig config, EReference reference,
+            String refKey, boolean smartCompression, EffectiveCodecConfig codecConfig,
+            CodecValueRegistry valueRegistry) {
         this.config = config;
         this.reference = reference;
         this.refKey = refKey;
         this.smartCompression = smartCompression;
         this.codecConfig = codecConfig;
+
+        // Pre-resolve the custom writer at construction time
+        String writerName = config.getValueWriterName();
+        if (writerName != null && !writerName.isEmpty() && valueRegistry != null) {
+            this.customWriter = (CodecValueWriter<EObject, EReference>) valueRegistry.getWriter(writerName).orElse(null);
+        } else {
+            this.customWriter = null;
+        }
     }
 
     @Override
@@ -283,11 +314,16 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      * Type is always written. When smart compression is enabled and the type
      * is from the same schema as the root, a simple name is used.
      * </p>
+     * <p>
+     * If a custom value writer is configured, it writes the reference value
+     * (the _ref field content) instead of the default URI logic.
+     * </p>
      *
      * @param target the target EObject
      * @param gen the JSON generator
      * @param crossDocument true if this is a cross-document reference
      * @param ctxt the serialization context for smart compression
+     * @see <a href="docs/codec-v2-spec/10-custom-values.md#5-reference-value-readerswriters">Spec: Reference Value Writers</a>
      */
     private void writeReferenceObject(EObject target, JsonGenerator gen, boolean crossDocument,
             SerializationContext ctxt) {
@@ -299,9 +335,41 @@ public class ReferenceSerializationEntry implements SerializationEntry {
         String effectiveType = applySmartCompressionToRef(typeUri, ctxt);
         gen.writeStringProperty("_type", effectiveType);
 
-        String uri = getReferenceUri(gen, target, crossDocument);
-        gen.writeStringProperty(refKey, uri);
+        // Write the reference value - use custom writer if configured
+        gen.writeName(refKey);
+        writeReferenceValue(target, gen, crossDocument, ctxt);
+
         gen.writeEndObject();
+    }
+
+    /**
+     * Writes the reference value (the _ref field content).
+     * <p>
+     * If a custom value writer is configured, it is used to write the value.
+     * Otherwise, the default URI logic is used.
+     * </p>
+     *
+     * @param target the target EObject
+     * @param gen the JSON generator (positioned after the field name)
+     * @param crossDocument true if this is a cross-document reference
+     * @param ctxt the serialization context
+     */
+    private void writeReferenceValue(EObject target, JsonGenerator gen, boolean crossDocument,
+            SerializationContext ctxt) {
+        // Use custom writer if configured
+        if (customWriter != null) {
+            try {
+                customWriter.write(target, reference, gen, ctxt);
+            } catch (IOException e) {
+                throw new UncheckedIOException(
+                        "Custom value writer failed for reference: " + reference.getName(), e);
+            }
+            return;
+        }
+
+        // Default: write URI string
+        String uri = getReferenceUri(gen, target, crossDocument);
+        gen.writeString(uri);
     }
 
     /**

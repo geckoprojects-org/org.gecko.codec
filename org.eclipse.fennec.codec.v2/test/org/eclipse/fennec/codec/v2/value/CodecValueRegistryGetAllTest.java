@@ -32,10 +32,10 @@ class CodecValueRegistryGetAllTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("getWriters returns unmodifiable view")
     void getWritersReturnsUnmodifiableView() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        var writer = createStringWriter();
         registry.registerWriter("test", writer);
 
-        Map<String, CodecValueWriter<?>> writers = registry.getWriters();
+        Map<String, CodecValueWriter<?, ?>> writers = registry.getWriters();
         assertEquals(1, writers.size());
         assertThrows(UnsupportedOperationException.class,
                 () -> writers.put("new", writer));
@@ -44,10 +44,10 @@ class CodecValueRegistryGetAllTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("getReaders returns unmodifiable view")
     void getReadersReturnsUnmodifiableView() {
-        CodecValueReader<String> reader = parser -> parser.getString();
+        var reader = createStringReader();
         registry.registerReader("test", reader);
 
-        Map<String, CodecValueReader<?>> readers = registry.getReaders();
+        Map<String, CodecValueReader<?, ?>> readers = registry.getReaders();
         assertEquals(1, readers.size());
         assertThrows(UnsupportedOperationException.class,
                 () -> readers.put("new", reader));

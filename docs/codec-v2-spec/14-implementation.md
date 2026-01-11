@@ -19,16 +19,18 @@
 - FeaturePath resolution
 - Array roots
 
-### Phase 3: Advanced Features (Current)
-- Cross-resource references
-- Custom value readers/writers
+### Phase 3: Advanced Features ✅
+- Custom value readers/writers (unified interface)
 - Additional TypeStrategies (SCHEMA_AND_TYPE, STRUCTURED, NUMERIC)
-- OSGi integration
+- Polymorphic list serialization
+- Bidirectional reference handling
+- Circular reference handling
 
-### Phase 4: Production Readiness
+### Phase 4: Production Readiness (Current)
 - Performance optimization
-- Complete test coverage
-- Documentation
+- OSGi integration
+- Cross-resource references (ResourceSet-based)
+- Documentation finalization
 
 ---
 
@@ -120,32 +122,42 @@
 - [x] Optional validation with `validateSuperTypeHierarchy` option
 
 ### Advanced
-- [ ] Cross-resource references
-- [ ] Custom value readers/writers
-- [ ] Annotation inheritance
+- [ ] Cross-resource references (ResourceSet-based resolution)
+- [x] Custom value readers/writers (unified interface)
+- [x] Annotation inheritance
 
 ---
 
 ## 3. Test Coverage
 
-| Area | Status |
-|------|--------|
-| Round-trip serialization | ✅ |
-| Type strategies (URI, NAME, MAPPED) | ✅ |
-| ID strategies (PLAIN, STRUCTURED) | ✅ |
-| Reference handling | ✅ |
-| Configuration merging | ✅ |
-| Smart compression | ✅ |
-| Enum serialization | ✅ |
-| SuperType serialization | ✅ |
-| Expand references | ✅ |
-| Global ignore features | ✅ |
-| Error handling | TODO |
+**Total: 774+ tests across 60+ test files**
+
+See [15-test-coverage.md](15-test-coverage.md) for the complete spec-to-test mapping.
+
+| Area | Status | Test Files |
+|------|--------|------------|
+| Round-trip serialization | ✅ | `CodecResourceRoundTripTest`, `CodecResourceAdvancedTest` |
+| Type strategies (URI, NAME, MAPPED) | ✅ | `TypeSerializationEntryTest`, `TypeDeserializationEntryTest` |
+| ID strategies (PLAIN, STRUCTURED) | ✅ | `IdSerializationEntryTest`, `CodecResourceIdTest` |
+| Reference handling | ✅ | `ReferenceSerializationEntryTest`, `ProxyCreationTest` |
+| Configuration merging | ✅ | `ConfigurationMergerTest`, `EffectiveCodecConfigTest` |
+| Smart compression | ✅ | `SmartCompressionSameSchemaTest`, `CodecResourceSmartCompressionTest` |
+| Enum serialization | ✅ | `EnumSerializationTest` |
+| SuperType serialization | ✅ | `SuperTypeSerializationEntryTest`, `CodecResourceSuperTypeTest` |
+| Expand references | ✅ | `ExpandReferenceTest` |
+| Global ignore features | ✅ | `GlobalIgnoreFeatureTest` |
+| Custom value readers/writers | ✅ | `CodecValueRegistryTest`, `ReferenceSerializationEntryCustomWriterTest` |
+| Polymorphic lists | ✅ | `CodecResourceAdvancedTest.PolymorphicListTests` |
+| Bidirectional references | ✅ | `CodecResourceAdvancedTest.BidirectionalReferenceTests` |
+| Circular references | ✅ | `CodecResourceAdvancedTest.CircularReferenceTests` |
+| Null/default handling | ✅ | `CodecResourceAdvancedTest.NullDefaultValueTests` |
+| Error handling | ✅ | `CodecResourceAdvancedTest.ErrorScenarioTests` |
 
 ---
 
 ## 4. Next Steps (Priority Order)
 
+### Completed ✅
 1. ~~**Cross-Document Containment**: Detect and serialize as reference~~ ✅
 2. ~~**Proxy Factory**: Create EMF proxies for non-containment references~~ ✅
 3. ~~**Expand Feature**: Inline serialization of non-containment references~~ ✅
@@ -154,16 +166,23 @@
 6. ~~**ID STRUCTURED Format**: Nested object with individual fields~~ ✅
 7. ~~**Global Ignore Features**: Codec-wide feature exclusion~~ ✅
 8. ~~**Extended Metadata Names**: XSD annotation support~~ ✅
-9. **Additional TypeStrategies**: SCHEMA_AND_TYPE, STRUCTURED, NUMERIC
-10. **Custom Value Readers/Writers**: CodecValueRegistry integration
-11. **OSGi Integration**: CodecResourceFactory for service registration
+9. ~~**Additional TypeStrategies**: SCHEMA_AND_TYPE, STRUCTURED, NUMERIC~~ ✅
+10. ~~**Custom Value Readers/Writers**: Unified interface for attributes and references~~ ✅
+11. ~~**Polymorphic Lists**: Mixed types in containment collections~~ ✅
+12. ~~**Bidirectional References**: Automatic opposite restoration~~ ✅
+13. ~~**Circular References**: Self and mutual reference handling~~ ✅
 
-**Deferred:**
-- Cross-Resource References (ResourceSet-based resolution)
+### Remaining
+1. **OSGi Integration**: CodecResourceFactory service registration
+2. **Cross-Resource References**: ResourceSet-based resolution
+3. **Performance Optimization**: Large object graph handling
+
+### Deferred
 - Expand Depth > 1
-- Smart compression (same-schema names)
 - Field ordering options
+- Streaming serialization
 
 ---
 
-[Next: Open Questions →](99-open-questions.md)
+[Next: Test Coverage →](15-test-coverage.md)
+

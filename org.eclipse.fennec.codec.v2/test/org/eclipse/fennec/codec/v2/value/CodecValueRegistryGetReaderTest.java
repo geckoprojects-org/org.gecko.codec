@@ -33,10 +33,10 @@ class CodecValueRegistryGetReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("returns reader when found")
     void returnsReaderWhenFound() {
-        CodecValueReader<String> reader = parser -> parser.getString();
+        var reader = createStringReader();
         registry.registerReader("test", reader);
 
-        Optional<CodecValueReader<?>> result = registry.getReader("test");
+        Optional<CodecValueReader<?, ?>> result = registry.getReader("test");
         assertTrue(result.isPresent());
         assertSame(reader, result.get());
     }
@@ -44,24 +44,25 @@ class CodecValueRegistryGetReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("returns empty when not found")
     void returnsEmptyWhenNotFound() {
-        Optional<CodecValueReader<?>> result = registry.getReader("nonexistent");
+        Optional<CodecValueReader<?, ?>> result = registry.getReader("nonexistent");
         assertFalse(result.isPresent());
     }
 
     @Test
     @DisplayName("returns empty for null name")
     void returnsEmptyForNullName() {
-        Optional<CodecValueReader<?>> result = registry.getReader(null);
+        Optional<CodecValueReader<?, ?>> result = registry.getReader(null);
         assertFalse(result.isPresent());
     }
 
     @Test
-    @DisplayName("getReader with type class returns typed reader")
-    void getReaderWithTypeClassReturnsTypedReader() {
-        CodecValueReader<String> reader = parser -> parser.getString();
+    @DisplayName("getReader with type and feature class returns typed reader")
+    void getReaderWithTypeAndFeatureClassReturnsTypedReader() {
+        var reader = createStringReader();
         registry.registerReader("test", reader);
 
-        Optional<CodecValueReader<String>> result = registry.getReader("test", String.class);
+        Optional<CodecValueReader<String, org.eclipse.emf.ecore.EAttribute>> result =
+            registry.getReader("test", String.class, org.eclipse.emf.ecore.EAttribute.class);
         assertTrue(result.isPresent());
     }
 }

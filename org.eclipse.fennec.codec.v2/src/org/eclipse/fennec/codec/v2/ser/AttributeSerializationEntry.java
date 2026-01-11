@@ -43,7 +43,7 @@ public class AttributeSerializationEntry implements SerializationEntry {
 
     private final EffectiveFeatureConfig config;
     private final EAttribute attribute;
-    private final CodecValueWriter<?> customWriter;
+    private final CodecValueWriter<Object, EAttribute> customWriter;
 
     /**
      * Creates a new AttributeSerializationEntry with the effective feature configuration.
@@ -62,6 +62,7 @@ public class AttributeSerializationEntry implements SerializationEntry {
      * @param attribute the EAttribute to serialize
      * @param valueRegistry the registry for custom value writers (may be null)
      */
+    @SuppressWarnings("unchecked")
     public AttributeSerializationEntry(EffectiveFeatureConfig config, EAttribute attribute,
             CodecValueRegistry valueRegistry) {
         this.config = config;
@@ -70,7 +71,7 @@ public class AttributeSerializationEntry implements SerializationEntry {
         // Pre-resolve the custom writer at construction time
         String writerName = config.getValueWriterName();
         if (writerName != null && !writerName.isEmpty() && valueRegistry != null) {
-            this.customWriter = valueRegistry.getWriter(writerName).orElse(null);
+            this.customWriter = (CodecValueWriter<Object, EAttribute>) valueRegistry.getWriter(writerName).orElse(null);
         } else {
             this.customWriter = null;
         }
@@ -124,11 +125,11 @@ public class AttributeSerializationEntry implements SerializationEntry {
         if (attribute.isMany() && value instanceof EList<?> list) {
             gen.writeStartArray();
             for (Object item : list) {
-                writeValue(gen, item);
+                writeValue(gen, item, ctxt);
             }
             gen.writeEndArray();
         } else {
-            writeValue(gen, value);
+            writeValue(gen, value, ctxt);
         }
     }
 
@@ -141,9 +142,9 @@ public class AttributeSerializationEntry implements SerializationEntry {
      *
      * @param gen the JSON generator
      * @param value the value to write
+     * @param ctxt the serialization context (may be null)
      */
-    @SuppressWarnings("unchecked")
-    private void writeValue(JsonGenerator gen, Object value) {
+    private void writeValue(JsonGenerator gen, Object value, SerializationContext ctxt) {
         if (value == null) {
             gen.writeNull();
             return;
@@ -152,7 +153,7 @@ public class AttributeSerializationEntry implements SerializationEntry {
         // Use custom writer if configured
         if (customWriter != null) {
             try {
-                ((CodecValueWriter<Object>) customWriter).write(value, gen);
+                customWriter.write(value, attribute, gen, ctxt);
             } catch (IOException e) {
                 throw new UncheckedIOException("Custom value writer failed for attribute: " + attribute.getName(), e);
             }

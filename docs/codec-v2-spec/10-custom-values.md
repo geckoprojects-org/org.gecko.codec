@@ -12,76 +12,283 @@ Custom value readers/writers allow you to:
 - Transform values during serialization/deserialization
 - Handle special data types (dates, binary, custom formats)
 - Implement domain-specific encoding
+- Customize reference URI formats
 
-The system consists of:
-- **`CodecValueWriter<T>`** - Functional interface for custom serialization
-- **`CodecValueReader<T>`** - Functional interface for custom deserialization
-- **`CodecValueRegistry`** - Registry to store named readers/writers
+The system provides a **unified interface** that works for both:
+- **Attributes** (`EAttribute`) - Transform primitive/data type values
+- **References** (`EReference`) - Customize reference URI format and resolution
+
+### 1.1 Core Components
+
+| Component | Purpose |
+|-----------|---------|
+| `CodecValueWriter<T, F>` | Functional interface for custom serialization |
+| `CodecValueReader<T, F>` | Functional interface for custom deserialization |
+| `CodecValueRegistry` | Registry to store named readers/writers |
 
 ---
 
-## 2. Interfaces
+## 2. Unified Interface Architecture
 
-### 2.1 CodecValueWriter
+### 2.1 Generic Type Parameters
+
+Both interfaces use two type parameters:
+
+```java
+CodecValueReader<T, F extends EStructuralFeature>
+CodecValueWriter<T, F extends EStructuralFeature>
+```
+
+| Parameter | Meaning |
+|-----------|---------|
+| `T` | The value type being read/written |
+| `F` | The feature type (`EAttribute` or `EReference`) |
+
+### 2.2 Usage by Feature Type
+
+| Feature Type | T (Value) | F (Feature) | Use Case |
+|--------------|-----------|-------------|----------|
+| Attribute | `Date`, `byte[]`, etc. | `EAttribute` | Format dates, encode binary |
+| Reference | `String` (URI) | `EReference` | Custom ID schemes, URI formats |
+
+---
+
+## 3. Interfaces
+
+### 3.1 CodecValueWriter
 
 ```java
 @FunctionalInterface
-public interface CodecValueWriter<T> {
+public interface CodecValueWriter<T, F extends EStructuralFeature> {
     /**
      * Writes a value to the JSON generator.
      *
      * @param value the value to write (never null)
+     * @param feature the feature being serialized
      * @param gen the JSON generator
+     * @param ctxt the serialization context (may be null)
      * @throws IOException if writing fails
      */
-    void write(T value, JsonGenerator gen) throws IOException;
+    void write(T value, F feature, JsonGenerator gen, SerializationContext ctxt)
+        throws IOException;
 }
 ```
 
-### 2.2 CodecValueReader
+### 3.2 CodecValueReader
 
 ```java
 @FunctionalInterface
-public interface CodecValueReader<T> {
+public interface CodecValueReader<T, F extends EStructuralFeature> {
     /**
      * Reads a value from the JSON parser.
      * The parser is positioned at the value token (not null).
      *
      * @param parser the JSON parser
+     * @param feature the feature being deserialized
+     * @param ctxt the deserialization context (may be null)
      * @return the parsed value
      * @throws IOException if reading fails
      */
-    T read(JsonParser parser) throws IOException;
+    T read(JsonParser parser, F feature, DeserializationContext ctxt)
+        throws IOException;
 }
+```
+
+### 3.3 Why Feature and Context Parameters?
+
+The `feature` parameter provides:
+- Access to feature metadata (name, type, annotations)
+- Ability to implement feature-specific logic in a single reader/writer
+
+The `ctxt` parameter provides:
+- Access to the serialization/deserialization context
+- Smart compression context (root schema URI)
+- Resource information for cross-document references
+
+---
+
+## 4. Attribute Value Readers/Writers
+
+### 4.1 Purpose
+
+Transform attribute values during serialization/deserialization:
+- Custom date/time formats
+- Binary encoding (Base64, hex)
+- Domain-specific value transformations
+
+### 4.2 Example: Date Formatting
+
+```java
+// Writer - converts Date to ISO 8601 string
+CodecValueWriter<Date, EAttribute> isoDateWriter = (date, attr, gen, ctxt) -> {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    gen.writeString(sdf.format(date));
+};
+
+// Reader - parses ISO 8601 string to Date
+CodecValueReader<Date, EAttribute> isoDateReader = (parser, attr, ctxt) -> {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    return sdf.parse(parser.getString());
+};
+```
+
+### 4.3 Example: Base64 Binary
+
+```java
+// Writer - encodes byte[] to Base64
+CodecValueWriter<byte[], EAttribute> base64Writer = (data, attr, gen, ctxt) ->
+    gen.writeString(Base64.getEncoder().encodeToString(data));
+
+// Reader - decodes Base64 to byte[]
+CodecValueReader<byte[], EAttribute> base64Reader = (parser, attr, ctxt) ->
+    Base64.getDecoder().decode(parser.getString());
+```
+
+### 4.4 Serialization Flow
+
+```
+AttributeSerializationEntry
+    │
+    ├─ Check if customWriter configured
+    │
+    ├─ YES: customWriter.write(value, attribute, gen, ctxt)
+    │
+    └─ NO: Default serialization (gen.writeString/writeNumber/etc.)
+```
+
+### 4.5 Deserialization Flow
+
+```
+AttributeDeserializationEntry
+    │
+    ├─ Check if customReader configured
+    │
+    ├─ YES: customReader.read(parser, attribute, ctxt)
+    │
+    └─ NO: Default deserialization (parser.getString/getIntValue/etc.)
 ```
 
 ---
 
-## 3. Registration
+## 5. Reference Value Readers/Writers
 
-### 3.1 CodecValueRegistry
+### 5.1 Purpose
 
-Writers and readers are registered by name in a `CodecValueRegistry`:
+Customize how non-containment reference URIs are written and read:
+- Custom ID schemes (MongoDB ObjectId, UUID formats)
+- Alternative URI formats
+- Domain-specific reference encoding
+
+### 5.2 When Applied
+
+Reference value writers/readers are used for **non-containment references only**:
+- The `_ref` field value (or custom ref key)
+- NOT for containment references (serialized inline)
+
+### 5.3 Example: MongoDB ObjectId
+
+```java
+// Writer - extracts MongoDB ObjectId from target object
+CodecValueWriter<EObject, EReference> mongoIdWriter = (target, ref, gen, ctxt) -> {
+    // Assumes target has an "_id" attribute with ObjectId
+    Object id = target.eGet(target.eClass().getEStructuralFeature("_id"));
+    if (id != null) {
+        gen.writeString(id.toString());
+    } else {
+        // Fall back to fragment URI
+        gen.writeString(target.eResource().getURIFragment(target));
+    }
+};
+
+// Reader - returns the ObjectId string for later resolution
+CodecValueReader<String, EReference> mongoIdReader = (parser, ref, ctxt) -> {
+    return parser.getString(); // ObjectId string to be resolved later
+};
+```
+
+### 5.4 Example: Custom URI Scheme
+
+```java
+// Writer - uses custom "urn:myapp:" scheme
+CodecValueWriter<EObject, EReference> customUriWriter = (target, ref, gen, ctxt) -> {
+    String id = extractId(target);
+    String typeName = target.eClass().getName();
+    gen.writeString("urn:myapp:" + typeName + "/" + id);
+};
+
+// Reader - parses custom URI
+CodecValueReader<String, EReference> customUriReader = (parser, ref, ctxt) -> {
+    String uri = parser.getString();
+    // The URI is returned as-is; resolution happens later via proxy
+    return uri;
+};
+```
+
+### 5.5 Serialization Flow
+
+```
+ReferenceSerializationEntry (non-containment)
+    │
+    ├─ writeReferenceObject()
+    │       │
+    │       ├─ Write _type (with smart compression)
+    │       │
+    │       ├─ Check if customWriter configured
+    │       │       │
+    │       │       ├─ YES: customWriter.write(target, reference, gen, ctxt)
+    │       │       │
+    │       │       └─ NO: Default URI (EcoreUtil.getURI or fragment)
+    │       │
+    │       └─ Write as { "_type": "...", "_ref": "..." }
+```
+
+### 5.6 Deserialization Flow
+
+```
+ReferenceDeserializationEntry (non-containment with _ref)
+    │
+    ├─ Read _ref field
+    │       │
+    │       ├─ Check if customReader configured
+    │       │       │
+    │       │       ├─ YES: refUri = customReader.read(parser, reference, ctxt)
+    │       │       │
+    │       │       └─ NO: refUri = parser.getString()
+    │       │
+    │       └─ Create UnresolvedReference with refUri
+    │
+    └─ Proxy resolution happens later
+```
+
+---
+
+## 6. Registration
+
+### 6.1 CodecValueRegistry
+
+Writers and readers are registered by name:
 
 ```java
 CodecValueRegistry registry = new CodecValueRegistry();
 
-// Register writers
-registry.registerWriter("isoDate", (Date date, JsonGenerator gen) ->
-    gen.writeString(ISO_FORMAT.format(date)));
+// Attribute writers
+registry.registerWriter("isoDate", isoDateWriter);
+registry.registerWriter("base64Binary", base64Writer);
 
-registry.registerWriter("base64Binary", (byte[] data, JsonGenerator gen) ->
-    gen.writeString(Base64.getEncoder().encodeToString(data)));
+// Attribute readers
+registry.registerReader("isoDate", isoDateReader);
+registry.registerReader("base64Binary", base64Reader);
 
-// Register readers
-registry.registerReader("isoDate", parser ->
-    ISO_FORMAT.parse(parser.getString()));
+// Reference writers (same registry)
+registry.registerWriter("mongoId", mongoIdWriter);
 
-registry.registerReader("base64Binary", parser ->
-    Base64.getDecoder().decode(parser.getString()));
+// Reference readers
+registry.registerReader("mongoId", mongoIdReader);
 ```
 
-### 3.2 Passing Registry to CodecResource
+### 6.2 Passing Registry to CodecResource
 
 ```java
 CodecResource resource = new CodecResource(
@@ -93,26 +300,14 @@ CodecResource resource = new CodecResource(
 );
 ```
 
-### 3.3 Passing Registry via CodecModule
-
-```java
-CodecModule module = CodecModule.builder()
-    .configuration(config)
-    .metadataService(metadataService)
-    .valueRegistry(registry)
-    .build();
-```
-
 ---
 
-## 4. Activation per Feature
+## 7. Activation per Feature
 
-To use a custom reader/writer for a specific attribute, configure the feature with the registered name.
-
-### 4.1 EAnnotation (on EStructuralFeature)
+### 7.1 EAnnotation on EAttribute
 
 ```xml
-<eStructuralFeatures xsi:type="ecore:EAttribute" name="createdAt" eType="ecore:EDataType...">
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="createdAt" eType="...">
   <eAnnotations source="http://eclipse.org/fennec/codec">
     <details key="codec.feature.valueWriterName" value="isoDate"/>
     <details key="codec.feature.valueReaderName" value="isoDate"/>
@@ -120,17 +315,18 @@ To use a custom reader/writer for a specific attribute, configure the feature wi
 </eStructuralFeatures>
 ```
 
-### 4.2 EffectiveFeatureConfig
+### 7.2 EAnnotation on EReference
 
-The configuration hierarchy resolves `valueWriterName` and `valueReaderName`:
-
-```java
-EffectiveFeatureConfig featureConfig = codecConfig.getFeatureConfig(attribute);
-String writerName = featureConfig.getValueWriterName(); // "isoDate"
-String readerName = featureConfig.getValueReaderName(); // "isoDate"
+```xml
+<eStructuralFeatures xsi:type="ecore:EReference" name="manager" eType="#//Person">
+  <eAnnotations source="http://eclipse.org/fennec/codec">
+    <details key="codec.feature.valueWriterName" value="mongoId"/>
+    <details key="codec.feature.valueReaderName" value="mongoId"/>
+  </eAnnotations>
+</eStructuralFeatures>
 ```
 
-### 4.3 Runtime Override via Load/Save Options
+### 7.3 Runtime Override via Load/Save Options
 
 ```java
 Map<String, Object> options = CodecOptionsBuilder.create()
@@ -144,191 +340,85 @@ resource.save(outputStream, options);
 
 ---
 
-## 5. Serialization Behavior
+## 8. Null Handling
 
-### 5.1 AttributeSerializationEntry
+### 8.1 Attributes
 
-When serializing an attribute:
+Custom readers/writers are **not called for null values**:
+- Null attribute values are serialized as JSON `null`
+- JSON `null` is deserialized as `null` without calling reader
 
-1. Check if `valueWriterName` is configured in `EffectiveFeatureConfig`
-2. If configured, look up writer in `CodecValueRegistry`
-3. If writer found, use it instead of default serialization
-4. If writer not found, fall back to default serialization
+### 8.2 References
 
-```java
-// Internal logic (simplified)
-if (customWriter != null) {
-    customWriter.write(value, gen);
-} else {
-    // Default: gen.writeString/writeNumber/etc.
-}
-```
-
-### 5.2 Null Handling
-
-Custom writers are **not called for null values**. Null is always serialized as JSON `null`:
-
-```json
-{
-  "createdAt": null
-}
-```
+Custom readers/writers are **not called for null references**:
+- Null references are serialized according to `serializeNull` config
+- JSON `null` sets the reference to `null` without calling reader
 
 ---
 
-## 6. Deserialization Behavior
+## 9. Error Handling
 
-### 6.1 AttributeDeserializationEntry
+### 9.1 Writer Errors
 
-When deserializing an attribute:
-
-1. Check if `valueReaderName` is configured in `EffectiveFeatureConfig`
-2. If configured, look up reader in `CodecValueRegistry`
-3. If reader found, use it instead of default deserialization
-4. If reader not found, fall back to default deserialization
-
-```java
-// Internal logic (simplified)
-if (customReader != null) {
-    return customReader.read(parser);
-} else {
-    // Default: parser.getString/getIntValue/etc.
-}
-```
-
-### 6.2 Null Handling
-
-Custom readers are **not called for null values**. JSON `null` always results in a null value being set on the EObject.
-
----
-
-## 7. Examples
-
-### 7.1 Custom Date Formatting
-
-**Writer:**
-```java
-CodecValueWriter<Date> isoDateWriter = (date, gen) -> {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-    gen.writeString(sdf.format(date));
-};
-```
-
-**Reader:**
-```java
-CodecValueReader<Date> isoDateReader = parser -> {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-    return sdf.parse(parser.getString());
-};
-```
-
-**Output:**
-```json
-{
-  "createdAt": "2025-12-06T10:30:00Z"
-}
-```
-
-### 7.2 Base64 Binary Encoding
-
-**Writer:**
-```java
-CodecValueWriter<byte[]> base64Writer = (data, gen) ->
-    gen.writeString(Base64.getEncoder().encodeToString(data));
-```
-
-**Reader:**
-```java
-CodecValueReader<byte[]> base64Reader = parser ->
-    Base64.getDecoder().decode(parser.getString());
-```
-
-**Output:**
-```json
-{
-  "thumbnail": "SGVsbG8gV29ybGQh"
-}
-```
-
-### 7.3 Custom Enum Serialization
-
-**Writer (lowercase):**
-```java
-CodecValueWriter<Status> lowerCaseEnumWriter = (status, gen) ->
-    gen.writeString(status.name().toLowerCase());
-```
-
-**Reader:**
-```java
-CodecValueReader<Status> lowerCaseEnumReader = parser ->
-    Status.valueOf(parser.getString().toUpperCase());
-```
-
-**Output:**
-```json
-{
-  "status": "active"
-}
-```
-
----
-
-## 8. Error Handling
-
-### 8.1 Writer Errors
-
-If a custom writer throws an `IOException`, it is wrapped in an `UncheckedIOException`:
+If a custom writer throws an `IOException`, it is wrapped:
 
 ```java
 throw new UncheckedIOException(
-    "Custom value writer failed for attribute: " + attribute.getName(), e);
+    "Custom value writer failed for " + feature.getName(), e);
 ```
 
-### 8.2 Reader Errors
+### 9.2 Reader Errors
 
-If a custom reader throws an `IOException`, it is wrapped in an `UncheckedIOException`:
+If a custom reader throws an `IOException`, it is wrapped:
 
 ```java
 throw new UncheckedIOException(
-    "Custom value reader failed for attribute: " + attribute.getName(), e);
+    "Custom value reader failed for " + feature.getName(), e);
 ```
 
-### 8.3 Missing Writer/Reader
+### 9.3 Missing Writer/Reader
 
-If a configured `valueWriterName` or `valueReaderName` is not found in the registry, the codec falls back to default serialization/deserialization silently. No error is thrown.
+If a configured name is not found in the registry:
+- Fall back to default serialization/deserialization
+- No error is thrown (silent fallback)
 
 ---
 
-## 9. Registry API
+## 10. Registry API
 
-### 9.1 Registration
+### 10.1 Registration
 
 ```java
-void registerWriter(String name, CodecValueWriter<?> writer);
-void registerReader(String name, CodecValueReader<?> reader);
+CodecValueRegistry registerWriter(String name, CodecValueWriter<?, ?> writer);
+CodecValueRegistry registerReader(String name, CodecValueReader<?, ?> reader);
 ```
 
-### 9.2 Lookup
+### 10.2 Lookup
 
 ```java
-Optional<CodecValueWriter<?>> getWriter(String name);
-Optional<CodecValueReader<?>> getReader(String name);
+Optional<CodecValueWriter<?, ?>> getWriter(String name);
+Optional<CodecValueReader<?, ?>> getReader(String name);
+
+// Type-safe lookup
+<T, F extends EStructuralFeature> Optional<CodecValueWriter<T, F>>
+    getWriter(String name, Class<T> valueType, Class<F> featureType);
+
+<T, F extends EStructuralFeature> Optional<CodecValueReader<T, F>>
+    getReader(String name, Class<T> valueType, Class<F> featureType);
+```
+
+### 10.3 Introspection
+
+```java
 boolean hasWriter(String name);
 boolean hasReader(String name);
-```
-
-### 9.3 Introspection
-
-```java
-Map<String, CodecValueWriter<?>> getWriters();
-Map<String, CodecValueReader<?>> getReaders();
+Map<String, CodecValueWriter<?, ?>> getWriters();
+Map<String, CodecValueReader<?, ?>> getReaders();
 ```
 
 ---
 
-## 10. Configuration Hierarchy
+## 11. Configuration Hierarchy
 
 Custom value reader/writer names follow the standard configuration hierarchy:
 
@@ -337,6 +427,20 @@ Custom value reader/writer names follow the standard configuration hierarchy:
 3. **CodecConfiguration**
 4. **EAnnotation on EStructuralFeature**
 5. **Built-in Defaults** (no custom reader/writer)
+
+---
+
+## 12. Implementation Classes
+
+| Class | Purpose |
+|-------|---------|
+| `CodecValueReader<T, F>` | Interface for custom deserialization |
+| `CodecValueWriter<T, F>` | Interface for custom serialization |
+| `CodecValueRegistry` | Named reader/writer storage |
+| `AttributeSerializationEntry` | Invokes attribute writers |
+| `AttributeDeserializationEntry` | Invokes attribute readers |
+| `ReferenceSerializationEntry` | Invokes reference writers |
+| `ReferenceDeserializationEntry` | Invokes reference readers |
 
 ---
 

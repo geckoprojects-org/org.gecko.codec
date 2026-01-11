@@ -30,8 +30,8 @@ class CodecValueRegistryCopyTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("creates independent copy")
     void createsIndependentCopy() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
-        CodecValueReader<String> reader = parser -> parser.getString();
+        var writer = createStringWriter();
+        var reader = createStringReader();
 
         registry.registerWriter("writer", writer);
         registry.registerReader("reader", reader);

@@ -13,6 +13,7 @@
  */
 package org.eclipse.fennec.codec.v2.value;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
@@ -30,5 +31,33 @@ abstract class CodecValueRegistryTestBase {
     @BeforeEach
     void setUp() {
         registry = new CodecValueRegistry();
+    }
+
+    /**
+     * Creates a simple string writer for testing.
+     */
+    protected CodecValueWriter<String, EAttribute> createStringWriter() {
+        return (value, feature, gen, ctxt) -> gen.writeString(value);
+    }
+
+    /**
+     * Creates a simple string reader for testing.
+     */
+    protected CodecValueReader<String, EAttribute> createStringReader() {
+        return (parser, feature, ctxt) -> parser.getString();
+    }
+
+    /**
+     * Creates a simple integer writer for testing.
+     */
+    protected CodecValueWriter<Integer, EAttribute> createIntWriter() {
+        return (value, feature, gen, ctxt) -> gen.writeNumber(value);
+    }
+
+    /**
+     * Creates a simple integer reader for testing.
+     */
+    protected CodecValueReader<Integer, EAttribute> createIntReader() {
+        return (parser, feature, ctxt) -> parser.getIntValue();
     }
 }

@@ -58,7 +58,7 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
 
     private final EffectiveFeatureConfig config;
     private final EAttribute attribute;
-    private final CodecValueReader<?> customReader;
+    private final CodecValueReader<Object, EAttribute> customReader;
 
     /**
      * Creates a new AttributeDeserializationEntry.
@@ -77,6 +77,7 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
      * @param attribute the EAttribute to deserialize
      * @param valueRegistry the registry for custom value readers (may be null)
      */
+    @SuppressWarnings("unchecked")
     public AttributeDeserializationEntry(EffectiveFeatureConfig config, EAttribute attribute,
             CodecValueRegistry valueRegistry) {
         this.config = Objects.requireNonNull(config, "config must not be null");
@@ -85,7 +86,7 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
         // Pre-resolve the custom reader at construction time
         String readerName = config.getValueReaderName();
         if (readerName != null && !readerName.isEmpty() && valueRegistry != null) {
-            this.customReader = valueRegistry.getReader(readerName).orElse(null);
+            this.customReader = (CodecValueReader<Object, EAttribute>) valueRegistry.getReader(readerName).orElse(null);
         } else {
             this.customReader = null;
         }
@@ -115,17 +116,17 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
         }
 
         if (attribute.isMany()) {
-            deserializeMultiValued(state, parser, eObject);
+            deserializeMultiValued(state, parser, ctxt, eObject);
         } else {
-            deserializeSingleValued(parser, eObject);
+            deserializeSingleValued(parser, ctxt, eObject);
         }
     }
 
     /**
      * Deserializes a single-valued attribute.
      */
-    private void deserializeSingleValued(JsonParser parser, EObject eObject) {
-        Object value = readValue(parser, attribute.getEAttributeType());
+    private void deserializeSingleValued(JsonParser parser, DeserializationContext ctxt, EObject eObject) {
+        Object value = readValue(parser, ctxt, attribute.getEAttributeType());
         if (value != null && attribute.isChangeable()) {
             eObject.eSet(attribute, value);
         }
@@ -135,12 +136,13 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
      * Deserializes a multi-valued attribute (array).
      */
     @SuppressWarnings("unchecked")
-    private void deserializeMultiValued(DeserializationState state, JsonParser parser, EObject eObject) {
+    private void deserializeMultiValued(DeserializationState state, JsonParser parser,
+            DeserializationContext ctxt, EObject eObject) {
         JsonToken token = parser.currentToken();
 
         if (token != JsonToken.START_ARRAY) {
             // Single value provided for multi-valued - wrap it
-            Object value = readValue(parser, attribute.getEAttributeType());
+            Object value = readValue(parser, ctxt, attribute.getEAttributeType());
             if (value != null) {
                 ((List<Object>) eObject.eGet(attribute)).add(value);
             }
@@ -150,7 +152,7 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
         List<Object> values = (List<Object>) eObject.eGet(attribute);
 
         while (parser.nextToken() != JsonToken.END_ARRAY) {
-            Object value = readValue(parser, attribute.getEAttributeType());
+            Object value = readValue(parser, ctxt, attribute.getEAttributeType());
             if (value != null) {
                 values.add(value);
             }
@@ -165,10 +167,11 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
      * </p>
      *
      * @param parser the JSON parser
+     * @param ctxt the deserialization context (may be null)
      * @param dataType the target EMF data type
      * @return the converted value, or null if conversion fails
      */
-    private Object readValue(JsonParser parser, EDataType dataType) {
+    private Object readValue(JsonParser parser, DeserializationContext ctxt, EDataType dataType) {
         JsonToken token = parser.currentToken();
 
         // Handle null first - custom readers don't handle null
@@ -179,7 +182,7 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
         // Use custom reader if configured
         if (customReader != null) {
             try {
-                return customReader.read(parser);
+                return customReader.read(parser, attribute, ctxt);
             } catch (IOException e) {
                 throw new UncheckedIOException("Custom value reader failed for attribute: " + attribute.getName(), e);
             }

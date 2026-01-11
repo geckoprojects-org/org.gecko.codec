@@ -15,7 +15,10 @@ package org.eclipse.fennec.codec.v2.value;
 
 import java.io.IOException;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
+
 import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
 
 /**
  * Interface for custom value readers that transform values during deserialization.
@@ -25,33 +28,50 @@ import tools.jackson.core.JsonParser;
  *   <li>Transform values after deserialization</li>
  *   <li>Parse special data types (dates, binary, custom formats)</li>
  *   <li>Implement domain-specific decoding</li>
+ *   <li>Handle both attribute values (EAttribute) and reference URIs (EReference)</li>
  * </ul>
  * </p>
  * <p>
- * Example implementation:
+ * Example implementation for attributes:
  * </p>
  * <pre>
- * public class ISO8601DateReader implements CodecValueReader&lt;Date&gt; {
+ * public class ISO8601DateReader implements CodecValueReader&lt;Date, EAttribute&gt; {
  *     &#64;Override
- *     public Date read(JsonParser parser) throws IOException {
+ *     public Date read(JsonParser parser, EAttribute feature, DeserializationContext ctxt) throws IOException {
  *         String text = parser.getString();
  *         return ISO8601_FORMAT.parse(text);
  *     }
  * }
  * </pre>
+ * <p>
+ * Example implementation for references (custom URI format):
+ * </p>
+ * <pre>
+ * public class CustomRefReader implements CodecValueReader&lt;String, EReference&gt; {
+ *     &#64;Override
+ *     public String read(JsonParser parser, EReference feature, DeserializationContext ctxt) throws IOException {
+ *         // Parse custom reference format and return URI string
+ *         String customId = parser.getString();
+ *         return "http://example.org/objects/" + customId;
+ *     }
+ * }
+ * </pre>
  *
- * @param <T> the type of value to read
+ * @param <T> the type of value to read (value type for attributes, String URI for references)
+ * @param <F> the feature type (EAttribute or EReference)
  * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
  */
 @FunctionalInterface
-public interface CodecValueReader<T> {
+public interface CodecValueReader<T, F extends EStructuralFeature> {
 
     /**
      * Reads a value from the JSON parser.
      *
      * @param parser the JSON parser positioned at the value
+     * @param feature the EStructuralFeature being deserialized (EAttribute or EReference)
+     * @param ctxt the deserialization context (may be null in some test scenarios)
      * @return the parsed value (may be null if the JSON value is null)
      * @throws IOException if an I/O error occurs
      */
-    T read(JsonParser parser) throws IOException;
+    T read(JsonParser parser, F feature, DeserializationContext ctxt) throws IOException;
 }

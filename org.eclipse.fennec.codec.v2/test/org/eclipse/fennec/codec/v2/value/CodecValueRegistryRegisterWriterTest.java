@@ -31,7 +31,7 @@ class CodecValueRegistryRegisterWriterTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("registers writer with valid name")
     void registersWriterWithValidName() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        var writer = createStringWriter();
         registry.registerWriter("testWriter", writer);
 
         assertTrue(registry.hasWriter("testWriter"));
@@ -41,7 +41,7 @@ class CodecValueRegistryRegisterWriterTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("throws exception for null name")
     void throwsExceptionForNullName() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        var writer = createStringWriter();
         assertThrows(IllegalArgumentException.class,
                 () -> registry.registerWriter(null, writer));
     }
@@ -49,7 +49,7 @@ class CodecValueRegistryRegisterWriterTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("throws exception for empty name")
     void throwsExceptionForEmptyName() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        var writer = createStringWriter();
         assertThrows(IllegalArgumentException.class,
                 () -> registry.registerWriter("", writer));
     }
@@ -64,15 +64,15 @@ class CodecValueRegistryRegisterWriterTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("returns registry for chaining")
     void returnsRegistryForChaining() {
-        CodecValueWriter<String> writer = (value, gen) -> gen.writeString(value);
+        var writer = createStringWriter();
         assertSame(registry, registry.registerWriter("test", writer));
     }
 
     @Test
     @DisplayName("overwrites existing writer with same name")
     void overwritesExistingWriter() {
-        CodecValueWriter<String> writer1 = (value, gen) -> gen.writeString(value);
-        CodecValueWriter<String> writer2 = (value, gen) -> gen.writeString(value.toUpperCase());
+        var writer1 = createStringWriter();
+        var writer2 = createStringWriter();
 
         registry.registerWriter("test", writer1);
         registry.registerWriter("test", writer2);

@@ -31,7 +31,7 @@ class CodecValueRegistryRegisterReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("registers reader with valid name")
     void registersReaderWithValidName() {
-        CodecValueReader<String> reader = parser -> parser.getString();
+        var reader = createStringReader();
         registry.registerReader("testReader", reader);
 
         assertTrue(registry.hasReader("testReader"));
@@ -41,7 +41,7 @@ class CodecValueRegistryRegisterReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("throws exception for null name")
     void throwsExceptionForNullName() {
-        CodecValueReader<String> reader = parser -> parser.getString();
+        var reader = createStringReader();
         assertThrows(IllegalArgumentException.class,
                 () -> registry.registerReader(null, reader));
     }
@@ -49,7 +49,7 @@ class CodecValueRegistryRegisterReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("throws exception for empty name")
     void throwsExceptionForEmptyName() {
-        CodecValueReader<String> reader = parser -> parser.getString();
+        var reader = createStringReader();
         assertThrows(IllegalArgumentException.class,
                 () -> registry.registerReader("", reader));
     }
@@ -64,7 +64,7 @@ class CodecValueRegistryRegisterReaderTest extends CodecValueRegistryTestBase {
     @Test
     @DisplayName("returns registry for chaining")
     void returnsRegistryForChaining() {
-        CodecValueReader<String> reader = parser -> parser.getString();
+        var reader = createStringReader();
         assertSame(registry, registry.registerReader("test", reader));
     }
 }
