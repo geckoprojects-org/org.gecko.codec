@@ -25,6 +25,7 @@ import org.eclipse.fennec.codec.metadata.model.codec.SuperTypeSerializationConfi
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
+import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
@@ -57,6 +58,7 @@ public class ConfigurationMerger {
 
     private final CodecConfiguration moduleConfig;
     private final MetadataService metadataService;
+    private final CodecValueRegistry valueRegistry;
 
     /**
      * Creates a new ConfigurationMerger.
@@ -71,8 +73,27 @@ public class ConfigurationMerger {
             MetadataService metadataService,
             Map<String, Object> factoryDefaults,
             Map<String, Object> options) {
+        this(moduleConfig, metadataService, null, factoryDefaults, options);
+    }
+
+    /**
+     * Creates a new ConfigurationMerger with a value registry.
+     *
+     * @param moduleConfig the codec module configuration
+     * @param metadataService the metadata service for model aspects (may be null)
+     * @param valueRegistry the custom value readers/writers registry (may be null)
+     * @param factoryDefaults the resource factory default options (may be null)
+     * @param options the load/save options (may be null)
+     */
+    public ConfigurationMerger(
+            CodecConfiguration moduleConfig,
+            MetadataService metadataService,
+            CodecValueRegistry valueRegistry,
+            Map<String, Object> factoryDefaults,
+            Map<String, Object> options) {
         this.moduleConfig = moduleConfig != null ? moduleConfig : CodecConfiguration.builder().build();
         this.metadataService = metadataService;
+        this.valueRegistry = valueRegistry;
     }
 
     /**
@@ -97,6 +118,7 @@ public class ConfigurationMerger {
                 .typeDiscriminatorService(typeDiscriminatorService)
                 .smartCompression(moduleConfig.isSmartCompression())
                 .metadataService(metadataService)
+                .valueRegistry(valueRegistry)
                 // SuperType global settings
                 .globalSuperTypeKey(moduleConfig.getSuperTypeKey())
                 .validateSuperTypeHierarchy(moduleConfig.isValidateSuperTypeHierarchy())

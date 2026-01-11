@@ -44,6 +44,7 @@ import org.eclipse.fennec.codec.v2.jackson.CodecJsonFactory;
 import org.eclipse.fennec.codec.v2.jackson.CodecJsonReadContext;
 import org.eclipse.fennec.codec.v2.module.CodecModule;
 import org.eclipse.fennec.codec.v2.util.CodecResourceHelper;
+import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 
@@ -82,6 +83,7 @@ public class CodecResource extends ResourceImpl {
 
     private final MetadataService metadataService;
     private final CodecConfiguration configuration;
+    private final CodecValueRegistry valueRegistry;
     private final JsonMapper.Builder mapperBuilder;
     private final CodecResourceHelper helper;
 
@@ -97,9 +99,24 @@ public class CodecResource extends ResourceImpl {
      */
     public CodecResource(URI uri, MetadataService metadataService, CodecConfiguration configuration,
             JsonMapper.Builder mapperBuilder) {
+        this(uri, metadataService, configuration, null, mapperBuilder);
+    }
+
+    /**
+     * Creates a new CodecResource with custom value readers/writers.
+     *
+     * @param uri the resource URI (must not be null)
+     * @param metadataService the metadata service (must not be null)
+     * @param configuration the codec configuration (null for defaults)
+     * @param valueRegistry the custom value readers/writers registry (null for none)
+     * @param mapperBuilder pre-configured mapper builder (null for default JsonMapper)
+     */
+    public CodecResource(URI uri, MetadataService metadataService, CodecConfiguration configuration,
+            CodecValueRegistry valueRegistry, JsonMapper.Builder mapperBuilder) {
         super(uri);
         this.metadataService = requireNonNull(metadataService, "metadataService must not be null");
         this.configuration = isNull(configuration) ? CodecConfiguration.defaults() : configuration;
+        this.valueRegistry = valueRegistry;
         this.mapperBuilder = mapperBuilder;
         this.helper = new CodecResourceHelper(metadataService);
     }
@@ -200,7 +217,7 @@ public class CodecResource extends ResourceImpl {
 
         // Create EffectiveCodecConfig by merging all configuration sources
         ConfigurationMerger merger = new ConfigurationMerger(
-                configuration, metadataService, null, mergedOptions);
+                configuration, metadataService, valueRegistry, null, mergedOptions);
         EffectiveCodecConfig effectiveConfig = merger.merge();
 
         // Create CodecJsonFactory to produce EMF-aware parsers
@@ -314,11 +331,16 @@ public class CodecResource extends ResourceImpl {
      * @return configured ObjectMapper
      */
     private ObjectMapper createObjectMapper(Map<String, Object> options) {
-        // Build the CodecModule with configuration and metadata service
-        CodecModule codecModule = CodecModule.builder()
+        // Build the CodecModule with configuration, metadata service, and value registry
+        CodecModule.Builder moduleBuilder = CodecModule.builder()
                 .configuration(configuration)
-                .metadataService(metadataService)
-                .build();
+                .metadataService(metadataService);
+
+        if (valueRegistry != null) {
+            moduleBuilder.valueRegistry(valueRegistry);
+        }
+
+        CodecModule codecModule = moduleBuilder.build();
 
         // Create the mapper with the module
         JsonMapper.Builder builder = isNull(mapperBuilder) ? JsonMapper.builder() : mapperBuilder;

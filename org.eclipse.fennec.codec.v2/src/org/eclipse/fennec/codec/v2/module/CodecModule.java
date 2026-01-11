@@ -121,6 +121,7 @@ public class CodecModule extends SimpleModule {
         ConfigurationMerger merger = new ConfigurationMerger(
                 configuration,
                 metadataService,
+                valueRegistry,
                 Collections.emptyMap(),  // factory defaults (not yet implemented)
                 options
         );

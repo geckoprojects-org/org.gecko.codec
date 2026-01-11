@@ -581,7 +581,8 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
             DeserializationEntry entry;
             if (feature instanceof EAttribute) {
-                entry = new AttributeDeserializationEntry(featureConfig, (EAttribute) feature);
+                entry = new AttributeDeserializationEntry(featureConfig, (EAttribute) feature,
+                        config.getValueRegistry());
             } else if (feature instanceof EReference) {
                 entry = new ReferenceDeserializationEntry(featureConfig, (EReference) feature, DEFAULT_REF_KEY);
             } else {

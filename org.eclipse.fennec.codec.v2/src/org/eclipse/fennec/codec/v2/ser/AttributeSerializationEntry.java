@@ -13,10 +13,15 @@
  */
 package org.eclipse.fennec.codec.v2.ser;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.v2.value.CodecValueWriter;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 
 import tools.jackson.core.JsonGenerator;
@@ -38,6 +43,7 @@ public class AttributeSerializationEntry implements SerializationEntry {
 
     private final EffectiveFeatureConfig config;
     private final EAttribute attribute;
+    private final CodecValueWriter<?> customWriter;
 
     /**
      * Creates a new AttributeSerializationEntry with the effective feature configuration.
@@ -46,8 +52,28 @@ public class AttributeSerializationEntry implements SerializationEntry {
      * @param attribute the EAttribute to serialize
      */
     public AttributeSerializationEntry(EffectiveFeatureConfig config, EAttribute attribute) {
+        this(config, attribute, null);
+    }
+
+    /**
+     * Creates a new AttributeSerializationEntry with custom value writer support.
+     *
+     * @param config the effective (pre-merged) feature configuration
+     * @param attribute the EAttribute to serialize
+     * @param valueRegistry the registry for custom value writers (may be null)
+     */
+    public AttributeSerializationEntry(EffectiveFeatureConfig config, EAttribute attribute,
+            CodecValueRegistry valueRegistry) {
         this.config = config;
         this.attribute = attribute;
+
+        // Pre-resolve the custom writer at construction time
+        String writerName = config.getValueWriterName();
+        if (writerName != null && !writerName.isEmpty() && valueRegistry != null) {
+            this.customWriter = valueRegistry.getWriter(writerName).orElse(null);
+        } else {
+            this.customWriter = null;
+        }
     }
 
     @Override
@@ -108,14 +134,33 @@ public class AttributeSerializationEntry implements SerializationEntry {
 
     /**
      * Writes a single attribute value to the generator.
+     * <p>
+     * If a custom value writer is configured, it will be used instead of
+     * the default serialization logic.
+     * </p>
      *
      * @param gen the JSON generator
      * @param value the value to write
      */
+    @SuppressWarnings("unchecked")
     private void writeValue(JsonGenerator gen, Object value) {
         if (value == null) {
             gen.writeNull();
-        } else if (value instanceof String s) {
+            return;
+        }
+
+        // Use custom writer if configured
+        if (customWriter != null) {
+            try {
+                ((CodecValueWriter<Object>) customWriter).write(value, gen);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Custom value writer failed for attribute: " + attribute.getName(), e);
+            }
+            return;
+        }
+
+        // Default serialization
+        if (value instanceof String s) {
             gen.writeString(s);
         } else if (value instanceof Integer i) {
             gen.writeNumber(i);

@@ -13,6 +13,8 @@
  */
 package org.eclipse.fennec.codec.v2.deser;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
@@ -26,6 +28,8 @@ import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
+import org.eclipse.fennec.codec.v2.value.CodecValueReader;
+import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -54,6 +58,7 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
 
     private final EffectiveFeatureConfig config;
     private final EAttribute attribute;
+    private final CodecValueReader<?> customReader;
 
     /**
      * Creates a new AttributeDeserializationEntry.
@@ -62,8 +67,28 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
      * @param attribute the EAttribute to deserialize
      */
     public AttributeDeserializationEntry(EffectiveFeatureConfig config, EAttribute attribute) {
+        this(config, attribute, null);
+    }
+
+    /**
+     * Creates a new AttributeDeserializationEntry with custom value reader support.
+     *
+     * @param config the effective feature configuration
+     * @param attribute the EAttribute to deserialize
+     * @param valueRegistry the registry for custom value readers (may be null)
+     */
+    public AttributeDeserializationEntry(EffectiveFeatureConfig config, EAttribute attribute,
+            CodecValueRegistry valueRegistry) {
         this.config = Objects.requireNonNull(config, "config must not be null");
         this.attribute = Objects.requireNonNull(attribute, "attribute must not be null");
+
+        // Pre-resolve the custom reader at construction time
+        String readerName = config.getValueReaderName();
+        if (readerName != null && !readerName.isEmpty() && valueRegistry != null) {
+            this.customReader = valueRegistry.getReader(readerName).orElse(null);
+        } else {
+            this.customReader = null;
+        }
     }
 
     @Override
@@ -134,6 +159,10 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
 
     /**
      * Reads a value from the parser and converts it to the appropriate type.
+     * <p>
+     * If a custom value reader is configured, it will be used instead of
+     * the default deserialization logic.
+     * </p>
      *
      * @param parser the JSON parser
      * @param dataType the target EMF data type
@@ -141,13 +170,25 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
      */
     private Object readValue(JsonParser parser, EDataType dataType) {
         JsonToken token = parser.currentToken();
+
+        // Handle null first - custom readers don't handle null
+        if (token == JsonToken.VALUE_NULL) {
+            return null;
+        }
+
+        // Use custom reader if configured
+        if (customReader != null) {
+            try {
+                return customReader.read(parser);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Custom value reader failed for attribute: " + attribute.getName(), e);
+            }
+        }
+
+        // Default deserialization
         Class<?> instanceClass = dataType.getInstanceClass();
 
         try {
-            if (token == JsonToken.VALUE_NULL) {
-                return null;
-            }
-
             if (token == JsonToken.VALUE_STRING) {
                 String stringValue = parser.getString();
                 return convertFromString(stringValue, dataType, instanceClass);

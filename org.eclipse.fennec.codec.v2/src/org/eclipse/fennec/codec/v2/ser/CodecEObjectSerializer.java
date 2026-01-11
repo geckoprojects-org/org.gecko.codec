@@ -179,7 +179,8 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
 
             SerializationEntry featureEntry;
             if (feature instanceof EAttribute attribute) {
-                featureEntry = new AttributeSerializationEntry(featureConfig, attribute);
+                featureEntry = new AttributeSerializationEntry(featureConfig, attribute,
+                        config.getValueRegistry());
             } else if (feature instanceof EReference reference) {
                 featureEntry = new ReferenceSerializationEntry(
                         featureConfig, reference, config.getRefKey(), config.isSmartCompression(), config);

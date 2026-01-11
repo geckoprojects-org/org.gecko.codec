@@ -26,6 +26,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
+import org.eclipse.fennec.codec.v2.value.CodecValueReader;
+import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.v2.value.CodecValueWriter;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
@@ -72,6 +75,9 @@ public final class EffectiveCodecConfig {
     private final String globalSuperTypeKey;
     private final boolean validateSuperTypeHierarchy;
 
+    // Custom value readers/writers registry
+    private final CodecValueRegistry valueRegistry;
+
     // Expand settings
     private final boolean expandGlobal;
     private final Set<EReference> expandReferences;
@@ -105,6 +111,7 @@ public final class EffectiveCodecConfig {
         this.metadataService = builder.metadataService;
         this.globalSuperTypeKey = builder.globalSuperTypeKey;
         this.validateSuperTypeHierarchy = builder.validateSuperTypeHierarchy;
+        this.valueRegistry = builder.valueRegistry;
         this.expandGlobal = builder.expandGlobal;
         this.expandReferences = builder.expandReferences != null
                 ? Set.copyOf(builder.expandReferences)
@@ -266,6 +273,55 @@ public final class EffectiveCodecConfig {
         }
         ClassMetadata metadata = metadataService.getClassMetadataByURI(uri);
         return metadata != null ? metadata.getEClass() : null;
+    }
+
+    // ========================================================================
+    // Custom Value Readers/Writers
+    // ========================================================================
+
+    /**
+     * Returns the registry for custom value readers and writers.
+     * <p>
+     * This registry contains named readers/writers that can be referenced
+     * by name in feature configurations via {@code valueWriterName} and
+     * {@code valueReaderName}.
+     * </p>
+     *
+     * @return the value registry, or null if not configured
+     * @see <a href="docs/codec-v2-spec/10-custom-values.md">Spec 10: Custom Value Readers/Writers</a>
+     */
+    public CodecValueRegistry getValueRegistry() {
+        return valueRegistry;
+    }
+
+    /**
+     * Gets a custom value writer by name from the registry.
+     *
+     * @param <T> the value type
+     * @param name the writer name
+     * @return the writer, or null if not found or no registry
+     */
+    @SuppressWarnings("unchecked")
+    public <T> CodecValueWriter<T> getValueWriter(String name) {
+        if (valueRegistry == null || name == null || name.isEmpty()) {
+            return null;
+        }
+        return (CodecValueWriter<T>) valueRegistry.getWriter(name).orElse(null);
+    }
+
+    /**
+     * Gets a custom value reader by name from the registry.
+     *
+     * @param <T> the value type
+     * @param name the reader name
+     * @return the reader, or null if not found or no registry
+     */
+    @SuppressWarnings("unchecked")
+    public <T> CodecValueReader<T> getValueReader(String name) {
+        if (valueRegistry == null || name == null || name.isEmpty()) {
+            return null;
+        }
+        return (CodecValueReader<T>) valueRegistry.getReader(name).orElse(null);
     }
 
     // ========================================================================
@@ -434,6 +490,8 @@ public final class EffectiveCodecConfig {
         // SuperType global settings
         private String globalSuperTypeKey = "_supertype";
         private boolean validateSuperTypeHierarchy = false;
+        // Custom value readers/writers
+        private CodecValueRegistry valueRegistry;
         // Expand settings
         private boolean expandGlobal = false;
         private Set<EReference> expandReferences;
@@ -497,6 +555,11 @@ public final class EffectiveCodecConfig {
 
         public Builder validateSuperTypeHierarchy(boolean validateSuperTypeHierarchy) {
             this.validateSuperTypeHierarchy = validateSuperTypeHierarchy;
+            return this;
+        }
+
+        public Builder valueRegistry(CodecValueRegistry valueRegistry) {
+            this.valueRegistry = valueRegistry;
             return this;
         }
 

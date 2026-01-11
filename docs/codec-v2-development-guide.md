@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-09
+**Last Updated:** 2026-01-11
 
 ---
 
@@ -1082,43 +1082,77 @@ SCHEMA_AND_TYPE: {"schema": "http://example.org/1.0", "type": "Person"}
 }
 ```
 
-#### 11.1.2 SuperType Serialization Status
+#### 11.1.2 SuperType Serialization Status ✅ Complete
 
 | Feature | PLAIN Ser | PLAIN Deser | STRUCTURED Ser | STRUCTURED Deser |
 |---------|:---------:|:-----------:|:--------------:|:----------------:|
-| Array of names/URIs | ✅ | ❌ | ❌ | ❌ |
-| ALL selection | ✅ | - | ❌ | - |
-| SINGLE selection | ✅ | - | ❌ | - |
-| ALL_EMF selection | ✅ | - | ❌ | - |
+| ARRAY presentation | ✅ | ✅ | ✅ | ✅ |
+| STRING presentation | ✅ | ✅ | ✅ | ✅ |
+| ALL selection | ✅ | - | ✅ | - |
+| SINGLE selection | ✅ | - | ✅ | - |
+| ALL_EMF selection | ✅ | - | ✅ | - |
+| Smart compression | ✅ | - | ✅ | - |
+| Hierarchy validation | - | ✅ | - | ✅ |
 
-**Note:** No `SuperTypeDeserializationEntry` exists - supertype info is typically not needed for deserialization (type determines the class).
+**Implementation:**
+- **PLAIN format**: `SuperTypeSerializationEntry` writes standalone `_supertype` field
+- **STRUCTURED format**: `TypeSerializationEntry.serializeSuperTypeInStructured()` embeds `supertype` inside `_type` object
+- **Deserialization**: `SuperTypeDeserializationEntry` handles PLAIN; `TypeDeserializationEntry.parseSuperTypesFromStructured()` handles STRUCTURED
+- **Validation**: Shared via `SuperTypeDeserializationEntry.validateSuperTypeHierarchyStatic()`
 
-**STRUCTURED SuperType format:**
+**STRUCTURED SuperType format** (inside `_type` object):
 ```json
 {
-  "_supertype": [
-    {"schema": "http://example.org/base/1.0", "type": "Entity"},
-    {"schema": "http://example.org/audit/1.0", "type": "Auditable"}
-  ]
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Person",
+    "supertype": ["Entity", "http://audit.org/1.0#//Auditable"]
+  }
 }
 ```
 
-#### 11.1.3 Implementation Tasks
+#### 11.1.3 Implementation Tasks ✅ All Complete
 
 1. ~~**Type STRUCTURED format** - Refactor `TypeSerializationEntry.serializeStructured()` to respect strategy~~ ✅
 2. ~~**Type SCHEMA_AND_TYPE PLAIN** - Write two separate fields (`_schema` + `_type`)~~ ✅
 3. ~~**Type deserialization** - Update `TypeDeserializationEntry` to handle all STRUCTURED variants~~ ✅
-4. **SuperType STRUCTURED** - Add STRUCTURED format support to `SuperTypeSerializationEntry`
+4. ~~**SuperType STRUCTURED** - Embedded in `TypeSerializationEntry` for STRUCTURED format~~ ✅
 
-### 11.2 Error Handling Improvements (Priority 2)
+### 11.2 Custom Value Readers/Writers ✅ Complete
+
+The custom value readers/writers infrastructure is now fully implemented:
+
+**Implementation:**
+- `CodecValueRegistry` - Registry to store named readers/writers
+- `CodecValueWriter<T>` - Functional interface for custom serialization
+- `CodecValueReader<T>` - Functional interface for custom deserialization
+- `EffectiveCodecConfig.getValueRegistry()` - Access to registry from config
+- `EffectiveCodecConfig.getValueWriter(name)` / `getValueReader(name)` - Convenience methods
+- `ConfigurationMerger` - Passes registry through configuration chain
+- `AttributeSerializationEntry` - Uses custom writer when `valueWriterName` is configured
+- `AttributeDeserializationEntry` - Uses custom reader when `valueReaderName` is configured
+- `CodecResource` - Constructor accepts `CodecValueRegistry`
+- `CodecModule.Builder.valueRegistry()` - Builder method to set registry
+
+**Usage:**
+```java
+// Create and populate registry
+CodecValueRegistry registry = new CodecValueRegistry();
+registry.registerWriter("isoDate", (date, gen) ->
+    gen.writeString(date.format(DateTimeFormatter.ISO_DATE)));
+registry.registerReader("isoDate", parser ->
+    LocalDate.parse(parser.getString()));
+
+// Use with CodecResource
+CodecResource resource = new CodecResource(uri, metadataService, config, registry, null);
+```
+
+**Note:** To activate custom readers/writers for specific attributes, the `valueWriterName`/`valueReaderName` must be set in the feature's EAnnotation or configuration. This part requires annotation parsing support in `EffectiveFeatureConfig`.
+
+### 11.3 Error Handling Improvements (Priority 3)
 
 - Better diagnostics and recovery
 - EMF Resource error/warning collection
-
-### 11.3 Custom Value Readers/Writers (Priority 3)
-
-- `CodecValueRegistry` integration
-- Support for `valueWriterName`/`valueReaderName` annotations
 
 ### 11.4 OSGi Integration (Priority 4)
 
