@@ -398,20 +398,21 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
             DeserializationEntry deserEntry = entries.get(propertyName);
             if (deserEntry != null && value != null) {
-                // For special entries (ID, Type), replay the value through a TokenBuffer
-                if (deserEntry instanceof IdDeserializationEntry
-                        || deserEntry instanceof TypeDeserializationEntry) {
-                    replayDeferredValue(state, deserEntry, value, ctxt);
-                } else {
-                    // For regular features, set the value directly
-                    setDeferredValue(state, propertyName, value);
-                }
+                // Replay ALL values through TokenBuffer to ensure proper type conversion
+                // This is necessary because deferred values are stored as raw Java types
+                // (e.g., Long instead of BigInteger) and need proper conversion via entries
+                replayDeferredValue(state, deserEntry, value, ctxt);
             }
         }
     }
 
     /**
-     * Replays a deferred value through a TokenBuffer for special entries.
+     * Replays a deferred value through a TokenBuffer for proper deserialization.
+     * <p>
+     * This is necessary because deferred values are stored as raw Java types
+     * (e.g., Long instead of BigInteger) and need proper type conversion
+     * via the deserialization entries.
+     * </p>
      */
     private void replayDeferredValue(DeserializationState state, DeserializationEntry entry,
             Object value, DeserializationContext ctxt) {
@@ -435,13 +436,20 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             } else if (value instanceof Boolean b) {
                 buffer.writeBoolean(b);
             } else if (value instanceof java.util.Map<?, ?> map) {
-                // For structured ID, write as object
+                // For structured values, write as object
                 buffer.writeStartObject();
                 for (var e : map.entrySet()) {
                     buffer.writeName(String.valueOf(e.getKey()));
                     writeValueToBuffer(buffer, e.getValue());
                 }
                 buffer.writeEndObject();
+            } else if (value instanceof java.util.List<?> list) {
+                // For array values
+                buffer.writeStartArray();
+                for (Object item : list) {
+                    writeValueToBuffer(buffer, item);
+                }
+                buffer.writeEndArray();
             } else if (value == null) {
                 buffer.writeNull();
             } else {
@@ -481,45 +489,6 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         } else {
             buffer.writeString(value.toString());
         }
-    }
-
-    /**
-     * Sets a deferred value on the EObject.
-     */
-    private void setDeferredValue(DeserializationState state, String propertyName, Object value) {
-        EObject eObject = state.getEObject();
-        EClass eClass = state.getResolvedEClass();
-
-        // Find the feature by name or key
-        EStructuralFeature feature = findFeatureByKey(eClass, propertyName);
-        if (feature != null && feature.isChangeable() && !feature.isDerived()) {
-            try {
-                eObject.eSet(feature, value);
-            } catch (Exception e) {
-                LOGGER.fine("Could not set deferred value for " + propertyName + ": " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Finds a feature by its JSON key or name.
-     */
-    private EStructuralFeature findFeatureByKey(EClass eClass, String key) {
-        // First try direct name match
-        EStructuralFeature feature = eClass.getEStructuralFeature(key);
-        if (feature != null) {
-            return feature;
-        }
-
-        // Search through all features checking config keys
-        for (EStructuralFeature f : eClass.getEAllStructuralFeatures()) {
-            EffectiveFeatureConfig featureConfig = config.getFeatureConfig(f);
-            if (featureConfig.getKey().equals(key)) {
-                return f;
-            }
-        }
-
-        return null;
     }
 
     /**
