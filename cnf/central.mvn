@@ -151,6 +151,7 @@ com.google.guava:guava:33.0.0-jre
 
 org.geckoprojects.emf:org.gecko.emf.osgi.example.model.basic:6.2.0
 org.geckoprojects.emf:org.gecko.emf.osgi.example.model.extended:6.2.0
+#org.geckoprojects.emf.model:org.geojson.model:1.0.0-SNAPSHOT
 
 
 org.geckoprojects.emf.utils:org.gecko.emf.collections:2.2.2

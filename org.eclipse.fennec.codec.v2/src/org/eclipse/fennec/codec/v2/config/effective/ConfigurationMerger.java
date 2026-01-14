@@ -329,8 +329,12 @@ public class ConfigurationMerger {
     }
 
     private TypeStrategy resolveTypeStrategy(TypeSerializationConfig aspectConfig) {
+        // Priority: 1. Aspect config (EAnnotation), 2. Module config (CodecConfiguration), 3. Default (URI)
         if (aspectConfig != null && aspectConfig.getStrategy() != null) {
             return aspectConfig.getStrategy();
+        }
+        if (moduleConfig.getTypeStrategy() != null) {
+            return moduleConfig.getTypeStrategy();
         }
         return TypeStrategy.URI;
     }
@@ -514,9 +518,17 @@ public class ConfigurationMerger {
         if (moduleConfig.isGloballyIgnored(feature.getName())) {
             return false;
         }
-        // Check derived/transient
-        if (feature.isDerived() || feature.isTransient()) {
-            return false;
+        // Check derived/transient/volatile - but allow forceSerialize override
+        // In EMF, volatile features don't have storage and are computed on the fly
+        if (feature.isDerived() || feature.isTransient() || feature.isVolatile()) {
+            // Check if force-serialize is enabled for this feature
+            String eClassName = feature.getEContainingClass() != null
+                    ? feature.getEContainingClass().getName()
+                    : null;
+            if (!moduleConfig.isForceSerialize(eClassName, feature.getName())) {
+                return false;
+            }
+            // Force-serialize enabled, continue to check aspect
         }
         // Check aspect
         if (aspect != null) {

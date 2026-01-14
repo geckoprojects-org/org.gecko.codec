@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.v2.ser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -142,9 +143,10 @@ class IdSerializationEntryTest {
     }
 
     @Test
-    @DisplayName("shouldSerialize returns true when using resource URI fragment")
-    void shouldSerializeReturnsTrueWhenUsingResourceFragment() {
-        // EClass without ID attribute
+    @DisplayName("shouldSerialize returns false when EClass has no ID attribute")
+    void shouldSerializeReturnsFalseWhenNoIdAttribute() {
+        // EClass without ID attribute - should not serialize even if there's a resource fragment
+        // This is intentional: there's no attribute to deserialize a fragment back into
         EClass noIdClass = EcoreFactory.eINSTANCE.createEClass();
         noIdClass.setName("NoIdClass");
 
@@ -157,7 +159,8 @@ class IdSerializationEntryTest {
         EffectiveIdConfig config = createDefaultConfig();
         IdSerializationEntry entry = new IdSerializationEntry(config, noIdClass);
 
-        assertTrue(entry.shouldSerialize(createState(eObject)));
+        // No ID attribute means no ID should be serialized
+        assertFalse(entry.shouldSerialize(createState(eObject)));
     }
 
     @Test
@@ -175,22 +178,23 @@ class IdSerializationEntryTest {
     }
 
     @Test
-    @DisplayName("serialize writes ID from resource URI fragment")
-    void serializeWritesIdFromResourceFragment() {
+    @DisplayName("serialize does nothing when EClass has no ID attribute")
+    void serializeDoesNothingWhenNoIdAttribute() {
+        // EClass without ID attribute - serialize should not write anything
         EClass noIdClass = EcoreFactory.eINSTANCE.createEClass();
         noIdClass.setName("NoIdClass");
 
         EObject eObject = mock(EObject.class);
-        Resource resource = mock(Resource.class);
         when(eObject.eClass()).thenReturn(noIdClass);
-        when(eObject.eResource()).thenReturn(resource);
-        when(resource.getURIFragment(eObject)).thenReturn("//@items.0");
 
         EffectiveIdConfig config = createDefaultConfig();
         IdSerializationEntry entry = new IdSerializationEntry(config, noIdClass);
         entry.serialize(createState(eObject), generator, null);
 
-        verify(generator).writeStringProperty("_id", "//@items.0");
+        // Should not write anything since there's no ID attribute
+        // Verify no _id field was written (the only key IdSerializationEntry uses)
+        verify(generator, never()).writeStringProperty("_id", anyString());
+        verify(generator, never()).writeName("_id");
     }
 
     // ========================================================================

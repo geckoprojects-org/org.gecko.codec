@@ -317,6 +317,225 @@ The deserializer tries name lookup first, then falls back to literal lookup, so 
 | Serialize Empty | `true` |
 | Enum Serialization | `LITERAL` |
 | Use Names From ExtendedMetaData | `false` |
+| Force Serialize Features | Empty (none) |
+
+---
+
+## 6. Force Serialize Volatile/Transient Features
+
+By default, EMF features marked as `volatile`, `transient`, or `derived` are **not serialized**. This is because:
+- **Transient** features are meant to be non-persistent
+- **Derived** features are computed from other features
+- **Volatile** features don't have storage and are computed on-the-fly
+
+However, some models (like GeoJSON) use volatile features to provide computed views of data that **must** be serialized. The `forceSerialize` configuration allows overriding this behavior.
+
+### 6.1 Configuration
+
+**Java Builder:**
+```java
+// Force serialize specific features by name (applies to all EClasses)
+CodecConfiguration config = CodecConfiguration.builder()
+    .forceSerialize("data", "bbox")  // Feature names
+    .build();
+
+// Force serialize with EClass qualification (more precise)
+CodecConfiguration config = CodecConfiguration.builder()
+    .forceSerializeQualified("Point.data", "GeoJsonObject.bbox")
+    .build();
+```
+
+### 6.2 Resolution Logic
+
+When determining if a feature should be serialized:
+
+1. Check if globally ignored → skip
+2. Check if volatile/transient/derived:
+   - If `forceSerialize` includes the feature name → continue
+   - If `forceSerializeQualified` includes `EClassName.featureName` → continue
+   - Otherwise → skip
+3. Check EAnnotation `serialize` setting
+4. Return serialization decision
+
+### 6.3 Use Case: GeoJSON
+
+The GeoJSON EMF model stores coordinates in a structured `Coordinates` object but exposes them as a `double[]` array through a volatile `data` attribute. For proper GeoJSON output, this volatile attribute must be serialized:
+
+**Ecore model:**
+```xml
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="data"
+    eType="#//DoubleArray1D" volatile="true">
+  <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
+    <details key="name" value="coordinates"/>
+  </eAnnotations>
+</eStructuralFeatures>
+```
+
+**Configuration:**
+```java
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeKey("type")
+    .typeStrategy(TypeStrategy.NAME)
+    .useNamesFromExtendedMetaData(true)
+    .forceSerialize("data", "bbox")  // Force volatile features
+    .build();
+```
+
+**Output:**
+```json
+{"type": "Point", "coordinates": [8.6821, 50.1109]}
+```
+
+Without `forceSerialize("data")`, the output would only be:
+```json
+{"type": "Point"}
+```
+
+### 6.4 Deserialization
+
+The `forceSerialize` configuration also affects deserialization. Volatile features included in `forceSerialize` will be deserialized from JSON, allowing round-trip support for computed attributes.
+
+> **Note:** For deserialization to work, the volatile feature must still be **changeable** (`isChangeable()=true`). Non-changeable features cannot be set even with `forceSerialize`.
+
+---
+
+## 7. Array Attributes
+
+EAttributes can have array data types (EDataTypes with array instance classes). The codec supports both primitive and object arrays of arbitrary dimensions.
+
+### 7.1 Supported Array Types
+
+| Array Type | Example JSON | Use Case |
+|------------|--------------|----------|
+| `double[]` | `[8.68, 50.11]` | GeoJSON Point coordinates |
+| `double[][]` | `[[0,0], [1,1], [2,2]]` | GeoJSON LineString coordinates |
+| `double[][][]` | `[[[0,0], [1,0], [1,1], [0,0]]]` | GeoJSON Polygon coordinates |
+| `double[][][][]` | Nested arrays | GeoJSON MultiPolygon coordinates |
+| `int[]` | `[1, 2, 3, 4, 5]` | Integer sequences |
+| `long[]` | `[1000000000000, ...]` | Large integer sequences |
+| `float[]` | `[1.5, 2.5, 3.5]` | Float sequences |
+| `boolean[]` | `[true, false, true]` | Boolean flags |
+| `String[]` | `["a", "b", "c"]` | String lists |
+| `Date[]` | `["2025-01-14", "2024-12-25"]` | Date sequences |
+| `BigDecimal[]` | `["123.456", "789.012"]` | Precise decimal sequences |
+
+### 7.2 Defining Array Data Types in Ecore
+
+Array attributes require custom EDataTypes with the appropriate instance class:
+
+```xml
+<!-- 1D double array -->
+<eClassifiers xsi:type="ecore:EDataType" name="DoubleArray1D"
+    instanceClassName="double[]"/>
+
+<!-- 2D double array -->
+<eClassifiers xsi:type="ecore:EDataType" name="DoubleArray2D"
+    instanceClassName="double[][]"/>
+
+<!-- 3D double array -->
+<eClassifiers xsi:type="ecore:EDataType" name="DoubleArray3D"
+    instanceClassName="double[][][]"/>
+
+<!-- Using the array type in an EClass -->
+<eClassifiers xsi:type="ecore:EClass" name="Point">
+  <eStructuralFeatures xsi:type="ecore:EAttribute" name="coordinates"
+      eType="#//DoubleArray1D"/>
+</eClassifiers>
+```
+
+### 7.3 Deserialization Behavior
+
+The deserializer automatically detects array types based on:
+
+1. **EDataType instance class** - Determines the target array type
+2. **JSON token** - `START_ARRAY` triggers array deserialization
+3. **Element type** - Primitive vs object arrays handled differently
+
+**Primitive arrays** (`double[]`, `int[]`, etc.):
+- Elements read directly from JSON numbers
+- Both integer and float JSON numbers accepted for `double[]`
+
+**Object arrays** (`Date[]`, `BigDecimal[]`, etc.):
+- Elements converted from JSON strings via type-specific parsing
+- Common types: `Date` (ISO format), `BigDecimal`, `BigInteger`, `UUID`
+- Fallback: String constructor or `valueOf`/`parse` static methods
+
+**Multi-dimensional arrays**:
+- Recursively processed based on component type
+- `double[][]` contains `double[]` elements
+- `double[][][]` contains `double[][]` elements
+
+### 7.4 Example: GeoJSON Coordinates
+
+The GeoJSON model defines coordinate arrays using EDataTypes:
+
+```xml
+<eClassifiers xsi:type="ecore:EDataType" name="DoubleArray1D"
+    instanceClassName="double[]"/>
+<eClassifiers xsi:type="ecore:EDataType" name="DoubleArray2D"
+    instanceClassName="double[][]"/>
+<eClassifiers xsi:type="ecore:EDataType" name="DoubleArray3D"
+    instanceClassName="double[][][]"/>
+```
+
+**Point** uses `double[]`:
+```json
+{"type": "Point", "coordinates": [8.6821, 50.1109]}
+```
+
+**LineString** uses `double[][]`:
+```json
+{"type": "LineString", "coordinates": [[0, 0], [10, 10], [20, 20]]}
+```
+
+**Polygon** uses `double[][][]`:
+```json
+{
+  "type": "Polygon",
+  "coordinates": [
+    [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]],
+    [[2, 2], [8, 2], [8, 8], [2, 8], [2, 2]]
+  ]
+}
+```
+
+### 7.5 Empty and Jagged Arrays
+
+**Empty arrays** are supported:
+```json
+{"coordinates": []}
+```
+Results in a zero-length array (`new double[0]`).
+
+**Jagged arrays** (varying inner lengths) are supported:
+```json
+{"data": [[1.0], [2.0, 3.0], [4.0, 5.0, 6.0]]}
+```
+Results in `double[3][]` with inner arrays of lengths 1, 2, 3.
+
+### 7.6 Difference: Array Attribute vs Multi-Valued Attribute
+
+| Aspect | Array Attribute | Multi-Valued Attribute |
+|--------|-----------------|------------------------|
+| EMF definition | `EAttribute` with array EDataType | `EAttribute` with `upperBound=-1` |
+| Instance class | `double[]`, `String[]`, etc. | `EList<Double>`, `EList<String>` |
+| JSON format | Same: `[1.0, 2.0, 3.0]` | Same: `[1.0, 2.0, 3.0]` |
+| Multi-dimensional | Supported (`double[][]`) | Not directly supported |
+| Use case | Fixed-structure data (coordinates) | Variable-length collections |
+
+**Example - Array attribute:**
+```xml
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="coordinates"
+    eType="#//DoubleArray1D"/>
+```
+
+**Example - Multi-valued attribute:**
+```xml
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="values"
+    upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+```
+
+Both serialize to JSON arrays, but array attributes support multi-dimensional nesting while multi-valued attributes provide EMF list semantics.
 
 ---
 

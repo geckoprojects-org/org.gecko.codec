@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
+import org.eclipse.fennec.model.metadata.TypeStrategy;
 
 /**
  * Central configuration holder for codec.v2 serialization settings.
@@ -60,6 +61,9 @@ public class CodecConfiguration {
 
     /** Default key for type property */
     private final String typeKey;
+
+    /** Type serialization strategy (URI, NAME, CLASS, etc.) */
+    private final TypeStrategy typeStrategy;
 
     // ========================================================================
     // ID Serialization Settings
@@ -189,6 +193,18 @@ public class CodecConfiguration {
     /** Whether to serialize null values */
     private final boolean serializeNullValue;
 
+    /**
+     * Features to force serialize even if transient/derived/volatile.
+     * Contains feature names that should be serialized regardless of their EMF flags.
+     */
+    private final Set<String> forceSerializeFeatures;
+
+    /**
+     * EClass-qualified feature names to force serialize.
+     * Format: "EClassName.featureName" for fine-grained control.
+     */
+    private final Set<String> forceSerializeFeaturesQualified;
+
     // ========================================================================
     // Smart Compression Settings
     // ========================================================================
@@ -236,6 +252,7 @@ public class CodecConfiguration {
         this.serializeType = builder.serializeType;
         this.deserializeType = builder.deserializeType;
         this.typeKey = builder.typeKey;
+        this.typeStrategy = builder.typeStrategy;
         this.useId = builder.useId;
         this.idOnTop = builder.idOnTop;
         this.serializeIdField = builder.serializeIdField;
@@ -266,6 +283,12 @@ public class CodecConfiguration {
         this.serializeDefaultValue = builder.serializeDefaultValue;
         this.serializeEmptyValue = builder.serializeEmptyValue;
         this.serializeNullValue = builder.serializeNullValue;
+        this.forceSerializeFeatures = builder.forceSerializeFeatures != null
+                ? Set.copyOf(builder.forceSerializeFeatures)
+                : Collections.emptySet();
+        this.forceSerializeFeaturesQualified = builder.forceSerializeFeaturesQualified != null
+                ? Set.copyOf(builder.forceSerializeFeaturesQualified)
+                : Collections.emptySet();
         this.smartCompression = builder.smartCompression;
         this.useNamesFromExtendedMetaData = builder.useNamesFromExtendedMetaData;
         this.writeEnumLiterals = builder.writeEnumLiterals;
@@ -294,6 +317,10 @@ public class CodecConfiguration {
 
     public String getTypeKey() {
         return typeKey;
+    }
+
+    public TypeStrategy getTypeStrategy() {
+        return typeStrategy;
     }
 
     public boolean isUseId() {
@@ -548,6 +575,57 @@ public class CodecConfiguration {
     }
 
     /**
+     * Returns the set of feature names that should be force-serialized.
+     * <p>
+     * Features in this set will be serialized even if they are transient, derived, or volatile.
+     * </p>
+     *
+     * @return unmodifiable set of feature names to force serialize
+     */
+    public Set<String> getForceSerializeFeatures() {
+        return forceSerializeFeatures;
+    }
+
+    /**
+     * Returns the set of qualified feature names that should be force-serialized.
+     * <p>
+     * Format: "EClassName.featureName" for fine-grained control per EClass.
+     * </p>
+     *
+     * @return unmodifiable set of qualified feature names to force serialize
+     */
+    public Set<String> getForceSerializeFeaturesQualified() {
+        return forceSerializeFeaturesQualified;
+    }
+
+    /**
+     * Checks if a feature should be force-serialized.
+     * <p>
+     * A feature is force-serialized if either:
+     * <ul>
+     *   <li>Its name is in {@link #getForceSerializeFeatures()}</li>
+     *   <li>Its qualified name (EClassName.featureName) is in {@link #getForceSerializeFeaturesQualified()}</li>
+     * </ul>
+     * </p>
+     *
+     * @param eClassName the EClass name
+     * @param featureName the feature name
+     * @return true if the feature should be force-serialized
+     */
+    public boolean isForceSerialize(String eClassName, String featureName) {
+        if (featureName == null) {
+            return false;
+        }
+        if (forceSerializeFeatures.contains(featureName)) {
+            return true;
+        }
+        if (eClassName != null && forceSerializeFeaturesQualified.contains(eClassName + "." + featureName)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Returns whether smart compression is enabled.
      * <p>
      * When enabled, type information (_type) is omitted when it can be inferred
@@ -633,6 +711,7 @@ public class CodecConfiguration {
         private boolean serializeType = true;
         private boolean deserializeType = false;
         private String typeKey = "_type";
+        private TypeStrategy typeStrategy = TypeStrategy.URI;
         private boolean useId = true;
         private boolean idOnTop = true;
         private boolean serializeIdField = false;
@@ -660,6 +739,8 @@ public class CodecConfiguration {
         private boolean serializeDefaultValue = false;
         private boolean serializeEmptyValue = false;
         private boolean serializeNullValue = false;
+        private Set<String> forceSerializeFeatures;
+        private Set<String> forceSerializeFeaturesQualified;
         private boolean smartCompression = false;
         private boolean useNamesFromExtendedMetaData = false;  // Changed to false in v2 (was true in v1)
         private boolean writeEnumLiterals = false;
@@ -689,6 +770,11 @@ public class CodecConfiguration {
 
         public Builder typeKey(String typeKey) {
             this.typeKey = typeKey;
+            return this;
+        }
+
+        public Builder typeStrategy(TypeStrategy typeStrategy) {
+            this.typeStrategy = typeStrategy != null ? typeStrategy : TypeStrategy.URI;
             return this;
         }
 
@@ -953,6 +1039,54 @@ public class CodecConfiguration {
 
         public Builder serializeNullValue(boolean serializeNullValue) {
             this.serializeNullValue = serializeNullValue;
+            return this;
+        }
+
+        /**
+         * Adds feature names that should be force-serialized even if transient/derived/volatile.
+         * <p>
+         * This is useful for features that are computed/volatile in EMF but need
+         * to be serialized to JSON (e.g., GeoJSON "data" attribute).
+         * </p>
+         *
+         * @param featureNames the feature names to force serialize
+         * @return this builder
+         */
+        public Builder forceSerialize(String... featureNames) {
+            if (featureNames != null && featureNames.length > 0) {
+                if (this.forceSerializeFeatures == null) {
+                    this.forceSerializeFeatures = new HashSet<>();
+                }
+                for (String name : featureNames) {
+                    if (name != null && !name.isEmpty()) {
+                        this.forceSerializeFeatures.add(name);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Adds qualified feature names (EClassName.featureName) that should be force-serialized.
+         * <p>
+         * This provides more precise control than {@link #forceSerialize(String...)}
+         * by limiting the force-serialize to a specific EClass.
+         * </p>
+         *
+         * @param qualifiedFeatureNames the qualified feature names (format: "EClassName.featureName")
+         * @return this builder
+         */
+        public Builder forceSerializeQualified(String... qualifiedFeatureNames) {
+            if (qualifiedFeatureNames != null && qualifiedFeatureNames.length > 0) {
+                if (this.forceSerializeFeaturesQualified == null) {
+                    this.forceSerializeFeaturesQualified = new HashSet<>();
+                }
+                for (String name : qualifiedFeatureNames) {
+                    if (name != null && !name.isEmpty() && name.contains(".")) {
+                        this.forceSerializeFeaturesQualified.add(name);
+                    }
+                }
+            }
             return this;
         }
 

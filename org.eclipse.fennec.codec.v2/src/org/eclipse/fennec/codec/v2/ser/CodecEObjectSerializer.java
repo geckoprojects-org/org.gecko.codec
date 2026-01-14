@@ -182,6 +182,13 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
             // Get effective feature configuration (cached)
             EffectiveFeatureConfig featureConfig = config.getFeatureConfig(feature);
 
+            // Skip features that should not be serialized
+            // This prevents non-serialized features from overwriting serialized ones
+            // with the same key (e.g., GeoJSON: transient 'coordinates' ref vs volatile 'data' attr)
+            if (!featureConfig.isSerialize()) {
+                continue;
+            }
+
             SerializationEntry featureEntry;
             if (feature instanceof EAttribute attribute) {
                 featureEntry = new AttributeSerializationEntry(featureConfig, attribute,

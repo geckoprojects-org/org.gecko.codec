@@ -191,7 +191,12 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
             // Check if this is the type property - ALWAYS process it when present
             if (isTypeKey(propertyName)) {
-                resolvedEClass = resolveType(parser, state, hintEClass, schemaValue);
+                // Read the raw type value BEFORE consuming it for type resolution
+                // We need this to also set it as an attribute if a matching feature exists
+                String rawTypeValue = readTypeValueAsString(parser);
+
+                // Now resolve the type using the raw value
+                resolvedEClass = resolveTypeFromValue(rawTypeValue, state, hintEClass, schemaValue, ctxt);
                 state.setResolvedEClass(resolvedEClass);
                 typeFieldProcessed = true;
 
@@ -199,6 +204,10 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                 if (resolvedEClass != null) {
                     eObject = state.createEObject();
                     processDeferredProperties(state, deferredProperties, ctxt);
+
+                    // Also set the type value as an attribute if a matching feature exists
+                    // This supports GeoJSON-style where "type": "Point" is both discriminator AND attribute
+                    setTypeAsAttributeIfExists(eObject, propertyName, rawTypeValue);
                 }
                 continue;
             }
@@ -274,35 +283,57 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
     }
 
     /**
-     * Resolves the EClass from the current parser position.
+     * Reads the type value as a string from the current parser position.
      * <p>
-     * Uses the configured type strategy to interpret the type value.
-     * The hint EClass is used as context for MAPPED type resolution -
-     * it provides the mapId for discriminator lookup.
+     * This extracts the raw type value before it's consumed by type resolution,
+     * allowing it to also be set as an attribute value.
      * </p>
      * <p>
-     * For PLAIN SCHEMA_AND_TYPE format, the schemaValue parameter provides
-     * the schema (EPackage nsURI) which is combined with the type name
-     * to resolve the EClass.
+     * For PLAIN format, returns the string value directly.
+     * For STRUCTURED format, returns the "type" field value from the object.
      * </p>
      *
      * @param parser the JSON parser positioned at the type value
+     * @return the raw type value as string, or null if not a simple string
+     */
+    private String readTypeValueAsString(JsonParser parser) {
+        JsonToken token = parser.currentToken();
+        if (token == JsonToken.VALUE_STRING) {
+            return parser.getString();
+        }
+        // For STRUCTURED format, we can't easily extract - return null
+        // The type attribute won't be set in this case
+        return null;
+    }
+
+    /**
+     * Resolves an EClass from a pre-read type value string.
+     * <p>
+     * Delegates to {@link TypeDeserializationEntry#resolveEClass} for consistent
+     * type resolution logic.
+     * </p>
+     *
+     * @param typeValue the raw type value string
      * @param state the deserialization state
-     * @param hintEClass optional hint EClass for MAPPED context (may be null)
-     * @param schemaValue optional schema value for PLAIN SCHEMA_AND_TYPE (may be null)
+     * @param hintEClass optional hint EClass for context
+     * @param schemaValue optional schema value for SCHEMA_AND_TYPE format
+     * @param ctxt the deserialization context
      * @return the resolved EClass, or null if resolution fails
      */
-    private EClass resolveType(JsonParser parser, DeserializationState state, EClass hintEClass, String schemaValue) {
+    private EClass resolveTypeFromValue(String typeValue, DeserializationState state,
+            EClass hintEClass, String schemaValue, DeserializationContext ctxt) {
+        if (typeValue == null) {
+            return hintEClass;
+        }
+
         // Build effective type config from module defaults
-        // We use module config here since we don't know the EClass yet
         EffectiveTypeConfig typeConfig = EffectiveTypeConfig.builder()
                 .enabled(true)
-                .typeKey(DEFAULT_TYPE_KEY)
-                .strategy(config.getGlobalTypeStrategy())  // Use global strategy for deserialization
+                .typeKey(config.getGlobalTypeKey() != null ? config.getGlobalTypeKey() : DEFAULT_TYPE_KEY)
+                .strategy(config.getGlobalTypeStrategy())
                 .build();
 
-        // Build supertype config for STRUCTURED format validation
-        // Use defaults when we don't have a specific EClass config yet
+        // Build supertype config for validation
         EffectiveSuperTypeConfig superTypeConfig = EffectiveSuperTypeConfig.builder()
                 .validateSuperTypeHierarchy(config.isValidateSuperTypeHierarchy())
                 .superTypeKey(config.getGlobalSuperTypeKey())
@@ -311,10 +342,54 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         TypeDeserializationEntry typeEntry = new TypeDeserializationEntry(
                 typeConfig, config.getTypeDiscriminatorService(), superTypeConfig);
 
-        // Pass the hint and schema to the type entry
-        typeEntry.deserializeWithSchemaHint(state, parser, null, hintEClass, schemaValue);
+        // Compose type value with schema if needed (SCHEMA_AND_TYPE format)
+        String effectiveTypeValue = typeValue;
+        if (schemaValue != null && !schemaValue.isEmpty() && !typeValue.contains("#//")) {
+            effectiveTypeValue = schemaValue + "#//" + typeValue;
+        }
 
-        return state.getResolvedEClass();
+        // Delegate to TypeDeserializationEntry for consistent resolution logic
+        EClass resolved = typeEntry.resolveEClass(effectiveTypeValue, hintEClass, ctxt);
+        if (resolved != null) {
+            state.setResolvedEClass(resolved);
+            return resolved;
+        }
+
+        // Fall back to hint if resolution fails
+        return hintEClass;
+    }
+
+    /**
+     * Sets the type value as an attribute if a matching feature exists.
+     * <p>
+     * This supports GeoJSON-style JSON where "type": "Point" is both
+     * a type discriminator AND an attribute value.
+     * </p>
+     *
+     * @param eObject the created EObject
+     * @param propertyName the property name (e.g., "type")
+     * @param typeValue the type value (e.g., "Point")
+     */
+    private void setTypeAsAttributeIfExists(EObject eObject, String propertyName, String typeValue) {
+        if (eObject == null || propertyName == null || typeValue == null) {
+            return;
+        }
+
+        EClass eClass = eObject.eClass();
+        EStructuralFeature feature = eClass.getEStructuralFeature(propertyName);
+
+        // Only set if it's an EAttribute (not EReference) and is a String type
+        if (feature instanceof EAttribute attr) {
+            if (attr.getEType().getInstanceClass() == String.class ||
+                "EString".equals(attr.getEType().getName())) {
+                try {
+                    eObject.eSet(feature, typeValue);
+                    LOGGER.fine(() -> "Set type key '" + propertyName + "' as attribute with value: " + typeValue);
+                } catch (Exception e) {
+                    LOGGER.warning("Failed to set type as attribute: " + e.getMessage());
+                }
+            }
+        }
     }
 
     /**
@@ -563,15 +638,17 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
         // Add feature entries
         for (EStructuralFeature feature : eClass.getEAllStructuralFeatures()) {
-            // Skip derived, transient, and non-changeable features
-            if (feature.isDerived() || feature.isTransient() || !feature.isChangeable()) {
-                continue;
-            }
-
+            // Get effective feature configuration first - it handles forceSerialize logic
             EffectiveFeatureConfig featureConfig = config.getFeatureConfig(feature);
 
             // Skip features marked as not serializable
+            // Note: isSerialize() already considers derived/transient/volatile with forceSerialize override
             if (!featureConfig.isSerialize()) {
+                continue;
+            }
+
+            // Skip non-changeable features (can't set values on them)
+            if (!feature.isChangeable()) {
                 continue;
             }
 

@@ -42,6 +42,7 @@ public class EMFContextHolder {
     private Resource resource;
     private EffectiveCodecConfig effectiveConfig;
     private EClass currentTypeHint;
+    private String contextSchemaUri;
 
     /**
      * Creates a new context holder.
@@ -169,5 +170,35 @@ public class EMFContextHolder {
      */
     public void setCurrentTypeHint(EClass typeHint) {
         this.currentTypeHint = typeHint;
+    }
+
+    /**
+     * Returns the context schema URI for NAME strategy type resolution.
+     * <p>
+     * The context schema is used to resolve simple type names (e.g., "Person")
+     * to full EClass URIs (e.g., "http://example.org/1.0#//Person").
+     * </p>
+     * <p>
+     * Sources (priority order):
+     * <ol>
+     *   <li>CODEC_ROOT_SCHEMA option (explicit)</li>
+     *   <li>CODEC_ROOT_OBJECT option (implicit from EClass package)</li>
+     *   <li>First full URI in content (smart compression)</li>
+     * </ol>
+     * </p>
+     *
+     * @return the context schema URI, or null if not set
+     */
+    public String getContextSchemaUri() {
+        return contextSchemaUri;
+    }
+
+    /**
+     * Sets the context schema URI for NAME strategy type resolution.
+     *
+     * @param contextSchemaUri the context schema URI (e.g., "http://example.org/1.0")
+     */
+    public void setContextSchemaUri(String contextSchemaUri) {
+        this.contextSchemaUri = contextSchemaUri;
     }
 }

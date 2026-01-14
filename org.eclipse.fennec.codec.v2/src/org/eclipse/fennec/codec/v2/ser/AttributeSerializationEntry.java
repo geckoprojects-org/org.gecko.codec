@@ -179,9 +179,79 @@ public class AttributeSerializationEntry implements SerializationEntry {
         } else if (value instanceof Enum<?> e) {
             // Java enums (non-EMF)
             writeJavaEnumValue(gen, e);
+        } else if (value.getClass().isArray()) {
+            // Array data types (e.g., double[], double[][], double[][][])
+            writeArrayValue(gen, value, ctxt);
         } else {
             gen.writeString(value.toString());
         }
+    }
+
+    /**
+     * Writes an array value to the generator.
+     * Supports primitive arrays (double[], int[], etc.) and object arrays,
+     * including multi-dimensional arrays (double[][], double[][][], etc.).
+     *
+     * @param gen the JSON generator
+     * @param array the array value to write
+     * @param ctxt the serialization context (may be null)
+     */
+    private void writeArrayValue(JsonGenerator gen, Object array, SerializationContext ctxt) {
+        Class<?> componentType = array.getClass().getComponentType();
+
+        gen.writeStartArray();
+
+        if (componentType == double.class) {
+            double[] arr = (double[]) array;
+            for (double v : arr) {
+                gen.writeNumber(v);
+            }
+        } else if (componentType == int.class) {
+            int[] arr = (int[]) array;
+            for (int v : arr) {
+                gen.writeNumber(v);
+            }
+        } else if (componentType == long.class) {
+            long[] arr = (long[]) array;
+            for (long v : arr) {
+                gen.writeNumber(v);
+            }
+        } else if (componentType == float.class) {
+            float[] arr = (float[]) array;
+            for (float v : arr) {
+                gen.writeNumber(v);
+            }
+        } else if (componentType == boolean.class) {
+            boolean[] arr = (boolean[]) array;
+            for (boolean v : arr) {
+                gen.writeBoolean(v);
+            }
+        } else if (componentType == short.class) {
+            short[] arr = (short[]) array;
+            for (short v : arr) {
+                gen.writeNumber(v);
+            }
+        } else if (componentType == byte.class) {
+            byte[] arr = (byte[]) array;
+            for (byte v : arr) {
+                gen.writeNumber(v);
+            }
+        } else {
+            // Object array (including nested arrays for multi-dimensional)
+            Object[] arr = (Object[]) array;
+            for (Object element : arr) {
+                if (element == null) {
+                    gen.writeNull();
+                } else if (element.getClass().isArray()) {
+                    // Recursive call for multi-dimensional arrays
+                    writeArrayValue(gen, element, ctxt);
+                } else {
+                    writeValue(gen, element, ctxt);
+                }
+            }
+        }
+
+        gen.writeEndArray();
     }
 
     /**

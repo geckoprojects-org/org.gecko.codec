@@ -140,3 +140,4 @@ Building annotation parsing in `org.eclipse.fennec.codec.metadata` that:
 3. Creates ClassCodecAspect, FeatureCodecAspect, ReferenceCodecAspect objects
 - java comments annotation with @claude or @CLAUDE are instructions for you, similar like a code review comment. please look at them
 - dont use full qualified class names in code. we use import instead
+- always look in the spec first, if you dont know how to use the codec. the spec should be our source of truth / user manual. if it isnt, we have to make it more clearer

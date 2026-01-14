@@ -208,12 +208,14 @@ public class IdSerializationEntry implements SerializationEntry {
      * <ol>
      *   <li>If idFeatures is configured → use those features in order</li>
      *   <li>Otherwise → use all features marked with eID="true"</li>
-     *   <li>Fallback → use resource URI fragment if nothing else available</li>
      * </ol>
+     * If no ID features are found, an empty map is returned and no _id field
+     * will be serialized. This matches the old codec behavior and makes sense
+     * because there would be nothing meaningful to deserialize back.
      * </p>
      *
      * @param eObject the EObject to get the ID from
-     * @return map of feature name to value (preserves order)
+     * @return map of feature name to value (preserves order), empty if no ID features
      */
     private Map<String, Object> resolveIdValues(EObject eObject) {
         Map<String, Object> result = new LinkedHashMap<>();
@@ -243,18 +245,10 @@ public class IdSerializationEntry implements SerializationEntry {
                 result.put(feature.getName(), value);
             }
         }
-        if (!result.isEmpty()) {
-            return result;
-        }
 
-        // 3. Fallback: use resource URI fragment
-        if (eObject.eResource() != null) {
-            String fragment = eObject.eResource().getURIFragment(eObject);
-            if (fragment != null) {
-                result.put("_fragment", fragment);
-            }
-        }
-
+        // No fallback - if no ID features exist, return empty map
+        // This is intentional: there's no meaningful way to deserialize
+        // a fragment back when there's no ID attribute to set it to
         return result;
     }
 

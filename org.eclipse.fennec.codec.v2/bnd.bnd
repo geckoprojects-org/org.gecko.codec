@@ -11,6 +11,9 @@ Bundle-Description: Next generation EMF codec framework using MetadataService
 	tools.jackson.core.jackson-databind;version=latest,\
 	com.fasterxml.jackson.core.jackson-annotations;version=latest
 	
+-testpath.codec: \
+	org.geojson.model;version=latest
+	
 -fixupmessages: \
 	jpms.jarname;is:=ignore,\
 	The .classpath;is:=ignore

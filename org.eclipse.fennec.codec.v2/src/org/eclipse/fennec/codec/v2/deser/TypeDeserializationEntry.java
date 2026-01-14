@@ -398,7 +398,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      * @param ctxt the deserialization context (for smart compression context schema)
      * @return the resolved EClass, or null if not found
      */
-    private EClass resolveEClass(String typeValue, EClass hintEClass, DeserializationContext ctxt) {
+    public EClass resolveEClass(String typeValue, EClass hintEClass, DeserializationContext ctxt) {
         if (typeValue == null || typeValue.isEmpty()) {
             return null;
         }

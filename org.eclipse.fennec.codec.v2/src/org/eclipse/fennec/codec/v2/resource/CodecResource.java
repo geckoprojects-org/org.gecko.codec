@@ -82,6 +82,20 @@ public class CodecResource extends ResourceImpl {
     /** Option key for specifying the root EClass during deserialization */
     public static final String CODEC_ROOT_OBJECT = "CODEC_ROOT_OBJECT";
 
+    /**
+     * Option key for specifying the context schema URI during deserialization.
+     * <p>
+     * When set, simple type names (NAME strategy) are resolved against this schema.
+     * Example: With schema "http://geojson.org/1.0", type "Point" resolves to
+     * "http://geojson.org/1.0#//Point".
+     * </p>
+     * <p>
+     * If {@link #CODEC_ROOT_OBJECT} is set, the context schema is automatically
+     * extracted from the hint EClass's package URI. This option can override that.
+     * </p>
+     */
+    public static final String CODEC_ROOT_SCHEMA = "CODEC_ROOT_SCHEMA";
+
     private final MetadataService metadataService;
     private final CodecConfiguration configuration;
     private final CodecValueRegistry valueRegistry;
@@ -243,6 +257,13 @@ public class CodecResource extends ResourceImpl {
             reader = reader.withAttribute(ContextHelper.EXPECTED_TYPE, rootEClassHint);
         }
 
+        // Resolve context schema from options
+        // Priority: 1) CODEC_ROOT_SCHEMA (explicit), 2) CODEC_ROOT_OBJECT (implicit from EClass package)
+        String contextSchemaUri = resolveContextSchema(effectiveOptions, rootEClassHint);
+        if (nonNull(contextSchemaUri)) {
+            reader = reader.withAttribute(ContextHelper.CONTEXT_SCHEMA_URI, contextSchemaUri);
+        }
+
         // Create parser using CodecJsonFactory - this produces a CodecJsonParser
         // with CodecJsonReadContext that carries EMF state
         try (JsonParser parser = codecFactory.createParser(ObjectReadContext.empty(), inputStream)) {
@@ -251,6 +272,9 @@ public class CodecResource extends ResourceImpl {
                 ctx.setResource(this);
                 if (nonNull(rootEClassHint)) {
                     ctx.setCurrentTypeHint(rootEClassHint);
+                }
+                if (nonNull(contextSchemaUri)) {
+                    ctx.setContextSchemaUri(contextSchemaUri);
                 }
             }
 
@@ -304,6 +328,41 @@ public class CodecResource extends ResourceImpl {
             metadata = metadataService.registerPackage(ePackage);
         }
         return metadata;
+    }
+
+    /**
+     * Resolves the context schema URI from options.
+     * <p>
+     * Priority:
+     * <ol>
+     *   <li>CODEC_ROOT_SCHEMA option (explicit)</li>
+     *   <li>CODEC_ROOT_OBJECT option (implicit from EClass package)</li>
+     * </ol>
+     * </p>
+     *
+     * @param options the effective options
+     * @param rootEClassHint the resolved root EClass hint (may be null)
+     * @return the context schema URI, or null if not determinable
+     */
+    private String resolveContextSchema(Map<?, ?> options, EClass rootEClassHint) {
+        // Priority 1: Explicit CODEC_ROOT_SCHEMA
+        Object schemaOption = options.get(CODEC_ROOT_SCHEMA);
+        if (schemaOption instanceof String schemaUri && !schemaUri.isEmpty()) {
+            LOGGER.fine(() -> "Using explicit CODEC_ROOT_SCHEMA: " + schemaUri);
+            return schemaUri;
+        }
+
+        // Priority 2: Implicit from CODEC_ROOT_OBJECT's package
+        if (nonNull(rootEClassHint)) {
+            EPackage ePackage = rootEClassHint.getEPackage();
+            if (nonNull(ePackage)) {
+                String schemaUri = ePackage.getNsURI();
+                LOGGER.fine(() -> "Using context schema from CODEC_ROOT_OBJECT: " + schemaUri);
+                return schemaUri;
+            }
+        }
+
+        return null;
     }
 
     /**

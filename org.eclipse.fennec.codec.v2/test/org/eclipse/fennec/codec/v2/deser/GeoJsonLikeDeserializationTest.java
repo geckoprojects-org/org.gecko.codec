@@ -1244,4 +1244,221 @@ class GeoJsonLikeDeserializationTest {
             assertEquals("No Geometry", props.eGet(propNameAttr));
         }
     }
+
+    // ========================================================================
+    // NAME Strategy with Context Schema Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("NAME Strategy with Context Schema")
+    class NameStrategyTests {
+
+        /**
+         * Helper that uses CODEC_ROOT_SCHEMA option.
+         */
+        private EObject loadJsonWithSchema(String json, EClass rootClass, String schemaUri) throws IOException {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .typeKey("type")  // Use "type" as type key (like GeoJSON)
+                    .build();
+            CodecResource resource = new CodecResource(
+                    URI.createURI("test://geo.json"),
+                    metadataService,
+                    config,
+                    null);
+
+            Map<String, Object> options = new HashMap<>();
+            options.put(CodecResource.CODEC_ROOT_OBJECT, rootClass);
+            options.put(CodecResource.CODEC_ROOT_SCHEMA, schemaUri);
+
+            try (var is = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
+                resource.load(is, options);
+            }
+
+            if (!resource.getErrors().isEmpty()) {
+                fail("Deserialization errors: " + resource.getErrors());
+            }
+
+            assertEquals(1, resource.getContents().size(), "Should have exactly one root object");
+            return resource.getContents().get(0);
+        }
+
+        /**
+         * Helper that uses only CODEC_ROOT_OBJECT (implicit schema).
+         */
+        private EObject loadJsonWithRootHint(String json, EClass rootClass) throws IOException {
+            CodecConfiguration config = CodecConfiguration.builder()
+                    .typeKey("type")  // Use "type" as type key (like GeoJSON)
+                    .build();
+            CodecResource resource = new CodecResource(
+                    URI.createURI("test://geo.json"),
+                    metadataService,
+                    config,
+                    null);
+
+            Map<String, Object> options = new HashMap<>();
+            options.put(CodecResource.CODEC_ROOT_OBJECT, rootClass);
+
+            try (var is = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
+                resource.load(is, options);
+            }
+
+            if (!resource.getErrors().isEmpty()) {
+                fail("Deserialization errors: " + resource.getErrors());
+            }
+
+            assertEquals(1, resource.getContents().size(), "Should have exactly one root object");
+            return resource.getContents().get(0);
+        }
+
+        @Test
+        @DisplayName("simple name with explicit CODEC_ROOT_SCHEMA")
+        void simpleNameWithExplicitSchema() throws IOException {
+            // GeoJSON-like: uses "type" instead of "_type"
+            String json = """
+                {
+                    "type": "Point",
+                    "coordinates": {
+                        "longitude": 8.6821,
+                        "latitude": 50.1109
+                    }
+                }
+                """;
+
+            EObject point = loadJsonWithSchema(json, pointClass, "http://test.fennec/geojsonlike");
+            assertEquals("Point", point.eGet(geomTypeAttr));
+            assertEquals(pointClass, point.eClass());
+
+            EObject coord = (EObject) point.eGet(pointCoordinatesRef);
+            assertCoordinate(coord, 8.6821, 50.1109);
+        }
+
+        @Test
+        @DisplayName("simple name with implicit schema from CODEC_ROOT_OBJECT")
+        void simpleNameWithImplicitSchema() throws IOException {
+            // No explicit schema - should be derived from pointClass.getEPackage().getNsURI()
+            String json = """
+                {
+                    "type": "Point",
+                    "coordinates": {
+                        "longitude": -122.4194,
+                        "latitude": 37.7749
+                    }
+                }
+                """;
+
+            EObject point = loadJsonWithRootHint(json, pointClass);
+            assertEquals("Point", point.eGet(geomTypeAttr));
+            assertEquals(pointClass, point.eClass());
+
+            EObject coord = (EObject) point.eGet(pointCoordinatesRef);
+            assertCoordinate(coord, -122.4194, 37.7749);
+        }
+
+        @Test
+        @DisplayName("nested polymorphic types with simple names")
+        @SuppressWarnings("unchecked")
+        void nestedPolymorphicWithSimpleNames() throws IOException {
+            // FeatureCollection with Features containing different geometry types
+            String json = """
+                {
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "id": "point-feature",
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": {"longitude": 0.0, "latitude": 0.0}
+                            }
+                        },
+                        {
+                            "id": "line-feature",
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "LineString",
+                                "coordinates": [
+                                    {"longitude": 0.0, "latitude": 0.0},
+                                    {"longitude": 10.0, "latitude": 10.0}
+                                ]
+                            }
+                        }
+                    ]
+                }
+                """;
+
+            EObject collection = loadJsonWithRootHint(json, featureCollectionClass);
+            assertEquals("FeatureCollection", collection.eGet(featureCollectionTypeAttr));
+
+            EList<EObject> features = (EList<EObject>) collection.eGet(featureCollectionFeaturesRef);
+            assertEquals(2, features.size());
+
+            // First feature has Point geometry
+            EObject feat1 = features.get(0);
+            assertEquals("point-feature", feat1.eGet(featureIdAttr));
+            EObject geom1 = (EObject) feat1.eGet(featureGeometryRef);
+            assertEquals(pointClass, geom1.eClass());
+
+            // Second feature has LineString geometry
+            EObject feat2 = features.get(1);
+            assertEquals("line-feature", feat2.eGet(featureIdAttr));
+            EObject geom2 = (EObject) feat2.eGet(featureGeometryRef);
+            assertEquals(lineStringClass, geom2.eClass());
+        }
+
+        @Test
+        @DisplayName("geometry collection with simple names")
+        @SuppressWarnings("unchecked")
+        void geometryCollectionWithSimpleNames() throws IOException {
+            String json = """
+                {
+                    "type": "GeometryCollection",
+                    "geometries": [
+                        {
+                            "type": "Point",
+                            "coordinates": {"longitude": 1.0, "latitude": 2.0}
+                        },
+                        {
+                            "type": "Polygon",
+                            "exterior": {
+                                "coordinates": [
+                                    {"longitude": 0.0, "latitude": 0.0},
+                                    {"longitude": 10.0, "latitude": 0.0},
+                                    {"longitude": 10.0, "latitude": 10.0},
+                                    {"longitude": 0.0, "latitude": 0.0}
+                                ]
+                            }
+                        }
+                    ]
+                }
+                """;
+
+            EObject collection = loadJsonWithRootHint(json, geometryCollectionClass);
+            assertEquals("GeometryCollection", collection.eGet(geomTypeAttr));
+
+            EList<EObject> geometries = (EList<EObject>) collection.eGet(geometryCollectionGeometriesRef);
+            assertEquals(2, geometries.size());
+            assertEquals(pointClass, geometries.get(0).eClass());
+            assertEquals(polygonClass, geometries.get(1).eClass());
+        }
+
+        @Test
+        @DisplayName("no type in root when CODEC_ROOT_OBJECT is set")
+        void noTypeInRootWithHint() throws IOException {
+            // When root type is known from hint, no "type" field is needed
+            String json = """
+                {
+                    "coordinates": {
+                        "longitude": 13.405,
+                        "latitude": 52.52
+                    }
+                }
+                """;
+
+            EObject point = loadJsonWithRootHint(json, pointClass);
+            assertEquals(pointClass, point.eClass());
+
+            EObject coord = (EObject) point.eGet(pointCoordinatesRef);
+            assertCoordinate(coord, 13.405, 52.52);
+        }
+    }
 }

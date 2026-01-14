@@ -491,37 +491,317 @@ The deserializer extracts `http://example.org/person/1.0` as namespace URI and `
 }
 ```
 
-### 5.3 CODEC_ROOT_OBJECT Option
+### 5.4 Context Schema and NAME Strategy
 
-The `CODEC_ROOT_OBJECT` option specifies the expected root EClass for deserialization.
+The **NAME strategy** writes only the simple EClass name (e.g., `"Person"` instead of `"http://example.org/1.0#//Person"`). For deserialization, this requires a **Context Schema** to resolve the simple name back to a full EClass URI.
 
-**Required when:**
-- Type information is NOT present in the content (`include=false` was used during serialization)
+#### 5.4.1 CODEC_ROOT_SCHEMA Option
 
-**Optional when:**
-- Type information IS present in the content (default behavior)
-- Can be used as a hint or validation even when type info exists
+Explicitly sets the context schema for deserialization:
 
-**Usage:**
 ```java
 Map<String, Object> options = new HashMap<>();
-options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.eINSTANCE.getPerson());
+options.put(CodecResourceOptions.CODEC_ROOT_SCHEMA, "http://geojson.org/1.0");
 resource.load(inputStream, options);
 ```
 
-### 5.4 Type Resolution Rules
+With this option, all simple type names are resolved against the specified schema:
+- `"type": "Point"` → `http://geojson.org/1.0#//Point`
+- `"type": "Feature"` → `http://geojson.org/1.0#//Feature`
+
+**Example (GeoJSON-like):**
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": {"longitude": 8.68, "latitude": 50.11}
+      }
+    }
+  ]
+}
+```
+
+#### 5.4.2 CODEC_ROOT_OBJECT Option
+
+Specifies the expected root EClass for deserialization. **Additionally**, it implicitly sets the context schema from the EClass's package URI.
+
+```java
+Map<String, Object> options = new HashMap<>();
+options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, GeoJsonPackage.eINSTANCE.getFeatureCollection());
+resource.load(inputStream, options);
+```
+
+This provides **two benefits**:
+1. Root object type is known → no `_type` needed at root level
+2. Context schema is established → nested objects can use simple names
+
+**Example (no _type at root needed):**
+```json
+{
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": {"longitude": 8.68, "latitude": 50.11}
+      }
+    }
+  ]
+}
+```
+
+#### 5.4.3 Context Schema Resolution Order
+
+| Source | Priority | Description |
+|--------|----------|-------------|
+| `CODEC_ROOT_SCHEMA` | 1 (highest) | Explicitly provided schema URI |
+| `CODEC_ROOT_OBJECT` | 2 | Extracted from hint EClass's package |
+| First full URI in content | 3 | Smart compression: schema from root's `_type` |
+| Search all packages | 4 (lowest) | Fallback, non-deterministic! |
+
+> **Warning:** Without a context schema, NAME strategy searches all registered packages for a matching class name. This is **non-deterministic** if multiple packages contain classes with the same name.
+
+#### 5.4.4 Smart Compression
+
+When the root object uses a full URI, the schema is automatically extracted and used for nested objects:
+
+```json
+{
+  "_type": "http://example.org/company/1.0#//Company",
+  "name": "Acme Inc",
+  "employees": [
+    {"_type": "Person", "name": "Alice"},
+    {"_type": "Person", "name": "Bob"}
+  ]
+}
+```
+
+The deserializer:
+1. Parses root `_type`: `http://example.org/company/1.0#//Company`
+2. Extracts context schema: `http://example.org/company/1.0`
+3. Resolves `"Person"` → `http://example.org/company/1.0#//Person`
+
+### 5.5 Type Resolution Rules
 
 | Content has `_type` | `CODEC_ROOT_OBJECT` set | Behavior |
 |---------------------|-------------------------|----------|
-| Yes | No | Use content type (default case) |
-| Yes | Yes | Use content type, warn if differs from hint |
-| No | Yes | Use hint type |
+| Yes (full URI) | No | Use content type, establish context schema |
+| Yes (simple name) | No | Resolve via context schema or search all packages |
+| Yes | Yes | Use content type, context schema from hint |
+| No | Yes | Use hint type, context schema from hint |
 | No | No | **ERROR**: Cannot determine type |
 
 When both content type and hint are present but differ:
 - Log a WARNING
 - Continue with content type (content wins)
 - Example: Hint says `Person`, content says `Employee` → use `Employee`, log warning
+
+### 5.6 Deferred Properties
+
+When properties appear **before** the `_type` field in the JSON, they are deferred and processed after type resolution:
+
+```json
+{
+  "name": "John",
+  "age": 30,
+  "_type": "http://example.org/1.0#//Person"
+}
+```
+
+**Processing order:**
+1. `name` and `age` are stored as raw Java objects (Map, List, primitives)
+2. `_type` is encountered → EClass is resolved
+3. EObject is created
+4. Deferred properties are replayed via TokenBuffer and deserialized
+
+**Supported deferred value types:**
+- Primitives: String, Number, Boolean, null
+- Nested objects: Stored as `Map<String, Object>`, replayed as JSON objects
+- Arrays: Stored as `List<Object>`, replayed as JSON arrays
+- Deep nesting: Fully supported (Maps containing Maps, Lists containing Lists, etc.)
+
+### 5.7 Polymorphic Containment References
+
+When an EReference points to an abstract EClass, the concrete type must be specified in the JSON:
+
+**Model:**
+```
+Geometry (abstract)
+  ├── Point
+  ├── LineString
+  └── Polygon
+
+Feature
+  └── geometry: Geometry (containment)
+```
+
+**JSON:**
+```json
+{
+  "_type": "http://geojson.org/1.0#//Feature",
+  "geometry": {
+    "_type": "http://geojson.org/1.0#//Point",
+    "coordinates": {"longitude": 8.68, "latitude": 50.11}
+  }
+}
+```
+
+**With context schema (NAME strategy):**
+```json
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": {"longitude": 8.68, "latitude": 50.11}
+  }
+}
+```
+
+The deserializer:
+1. Gets the reference type (`Geometry`) as a hint
+2. Reads `_type`/`type` from the nested object
+3. Resolves concrete class (`Point`) which must be a subtype of the hint
+4. If no `_type` and reference type is **concrete**: uses reference type
+5. If no `_type` and reference type is **abstract**: **ERROR**
+
+---
+
+## 6. Real-World Example: GeoJSON
+
+This section demonstrates deserialization of real [GeoJSON](https://geojson.org/) data using the [org.geojson.model](https://github.com/geckoprojects-org/org.gecko.emf.models/tree/main/org.geojson.model) EMF model.
+
+### 6.1 The GeoJSON Model
+
+The GeoJSON model uses several codec-relevant features:
+
+1. **`type` as discriminator** - GeoJSON uses `"type": "Point"` instead of `"_type"`
+2. **ExtendedMetaData for feature names** - The `data` attribute maps to JSON key `coordinates`
+3. **Array data types** - Coordinates are `double[]`, `double[][]`, `double[][][]` arrays
+4. **Polymorphic containment** - `Feature.geometry` can be Point, LineString, Polygon, etc.
+
+**Model structure:**
+```
+GeoJsonObject (abstract)
+  └── bbox: double[] (via ExtendedMetaData: "bbox")
+
+Geometry (interface, extends GeoJsonObject)
+  ├── Point
+  │     └── data: double[] (via ExtendedMetaData: "coordinates")
+  ├── LineString
+  │     └── data: double[][] (via ExtendedMetaData: "coordinates")
+  ├── Polygon
+  │     └── data: double[][][] (via ExtendedMetaData: "coordinates")
+  └── ...
+
+Feature (extends GeoJsonObject)
+  ├── id: String
+  ├── geometry: Geometry (containment)
+  └── properties: EObject (containment)
+
+FeatureCollection (extends GeoJsonObject)
+  └── features: Feature[*] (containment)
+```
+
+### 6.2 Configuration
+
+To deserialize real GeoJSON, configure:
+
+```java
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeKey("type")                        // GeoJSON uses "type" not "_type"
+    .useNamesFromExtendedMetaData(true)     // Map "coordinates" → data attribute
+    .build();
+
+Map<String, Object> options = new HashMap<>();
+options.put(CodecResource.CODEC_ROOT_SCHEMA, "https://geojson.org/model/2016");
+
+resource.load(inputStream, options);
+```
+
+### 6.3 Example: Point
+
+**GeoJSON Input:**
+```json
+{
+  "type": "Point",
+  "coordinates": [8.6821, 50.1109]
+}
+```
+
+**Deserialization:**
+1. `"type": "Point"` → resolves to `GeoJsonPackage.eINSTANCE.getPoint()`
+2. `"coordinates"` → maps to `data` attribute (via ExtendedMetaData)
+3. `[8.6821, 50.1109]` → deserialized as `double[]`
+
+### 6.4 Example: Polygon with BBox
+
+**GeoJSON Input:**
+```json
+{
+  "type": "Polygon",
+  "bbox": [11.504, 50.895, 11.567, 50.913],
+  "coordinates": [
+    [
+      [11.554, 50.901],
+      [11.554, 50.901],
+      [11.554, 50.900],
+      [11.554, 50.901]
+    ]
+  ]
+}
+```
+
+**Deserialization:**
+1. `"type": "Polygon"` → `Polygon` EClass
+2. `"bbox"` → `double[4]` bounding box array
+3. `"coordinates"` → `double[][][]` (rings containing coordinate arrays)
+
+### 6.5 Example: FeatureCollection
+
+**GeoJSON Input:**
+```json
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "berlin",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [13.405, 52.52]
+      },
+      "properties": null
+    },
+    {
+      "type": "Feature",
+      "id": "frankfurt",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [8.682, 50.110]
+      },
+      "properties": null
+    }
+  ]
+}
+```
+
+**Deserialization:**
+1. Root: `FeatureCollection` with 2 features
+2. Each feature: polymorphic `geometry` resolved by nested `"type"` field
+3. Coordinates deserialized as `double[]` arrays
+
+### 6.6 Key Takeaways
+
+| GeoJSON Requirement | Codec Configuration |
+|---------------------|---------------------|
+| `type` as discriminator | `.typeKey("type")` |
+| `coordinates` → `data` | `.useNamesFromExtendedMetaData(true)` |
+| Context schema for NAME | `CODEC_ROOT_SCHEMA` option |
+| Array coordinates | Automatic (see [Feature Serialization - Array Attributes](09-feature.md#6-array-attributes)) |
 
 ---
 

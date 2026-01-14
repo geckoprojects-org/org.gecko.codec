@@ -15,8 +15,10 @@ package org.eclipse.fennec.codec.v2.deser;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -220,6 +222,11 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
                 return EcoreUtil.createFromString(dataType, String.valueOf(boolValue));
             }
 
+            // Handle array data types (e.g., double[], double[][], double[][][])
+            if (token == JsonToken.START_ARRAY) {
+                return readArrayValue(parser, ctxt, instanceClass);
+            }
+
             String msg = "Unexpected token type for attribute '" + attribute.getName() + "': " + token;
             LOGGER.warning(msg);
             ContextHelper.addWarning(ctxt, msg, parser, "AttributeDeserializationEntry");
@@ -230,6 +237,295 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
             LOGGER.warning(msg);
             ContextHelper.addWarning(ctxt, msg, parser, "AttributeDeserializationEntry");
             return null;
+        }
+    }
+
+    /**
+     * Reads an array value from the parser.
+     * <p>
+     * Supports:
+     * <ul>
+     *   <li>{@code double[]} - 1D array of doubles (e.g., GeoJSON Point coordinates)</li>
+     *   <li>{@code double[][]} - 2D array (e.g., GeoJSON LineString coordinates)</li>
+     *   <li>{@code double[][][]} - 3D array (e.g., GeoJSON Polygon coordinates)</li>
+     *   <li>{@code double[][][][]} - 4D array (e.g., GeoJSON MultiPolygon coordinates)</li>
+     *   <li>{@code int[]}, {@code long[]}, {@code float[]} - other primitive arrays</li>
+     *   <li>{@code String[]} - string arrays</li>
+     * </ul>
+     * </p>
+     *
+     * @param parser the JSON parser positioned at START_ARRAY
+     * @param ctxt the deserialization context
+     * @param instanceClass the target array class
+     * @return the array value, or null if not supported
+     */
+    private Object readArrayValue(JsonParser parser, DeserializationContext ctxt, Class<?> instanceClass) {
+        if (!instanceClass.isArray()) {
+            String msg = "Expected array type but got: " + instanceClass.getName();
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "AttributeDeserializationEntry");
+            return null;
+        }
+
+        Class<?> componentType = instanceClass.getComponentType();
+
+        // Handle multi-dimensional arrays recursively
+        if (componentType.isArray()) {
+            return readNestedArray(parser, ctxt, componentType);
+        }
+
+        // Handle 1D primitive arrays
+        if (componentType == double.class) {
+            return readDoubleArray(parser);
+        }
+        if (componentType == int.class) {
+            return readIntArray(parser);
+        }
+        if (componentType == long.class) {
+            return readLongArray(parser);
+        }
+        if (componentType == float.class) {
+            return readFloatArray(parser);
+        }
+        if (componentType == boolean.class) {
+            return readBooleanArray(parser);
+        }
+        if (componentType == String.class) {
+            return readStringArray(parser);
+        }
+
+        // Handle object arrays (Date[], BigDecimal[], UUID[], etc.) via EMF string conversion
+        return readObjectArray(parser, ctxt, componentType);
+    }
+
+    /**
+     * Reads a nested (multi-dimensional) array.
+     */
+    private Object readNestedArray(JsonParser parser, DeserializationContext ctxt, Class<?> componentType) {
+        List<Object> elements = new ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            if (parser.currentToken() == JsonToken.START_ARRAY) {
+                Object nested = readArrayValue(parser, ctxt, componentType);
+                if (nested != null) {
+                    elements.add(nested);
+                }
+            }
+        }
+
+        // Convert List to array of the correct type
+        Object array = Array.newInstance(componentType, elements.size());
+        for (int i = 0; i < elements.size(); i++) {
+            Array.set(array, i, elements.get(i));
+        }
+        return array;
+    }
+
+    /**
+     * Reads a double[] from the parser.
+     */
+    private double[] readDoubleArray(JsonParser parser) {
+        List<Double> values = new ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            JsonToken token = parser.currentToken();
+            if (token == JsonToken.VALUE_NUMBER_FLOAT || token == JsonToken.VALUE_NUMBER_INT) {
+                values.add(parser.getDoubleValue());
+            }
+        }
+
+        double[] result = new double[values.size()];
+        for (int i = 0; i < values.size(); i++) {
+            result[i] = values.get(i);
+        }
+        return result;
+    }
+
+    /**
+     * Reads an int[] from the parser.
+     */
+    private int[] readIntArray(JsonParser parser) {
+        List<Integer> values = new ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            if (parser.currentToken() == JsonToken.VALUE_NUMBER_INT) {
+                values.add(parser.getIntValue());
+            }
+        }
+
+        int[] result = new int[values.size()];
+        for (int i = 0; i < values.size(); i++) {
+            result[i] = values.get(i);
+        }
+        return result;
+    }
+
+    /**
+     * Reads a long[] from the parser.
+     */
+    private long[] readLongArray(JsonParser parser) {
+        List<Long> values = new ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            if (parser.currentToken() == JsonToken.VALUE_NUMBER_INT) {
+                values.add(parser.getLongValue());
+            }
+        }
+
+        long[] result = new long[values.size()];
+        for (int i = 0; i < values.size(); i++) {
+            result[i] = values.get(i);
+        }
+        return result;
+    }
+
+    /**
+     * Reads a float[] from the parser.
+     */
+    private float[] readFloatArray(JsonParser parser) {
+        List<Float> values = new ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            JsonToken token = parser.currentToken();
+            if (token == JsonToken.VALUE_NUMBER_FLOAT || token == JsonToken.VALUE_NUMBER_INT) {
+                values.add(parser.getFloatValue());
+            }
+        }
+
+        float[] result = new float[values.size()];
+        for (int i = 0; i < values.size(); i++) {
+            result[i] = values.get(i);
+        }
+        return result;
+    }
+
+    /**
+     * Reads a boolean[] from the parser.
+     */
+    private boolean[] readBooleanArray(JsonParser parser) {
+        List<Boolean> values = new ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            JsonToken token = parser.currentToken();
+            if (token == JsonToken.VALUE_TRUE || token == JsonToken.VALUE_FALSE) {
+                values.add(parser.getBooleanValue());
+            }
+        }
+
+        boolean[] result = new boolean[values.size()];
+        for (int i = 0; i < values.size(); i++) {
+            result[i] = values.get(i);
+        }
+        return result;
+    }
+
+    /**
+     * Reads a String[] from the parser.
+     */
+    private String[] readStringArray(JsonParser parser) {
+        List<String> values = new ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            if (parser.currentToken() == JsonToken.VALUE_STRING) {
+                values.add(parser.getString());
+            }
+        }
+
+        return values.toArray(new String[0]);
+    }
+
+    /**
+     * Reads an array of objects using direct type conversion.
+     * <p>
+     * Supports any object type that can be constructed from a string,
+     * such as {@code Date[]}, {@code BigDecimal[]}, {@code UUID[]}, etc.
+     * </p>
+     *
+     * @param parser the JSON parser
+     * @param ctxt the deserialization context
+     * @param componentType the array component type
+     * @return the object array, or null if conversion fails
+     */
+    private Object readObjectArray(JsonParser parser, DeserializationContext ctxt, Class<?> componentType) {
+        List<Object> values = new ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            JsonToken token = parser.currentToken();
+            Object value = null;
+
+            try {
+                if (token == JsonToken.VALUE_STRING) {
+                    value = convertObjectFromString(parser.getString(), componentType);
+                } else if (token == JsonToken.VALUE_NUMBER_INT) {
+                    value = convertObjectFromString(String.valueOf(parser.getLongValue()), componentType);
+                } else if (token == JsonToken.VALUE_NUMBER_FLOAT) {
+                    value = convertObjectFromString(String.valueOf(parser.getDoubleValue()), componentType);
+                } else if (token == JsonToken.VALUE_TRUE || token == JsonToken.VALUE_FALSE) {
+                    value = convertObjectFromString(String.valueOf(parser.getBooleanValue()), componentType);
+                } else if (token != JsonToken.VALUE_NULL) {
+                    String msg = "Unexpected token in object array: " + token;
+                    LOGGER.warning(msg);
+                    ContextHelper.addWarning(ctxt, msg, parser, "AttributeDeserializationEntry");
+                }
+            } catch (Exception e) {
+                String msg = "Failed to convert array element to " + componentType.getName() + ": " + e.getMessage();
+                LOGGER.warning(msg);
+                ContextHelper.addWarning(ctxt, msg, parser, "AttributeDeserializationEntry");
+            }
+
+            if (value != null) {
+                values.add(value);
+            }
+        }
+
+        // Create array of correct type
+        Object array = Array.newInstance(componentType, values.size());
+        for (int i = 0; i < values.size(); i++) {
+            Array.set(array, i, values.get(i));
+        }
+        return array;
+    }
+
+    /**
+     * Converts a string value to an object of the specified type.
+     * <p>
+     * Uses reflection to find a suitable constructor or static factory method.
+     * </p>
+     */
+    private Object convertObjectFromString(String stringValue, Class<?> targetType) throws Exception {
+        // Try common types first
+        if (targetType == java.math.BigDecimal.class) {
+            return new java.math.BigDecimal(stringValue);
+        }
+        if (targetType == java.math.BigInteger.class) {
+            return new java.math.BigInteger(stringValue);
+        }
+        if (targetType == java.util.Date.class) {
+            // Try ISO date format first (yyyy-MM-dd)
+            try {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                return sdf.parse(stringValue);
+            } catch (java.text.ParseException e) {
+                // Try ISO datetime format
+                java.text.SimpleDateFormat sdfTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                return sdfTime.parse(stringValue);
+            }
+        }
+        if (targetType == java.util.UUID.class) {
+            return java.util.UUID.fromString(stringValue);
+        }
+
+        // Try String constructor
+        try {
+            return targetType.getConstructor(String.class).newInstance(stringValue);
+        } catch (NoSuchMethodException e) {
+            // Try valueOf static method
+            try {
+                return targetType.getMethod("valueOf", String.class).invoke(null, stringValue);
+            } catch (NoSuchMethodException e2) {
+                // Try parse static method
+                return targetType.getMethod("parse", String.class).invoke(null, stringValue);
+            }
         }
     }
 

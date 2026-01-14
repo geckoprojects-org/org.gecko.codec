@@ -260,4 +260,24 @@ public class CodecJsonReadContext extends JsonReadContext implements EMFCodecRea
         // Priority 2: Return hint (caller must check instantiability)
         return hint;
     }
+
+    // ========== Context Schema Methods (for NAME strategy) ==========
+
+    /**
+     * Gets the context schema URI for NAME strategy type resolution.
+     *
+     * @return the context schema URI, or null if not set
+     */
+    public String getContextSchemaUri() {
+        return holder.getContextSchemaUri();
+    }
+
+    /**
+     * Sets the context schema URI for NAME strategy type resolution.
+     *
+     * @param contextSchemaUri the context schema URI
+     */
+    public void setContextSchemaUri(String contextSchemaUri) {
+        holder.setContextSchemaUri(contextSchemaUri);
+    }
 }
