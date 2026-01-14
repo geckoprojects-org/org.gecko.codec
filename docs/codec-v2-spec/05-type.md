@@ -423,7 +423,35 @@ TypeSerializationConfig config = TypeSerializationConfig.builder()
 
 ## 5. Deserialization
 
-### 5.1 Format Detection
+### 5.1 Type Key Recognition
+
+The deserializer automatically recognizes the following property names as type discriminators:
+
+| Key | Description |
+|-----|-------------|
+| `_type` | Default type key (recommended) |
+| `_class` | Alternative type key |
+| `@type` | JSON-LD compatible |
+| `eClass` | EMF/emfjson-jackson compatible |
+
+> **Important:** The property name `type` is **NOT** automatically recognized as a type key, because it is a very common attribute name in data formats like GeoJSON (`"type": "Point"`), OpenAPI-generated models, etc.
+
+To use `type` as type discriminator, configure it explicitly:
+
+```java
+CodecConfiguration config = CodecConfiguration.builder()
+    .globalTypeKey("type")
+    .build();
+```
+
+Or via EAnnotation on the EPackage:
+```xml
+<eAnnotations source="http://eclipse.org/fennec/codec">
+  <details key="typeKey" value="type"/>
+</eAnnotations>
+```
+
+### 5.2 Format Detection
 
 Deserializers detect the format from the JSON structure:
 
@@ -433,7 +461,7 @@ Deserializers detect the format from the JSON structure:
 | `"_type": { ... }` | STRUCTURED | Read inner keys to determine strategy |
 | `"_schema": ..., "_type": "string"` | PLAIN | SCHEMA_AND_TYPE strategy (two separate fields) |
 
-### 5.2 Type Resolution
+### 5.3 Type Resolution
 
 The deserializer resolves the EClass based on the detected format and strategy:
 

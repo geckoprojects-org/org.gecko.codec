@@ -248,10 +248,12 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
      */
     private boolean isTypeKey(String propertyName) {
         // Common type keys - check these for compatibility with various serialization formats
-        if (DEFAULT_TYPE_KEY.equals(propertyName)
+        // Note: "type" is NOT included as it's a very common attribute name (e.g., GeoJSON uses "type": "Point")
+        // Only explicitly prefixed keys are treated as type discriminators
+        if (DEFAULT_TYPE_KEY.equals(propertyName)  // "_type"
             || "_class".equals(propertyName)
             || "@type".equals(propertyName)
-            || "type".equals(propertyName)) {
+            || "eClass".equals(propertyName)) {    // EMF-compatible
             return true;
         }
         // Check against module-configured type key
@@ -468,6 +470,9 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
     /**
      * Writes a value to the TokenBuffer.
+     * <p>
+     * Handles all JSON value types including nested objects and arrays.
+     * </p>
      */
     private void writeValueToBuffer(tools.jackson.databind.util.TokenBuffer buffer, Object value) {
         if (value instanceof String s) {
@@ -484,6 +489,21 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             }
         } else if (value instanceof Boolean b) {
             buffer.writeBoolean(b);
+        } else if (value instanceof java.util.Map<?, ?> map) {
+            // Handle nested objects (deferred Map values)
+            buffer.writeStartObject();
+            for (var e : map.entrySet()) {
+                buffer.writeName(String.valueOf(e.getKey()));
+                writeValueToBuffer(buffer, e.getValue());
+            }
+            buffer.writeEndObject();
+        } else if (value instanceof java.util.List<?> list) {
+            // Handle nested arrays
+            buffer.writeStartArray();
+            for (Object item : list) {
+                writeValueToBuffer(buffer, item);
+            }
+            buffer.writeEndArray();
         } else if (value == null) {
             buffer.writeNull();
         } else {
