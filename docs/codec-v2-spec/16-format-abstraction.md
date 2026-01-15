@@ -552,3 +552,104 @@ public class ISO8601DateReader implements CodecValueReader<Date, EAttribute> {
 4. **Error Recovery**: Should the abstraction support error recovery / partial parsing?
 
 5. **Async Support**: Should we consider async/reactive stream interfaces for future scalability?
+
+---
+
+## 12. Format Extension Projects
+
+The following projects provide pre-configured resources for specific formats:
+
+| Project | Format | Description |
+|---------|--------|-------------|
+| `org.eclipse.fennec.codec.geojson` | GeoJSON | Pre-configured for GeoJSON with `type` key, NAME strategy, ExtendedMetaData support |
+| `org.eclipse.fennec.codec.jsonschema` | JSON Schema | JSON Schema ↔ EPackage conversion, embedded schema support |
+
+### 12.1 GeoJSON Extension
+
+**Project:** `org.eclipse.fennec.codec.geojson`
+
+Pre-configured `CodecResource` for [GeoJSON](https://geojson.org/) format:
+
+```java
+// Configuration applied automatically
+CodecConfiguration.builder()
+    .typeKey("type")                          // GeoJSON uses "type" not "_type"
+    .typeStrategy(TypeStrategy.NAME)          // Simple names: Point, Feature, etc.
+    .useNamesFromExtendedMetaData(true)       // Maps "coordinates" correctly
+    .forceSerialize("data", "bbox")           // Volatile attributes
+    .useId(false)                             // Feature.id is a regular property
+    .serializeType(true)
+    .build();
+```
+
+**Usage:**
+
+```java
+// OSGi - inject via DS
+@Reference
+Resource.Factory geoJsonFactory;
+
+Resource resource = geoJsonFactory.createResource(URI.createURI("map.geojson"));
+resource.load(inputStream, Collections.emptyMap());
+FeatureCollection fc = (FeatureCollection) resource.getContents().get(0);
+
+// Non-OSGi - create directly
+MetadataService metadataService = MetadataServiceFactory.create();
+metadataService.registerPackage(GeoJsonPackage.eINSTANCE);
+
+GeoJsonResourceImpl resource = new GeoJsonResourceImpl(
+    URI.createURI("map.geojson"),
+    metadataService);
+```
+
+### 12.2 JSON Schema Extension
+
+**Project:** `org.eclipse.fennec.codec.jsonschema`
+
+Converts between JSON Schema and EMF EPackage. Supports:
+- Standalone JSON Schema files
+- Embedded schemas (e.g., OpenAPI `components.schemas`)
+
+*Documentation to be completed.*
+
+### 12.3 Creating Custom Format Extensions
+
+To create a custom format extension:
+
+1. **Extend `CodecResource`** with format-specific configuration:
+
+```java
+public class MyFormatResourceImpl extends CodecResource {
+
+    public static final CodecConfiguration MY_FORMAT_CONFIG = CodecConfiguration.builder()
+        .typeKey("@type")
+        .typeStrategy(TypeStrategy.URI)
+        // ... format-specific settings
+        .build();
+
+    public MyFormatResourceImpl(URI uri, MetadataService metadataService) {
+        super(uri, metadataService, MY_FORMAT_CONFIG, null, null);
+    }
+}
+```
+
+2. **Create ResourceFactory** as OSGi DS component:
+
+```java
+@Component(service = Resource.Factory.class, property = {
+    EMFNamespaces.EMF_MODEL_FILE_EXT + "=myformat"
+})
+public class MyFormatResourceFactoryImpl extends ResourceFactoryImpl {
+
+    private final MetadataService metadataService;
+
+    @Activate
+    public MyFormatResourceFactoryImpl(@Reference MetadataService metadataService) {
+        this.metadataService = metadataService;
+    }
+
+    @Override
+    public Resource createResource(URI uri) {
+        return new MyFormatResourceImpl(uri, metadataService);
+    }
+}

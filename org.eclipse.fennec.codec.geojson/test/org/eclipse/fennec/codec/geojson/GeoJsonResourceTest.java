@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.v2.resource;
+package org.eclipse.fennec.codec.geojson;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -23,16 +23,15 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
-import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.geojson.BoundingBox;
 import org.geojson.Coordinates;
 import org.geojson.Feature;
 import org.geojson.FeatureCollection;
@@ -40,9 +39,12 @@ import org.geojson.GeoJsonFactory;
 import org.geojson.GeoJsonPackage;
 import org.geojson.Hole;
 import org.geojson.LineString;
+import org.geojson.MultiLineString;
+import org.geojson.MultiPoint;
 import org.geojson.Point;
 import org.geojson.Polygon;
 import org.geojson.Ring;
+import org.geojson.SimpleLineString;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,20 +52,19 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for real GeoJSON serialization and deserialization using the generated org.geojson.model.
+ * Tests for GeoJsonResourceImpl using the v2 codec infrastructure.
  * <p>
- * This tests actual GeoJSON format with coordinates as arrays:
+ * Tests GeoJSON serialization and deserialization using the pre-configured
+ * GeoJsonResourceImpl which handles:
  * <ul>
- *   <li>Point: {@code "coordinates": [lng, lat]} or {@code [lng, lat, elev]}</li>
- *   <li>LineString: {@code "coordinates": [[lng, lat], [lng, lat], ...]}</li>
- *   <li>Polygon: {@code "coordinates": [[[lng, lat], ...], [[lng, lat], ...]]}</li>
+ *   <li>Type key as "type" (GeoJSON standard)</li>
+ *   <li>Simple type names (Point, Feature, etc.)</li>
+ *   <li>Coordinates as arrays</li>
  * </ul>
  * </p>
- *
- * @see <a href="https://github.com/geckoprojects-org/org.gecko.emf.models/tree/main/org.geojson.model">org.geojson.model</a>
  */
-@DisplayName("Real GeoJSON Round-Trip Tests")
-class RealGeoJsonRoundTripTest {
+@DisplayName("GeoJsonResource Tests")
+class GeoJsonResourceTest {
 
     private MetadataService metadataService;
     private GeoJsonPackage geoPackage;
@@ -84,32 +85,16 @@ class RealGeoJsonRoundTripTest {
         EPackage.Registry.INSTANCE.remove(geoPackage.getNsURI());
     }
 
-    private CodecConfiguration createGeoJsonConfig() {
-        return CodecConfiguration.builder()
-                .typeKey("type")  // GeoJSON uses "type" not "_type"
-                .typeStrategy(TypeStrategy.NAME)  // GeoJSON uses simple names like "Point", "Feature"
-                .useNamesFromExtendedMetaData(true)  // GeoJSON uses ExtendedMetaData for "coordinates" mapping
-                .forceSerialize("data", "bbox")  // GeoJSON model has volatile attributes that must be serialized
-                .build();
-    }
-
     /**
-     * Loads JSON using "type" as type discriminator (GeoJSON style).
+     * Loads JSON using GeoJsonResourceImpl.
      */
     private <T extends EObject> T loadGeoJson(String json, Class<T> expectedType) throws IOException {
-        CodecConfiguration config = createGeoJsonConfig();
-
-        CodecResource resource = new CodecResource(
-                URI.createURI("test://geo.json"),
-                metadataService,
-                config,
-                null);
-
-        Map<String, Object> options = new HashMap<>();
-        options.put(CodecResource.CODEC_ROOT_SCHEMA, geoPackage.getNsURI());
+        GeoJsonResourceImpl resource = new GeoJsonResourceImpl(
+                URI.createURI("test://geo.geojson"),
+                metadataService);
 
         try (var is = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
-            resource.load(is, options);
+            resource.load(is, Collections.emptyMap());
         }
 
         if (!resource.getErrors().isEmpty()) {
@@ -127,23 +112,17 @@ class RealGeoJsonRoundTripTest {
     }
 
     /**
-     * Saves an EObject to JSON using GeoJSON style configuration.
+     * Saves an EObject to JSON using GeoJsonResourceImpl.
      */
     private String saveGeoJson(EObject object) throws IOException {
-        CodecConfiguration config = createGeoJsonConfig();
-
-        CodecResource resource = new CodecResource(
-                URI.createURI("test://geo.json"),
-                metadataService,
-                config,
-                null);
+        GeoJsonResourceImpl resource = new GeoJsonResourceImpl(
+                URI.createURI("test://geo.geojson"),
+                metadataService);
 
         resource.getContents().add(object);
 
-        Map<String, Object> options = new HashMap<>();
-
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            resource.save(os, options);
+            resource.save(os, Collections.emptyMap());
 
             if (!resource.getErrors().isEmpty()) {
                 fail("Serialization errors: " + resource.getErrors());
@@ -270,27 +249,58 @@ class RealGeoJsonRoundTripTest {
                 assertEquals(20.0, c2.getLongitude(), 0.0001);
                 assertEquals(20.0, c2.getLatitude(), 0.0001);
             }
+        }
+
+        @Nested
+        @DisplayName("MultiPoint Geometry")
+        class MultiPointTests {
 
             @Test
-            @DisplayName("linestring with real-world coordinates")
-            void realWorldLineString() throws IOException {
+            @DisplayName("multipoint with multiple coordinates")
+            void multiPoint() throws IOException {
                 String json = """
                     {
-                        "type": "LineString",
+                        "type": "MultiPoint",
+                        "coordinates": [ [ 52.0, 12.0, 120.0 ], [ 52.0, 12.0, 120.0 ] ]
+                    }
+                    """;
+
+                MultiPoint result = loadGeoJson(json, MultiPoint.class);
+                assertNotNull(result);
+                assertEquals(2, result.getCoordinates().size());
+
+                Coordinates c0 = result.getCoordinates().get(0);
+                assertEquals(52.0, c0.getLongitude(), 0.0001);
+                assertEquals(12.0, c0.getLatitude(), 0.0001);
+                assertEquals(120.0, c0.getElevation(), 0.0001);
+            }
+        }
+
+        @Nested
+        @DisplayName("MultiLineString Geometry")
+        class MultiLineStringTests {
+
+            @Test
+            @DisplayName("multilinestring with multiple lines")
+            void multiLineString() throws IOException {
+                String json = """
+                    {
+                        "type": "MultiLineString",
                         "coordinates": [
-                            [8.6821, 50.1109],
-                            [8.6831, 50.1115],
-                            [8.6845, 50.1120],
-                            [8.6860, 50.1118]
+                            [ [52.0, 12.0, 120.0], [53.0, 11.0, 123.0] ],
+                            [ [52.0, 12.0, 120.0], [53.0, 11.0, 123.0] ]
                         ]
                     }
                     """;
 
-                LineString line = loadGeoJson(json, LineString.class);
-                assertEquals(4, line.getCoordinates().size());
+                MultiLineString result = loadGeoJson(json, MultiLineString.class);
+                assertNotNull(result);
+                assertEquals(2, result.getLinesStrings().size());
 
-                assertEquals(8.6821, line.getCoordinates().get(0).getLongitude(), 0.0001);
-                assertEquals(8.6860, line.getCoordinates().get(3).getLongitude(), 0.0001);
+                SimpleLineString line1 = result.getLinesStrings().get(0);
+                assertEquals(2, line1.getCoordinates().size());
+                assertEquals(52.0, line1.getCoordinates().get(0).getLongitude(), 0.0001);
+                assertEquals(12.0, line1.getCoordinates().get(0).getLatitude(), 0.0001);
             }
         }
 
@@ -394,36 +404,6 @@ class RealGeoJsonRoundTripTest {
                 Point point = (Point) feature.getGeometry();
                 assertEquals(13.405, point.getCoordinates().getLongitude(), 0.0001);
             }
-
-            @Test
-            @DisplayName("feature with polygon geometry")
-            void featureWithPolygon() throws IOException {
-                String json = """
-                    {
-                        "type": "Feature",
-                        "id": "area-1",
-                        "geometry": {
-                            "type": "Polygon",
-                            "coordinates": [
-                                [
-                                    [0.0, 0.0],
-                                    [10.0, 0.0],
-                                    [10.0, 10.0],
-                                    [0.0, 10.0],
-                                    [0.0, 0.0]
-                                ]
-                            ]
-                        },
-                        "properties": null
-                    }
-                    """;
-
-                Feature feature = loadGeoJson(json, Feature.class);
-                assertEquals("area-1", feature.getId());
-
-                assertNotNull(feature.getGeometry());
-                assertInstanceOf(Polygon.class, feature.getGeometry());
-            }
         }
 
         @Nested
@@ -509,40 +489,123 @@ class RealGeoJsonRoundTripTest {
                 assertEquals(10.0, polygon.getBoundingBox().getNortheast().getLongitude(), 0.0001);
                 assertEquals(10.0, polygon.getBoundingBox().getNortheast().getLatitude(), 0.0001);
             }
+
+            @Test
+            @DisplayName("point with 3D bbox")
+            void pointWithBbox3D() throws IOException {
+                String json = """
+                    {
+                        "type": "Point",
+                        "bbox": [ 52.0, 12.0, 120.0, 52.0, 12.0, 120.0 ],
+                        "coordinates": [ 52.0, 12.0, 120.0 ]
+                    }
+                    """;
+
+                Point result = loadGeoJson(json, Point.class);
+                assertNotNull(result);
+                assertNotNull(result.getBoundingBox());
+                assertNotNull(result.getBoundingBox().getNortheast());
+                assertNotNull(result.getBoundingBox().getSouthwest());
+
+                assertEquals(52.0, result.getBoundingBox().getSouthwest().getLongitude(), 0.0001);
+                assertEquals(12.0, result.getBoundingBox().getSouthwest().getLatitude(), 0.0001);
+                assertEquals(120.0, result.getBoundingBox().getSouthwest().getElevation(), 0.0001);
+            }
+
+            @Test
+            @DisplayName("feature with bbox")
+            void featureWithBbox() throws IOException {
+                String json = """
+                    {
+                        "type": "Feature",
+                        "bbox": [ 52.0, 12.0, 120.0, 52.0, 12.0, 120.0 ]
+                    }
+                    """;
+
+                Feature result = loadGeoJson(json, Feature.class);
+                assertNotNull(result);
+                assertNotNull(result.getBoundingBox());
+                assertNotNull(result.getBoundingBox().getNortheast());
+                assertNotNull(result.getBoundingBox().getSouthwest());
+            }
         }
 
         @Nested
-        @DisplayName("Real-World Examples")
+        @DisplayName("Real-World Data")
         class RealWorldTests {
 
             @Test
-            @DisplayName("Jena polygon from test.json")
+            @DisplayName("Jena city polygon (real GeoJSON data)")
             void jenaPolygon() throws IOException {
+                // Real polygon data from the original test - Jena city boundary
                 String json = """
                     {
                         "type": "Polygon",
                         "bbox": [11.504092, 50.895368, 11.566935, 50.913474],
-                        "coordinates": [
-                            [
-                                [11.554532, 50.90168],
-                                [11.554127, 50.901214],
-                                [11.554528, 50.900991],
-                                [11.554196, 50.900806],
-                                [11.554532, 50.90168]
-                            ]
-                        ]
+                        "coordinates": [[
+                            [11.554532, 50.90168], [11.554127, 50.901214], [11.554528, 50.900991],
+                            [11.554196, 50.900806], [11.553101, 50.899564], [11.552797, 50.898849],
+                            [11.552712, 50.896565], [11.552282, 50.896421], [11.551836, 50.896126],
+                            [11.551464, 50.896398], [11.550654, 50.895844], [11.550172, 50.89619],
+                            [11.550001, 50.89586], [11.549749, 50.895793], [11.548798, 50.896242],
+                            [11.548026, 50.896414], [11.547431, 50.89628], [11.544954, 50.895368],
+                            [11.542608, 50.895993], [11.541526, 50.895805], [11.540404, 50.89597],
+                            [11.540749, 50.896473], [11.540567, 50.896535], [11.54203, 50.897826],
+                            [11.54066, 50.898225], [11.540999, 50.898748], [11.541198, 50.899531],
+                            [11.54108, 50.900253], [11.541148, 50.901313], [11.540578, 50.901684],
+                            [11.53719, 50.90164], [11.535231, 50.901289], [11.530252, 50.901846],
+                            [11.529464, 50.902023], [11.526186, 50.902341], [11.522933, 50.903903],
+                            [11.523349, 50.904504], [11.522543, 50.904434], [11.522427, 50.90488],
+                            [11.521146, 50.905783], [11.51895, 50.905191], [11.517241, 50.904858],
+                            [11.513599, 50.903797], [11.51147, 50.905539], [11.511694, 50.906269],
+                            [11.510561, 50.906379], [11.510615, 50.906564], [11.50856, 50.906702],
+                            [11.507924, 50.906704], [11.507696, 50.906601], [11.506708, 50.906938],
+                            [11.505393, 50.906239], [11.504333, 50.905819], [11.504098, 50.906495],
+                            [11.504185, 50.906948], [11.504092, 50.907269], [11.504276, 50.907497],
+                            [11.505382, 50.908132], [11.505481, 50.908525], [11.50528, 50.908865],
+                            [11.507127, 50.910712], [11.507056, 50.911474], [11.507383, 50.913114],
+                            [11.508475, 50.913437], [11.50914, 50.913474], [11.509967, 50.913332],
+                            [11.511671, 50.912817], [11.513102, 50.912643], [11.513641, 50.912461],
+                            [11.516359, 50.913023], [11.518141, 50.913258], [11.519234, 50.913261],
+                            [11.523311, 50.912463], [11.526255, 50.91212], [11.526344, 50.912095],
+                            [11.525979, 50.911704], [11.52578, 50.91163], [11.525263, 50.911087],
+                            [11.524727, 50.910095], [11.52471, 50.909722], [11.526668, 50.909192],
+                            [11.528186, 50.90914], [11.528868, 50.908662], [11.530769, 50.909893],
+                            [11.532192, 50.910479], [11.536595, 50.911412], [11.538296, 50.911976],
+                            [11.539526, 50.912041], [11.542292, 50.912972], [11.549484, 50.91145],
+                            [11.556112, 50.910784], [11.557463, 50.91089], [11.560743, 50.911368],
+                            [11.56291, 50.911518], [11.564749, 50.912197], [11.56533, 50.912274],
+                            [11.565757, 50.912226], [11.566935, 50.912521], [11.566636, 50.912208],
+                            [11.565377, 50.911506], [11.564079, 50.909826], [11.562613, 50.90921],
+                            [11.563746, 50.907839], [11.563981, 50.907932], [11.564818, 50.906646],
+                            [11.563154, 50.906306], [11.564127, 50.904987], [11.563114, 50.904886],
+                            [11.563125, 50.903904], [11.563138, 50.903743], [11.563784, 50.90367],
+                            [11.56375, 50.902355], [11.564245, 50.902265], [11.564213, 50.901758],
+                            [11.56298, 50.901862], [11.561666, 50.901597], [11.559324, 50.9015],
+                            [11.558811, 50.901636], [11.557151, 50.901813], [11.556607, 50.901962],
+                            [11.554532, 50.90168]
+                        ]]
                     }
                     """;
 
-                Polygon polygon = loadGeoJson(json, Polygon.class);
+                Polygon result = loadGeoJson(json, Polygon.class);
+                assertNotNull(result);
+                assertNotNull(result.getExteriorRing());
+                assertTrue(result.getExteriorRing().getCoordinates().size() > 100,
+                        "Should have many coordinates");
 
-                assertNotNull(polygon.getBoundingBox());
-                assertEquals(11.504092, polygon.getBoundingBox().getSouthwest().getLongitude(), 0.0001);
-                assertEquals(50.895368, polygon.getBoundingBox().getSouthwest().getLatitude(), 0.0001);
+                // Verify bbox
+                assertNotNull(result.getBoundingBox());
+                assertNotNull(result.getBoundingBox().getSouthwest());
+                assertNotNull(result.getBoundingBox().getNortheast());
 
-                assertEquals(5, polygon.getExteriorRing().getCoordinates().size());
+                assertEquals(11.504092, result.getBoundingBox().getSouthwest().getLongitude(), 0.0001);
+                assertEquals(50.895368, result.getBoundingBox().getSouthwest().getLatitude(), 0.0001);
+                assertEquals(11.566935, result.getBoundingBox().getNortheast().getLongitude(), 0.0001);
+                assertEquals(50.913474, result.getBoundingBox().getNortheast().getLatitude(), 0.0001);
 
-                Coordinates first = polygon.getExteriorRing().getCoordinates().get(0);
+                // Verify first coordinate
+                Coordinates first = result.getExteriorRing().getCoordinates().get(0);
                 assertEquals(11.554532, first.getLongitude(), 0.0001);
                 assertEquals(50.90168, first.getLatitude(), 0.0001);
             }
@@ -566,7 +629,6 @@ class RealGeoJsonRoundTripTest {
             String json = saveGeoJson(point);
 
             assertNotNull(json);
-            // Debug output
             System.out.println("Serialized Point JSON: " + json);
             assertTrue(json.contains("\"type\""), "Should contain type field, got: " + json);
             assertTrue(json.contains("\"Point\""), "Should contain Point value, got: " + json);
@@ -592,24 +654,62 @@ class RealGeoJsonRoundTripTest {
         }
 
         @Test
-        @DisplayName("Polygon serialization")
-        void serializePolygon() throws IOException {
-            Polygon polygon = geoFactory.createPolygon();
+        @DisplayName("MultiPoint serialization")
+        void serializeMultiPoint() throws IOException {
+            MultiPoint multiPoint = geoFactory.createMultiPoint();
+            multiPoint.getCoordinates().add(createCoordinates(52.0, 12.0, 120.0));
+            multiPoint.getCoordinates().add(createCoordinates(53.0, 13.0, 130.0));
 
-            Ring exteriorRing = geoFactory.createRing();
-            exteriorRing.getCoordinates().add(createCoordinates(0.0, 0.0));
-            exteriorRing.getCoordinates().add(createCoordinates(10.0, 0.0));
-            exteriorRing.getCoordinates().add(createCoordinates(10.0, 10.0));
-            exteriorRing.getCoordinates().add(createCoordinates(0.0, 10.0));
-            exteriorRing.getCoordinates().add(createCoordinates(0.0, 0.0));
-
-            polygon.setExteriorRing(exteriorRing);
-
-            String json = saveGeoJson(polygon);
+            String json = saveGeoJson(multiPoint);
 
             assertNotNull(json);
             assertTrue(json.contains("\"type\""));
-            assertTrue(json.contains("\"Polygon\""));
+            assertTrue(json.contains("\"MultiPoint\""));
+            assertTrue(json.contains("\"coordinates\""));
+        }
+
+        @Test
+        @DisplayName("MultiLineString serialization")
+        void serializeMultiLineString() throws IOException {
+            LineString line1 = geoFactory.createLineString();
+            line1.getCoordinates().add(createCoordinates(52.0, 12.0, 120.0));
+            line1.getCoordinates().add(createCoordinates(53.0, 11.0, 123.0));
+
+            LineString line2 = geoFactory.createLineString();
+            line2.getCoordinates().add(createCoordinates(54.0, 14.0, 140.0));
+            line2.getCoordinates().add(createCoordinates(55.0, 15.0, 150.0));
+
+            MultiLineString multiLine = geoFactory.createMultiLineString();
+            multiLine.getLinesStrings().add(line1);
+            multiLine.getLinesStrings().add(line2);
+
+            String json = saveGeoJson(multiLine);
+
+            assertNotNull(json);
+            assertTrue(json.contains("\"type\""));
+            assertTrue(json.contains("\"MultiLineString\""));
+            assertTrue(json.contains("\"coordinates\""));
+        }
+
+        @Test
+        @DisplayName("Point with BoundingBox serialization")
+        void serializePointWithBoundingBox() throws IOException {
+            Point point = geoFactory.createPoint();
+            Coordinates coords = createCoordinates(52.0, 12.0, 120.0);
+            point.setCoordinates(coords);
+
+            BoundingBox bbox = geoFactory.createBoundingBox();
+            bbox.setSouthwest(EcoreUtil.copy(coords));
+            bbox.setNortheast(EcoreUtil.copy(coords));
+            point.setBoundingBox(bbox);
+
+            String json = saveGeoJson(point);
+
+            assertNotNull(json);
+            assertTrue(json.contains("\"type\""));
+            assertTrue(json.contains("\"Point\""));
+            assertTrue(json.contains("\"bbox\""));
+            assertTrue(json.contains("\"coordinates\""));
         }
 
         @Test
@@ -733,6 +833,64 @@ class RealGeoJsonRoundTripTest {
                         loaded.getCoordinates().get(i).getLongitude(), 0.0001);
                 assertEquals(original.getCoordinates().get(i).getLatitude(),
                         loaded.getCoordinates().get(i).getLatitude(), 0.0001);
+            }
+        }
+
+        @Test
+        @DisplayName("MultiPoint round-trip")
+        void multiPointRoundTrip() throws IOException {
+            // Create
+            MultiPoint original = geoFactory.createMultiPoint();
+            original.getCoordinates().add(createCoordinates(52.0, 12.0, 120.0));
+            original.getCoordinates().add(createCoordinates(53.0, 13.0, 130.0));
+
+            // Serialize
+            String json = saveGeoJson(original);
+
+            // Deserialize
+            MultiPoint loaded = loadGeoJson(json, MultiPoint.class);
+
+            // Verify
+            assertEquals(original.getCoordinates().size(), loaded.getCoordinates().size());
+            for (int i = 0; i < original.getCoordinates().size(); i++) {
+                assertEquals(original.getCoordinates().get(i).getLongitude(),
+                        loaded.getCoordinates().get(i).getLongitude(), 0.0001);
+                assertEquals(original.getCoordinates().get(i).getLatitude(),
+                        loaded.getCoordinates().get(i).getLatitude(), 0.0001);
+                assertEquals(original.getCoordinates().get(i).getElevation(),
+                        loaded.getCoordinates().get(i).getElevation(), 0.0001);
+            }
+        }
+
+        @Test
+        @DisplayName("MultiLineString round-trip")
+        void multiLineStringRoundTrip() throws IOException {
+            // Create
+            LineString line1 = geoFactory.createLineString();
+            line1.getCoordinates().add(createCoordinates(52.0, 12.0, 120.0));
+            line1.getCoordinates().add(createCoordinates(53.0, 11.0, 123.0));
+
+            LineString line2 = geoFactory.createLineString();
+            line2.getCoordinates().add(createCoordinates(54.0, 14.0, 140.0));
+            line2.getCoordinates().add(createCoordinates(55.0, 15.0, 150.0));
+
+            MultiLineString original = geoFactory.createMultiLineString();
+            original.getLinesStrings().add(line1);
+            original.getLinesStrings().add(line2);
+
+            // Serialize
+            String json = saveGeoJson(original);
+
+            // Deserialize
+            MultiLineString loaded = loadGeoJson(json, MultiLineString.class);
+
+            // Verify
+            assertEquals(original.getLinesStrings().size(), loaded.getLinesStrings().size());
+
+            for (int i = 0; i < original.getLinesStrings().size(); i++) {
+                SimpleLineString origLine = original.getLinesStrings().get(i);
+                SimpleLineString loadedLine = loaded.getLinesStrings().get(i);
+                assertEquals(origLine.getCoordinates().size(), loadedLine.getCoordinates().size());
             }
         }
 
