@@ -2119,7 +2119,7 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 		// Create annotations
 		// JsonProperty
 		createJsonPropertyAnnotations();
-		// codec.extras
+		// http://eclipse.org/fennec/codec
 		createCodecAnnotations();
 		// http:///org/eclipse/emf/ecore/util/ExtendedMetaData
 		createExtendedMetaDataAnnotations();
@@ -2174,18 +2174,19 @@ public class OpenApiPackageImpl extends EPackageImpl implements OpenApiPackage {
 	}
 
 	/**
-	 * Initializes the annotations for <b>codec.extras</b>.
+	 * Initializes the annotations for <b>http://eclipse.org/fennec/codec</b>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	protected void createCodecAnnotations() {
-		String source = "codec.extras";
+		String source = "http://eclipse.org/fennec/codec";
 		addAnnotation
 		  (getComponents_Schemas(),
 		   source,
 		   new String[] {
-			   "jsonschema", "true"
+			   "valueReaderName", "schemas",
+			   "valueWriterName", "schemas"
 		   });
 	}
 

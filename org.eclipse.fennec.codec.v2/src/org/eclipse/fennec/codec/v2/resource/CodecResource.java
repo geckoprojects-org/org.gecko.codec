@@ -45,7 +45,7 @@ import org.eclipse.fennec.codec.v2.jackson.CodecJsonReadContext;
 import org.eclipse.fennec.codec.v2.module.CodecModule;
 import org.eclipse.fennec.codec.v2.util.CodecResourceHelper;
 import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
-import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 

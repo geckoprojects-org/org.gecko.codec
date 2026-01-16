@@ -22,7 +22,7 @@ import org.eclipse.fennec.codec.v2.config.effective.ConfigurationMerger;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.deser.CodecDeserializers;
 import org.eclipse.fennec.codec.v2.ser.CodecSerializers;
-import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 
 import tools.jackson.core.Version;

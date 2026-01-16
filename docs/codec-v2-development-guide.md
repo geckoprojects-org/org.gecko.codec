@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-11 (Phase 3 Complete + Error Handling)
+**Last Updated:** 2026-01-16 (Custom Values + OpenAPI Support)
 
 ---
 
@@ -17,7 +17,9 @@ We are building **codec.v2**, a new EMF serialization codec based on the specifi
 - [Global Options](codec-v2-spec/03-global-options.md) - Smart compression, field ordering
 - [Type](codec-v2-spec/04-type.md), [SuperType](codec-v2-spec/05-supertype.md), [ID](codec-v2-spec/06-id.md), [Reference](codec-v2-spec/07-reference.md) - Core serialization targets
 - [Architecture](codec-v2-spec/13-architecture.md) - Component overview
+- [Custom Values](codec-v2-spec/10-custom-values.md) - Custom value readers/writers
 - [Format Abstraction](codec-v2-spec/16-format-abstraction.md) - Multi-format support (JSON, BSON, CSV, custom)
+- [OpenAPI Support](codec-v2-spec/17-openapi-support.md) - JSON Schema ↔ EPackage conversion
 
 ### Key Projects
 
@@ -26,6 +28,8 @@ We are building **codec.v2**, a new EMF serialization codec based on the specifi
 | `org.eclipse.fennec.model.metadata` | Generic MetadataService infrastructure | ✅ Complete | [model-metadata-architecture.md](../org.eclipse.fennec.model.metadata/model-metadata-architecture.md) |
 | `org.eclipse.fennec.codec.metadata` | Codec-specific aspects and annotation parsing | ✅ Complete | [codec-metadata-architecture.md](../org.eclipse.fennec.codec.metadata/codec-metadata-architecture.md) |
 | `org.eclipse.fennec.codec.v2` | New codec implementation | ✅ Phase 3 Complete | See [14-implementation.md](codec-v2-spec/14-implementation.md) |
+| `org.eclipse.fennec.codec.jsonschema.v2` | JSON Schema ↔ EPackage converters | ✅ Complete | See [17-openapi-support.md](codec-v2-spec/17-openapi-support.md) |
+| `org.eclipse.fennec.codec.openapi` | OpenAPI 3.x resource with JSON Schema support | ✅ Complete | See [17-openapi-support.md](codec-v2-spec/17-openapi-support.md) |
 | `org.eclipse.fennec.codec.v2.example` | Examples and integration tests | Not started | - |
 | `org.eclipse.fennec.codec.*` (other) | Old codec implementations (reference only) | Existing | - |
 
@@ -205,7 +209,7 @@ serializeEmpty = false
 
 **Phase 1-3: Complete ✅**
 
-The codec.v2 implementation is feature-complete with 774+ tests passing:
+The codec.v2 implementation is feature-complete with **890+ tests** passing:
 
 | Feature | Status |
 |---------|--------|
@@ -214,7 +218,7 @@ The codec.v2 implementation is feature-complete with 774+ tests passing:
 | Reference handling (containment, non-containment, cross-doc) | ✅ |
 | SuperType serialization (ALL, SINGLE, ARRAY, STRING) | ✅ |
 | Smart compression | ✅ |
-| Custom value readers/writers (unified interface) | ✅ |
+| Custom value readers/writers (unified interface with `canHandle()`) | ✅ |
 | Polymorphic lists | ✅ |
 | Bidirectional references | ✅ |
 | Circular references | ✅ |
@@ -225,6 +229,15 @@ The codec.v2 implementation is feature-complete with 774+ tests passing:
 | Global feature ignore | ✅ |
 | Expand references | ✅ |
 | Proxy creation | ✅ |
+
+**OpenAPI/JSON Schema Support: Complete ✅**
+
+| Feature | Status |
+|---------|--------|
+| JSON Schema → EPackage conversion | ✅ |
+| EPackage → JSON Schema conversion | ✅ |
+| OpenAPI 3.x resource implementation | ✅ |
+| Real-world roundtrip tests (petstore, bike, sevdesk, kubernetes) | ✅ |
 
 ### 5.2 Remaining Work (Phase 4)
 

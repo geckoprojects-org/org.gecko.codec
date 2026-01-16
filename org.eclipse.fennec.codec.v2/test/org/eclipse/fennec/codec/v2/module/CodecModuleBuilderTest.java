@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

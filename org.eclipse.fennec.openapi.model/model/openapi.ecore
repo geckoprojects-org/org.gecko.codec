@@ -124,8 +124,9 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" eType="ecore:EClass platform:/plugin/org.eclipse.emf.ecore/model/Ecore.ecore#//EPackage"
         containment="true">
-      <eAnnotations source="codec.extras">
-        <details key="jsonschema" value="true"/>
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="valueReaderName" value="schemas"/>
+        <details key="valueWriterName" value="schemas"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

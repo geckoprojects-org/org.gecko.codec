@@ -25,7 +25,7 @@ import org.eclipse.fennec.codec.metadata.model.codec.SuperTypeSerializationConfi
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;

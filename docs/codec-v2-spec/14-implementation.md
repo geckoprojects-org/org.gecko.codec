@@ -130,7 +130,7 @@
 
 ## 3. Test Coverage
 
-**Total: 774+ tests across 60+ test files**
+**Total: 890+ tests across 70+ test files**
 
 See [15-test-coverage.md](15-test-coverage.md) for the complete spec-to-test mapping.
 
@@ -146,12 +146,14 @@ See [15-test-coverage.md](15-test-coverage.md) for the complete spec-to-test map
 | SuperType serialization | ✅ | `SuperTypeSerializationEntryTest`, `CodecResourceSuperTypeTest` |
 | Expand references | ✅ | `ExpandReferenceTest` |
 | Global ignore features | ✅ | `GlobalIgnoreFeatureTest` |
-| Custom value readers/writers | ✅ | `CodecValueRegistryTest`, `ReferenceSerializationEntryCustomWriterTest` |
+| Custom value readers/writers | ✅ | `CodecValueRegistryTest`, `ReferenceSerializationEntryCustomWriterTest`, `*CanHandleTest` |
+| canHandle() validation | ✅ | `AttributeSerializationEntryCanHandleTest`, `AttributeDeserializationEntryCanHandleTest`, `ReferenceSerializationEntryCanHandleTest`, `ReferenceDeserializationEntryCanHandleTest` |
 | Polymorphic lists | ✅ | `CodecResourceAdvancedTest.PolymorphicListTests` |
 | Bidirectional references | ✅ | `CodecResourceAdvancedTest.BidirectionalReferenceTests` |
 | Circular references | ✅ | `CodecResourceAdvancedTest.CircularReferenceTests` |
 | Null/default handling | ✅ | `CodecResourceAdvancedTest.NullDefaultValueTests` |
 | Error handling | ✅ | `CodecResourceAdvancedTest.ErrorScenarioTests` |
+| OpenAPI roundtrip | ✅ | `OpenApiResourceTest` (petstore, bike, sevdesk, kubernetes) |
 
 ---
 
@@ -171,6 +173,8 @@ See [15-test-coverage.md](15-test-coverage.md) for the complete spec-to-test map
 11. ~~**Polymorphic Lists**: Mixed types in containment collections~~ ✅
 12. ~~**Bidirectional References**: Automatic opposite restoration~~ ✅
 13. ~~**Circular References**: Self and mutual reference handling~~ ✅
+14. ~~**canHandle() validation**: Type-safe reader/writer configuration checking~~ ✅
+15. ~~**OpenAPI Support**: JSON Schema ↔ EPackage conversion with real-world tests~~ ✅
 
 ### Remaining
 1. **OSGi Integration**: CodecResourceFactory service registration

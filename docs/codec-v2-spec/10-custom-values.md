@@ -13,128 +13,195 @@ Custom value readers/writers allow you to:
 - Handle special data types (dates, binary, custom formats)
 - Implement domain-specific encoding
 - Customize reference URI formats
+- Convert embedded formats (e.g., JSON Schema to EPackage)
 
-The system provides a **unified interface** that works for both:
-- **Attributes** (`EAttribute`) - Transform primitive/data type values
-- **References** (`EReference`) - Customize reference URI format and resolution
+### 1.1 Interface Hierarchy
 
-### 1.1 Core Components
+The system provides a **type-safe interface hierarchy**:
+
+```
+CodecValueReader<T, F extends EStructuralFeature>
+├── AttributeValueReader<T>      extends CodecValueReader<T, EAttribute>
+└── ReferenceValueReader<T>      extends CodecValueReader<T, EReference>
+                                 where T extends EObject
+
+CodecValueWriter<T, F extends EStructuralFeature>
+├── AttributeValueWriter<T>      extends CodecValueWriter<T, EAttribute>
+└── ReferenceValueWriter<T>      extends CodecValueWriter<T, EReference>
+                                 where T extends EObject
+```
+
+### 1.2 Use Cases by Interface
+
+| Interface | Use Case | Example |
+|-----------|----------|---------|
+| `AttributeValueReader<T>` | Transform primitive/data type values | ISO 8601 date parsing |
+| `AttributeValueWriter<T>` | Format primitive/data type values | Base64 encoding |
+| `ReferenceValueReader<T>` | Read containment references in custom format | JSON Schema → EPackage |
+| `ReferenceValueWriter<T>` | Write containment references in custom format | EPackage → JSON Schema |
+| `CodecValueReader<String, EReference>` | Transform non-containment reference URIs | MongoDB ObjectId → EMF URI |
+| `CodecValueWriter<EObject, EReference>` | Write non-containment reference URIs | Custom URI scheme |
+
+### 1.3 Core Components
 
 | Component | Purpose |
 |-----------|---------|
-| `CodecValueWriter<T, F>` | Functional interface for custom serialization |
-| `CodecValueReader<T, F>` | Functional interface for custom deserialization |
+| `CodecValueWriter<T, F>` | Base interface for custom serialization |
+| `CodecValueReader<T, F>` | Base interface for custom deserialization |
+| `AttributeValueWriter<T>` | Specialized for EAttribute with `canHandle()` |
+| `AttributeValueReader<T>` | Specialized for EAttribute with `canHandle()` |
+| `ReferenceValueWriter<T>` | Specialized for containment EReference with `canHandle()` |
+| `ReferenceValueReader<T>` | Specialized for containment EReference with `canHandle()` |
 | `CodecValueRegistry` | Registry to store named readers/writers |
 
 ---
 
-## 2. Unified Interface Architecture
+## 2. Interface Architecture
 
-### 2.1 Generic Type Parameters
-
-Both interfaces use two type parameters:
-
-```java
-CodecValueReader<T, F extends EStructuralFeature>
-CodecValueWriter<T, F extends EStructuralFeature>
-```
-
-| Parameter | Meaning |
-|-----------|---------|
-| `T` | The value type being read/written |
-| `F` | The feature type (`EAttribute` or `EReference`) |
-
-### 2.2 Usage by Feature Type
-
-| Feature Type | T (Value) | F (Feature) | Use Case |
-|--------------|-----------|-------------|----------|
-| Attribute | `Date`, `byte[]`, etc. | `EAttribute` | Format dates, encode binary |
-| Reference | `String` (URI) | `EReference` | Custom ID schemes, URI formats |
-
----
-
-## 3. Interfaces
-
-### 3.1 CodecValueWriter
+### 2.1 Base Interfaces
 
 ```java
 @FunctionalInterface
+public interface CodecValueReader<T, F extends EStructuralFeature> {
+    T read(JsonParser parser, F feature, DeserializationContext ctxt)
+        throws IOException;
+}
+
+@FunctionalInterface
 public interface CodecValueWriter<T, F extends EStructuralFeature> {
-    /**
-     * Writes a value to the JSON generator.
-     *
-     * @param value the value to write (never null)
-     * @param feature the feature being serialized
-     * @param gen the JSON generator
-     * @param ctxt the serialization context (may be null)
-     * @throws IOException if writing fails
-     */
     void write(T value, F feature, JsonGenerator gen, SerializationContext ctxt)
         throws IOException;
 }
 ```
 
-### 3.2 CodecValueReader
+### 2.2 Specialized Attribute Interfaces
 
 ```java
-@FunctionalInterface
-public interface CodecValueReader<T, F extends EStructuralFeature> {
+public interface AttributeValueReader<T> extends CodecValueReader<T, EAttribute> {
     /**
-     * Reads a value from the JSON parser.
-     * The parser is positioned at the value token (not null).
-     *
-     * @param parser the JSON parser
-     * @param feature the feature being deserialized
-     * @param ctxt the deserialization context (may be null)
-     * @return the parsed value
-     * @throws IOException if reading fails
+     * Checks if this reader can handle the given attribute.
      */
-    T read(JsonParser parser, F feature, DeserializationContext ctxt)
-        throws IOException;
+    boolean canHandle(EAttribute attribute);
+}
+
+public interface AttributeValueWriter<T> extends CodecValueWriter<T, EAttribute> {
+    /**
+     * Checks if this writer can handle the given attribute.
+     */
+    boolean canHandle(EAttribute attribute);
 }
 ```
 
-### 3.3 Why Feature and Context Parameters?
+### 2.3 Specialized Reference Interfaces
 
-The `feature` parameter provides:
-- Access to feature metadata (name, type, annotations)
-- Ability to implement feature-specific logic in a single reader/writer
+```java
+public interface ReferenceValueReader<T extends EObject>
+        extends CodecValueReader<T, EReference> {
+    /**
+     * Checks if this reader can handle the given reference.
+     * Typically checks if the reference type is compatible.
+     */
+    boolean canHandle(EReference reference);
+}
 
-The `ctxt` parameter provides:
-- Access to the serialization/deserialization context
-- Smart compression context (root schema URI)
-- Resource information for cross-document references
+public interface ReferenceValueWriter<T extends EObject>
+        extends CodecValueWriter<T, EReference> {
+    /**
+     * Checks if this writer can handle the given reference.
+     * Typically checks if the reference type is compatible.
+     */
+    boolean canHandle(EReference reference);
+}
+```
+
+### 2.4 The `canHandle()` Method
+
+The `canHandle()` method enables **type-safe validation** at construction time:
+
+```java
+public class EPackageValueReader implements ReferenceValueReader<EPackage> {
+    @Override
+    public boolean canHandle(EReference reference) {
+        // Only handle references of type EPackage
+        return EcorePackage.Literals.EPACKAGE.isSuperTypeOf(
+            reference.getEReferenceType());
+    }
+
+    @Override
+    public EPackage read(JsonParser parser, EReference ref, DeserializationContext ctxt) {
+        // Convert JSON Schema to EPackage
+        return converter.convert(parser.readValueAsTree());
+    }
+}
+```
+
+Benefits:
+- **Early validation**: Incompatible readers/writers are rejected at construction
+- **Clear error messages**: Log warnings when reader/writer cannot handle a feature
+- **Type safety**: Prevents runtime ClassCastException
 
 ---
 
-## 4. Attribute Value Readers/Writers
+## 3. Attribute Value Readers/Writers
 
-### 4.1 Purpose
+### 3.1 Purpose
 
 Transform attribute values during serialization/deserialization:
 - Custom date/time formats
 - Binary encoding (Base64, hex)
 - Domain-specific value transformations
 
-### 4.2 Example: Date Formatting
+### 3.2 Example: Date Formatting
 
 ```java
-// Writer - converts Date to ISO 8601 string
-CodecValueWriter<Date, EAttribute> isoDateWriter = (date, attr, gen, ctxt) -> {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-    gen.writeString(sdf.format(date));
-};
+public class ISODateReader implements AttributeValueReader<Date> {
+    private final SimpleDateFormat sdf;
 
-// Reader - parses ISO 8601 string to Date
-CodecValueReader<Date, EAttribute> isoDateReader = (parser, attr, ctxt) -> {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-    return sdf.parse(parser.getString());
-};
+    public ISODateReader() {
+        sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
+    @Override
+    public boolean canHandle(EAttribute attribute) {
+        return attribute.getEAttributeType().getInstanceClass() == Date.class;
+    }
+
+    @Override
+    public Date read(JsonParser parser, EAttribute attr, DeserializationContext ctxt)
+            throws IOException {
+        try {
+            return sdf.parse(parser.getString());
+        } catch (ParseException e) {
+            throw new IOException("Invalid date format", e);
+        }
+    }
+}
+
+public class ISODateWriter implements AttributeValueWriter<Date> {
+    private final SimpleDateFormat sdf;
+
+    public ISODateWriter() {
+        sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
+    @Override
+    public boolean canHandle(EAttribute attribute) {
+        return attribute.getEAttributeType().getInstanceClass() == Date.class;
+    }
+
+    @Override
+    public void write(Date date, EAttribute attr, JsonGenerator gen,
+            SerializationContext ctxt) throws IOException {
+        gen.writeString(sdf.format(date));
+    }
+}
 ```
 
-### 4.3 Example: Base64 Binary
+### 3.3 Example: Base64 Binary (Lambda Style)
+
+For simple cases, lambdas can still be used with the base interfaces:
 
 ```java
 // Writer - encodes byte[] to Base64
@@ -146,149 +213,178 @@ CodecValueReader<byte[], EAttribute> base64Reader = (parser, attr, ctxt) ->
     Base64.getDecoder().decode(parser.getString());
 ```
 
-### 4.4 Serialization Flow
+### 3.4 Serialization Flow
 
 ```
 AttributeSerializationEntry
     │
-    ├─ Check if customWriter configured
+    ├─ Lookup customWriter from registry
     │
-    ├─ YES: customWriter.write(value, attribute, gen, ctxt)
+    ├─ If writer instanceof AttributeValueWriter:
+    │       │
+    │       ├─ Check canHandle(attribute)
+    │       │       │
+    │       │       ├─ YES: Use this writer
+    │       │       │
+    │       │       └─ NO: Log warning, fall back to default
     │
-    └─ NO: Default serialization (gen.writeString/writeNumber/etc.)
-```
-
-### 4.5 Deserialization Flow
-
-```
-AttributeDeserializationEntry
+    ├─ If customWriter available:
+    │       customWriter.write(value, attribute, gen, ctxt)
     │
-    ├─ Check if customReader configured
-    │
-    ├─ YES: customReader.read(parser, attribute, ctxt)
-    │
-    └─ NO: Default deserialization (parser.getString/getIntValue/etc.)
+    └─ Otherwise: Default serialization
 ```
 
 ---
 
-## 5. Reference Value Readers/Writers
+## 4. Reference Value Readers/Writers
 
-### 5.1 Purpose
+### 4.1 Two Types of Reference Customization
 
-Customize how non-containment reference URIs are written and read:
-- Custom ID schemes (MongoDB ObjectId, UUID formats)
-- Alternative URI formats
-- Domain-specific reference encoding
+| Type | Interface | Purpose | When Used |
+|------|-----------|---------|-----------|
+| **Containment** | `ReferenceValueReader<T>` / `ReferenceValueWriter<T>` | Convert entire object structure | JSON Schema ↔ EPackage |
+| **Non-Containment URI** | `CodecValueReader<String, EReference>` / `CodecValueWriter<EObject, EReference>` | Transform reference URI | MongoDB ObjectId ↔ EMF URI |
 
-### 5.2 When Applied
+### 4.2 Containment Reference Readers/Writers
 
-Reference value writers/readers are used for **non-containment references only**:
-- The `_ref` field value (or custom ref key)
-- NOT for containment references (serialized inline)
+Used for **containment references** where embedded content needs custom conversion.
 
-### 5.3 Example: MongoDB ObjectId
+#### Example: JSON Schema to EPackage (OpenAPI)
 
 ```java
-// Writer - extracts MongoDB ObjectId from target object
-CodecValueWriter<EObject, EReference> mongoIdWriter = (target, ref, gen, ctxt) -> {
-    // Assumes target has an "_id" attribute with ObjectId
-    Object id = target.eGet(target.eClass().getEStructuralFeature("_id"));
-    if (id != null) {
-        gen.writeString(id.toString());
-    } else {
-        // Fall back to fragment URI
-        gen.writeString(target.eResource().getURIFragment(target));
+public class EPackageValueReader implements ReferenceValueReader<EPackage> {
+    private final JsonSchemaToEPackageConverter converter;
+
+    @Override
+    public boolean canHandle(EReference reference) {
+        return EcorePackage.Literals.EPACKAGE.isSuperTypeOf(
+            reference.getEReferenceType());
     }
-};
 
-// Reader - returns the ObjectId string for later resolution
-CodecValueReader<String, EReference> mongoIdReader = (parser, ref, ctxt) -> {
-    return parser.getString(); // ObjectId string to be resolved later
-};
+    @Override
+    public EPackage read(JsonParser parser, EReference ref, DeserializationContext ctxt)
+            throws IOException {
+        TreeNode tree = parser.readValueAsTree();
+        return converter.convert((JsonNode) tree, null);
+    }
+}
+
+public class EPackageValueWriter implements ReferenceValueWriter<EPackage> {
+    @Override
+    public boolean canHandle(EReference reference) {
+        return EcorePackage.Literals.EPACKAGE.isSuperTypeOf(
+            reference.getEReferenceType());
+    }
+
+    @Override
+    public void write(EPackage value, EReference ref, JsonGenerator gen,
+            SerializationContext ctxt) throws IOException {
+        JsonNode schema = converter.convert(value);
+        gen.writePOJO(schema);
+    }
+}
 ```
 
-### 5.4 Example: Custom URI Scheme
+#### Serialization Flow (Containment)
+
+```
+ReferenceSerializationEntry (containment)
+    │
+    ├─ Lookup customWriter from registry
+    │
+    ├─ If writer instanceof ReferenceValueWriter:
+    │       │
+    │       ├─ Check canHandle(reference)
+    │       │       │
+    │       │       ├─ YES: containmentWriter.write(target, ref, gen, ctxt)
+    │       │       │
+    │       │       └─ NO: Log warning, use default serialization
+    │
+    └─ Default: ctxt.writeValue(gen, target)
+```
+
+### 4.3 Non-Containment Reference URI Customization
+
+Used for **non-containment references** to transform URI format.
+
+#### Example: MongoDB ObjectId
 
 ```java
-// Writer - uses custom "urn:myapp:" scheme
-CodecValueWriter<EObject, EReference> customUriWriter = (target, ref, gen, ctxt) -> {
-    String id = extractId(target);
-    String typeName = target.eClass().getName();
-    gen.writeString("urn:myapp:" + typeName + "/" + id);
+// Writer - extracts ObjectId from target
+CodecValueWriter<EObject, EReference> mongoIdWriter = (target, ref, gen, ctxt) -> {
+    Object id = target.eGet(target.eClass().getEStructuralFeature("_id"));
+    gen.writeString(id != null ? id.toString() :
+        target.eResource().getURIFragment(target));
 };
 
-// Reader - parses custom URI
-CodecValueReader<String, EReference> customUriReader = (parser, ref, ctxt) -> {
-    String uri = parser.getString();
-    // The URI is returned as-is; resolution happens later via proxy
-    return uri;
+// Reader - transforms ObjectId to EMF URI
+CodecValueReader<String, EReference> mongoIdReader = (parser, ref, ctxt) -> {
+    String objectId = parser.getString();
+    return "#/persons/" + objectId;  // Transform to EMF URI
 };
 ```
 
-### 5.5 Serialization Flow
+#### Serialization Flow (Non-Containment)
 
 ```
 ReferenceSerializationEntry (non-containment)
     │
     ├─ writeReferenceObject()
     │       │
-    │       ├─ Write _type (with smart compression)
+    │       ├─ Write _type
     │       │
-    │       ├─ Check if customWriter configured
-    │       │       │
-    │       │       ├─ YES: customWriter.write(target, reference, gen, ctxt)
-    │       │       │
-    │       │       └─ NO: Default URI (EcoreUtil.getURI or fragment)
+    │       ├─ If uriWriter configured:
+    │       │       uriWriter.write(target, reference, gen, ctxt)
     │       │
-    │       └─ Write as { "_type": "...", "_ref": "..." }
-```
-
-### 5.6 Deserialization Flow
-
-```
-ReferenceDeserializationEntry (non-containment with _ref)
-    │
-    ├─ Read _ref field
-    │       │
-    │       ├─ Check if customReader configured
-    │       │       │
-    │       │       ├─ YES: refUri = customReader.read(parser, reference, ctxt)
-    │       │       │
-    │       │       └─ NO: refUri = parser.getString()
-    │       │
-    │       └─ Create UnresolvedReference with refUri
-    │
-    └─ Proxy resolution happens later
+    │       └─ Default: gen.writeString(getReferenceUri())
 ```
 
 ---
 
-## 6. Registration
+## 5. Registration
 
-### 6.1 CodecValueRegistry
+### 5.1 CodecValueRegistry
 
 Writers and readers are registered by name:
 
 ```java
 CodecValueRegistry registry = new CodecValueRegistry();
 
-// Attribute writers
-registry.registerWriter("isoDate", isoDateWriter);
-registry.registerWriter("base64Binary", base64Writer);
+// Attribute handlers
+registry.registerWriter("isoDate", new ISODateWriter());
+registry.registerReader("isoDate", new ISODateReader());
 
-// Attribute readers
-registry.registerReader("isoDate", isoDateReader);
-registry.registerReader("base64Binary", base64Reader);
+// Containment reference handlers (ReferenceValueReader/Writer)
+registry.registerReader("schemas", new EPackageValueReader());
+registry.registerWriter("schemas", new EPackageValueWriter("schemas", true));
 
-// Reference writers (same registry)
+// Non-containment URI handlers (generic CodecValueReader/Writer)
 registry.registerWriter("mongoId", mongoIdWriter);
-
-// Reference readers
 registry.registerReader("mongoId", mongoIdReader);
 ```
 
-### 6.2 Passing Registry to CodecResource
+### 5.2 Type Resolution at Construction Time
+
+When a reader/writer is resolved from the registry:
+
+```java
+// In ReferenceDeserializationEntry constructor:
+CodecValueReader<?, ?> reader = registry.getReader(readerName).orElse(null);
+
+if (reader instanceof ReferenceValueReader<?> refReader) {
+    // For containment references
+    if (refReader.canHandle(reference)) {
+        this.containmentReader = refReader;
+    } else {
+        LOGGER.warning("Reader cannot handle reference: " + reference.getName());
+    }
+} else if (reader != null) {
+    // For non-containment URI transformation
+    this.uriReader = (CodecValueReader<String, EReference>) reader;
+}
+```
+
+### 5.3 Passing Registry to CodecResource
 
 ```java
 CodecResource resource = new CodecResource(
@@ -302,31 +398,44 @@ CodecResource resource = new CodecResource(
 
 ---
 
-## 7. Activation per Feature
+## 6. Activation per Feature
 
-### 7.1 EAnnotation on EAttribute
+### 6.1 EAnnotation on EAttribute
 
 ```xml
 <eStructuralFeatures xsi:type="ecore:EAttribute" name="createdAt" eType="...">
   <eAnnotations source="http://eclipse.org/fennec/codec">
-    <details key="codec.feature.valueWriterName" value="isoDate"/>
-    <details key="codec.feature.valueReaderName" value="isoDate"/>
+    <details key="valueWriterName" value="isoDate"/>
+    <details key="valueReaderName" value="isoDate"/>
   </eAnnotations>
 </eStructuralFeatures>
 ```
 
-### 7.2 EAnnotation on EReference
+### 6.2 EAnnotation on Containment EReference
+
+```xml
+<eStructuralFeatures xsi:type="ecore:EReference" name="schemas"
+                     eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EPackage"
+                     containment="true">
+  <eAnnotations source="http://eclipse.org/fennec/codec">
+    <details key="valueWriterName" value="schemas"/>
+    <details key="valueReaderName" value="schemas"/>
+  </eAnnotations>
+</eStructuralFeatures>
+```
+
+### 6.3 EAnnotation on Non-Containment EReference
 
 ```xml
 <eStructuralFeatures xsi:type="ecore:EReference" name="manager" eType="#//Person">
   <eAnnotations source="http://eclipse.org/fennec/codec">
-    <details key="codec.feature.valueWriterName" value="mongoId"/>
-    <details key="codec.feature.valueReaderName" value="mongoId"/>
+    <details key="valueWriterName" value="mongoId"/>
+    <details key="valueReaderName" value="mongoId"/>
   </eAnnotations>
 </eStructuralFeatures>
 ```
 
-### 7.3 Runtime Override via Load/Save Options
+### 6.4 Runtime Override via Load/Save Options
 
 ```java
 Map<String, Object> options = CodecOptionsBuilder.create()
@@ -340,15 +449,15 @@ resource.save(outputStream, options);
 
 ---
 
-## 8. Null Handling
+## 7. Null Handling
 
-### 8.1 Attributes
+### 7.1 Attributes
 
 Custom readers/writers are **not called for null values**:
 - Null attribute values are serialized as JSON `null`
 - JSON `null` is deserialized as `null` without calling reader
 
-### 8.2 References
+### 7.2 References
 
 Custom readers/writers are **not called for null references**:
 - Null references are serialized according to `serializeNull` config
@@ -356,9 +465,9 @@ Custom readers/writers are **not called for null references**:
 
 ---
 
-## 9. Error Handling
+## 8. Error Handling
 
-### 9.1 Writer Errors
+### 8.1 Writer Errors
 
 If a custom writer throws an `IOException`, it is wrapped:
 
@@ -367,7 +476,7 @@ throw new UncheckedIOException(
     "Custom value writer failed for " + feature.getName(), e);
 ```
 
-### 9.2 Reader Errors
+### 8.2 Reader Errors
 
 If a custom reader throws an `IOException`, it is wrapped:
 
@@ -376,7 +485,14 @@ throw new UncheckedIOException(
     "Custom value reader failed for " + feature.getName(), e);
 ```
 
-### 9.3 Missing Writer/Reader
+### 8.3 `canHandle()` Returns False
+
+If a specialized reader/writer's `canHandle()` returns false:
+- A warning is logged
+- Fall back to default serialization/deserialization
+- No error is thrown
+
+### 8.4 Missing Writer/Reader
 
 If a configured name is not found in the registry:
 - Fall back to default serialization/deserialization
@@ -384,30 +500,23 @@ If a configured name is not found in the registry:
 
 ---
 
-## 10. Registry API
+## 9. Registry API
 
-### 10.1 Registration
+### 9.1 Registration
 
 ```java
 CodecValueRegistry registerWriter(String name, CodecValueWriter<?, ?> writer);
 CodecValueRegistry registerReader(String name, CodecValueReader<?, ?> reader);
 ```
 
-### 10.2 Lookup
+### 9.2 Lookup
 
 ```java
 Optional<CodecValueWriter<?, ?>> getWriter(String name);
 Optional<CodecValueReader<?, ?>> getReader(String name);
-
-// Type-safe lookup
-<T, F extends EStructuralFeature> Optional<CodecValueWriter<T, F>>
-    getWriter(String name, Class<T> valueType, Class<F> featureType);
-
-<T, F extends EStructuralFeature> Optional<CodecValueReader<T, F>>
-    getReader(String name, Class<T> valueType, Class<F> featureType);
 ```
 
-### 10.3 Introspection
+### 9.3 Introspection
 
 ```java
 boolean hasWriter(String name);
@@ -418,7 +527,7 @@ Map<String, CodecValueReader<?, ?>> getReaders();
 
 ---
 
-## 11. Configuration Hierarchy
+## 10. Configuration Hierarchy
 
 Custom value reader/writer names follow the standard configuration hierarchy:
 
@@ -430,17 +539,69 @@ Custom value reader/writer names follow the standard configuration hierarchy:
 
 ---
 
-## 12. Implementation Classes
+## 11. Implementation Classes
 
 | Class | Purpose |
 |-------|---------|
-| `CodecValueReader<T, F>` | Interface for custom deserialization |
-| `CodecValueWriter<T, F>` | Interface for custom serialization |
+| `CodecValueReader<T, F>` | Base interface for custom deserialization |
+| `CodecValueWriter<T, F>` | Base interface for custom serialization |
+| `AttributeValueReader<T>` | Specialized for EAttribute with `canHandle()` |
+| `AttributeValueWriter<T>` | Specialized for EAttribute with `canHandle()` |
+| `ReferenceValueReader<T>` | Specialized for containment EReference with `canHandle()` |
+| `ReferenceValueWriter<T>` | Specialized for containment EReference with `canHandle()` |
 | `CodecValueRegistry` | Named reader/writer storage |
 | `AttributeSerializationEntry` | Invokes attribute writers |
 | `AttributeDeserializationEntry` | Invokes attribute readers |
-| `ReferenceSerializationEntry` | Invokes reference writers |
-| `ReferenceDeserializationEntry` | Invokes reference readers |
+| `ReferenceSerializationEntry` | Invokes reference writers (both types) |
+| `ReferenceDeserializationEntry` | Invokes reference readers (both types) |
+
+---
+
+## 12. Real-World Example: OpenAPI with JSON Schema
+
+OpenAPI documents embed JSON Schema in `components/schemas`. The codec handles this
+by converting between `EPackage` and JSON Schema using custom `ReferenceValueReader/Writer`.
+
+### 12.1 Quick Example
+
+```xml
+<!-- In openapi.ecore -->
+<eStructuralFeatures xsi:type="ecore:EReference" name="schemas"
+                     eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EPackage"
+                     containment="true">
+  <eAnnotations source="http://eclipse.org/fennec/codec">
+    <details key="valueReaderName" value="schemas"/>
+    <details key="valueWriterName" value="schemas"/>
+  </eAnnotations>
+</eStructuralFeatures>
+```
+
+```java
+// Register converters
+registry.registerReader("schemas", new EPackageValueReader());
+registry.registerWriter("schemas", new EPackageValueWriter("schemas", true));
+```
+
+```json
+{
+  "openapi": "3.0.3",
+  "components": {
+    "schemas": {
+      "Person": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "age": { "type": "integer" }
+        }
+      }
+    }
+  }
+}
+```
+
+The `schemas` object is automatically converted to an `EPackage` with an `EClass` named "Person".
+
+**For complete OpenAPI support documentation, see [Chapter 17: OpenAPI Support](17-openapi-support.md).**
 
 ---
 

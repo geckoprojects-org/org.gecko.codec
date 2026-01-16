@@ -15,13 +15,15 @@ package org.eclipse.fennec.codec.v2.ser;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.fennec.codec.api.value.AttributeValueWriter;
+import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.api.value.CodecValueWriter;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
-import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.v2.value.CodecValueWriter;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 
 import tools.jackson.core.JsonGenerator;
@@ -41,6 +43,8 @@ import tools.jackson.databind.SerializationContext;
  */
 public class AttributeSerializationEntry implements SerializationEntry {
 
+    private static final Logger LOGGER = Logger.getLogger(AttributeSerializationEntry.class.getName());
+
     private final EffectiveFeatureConfig config;
     private final EAttribute attribute;
     private final CodecValueWriter<Object, EAttribute> customWriter;
@@ -57,6 +61,11 @@ public class AttributeSerializationEntry implements SerializationEntry {
 
     /**
      * Creates a new AttributeSerializationEntry with custom value writer support.
+     * <p>
+     * If the configured writer implements {@link AttributeValueWriter} and its
+     * {@code canHandle()} method returns false for this attribute, a warning
+     * is logged and the writer is not used (falls back to default serialization).
+     * </p>
      *
      * @param config the effective (pre-merged) feature configuration
      * @param attribute the EAttribute to serialize
@@ -71,7 +80,22 @@ public class AttributeSerializationEntry implements SerializationEntry {
         // Pre-resolve the custom writer at construction time
         String writerName = config.getValueWriterName();
         if (writerName != null && !writerName.isEmpty() && valueRegistry != null) {
-            this.customWriter = (CodecValueWriter<Object, EAttribute>) valueRegistry.getWriter(writerName).orElse(null);
+            CodecValueWriter<?, ?> writer = valueRegistry.getWriter(writerName).orElse(null);
+
+            // Check canHandle() for AttributeValueWriter implementations
+            if (writer instanceof AttributeValueWriter<?> attributeWriter) {
+                if (attributeWriter.canHandle(attribute)) {
+                    this.customWriter = (CodecValueWriter<Object, EAttribute>) writer;
+                } else {
+                    LOGGER.warning("AttributeValueWriter '" + writerName
+                            + "' cannot handle attribute '" + attribute.getName()
+                            + "' (canHandle returned false). Using default serialization.");
+                    this.customWriter = null;
+                }
+            } else {
+                // Generic CodecValueWriter - no canHandle() check needed
+                this.customWriter = (CodecValueWriter<Object, EAttribute>) writer;
+            }
         } else {
             this.customWriter = null;
         }

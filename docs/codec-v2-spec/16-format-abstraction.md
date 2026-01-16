@@ -559,10 +559,12 @@ public class ISO8601DateReader implements CodecValueReader<Date, EAttribute> {
 
 The following projects provide pre-configured resources for specific formats:
 
-| Project | Format | Description |
-|---------|--------|-------------|
-| `org.eclipse.fennec.codec.geojson` | GeoJSON | Pre-configured for GeoJSON with `type` key, NAME strategy, ExtendedMetaData support |
-| `org.eclipse.fennec.codec.jsonschema` | JSON Schema | JSON Schema ↔ EPackage conversion, embedded schema support |
+| Project | Format | Base Class | Description |
+|---------|--------|------------|-------------|
+| `org.eclipse.fennec.codec.geojson` | GeoJSON | `CodecResource` | Pre-configured for GeoJSON with `type` key, NAME strategy |
+| `org.eclipse.fennec.codec.jsonschema.v2` | JSON Schema | `ResourceImpl` | Meta-format: JSON Schema ↔ EPackage conversion |
+
+**Note:** Most format extensions extend `CodecResource` for standard EObject serialization. JSON Schema is special because it's a **meta-format** that converts the schema itself (EPackage), not instances.
 
 ### 12.1 GeoJSON Extension
 
@@ -604,13 +606,157 @@ GeoJsonResourceImpl resource = new GeoJsonResourceImpl(
 
 ### 12.2 JSON Schema Extension
 
-**Project:** `org.eclipse.fennec.codec.jsonschema`
+**Project:** `org.eclipse.fennec.codec.jsonschema.v2`
 
-Converts between JSON Schema and EMF EPackage. Supports:
-- Standalone JSON Schema files
-- Embedded schemas (e.g., OpenAPI `components.schemas`)
+Provides bidirectional conversion between JSON Schema and EMF EPackage. Unlike other format extensions, JSON Schema is a **meta-format** that converts between metamodels rather than serializing EObjects.
 
-*Documentation to be completed.*
+#### Architecture Decision
+
+JSON Schema conversion operates at a different level than normal codec operations:
+- **Normal codec**: Serializes/deserializes EObject instances using EPackage as schema
+- **JSON Schema**: Converts the EPackage itself to/from a schema format
+
+Therefore, the JSON Schema extension provides **two integration patterns**:
+
+| Pattern | Use Case | Implementation |
+|---------|----------|----------------|
+| **Standalone** | `.jsonschema` files, schema generation | `JsonSchemaResourceImpl` (extends `ResourceImpl`) |
+| **Embedded** | OpenAPI `components/schemas`, AI structured output | `EPackageValueReader` / `EPackageValueWriter` |
+
+#### 12.2.1 Standalone Mode
+
+For standalone JSON Schema files, use `JsonSchemaResourceImpl` directly:
+
+```java
+// Load JSON Schema → EPackage
+JsonSchemaResourceImpl resource = new JsonSchemaResourceImpl(
+    URI.createURI("schema.jsonschema"));
+
+Map<String, Object> options = new HashMap<>();
+options.put(JsonSchemaResourceImpl.OPTION_SCHEMA_FEATURE, "definitions");
+
+resource.load(inputStream, options);
+EPackage ePackage = (EPackage) resource.getContents().get(0);
+
+// Save EPackage → JSON Schema
+resource.getContents().add(myEPackage);
+resource.save(outputStream, options);
+```
+
+**Supported Options:**
+
+| Option | Values | Description |
+|--------|--------|-------------|
+| `OPTION_SCHEMA_FEATURE` | `"definitions"`, `"$defs"`, `"schemas"`, `null` | Key for schema definitions (null = auto-detect) |
+| `OPTION_PRETTY_PRINT` | `true`, `false` | Format output with indentation (default: true) |
+| `OPTION_SCHEMA_DRAFT` | `"draft-04"`, `"draft-07"`, `"2020-12"` | JSON Schema draft version |
+
+**Note:** `JsonSchemaResourceImpl` extends `ResourceImpl` directly, not `CodecResource`, because it performs meta-format conversion rather than standard EObject serialization.
+
+#### 12.2.2 Embedded Mode
+
+For JSON Schema embedded within other formats (e.g., OpenAPI), use the value handlers that integrate with codec v2's value transformation layer:
+
+```java
+// Register value handlers for embedded schema
+CodecValueRegistry registry = new CodecValueRegistry();
+
+// Reader: JSON Schema → EPackage
+registry.registerReader(
+    EcorePackage.Literals.EPACKAGE,                    // Value type
+    OpenApiPackage.Literals.COMPONENTS__SCHEMAS,       // Feature
+    new EPackageValueReader("schemas")                 // Handler
+);
+
+// Writer: EPackage → JSON Schema
+registry.registerWriter(
+    EcorePackage.Literals.EPACKAGE,
+    OpenApiPackage.Literals.COMPONENTS__SCHEMAS,
+    new EPackageValueWriter("schemas", true)           // embedInFeature=true
+);
+
+// Use with CodecResource
+CodecResource resource = new CodecResource(
+    uri, metadataService, config, registry, null);
+```
+
+**EPackageValueReader:**
+
+| Constructor | Description |
+|-------------|-------------|
+| `EPackageValueReader()` | Auto-detect schema feature |
+| `EPackageValueReader(schemaFeature)` | Use specific feature key |
+
+**EPackageValueWriter:**
+
+| Constructor | Description |
+|-------------|-------------|
+| `EPackageValueWriter()` | Full JSON Schema document |
+| `EPackageValueWriter(schemaFeature)` | Specific feature key |
+| `EPackageValueWriter(schemaFeature, embedInFeature)` | If `true`, output only definitions content |
+
+#### 12.2.3 JSON Schema Features
+
+The converters support these JSON Schema features:
+
+**Deserialization (JSON Schema → EPackage):**
+
+| JSON Schema | EMF Mapping |
+|-------------|-------------|
+| `$id` | `EPackage.nsURI` |
+| `title` | `EPackage.name` |
+| `type: "object"` | `EClass` |
+| `type: "string" + enum` | `EEnum` |
+| `properties` | `EAttribute` / `EReference` |
+| `$ref` | `EReference` (non-containment) |
+| `allOf` | `ESuperTypes` (inheritance) |
+| `oneOf` (discriminated) | Abstract base + concrete subclasses |
+| `oneOf` (variants) | Base class with variant subclasses |
+| `type: ["string", "integer"]` | Artificial union class |
+
+**Enhanced Features:**
+
+| Annotation | Effect |
+|------------|--------|
+| `minProperties: 1, maxProperties: 1` | Discriminated union pattern |
+| Nested definitions (e.g., `configs/kafka`) | `namespacePath` annotation |
+| Top-level `properties` | `rootClass` annotation |
+| `minLength`, `maxLength`, `pattern`, etc. | Preserved as annotations |
+
+**Serialization (EPackage → JSON Schema):**
+
+| EMF Element | JSON Schema Output |
+|-------------|-------------------|
+| `EPackage` | Schema document with `$id`, `title` |
+| `EClass` | `type: "object"` with `properties` |
+| `EEnum` | `type: "string"` with `enum` |
+| `ESuperTypes` | `allOf` with `$ref` |
+| `EAttribute (many)` | `type: "array"` |
+| `EReference (containment)` | Nested object |
+| `EReference (non-containment)` | `$ref` |
+
+#### 12.2.4 Example: OpenAPI Integration
+
+```java
+// OpenAPI document with embedded schemas
+{
+  "openapi": "3.0.0",
+  "info": { "title": "My API", "version": "1.0" },
+  "components": {
+    "schemas": {
+      "Person": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "age": { "type": "integer" }
+        }
+      }
+    }
+  }
+}
+```
+
+With registered value handlers, the `components.schemas` object is automatically converted to/from an `EPackage` containing the `Person` EClass.
 
 ### 12.3 Creating Custom Format Extensions
 
@@ -653,3 +799,522 @@ public class MyFormatResourceFactoryImpl extends ResourceFactoryImpl {
         return new MyFormatResourceImpl(uri, metadataService);
     }
 }
+```
+
+---
+
+## 13. JSON Schema Version Support and Feature Coverage
+
+This section provides a comprehensive reference for JSON Schema support in the codec.
+
+### 13.1 Supported JSON Schema Versions
+
+The JSON Schema converter supports multiple draft versions:
+
+| Draft Version | `$schema` URI | Definitions Key | Status |
+|---------------|---------------|-----------------|--------|
+| Draft-04 | `http://json-schema.org/draft-04/schema#` | `definitions` | ✅ Supported |
+| Draft-06 | `http://json-schema.org/draft-06/schema#` | `definitions` | ✅ Supported |
+| Draft-07 | `http://json-schema.org/draft-07/schema#` | `definitions` | ✅ Supported (Primary) |
+| Draft 2019-09 | `https://json-schema.org/draft/2019-09/schema` | `$defs` | ✅ Supported |
+| Draft 2020-12 | `https://json-schema.org/draft/2020-12/schema` | `$defs` | ✅ Supported |
+
+**Note:** The converter auto-detects the definitions key (`definitions` vs `$defs`) or uses the explicitly specified `OPTION_SCHEMA_FEATURE`.
+
+### 13.2 Complete Feature Matrix
+
+#### 13.2.1 Core Keywords
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `$schema` | EAnnotation | ✅ | ✅ | Preserved in annotation |
+| `$id` | `EPackage.nsURI` | ✅ | ✅ | |
+| `$ref` | `EReference` | ✅ | ✅ | Non-containment reference |
+| `$defs` / `definitions` | EClassifiers | ✅ | ✅ | Auto-detected |
+| `$anchor` | EAnnotation + classifierMap | ✅ | ✅ | Local schema reference by name |
+| `$dynamicRef` | - | ❌ | ❌ | Draft 2020-12, not supported |
+| `$dynamicAnchor` | - | ❌ | ❌ | Draft 2020-12, not supported |
+| `$vocabulary` | - | ❌ | ❌ | Meta-schema feature |
+
+#### 13.2.2 Type Keywords
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `type: "object"` | `EClass` | ✅ | ✅ | |
+| `type: "array"` | `upperBound = -1` | ✅ | ✅ | |
+| `type: "string"` | `EString` | ✅ | ✅ | |
+| `type: "number"` | `EDouble` | ✅ | ✅ | |
+| `type: "integer"` | `EInt` | ✅ | ✅ | |
+| `type: "boolean"` | `EBoolean` | ✅ | ✅ | |
+| `type: "null"` | - | ⚠️ | ⚠️ | Handled via nullability |
+| `type: ["string", "integer"]` | Union class | ✅ | ✅ | Creates artificial base + variants |
+
+#### 13.2.3 Object Keywords
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `properties` | `EStructuralFeature` | ✅ | ✅ | Creates attributes/references |
+| `required` | `lowerBound = 1` | ✅ | ✅ | |
+| `additionalProperties` | EAnnotation | ✅ | ✅ | Boolean or schema, preserved |
+| `patternProperties` | - | ⚠️ | ⚠️ | Preserved as annotation, no EMF equivalent |
+| `propertyNames` | - | ❌ | ❌ | Not mappable to EMF |
+| `minProperties` | EAnnotation | ✅ | ✅ | Used for discriminated union detection |
+| `maxProperties` | EAnnotation | ✅ | ✅ | Used for discriminated union detection |
+| `unevaluatedProperties` | - | ⚠️ | ✅ | Written for discriminated unions |
+| `dependentRequired` | - | ❌ | ❌ | Not mappable to EMF |
+| `dependentSchemas` | - | ❌ | ❌ | Not mappable to EMF |
+
+#### 13.2.4 Array Keywords
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `items` | Element type | ✅ | ✅ | Single schema for all items |
+| `prefixItems` | - | ❌ | ❌ | Draft 2020-12 tuple validation |
+| `minItems` | `lowerBound` | ✅ | ✅ | |
+| `maxItems` | `upperBound` | ✅ | ✅ | |
+| `uniqueItems` | EAnnotation | ✅ | ✅ | Preserved as annotation |
+| `contains` | - | ❌ | ❌ | Not mappable to EMF |
+| `minContains` | - | ❌ | ❌ | Not mappable to EMF |
+| `maxContains` | - | ❌ | ❌ | Not mappable to EMF |
+| `unevaluatedItems` | - | ❌ | ❌ | Draft 2020-12 |
+
+#### 13.2.5 Composition Keywords
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `allOf` | `ESuperTypes` | ✅ | ✅ | Inheritance hierarchy |
+| `anyOf` | Abstract + subtypes | ✅ | ✅ | Creates parent with common props |
+| `oneOf` | Abstract + subtypes | ✅ | ✅ | Discriminated union or variants |
+| `not` | - | ❌ | ❌ | Not mappable to EMF |
+| `if` / `then` / `else` | - | ❌ | ❌ | Conditional schemas not mappable |
+
+#### 13.2.6 String Validation Keywords
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `minLength` | EAnnotation | ✅ | ✅ | Preserved for validation |
+| `maxLength` | EAnnotation | ✅ | ✅ | Preserved for validation |
+| `pattern` | EAnnotation | ✅ | ✅ | Regex pattern preserved |
+| `format` | EAnnotation | ✅ | ✅ | See format table below |
+
+**Recognized String Formats:**
+
+| Format | Preserved | Notes |
+|--------|:---------:|-------|
+| `date-time` | ✅ | ISO 8601 |
+| `date` | ✅ | |
+| `time` | ✅ | |
+| `duration` | ✅ | ISO 8601 duration |
+| `email` | ✅ | |
+| `idn-email` | ✅ | |
+| `hostname` | ✅ | |
+| `idn-hostname` | ✅ | |
+| `ipv4` | ✅ | |
+| `ipv6` | ✅ | |
+| `uri` | ✅ | |
+| `uri-reference` | ✅ | |
+| `iri` | ✅ | |
+| `iri-reference` | ✅ | |
+| `uuid` | ✅ | |
+| `uri-template` | ✅ | |
+| `json-pointer` | ✅ | |
+| `relative-json-pointer` | ✅ | |
+| `regex` | ✅ | |
+
+#### 13.2.7 Numeric Validation Keywords
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `minimum` | EAnnotation | ✅ | ✅ | |
+| `maximum` | EAnnotation | ✅ | ✅ | |
+| `exclusiveMinimum` | EAnnotation | ✅ | ✅ | |
+| `exclusiveMaximum` | EAnnotation | ✅ | ✅ | |
+| `multipleOf` | EAnnotation | ✅ | ✅ | |
+
+#### 13.2.8 Annotation Keywords
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `title` | Name / EAnnotation | ✅ | ✅ | Used for EPackage.name |
+| `description` | GenModel documentation | ✅ | ✅ | |
+| `default` | EAnnotation | ✅ | ✅ | |
+| `examples` | EAnnotation | ✅ | ✅ | |
+| `deprecated` | GenModel annotation | ✅ | ✅ | Uses GenModel for tooling support |
+| `readOnly` | EAnnotation | ✅ | ✅ | |
+| `writeOnly` | EAnnotation | ✅ | ✅ | |
+| `$comment` | EAnnotation | ✅ | ✅ | Preserved as "comment" annotation |
+
+#### 13.2.9 Content Keywords
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `contentEncoding` | EAnnotation | ✅ | ✅ | e.g., "base64" |
+| `contentMediaType` | EAnnotation | ✅ | ✅ | e.g., "image/png" |
+| `contentSchema` | - | ❌ | ❌ | Complex, not mappable |
+
+#### 13.2.10 Enum and Const
+
+| Keyword | EMF Mapping | Read | Write | Notes |
+|---------|-------------|:----:|:-----:|-------|
+| `enum` | `EEnum` | ✅ | ✅ | String enums become EEnum |
+| `const` | EAnnotation | ✅ | ✅ | Fixed value preserved |
+
+### 13.3 Feature Legend
+
+| Symbol | Meaning |
+|--------|---------|
+| ✅ | Fully supported |
+| ⚠️ | Partially supported (preserved as annotation, may not round-trip perfectly) |
+| ❌ | Not supported |
+
+### 13.4 EMF Limitations
+
+The following JSON Schema features have **no natural EMF equivalent** and cannot be represented:
+
+1. **Conditional Schemas** (`if`/`then`/`else`): EMF has no conditional feature mechanism
+2. **Negation** (`not`): EMF cannot express "not this type"
+3. **Tuple Validation** (`prefixItems`): EMF arrays are homogeneous
+4. **Property Names Validation** (`propertyNames`): EMF features have fixed names
+5. **Contains Constraints** (`contains`, `minContains`, `maxContains`): EMF has no "at least one matching" constraint
+6. **Dependent Constraints** (`dependentRequired`, `dependentSchemas`): No EMF equivalent
+7. **Dynamic References** (`$dynamicRef`, `$dynamicAnchor`): Complex recursive patterns
+8. **Content Schema** (`contentSchema`): Complex embedded schema for content validation
+
+### 13.5 Annotations Source
+
+All JSON Schema metadata is preserved in EMF EAnnotations with these sources:
+
+| Source | Purpose |
+|--------|---------|
+| `http://fennec.eclipse.org/jsonschema` | JSON Schema-specific metadata |
+| `http://www.eclipse.org/emf/2002/GenModel` | Documentation (description) |
+| `http:///org/eclipse/emf/ecore/util/ExtendedMetaData` | Original names |
+
+### 13.6 Special Patterns
+
+#### 13.6.1 Discriminated Unions
+
+When JSON Schema uses the pattern:
+```json
+{
+  "type": "object",
+  "minProperties": 1,
+  "maxProperties": 1,
+  "oneOf": [
+    { "required": ["kafka"], "properties": { "kafka": { "$ref": "..." } } },
+    { "required": ["file"], "properties": { "file": { "$ref": "..." } } }
+  ]
+}
+```
+
+This creates:
+- Abstract EClass with `discriminatedUnion=true` annotation
+- Concrete subclasses for each option with `discriminatorKey` annotation
+- Type mapping annotations for codec deserialization
+
+#### 13.6.2 Context-Specific Variants (oneOf without discriminator)
+
+When `oneOf` has multiple complete schemas with overlapping properties:
+- Creates abstract base class with `commonBase=true` annotation
+- Extracts common properties to base class
+- Creates variant subclasses with `variant=<title>` annotation
+
+#### 13.6.3 Namespace Paths
+
+Nested definition structures like `definitions/configs/kafka` are handled:
+- Intermediate nodes without schema keywords are organizational namespaces
+- EClassifiers get `namespacePath` annotation (e.g., `configs`)
+- `$ref` paths resolve correctly across namespaces
+
+### 13.7 Diagnostic Warnings
+
+The JSON Schema converter reports issues through EMF's standard diagnostics mechanism. After loading a schema, check `resource.getWarnings()` for any conversion warnings.
+
+#### 13.7.1 Accessing Diagnostics
+
+```java
+// Load schema
+JsonSchemaResourceImpl resource = new JsonSchemaResourceImpl(
+    URI.createURI("schema.jsonschema"));
+resource.load(inputStream, options);
+
+// Check for warnings about unsupported features
+for (Resource.Diagnostic warning : resource.getWarnings()) {
+    System.out.println("Warning: " + warning.getMessage());
+    System.out.println("  Location: " + warning.getLocation());
+}
+
+// Alternatively, access converter diagnostics directly
+JsonSchemaToEPackageConverter converter = new JsonSchemaToEPackageConverter();
+EPackage ePackage = converter.convert(inputStream, "definitions");
+
+for (JsonSchemaConversionDiagnostic diag : converter.getDiagnostics()) {
+    System.out.println("[" + diag.getCode() + "] " + diag.getMessage());
+}
+```
+
+#### 13.7.2 Diagnostic Codes
+
+| Code | Description | Example Keywords |
+|------|-------------|------------------|
+| `UNSUPPORTED_FEATURE` | Keyword cannot be mapped to EMF | `not`, `if`/`then`/`else`, `prefixItems`, `contains` |
+| `PARTIAL_SUPPORT` | Keyword preserved as annotation but no semantic EMF equivalent | `patternProperties`, `$comment` |
+| `COMPLEX_ANYOF` | Complex `anyOf` with different schemas detected | - |
+| `UNRESOLVED_REFERENCE` | A `$ref` could not be resolved | - |
+
+#### 13.7.3 Warning Messages
+
+| Condition | Warning Message |
+|-----------|-----------------|
+| Unsupported keyword | "Unsupported JSON Schema keyword '{keyword}' - cannot be mapped to EMF" |
+| Partially supported keyword | "Keyword '{keyword}' is partially supported: {detail}" |
+| Complex `anyOf` | "Complex anyOf with different schemas detected. May require manual modeling." |
+| Unresolved `$ref` | "Could not resolve reference: {path}" |
+
+#### 13.7.4 Helper Class: JsonSchemaKeywords
+
+The `JsonSchemaKeywords` utility class provides programmatic access to keyword support information:
+
+```java
+// Check support level for a keyword
+JsonSchemaKeywords.SupportLevel level = JsonSchemaKeywords.getSupportLevel("not");
+// Returns: SupportLevel.NONE
+
+level = JsonSchemaKeywords.getSupportLevel("properties");
+// Returns: SupportLevel.FULL
+
+level = JsonSchemaKeywords.getSupportLevel("patternProperties");
+// Returns: SupportLevel.PARTIAL
+
+// Check keyword categories
+boolean isSupported = JsonSchemaKeywords.isFullySupported("allOf");     // true
+boolean isUnsupported = JsonSchemaKeywords.isUnsupported("prefixItems"); // true
+```
+
+### 13.8 Round-Trip Fidelity
+
+**Round-trip guaranteed** for:
+- Basic types (string, number, integer, boolean)
+- Object structures with properties
+- Arrays with items and bounds (minItems/maxItems)
+- Enums
+- Inheritance (`allOf`)
+- Required properties
+- Descriptions and documentation
+- Format annotations
+- Validation constraints (min/max, pattern, etc.)
+
+**Round-trip may differ** for:
+- `oneOf`/`anyOf` structures (structural changes for EMF compatibility)
+- Multi-type properties (converted to union classes)
+- Deeply nested namespace paths
+- `patternProperties` (preserved but not semantically mapped)
+
+### 13.9 Schema Reference Methods: `$anchor` vs JSON Pointer
+
+JSON Schema supports two methods for referencing definitions within a schema:
+
+#### 13.9.1 JSON Pointer References (Default)
+
+JSON Pointer references use the path syntax `#/definitions/Name`:
+
+```json
+{
+  "definitions": {
+    "Address": {
+      "type": "object",
+      "properties": {
+        "street": { "type": "string" }
+      }
+    },
+    "Person": {
+      "type": "object",
+      "properties": {
+        "home": { "$ref": "#/definitions/Address" }
+      }
+    }
+  }
+}
+```
+
+**Advantages:**
+- Universal - works in all JSON Schema versions
+- Self-documenting - shows the exact path to the definition
+- Default behavior - no special configuration needed
+
+#### 13.9.2 Anchor-Based References
+
+Anchor-based references use `$anchor` to define a short name and `#anchorName` to reference it:
+
+```json
+{
+  "definitions": {
+    "Address": {
+      "$anchor": "address",
+      "type": "object",
+      "properties": {
+        "street": { "type": "string" }
+      }
+    },
+    "Person": {
+      "type": "object",
+      "properties": {
+        "home": { "$ref": "#address" }
+      }
+    }
+  }
+}
+```
+
+**Advantages:**
+- Shorter references in large schemas
+- References survive definition moves/renames
+- Introduced in JSON Schema 2019-09
+
+#### 13.9.3 Serialization Options
+
+When converting EPackage to JSON Schema, the default is JSON Pointer references. To generate anchor-based references, use the `OPTION_USE_ANCHOR_REFS` option:
+
+```java
+// Default: JSON Pointer references
+EPackageToJsonSchemaConverter writer = new EPackageToJsonSchemaConverter();
+writer.convert(ePackage, outputStream, "definitions", true);
+// Output: "$ref": "#/definitions/Address"
+
+// With anchor option: generates $anchor and uses anchor refs
+Map<String, Object> options = Map.of(
+    EPackageToJsonSchemaConverter.OPTION_USE_ANCHOR_REFS, true
+);
+writer.convert(ePackage, outputStream, "definitions", true, options);
+// Output: "$anchor": "address" and "$ref": "#address"
+```
+
+#### 13.9.4 Round-Trip Behavior
+
+| Input Schema | Output without option | Output with `OPTION_USE_ANCHOR_REFS` |
+|--------------|----------------------|--------------------------------------|
+| JSON Pointer refs | JSON Pointer refs | Anchor refs (anchors generated) |
+| Anchor refs | Anchor refs (preserved) | Anchor refs (preserved) |
+| Mixed | Mixed (preserved) | Anchor refs where possible |
+
+**Note:** Existing `$anchor` annotations from the input schema are always preserved, regardless of the option setting.
+
+#### 13.9.5 Per-Class Override
+
+You can also enable anchors for specific classes via EAnnotation:
+
+```java
+// Add annotation to specific EClass
+EAnnotation annotation = EcoreFactory.eINSTANCE.createEAnnotation();
+annotation.setSource("http://fennec.eclipse.org/jsonschema");
+annotation.getDetails().put("useAnchor", "true");
+myEClass.getEAnnotations().add(annotation);
+```
+
+This generates `$anchor` for that class and uses anchor refs when referencing it, even without the global option.
+
+---
+
+## 14. Working with Generated EPackages
+
+Once you've converted a JSON Schema to an EPackage, you can use it for deserializing JSON data that conforms to the schema.
+
+### 14.1 Example: Simple Schema
+
+```java
+// Step 1: Load JSON Schema and convert to EPackage
+JsonSchemaResourceImpl schemaRes = new JsonSchemaResourceImpl(
+    URI.createURI("meter-reading.jsonschema"));
+
+Map<String, Object> schemaOptions = new HashMap<>();
+schemaOptions.put(JsonSchemaResourceImpl.OPTION_SCHEMA_FEATURE, "definitions");
+
+schemaRes.load(inputStream, schemaOptions);
+EPackage ePackage = (EPackage) schemaRes.getContents().get(0);
+
+// Step 2: Register the generated EPackage
+resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
+
+// Step 3: Find the target EClass
+EClass meterReadingClass = (EClass) ePackage.getEClassifier("MeterReading");
+
+// Step 4: Deserialize JSON data using the generated EPackage
+// (requires codec v2 CodecResource with proper configuration)
+```
+
+### 14.2 Important: EPackage Registration
+
+When working with dynamically generated EPackages, you must register them in:
+
+1. **ResourceSet's package registry** - so EMF can find the EPackage by URI:
+   ```java
+   resourceSet.getPackageRegistry().put(ePackage.getNsURI(), ePackage);
+   ```
+
+2. **MetadataService** (for codec v2) - so codec can generate metadata:
+   ```java
+   metadataService.registerPackage(ePackage);
+   ```
+
+### 14.3 Limitations with oneOf / Union Types
+
+JSON Schema's `oneOf` construct creates challenges for deserialization:
+
+**The Problem:**
+- When converting `oneOf` to EMF, an abstract EClass is typically generated with concrete variant subclasses
+- During deserialization, the codec needs to determine which concrete subclass to instantiate
+- JSON data doesn't always contain explicit type discriminators
+
+**Current Workaround:**
+
+Provide explicit type mapping via load options:
+
+```java
+Map<String, Object> options = CodecOptionsBuilder.create()
+    .rootObject(rootEClass)
+    .forClass(inputNodeClass)
+        .typeKey("_type")
+        .typeStrategy("NAME")
+        .typeMap(Map.of(
+            "kafka", "KafkaInputNode",
+            "file", "FileInputNode"
+        ))
+    .build();
+```
+
+**Known Limitation:**
+
+Type mapping based solely on property name presence (discriminating based on which property is set) is not currently supported. You must either:
+1. Add explicit type discriminator fields to your JSON data
+2. Pre-determine the type through other means and specify it in options
+
+---
+
+## 15. Future Work
+
+The following features are planned but not yet implemented. See the linked documents for implementation details.
+
+### 15.1 Tuple Validation (`prefixItems`)
+
+JSON Schema's `prefixItems` keyword for arrays with typed positional elements (tuples).
+
+**Status:** Planned
+
+**Details:** [todo/jsonschema-prefixItems-implementation.md](todo/jsonschema-prefixItems-implementation.md)
+
+### 15.2 Format-to-EDataType Mapping
+
+Map JSON Schema `format` values to proper EMF EDataTypes instead of just preserving as annotations.
+
+| Format | Target Type |
+|--------|-------------|
+| `date-time` | `EDate` (built-in) |
+| `date` | `LocalDate` (new) |
+| `time` | `LocalTime` (new) |
+| `duration` | `Duration` (new) |
+| `uuid` | `UUID` (new) |
+| `uri` | `URI` (new) |
+
+**Status:** Planned (pending team discussion on EMF contribution)
+
+**Details:** [todo/jsonschema-format-datatypes-implementation.md](todo/jsonschema-format-datatypes-implementation.md)

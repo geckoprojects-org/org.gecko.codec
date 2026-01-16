@@ -27,8 +27,9 @@ import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.eclipse.fennec.codec.v2.context.CodecWriteContext;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
-import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.v2.value.CodecValueWriter;
+import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.api.value.CodecValueWriter;
+import org.eclipse.fennec.codec.api.value.ReferenceValueWriter;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.TokenStreamContext;
@@ -50,12 +51,17 @@ import tools.jackson.databind.SerializationContext;
  */
 public class ReferenceSerializationEntry implements SerializationEntry {
 
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(ReferenceSerializationEntry.class.getName());
+
     private final EffectiveFeatureConfig config;
     private final EReference reference;
     private final String refKey;
     private final boolean smartCompression;
     private final EffectiveCodecConfig codecConfig;
-    private final CodecValueWriter<EObject, EReference> customWriter;
+    /** Custom writer for containment references - writes EObject in custom format */
+    private final ReferenceValueWriter<?> containmentWriter;
+    /** Custom writer for non-containment reference URIs - writes custom URI format */
+    private final CodecValueWriter<EObject, EReference> uriWriter;
 
     /**
      * Creates a new ReferenceSerializationEntry with the effective feature configuration.
@@ -105,7 +111,6 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      * @param codecConfig the effective codec configuration (for expand settings)
      * @param valueRegistry the registry for custom value writers (may be null)
      */
-    @SuppressWarnings("unchecked")
     public ReferenceSerializationEntry(EffectiveFeatureConfig config, EReference reference,
             String refKey, boolean smartCompression, EffectiveCodecConfig codecConfig,
             CodecValueRegistry valueRegistry) {
@@ -116,11 +121,38 @@ public class ReferenceSerializationEntry implements SerializationEntry {
         this.codecConfig = codecConfig;
 
         // Pre-resolve the custom writer at construction time
+        // We support two types of writers:
+        // 1. ReferenceValueWriter<T extends EObject> for containment references
+        // 2. CodecValueWriter<EObject, EReference> for non-containment URI transformation
         String writerName = config.getValueWriterName();
         if (writerName != null && !writerName.isEmpty() && valueRegistry != null) {
-            this.customWriter = (CodecValueWriter<EObject, EReference>) valueRegistry.getWriter(writerName).orElse(null);
+            CodecValueWriter<?, ?> writer = valueRegistry.getWriter(writerName).orElse(null);
+
+            if (writer instanceof ReferenceValueWriter<?> refWriter) {
+                // ReferenceValueWriter for containment - writes EObject in custom format
+                if (refWriter.canHandle(reference)) {
+                    this.containmentWriter = refWriter;
+                    this.uriWriter = null;
+                } else {
+                    LOGGER.warning("ReferenceValueWriter '" + writerName + "' cannot handle reference '" +
+                            reference.getName() + "' of type " + reference.getEReferenceType().getName());
+                    this.containmentWriter = null;
+                    this.uriWriter = null;
+                }
+            } else if (writer != null) {
+                // Generic CodecValueWriter for URI transformation
+                @SuppressWarnings("unchecked")
+                CodecValueWriter<EObject, EReference> refUriWriter =
+                        (CodecValueWriter<EObject, EReference>) writer;
+                this.containmentWriter = null;
+                this.uriWriter = refUriWriter;
+            } else {
+                this.containmentWriter = null;
+                this.uriWriter = null;
+            }
         } else {
-            this.customWriter = null;
+            this.containmentWriter = null;
+            this.uriWriter = null;
         }
     }
 
@@ -206,9 +238,15 @@ public class ReferenceSerializationEntry implements SerializationEntry {
             // Cross-document containment: serialize as reference (like non-containment)
             writeReferenceObject(target, gen, true, ctxt);
         } else if (reference.isContainment()) {
-            // Standard containment: serialize inline
-            // Smart compression is handled by TypeSerializationEntry (same-schema simple names)
-            ctxt.writeValue(gen, target);
+            // Check for custom containment writer first - allows special conversion logic
+            // (e.g., EPackage to JSON Schema for OpenAPI components/schemas)
+            if (containmentWriter != null) {
+                writeWithContainmentWriter(target, gen, ctxt);
+            } else {
+                // Standard containment: serialize inline
+                // Smart compression is handled by TypeSerializationEntry (same-schema simple names)
+                ctxt.writeValue(gen, target);
+            }
         } else if (shouldExpandReference(target)) {
             // Non-containment with expand enabled: serialize inline (like containment)
             // Only if the target is resolved (not a proxy)
@@ -216,6 +254,23 @@ public class ReferenceSerializationEntry implements SerializationEntry {
         } else {
             // Non-containment: serialize as reference
             writeReferenceObject(target, gen, false, ctxt);
+        }
+    }
+
+    /**
+     * Writes a containment reference value using a custom containment writer.
+     *
+     * @param target the target EObject
+     * @param gen the JSON generator
+     * @param ctxt the serialization context
+     */
+    @SuppressWarnings("unchecked")
+    private void writeWithContainmentWriter(EObject target, JsonGenerator gen, SerializationContext ctxt) {
+        try {
+            ((ReferenceValueWriter<EObject>) containmentWriter).write(target, reference, gen, ctxt);
+        } catch (IOException e) {
+            throw new UncheckedIOException(
+                    "Custom containment writer failed for reference: " + reference.getName(), e);
         }
     }
 
@@ -345,7 +400,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
     /**
      * Writes the reference value (the _ref field content).
      * <p>
-     * If a custom value writer is configured, it is used to write the value.
+     * If a URI writer is configured, it is used to write the reference value.
      * Otherwise, the default URI logic is used.
      * </p>
      *
@@ -356,13 +411,13 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      */
     private void writeReferenceValue(EObject target, JsonGenerator gen, boolean crossDocument,
             SerializationContext ctxt) {
-        // Use custom writer if configured
-        if (customWriter != null) {
+        // Use URI writer for non-containment reference transformation if configured
+        if (uriWriter != null) {
             try {
-                customWriter.write(target, reference, gen, ctxt);
+                uriWriter.write(target, reference, gen, ctxt);
             } catch (IOException e) {
                 throw new UncheckedIOException(
-                        "Custom value writer failed for reference: " + reference.getName(), e);
+                        "Custom URI writer failed for reference: " + reference.getName(), e);
             }
             return;
         }

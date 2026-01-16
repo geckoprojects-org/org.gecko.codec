@@ -29,10 +29,11 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.fennec.codec.api.value.AttributeValueReader;
+import org.eclipse.fennec.codec.api.value.CodecValueReader;
+import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
-import org.eclipse.fennec.codec.v2.value.CodecValueReader;
-import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -75,6 +76,11 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
 
     /**
      * Creates a new AttributeDeserializationEntry with custom value reader support.
+     * <p>
+     * If the configured reader implements {@link AttributeValueReader} and its
+     * {@code canHandle()} method returns false for this attribute, a warning
+     * is logged and the reader is not used (falls back to default deserialization).
+     * </p>
      *
      * @param config the effective feature configuration
      * @param attribute the EAttribute to deserialize
@@ -89,7 +95,22 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
         // Pre-resolve the custom reader at construction time
         String readerName = config.getValueReaderName();
         if (readerName != null && !readerName.isEmpty() && valueRegistry != null) {
-            this.customReader = (CodecValueReader<Object, EAttribute>) valueRegistry.getReader(readerName).orElse(null);
+            CodecValueReader<?, ?> reader = valueRegistry.getReader(readerName).orElse(null);
+
+            // Check canHandle() for AttributeValueReader implementations
+            if (reader instanceof AttributeValueReader<?> attributeReader) {
+                if (attributeReader.canHandle(attribute)) {
+                    this.customReader = (CodecValueReader<Object, EAttribute>) reader;
+                } else {
+                    LOGGER.warning("AttributeValueReader '" + readerName
+                            + "' cannot handle attribute '" + attribute.getName()
+                            + "' (canHandle returned false). Using default deserialization.");
+                    this.customReader = null;
+                }
+            } else {
+                // Generic CodecValueReader - no canHandle() check needed
+                this.customReader = (CodecValueReader<Object, EAttribute>) reader;
+            }
         } else {
             this.customReader = null;
         }

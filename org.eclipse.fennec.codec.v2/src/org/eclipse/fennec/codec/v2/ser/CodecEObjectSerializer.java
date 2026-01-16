@@ -195,7 +195,8 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
                         config.getValueRegistry());
             } else if (feature instanceof EReference reference) {
                 featureEntry = new ReferenceSerializationEntry(
-                        featureConfig, reference, config.getRefKey(), config.isSmartCompression(), config);
+                        featureConfig, reference, config.getRefKey(), config.isSmartCompression(), config,
+                        config.getValueRegistry());
             } else {
                 continue;
             }

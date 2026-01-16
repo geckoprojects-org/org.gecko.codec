@@ -68,7 +68,7 @@ public interface Components extends EObject {
 	 * @see #setSchemas(EPackage)
 	 * @see org.eclipse.fennec.openapi.model.OpenApiPackage#getComponents_Schemas()
 	 * @model containment="true"
-	 *        annotation="codec.extras jsonschema='true'"
+	 *        annotation="http://eclipse.org/fennec/codec valueReaderName='schemas' valueWriterName='schemas'"
 	 * @generated
 	 */
 	EPackage getSchemas();

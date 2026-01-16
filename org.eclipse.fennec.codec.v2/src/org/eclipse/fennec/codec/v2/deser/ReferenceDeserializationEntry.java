@@ -13,8 +13,6 @@
  */
 package org.eclipse.fennec.codec.v2.deser;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -31,8 +29,9 @@ import org.eclipse.fennec.codec.v2.context.ContextHelper;
 import org.eclipse.fennec.codec.v2.context.EMFCodecReadContext;
 import org.eclipse.fennec.codec.v2.deser.DeserializationState.UnresolvedReference;
 import org.eclipse.fennec.codec.v2.jackson.CodecJsonReadContext;
-import org.eclipse.fennec.codec.v2.value.CodecValueReader;
-import org.eclipse.fennec.codec.v2.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.api.value.CodecValueReader;
+import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.api.value.ReferenceValueReader;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -73,7 +72,10 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     private final EffectiveFeatureConfig config;
     private final EReference reference;
     private final String refKey;
-    private final CodecValueReader<String, EReference> customReader;
+    /** Custom reader for containment references - returns EObject */
+    private final ReferenceValueReader<?> containmentReader;
+    /** Custom reader for non-containment reference URIs - returns String */
+    private final CodecValueReader<String, EReference> uriReader;
 
     /**
      * Creates a new ReferenceDeserializationEntry.
@@ -94,7 +96,6 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      * @param refKey the key used for non-containment references (e.g., "$ref")
      * @param valueRegistry the registry for custom value readers (may be null)
      */
-    @SuppressWarnings("unchecked")
     public ReferenceDeserializationEntry(EffectiveFeatureConfig config, EReference reference,
             String refKey, CodecValueRegistry valueRegistry) {
         this.config = Objects.requireNonNull(config, "config must not be null");
@@ -102,11 +103,38 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
         this.refKey = Objects.requireNonNull(refKey, "refKey must not be null");
 
         // Pre-resolve the custom reader at construction time
+        // We support two types of readers:
+        // 1. ReferenceValueReader<T extends EObject> for containment references
+        // 2. CodecValueReader<String, EReference> for non-containment URI transformation
         String readerName = config.getValueReaderName();
         if (readerName != null && !readerName.isEmpty() && valueRegistry != null) {
-            this.customReader = (CodecValueReader<String, EReference>) valueRegistry.getReader(readerName).orElse(null);
+            CodecValueReader<?, ?> reader = valueRegistry.getReader(readerName).orElse(null);
+
+            if (reader instanceof ReferenceValueReader<?> refReader) {
+                // ReferenceValueReader for containment - returns EObject
+                if (refReader.canHandle(reference)) {
+                    this.containmentReader = refReader;
+                    this.uriReader = null;
+                } else {
+                    LOGGER.warning("ReferenceValueReader '" + readerName + "' cannot handle reference '" +
+                            reference.getName() + "' of type " + reference.getEReferenceType().getName());
+                    this.containmentReader = null;
+                    this.uriReader = null;
+                }
+            } else if (reader != null) {
+                // Generic CodecValueReader for URI transformation - assume it returns String
+                @SuppressWarnings("unchecked")
+                CodecValueReader<String, EReference> stringReader =
+                        (CodecValueReader<String, EReference>) reader;
+                this.containmentReader = null;
+                this.uriReader = stringReader;
+            } else {
+                this.containmentReader = null;
+                this.uriReader = null;
+            }
         } else {
-            this.customReader = null;
+            this.containmentReader = null;
+            this.uriReader = null;
         }
     }
 
@@ -223,6 +251,11 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      * context to allow deserialization of nested objects without explicit _type.
      * </p>
      * <p>
+     * If a custom reader is configured for this reference, it will be used instead
+     * of the standard EMF object deserialization. This allows special handling for
+     * containment references that need custom conversion (e.g., JSON Schema to EPackage).
+     * </p>
+     * <p>
      * This method uses proper context isolation:
      * <ul>
      *   <li>If using CodecJsonReadContext: creates child context with type hint</li>
@@ -238,6 +271,13 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     private EObject deserializeContainedObject(DeserializationState parentState, JsonParser parser,
             DeserializationContext ctxt) {
         try {
+            // Check for custom containment reader first - allows special conversion logic
+            // (e.g., JSON Schema to EPackage for OpenAPI components/schemas)
+            if (containmentReader != null) {
+                EObject result = containmentReader.read(parser, reference, ctxt);
+                return result;
+            }
+
             // Check if we have an EMF-aware context from the parser
             TokenStreamContext streamContext = parser.streamReadContext();
 
@@ -668,7 +708,7 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     /**
      * Reads the reference value (the _ref field content).
      * <p>
-     * If a custom value reader is configured, it is used to read the value.
+     * If a URI reader is configured, it is used to transform the value.
      * Otherwise, the default parser.getString() is used.
      * </p>
      *
@@ -677,13 +717,13 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      * @return the reference value string
      */
     private String readReferenceValue(JsonParser parser, DeserializationContext ctxt) {
-        // Use custom reader if configured
-        if (customReader != null) {
+        // Use URI reader for non-containment reference transformation if configured
+        if (uriReader != null) {
             try {
-                return customReader.read(parser, reference, ctxt);
-            } catch (IOException e) {
-                throw new UncheckedIOException(
-                        "Custom value reader failed for reference: " + reference.getName(), e);
+                return uriReader.read(parser, reference, ctxt);
+            } catch (java.io.IOException e) {
+                throw new java.io.UncheckedIOException(
+                        "Custom URI reader failed for reference: " + reference.getName(), e);
             }
         }
 
