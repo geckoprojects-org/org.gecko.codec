@@ -26,6 +26,7 @@ This document defines the serialization features for codec.v2, including configu
 | 15 | [Test Coverage](15-test-coverage.md) | Test coverage matrix and spec-to-test mapping |
 | 16 | [Format Abstraction](16-format-abstraction.md) | Multi-format support (JSON, BSON, CSV) and custom parsers/generators |
 | 17 | [Root Element](17-root-element.md) | Root element handling, JSON arrays, CODEC_ROOT_OBJECT option |
+| 18 | [Feature Type Hints and Value Readers](18-feature-type-hints.md) | CODEC_FEATURE_TYPE_HINTS, CODEC_FEATURE_VALUE_READERS/WRITERS |
 | 99 | [Open Questions](99-open-questions.md) | Open questions and issues to resolve |
 
 ---

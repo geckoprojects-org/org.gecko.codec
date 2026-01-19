@@ -218,6 +218,11 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
         Class<?> instanceClass = dataType.getInstanceClass();
 
         try {
+            // Special handling for EJavaObject (Object.class) - preserve native JSON types
+            if (instanceClass == Object.class) {
+                return readAnyJsonValue(parser, ctxt);
+            }
+
             if (token == JsonToken.VALUE_STRING) {
                 String stringValue = parser.getString();
                 return convertFromString(stringValue, dataType, instanceClass);
@@ -245,7 +250,24 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
 
             // Handle array data types (e.g., double[], double[][], double[][][])
             if (token == JsonToken.START_ARRAY) {
+                // Special case: if target is String, serialize array to JSON string
+                if (instanceClass == String.class) {
+                    return readJsonStructureAsString(parser);
+                }
                 return readArrayValue(parser, ctxt, instanceClass);
+            }
+
+            // Handle JSON objects: if target is String, serialize to JSON string
+            if (token == JsonToken.START_OBJECT) {
+                if (instanceClass == String.class) {
+                    return readJsonStructureAsString(parser);
+                }
+                String msg = "Unexpected START_OBJECT for attribute '" + attribute.getName()
+                        + "' with type " + instanceClass.getName();
+                LOGGER.warning(msg);
+                ContextHelper.addWarning(ctxt, msg, parser, "AttributeDeserializationEntry");
+                skipJsonValue(parser);
+                return null;
             }
 
             String msg = "Unexpected token type for attribute '" + attribute.getName() + "': " + token;
@@ -662,5 +684,264 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
      */
     public EAttribute getAttribute() {
         return attribute;
+    }
+
+    /**
+     * Reads any JSON value and returns it as a native Java object.
+     * <p>
+     * Used for EJavaObject (Object.class) attributes that can hold any value.
+     * </p>
+     * <ul>
+     *   <li>String → String</li>
+     *   <li>Integer → Long</li>
+     *   <li>Float → Double</li>
+     *   <li>Boolean → Boolean</li>
+     *   <li>Null → null</li>
+     *   <li>Array → List&lt;Object&gt;</li>
+     *   <li>Object → Map&lt;String, Object&gt;</li>
+     * </ul>
+     *
+     * @param parser the JSON parser
+     * @param ctxt the deserialization context
+     * @return the native Java representation of the JSON value
+     */
+    private Object readAnyJsonValue(JsonParser parser, DeserializationContext ctxt) {
+        JsonToken token = parser.currentToken();
+
+        switch (token) {
+            case VALUE_STRING:
+                return parser.getString();
+            case VALUE_NUMBER_INT:
+                return parser.getLongValue();
+            case VALUE_NUMBER_FLOAT:
+                return parser.getDoubleValue();
+            case VALUE_TRUE:
+                return Boolean.TRUE;
+            case VALUE_FALSE:
+                return Boolean.FALSE;
+            case VALUE_NULL:
+                return null;
+            case START_ARRAY:
+                return readJsonArrayAsCollection(parser, ctxt);
+            case START_OBJECT:
+                return readJsonObjectAsMap(parser, ctxt);
+            default:
+                String msg = "Unexpected token for EJavaObject attribute '" + attribute.getName() + "': " + token;
+                LOGGER.warning(msg);
+                ContextHelper.addWarning(ctxt, msg, parser, "AttributeDeserializationEntry");
+                return null;
+        }
+    }
+
+    /**
+     * Reads a JSON array and returns it as a List.
+     */
+    private List<Object> readJsonArrayAsCollection(JsonParser parser, DeserializationContext ctxt) {
+        List<Object> list = new ArrayList<>();
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            list.add(readAnyJsonValue(parser, ctxt));
+        }
+
+        return list;
+    }
+
+    /**
+     * Reads a JSON object and returns it as a Map.
+     */
+    private java.util.Map<String, Object> readJsonObjectAsMap(JsonParser parser, DeserializationContext ctxt) {
+        java.util.Map<String, Object> map = new java.util.LinkedHashMap<>();
+
+        while (parser.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = parser.currentName();
+            parser.nextToken(); // Move to value
+            map.put(fieldName, readAnyJsonValue(parser, ctxt));
+        }
+
+        return map;
+    }
+
+    /**
+     * Reads a JSON structure (object or array) and returns it as a JSON string.
+     * <p>
+     * This is used when a String-typed attribute encounters a JSON object or array.
+     * The entire structure is serialized to a JSON string representation.
+     * </p>
+     * <p>
+     * Example: {@code {"timeout": 30, "retries": 3}} becomes {@code "{\"timeout\":30,\"retries\":3}"}
+     * </p>
+     *
+     * @param parser the JSON parser positioned at START_OBJECT or START_ARRAY
+     * @return the JSON string representation of the structure
+     */
+    private String readJsonStructureAsString(JsonParser parser) {
+        StringBuilder sb = new StringBuilder();
+        JsonToken startToken = parser.currentToken();
+
+        if (startToken == JsonToken.START_OBJECT) {
+            readJsonObjectToString(parser, sb);
+        } else if (startToken == JsonToken.START_ARRAY) {
+            readJsonArrayToString(parser, sb);
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Reads a JSON object and appends it to the StringBuilder.
+     */
+    private void readJsonObjectToString(JsonParser parser, StringBuilder sb) {
+        sb.append("{");
+        boolean first = true;
+
+        while (parser.nextToken() != JsonToken.END_OBJECT) {
+            if (!first) {
+                sb.append(",");
+            }
+            first = false;
+
+            // Current token should be PROPERTY_NAME
+            String fieldName = parser.currentName();
+            sb.append("\"").append(escapeJson(fieldName)).append("\":");
+
+            // Move to value
+            parser.nextToken();
+            appendJsonValue(parser, sb);
+        }
+
+        sb.append("}");
+    }
+
+    /**
+     * Reads a JSON array and appends it to the StringBuilder.
+     */
+    private void readJsonArrayToString(JsonParser parser, StringBuilder sb) {
+        sb.append("[");
+        boolean first = true;
+
+        while (parser.nextToken() != JsonToken.END_ARRAY) {
+            if (!first) {
+                sb.append(",");
+            }
+            first = false;
+
+            appendJsonValue(parser, sb);
+        }
+
+        sb.append("]");
+    }
+
+    /**
+     * Appends the current JSON value to the StringBuilder.
+     */
+    private void appendJsonValue(JsonParser parser, StringBuilder sb) {
+        JsonToken token = parser.currentToken();
+
+        switch (token) {
+            case START_OBJECT:
+                readJsonObjectToString(parser, sb);
+                break;
+            case START_ARRAY:
+                readJsonArrayToString(parser, sb);
+                break;
+            case VALUE_STRING:
+                sb.append("\"").append(escapeJson(parser.getString())).append("\"");
+                break;
+            case VALUE_NUMBER_INT:
+                sb.append(parser.getLongValue());
+                break;
+            case VALUE_NUMBER_FLOAT:
+                sb.append(parser.getDecimalValue().toPlainString());
+                break;
+            case VALUE_TRUE:
+                sb.append("true");
+                break;
+            case VALUE_FALSE:
+                sb.append("false");
+                break;
+            case VALUE_NULL:
+                sb.append("null");
+                break;
+            default:
+                // Skip unexpected tokens
+                break;
+        }
+    }
+
+    /**
+     * Escapes special characters in a JSON string value.
+     */
+    private String escapeJson(String value) {
+        if (value == null) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (char c : value.toCharArray()) {
+            switch (c) {
+                case '"':
+                    sb.append("\\\"");
+                    break;
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case '\b':
+                    sb.append("\\b");
+                    break;
+                case '\f':
+                    sb.append("\\f");
+                    break;
+                case '\n':
+                    sb.append("\\n");
+                    break;
+                case '\r':
+                    sb.append("\\r");
+                    break;
+                case '\t':
+                    sb.append("\\t");
+                    break;
+                default:
+                    if (c < 0x20) {
+                        sb.append(String.format("\\u%04x", (int) c));
+                    } else {
+                        sb.append(c);
+                    }
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Skips the current JSON value (object, array, or primitive).
+     * <p>
+     * Used when an unexpected structure is encountered but we need to
+     * continue parsing the rest of the document.
+     * </p>
+     *
+     * @param parser the JSON parser
+     */
+    private void skipJsonValue(JsonParser parser) {
+        JsonToken token = parser.currentToken();
+        if (token == JsonToken.START_OBJECT) {
+            int depth = 1;
+            while (depth > 0) {
+                token = parser.nextToken();
+                if (token == JsonToken.START_OBJECT) {
+                    depth++;
+                } else if (token == JsonToken.END_OBJECT) {
+                    depth--;
+                }
+            }
+        } else if (token == JsonToken.START_ARRAY) {
+            int depth = 1;
+            while (depth > 0) {
+                token = parser.nextToken();
+                if (token == JsonToken.START_ARRAY) {
+                    depth++;
+                } else if (token == JsonToken.END_ARRAY) {
+                    depth--;
+                }
+            }
+        }
+        // Primitive values are already consumed
     }
 }

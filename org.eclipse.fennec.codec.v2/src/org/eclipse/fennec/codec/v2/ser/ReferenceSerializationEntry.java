@@ -15,9 +15,12 @@ package org.eclipse.fennec.codec.v2.ser;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -197,13 +200,18 @@ public class ReferenceSerializationEntry implements SerializationEntry {
         gen.writeName(config.getKey());
 
         if (reference.isMany() && value instanceof EList<?> list) {
-            gen.writeStartArray();
-            for (Object item : list) {
-                if (item instanceof EObject target) {
-                    serializeReference(target, gen, ctxt);
+            // Check if this is an EMap reference (Map.Entry type)
+            if (isMapEntryReference()) {
+                serializeEMap(list, gen, ctxt);
+            } else {
+                gen.writeStartArray();
+                for (Object item : list) {
+                    if (item instanceof EObject target) {
+                        serializeReference(target, gen, ctxt);
+                    }
                 }
+                gen.writeEndArray();
             }
-            gen.writeEndArray();
         } else if (value instanceof EObject target) {
             serializeReference(target, gen, ctxt);
         }
@@ -486,5 +494,135 @@ public class ReferenceSerializationEntry implements SerializationEntry {
         }
         // Fallback for objects not in a resource
         return target.eClass().getEPackage().getNsURI() + "#//" + target.eClass().getName();
+    }
+
+    // ========================================================================
+    // EMap Serialization Support
+    // ========================================================================
+
+    /**
+     * Checks if this reference is an EMap reference (reference type is a Map.Entry).
+     * <p>
+     * EMap references are detected by:
+     * <ul>
+     *   <li>instanceClassName equals "java.util.Map$Entry", OR</li>
+     *   <li>The reference type has "key" and "value" features</li>
+     * </ul>
+     * </p>
+     *
+     * @return true if this is an EMap reference
+     * @see <a href="docs/codec-v2-spec/11-emap.md">Spec: EMap Serialization</a>
+     */
+    private boolean isMapEntryReference() {
+        EClass entryClass = reference.getEReferenceType();
+        if (entryClass == null) {
+            return false;
+        }
+
+        // Check instanceClassName for Map.Entry
+        String instanceClassName = entryClass.getInstanceClassName();
+        if ("java.util.Map$Entry".equals(instanceClassName)) {
+            return true;
+        }
+
+        // Fallback: check for key and value features
+        return entryClass.getEStructuralFeature("key") != null
+                && entryClass.getEStructuralFeature("value") != null;
+    }
+
+    /**
+     * Serializes an EMap as a JSON object.
+     * <p>
+     * Each map entry is serialized with its key as the JSON field name
+     * and its value as the JSON field value:
+     * <pre>
+     * {
+     *   "key1": value1,
+     *   "key2": value2
+     * }
+     * </pre>
+     * </p>
+     *
+     * @param entries the list of map entries (EObjects with key/value features)
+     * @param gen the JSON generator
+     * @param ctxt the serialization context
+     */
+    private void serializeEMap(List<?> entries, JsonGenerator gen, SerializationContext ctxt) {
+        EClass entryClass = reference.getEReferenceType();
+        var keyFeature = entryClass.getEStructuralFeature("key");
+        var valueFeature = entryClass.getEStructuralFeature("value");
+
+        gen.writeStartObject();
+
+        for (Object item : entries) {
+            if (item instanceof EObject entry) {
+                // Get the key - convert to string
+                Object keyValue = entry.eGet(keyFeature);
+                String key = keyValue != null ? keyValue.toString() : "";
+
+                // Write the key as field name
+                gen.writeName(key);
+
+                // Serialize the value based on its type
+                Object value = entry.eGet(valueFeature);
+                serializeMapEntryValue(value, valueFeature, gen, ctxt);
+            }
+        }
+
+        gen.writeEndObject();
+    }
+
+    /**
+     * Serializes the value of an EMap entry.
+     * <p>
+     * If the value is an EObject (reference), it is serialized inline.
+     * If the value is a primitive/data type, it is serialized directly.
+     * </p>
+     *
+     * @param value the value to serialize
+     * @param valueFeature the value feature (to determine if it's a reference or attribute)
+     * @param gen the JSON generator
+     * @param ctxt the serialization context
+     */
+    private void serializeMapEntryValue(Object value, org.eclipse.emf.ecore.EStructuralFeature valueFeature,
+            JsonGenerator gen, SerializationContext ctxt) {
+        if (value == null) {
+            gen.writeNull();
+        } else if (value instanceof EObject eObject) {
+            // Reference value - serialize inline
+            ctxt.writeValue(gen, eObject);
+        } else if (valueFeature instanceof EAttribute) {
+            // Attribute value - serialize as primitive
+            serializeAttributeValue(value, gen);
+        } else {
+            // Unknown - write as string
+            gen.writeString(value.toString());
+        }
+    }
+
+    /**
+     * Serializes a primitive attribute value.
+     *
+     * @param value the value to serialize (non-null)
+     * @param gen the JSON generator
+     */
+    private void serializeAttributeValue(Object value, JsonGenerator gen) {
+        if (value instanceof String s) {
+            gen.writeString(s);
+        } else if (value instanceof Integer i) {
+            gen.writeNumber(i);
+        } else if (value instanceof Long l) {
+            gen.writeNumber(l);
+        } else if (value instanceof Double d) {
+            gen.writeNumber(d);
+        } else if (value instanceof Float f) {
+            gen.writeNumber(f);
+        } else if (value instanceof Boolean b) {
+            gen.writeBoolean(b);
+        } else if (value instanceof Number n) {
+            gen.writeNumber(n.doubleValue());
+        } else {
+            gen.writeString(value.toString());
+        }
     }
 }

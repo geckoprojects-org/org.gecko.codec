@@ -115,4 +115,45 @@ public interface CodecModuleOptions {
 	String CODEC_MODULE_REFERENCE_DESERIALIZER = "codec.module.reference.deserializer";
 	String CODEC_PROXY_FACTORY = "codec.proxy.factory";
 
+	/**
+	 * Load option key for feature-specific type hints.
+	 * <p>
+	 * Value: {@code Map<EStructuralFeature, EClass>}
+	 * </p>
+	 * <p>
+	 * Provides EClass type hints for specific features, particularly useful for
+	 * EObject-typed features where the concrete type cannot be determined from JSON alone.
+	 * </p>
+	 *
+	 * @see <a href="docs/codec-v2-spec/18-feature-type-hints.md">Spec: Feature Type Hints</a>
+	 */
+	String CODEC_FEATURE_TYPE_HINTS = "codec.feature.type.hints";
+
+	/**
+	 * Load option key for feature-specific value readers.
+	 * <p>
+	 * Value: {@code Map<EStructuralFeature, String>} where String is the registered reader name
+	 * </p>
+	 * <p>
+	 * This is the Load-Option equivalent of the {@code valueReaderName} EAnnotation.
+	 * Takes priority over CODEC_FEATURE_TYPE_HINTS for the same feature.
+	 * </p>
+	 *
+	 * @see <a href="docs/codec-v2-spec/18-feature-type-hints.md">Spec: Feature Type Hints</a>
+	 */
+	String CODEC_FEATURE_VALUE_READERS = "codec.feature.value.readers";
+
+	/**
+	 * Save option key for feature-specific value writers.
+	 * <p>
+	 * Value: {@code Map<EStructuralFeature, String>} where String is the registered writer name
+	 * </p>
+	 * <p>
+	 * This is the Save-Option equivalent of the {@code valueWriterName} EAnnotation.
+	 * </p>
+	 *
+	 * @see <a href="docs/codec-v2-spec/18-feature-type-hints.md">Spec: Feature Type Hints</a>
+	 */
+	String CODEC_FEATURE_VALUE_WRITERS = "codec.feature.value.writers";
+
 }

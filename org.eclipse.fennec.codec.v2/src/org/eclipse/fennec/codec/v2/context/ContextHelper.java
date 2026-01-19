@@ -13,7 +13,10 @@
  */
 package org.eclipse.fennec.codec.v2.context;
 
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
 
 import tools.jackson.core.JsonParser;
@@ -70,6 +73,55 @@ public final class ContextHelper {
      * </p>
      */
     public static final String ROOT_SERIALIZED = "CODEC_ROOT_SERIALIZED";
+
+    /**
+     * Context attribute key for feature-specific type hints.
+     * <p>
+     * Value: {@code Map<EStructuralFeature, EClass>}
+     * </p>
+     * <p>
+     * Provides EClass type hints for specific EObject-typed features where
+     * the concrete type cannot be determined from the JSON alone.
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/18-feature-type-hints.md">Spec: Feature Type Hints</a>
+     */
+    public static final String FEATURE_TYPE_HINTS = "CODEC_FEATURE_TYPE_HINTS";
+
+    /**
+     * Context attribute key for feature-specific value readers.
+     * <p>
+     * Value: {@code Map<EStructuralFeature, String>}
+     * </p>
+     * <p>
+     * Maps features to ValueReader names. Takes priority over FEATURE_TYPE_HINTS.
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/18-feature-type-hints.md">Spec: Feature Type Hints</a>
+     */
+    public static final String FEATURE_VALUE_READERS = "CODEC_FEATURE_VALUE_READERS";
+
+    /**
+     * Context attribute key for feature-specific value writers.
+     * <p>
+     * Value: {@code Map<EStructuralFeature, String>}
+     * </p>
+     * <p>
+     * Maps features to ValueWriter names for serialization.
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/18-feature-type-hints.md">Spec: Feature Type Hints</a>
+     */
+    public static final String FEATURE_VALUE_WRITERS = "CODEC_FEATURE_VALUE_WRITERS";
+
+    /**
+     * Context attribute key for the current feature's type hint.
+     * <p>
+     * Set temporarily during deserialization when a type hint is available
+     * for the current feature. Allows ValueReaders to access the hint.
+     * </p>
+     */
+    public static final String FEATURE_TYPE_HINT = "CODEC_FEATURE_TYPE_HINT";
 
     private ContextHelper() {
         // Static helper class
@@ -504,5 +556,167 @@ public final class ContextHelper {
      */
     public static void addError(DeserializationContext ctxt, String message, String source) {
         addError(ctxt, message, (JsonParser) null, source);
+    }
+
+    // ========================================================================
+    // Feature Type Hints and Value Readers/Writers Methods
+    // ========================================================================
+
+    /**
+     * Gets the feature type hints map from the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @return the feature type hints map, or null if not set
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<EStructuralFeature, EClass> getFeatureTypeHints(DeserializationContext ctxt) {
+        if (ctxt == null) {
+            return null;
+        }
+        Object value = ctxt.getAttribute(FEATURE_TYPE_HINTS);
+        return value instanceof Map ? (Map<EStructuralFeature, EClass>) value : null;
+    }
+
+    /**
+     * Gets the feature value readers map from the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @return the feature value readers map, or null if not set
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<EStructuralFeature, String> getFeatureValueReaders(DeserializationContext ctxt) {
+        if (ctxt == null) {
+            return null;
+        }
+        Object value = ctxt.getAttribute(FEATURE_VALUE_READERS);
+        return value instanceof Map ? (Map<EStructuralFeature, String>) value : null;
+    }
+
+    /**
+     * Gets the feature value writers map from the serialization context.
+     *
+     * @param ctxt the serialization context
+     * @return the feature value writers map, or null if not set
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<EStructuralFeature, String> getFeatureValueWriters(SerializationContext ctxt) {
+        if (ctxt == null) {
+            return null;
+        }
+        Object value = ctxt.getAttribute(FEATURE_VALUE_WRITERS);
+        return value instanceof Map ? (Map<EStructuralFeature, String>) value : null;
+    }
+
+    /**
+     * Sets the feature type hints map in the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @param hints the feature type hints map
+     */
+    public static void setFeatureTypeHints(DeserializationContext ctxt, Map<EStructuralFeature, EClass> hints) {
+        if (ctxt != null) {
+            ctxt.setAttribute(FEATURE_TYPE_HINTS, hints);
+        }
+    }
+
+    /**
+     * Sets the feature value readers map in the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @param readers the feature value readers map
+     */
+    public static void setFeatureValueReaders(DeserializationContext ctxt, Map<EStructuralFeature, String> readers) {
+        if (ctxt != null) {
+            ctxt.setAttribute(FEATURE_VALUE_READERS, readers);
+        }
+    }
+
+    /**
+     * Sets the feature value writers map in the serialization context.
+     *
+     * @param ctxt the serialization context
+     * @param writers the feature value writers map
+     */
+    public static void setFeatureValueWriters(SerializationContext ctxt, Map<EStructuralFeature, String> writers) {
+        if (ctxt != null) {
+            ctxt.setAttribute(FEATURE_VALUE_WRITERS, writers);
+        }
+    }
+
+    /**
+     * Gets the type hint for a specific feature from the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @param feature the feature to get the hint for
+     * @return the EClass type hint, or null if no hint is available
+     */
+    public static EClass getFeatureTypeHint(DeserializationContext ctxt, EStructuralFeature feature) {
+        Map<EStructuralFeature, EClass> hints = getFeatureTypeHints(ctxt);
+        return hints != null ? hints.get(feature) : null;
+    }
+
+    /**
+     * Gets the value reader name for a specific feature from the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @param feature the feature to get the reader for
+     * @return the value reader name, or null if no reader is configured
+     */
+    public static String getFeatureValueReader(DeserializationContext ctxt, EStructuralFeature feature) {
+        Map<EStructuralFeature, String> readers = getFeatureValueReaders(ctxt);
+        return readers != null ? readers.get(feature) : null;
+    }
+
+    /**
+     * Gets the value writer name for a specific feature from the serialization context.
+     *
+     * @param ctxt the serialization context
+     * @param feature the feature to get the writer for
+     * @return the value writer name, or null if no writer is configured
+     */
+    public static String getFeatureValueWriter(SerializationContext ctxt, EStructuralFeature feature) {
+        Map<EStructuralFeature, String> writers = getFeatureValueWriters(ctxt);
+        return writers != null ? writers.get(feature) : null;
+    }
+
+    /**
+     * Gets the current feature's type hint from the deserialization context.
+     * <p>
+     * This is set temporarily during deserialization of a feature and can be
+     * accessed by ValueReaders to use the hint when available.
+     * </p>
+     *
+     * @param ctxt the deserialization context
+     * @return the current feature's type hint, or null if not set
+     */
+    public static EClass getCurrentFeatureTypeHint(DeserializationContext ctxt) {
+        if (ctxt == null) {
+            return null;
+        }
+        Object value = ctxt.getAttribute(FEATURE_TYPE_HINT);
+        return value instanceof EClass ? (EClass) value : null;
+    }
+
+    /**
+     * Sets the current feature's type hint in the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @param eClass the type hint EClass
+     */
+    public static void setCurrentFeatureTypeHint(DeserializationContext ctxt, EClass eClass) {
+        if (ctxt != null) {
+            ctxt.setAttribute(FEATURE_TYPE_HINT, eClass);
+        }
+    }
+
+    /**
+     * Clears the current feature's type hint from the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     */
+    public static void clearCurrentFeatureTypeHint(DeserializationContext ctxt) {
+        if (ctxt != null) {
+            ctxt.setAttribute(FEATURE_TYPE_HINT, null);
+        }
     }
 }

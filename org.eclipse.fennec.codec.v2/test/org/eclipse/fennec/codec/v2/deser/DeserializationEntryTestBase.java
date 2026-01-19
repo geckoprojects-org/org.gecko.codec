@@ -57,6 +57,7 @@ abstract class DeserializationEntryTestBase {
     protected EAttribute activeAttribute;
     protected EAttribute scoreAttribute;
     protected EAttribute tagsAttribute;
+    protected EAttribute metadataAttribute;  // EJavaObject type
 
     // EAttributes on MultiIdPerson (for combined ID tests)
     protected EAttribute firstNameAttribute;
@@ -94,6 +95,7 @@ abstract class DeserializationEntryTestBase {
         activeAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "active");
         scoreAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "score");
         tagsAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "tags");
+        metadataAttribute = (EAttribute) ecoreHelper.getFeature(personClass, "metadata");
 
         // Load EAttributes on MultiIdPerson
         firstNameAttribute = (EAttribute) ecoreHelper.getFeature(multiIdPersonClass, "firstName");

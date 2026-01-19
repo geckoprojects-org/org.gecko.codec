@@ -164,7 +164,12 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
         }
 
         if (reference.isMany()) {
-            deserializeMultiValued(state, parser, ctxt, eObject);
+            // Check if this is an EMap (reference to Map.Entry types)
+            if (isMapEntryReference() && parser.currentToken() == JsonToken.START_OBJECT) {
+                deserializeEMap(state, parser, ctxt, eObject);
+            } else {
+                deserializeMultiValued(state, parser, ctxt, eObject);
+            }
         } else {
             deserializeSingleValued(state, parser, ctxt, eObject);
         }
@@ -251,9 +256,14 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      * context to allow deserialization of nested objects without explicit _type.
      * </p>
      * <p>
-     * If a custom reader is configured for this reference, it will be used instead
-     * of the standard EMF object deserialization. This allows special handling for
-     * containment references that need custom conversion (e.g., JSON Schema to EPackage).
+     * Priority for type resolution (see spec 18-feature-type-hints.md):
+     * <ol>
+     *   <li>_type field in JSON (explicit type in data)</li>
+     *   <li>CODEC_FEATURE_VALUE_READERS option (runtime value reader)</li>
+     *   <li>CODEC_FEATURE_TYPE_HINTS option (runtime type hint)</li>
+     *   <li>valueReaderName EAnnotation (static model config)</li>
+     *   <li>EReference.eType (declared reference type)</li>
+     * </ol>
      * </p>
      * <p>
      * This method uses proper context isolation:
@@ -271,11 +281,62 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     private EObject deserializeContainedObject(DeserializationState parentState, JsonParser parser,
             DeserializationContext ctxt) {
         try {
-            // Check for custom containment reader first - allows special conversion logic
+            // Priority 1: Check for runtime value reader from CODEC_FEATURE_VALUE_READERS option
+            String runtimeReaderName = ContextHelper.getFeatureValueReader(ctxt, reference);
+            if (runtimeReaderName != null && !runtimeReaderName.isEmpty()) {
+                // Delegate to runtime-specified value reader
+                ReferenceValueReader<?> runtimeReader = resolveRuntimeValueReader(runtimeReaderName, ctxt);
+                if (runtimeReader != null) {
+                    // Make type hint available to the reader via context
+                    EClass typeHint = ContextHelper.getFeatureTypeHint(ctxt, reference);
+                    if (typeHint != null) {
+                        ContextHelper.setCurrentFeatureTypeHint(ctxt, typeHint);
+                    }
+                    try {
+                        return runtimeReader.read(parser, reference, ctxt);
+                    } finally {
+                        ContextHelper.clearCurrentFeatureTypeHint(ctxt);
+                    }
+                } else {
+                    String msg = "ValueReader '" + runtimeReaderName + "' not found for reference '" +
+                            reference.getName() + "', falling back to default";
+                    LOGGER.warning(msg);
+                    ContextHelper.addWarning(ctxt, msg, parser, "ReferenceDeserializationEntry");
+                }
+            }
+
+            // Priority 2: Check for runtime type hint from CODEC_FEATURE_TYPE_HINTS option
+            EClass runtimeTypeHint = ContextHelper.getFeatureTypeHint(ctxt, reference);
+
+            // Priority 3: Check for custom containment reader from EAnnotation (valueReaderName)
             // (e.g., JSON Schema to EPackage for OpenAPI components/schemas)
             if (containmentReader != null) {
-                EObject result = containmentReader.read(parser, reference, ctxt);
-                return result;
+                // Make type hint available to the reader via context
+                if (runtimeTypeHint != null) {
+                    ContextHelper.setCurrentFeatureTypeHint(ctxt, runtimeTypeHint);
+                }
+                try {
+                    return containmentReader.read(parser, reference, ctxt);
+                } finally {
+                    ContextHelper.clearCurrentFeatureTypeHint(ctxt);
+                }
+            }
+
+            // Determine effective type hint: runtime > declared reference type
+            EClass effectiveTypeHint = runtimeTypeHint != null ? runtimeTypeHint : reference.getEReferenceType();
+
+            // Check if the effective type hint is abstract or is EObject itself
+            // Per spec 18-feature-type-hints.md Section 10.1:
+            // "EObject-typed feature without hint and without _type" -> skip feature, value is null
+            if (isUninstantiableType(effectiveTypeHint)) {
+                String msg = "Cannot deserialize feature '" + reference.getName() + "' of type " +
+                        effectiveTypeHint.getName() + ": no type information found and no " +
+                        "CODEC_FEATURE_TYPE_HINTS provided. Feature will be skipped.";
+                LOGGER.warning(msg);
+                ContextHelper.addWarning(ctxt, msg, parser, "ReferenceDeserializationEntry");
+                // Skip the JSON content for this feature
+                skipJsonValue(parser);
+                return null;
             }
 
             // Check if we have an EMF-aware context from the parser
@@ -288,8 +349,9 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                         parser.currentLocation().getLineNr(),
                         parser.currentLocation().getColumnNr());
 
-                // Set the reference type as hint for the nested deserialization
-                childContext.setCurrentTypeHint(reference.getEReferenceType());
+                // Set the effective type hint for the nested deserialization
+                // Priority: runtime type hint > declared reference type
+                childContext.setCurrentTypeHint(effectiveTypeHint);
 
                 // Set the current feature being deserialized
                 childContext.setCurrentFeature(reference);
@@ -301,7 +363,7 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
 
                 // Also set via ContextHelper for backwards compatibility
                 EClass previousExpectedType = ContextHelper.getExpectedType(ctxt);
-                ContextHelper.setExpectedType(ctxt, reference.getEReferenceType());
+                ContextHelper.setExpectedType(ctxt, effectiveTypeHint);
 
                 try {
                     tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
@@ -324,7 +386,7 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
             } else if (streamContext instanceof EMFCodecReadContext emfContext) {
                 // Generic EMF context (non-JSON format) - set hint directly
                 EClass previousHint = emfContext.getCurrentTypeHint();
-                emfContext.setCurrentTypeHint(reference.getEReferenceType());
+                emfContext.setCurrentTypeHint(effectiveTypeHint);
 
                 try {
                     tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
@@ -341,7 +403,7 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 }
             } else {
                 // Fall back to ContextHelper for non-EMF-aware parsers
-                return deserializeWithContextHelper(parser, ctxt);
+                return deserializeWithContextHelper(parser, ctxt, effectiveTypeHint);
             }
         } catch (Exception e) {
             String msg = "Error deserializing contained object for " + reference.getName() + ": " + e.getMessage();
@@ -637,10 +699,14 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
 
     /**
      * Fallback deserialization using ContextHelper for non-EMF-aware parsers.
+     *
+     * @param parser the JSON parser
+     * @param ctxt the deserialization context
+     * @param typeHint the effective type hint to use
      */
-    private EObject deserializeWithContextHelper(JsonParser parser, DeserializationContext ctxt) {
+    private EObject deserializeWithContextHelper(JsonParser parser, DeserializationContext ctxt, EClass typeHint) {
         EClass previousExpectedType = ContextHelper.getExpectedType(ctxt);
-        ContextHelper.setExpectedType(ctxt, reference.getEReferenceType());
+        ContextHelper.setExpectedType(ctxt, typeHint);
 
         try {
             tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
@@ -659,6 +725,30 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 ContextHelper.clearExpectedType(ctxt);
             }
         }
+    }
+
+    /**
+     * Resolves a ReferenceValueReader from the runtime value registry by name.
+     * <p>
+     * This method looks up the reader from the CodecValueRegistry that was
+     * passed via the DeserializationContext.
+     * </p>
+     *
+     * @param readerName the name of the value reader
+     * @param ctxt the deserialization context
+     * @return the resolved ReferenceValueReader, or null if not found
+     */
+    private ReferenceValueReader<?> resolveRuntimeValueReader(String readerName, DeserializationContext ctxt) {
+        // The value registry should be available via the CodecModule configuration
+        // For now we rely on the registry that was passed to the constructor
+        // TODO: In future, we could look this up from a context attribute if needed
+        // For runtime readers, we'd need the registry to be accessible at deserialization time
+        LOGGER.fine(() -> "Looking up runtime value reader: " + readerName);
+
+        // Note: Runtime value readers require the CodecValueRegistry to be accessible
+        // This is a limitation - currently we only support readers configured via constructor
+        // A future enhancement would be to pass the registry via context
+        return null; // Placeholder - requires registry access enhancement
     }
 
     /**
@@ -747,5 +837,239 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      */
     public String getRefKey() {
         return refKey;
+    }
+
+    /**
+     * Checks if the given EClass is the base EObject type from Ecore.
+     * <p>
+     * This method specifically checks for the base EObject class from the Ecore
+     * package. Abstract domain classes (like "Geometry") are NOT considered here
+     * because they typically work with _type polymorphism in JSON.
+     * </p>
+     * <p>
+     * Per spec 18-feature-type-hints.md Section 10.1:
+     * "EObject-typed feature without hint and without _type" should be skipped.
+     * However, abstract domain classes with _type in JSON should still work.
+     * </p>
+     *
+     * @param eClass the EClass to check
+     * @return true if it's the base EObject type that cannot be instantiated
+     */
+    private boolean isUninstantiableType(EClass eClass) {
+        if (eClass == null) {
+            return true;
+        }
+        // Only skip for the base EObject from Ecore package
+        // Abstract domain classes (like "Geometry") can work with _type in JSON
+        // The deserializer will handle those cases
+        if ("EObject".equals(eClass.getName()) &&
+                "http://www.eclipse.org/emf/2002/Ecore".equals(eClass.getEPackage().getNsURI())) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Skips the current JSON value (object, array, or primitive).
+     * <p>
+     * This is used when a feature cannot be deserialized (e.g., no type hint for EObject-typed feature)
+     * but we still need to consume the JSON tokens to continue parsing.
+     * </p>
+     *
+     * @param parser the JSON parser positioned at the start of the value
+     */
+    private void skipJsonValue(JsonParser parser) {
+        try {
+            parser.skipChildren();
+        } catch (Exception e) {
+            LOGGER.warning("Failed to skip JSON value: " + e.getMessage());
+        }
+    }
+
+    // ========================================================================
+    // EMap Support
+    // ========================================================================
+
+    /**
+     * Checks if this reference is an EMap reference (reference to Map.Entry types).
+     * <p>
+     * EMF's EMap is modeled as a multi-valued containment reference to a class
+     * that implements {@code java.util.Map$Entry}. This method detects such references
+     * by checking the instanceClassName of the reference type.
+     * </p>
+     *
+     * @return true if this reference is to a Map.Entry type
+     */
+    private boolean isMapEntryReference() {
+        EClass entryClass = reference.getEReferenceType();
+        if (entryClass == null) {
+            return false;
+        }
+
+        // Check instanceClassName for Map.Entry
+        String instanceClassName = entryClass.getInstanceClassName();
+        if ("java.util.Map$Entry".equals(instanceClassName)) {
+            return true;
+        }
+
+        // Also check if the class has both 'key' and 'value' features
+        // This is a fallback for cases where instanceClassName is not set
+        return entryClass.getEStructuralFeature("key") != null &&
+               entryClass.getEStructuralFeature("value") != null;
+    }
+
+    /**
+     * Deserializes an EMap from a JSON object.
+     * <p>
+     * JSON format for EMaps:
+     * <pre>
+     * {
+     *   "key1": value1,
+     *   "key2": value2,
+     *   ...
+     * }
+     * </pre>
+     * Where each JSON field name becomes the map entry key, and the field value
+     * becomes the map entry value.
+     * </p>
+     *
+     * @param state the deserialization state
+     * @param parser the JSON parser at START_OBJECT
+     * @param ctxt the deserialization context
+     * @param eObject the parent EObject
+     */
+    @SuppressWarnings("unchecked")
+    private void deserializeEMap(DeserializationState state, JsonParser parser,
+            DeserializationContext ctxt, EObject eObject) {
+        EClass entryClass = reference.getEReferenceType();
+        org.eclipse.emf.ecore.EStructuralFeature keyFeature = entryClass.getEStructuralFeature("key");
+        org.eclipse.emf.ecore.EStructuralFeature valueFeature = entryClass.getEStructuralFeature("value");
+
+        if (keyFeature == null || valueFeature == null) {
+            String msg = "EMap entry class '" + entryClass.getName() + "' missing key or value feature";
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
+            return;
+        }
+
+        List<EObject> entries = (List<EObject>) eObject.eGet(reference);
+
+        try {
+            // Iterate over JSON object fields
+            while (parser.nextToken() != JsonToken.END_OBJECT) {
+                String key = parser.currentName();
+                parser.nextToken(); // Move to value
+
+                // Create a new map entry
+                EObject entry = entryClass.getEPackage().getEFactoryInstance().create(entryClass);
+
+                // Set the key
+                entry.eSet(keyFeature, key);
+
+                // Deserialize the value based on value feature type
+                Object value = deserializeMapEntryValue(state, parser, ctxt, valueFeature);
+                if (value != null) {
+                    entry.eSet(valueFeature, value);
+                }
+
+                entries.add(entry);
+            }
+        } catch (Exception e) {
+            String msg = "Error deserializing EMap for '" + reference.getName() + "': " + e.getMessage();
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
+        }
+    }
+
+    /**
+     * Deserializes the value part of a map entry.
+     * <p>
+     * The value can be:
+     * <ul>
+     *   <li>A primitive/string (for EAttribute value features)</li>
+     *   <li>An object (for EReference value features)</li>
+     * </ul>
+     * </p>
+     *
+     * @param state the deserialization state
+     * @param parser the JSON parser positioned at the value token
+     * @param ctxt the deserialization context
+     * @param valueFeature the value feature of the map entry class
+     * @return the deserialized value
+     */
+    private Object deserializeMapEntryValue(DeserializationState state, JsonParser parser,
+            DeserializationContext ctxt, org.eclipse.emf.ecore.EStructuralFeature valueFeature) {
+        try {
+            if (valueFeature instanceof org.eclipse.emf.ecore.EAttribute) {
+                // Simple value - let Jackson deserialize it
+                return deserializeAttributeValue(parser, (org.eclipse.emf.ecore.EAttribute) valueFeature);
+            } else if (valueFeature instanceof EReference valueRef) {
+                // Reference value - deserialize as EObject
+                if (parser.currentToken() == JsonToken.START_OBJECT) {
+                    // Set the reference type as hint for the nested deserialization
+                    EClass previousExpectedType = ContextHelper.getExpectedType(ctxt);
+                    ContextHelper.setExpectedType(ctxt, valueRef.getEReferenceType());
+
+                    try {
+                        tools.jackson.databind.ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
+                                ctxt.constructType(EObject.class));
+                        if (deser != null) {
+                            return deser.deserialize(parser, ctxt);
+                        }
+                    } finally {
+                        if (previousExpectedType != null) {
+                            ContextHelper.setExpectedType(ctxt, previousExpectedType);
+                        } else {
+                            ContextHelper.clearExpectedType(ctxt);
+                        }
+                    }
+                } else if (parser.currentToken() == JsonToken.VALUE_NULL) {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warning("Error deserializing map entry value: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
+     * Deserializes a simple attribute value from JSON.
+     *
+     * @param parser the JSON parser positioned at the value token
+     * @param attribute the EAttribute to deserialize to
+     * @return the deserialized value
+     */
+    private Object deserializeAttributeValue(JsonParser parser, org.eclipse.emf.ecore.EAttribute attribute) {
+        JsonToken token = parser.currentToken();
+
+        if (token == JsonToken.VALUE_NULL) {
+            return null;
+        }
+
+        EClassifier type = attribute.getEType();
+        String instanceClassName = type.getInstanceClassName();
+
+        try {
+            if ("java.lang.String".equals(instanceClassName) || "String".equals(type.getName())) {
+                return parser.getString();
+            } else if ("int".equals(instanceClassName) || "java.lang.Integer".equals(instanceClassName)) {
+                return parser.getIntValue();
+            } else if ("long".equals(instanceClassName) || "java.lang.Long".equals(instanceClassName)) {
+                return parser.getLongValue();
+            } else if ("double".equals(instanceClassName) || "java.lang.Double".equals(instanceClassName)) {
+                return parser.getDoubleValue();
+            } else if ("float".equals(instanceClassName) || "java.lang.Float".equals(instanceClassName)) {
+                return parser.getFloatValue();
+            } else if ("boolean".equals(instanceClassName) || "java.lang.Boolean".equals(instanceClassName)) {
+                return parser.getBooleanValue();
+            } else {
+                // Default: try to get as string
+                return parser.getString();
+            }
+        } catch (Exception e) {
+            LOGGER.warning("Error deserializing attribute value: " + e.getMessage());
+            return null;
+        }
     }
 }

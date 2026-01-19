@@ -244,6 +244,359 @@ class AttributeDeserializationEntryTest extends DeserializationEntryTestBase {
     }
 
     @Nested
+    @DisplayName("JSON structure to String deserialization")
+    class JsonStructureToStringDeserialization {
+
+        @Test
+        @DisplayName("deserializes JSON object to string")
+        void deserializesJsonObjectToString() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            // JSON object provided for String-typed attribute
+            try (JsonParser parser = createParser("{\"timeout\": 30, \"retries\": 3}")) {
+                EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, nameAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                String result = (String) person.eGet(nameAttribute);
+                assertNotNull(result);
+                // Should contain the JSON structure as a string
+                assertTrue(result.contains("\"timeout\""));
+                assertTrue(result.contains("30"));
+                assertTrue(result.contains("\"retries\""));
+                assertTrue(result.contains("3"));
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes JSON array to string")
+        void deserializesJsonArrayToString() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            // JSON array provided for String-typed attribute
+            try (JsonParser parser = createParser("[\"tag1\", \"tag2\", 42, true]")) {
+                EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, nameAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                String result = (String) person.eGet(nameAttribute);
+                assertNotNull(result);
+                assertEquals("[\"tag1\",\"tag2\",42,true]", result);
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes nested JSON structure to string")
+        void deserializesNestedJsonStructureToString() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            // Nested JSON object
+            try (JsonParser parser = createParser("{\"config\": {\"nested\": [1, 2, 3]}}")) {
+                EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, nameAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                String result = (String) person.eGet(nameAttribute);
+                assertNotNull(result);
+                assertTrue(result.contains("\"config\""));
+                assertTrue(result.contains("\"nested\""));
+                assertTrue(result.contains("[1,2,3]"));
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes empty JSON object to string")
+        void deserializesEmptyJsonObjectToString() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("{}")) {
+                EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, nameAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                assertEquals("{}", person.eGet(nameAttribute));
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes empty JSON array to string")
+        void deserializesEmptyJsonArrayToString() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("[]")) {
+                EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, nameAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                assertEquals("[]", person.eGet(nameAttribute));
+            }
+        }
+
+        @Test
+        @DisplayName("escapes special characters in JSON strings")
+        void escapesSpecialCharactersInJsonStrings() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            // JSON with special characters
+            try (JsonParser parser = createParser("{\"text\": \"line1\\nline2\\ttab\"}")) {
+                EffectiveFeatureConfig config = createDefaultConfig("name", nameAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, nameAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                String result = (String) person.eGet(nameAttribute);
+                assertNotNull(result);
+                // The string should contain escaped newline and tab
+                assertTrue(result.contains("\\n") || result.contains("line1"));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("EJavaObject attribute deserialization")
+    class EJavaObjectDeserialization {
+
+        @Test
+        @DisplayName("deserializes string value to String")
+        void deserializesStringValue() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("\"hello world\"")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertNotNull(result);
+                assertEquals("hello world", result);
+                assertTrue(result instanceof String);
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes integer value to Long")
+        void deserializesIntegerValue() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("42")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertNotNull(result);
+                assertTrue(result instanceof Long, "Expected Long but was: " + result.getClass().getName());
+                assertEquals(42L, result);
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes decimal value to Double")
+        void deserializesDecimalValue() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("3.14")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertNotNull(result);
+                assertTrue(result instanceof Double, "Expected Double but was: " + result.getClass().getName());
+                assertEquals(3.14, (Double) result, 0.001);
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes true to Boolean.TRUE")
+        void deserializesTrueValue() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("true")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertEquals(Boolean.TRUE, result);
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes false to Boolean.FALSE")
+        void deserializesFalseValue() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("false")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertEquals(Boolean.FALSE, result);
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes null to null")
+        void deserializesNullValue() {
+            EObject person = createPerson();
+            person.eSet(metadataAttribute, "initial"); // Set initial value
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("null")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertNull(result);
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes JSON object to Map")
+        void deserializesObjectToMap() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("{\"name\": \"John\", \"age\": 30}")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertNotNull(result);
+                assertTrue(result instanceof java.util.Map, "Expected Map but was: " + result.getClass().getName());
+
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> map = (java.util.Map<String, Object>) result;
+                assertEquals("John", map.get("name"));
+                assertEquals(30L, map.get("age"));
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes JSON array to List")
+        void deserializesArrayToList() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("[1, 2, 3, \"four\", true]")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertNotNull(result);
+                assertTrue(result instanceof java.util.List, "Expected List but was: " + result.getClass().getName());
+
+                @SuppressWarnings("unchecked")
+                java.util.List<Object> list = (java.util.List<Object>) result;
+                assertEquals(5, list.size());
+                assertEquals(1L, list.get(0));
+                assertEquals(2L, list.get(1));
+                assertEquals(3L, list.get(2));
+                assertEquals("four", list.get(3));
+                assertEquals(Boolean.TRUE, list.get(4));
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes nested JSON structure")
+        void deserializesNestedStructure() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("{\"config\": {\"enabled\": true, \"values\": [1, 2, 3]}}")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertNotNull(result);
+                assertTrue(result instanceof java.util.Map);
+
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> map = (java.util.Map<String, Object>) result;
+
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> configMap = (java.util.Map<String, Object>) map.get("config");
+                assertNotNull(configMap);
+                assertEquals(Boolean.TRUE, configMap.get("enabled"));
+
+                @SuppressWarnings("unchecked")
+                java.util.List<Object> values = (java.util.List<Object>) configMap.get("values");
+                assertEquals(3, values.size());
+                assertEquals(1L, values.get(0));
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes empty object to empty Map")
+        void deserializesEmptyObject() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("{}")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertNotNull(result);
+                assertTrue(result instanceof java.util.Map);
+                assertTrue(((java.util.Map<?, ?>) result).isEmpty());
+            }
+        }
+
+        @Test
+        @DisplayName("deserializes empty array to empty List")
+        void deserializesEmptyArray() {
+            EObject person = createPerson();
+            DeserializationState state = createStateWithObject(person);
+
+            try (JsonParser parser = createParser("[]")) {
+                EffectiveFeatureConfig config = createDefaultConfig("metadata", metadataAttribute);
+                AttributeDeserializationEntry entry = new AttributeDeserializationEntry(config, metadataAttribute);
+
+                entry.deserialize(state, parser, null);
+
+                Object result = person.eGet(metadataAttribute);
+                assertNotNull(result);
+                assertTrue(result instanceof java.util.List);
+                assertTrue(((java.util.List<?>) result).isEmpty());
+            }
+        }
+    }
+
+    @Nested
     @DisplayName("Error handling")
     class ErrorHandling {
 

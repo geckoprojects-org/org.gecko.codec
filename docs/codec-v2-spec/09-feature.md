@@ -539,4 +539,192 @@ Both serialize to JSON arrays, but array attributes support multi-dimensional ne
 
 ---
 
+## 8. JSON Structure to String Conversion (Deserialization Only)
+
+When a String-typed EAttribute encounters a JSON object or array during deserialization, the codec converts the entire structure to a JSON string representation. This is a **deserialization-only** feature and does not support lossless roundtrips.
+
+### 8.1 Use Case
+
+Some schemas (like OpenAPI/JSON Schema) define string-typed attributes that can accept any JSON value. For example, the OpenAPI Schema `default` field can be:
+- A string: `"default": "hello"`
+- A number: `"default": 42`
+- An object: `"default": {"timeout": 30}`
+- An array: `"default": [1, 2, 3]`
+
+When the EMF model defines such an attribute as `EString`, the codec needs to handle objects and arrays gracefully.
+
+### 8.2 Deserialization Behavior
+
+When a String-typed attribute encounters:
+
+| Input JSON | Result String |
+|------------|---------------|
+| `{"timeout": 30}` | `"{\"timeout\":30}"` |
+| `[1, 2, 3]` | `"[1,2,3]"` |
+| `{"nested": {"a": [1]}}` | `"{\"nested\":{\"a\":[1]}}"` |
+| `[]` | `"[]"` |
+| `{}` | `"{}"` |
+
+The JSON structure is serialized to a compact JSON string without extra whitespace.
+
+### 8.3 Roundtrip Limitation
+
+**Important:** This conversion is **not roundtrip-safe**.
+
+- **Input:** `{"default": {"timeout": 30}}`
+- **After deserialization:** `default = "{\"timeout\":30}"` (String)
+- **After serialization:** `{"default": "{\"timeout\":30}"}` (escaped string)
+
+The re-serialized output contains an escaped string, not the original JSON object.
+
+### 8.4 Recommended Solution for Roundtrips
+
+If roundtrip preservation is required, use `EJavaObject` instead of `EString`:
+
+```xml
+<!-- Recommended for any-value attributes -->
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="default"
+    eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+```
+
+With `EJavaObject`:
+- JSON object → `Map<String, Object>` (preserves structure)
+- JSON array → `List<Object>` (preserves structure)
+- Roundtrip works correctly
+
+### 8.5 When to Use String vs EJavaObject
+
+| Scenario | Use `EString` | Use `EJavaObject` |
+|----------|---------------|-------------------|
+| Import-only (no re-export) | ✓ (simpler) | ✓ |
+| Roundtrip required | ✗ | ✓ |
+| Need to inspect structure | ✗ | ✓ |
+| Just need string representation | ✓ | Possible |
+
+---
+
+## 9. EJavaObject Attributes
+
+EAttributes with type `EJavaObject` (instance class `Object.class`) can hold any JSON value. The codec provides full support for deserializing and serializing these dynamic-typed attributes.
+
+### 9.1 Defining EJavaObject Attributes
+
+```xml
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="metadata"
+    eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+```
+
+### 9.2 Deserialization Behavior
+
+When deserializing an `EJavaObject` attribute, JSON values are converted to native Java types:
+
+| JSON Type | Java Type |
+|-----------|-----------|
+| String | `String` |
+| Integer | `Long` |
+| Decimal | `Double` |
+| Boolean | `Boolean` |
+| Null | `null` |
+| Array | `List<Object>` |
+| Object | `Map<String, Object>` (LinkedHashMap) |
+
+**Example:**
+
+```json
+{
+  "metadata": {
+    "enabled": true,
+    "count": 42,
+    "tags": ["a", "b"],
+    "config": {"timeout": 30}
+  }
+}
+```
+
+After deserialization:
+```java
+Object metadata = eObject.eGet(metadataAttribute);
+// metadata is LinkedHashMap<String, Object>
+Map<String, Object> map = (Map<String, Object>) metadata;
+Boolean enabled = (Boolean) map.get("enabled");     // true
+Long count = (Long) map.get("count");               // 42L
+List<?> tags = (List<?>) map.get("tags");           // ["a", "b"]
+Map<?, ?> config = (Map<?, ?>) map.get("config");   // {timeout=30}
+```
+
+### 9.3 Serialization Behavior
+
+When serializing an `EJavaObject` attribute, Java types are converted to JSON:
+
+| Java Type | JSON Type |
+|-----------|-----------|
+| `String` | String |
+| `Number` (Integer, Long, Double, etc.) | Number |
+| `Boolean` | Boolean |
+| `null` | null |
+| `List`, `Collection` | Array |
+| `Map` | Object |
+
+This enables **lossless roundtrips** for any JSON value.
+
+### 9.4 Use Cases
+
+**1. Schema-less metadata:**
+```xml
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="extensions"
+    eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+```
+
+**2. OpenAPI/JSON Schema default values:**
+```xml
+<!-- Schema default can be any JSON value -->
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="default"
+    eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+```
+
+**3. Dynamic configuration:**
+```xml
+<eStructuralFeatures xsi:type="ecore:EAttribute" name="options"
+    eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+```
+
+### 9.5 Type Safety Considerations
+
+Since `EJavaObject` accepts any value, type checking must be done at runtime:
+
+```java
+Object value = eObject.eGet(metadataAttribute);
+if (value instanceof Map<?, ?> map) {
+    // Handle object
+} else if (value instanceof List<?> list) {
+    // Handle array
+} else if (value instanceof String str) {
+    // Handle string
+} else if (value instanceof Number num) {
+    // Handle number
+} else if (value instanceof Boolean bool) {
+    // Handle boolean
+}
+```
+
+### 9.6 Nested Structures
+
+Nested JSON structures are fully supported. Arrays within objects, objects within arrays, and arbitrary nesting depths are all preserved:
+
+```json
+{
+  "metadata": {
+    "level1": {
+      "level2": {
+        "values": [1, 2, {"nested": true}]
+      }
+    }
+  }
+}
+```
+
+All nested structures are recursively converted to `Map<String, Object>` and `List<Object>`.
+
+---
+
 [Next: Custom Value Readers/Writers →](10-custom-values.md)

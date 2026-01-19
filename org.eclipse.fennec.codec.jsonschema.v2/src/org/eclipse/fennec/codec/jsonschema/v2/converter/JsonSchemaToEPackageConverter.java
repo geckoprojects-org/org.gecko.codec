@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -32,6 +34,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EModelElement;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -119,6 +122,262 @@ public class JsonSchemaToEPackageConverter {
 		this.schemaFeature = schemaFeature;
 		resetState();
 		return convertNode(rootNode);
+	}
+
+	/**
+	 * Converts an EMap of Schema objects to an EPackage.
+	 * <p>
+	 * This method is used by OpenAPI resource to convert the deserialized
+	 * schemas map into an EMF-native EPackage representation.
+	 * </p>
+	 * <p>
+	 * Each entry has a key (schema name) and value (Schema object).
+	 * The Schema object contains the JSON Schema properties that can be
+	 * converted to EClassifiers.
+	 * </p>
+	 *
+	 * @param schemaMap the map of schema entries from OpenAPI components/schemas
+	 * @return the created EPackage, or null if conversion fails
+	 */
+	public EPackage convertFromSchemaMap(EMap<String, ? extends EObject> schemaMap) {
+		if (schemaMap == null || schemaMap.isEmpty()) {
+			return null;
+		}
+
+		resetState();
+
+		EPackage ePackage = ecoreFactory.createEPackage();
+		ePackage.setName("schemas");
+		ePackage.setNsURI("http://generated/schemas");
+		ePackage.setNsPrefix("schemas");
+
+		// Process each schema entry
+		for (var entry : schemaMap.entrySet()) {
+			String schemaName = entry.getKey();
+			EObject schemaValue = entry.getValue();
+
+			if (schemaName == null || schemaValue == null) {
+				continue;
+			}
+
+			// Convert Schema EObject to EClass
+			EClassifier classifier = convertSchemaObjectToClassifier(schemaValue, schemaName);
+			if (classifier != null) {
+				classifierMap.put(schemaName, classifier);
+				ePackage.getEClassifiers().add(classifier);
+			}
+		}
+
+		// Resolve deferred references
+		resolveDeferredReferences();
+		resolveMissingReferences();
+		resolveAnyOfReferences();
+		resolveAllOfReferences();
+
+		return ePackage;
+	}
+
+	/**
+	 * Converts a Schema EObject to an EClassifier.
+	 * <p>
+	 * The Schema EObject comes from the OpenAPI model and contains
+	 * properties like type, properties, items, etc.
+	 * </p>
+	 */
+	private EClassifier convertSchemaObjectToClassifier(EObject schema, String name) {
+		// Get the type feature
+		EStructuralFeature typeFeature = schema.eClass().getEStructuralFeature("type");
+		String type = typeFeature != null ? (String) schema.eGet(typeFeature) : null;
+
+		// Check for enum
+		EStructuralFeature enumFeature = schema.eClass().getEStructuralFeature("enum");
+		if (enumFeature != null) {
+			@SuppressWarnings("unchecked")
+			EList<String> enumValues = (EList<String>) schema.eGet(enumFeature);
+			if (enumValues != null && !enumValues.isEmpty()) {
+				return createEEnumFromValues(enumValues, name);
+			}
+		}
+
+		// Handle object type -> EClass
+		if ("object".equals(type) || type == null) {
+			return createEClassFromSchemaObject(schema, name);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Creates an EEnum from a list of enum values.
+	 */
+	private EEnum createEEnumFromValues(EList<String> enumValues, String name) {
+		EEnum eEnum = ecoreFactory.createEEnum();
+		eEnum.setName(capitalizeFirst(name));
+
+		int ordinal = 0;
+		for (String value : enumValues) {
+			EEnumLiteral literal = ecoreFactory.createEEnumLiteral();
+			literal.setLiteral(value);
+			literal.setName(value);
+			literal.setValue(ordinal++);
+			eEnum.getELiterals().add(literal);
+		}
+
+		return eEnum;
+	}
+
+	/**
+	 * Creates an EClass from a Schema EObject.
+	 */
+	private EClass createEClassFromSchemaObject(EObject schema, String name) {
+		EClass eClass = ecoreFactory.createEClass();
+		eClass.setName(capitalizeFirst(name));
+
+		// Get description
+		EStructuralFeature descFeature = schema.eClass().getEStructuralFeature("description");
+		if (descFeature != null) {
+			String description = (String) schema.eGet(descFeature);
+			if (description != null && !description.isEmpty()) {
+				addEAnnotation(eClass, AnnotationSources.GEN_MODEL, "documentation", description);
+			}
+		}
+
+		// Get required fields
+		EStructuralFeature requiredFeature = schema.eClass().getEStructuralFeature("required");
+		Set<String> requiredFields = new HashSet<>();
+		if (requiredFeature != null) {
+			@SuppressWarnings("unchecked")
+			EList<String> required = (EList<String>) schema.eGet(requiredFeature);
+			if (required != null) {
+				requiredFields.addAll(required);
+			}
+		}
+
+		// Get properties - can be EMap or EList with key/value features
+		EStructuralFeature propsFeature = schema.eClass().getEStructuralFeature("properties");
+		if (propsFeature != null) {
+			Object propsValue = schema.eGet(propsFeature);
+
+			if (propsValue instanceof EMap<?, ?> propsMap) {
+				// Handle EMap<String, Schema> directly
+				for (var entry : propsMap.entrySet()) {
+					String propName = (String) entry.getKey();
+					EObject propSchema = (EObject) entry.getValue();
+
+					if (propName != null && propSchema != null) {
+						EStructuralFeature feature = createFeatureFromSchemaObject(propSchema, propName);
+						if (feature != null) {
+							if (requiredFields.contains(propName)) {
+								feature.setLowerBound(1);
+							}
+							eClass.getEStructuralFeatures().add(feature);
+						}
+					}
+				}
+			} else if (propsValue instanceof EList<?> propsList) {
+				// Handle EList of map entries (for test compatibility)
+				for (Object propEntry : propsList) {
+					if (propEntry instanceof Map.Entry<?, ?> entry) {
+						String propName = (String) entry.getKey();
+						EObject propSchema = (EObject) entry.getValue();
+
+						if (propName != null && propSchema != null) {
+							EStructuralFeature feature = createFeatureFromSchemaObject(propSchema, propName);
+							if (feature != null) {
+								if (requiredFields.contains(propName)) {
+									feature.setLowerBound(1);
+								}
+								eClass.getEStructuralFeatures().add(feature);
+							}
+						}
+					} else if (propEntry instanceof EObject entryObj) {
+						// Handle EObject with key/value structural features
+						String propName = (String) entryObj.eGet(entryObj.eClass().getEStructuralFeature("key"));
+						EObject propSchema = (EObject) entryObj.eGet(
+							entryObj.eClass().getEStructuralFeature("value"));
+
+						if (propName != null && propSchema != null) {
+							EStructuralFeature feature = createFeatureFromSchemaObject(propSchema, propName);
+							if (feature != null) {
+								if (requiredFields.contains(propName)) {
+									feature.setLowerBound(1);
+								}
+								eClass.getEStructuralFeatures().add(feature);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return eClass;
+	}
+
+	/**
+	 * Creates an EStructuralFeature from a Schema EObject property.
+	 */
+	private EStructuralFeature createFeatureFromSchemaObject(EObject propSchema, String name) {
+		EStructuralFeature typeFeature = propSchema.eClass().getEStructuralFeature("type");
+		String type = typeFeature != null ? (String) propSchema.eGet(typeFeature) : null;
+
+		// Check for $ref
+		EStructuralFeature refFeature = propSchema.eClass().getEStructuralFeature("ref");
+		if (refFeature != null) {
+			String ref = (String) propSchema.eGet(refFeature);
+			if (ref != null && !ref.isEmpty()) {
+				EReference reference = ecoreFactory.createEReference();
+				reference.setName(name);
+				reference.setContainment(true);
+				String refName = extractSchemaNameFromRef(ref);
+				if (classifierMap.containsKey(refName)) {
+					reference.setEType(classifierMap.get(refName));
+				} else {
+					deferredReferences.add(new DeferredTypeReference(reference, refName));
+				}
+				return reference;
+			}
+		}
+
+		// Handle array type
+		if ("array".equals(type)) {
+			EStructuralFeature itemsFeature = propSchema.eClass().getEStructuralFeature("items");
+			if (itemsFeature != null) {
+				EObject items = (EObject) propSchema.eGet(itemsFeature);
+				if (items != null) {
+					EStructuralFeature feature = createFeatureFromSchemaObject(items, name);
+					if (feature != null) {
+						feature.setUpperBound(-1);
+						feature.setLowerBound(0);
+					}
+					return feature;
+				}
+			}
+			// Fallback: array of objects
+			EAttribute attr = ecoreFactory.createEAttribute();
+			attr.setName(name);
+			attr.setEType(EcorePackage.Literals.EJAVA_OBJECT);
+			attr.setUpperBound(-1);
+			return attr;
+		}
+
+		// Handle object type - create reference
+		if ("object".equals(type)) {
+			String nestedClassName = capitalizeFirst(name);
+			EClass nestedClass = createEClassFromSchemaObject(propSchema, nestedClassName);
+			classifierMap.put(nestedClassName, nestedClass);
+
+			EReference reference = ecoreFactory.createEReference();
+			reference.setName(name);
+			reference.setEType(nestedClass);
+			reference.setContainment(true);
+			return reference;
+		}
+
+		// Handle primitive types - create attribute
+		EAttribute attribute = ecoreFactory.createEAttribute();
+		attribute.setName(name);
+		attribute.setEType(mapJsonTypeToEcore(type != null ? type : "string"));
+		return attribute;
 	}
 
 	private void resetState() {

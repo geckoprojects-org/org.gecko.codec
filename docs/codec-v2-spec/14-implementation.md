@@ -85,13 +85,15 @@
 - [x] Key customization
 - [x] Enum serialization options (LITERAL, NAME, VALUE strategies)
 - [x] Extended metadata names
+- [x] EJavaObject attributes (any JSON value → native Java types)
+- [x] JSON-to-String conversion for EString attributes (deserialization only)
 
 ### Global Options
 - [x] Smart compression (type omission)
-- [ ] Smart compression (same-schema names)
+- [x] Smart compression (same-schema names)
 - [ ] Field ordering
 - [x] Global feature ignore list
-- [ ] NUMERIC mode
+- [x] NUMERIC mode (TypeStrategy.NUMERIC ser + deser)
 
 ### SuperType Serialization
 
@@ -157,7 +159,30 @@ See [15-test-coverage.md](15-test-coverage.md) for the complete spec-to-test map
 
 ---
 
-## 4. Next Steps (Priority Order)
+## 4. OpenAPI Roundtrip Results
+
+Real-world OpenAPI files tested for roundtrip preservation:
+
+| File | Size | Version | Schemas | Paths | Operations | Field Preservation |
+|------|------|---------|---------|-------|------------|-------------------|
+| petstore.json | 45 KB | 3.0.4 | 6 → 6 (100%) | 13 | 19 | 92.6% |
+| bike.json | 99 KB | 3.0.3 | 43 → 43 (100%) | 13 | 14 | 90.8% |
+| sevdesk.json | 677 KB | 3.0.0 | 74 → 74 (100%) | 117 | 151 | 87.6% |
+| kubernetes-api.json | 1944 KB | 3.0.0 | 249 → 249 (100%) | 113 | 248 | 86.7% |
+
+**Key findings:**
+- Schema preservation: **100%** across all files
+- Path and operation counts: Fully preserved
+- Field preservation varies (86-93%) due to:
+  - OpenAPI extensions (`x-*` fields) not modeled in EPackage
+  - Vendor-specific fields (e.g., `x-tagGroups` in sevdesk)
+  - Optional metadata fields without EMF mapping
+
+**Note**: The codec correctly handles `EJavaObject` attributes for dynamic values like Schema `default`, preserving native JSON types (strings, numbers, booleans, objects, arrays) through roundtrip.
+
+---
+
+## 5. Next Steps (Priority Order)
 
 ### Completed ✅
 1. ~~**Cross-Document Containment**: Detect and serialize as reference~~ ✅
@@ -177,9 +202,12 @@ See [15-test-coverage.md](15-test-coverage.md) for the complete spec-to-test map
 15. ~~**OpenAPI Support**: JSON Schema ↔ EPackage conversion with real-world tests~~ ✅
 
 ### Remaining
-1. **OSGi Integration**: CodecResourceFactory service registration
-2. **Cross-Resource References**: ResourceSet-based resolution
-3. **Performance Optimization**: Large object graph handling
+1. **Feature Type Hints** (Chapter 18): `CODEC_FEATURE_TYPE_HINTS` load option for EObject-typed features
+2. **Feature Value Readers** (Chapter 18): `CODEC_FEATURE_VALUE_READERS` load option - runtime equivalent of `valueReaderName` EAnnotation
+3. **Feature Value Writers** (Chapter 18): `CODEC_FEATURE_VALUE_WRITERS` save option - runtime equivalent of `valueWriterName` EAnnotation
+4. **OSGi Integration**: CodecResourceFactory service registration
+5. **Cross-Resource References**: ResourceSet-based resolution
+6. **Performance Optimization**: Large object graph handling
 
 ### Deferred
 - Expand Depth > 1

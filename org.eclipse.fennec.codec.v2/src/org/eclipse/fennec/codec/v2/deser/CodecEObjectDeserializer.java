@@ -276,10 +276,12 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
      * </p>
      */
     private boolean isSchemaKey(String propertyName) {
-        // Common schema keys for PLAIN SCHEMA_AND_TYPE format
+        // Schema keys for PLAIN SCHEMA_AND_TYPE format
+        // Note: Only prefixed keys (_schema, @vocab) are schema keys.
+        // "schema" without prefix is NOT a schema key - it's a common feature name
+        // (e.g., in OpenAPI Parameter.schema, MediaType.schema)
         return DEFAULT_SCHEMA_KEY.equals(propertyName)
-            || "@vocab".equals(propertyName)
-            || "schema".equals(propertyName);
+            || "@vocab".equals(propertyName);
     }
 
     /**

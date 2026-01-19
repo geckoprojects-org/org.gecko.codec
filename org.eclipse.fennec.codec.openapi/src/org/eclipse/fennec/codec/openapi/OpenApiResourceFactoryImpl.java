@@ -18,7 +18,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
-import org.eclipse.fennec.openapi.model.OpenApiPackage;
+import org.eclipse.fennec.model.openapi.OpenApiPackage;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;

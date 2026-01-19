@@ -31,10 +31,14 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.fennec.codec.v2.resource.CodecResource;
-import org.eclipse.fennec.openapi.model.Components;
-import org.eclipse.fennec.openapi.model.Info;
-import org.eclipse.fennec.openapi.model.OpenApi;
-import org.eclipse.fennec.openapi.model.OpenApiPackage;
+import org.eclipse.fennec.model.openapi.Components;
+import org.eclipse.fennec.model.openapi.HttpMethod;
+import org.eclipse.fennec.model.openapi.Info;
+import org.eclipse.fennec.model.openapi.OpenAPI;
+import org.eclipse.fennec.model.openapi.OpenApiFactory;
+import org.eclipse.fennec.model.openapi.OpenApiPackage;
+import org.eclipse.fennec.model.openapi.Operation;
+import org.eclipse.fennec.model.openapi.PathItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -75,13 +79,90 @@ class OpenApiResourceTest {
 
 			assertEquals(1, resource.getContents().size());
 			EObject root = resource.getContents().get(0);
-			assertTrue(root instanceof OpenApi);
+			assertTrue(root instanceof OpenAPI);
 
-			OpenApi openApi = (OpenApi) root;
+			OpenAPI openApi = (OpenAPI) root;
 			assertEquals("3.0.3", openApi.getOpenapi());
 			assertNotNull(openApi.getInfo());
 			assertEquals("Test API", openApi.getInfo().getTitle());
 			assertEquals("1.0.0", openApi.getInfo().getVersion());
+		}
+
+		@Test
+		@DisplayName("loads OpenAPI with paths and sets HttpMethod from feature name")
+		void loadsPathsWithHttpMethod() throws IOException {
+			String json = """
+				{
+					"openapi": "3.0.3",
+					"info": {
+						"title": "Path Test API",
+						"version": "1.0.0"
+					},
+					"paths": {
+						"/pets": {
+							"get": {
+								"operationId": "getPets",
+								"summary": "List all pets"
+							},
+							"post": {
+								"operationId": "createPet",
+								"summary": "Create a pet"
+							}
+						},
+						"/pets/{id}": {
+							"get": {
+								"operationId": "getPetById",
+								"summary": "Get a pet by ID"
+							},
+							"put": {
+								"operationId": "updatePet",
+								"summary": "Update a pet"
+							},
+							"delete": {
+								"operationId": "deletePet",
+								"summary": "Delete a pet"
+							}
+						}
+					}
+				}
+				""";
+
+			OpenApiResourceImpl resource = createResource();
+			resource.load(toInputStream(json), loadOptions());
+
+			OpenAPI openApi = (OpenAPI) resource.getContents().get(0);
+			assertNotNull(openApi.getPaths());
+			assertEquals(2, openApi.getPaths().size());
+
+			// Check /pets path
+			PathItem petsPath = openApi.getPaths().get("/pets");
+			assertNotNull(petsPath, "/pets path should exist");
+
+			Operation getPets = petsPath.getGet();
+			assertNotNull(getPets, "GET /pets should exist");
+			assertEquals("getPets", getPets.getOperationId());
+			assertEquals(HttpMethod.GET, getPets.getMethod(), "GET operation should have GET method");
+
+			Operation postPets = petsPath.getPost();
+			assertNotNull(postPets, "POST /pets should exist");
+			assertEquals("createPet", postPets.getOperationId());
+			assertEquals(HttpMethod.POST, postPets.getMethod(), "POST operation should have POST method");
+
+			// Check /pets/{id} path
+			PathItem petByIdPath = openApi.getPaths().get("/pets/{id}");
+			assertNotNull(petByIdPath, "/pets/{id} path should exist");
+
+			Operation getPetById = petByIdPath.getGet();
+			assertNotNull(getPetById, "GET /pets/{id} should exist");
+			assertEquals(HttpMethod.GET, getPetById.getMethod(), "GET operation should have GET method");
+
+			Operation putPet = petByIdPath.getPut();
+			assertNotNull(putPet, "PUT /pets/{id} should exist");
+			assertEquals(HttpMethod.PUT, putPet.getMethod(), "PUT operation should have PUT method");
+
+			Operation deletePet = petByIdPath.getDelete();
+			assertNotNull(deletePet, "DELETE /pets/{id} should exist");
+			assertEquals(HttpMethod.DELETE, deletePet.getMethod(), "DELETE operation should have DELETE method");
 		}
 
 		@Test
@@ -130,11 +211,11 @@ class OpenApiResourceTest {
 
 			resource.load(toInputStream(json), loadOptions());
 
-			OpenApi openApi = (OpenApi) resource.getContents().get(0);
+			OpenAPI openApi = (OpenAPI) resource.getContents().get(0);
 			assertNotNull(openApi.getComponents());
 
 			Components components = openApi.getComponents();
-			EPackage schemas = components.getSchemas();
+			EPackage schemas = components.getSchemasPackage();
 			assertNotNull(schemas, "schemas should be converted to EPackage");
 
 			// Debug: print what classifiers we got
@@ -162,10 +243,10 @@ class OpenApiResourceTest {
 		@DisplayName("saves OpenAPI document")
 		void savesDocument() throws IOException {
 			// Create OpenAPI programmatically
-			OpenApi openApi = org.eclipse.fennec.openapi.model.OpenApiFactory.eINSTANCE.createOpenApi();
+			OpenAPI openApi = OpenApiFactory.eINSTANCE.createOpenAPI();
 			openApi.setOpenapi("3.0.3");
 
-			Info info = org.eclipse.fennec.openapi.model.OpenApiFactory.eINSTANCE.createInfo();
+			Info info = OpenApiFactory.eINSTANCE.createInfo();
 			info.setTitle("Generated API");
 			info.setVersion("2.0.0");
 			openApi.setInfo(info);
@@ -220,17 +301,20 @@ class OpenApiResourceTest {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			resource1.save(out, null);
 			String savedJson = out.toString(StandardCharsets.UTF_8);
+			System.out.println("=== SAVED JSON ===");
+			System.out.println(savedJson);
+			System.out.println("=== END SAVED JSON ===");
 
 			// Load again
 			OpenApiResourceImpl resource2 = createResource();
 			resource2.load(toInputStream(savedJson), loadOptions());
 
 			// Verify
-			OpenApi openApi = (OpenApi) resource2.getContents().get(0);
+			OpenAPI openApi = (OpenAPI) resource2.getContents().get(0);
 			assertEquals("3.0.3", openApi.getOpenapi());
 			assertEquals("Round-trip Test", openApi.getInfo().getTitle());
 
-			EPackage schemas = openApi.getComponents().getSchemas();
+			EPackage schemas = openApi.getComponents().getSchemasPackage();
 			assertNotNull(schemas);
 			assertNotNull(schemas.getEClassifier("Item"));
 		}
@@ -258,13 +342,13 @@ class OpenApiResourceTest {
 			assertTrue(resource1.getErrors().isEmpty(),
 					"Load errors: " + resource1.getErrors());
 
-			OpenApi openApi1 = (OpenApi) resource1.getContents().get(0);
+			OpenAPI openApi1 = (OpenAPI) resource1.getContents().get(0);
 			assertEquals("3.0.3", openApi1.getOpenapi());
 			assertEquals("Eco-Visio API Reference", openApi1.getInfo().getTitle());
 
 			// Verify components/schemas are loaded as EPackage
 			assertNotNull(openApi1.getComponents(), "Components should exist");
-			EPackage schemas1 = openApi1.getComponents().getSchemas();
+			EPackage schemas1 = openApi1.getComponents().getSchemasPackage();
 			assertNotNull(schemas1, "Schemas EPackage should exist");
 			int schemaCount = schemas1.getEClassifiers().size();
 			assertTrue(schemaCount > 0, "Should have at least one schema");
@@ -283,11 +367,11 @@ class OpenApiResourceTest {
 					"Reload errors: " + resource2.getErrors());
 
 			// Verify round-trip
-			OpenApi openApi2 = (OpenApi) resource2.getContents().get(0);
+			OpenAPI openApi2 = (OpenAPI) resource2.getContents().get(0);
 			assertEquals("3.0.3", openApi2.getOpenapi());
 			assertEquals("Eco-Visio API Reference", openApi2.getInfo().getTitle());
 
-			EPackage schemas2 = openApi2.getComponents().getSchemas();
+			EPackage schemas2 = openApi2.getComponents().getSchemasPackage();
 			assertNotNull(schemas2, "Schemas should survive round-trip");
 			int schemaCount2 = schemas2.getEClassifiers().size();
 			System.out.println("After round-trip: " + schemaCount2 + " schemas");
@@ -311,7 +395,7 @@ class OpenApiResourceTest {
 			assertTrue(resource1.getErrors().isEmpty(),
 					"Load errors: " + resource1.getErrors());
 
-			OpenApi openApi1 = (OpenApi) resource1.getContents().get(0);
+			OpenAPI openApi1 = (OpenAPI) resource1.getContents().get(0);
 			// Petstore uses OpenAPI 3.0.4
 			assertTrue(openApi1.getOpenapi().startsWith("3.0"),
 					"Expected OpenAPI 3.0.x, got: " + openApi1.getOpenapi());
@@ -319,7 +403,7 @@ class OpenApiResourceTest {
 
 			// Verify components/schemas are loaded as EPackage
 			assertNotNull(openApi1.getComponents(), "Components should exist");
-			EPackage schemas1 = openApi1.getComponents().getSchemas();
+			EPackage schemas1 = openApi1.getComponents().getSchemasPackage();
 			assertNotNull(schemas1, "Schemas EPackage should exist");
 			int schemaCount = schemas1.getEClassifiers().size();
 			assertTrue(schemaCount > 0, "Should have at least one schema");
@@ -343,10 +427,10 @@ class OpenApiResourceTest {
 					"Reload errors: " + resource2.getErrors());
 
 			// Verify round-trip
-			OpenApi openApi2 = (OpenApi) resource2.getContents().get(0);
+			OpenAPI openApi2 = (OpenAPI) resource2.getContents().get(0);
 			assertTrue(openApi2.getOpenapi().startsWith("3.0"));
 
-			EPackage schemas2 = openApi2.getComponents().getSchemas();
+			EPackage schemas2 = openApi2.getComponents().getSchemasPackage();
 			assertNotNull(schemas2, "Schemas should survive round-trip");
 			int schemaCount2 = schemas2.getEClassifiers().size();
 			System.out.println("After round-trip: " + schemaCount2 + " schemas");
@@ -369,13 +453,13 @@ class OpenApiResourceTest {
 			assertTrue(resource1.getErrors().isEmpty(),
 					"Load errors: " + resource1.getErrors());
 
-			OpenApi openApi1 = (OpenApi) resource1.getContents().get(0);
+			OpenAPI openApi1 = (OpenAPI) resource1.getContents().get(0);
 			assertEquals("3.0.0", openApi1.getOpenapi());
 			assertEquals("sevdesk API", openApi1.getInfo().getTitle());
 
 			// Verify components/schemas are loaded as EPackage
 			assertNotNull(openApi1.getComponents(), "Components should exist");
-			EPackage schemas1 = openApi1.getComponents().getSchemas();
+			EPackage schemas1 = openApi1.getComponents().getSchemasPackage();
 			assertNotNull(schemas1, "Schemas EPackage should exist");
 			int schemaCount = schemas1.getEClassifiers().size();
 			assertTrue(schemaCount > 0, "Should have at least one schema");
@@ -394,10 +478,10 @@ class OpenApiResourceTest {
 					"Reload errors: " + resource2.getErrors());
 
 			// Verify round-trip
-			OpenApi openApi2 = (OpenApi) resource2.getContents().get(0);
+			OpenAPI openApi2 = (OpenAPI) resource2.getContents().get(0);
 			assertEquals("3.0.0", openApi2.getOpenapi());
 
-			EPackage schemas2 = openApi2.getComponents().getSchemas();
+			EPackage schemas2 = openApi2.getComponents().getSchemasPackage();
 			assertNotNull(schemas2, "Schemas should survive round-trip");
 			int schemaCount2 = schemas2.getEClassifiers().size();
 			System.out.println("After round-trip: " + schemaCount2 + " schemas");
@@ -418,14 +502,14 @@ class OpenApiResourceTest {
 			assertTrue(resource1.getErrors().isEmpty(),
 					"Load errors: " + resource1.getErrors());
 
-			OpenApi openApi1 = (OpenApi) resource1.getContents().get(0);
+			OpenAPI openApi1 = (OpenAPI) resource1.getContents().get(0);
 			// Kubernetes API uses OpenAPI 3.x
 			assertNotNull(openApi1.getOpenapi());
 			System.out.println("Kubernetes API: openapi=" + openApi1.getOpenapi());
 
 			// Verify components/schemas are loaded as EPackage
 			assertNotNull(openApi1.getComponents(), "Components should exist");
-			EPackage schemas1 = openApi1.getComponents().getSchemas();
+			EPackage schemas1 = openApi1.getComponents().getSchemasPackage();
 			assertNotNull(schemas1, "Schemas EPackage should exist");
 			int schemaCount = schemas1.getEClassifiers().size();
 			assertTrue(schemaCount > 0, "Should have at least one schema");
@@ -447,10 +531,10 @@ class OpenApiResourceTest {
 					"Reload errors: " + resource2.getErrors());
 
 			// Verify round-trip
-			OpenApi openApi2 = (OpenApi) resource2.getContents().get(0);
+			OpenAPI openApi2 = (OpenAPI) resource2.getContents().get(0);
 			assertEquals(openApi1.getOpenapi(), openApi2.getOpenapi());
 
-			EPackage schemas2 = openApi2.getComponents().getSchemas();
+			EPackage schemas2 = openApi2.getComponents().getSchemasPackage();
 			assertNotNull(schemas2, "Schemas should survive round-trip");
 			int schemaCount2 = schemas2.getEClassifiers().size();
 			System.out.println("After round-trip: " + schemaCount2 + " schemas");

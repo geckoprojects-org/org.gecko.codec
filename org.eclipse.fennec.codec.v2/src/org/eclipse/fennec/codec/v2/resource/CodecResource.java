@@ -32,10 +32,12 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
+import org.eclipse.fennec.codec.constants.CodecOptions;
 import org.eclipse.fennec.codec.v2.config.effective.ConfigurationMerger;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
@@ -193,7 +195,26 @@ public class CodecResource extends ResourceImpl {
         // Create configured ObjectMapper with CodecModule
         mapper = createObjectMapper(effectiveOptions);
 
-        // Serialize the root object
+        // Set feature value writers if provided (see spec 18-feature-type-hints.md)
+        Object valueWritersOption = effectiveOptions.get(CodecOptions.CODEC_FEATURE_VALUE_WRITERS);
+        if (valueWritersOption instanceof Map<?, ?> valueWritersMap) {
+            @SuppressWarnings("unchecked")
+            Map<EStructuralFeature, String> valueWriters = (Map<EStructuralFeature, String>) valueWritersMap;
+            // For single root, use ObjectWriter with attribute; for multiple roots, use mapper directly
+            // because ObjectWriter.forType(EObject.class) doesn't handle EObject[] arrays properly
+            if (getContents().size() == 1) {
+                var writer = mapper.writerFor(EObject.class)
+                        .withAttribute(ContextHelper.FEATURE_VALUE_WRITERS, valueWriters);
+                writer.writeValue(outputStream, rootObject);
+                LOGGER.fine(() -> String.format("Saved %s to %s", eClass.getName(), getURI()));
+                return;
+            }
+            // For multiple roots with value writers, we need to set the attribute differently
+            // TODO: Jackson doesn't easily support array serialization with per-element attributes
+            // For now, fall through to standard mapper serialization
+        }
+
+        // Serialize the root object(s)
         if (getContents().size() == 1) {
             // Single root object
             mapper.writeValue(outputStream, rootObject);
@@ -262,6 +283,22 @@ public class CodecResource extends ResourceImpl {
         String contextSchemaUri = resolveContextSchema(effectiveOptions, rootEClassHint);
         if (nonNull(contextSchemaUri)) {
             reader = reader.withAttribute(ContextHelper.CONTEXT_SCHEMA_URI, contextSchemaUri);
+        }
+
+        // Set feature type hints if provided (see spec 18-feature-type-hints.md)
+        Object typeHintsOption = mergedOptions.get(CodecOptions.CODEC_FEATURE_TYPE_HINTS);
+        if (typeHintsOption instanceof Map<?, ?> typeHintsMap) {
+            @SuppressWarnings("unchecked")
+            Map<EStructuralFeature, EClass> typeHints = (Map<EStructuralFeature, EClass>) typeHintsMap;
+            reader = reader.withAttribute(ContextHelper.FEATURE_TYPE_HINTS, typeHints);
+        }
+
+        // Set feature value readers if provided (see spec 18-feature-type-hints.md)
+        Object valueReadersOption = mergedOptions.get(CodecOptions.CODEC_FEATURE_VALUE_READERS);
+        if (valueReadersOption instanceof Map<?, ?> valueReadersMap) {
+            @SuppressWarnings("unchecked")
+            Map<EStructuralFeature, String> valueReaders = (Map<EStructuralFeature, String>) valueReadersMap;
+            reader = reader.withAttribute(ContextHelper.FEATURE_VALUE_READERS, valueReaders);
         }
 
         // Create parser using CodecJsonFactory - this produces a CodecJsonParser
