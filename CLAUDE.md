@@ -141,3 +141,47 @@ Building annotation parsing in `org.eclipse.fennec.codec.metadata` that:
 - java comments annotation with @claude or @CLAUDE are instructions for you, similar like a code review comment. please look at them
 - dont use full qualified class names in code. we use import instead
 - always look in the spec first, if you dont know how to use the codec. the spec should be our source of truth / user manual. if it isnt, we have to make it more clearer
+
+---
+
+## Development Workflow (MUST FOLLOW)
+
+### Codec V2 Testing (CRITICAL)
+- **Use `./gradlew :org.eclipse.fennec.codec.v2:test` for codec.v2 tests** - plain JUnit 5
+- **Do NOT use `testOSGi` for codec.v2** - OSGi tests are for the old codec only
+- Similar for other v2 projects: `:org.eclipse.fennec.codec.metadata:test`, `:org.eclipse.fennec.model.metadata:test`
+
+### Workflow Rules
+
+1. **Specification First**
+   - Always check the spec (`docs/codec-v2-spec/`) before implementing
+   - If spec is unclear, clarify it first - spec is our source of truth
+   - Never implement something that contradicts the spec
+
+2. **Test-Driven Development**
+   - Create/update tests BEFORE implementation
+   - Tests must FAIL before implementation (proves test is valid)
+   - Tests must PASS after implementation
+   - Spec tests verify spec compliance - they define expected behavior
+
+3. **Failing Tests = Investigation Required**
+   - NEVER change tests just to make them pass
+   - Failing tests are signals - investigate the root cause:
+     - Implementation bug?
+     - Unintended side effect from another change?
+     - Spec gap that needs clarification?
+   - Even if the failing test seems unrelated, investigate - it may reveal important side effects
+
+4. **Code Quality**
+   - Use imports, NEVER fully qualified class names
+   - Look for `@claude` or `@CLAUDE` comments - these are instructions
+   - Review for performance and Java best practices
+
+5. **Cross-Project Changes**
+   - Update spec FIRST
+   - Check consistency with existing behavior
+   - Then test, then implement
+
+6. **Session Handoff**
+   - Update `docs/codec-v2-development-guide.md` at session end
+   - Document: what was done, what's next, any blockers

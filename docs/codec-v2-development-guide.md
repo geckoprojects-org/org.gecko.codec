@@ -2,7 +2,72 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-16 (Custom Values + OpenAPI Support)
+**Last Updated:** 2026-01-20 (Workflow Rules + Agent Setup)
+
+---
+
+## 0. Development Workflow (MUST FOLLOW)
+
+### Testing Commands (CRITICAL)
+
+**Codec V2 uses JUnit 5 tests, NOT OSGi tests!**
+
+```bash
+# Codec V2 projects - use these:
+./gradlew :org.eclipse.fennec.codec.v2:test
+./gradlew :org.eclipse.fennec.codec.metadata:test
+./gradlew :org.eclipse.fennec.model.metadata:test
+./gradlew :org.eclipse.fennec.codec.jsonschema.v2:test
+./gradlew :org.eclipse.fennec.codec.openapi:test
+
+# Do NOT use testOSGi for v2 projects!
+```
+
+### Workflow Rules
+
+1. **Specification First**
+   - Check spec (`docs/codec-v2-spec/`) before implementing
+   - Spec is the source of truth - clarify gaps before coding
+   - Never implement something that contradicts the spec
+
+2. **Test-Driven Development**
+   - Create tests BEFORE implementation
+   - Tests must FAIL before implementation (proves test validity)
+   - Tests must PASS after implementation
+
+3. **Failing Tests = Investigation Required**
+   - **NEVER change tests just to make them pass**
+   - Investigate root cause: implementation bug? side effect? spec gap?
+   - Even "unrelated" failures may reveal important side effects
+
+4. **Spec Completeness Requirements**
+   - Serialization vs Deserialization: clarify when each config applies
+   - Examples required for: property maps, config builder, annotations
+   - Default behavior must be documented
+   - Override behavior must be explicit
+   - Error cases must be documented
+
+5. **Configuration Hierarchy Consistency**
+   - Every ANNOTATION feature → MUST have property/config builder equivalent
+   - NOT every property → needs annotation (some are runtime-only)
+   - Ask about contradictions or gaps - don't assume
+
+6. **Code Quality**
+   - Use imports, NEVER fully qualified class names
+   - Look for `@claude`/`@CLAUDE` comments - these are instructions
+
+### Available Agents
+
+Agents in `.claude/agents/` help enforce this workflow:
+
+| Agent | Purpose |
+|-------|---------|
+| `spec-validator` | Validate changes against spec, reveal gaps/contradictions |
+| `test-runner` | Run JUnit tests (not OSGi!), investigate failures |
+| `example-curator` | Identify good test examples for documentation |
+| `error-hardening` | Find misconfiguration cases, harden error handling |
+| `doc-updater` | Update docs at session end |
+| `code-reviewer` | Check imports, @claude comments, quality |
 
 ---
 
@@ -312,7 +377,28 @@ The codec.v2 implementation is feature-complete with **890+ tests** passing:
 
 ---
 
-## 7. Testing Strategy
+## 7. Spec Review Findings
+
+A comprehensive review of the specification was conducted on 2026-01-20. The findings are documented in:
+
+**[codec-v2-spec-review-findings.md](codec-v2-spec-review-findings.md)**
+
+This document tracks:
+- **Contradictions** - Conflicting specs that need decisions (3 items)
+- **Serialization vs Deserialization clarity** - Which configs apply when (3 items)
+- **Configuration hierarchy gaps** - Missing registries and documentation (3 items)
+- **Missing examples** - Features without complete config examples (4 items)
+- **Default behavior gaps** - Unclear deserialization behavior (3 items)
+- **Error handling** - Incomplete error specification (2 items)
+- **Code quality issues** - Resource leaks, FQCNs (3 items)
+
+**Total: 25 findings requiring resolution**
+
+Before implementing new features, these findings should be reviewed and resolved to ensure spec consistency.
+
+---
+
+## 8. Testing Strategy
 
 Tests should NOT be trivial getter/setter tests. Instead:
 
