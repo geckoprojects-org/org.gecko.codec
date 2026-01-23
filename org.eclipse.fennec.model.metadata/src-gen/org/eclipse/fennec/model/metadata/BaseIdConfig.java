@@ -36,6 +36,10 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseIdConfig#getFormat <em>Format</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseIdConfig#getIdKey <em>Id Key</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseIdConfig#getSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseIdConfig#isOnTop <em>On Top</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseIdConfig#isSerializeSeparator <em>Serialize Separator</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseIdConfig#getSeparatorKey <em>Separator Key</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseIdConfig#getValueKey <em>Value Key</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseIdConfig()
@@ -182,5 +186,109 @@ public interface BaseIdConfig extends EObject {
 	 * @generated
 	 */
 	void setSeparator(String value);
+
+	/**
+	 * Returns the value of the '<em><b>On Top</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Whether ID should appear before type in serialized output. Default true (ID first, useful for MongoDB indexing).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>On Top</em>' attribute.
+	 * @see #setOnTop(boolean)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseIdConfig_OnTop()
+	 * @model default="true"
+	 * @generated
+	 */
+	boolean isOnTop();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseIdConfig#isOnTop <em>On Top</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>On Top</em>' attribute.
+	 * @see #isOnTop()
+	 * @generated
+	 */
+	void setOnTop(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Serialize Separator</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Whether to include separator in STRUCTURED ID output. When true, separator is serialized allowing deserialization without pre-configuration.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Serialize Separator</em>' attribute.
+	 * @see #setSerializeSeparator(boolean)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseIdConfig_SerializeSeparator()
+	 * @model default="true"
+	 * @generated
+	 */
+	boolean isSerializeSeparator();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseIdConfig#isSerializeSeparator <em>Serialize Separator</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Serialize Separator</em>' attribute.
+	 * @see #isSerializeSeparator()
+	 * @generated
+	 */
+	void setSerializeSeparator(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Separator Key</b></em>' attribute.
+	 * The default value is <code>"separator"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * JSON key for separator field in STRUCTURED ID format.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Separator Key</em>' attribute.
+	 * @see #setSeparatorKey(String)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseIdConfig_SeparatorKey()
+	 * @model default="separator"
+	 * @generated
+	 */
+	String getSeparatorKey();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseIdConfig#getSeparatorKey <em>Separator Key</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Separator Key</em>' attribute.
+	 * @see #getSeparatorKey()
+	 * @generated
+	 */
+	void setSeparatorKey(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Value Key</b></em>' attribute.
+	 * The default value is <code>"id"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * JSON key for the ID value in STRUCTURED format. Default is 'id'.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Value Key</em>' attribute.
+	 * @see #setValueKey(String)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseIdConfig_ValueKey()
+	 * @model default="id"
+	 * @generated
+	 */
+	String getValueKey();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseIdConfig#getValueKey <em>Value Key</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Value Key</em>' attribute.
+	 * @see #getValueKey()
+	 * @generated
+	 */
+	void setValueKey(String value);
 
 } // BaseIdConfig

@@ -697,6 +697,139 @@ class CodecResourceAdvancedTest {
             assertNotNull(loadedChild);
             assertEquals("Child", loadedChild.eGet(entityRequiredNameAttr));
         }
+
+        /**
+         * Tests the distinction between explicit null in JSON vs missing field.
+         * <p>
+         * Per spec section 1.3 (Deserialization Behavior):
+         * - Explicit null in JSON → sets feature to null (for object types like EString)
+         * - Explicit null in JSON for primitive types → EMF resets to defaultValueLiteral
+         * - Missing field → feature retains EMF default value (same as eUnset behavior)
+         * </p>
+         * <p>
+         * EMF Behavior Note: For primitive types (EInt, EBoolean, etc.), eSet(attr, null)
+         * resets the feature to its EMF default (from defaultValueLiteral), NOT to the
+         * Java primitive default (0, false). This is standard EMF behavior.
+         * </p>
+         *
+         * @see <a href="docs/codec-v2-spec/09-feature.md#13-deserialization-behavior">Spec 1.3: Deserialization Behavior</a>
+         */
+        @Test
+        @DisplayName("distinguishes explicit null from missing field in deserialization")
+        void distinguishesExplicitNullFromMissingField() throws IOException {
+            // JSON with explicit null for defaultedString (should set to null)
+            // and missing defaultedInt (should use EMF default 42)
+            String json = """
+                {
+                    "_type": "http://test.example.org/advanced/1.0#//Entity",
+                    "requiredName": "Null Test Entity",
+                    "defaultedString": null
+                }
+                """;
+
+            EObject loaded = deserialize(json, entityClass);
+
+            assertNotNull(loaded);
+            assertEquals("Null Test Entity", loaded.eGet(entityRequiredNameAttr));
+
+            // Explicit null in JSON for String (object type) → should be null
+            assertNull(loaded.eGet(entityDefaultedStringAttr),
+                    "Explicit null in JSON should set String feature to null");
+
+            // Missing field → should use EMF default 42
+            assertEquals(42, loaded.eGet(entityDefaultedIntAttr),
+                    "Missing field should retain EMF default value");
+
+            // Missing field → should use EMF default true
+            assertEquals(true, loaded.eGet(entityDefaultedBoolAttr),
+                    "Missing field should retain EMF default value");
+        }
+
+        /**
+         * Tests that explicit null for primitive types results in the EMF default value.
+         * <p>
+         * EMF Behavior: eSet(attr, null) for primitives resets to defaultValueLiteral.
+         * JSON null + EInt with default 42 → 42 (EMF default), NOT 0 (Java primitive default)
+         * JSON null + EBoolean with default true → true (EMF default), NOT false (Java primitive default)
+         * </p>
+         * <p>
+         * This behavior is consistent with EMF's interpretation of null as "unset" for primitives,
+         * which resets to the declared default value.
+         * </p>
+         */
+        @Test
+        @DisplayName("explicit null for primitive types resets to EMF default value")
+        void explicitNullForPrimitiveResetsToEmfDefault() throws IOException {
+            // JSON with explicit null for defaultedInt (should reset to EMF default 42)
+            String json = """
+                {
+                    "_type": "http://test.example.org/advanced/1.0#//Entity",
+                    "requiredName": "Primitive Null Test",
+                    "defaultedInt": null,
+                    "defaultedBoolean": null
+                }
+                """;
+
+            EObject loaded = deserialize(json, entityClass);
+
+            // Explicit null for EInt → EMF resets to defaultValueLiteral (42), NOT Java's 0
+            assertEquals(42, loaded.eGet(entityDefaultedIntAttr),
+                    "Explicit null for primitive EInt should reset to EMF default (42), not Java primitive default (0)");
+
+            // Explicit null for EBoolean → EMF resets to defaultValueLiteral (true), NOT Java's false
+            assertEquals(true, loaded.eGet(entityDefaultedBoolAttr),
+                    "Explicit null for primitive EBoolean should reset to EMF default (true), not Java primitive default (false)");
+        }
+
+        /**
+         * Tests that serializeNull/serializeDefaults settings do NOT affect deserialization.
+         * <p>
+         * Per spec: These are serialization-only configurations.
+         * </p>
+         */
+        @Test
+        @DisplayName("serializeNull setting does not affect deserialization behavior")
+        void serializeNullDoesNotAffectDeserialization() throws IOException {
+            // This test verifies that regardless of how the JSON was produced
+            // (with serializeNull=true or false), the deserializer handles it consistently
+
+            // JSON as if produced with serializeNull=true (explicit nulls present)
+            String jsonWithNulls = """
+                {
+                    "_type": "http://test.example.org/advanced/1.0#//Entity",
+                    "requiredName": "With Nulls",
+                    "optionalDescription": null,
+                    "defaultedInt": 42,
+                    "defaultedBoolean": true,
+                    "defaultedString": "default"
+                }
+                """;
+
+            // JSON as if produced with serializeNull=false (nulls omitted)
+            String jsonWithoutNulls = """
+                {
+                    "_type": "http://test.example.org/advanced/1.0#//Entity",
+                    "requiredName": "Without Nulls",
+                    "defaultedInt": 42,
+                    "defaultedBoolean": true,
+                    "defaultedString": "default"
+                }
+                """;
+
+            EObject loadedWithNulls = deserialize(jsonWithNulls, entityClass);
+            EObject loadedWithoutNulls = deserialize(jsonWithoutNulls, entityClass);
+
+            // Both should have null for optionalDescription
+            // (explicit null vs missing both result in null for optional String)
+            assertNull(loadedWithNulls.eGet(entityOptionalDescAttr));
+            assertNull(loadedWithoutNulls.eGet(entityOptionalDescAttr));
+
+            // Other values should be identical
+            assertEquals(42, loadedWithNulls.eGet(entityDefaultedIntAttr));
+            assertEquals(42, loadedWithoutNulls.eGet(entityDefaultedIntAttr));
+            assertEquals(true, loadedWithNulls.eGet(entityDefaultedBoolAttr));
+            assertEquals(true, loadedWithoutNulls.eGet(entityDefaultedBoolAttr));
+        }
     }
 
     // ========================================================================

@@ -214,13 +214,49 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	int BASE_ID_CONFIG__SEPARATOR = 4;
 
 	/**
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_ID_CONFIG__ON_TOP = 5;
+
+	/**
+	 * The feature id for the '<em><b>Serialize Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_ID_CONFIG__SERIALIZE_SEPARATOR = 6;
+
+	/**
+	 * The feature id for the '<em><b>Separator Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_ID_CONFIG__SEPARATOR_KEY = 7;
+
+	/**
+	 * The feature id for the '<em><b>Value Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_ID_CONFIG__VALUE_KEY = 8;
+
+	/**
 	 * The number of structural features of the '<em>Base Id Config</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_ID_CONFIG_FEATURE_COUNT = 5;
+	int BASE_ID_CONFIG_FEATURE_COUNT = 9;
 
 	/**
 	 * The number of operations of the '<em>Base Id Config</em>' class.
@@ -1319,6 +1355,50 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getBaseIdConfig_Separator();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseIdConfig#isOnTop <em>On Top</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>On Top</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseIdConfig#isOnTop()
+	 * @see #getBaseIdConfig()
+	 * @generated
+	 */
+	EAttribute getBaseIdConfig_OnTop();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseIdConfig#isSerializeSeparator <em>Serialize Separator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Serialize Separator</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseIdConfig#isSerializeSeparator()
+	 * @see #getBaseIdConfig()
+	 * @generated
+	 */
+	EAttribute getBaseIdConfig_SerializeSeparator();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseIdConfig#getSeparatorKey <em>Separator Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Separator Key</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseIdConfig#getSeparatorKey()
+	 * @see #getBaseIdConfig()
+	 * @generated
+	 */
+	EAttribute getBaseIdConfig_SeparatorKey();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseIdConfig#getValueKey <em>Value Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value Key</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseIdConfig#getValueKey()
+	 * @see #getBaseIdConfig()
+	 * @generated
+	 */
+	EAttribute getBaseIdConfig_ValueKey();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.BaseReferenceConfig <em>Base Reference Config</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2145,6 +2225,38 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute BASE_ID_CONFIG__SEPARATOR = eINSTANCE.getBaseIdConfig_Separator();
+
+		/**
+		 * The meta object literal for the '<em><b>On Top</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_ID_CONFIG__ON_TOP = eINSTANCE.getBaseIdConfig_OnTop();
+
+		/**
+		 * The meta object literal for the '<em><b>Serialize Separator</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_ID_CONFIG__SERIALIZE_SEPARATOR = eINSTANCE.getBaseIdConfig_SerializeSeparator();
+
+		/**
+		 * The meta object literal for the '<em><b>Separator Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_ID_CONFIG__SEPARATOR_KEY = eINSTANCE.getBaseIdConfig_SeparatorKey();
+
+		/**
+		 * The meta object literal for the '<em><b>Value Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_ID_CONFIG__VALUE_KEY = eINSTANCE.getBaseIdConfig_ValueKey();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.BaseReferenceConfigImpl <em>Base Reference Config</em>}' class.

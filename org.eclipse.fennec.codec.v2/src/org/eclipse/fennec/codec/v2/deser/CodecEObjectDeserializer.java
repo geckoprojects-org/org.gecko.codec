@@ -15,6 +15,7 @@ package org.eclipse.fennec.codec.v2.deser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -429,7 +430,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
      * Reads a JSON object into a Map.
      */
     private Map<String, Object> readObjectAsMap(JsonParser parser) {
-        Map<String, Object> result = new java.util.LinkedHashMap<>();
+        Map<String, Object> result = new LinkedHashMap<>();
 
         while (parser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = parser.currentName();
@@ -514,7 +515,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                 }
             } else if (value instanceof Boolean b) {
                 buffer.writeBoolean(b);
-            } else if (value instanceof java.util.Map<?, ?> map) {
+            } else if (value instanceof Map<?, ?> map) {
                 // For structured values, write as object
                 buffer.writeStartObject();
                 for (var e : map.entrySet()) {
@@ -522,7 +523,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                     writeValueToBuffer(buffer, e.getValue());
                 }
                 buffer.writeEndObject();
-            } else if (value instanceof java.util.List<?> list) {
+            } else if (value instanceof List<?> list) {
                 // For array values
                 buffer.writeStartArray();
                 for (Object item : list) {
@@ -566,7 +567,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             }
         } else if (value instanceof Boolean b) {
             buffer.writeBoolean(b);
-        } else if (value instanceof java.util.Map<?, ?> map) {
+        } else if (value instanceof Map<?, ?> map) {
             // Handle nested objects (deferred Map values)
             buffer.writeStartObject();
             for (var e : map.entrySet()) {
@@ -574,7 +575,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                 writeValueToBuffer(buffer, e.getValue());
             }
             buffer.writeEndObject();
-        } else if (value instanceof java.util.List<?> list) {
+        } else if (value instanceof List<?> list) {
             // Handle nested arrays
             buffer.writeStartArray();
             for (Object item : list) {

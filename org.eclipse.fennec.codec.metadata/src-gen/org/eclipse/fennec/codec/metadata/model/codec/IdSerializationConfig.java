@@ -36,6 +36,8 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig#getIdFeatures <em>Id Features</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig#getIdValueWriterName <em>Id Value Writer Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig#getIdValueReaderName <em>Id Value Reader Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig#getStrategyScope <em>Strategy Scope</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig#getFormatScope <em>Format Scope</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getIdSerializationConfig()
@@ -108,5 +110,63 @@ public interface IdSerializationConfig extends BaseIdConfig {
 	 * @generated
 	 */
 	void setIdValueReaderName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Strategy Scope</b></em>' attribute.
+	 * The default value is <code>"ALL"</code>.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.StrategyScope}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Where the ID strategy applies in the object graph.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Strategy Scope</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.StrategyScope
+	 * @see #setStrategyScope(StrategyScope)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getIdSerializationConfig_StrategyScope()
+	 * @model default="ALL"
+	 * @generated
+	 */
+	StrategyScope getStrategyScope();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig#getStrategyScope <em>Strategy Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Strategy Scope</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.StrategyScope
+	 * @see #getStrategyScope()
+	 * @generated
+	 */
+	void setStrategyScope(StrategyScope value);
+
+	/**
+	 * Returns the value of the '<em><b>Format Scope</b></em>' attribute.
+	 * The default value is <code>"ALL"</code>.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.StrategyScope}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Where the ID format applies in the object graph. Independent from strategyScope.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Format Scope</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.StrategyScope
+	 * @see #setFormatScope(StrategyScope)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getIdSerializationConfig_FormatScope()
+	 * @model default="ALL"
+	 * @generated
+	 */
+	StrategyScope getFormatScope();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig#getFormatScope <em>Format Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Format Scope</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.StrategyScope
+	 * @see #getFormatScope()
+	 * @generated
+	 */
+	void setFormatScope(StrategyScope value);
 
 } // IdSerializationConfig

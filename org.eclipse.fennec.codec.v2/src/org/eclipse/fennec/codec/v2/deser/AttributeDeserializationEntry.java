@@ -18,9 +18,15 @@ import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -537,25 +543,25 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
      */
     private Object convertObjectFromString(String stringValue, Class<?> targetType) throws Exception {
         // Try common types first
-        if (targetType == java.math.BigDecimal.class) {
-            return new java.math.BigDecimal(stringValue);
+        if (targetType == BigDecimal.class) {
+            return new BigDecimal(stringValue);
         }
-        if (targetType == java.math.BigInteger.class) {
-            return new java.math.BigInteger(stringValue);
+        if (targetType == BigInteger.class) {
+            return new BigInteger(stringValue);
         }
-        if (targetType == java.util.Date.class) {
+        if (targetType == Date.class) {
             // Try ISO date format first (yyyy-MM-dd)
             try {
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 return sdf.parse(stringValue);
-            } catch (java.text.ParseException e) {
+            } catch (ParseException e) {
                 // Try ISO datetime format
-                java.text.SimpleDateFormat sdfTime = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat sdfTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 return sdfTime.parse(stringValue);
             }
         }
-        if (targetType == java.util.UUID.class) {
-            return java.util.UUID.fromString(stringValue);
+        if (targetType == UUID.class) {
+            return UUID.fromString(stringValue);
         }
 
         // Try String constructor
@@ -749,8 +755,8 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
     /**
      * Reads a JSON object and returns it as a Map.
      */
-    private java.util.Map<String, Object> readJsonObjectAsMap(JsonParser parser, DeserializationContext ctxt) {
-        java.util.Map<String, Object> map = new java.util.LinkedHashMap<>();
+    private Map<String, Object> readJsonObjectAsMap(JsonParser parser, DeserializationContext ctxt) {
+        Map<String, Object> map = new LinkedHashMap<>();
 
         while (parser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = parser.currentName();

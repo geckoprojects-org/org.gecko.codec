@@ -34,6 +34,38 @@ public final class AnnotationSources {
     }
 
     /**
+     * Source URI for codec configuration annotations.
+     * <p>
+     * All codec-related configuration (ID, type, supertype, reference, feature)
+     * is placed in a single EAnnotation with this source URI. Configuration is
+     * specified through detail key-value pairs.
+     * </p>
+     * <p>
+     * Example:
+     * </p>
+     * <pre>{@code
+     * <eAnnotations source="http://eclipse.org/fennec/codec">
+     *   <details key="idStrategy" value="ID_FIELD"/>
+     *   <details key="typeStrategy" value="URI"/>
+     * </eAnnotations>
+     * }</pre>
+     */
+    public static final String CODEC = "http://eclipse.org/fennec/codec";
+
+    /**
+     * Source URI prefix for type mapping registry annotations.
+     * <p>
+     * The full source is: {@code http://eclipse.org/fennec/codec/typeMapping/{mapId}}
+     * </p>
+     */
+    public static final String TYPE_MAPPING_PREFIX = "http://eclipse.org/fennec/codec/typeMapping/";
+
+    /**
+     * Source URI for inline type mapping annotations on EReferences.
+     */
+    public static final String INLINE_MAPPING = "http://eclipse.org/fennec/codec/inlineMapping";
+
+    /**
      * Source URI for JSON Schema metadata annotations.
      * <p>
      * Used to store JSON Schema-specific information on EMF elements,

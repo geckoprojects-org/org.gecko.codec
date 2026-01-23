@@ -1,39 +1,122 @@
-# Codec V2 Serialization Feature Specification
+# Codec V2 Serialization Specification
 
-## Overview
-
-This document defines the serialization features for codec.v2, including configurable strategies for type information, identity, references, and supertype serialization.
-
-## Table of Contents
-
-| # | Document | Description |
-|---|----------|-------------|
-| 00 | [Overview](00-overview.md) | This document - TOC and Serialization Targets |
-| 01 | [Serialization Strategies](01-strategies.md) | PLAIN vs STRUCTURED format, strategy classification |
-| 02 | [Key Configuration](02-key-configuration.md) | Key naming conventions for PLAIN/STRUCTURED formats |
-| 03 | [Configuration Hierarchy](03-config-hierarchy.md) | Configuration levels and resolution order |
-| 04 | [Global Configuration Options](04-global-options.md) | Smart Compression, Numeric IDs, Field Ordering, Global Ignore |
-| 05 | [Type Serialization](05-type.md) | Type strategies (URI, NAME, MAPPED, etc.) and configuration |
-| 06 | [SuperType Serialization](06-supertype.md) | SuperType hierarchy serialization |
-| 07 | [ID Serialization](07-id.md) | ID strategies and combined ID configuration |
-| 08 | [Reference Serialization](08-reference.md) | Non-containment references and cross-document containment |
-| 09 | [Feature Serialization](09-feature.md) | EAttribute and EReference feature handling |
-| 10 | [Custom Value Readers/Writers](10-custom-values.md) | Custom serialization for specific types |
-| 11 | [Polymorphism and Inheritance](11-polymorphism.md) | Type resolution and inheritance handling |
-| 12 | [Configuration Scenarios](12-scenarios.md) | Complete configuration examples and test scenarios |
-| 13 | [Architecture](13-architecture.md) | Serialization architecture and design |
-| 14 | [Implementation](14-implementation.md) | Implementation strategy and checklist |
-| 15 | [Test Coverage](15-test-coverage.md) | Test coverage matrix and spec-to-test mapping |
-| 16 | [Format Abstraction](16-format-abstraction.md) | Multi-format support (JSON, BSON, CSV) and custom parsers/generators |
-| 17 | [Root Element](17-root-element.md) | Root element handling, JSON arrays, CODEC_ROOT_OBJECT option |
-| 18 | [Feature Type Hints and Value Readers](18-feature-type-hints.md) | CODEC_FEATURE_TYPE_HINTS, CODEC_FEATURE_VALUE_READERS/WRITERS |
-| 99 | [Open Questions](99-open-questions.md) | Open questions and issues to resolve |
+This specification defines how EMF EObjects are serialized to and deserialized from JSON (and other formats). It covers type information, identity, references, and all configuration options.
 
 ---
 
-## 1. Serialization Targets
+## PART I: FOUNDATIONS
 
-The codec serializes the following metadata alongside EObject features:
+Before configuring the codec, understand how it works and how configuration is resolved.
+
+### [01 - Architecture](01-architecture.md)
+
+How the codec works internally. This chapter explains the component structure (CodecResource, serializers, deserializers), how configuration from multiple sources is merged into an immutable EffectiveCodecConfig, and the serialization/deserialization flow. Read this first to understand the big picture.
+
+### [02 - Configuration Resolution](02-config-resolution.md)
+
+How configuration is resolved across two dimensions: the **source hierarchy** (load/save options → resource → factory → module → annotations → defaults) and the **scope chain** (feature → class → global). Understanding this is essential - every configuration option follows these rules.
+
+### [03 - Naming Conventions](03-naming-conventions.md)
+
+The consistent naming scheme used throughout the codec: EAnnotation keys (`typeStrategy`), property map keys (`codec.typeStrategy`), Java constants (`CODEC_TYPE_STRATEGY`), and builder methods (`.typeStrategy(...)`). Also covers the scope-level keys like `codec.eClassConfig` for per-class configuration.
+
+### [04 - Common Types](04-common-types.md)
+
+Definitions of the enums and types used across all configuration: `SerializationFormat` (PLAIN vs STRUCTURED), `StrategyScope` (ALL, ROOT_ONLY, etc.), `TypeStrategy`, `IdStrategy`, `IdKeyMode`, and others. Reference this when you encounter these types in other chapters.
+
+### [05 - Global Options](05-global-options.md)
+
+Codec-wide settings that affect all serialization: smart compression (omit redundant type info), field ordering, numeric ID optimization, and the global feature ignore list. These are the defaults that feature-specific settings can override.
+
+---
+
+## PART II: SERIALIZATION FEATURES
+
+Each serialization target (type, ID, reference, etc.) has its own configuration options.
+
+### [06 - Type Serialization](06-type.md)
+
+How EClass type information is written to JSON. Strategies include URI (full EMF URI), NAME (simple class name), CLASS (Java class), NUMERIC (classifier ID), and NONE. Covers both PLAIN format (`"_type": "Person"`) and STRUCTURED format (`"_type": {"type": "Person"}`).
+
+### [07 - SuperType Serialization](07-supertype.md)
+
+Optional serialization of supertype information for querying and indexing. Configure which supertypes to include (SINGLE, ALL, ALL_EMF), presentation format (array or string), and how they integrate with the type field in STRUCTURED format.
+
+### [08 - Discriminator Mapping](08-discriminator-mapping.md)
+
+Type resolution based on values in the JSON data itself, rather than explicit type fields. Two approaches: **Type Mapping Registry** (EClass annotations define discriminator values) and **Inline Mapping** (EReference annotations map values to types). Essential for IoT/LoRaWAN payloads and external JSON APIs.
+
+### [09 - ID Serialization](09-id.md)
+
+How object identity is serialized. Strategies: ID_FIELD (use eID attribute), COMBINED (concatenate multiple features). Key modes control what's written: ID_ONLY (just `_id`), BOTH (`_id` + individual features), FEATURE_ONLY, NONE. Supports PLAIN and STRUCTURED formats.
+
+### [10 - Reference Serialization](10-reference.md)
+
+How non-containment references point to other objects. Formats include PLAIN (just the reference value) and STRUCTURED (object with `_ref` and optional `_type`). The `expand` option serializes the full referenced object inline. Also covers cross-document containment detection.
+
+### [11 - Feature Serialization](11-feature.md)
+
+Configuration for individual EAttributes and EReferences: custom JSON keys, null/empty/default value handling, enum serialization modes (LITERAL, VALUE, NAME), and the ignore/force flags for controlling which features are serialized.
+
+### [12 - Polymorphism and Inheritance](12-polymorphism.md)
+
+How the codec handles polymorphic references where the actual type differs from the declared type. Covers annotation inheritance (feature → class → global → default) and type resolution strategies for heterogeneous collections.
+
+---
+
+## PART III: RUNTIME & ADVANCED
+
+Options that apply at load/save time and advanced features.
+
+### [13 - Load/Save Options](13-load-save-options.md)
+
+Options passed to `resource.load(options)` and `resource.save(options)`: root type hints (`CODEC_ROOT_TYPE`), schema context (`CODEC_ROOT_SCHEMA`), per-feature type hints (`CODEC_FEATURE_TYPE_HINTS`), deserialization mode (STRICT, LENIENT, AUTO_DETECT), and type hint mode (HINT vs OVERRIDE).
+
+### [14 - Custom Value Readers/Writers](14-custom-values.md)
+
+Extend the codec with custom serialization for specific types. Define `CodecValueReader` and `CodecValueWriter` implementations, register them globally or activate per-feature via annotations. Includes examples for OpenAPI, GeoJSON coordinates, and date formatting.
+
+### [15 - Error Handling & Diagnostics](15-error-handling.md)
+
+How the codec reports errors and warnings through EMF's diagnostic mechanism. Error types (type resolution, ID parsing, reference resolution), severity levels, the DiagnosticCollector API, and options for fail-fast mode and warning suppression.
+
+---
+
+## PART IV: REFERENCE
+
+Quick-reference materials for lookup.
+
+### [16 - Annotation & Configuration Reference](16-annotation-reference.md)
+
+**The definitive reference** for all configuration options. Complete matrix of which properties are valid at which scope levels (Global, EClass, EReference, EAttribute), naming conventions, property-to-builder mapping, and implementation status tracking.
+
+---
+
+## PART V: EXTENSIBILITY & EXAMPLES
+
+Extending the codec and practical examples.
+
+### [17 - Format Abstraction](17-format-abstraction.md)
+
+The codec's format-agnostic architecture that enables JSON, BSON, CSV, and custom formats. Covers the stream abstraction interfaces (CodecStreamReader/Writer), token model, format adapters, JSON Schema integration, and the OpenAPI extension example.
+
+### [18 - Configuration Scenarios](18-scenarios.md)
+
+Complete, working examples that combine multiple features: minimal configuration, STRUCTURED format with supertypes, smart compression, custom keys, reference expansion, and NUMERIC strategy for compact output. Use these as starting points for your own configuration.
+
+### [19 - Test Coverage](19-test-coverage.md)
+
+Test coverage matrix mapping spec sections to test files. Use this to find tests for specific features or to identify coverage gaps. Lists all test models and advanced scenario coverage.
+
+### [99 - Open Questions](99-open-questions.md)
+
+Unresolved design questions and future considerations. Check here before proposing changes - your question may already be captured.
+
+---
+
+## Quick Reference
+
+### Serialization Targets
 
 | Target | Purpose | Applies To |
 |--------|---------|------------|
@@ -43,103 +126,30 @@ The codec serializes the following metadata alongside EObject features:
 | **Cross-Doc Containment** | Points to contained objects in other documents | EReference (containment, cross-document) |
 | **SuperType** | Lists supertypes for querying | EObjects (optional) |
 
-### 1.1 EAnnotation and Configuration Parity
+### Configuration Priority
 
-Every codec feature that can be configured declaratively via **EAnnotations** on the EMF model should also be configurable programmatically via the **Config Builder** at runtime, and vice versa.
+| Priority | Level | Scope |
+|----------|-------|-------|
+| 1 (highest) | Load/Save options | Per-operation |
+| 2 | ResourceFactory defaults | Per-factory |
+| 3 | Codec module config | Per-codec |
+| 4 | Configuration properties | External |
+| 5 | EAnnotations | Per-model |
+| 6 (lowest) | Built-in defaults | Global |
 
-**Configuration Levels (Resolution Order, dynamic before static):**
+### Key Enums
 
-| Priority | Level | Scope | Description |
-|----------|-------|-------|-------------|
-| 1 (highest) | **Load/Save options** | Per-operation | Options passed to `resource.save(options)` / `resource.load(options)` |
-| 2 | **ResourceFactory defaults** | Per-factory | `defaultSaveOptions`/`defaultLoadOptions` on EMF ResourceFactory |
-| 3 | **Codec module config** | Per-codec | Jackson module / codec instance configuration |
-| 4 | **Configuration properties** | External | System properties, config files |
-| 5 | **EAnnotations** | Per-model | Declared in .ecore model (static) |
-| 6 (lowest) | **Built-in defaults** | Global | Hardcoded codec defaults |
-
-**Key Principle:** Every configuration setting (EAnnotation detail keys, Jackson module features) must have a corresponding runtime option key. This allows any setting to be overridden at load/save time without modifying the model or codec configuration.
-
-**Core Annotations (source: `http://eclipse.org/fennec/codec`):**
-
-| Detail Key | Applies To | Purpose |
-|------------|------------|---------|
-| `codec.type` | EClass, EReference | Marker for type serialization config |
-| `codec.id` | EClass | Marker for ID serialization config |
-| `codec.reference` | EReference | Marker for reference serialization config |
-| `codec.supertype` | EClass | Marker for supertype serialization config |
-| `serialize` | EStructuralFeature | Skip feature during serialization (false = transient) |
-| `key` | EStructuralFeature | Custom JSON property name |
-| `valueWriterName` | EStructuralFeature | Custom value writer reference |
-| `valueReaderName` | EStructuralFeature | Custom value reader reference |
-
-**Design Principle:** When documenting a configuration option, always show both:
-- The **EAnnotation** approach (for model designers)
-- The **Config Builder** approach (for runtime customization)
-
-This ensures flexibility: models can define sensible defaults that integrators can override at runtime without modifying the model.
+| Enum | Values | Default |
+|------|--------|---------|
+| SerializationFormat | PLAIN, STRUCTURED | PLAIN |
+| TypeStrategy | URI, NAME, SCHEMA_AND_TYPE, NUMERIC, NONE | URI |
+| IdStrategy | ID_FIELD, COMBINED | ID_FIELD |
+| IdKeyMode | ID_ONLY, BOTH, FEATURE_ONLY, NONE | ID_ONLY |
+| StrategyScope | ALL, ROOT_ONLY, ROOT_CONTAINMENT, ROOT_NON_CONTAINMENT | ALL |
 
 ---
 
-## 2. Error and Warning Handling
+## Related Documentation
 
-The codec uses EMF's standard diagnostic mechanism for reporting errors and warnings during serialization and deserialization.
-
-**Principle:**
-- All errors and warnings are collected in the EMF Resource's diagnostics (`resource.getErrors()`, `resource.getWarnings()`)
-- Errors cause the load/save operation to fail after all diagnostics are collected
-- Warnings do not cause failure but are reported for user awareness
-- All diagnostics are also logged via the standard logging mechanism
-
-**Error Severity:**
-
-| Severity | Behavior | Examples |
-|----------|----------|----------|
-| **ERROR** | Operation fails, diagnostic added | Cannot instantiate abstract type, unresolved type URI, missing required type info |
-| **WARNING** | Operation continues, diagnostic added | Type collision (content type differs from hint), deprecated option usage |
-
-**Diagnostic Information:**
-
-Each diagnostic includes:
-- Message describing the issue
-- Location (resource URI, line/column if available)
-- Source (codec component that raised the issue)
-
-**Example - Error during load:**
-```java
-resource.load(inputStream, options);
-if (!resource.getErrors().isEmpty()) {
-    for (Diagnostic error : resource.getErrors()) {
-        System.err.println("Error: " + error.getMessage());
-    }
-    // Operation failed - handle appropriately
-}
-```
-
-**Implementation Details:**
-
-The codec uses a `DiagnosticCollector` internally to aggregate errors and warnings during serialization/deserialization:
-
-1. **Initialization:** A `DiagnosticCollector` is created at the start of each load/save operation
-2. **Propagation:** The collector is passed through Jackson's context attributes and accessible via `ContextHelper`
-3. **Collection:** Each deserialization/serialization entry adds diagnostics via `ContextHelper.addError()`/`addWarning()`
-4. **Finalization:** After the operation completes, `collector.addToResource(resource)` transfers all diagnostics to the EMF Resource
-
-**Diagnostic Sources:**
-
-| Component | Error Examples | Warning Examples |
-|-----------|----------------|------------------|
-| `CodecEObjectDeserializer` | No type info and no hint, failed EObject creation | Unexpected token |
-| `TypeDeserializationEntry` | - | Could not resolve EClass, unexpected token |
-| `IdDeserializationEntry` | EObject not yet created | STRUCTURED ID format mismatch, parse errors |
-| `ReferenceDeserializationEntry` | EObject not yet created, no deserializer found, deserialization exception | Unexpected token |
-| `AttributeDeserializationEntry` | EObject not yet created | Value conversion failure, unexpected token |
-| `CodecResource` | Proxy creation failure | Unexpected root token |
-
-**Null-Safety:**
-
-All diagnostic methods are null-safe. When context is null (e.g., in unit tests), diagnostics are silently skipped:
-```java
-// Safe to call even if ctxt is null
-ContextHelper.addWarning(ctxt, "message", parser, "Source");
-```
+- **[Development Guide](../codec-v2-development-guide.md)** - Implementation status, architecture details, session continuity
+- **[Spec Review Findings](../codec-v2-spec-review-findings.md)** - Gap analysis and improvement recommendations

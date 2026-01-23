@@ -13,6 +13,8 @@
  */
 package org.eclipse.fennec.codec.v2.deser;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -437,13 +439,16 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
             return;
         }
 
+        TokenBuffer buffer = null;
+        JsonParser bufferParser = null;
+        JsonParser replayParser = null;
         try {
             // Buffer the object to inspect for _ref and check for additional fields
-            TokenBuffer buffer = ctxt.bufferForInputBuffering(parser);
+            buffer = ctxt.bufferForInputBuffering(parser);
             buffer.copyCurrentStructure(parser);
 
             // Parse the buffered content to check for _ref and count other fields
-            JsonParser bufferParser = buffer.asParser(ctxt, parser);
+            bufferParser = buffer.asParser(ctxt, parser);
             bufferParser.nextToken(); // START_OBJECT
 
             String refUri = null;
@@ -469,14 +474,16 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 }
             }
             bufferParser.close();
+            bufferParser = null; // Mark as closed
 
             if (refUri != null && hasOtherFields) {
                 // Has _ref AND other fields: proxy with projection
                 // Deserialize the full object and then set proxy URI
-                JsonParser replayParser = buffer.asParser(ctxt, parser);
+                replayParser = buffer.asParser(ctxt, parser);
                 replayParser.nextToken(); // Move to START_OBJECT
                 EObject proxyWithProjection = deserializeFullObject(state, replayParser, ctxt);
                 replayParser.close();
+                replayParser = null; // Mark as closed
 
                 if (proxyWithProjection != null) {
                     // Set the proxy URI on the deserialized object
@@ -492,21 +499,25 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, index, typeFromContent));
             } else {
                 // No _ref: deserialize as orphan object (expanded reference)
-                JsonParser replayParser = buffer.asParser(ctxt, parser);
+                replayParser = buffer.asParser(ctxt, parser);
                 replayParser.nextToken(); // Move to START_OBJECT
                 EObject orphan = deserializeOrphanObject(state, replayParser, ctxt);
                 replayParser.close();
+                replayParser = null; // Mark as closed
 
                 if (orphan != null && reference.isChangeable()) {
                     eObject.eSet(reference, orphan);
                 }
             }
-
-            buffer.close();
         } catch (Exception e) {
             String msg = "Error deserializing non-containment reference '" + reference.getName() + "': " + e.getMessage();
             LOGGER.severe(msg);
             ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
+        } finally {
+            // Ensure all resources are closed even on exception
+            closeQuietly(replayParser);
+            closeQuietly(bufferParser);
+            closeQuietly(buffer);
         }
     }
 
@@ -549,13 +560,16 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
             return;
         }
 
+        TokenBuffer buffer = null;
+        JsonParser bufferParser = null;
+        JsonParser replayParser = null;
         try {
             // Buffer the object to inspect for _ref and check for additional fields
-            TokenBuffer buffer = ctxt.bufferForInputBuffering(parser);
+            buffer = ctxt.bufferForInputBuffering(parser);
             buffer.copyCurrentStructure(parser);
 
             // Parse the buffered content to check for _ref and count other fields
-            JsonParser bufferParser = buffer.asParser(ctxt, parser);
+            bufferParser = buffer.asParser(ctxt, parser);
             bufferParser.nextToken(); // START_OBJECT
 
             String refUri = null;
@@ -580,13 +594,15 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 }
             }
             bufferParser.close();
+            bufferParser = null; // Mark as closed
 
             if (refUri != null && hasOtherFields) {
                 // Has _ref AND other fields: proxy with projection
-                JsonParser replayParser = buffer.asParser(ctxt, parser);
+                replayParser = buffer.asParser(ctxt, parser);
                 replayParser.nextToken(); // Move to START_OBJECT
                 EObject proxyWithProjection = deserializeFullObject(state, replayParser, ctxt);
                 replayParser.close();
+                replayParser = null; // Mark as closed
 
                 if (proxyWithProjection != null) {
                     // Set the proxy URI on the deserialized object
@@ -599,21 +615,25 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, index, typeFromContent));
             } else {
                 // No _ref: deserialize as orphan object (expanded reference)
-                JsonParser replayParser = buffer.asParser(ctxt, parser);
+                replayParser = buffer.asParser(ctxt, parser);
                 replayParser.nextToken(); // Move to START_OBJECT
                 EObject orphan = deserializeOrphanObject(state, replayParser, ctxt);
                 replayParser.close();
+                replayParser = null; // Mark as closed
 
                 if (orphan != null) {
                     values.add(orphan);
                 }
             }
-
-            buffer.close();
         } catch (Exception e) {
             String msg = "Error deserializing non-containment reference element '" + reference.getName() + "': " + e.getMessage();
             LOGGER.severe(msg);
             ContextHelper.addError(ctxt, msg, parser, "ReferenceDeserializationEntry");
+        } finally {
+            // Ensure all resources are closed even on exception
+            closeQuietly(replayParser);
+            closeQuietly(bufferParser);
+            closeQuietly(buffer);
         }
     }
 
@@ -811,8 +831,8 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
         if (uriReader != null) {
             try {
                 return uriReader.read(parser, reference, ctxt);
-            } catch (java.io.IOException e) {
-                throw new java.io.UncheckedIOException(
+            } catch (IOException e) {
+                throw new UncheckedIOException(
                         "Custom URI reader failed for reference: " + reference.getName(), e);
             }
         }
@@ -883,6 +903,25 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
             parser.skipChildren();
         } catch (Exception e) {
             LOGGER.warning("Failed to skip JSON value: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Closes an AutoCloseable resource quietly, suppressing any exceptions.
+     * <p>
+     * Used in finally blocks to ensure resources are closed even if
+     * they've already been closed or are null.
+     * </p>
+     *
+     * @param closeable the resource to close (may be null)
+     */
+    private void closeQuietly(AutoCloseable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (Exception e) {
+                LOGGER.fine("Failed to close resource: " + e.getMessage());
+            }
         }
     }
 

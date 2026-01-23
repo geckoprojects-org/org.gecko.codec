@@ -13,7 +13,9 @@
 Type serialization uses **two orthogonal dimensions** (see [Serialization Strategies](01-strategies.md)):
 
 1. **Format**: PLAIN | STRUCTURED - how the data is presented
-2. **Strategy**: URI | NAME | CLASS | NUMERIC | MAPPED | SCHEMA_AND_TYPE - what information is transported
+2. **Strategy**: URI | NAME | CLASS | NUMERIC | SCHEMA_AND_TYPE | NONE - what information is transported
+
+> **Note:** `MAPPED` was removed from TypeStrategy. Discriminator-based type resolution is now a separate optional layer that works alongside any strategy. See [Discriminator Mapping](#13-discriminator-mapping-separate-layer) below for details.
 
 ### 1.1 PLAIN Format Examples
 
@@ -23,8 +25,8 @@ Type serialization uses **two orthogonal dimensions** (see [Serialization Strate
 | NAME | `"_type": "Person"` |
 | CLASS | `"_type": "org.example.Person"` |
 | NUMERIC | `"_type": "3"` |
-| MAPPED | `"_type": "customer"` |
 | SCHEMA_AND_TYPE | `"_schema": "http://example.org/person/1.0", "_type": "Person"` |
+| NONE | (no type field written) |
 
 ### 1.2 STRUCTURED Format Examples
 
@@ -34,70 +36,97 @@ Type serialization uses **two orthogonal dimensions** (see [Serialization Strate
 | NAME | `"_type": { "type": "Person" }` |
 | CLASS | `"_type": { "class": "org.example.Person" }` |
 | NUMERIC | `"_type": { "schema": "http://example.org/person/1.0", "classifier": 3 }` |
-| MAPPED | `"_type": { "discriminator": "customer" }` |
 | SCHEMA_AND_TYPE | `"_type": { "schema": "http://example.org/person/1.0", "type": "Person" }` |
+| NONE | (no type field written) |
 
-### 1.3 MAPPED Strategy (Discriminator-Based Polymorphism)
+### 1.3 Discriminator Mapping (Separate Layer)
 
-The MAPPED strategy enables type discrimination based on a value found within the data itself, rather than an explicit type field. This is particularly useful for:
+Discriminator-based type resolution is **not** a TypeStrategy - it's an **orthogonal layer** that works alongside any strategy. This enables type discrimination based on a value found within the data itself.
+
+**Why it's separate from TypeStrategy:**
+
+| Aspect | TypeStrategy (URI, NAME, etc.) | Discriminator Mapping |
+|--------|-------------------------------|----------------------|
+| **What it answers** | "What value represents this type?" | "How do I translate an arbitrary string to a type?" |
+| **Serialization output** | Deterministic from EClass | Requires external mapping definition |
+| **Deserialization input** | Self-describing (URI resolvable) | Requires registry lookup |
+| **Standalone?** | Yes | No - needs discriminator definitions |
+
+**Use cases:**
 - **IoT/LoRaWAN devices** - where device type is embedded in payload metadata
 - **JSON Schema oneOf patterns** - where type is determined by feature presence or values
 - **Legacy APIs** - where type information is encoded in application-specific fields
 
-**How it works:**
+**Two configuration approaches:**
 
-1. **Base class** defines the discriminator feature path (which field contains the type indicator)
-2. **Concrete classes** define their discriminator value (what value identifies them)
-3. **ModelInfoService** builds a reverse lookup map from values → EClasses
+#### Named Registry (on EClass annotations)
 
-**Configuration (via annotations or CodecConfig):**
+```xml
+<!-- Base class defines the map and discriminator path -->
+<eClassifiers name="UplinkMessage">
+  <eAnnotations source="http://eclipse.org/fennec/codec">
+    <details key="typeMapId" value="lorawan-devices"/>
+    <details key="typeDiscriminatorPath" value="info.profileName"/>
+  </eAnnotations>
+</eClassifiers>
 
+<!-- Concrete classes register their discriminator value -->
+<eClassifiers name="TemperatureSensor">
+  <eAnnotations source="http://eclipse.org/fennec/codec">
+    <details key="typeDiscriminator" value="temp-sensor"/>
+  </eAnnotations>
+</eClassifiers>
+```
+
+#### Inline Mapping (on EReference annotations)
+
+```xml
+<eStructuralFeatures name="contacts" upperBound="-1" eType="#//Contact">
+  <eAnnotations source="http://eclipse.org/fennec/codec">
+    <details key="typeKey" value="contactType"/>
+    <details key="inlineMapping.friend" value="http://example.org#//Friend"/>
+    <details key="inlineMapping.enemy" value="http://example.org#//Enemy"/>
+  </eAnnotations>
+</eStructuralFeatures>
+```
+
+**Resolution priority during deserialization:**
+1. Discriminator Mapping (if configured) - inline mapping first, then named registry
+2. Type Strategy Resolution (URI, NAME, etc.)
+3. Fallback (CODEC_ROOT_OBJECT hint, reference type)
+
+### 1.4 NONE Strategy
+
+The `NONE` strategy indicates that no type information should be written or expected.
+
+**Serialization with NONE:**
+- No type field (`_type`) is written
+- Useful for homogeneous collections, APIs that don't expect type metadata, or compact output
+
+**Deserialization with NONE:**
+- Deserializer does NOT look for type field in JSON
+- Type resolution relies entirely on:
+  1. `CODEC_ROOT_OBJECT` load option (for root object)
+  2. `EReference.getEReferenceType()` (for nested objects)
+- **ERROR** if reference type is abstract and no concrete type can be determined
+
+**Example:**
 ```java
-// On base class (e.g., LoRaWANUplink)
-TypeResolutionConfig.builder()
-    .strategy(TypeStrategy.MAPPED)
-    .typeFeaturePath("deviceInfo.deviceProfileName")  // Path to discriminator
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeStrategy(TypeStrategy.NONE)
     .build();
 
-// On concrete class (e.g., DraginoLSE01Uplink)
-TypeResolutionConfig.builder()
-    .strategy(TypeStrategy.MAPPED)
-    .discriminatorValue("Dragino_LSE01")  // Value that identifies this class
-    .build();
+// Serialization output - no _type field
+// { "name": "John", "age": 30 }
+
+// Deserialization - MUST provide CODEC_ROOT_OBJECT
+Map<String, Object> options = Map.of(
+    CodecResource.CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON
+);
+resource.load(input, options);
 ```
 
-**Example Input JSON (no explicit type field):**
-```json
-{
-  "deviceInfo": {
-    "deviceProfileName": "Dragino_LSE01",
-    "devEui": "A84041..."
-  },
-  "temperature": 23.5,
-  "humidity": 65
-}
-```
-
-The deserializer reads `deviceInfo.deviceProfileName`, finds `"Dragino_LSE01"`, and uses the reverse lookup to instantiate `DraginoLSE01Uplink`.
-
-**Feature-Based Type Discrimination (JSON Schema oneOf):**
-
-For cases where type is determined by feature presence rather than a single discriminator value:
-
-```java
-TypeResolutionConfig.builder()
-    .strategy(TypeStrategy.MAPPED)
-    .typeFeaturePath("*")  // Special marker for feature-based detection
-    .typeMap(Map.of(
-        "temperature,humidity", "EnvironmentSensor",
-        "latitude,longitude", "GPSTracker"
-    ))
-    .build();
-```
-
-The deserializer checks which features are present and matches against the type map.
-
-### 1.4 SCHEMA_AND_TYPE Strategy
+### 1.6 SCHEMA_AND_TYPE Strategy
 
 The SCHEMA_AND_TYPE strategy transports both schema URI and type name as separate pieces of information.
 
@@ -129,19 +158,20 @@ The SCHEMA_AND_TYPE strategy transports both schema URI and type name as separat
 - `nameKey`: type name field inside object (default: `type`)
 - `superTypeKey`: supertype field inside object (default: `supertype`, optional)
 
-### 1.5 Type Strategy Scope and Containment Behavior
+### 1.7 Type Strategy Scope and Containment Behavior
 
 Type strategy configuration applies **per-class**, not globally to all objects in a hierarchy. This has important implications for containment references.
 
-#### 1.5.1 Strategy Scope Rules
+#### 1.7.1 Strategy Scope Rules
 
 | Strategy | Applies To | Children Behavior |
 |----------|-----------|-------------------|
 | **URI** | Configured class | Children use their own configured strategy (or default URI) |
 | **SCHEMA_AND_TYPE** | **Root object only** | Children fall back to default (URI) |
 | **NAME** | Configured class | Children use their own configured strategy (or default URI) |
-| **MAPPED** | Configured class | Children use their own configured strategy |
+| **CLASS** | Configured class | Children use their own configured strategy |
 | **NUMERIC** | Configured class | Children use their own configured strategy |
+| **NONE** | Configured class | Children use their own configured strategy |
 
 **Key Rule:** SCHEMA_AND_TYPE is a **root-only strategy**. It establishes a context schema at the root level but does not propagate to contained objects.
 
@@ -290,7 +320,7 @@ The configuration defines **format, strategy, and keys** - not actual values. Va
 | Key | Values | Default | Description |
 |-----|--------|---------|-------------|
 | `format` | PLAIN, STRUCTURED | PLAIN | How data is presented (flat vs nested) |
-| `strategy` | URI, NAME, CLASS, NUMERIC, MAPPED, SCHEMA_AND_TYPE | URI | What type information to transport |
+| `strategy` | URI, NAME, CLASS, NUMERIC, SCHEMA_AND_TYPE, NONE | URI | What type information to transport |
 | `include` | true, false | true | Whether to include type info |
 | `includeSupertypes` | true, false | false | Whether to include supertype info |
 | `typeKey` | any string | `_type` | Outer key (both formats) |
@@ -457,7 +487,7 @@ Deserializers detect the format from the JSON structure:
 
 | Input | Detected Format | Strategy Detection |
 |-------|-----------------|-------------------|
-| `"_type": "string"` | PLAIN | Detect by content: URI (contains `#//`), CLASS (contains `.`), NAME/MAPPED (simple string) |
+| `"_type": "string"` | PLAIN | Detect by content: URI (contains `#//`), CLASS (contains `.`), NAME (simple string) |
 | `"_type": { ... }` | STRUCTURED | Read inner keys to determine strategy |
 | `"_schema": ..., "_type": "string"` | PLAIN | SCHEMA_AND_TYPE strategy (two separate fields) |
 
@@ -490,6 +520,56 @@ The deserializer extracts `http://example.org/person/1.0` as namespace URI and `
   "name": "John"
 }
 ```
+
+### 5.3.1 Unknown Type Handling
+
+When the deserializer cannot resolve a type value to a known EClass, the behavior depends on whether a **type hint** is available.
+
+#### Fallback to Type Hint
+
+If a `CODEC_ROOT_OBJECT` hint is provided (or the reference type is concrete), the deserializer uses it as fallback:
+
+| Scenario | Behavior | Severity |
+|----------|----------|----------|
+| Unknown type value, hint available | Use hint, continue | WARNING |
+| Unknown type value, no hint | Fail | ERROR |
+
+**Example - Unknown type with hint (succeeds):**
+```java
+Map<String, Object> options = Map.of(
+    CodecResourceOptions.CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON
+);
+resource.load(inputStream, options);
+// JSON: {"_type": "UnknownType", "name": "John"}
+// Result: WARNING logged, Person created using hint
+```
+
+**Example - Unknown type without hint (fails):**
+```java
+resource.load(inputStream, Collections.emptyMap());
+// JSON: {"_type": "UnknownType", "name": "John"}
+// Result: ERROR - "Cannot deserialize: no type information found and no CODEC_ROOT_OBJECT hint"
+```
+
+#### Resolution Order
+
+When resolving type values, the deserializer tries multiple strategies:
+
+1. **Full URI** - If value contains `#//`, treat as EMF EClass URI
+2. **Java class name** - If value contains `.`, look up by instance class name
+3. **Discriminator mapping** - Check TypeDiscriminatorService for mapped values
+4. **Simple name** - Look up by class name in context schema
+5. **Numeric ID** - Parse as classifier ID within context schema
+6. **Fallback** - Use hint if available, otherwise ERROR
+
+#### Diagnostic Messages
+
+| Scenario | Message |
+|----------|---------|
+| Type value not resolved | `Could not resolve EClass from type value: {value}` |
+| No type info and no hint | `Cannot deserialize: no type information found and no CODEC_ROOT_OBJECT hint` |
+
+See [Error Handling](00-overview.md#2-error-and-warning-handling) for the complete error scenarios table.
 
 ### 5.4 Context Schema and NAME Strategy
 
@@ -599,6 +679,141 @@ When both content type and hint are present but differ:
 - Log a WARNING
 - Continue with content type (content wins)
 - Example: Hint says `Person`, content says `Employee` → use `Employee`, log warning
+
+#### 5.5.1 Type Hint Mode (CODEC_TYPE_MODE)
+
+By default, `CODEC_ROOT_OBJECT` and `CODEC_ROOT_SCHEMA` behave as **hints/fallbacks**, not as highest-priority overrides. This is an **intentional deviation** from the standard configuration hierarchy (where Load/Save options have highest priority).
+
+**Rationale:**
+- Most common use case is "help deserialize when type info is missing"
+- Users expect content type information to be respected
+- Forcing override by default would cause unexpected behavior
+
+| Mode | Behavior | Use Case |
+|------|----------|----------|
+| `HINT` (default) | Content type wins when present; hint used as fallback | General deserialization, flexible input handling |
+| `OVERRIDE` | Hint always wins for root object, ignoring content type | Force-deserialize as specific type regardless of content |
+
+**HINT Mode (default):**
+```
+Type Resolution Priority:
+1. Content type information (from JSON _type field) - wins when present
+2. CODEC_ROOT_OBJECT / CODEC_ROOT_SCHEMA - used as fallback when content has no type
+3. Reference type (EReference.getEReferenceType()) - for nested objects
+4. ERROR - if no type determinable
+```
+
+**OVERRIDE Mode:**
+```
+Type Resolution Priority:
+1. CODEC_ROOT_OBJECT - always wins for root object (follows strict config hierarchy)
+2. Content type information - ignored for root object
+3. Reference type - for nested objects (CODEC_ROOT_OBJECT only affects root)
+```
+
+**Configuration:**
+```java
+Map<String, Object> options = new HashMap<>();
+options.put(CodecResource.CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON);
+options.put(CodecResource.CODEC_TYPE_MODE, TypeHintMode.OVERRIDE);  // Force type
+resource.load(inputStream, options);
+```
+
+**Example - HINT mode (default):**
+```java
+// JSON has type info - content wins, hint ignored
+String json = """
+    { "_type": "http://example.org#//Employee", "name": "John" }
+    """;
+
+options.put(CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON);
+// Result: Deserializes as Employee (content wins)
+// If Employee is subtype of Person: no warning
+// If incompatible: WARNING logged but content still wins
+```
+
+**Example - OVERRIDE mode:**
+```java
+// Force deserialize as specific type, ignore content type
+String json = """
+    { "_type": "http://example.org#//OldType", "name": "John" }
+    """;
+
+options.put(CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON);
+options.put(CODEC_TYPE_MODE, TypeHintMode.OVERRIDE);
+// Result: Deserializes as Person (override mode, content type ignored)
+```
+
+> **Note:** This behavior deviates from the general configuration hierarchy principle where Load/Save options (Level 1) have highest priority. The deviation exists for practical usability reasons.
+
+#### 5.5.2 Deserialization Mode (Type Resolution Strictness)
+
+The `DeserializationMode` controls how strictly the deserializer follows the configured type strategy when resolving types.
+
+| Mode | Behavior | Use Case |
+|------|----------|----------|
+| `STRICT` | Type field MUST match configured strategy exactly; missing/malformed → ERROR | Guaranteed format compliance |
+| `LENIENT` (default) | Try configured strategy first, then fallback resolution | Maximum interoperability |
+| `AUTO_DETECT` | Ignore configured strategy; probe JSON structure to determine format | Unknown/mixed formats |
+
+**Why LENIENT is default:**
+- Most users want deserialization to succeed when possible
+- Real-world JSON often has minor variations
+- STRICT is available for those who need format guarantees
+- LENIENT + warnings provides best of both worlds
+
+**STRICT Mode:**
+```java
+// Config says SCHEMA_AND_TYPE, but JSON only has simple name → ERROR
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeStrategy(TypeStrategy.SCHEMA_AND_TYPE)
+    .deserializationMode(DeserializationMode.STRICT)
+    .build();
+
+// JSON: {"_type": "Person", "name": "John"}  // No _schema field
+// Result: ERROR - "Missing schema field, config requires SCHEMA_AND_TYPE"
+```
+
+**LENIENT Mode (default):**
+```java
+// Config says SCHEMA_AND_TYPE, but JSON only has simple name → try fallback
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeStrategy(TypeStrategy.SCHEMA_AND_TYPE)
+    // .deserializationMode(DeserializationMode.LENIENT)  // default
+    .build();
+
+// JSON: {"_type": "Person", "name": "John"}
+// Result: WARNING logged, resolves "Person" using CODEC_ROOT_SCHEMA or hint
+```
+
+**AUTO_DETECT Mode:**
+```java
+// Ignore config, probe JSON structure
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeStrategy(TypeStrategy.URI)  // Config says URI
+    .deserializationMode(DeserializationMode.AUTO_DETECT)
+    .build();
+
+// JSON: {"_type": "Person", "name": "John"}  // Simple name
+// Result: Auto-detects NAME format, resolves using context
+```
+
+**Resolution Behavior by Mode:**
+
+| Scenario | STRICT | LENIENT | AUTO_DETECT |
+|----------|--------|---------|-------------|
+| Missing type field | ERROR | Use hints | Use hints |
+| Wrong format | ERROR | Try fallbacks | Probe format |
+| Unknown type value | ERROR | WARNING + fallback | WARNING + fallback |
+
+**Warning Messages (LENIENT mode):**
+```
+WARNING: Type resolved via fallback. Config: typeStrategy=SCHEMA_AND_TYPE,
+         but type "Person" resolved using CODEC_ROOT_SCHEMA hint.
+         Consider updating config or JSON to match.
+```
+
+> **Note:** `DeserializationMode` controls **type resolution** strictness. For **feature handling** strictness (unknown/missing features), see [Feature Strictness](09-feature.md#7-feature-strictness).
 
 ### 5.6 Deferred Properties
 

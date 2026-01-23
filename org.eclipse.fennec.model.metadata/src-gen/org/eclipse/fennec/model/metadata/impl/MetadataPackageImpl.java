@@ -388,6 +388,46 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
+	public EAttribute getBaseIdConfig_OnTop() {
+		return (EAttribute)baseIdConfigEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseIdConfig_SerializeSeparator() {
+		return (EAttribute)baseIdConfigEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseIdConfig_SeparatorKey() {
+		return (EAttribute)baseIdConfigEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseIdConfig_ValueKey() {
+		return (EAttribute)baseIdConfigEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getBaseReferenceConfig() {
 		return baseReferenceConfigEClass;
 	}
@@ -1075,6 +1115,10 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		createEAttribute(baseIdConfigEClass, BASE_ID_CONFIG__FORMAT);
 		createEAttribute(baseIdConfigEClass, BASE_ID_CONFIG__ID_KEY);
 		createEAttribute(baseIdConfigEClass, BASE_ID_CONFIG__SEPARATOR);
+		createEAttribute(baseIdConfigEClass, BASE_ID_CONFIG__ON_TOP);
+		createEAttribute(baseIdConfigEClass, BASE_ID_CONFIG__SERIALIZE_SEPARATOR);
+		createEAttribute(baseIdConfigEClass, BASE_ID_CONFIG__SEPARATOR_KEY);
+		createEAttribute(baseIdConfigEClass, BASE_ID_CONFIG__VALUE_KEY);
 
 		baseReferenceConfigEClass = createEClass(BASE_REFERENCE_CONFIG);
 		createEAttribute(baseReferenceConfigEClass, BASE_REFERENCE_CONFIG__FORMAT);
@@ -1204,6 +1248,10 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEAttribute(getBaseIdConfig_Format(), this.getSerializationFormat(), "format", "PLAIN", 0, 1, BaseIdConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseIdConfig_IdKey(), ecorePackage.getEString(), "idKey", "_id", 0, 1, BaseIdConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseIdConfig_Separator(), ecorePackage.getEString(), "separator", "-", 0, 1, BaseIdConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseIdConfig_OnTop(), ecorePackage.getEBoolean(), "onTop", "true", 0, 1, BaseIdConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseIdConfig_SerializeSeparator(), ecorePackage.getEBoolean(), "serializeSeparator", "true", 0, 1, BaseIdConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseIdConfig_SeparatorKey(), ecorePackage.getEString(), "separatorKey", "separator", 0, 1, BaseIdConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseIdConfig_ValueKey(), ecorePackage.getEString(), "valueKey", "id", 0, 1, BaseIdConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(baseReferenceConfigEClass, BaseReferenceConfig.class, "BaseReferenceConfig", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBaseReferenceConfig_Format(), this.getSerializationFormat(), "format", "PLAIN", 0, 1, BaseReferenceConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1285,7 +1333,6 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.NAME);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.CLASS);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.URI);
-		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.MAPPED);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.SCHEMA_AND_TYPE);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.NUMERIC);
 

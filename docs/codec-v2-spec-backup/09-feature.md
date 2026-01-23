@@ -122,6 +122,62 @@ FeatureSerializationConfig defaultConfig = FeatureSerializationConfig.builder()
 2. Codec-wide setting
 3. Built-in default
 
+### 1.3 Deserialization Behavior
+
+The `serializeNull`, `serializeDefaults`, and `serializeEmpty` settings are **serialization-only** configurations. They control what is written to JSON but do **NOT** affect how JSON is read.
+
+Deserialization follows these rules:
+
+| JSON Input | Deserialization Result |
+|------------|------------------------|
+| Field with explicit `null` value | See type-specific behavior below |
+| Field missing from JSON | Feature retains EMF default value |
+| Field with value | Sets feature to parsed value |
+
+#### Type-Specific Null Handling
+
+EMF handles `null` differently for object types vs primitive types:
+
+| Feature Type | JSON `null` Result | Reason |
+|--------------|-------------------|--------|
+| **Object types** (EString, EObject, etc.) | Sets to `null` | Object references can hold null |
+| **Primitive types** (EInt, EBoolean, EDouble, etc.) | Resets to EMF default | Primitives cannot hold null; EMF treats null as "unset" |
+
+**Important:** For primitive types, `eSet(attribute, null)` resets to the `defaultValueLiteral`, NOT the Java primitive default (0, false).
+
+**Example:**
+
+Given an EMF model with:
+```java
+EAttribute middleName;  // EString, optional (no default)
+EAttribute count;       // EInt, defaultValueLiteral="42"
+EAttribute active;      // EBoolean, defaultValueLiteral="true"
+```
+
+| JSON Input | middleName | count | active |
+|------------|------------|-------|--------|
+| `{"middleName": null, "count": 10}` | `null` | `10` | `true` (EMF default) |
+| `{"count": 10}` | `null` (String default) | `10` | `true` (EMF default) |
+| `{"middleName": "M", "count": null}` | `"M"` | `42` (EMF default¹) | `true` (EMF default) |
+| `{}` | `null` | `42` (EMF default) | `true` (EMF default) |
+
+¹ Note: `count: null` results in `42` (the EMF defaultValueLiteral), NOT `0` (Java int default).
+
+**Key Points:**
+
+1. **Explicit `null` for object types** → Feature is set to `null`
+2. **Explicit `null` for primitive types** → Feature is reset to EMF default (via `eSet(attr, null)`)
+3. **Missing field** → Feature retains its EMF default value (same effect as `null` for primitives)
+4. **`serializeNull`/`serializeDefaults` do NOT affect deserialization** - these are output controls only
+5. **Multi-valued features** → JSON `null` is ignored; missing field results in empty list
+
+**Rationale:**
+
+- **Object types respect explicit `null`**: If the JSON explicitly contains `"field": null`, the intent is to set the value to null.
+- **Primitive types use EMF semantics**: EMF primitives cannot hold null, so null is interpreted as "unset" which returns the default value.
+- **Missing fields use defaults**: This aligns with JSON conventions where omitted fields are unspecified, and EMF defaults provide sensible fallback values.
+- **Symmetry not required**: Serialization decisions (what to include) are independent from deserialization decisions (how to interpret).
+
 ---
 
 ## 2. Feature Key Customization
@@ -724,6 +780,62 @@ Nested JSON structures are fully supported. Arrays within objects, objects withi
 ```
 
 All nested structures are recursively converted to `Map<String, Object>` and `List<Object>`.
+
+---
+
+## 10. Unknown Field Handling
+
+When deserializing JSON, fields may appear that don't correspond to any EMF feature in the target EClass. This section documents how such unknown fields are handled.
+
+### 10.1 Current Behavior
+
+**Default behavior:** Unknown fields generate a **WARNING** and are **skipped**.
+
+```json
+{
+  "_type": "http://example.org/1.0#//Person",
+  "firstName": "John",
+  "unknownField": "some value",
+  "anotherUnknown": 123
+}
+```
+
+**Result:**
+- `firstName` is set on the Person object
+- `unknownField` and `anotherUnknown` are skipped
+- Warnings are added to `resource.getWarnings()`
+- Deserialization completes successfully
+
+### 10.2 Diagnostic Message
+
+Unknown fields produce the following warning:
+
+| Severity | Message Template | Source |
+|----------|------------------|--------|
+| WARNING | `Unknown feature '{name}' for EClass {class}` | AttributeDeserializationEntry |
+
+### 10.3 Accessing Unknown Field Warnings
+
+```java
+resource.load(inputStream, options);
+
+for (Diagnostic warning : resource.getWarnings()) {
+    if (warning.getMessage().contains("Unknown feature")) {
+        System.out.println("Unknown field: " + warning.getMessage());
+    }
+}
+```
+
+### 10.4 Future: Strictness Mode (Planned)
+
+> **Note:** A configurable STRICT/LENIENT mode is planned for a future release.
+>
+> | Mode | Unknown Field | Missing Required Field |
+> |------|---------------|------------------------|
+> | **LENIENT** (current) | Warning + skip | Warning + use default |
+> | **STRICT** (planned) | Error + fail | Error + fail |
+>
+> Configuration will be available at Global, EClass, and EReference levels.
 
 ---
 

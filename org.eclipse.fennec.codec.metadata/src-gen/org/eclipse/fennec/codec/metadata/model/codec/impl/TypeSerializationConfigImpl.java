@@ -21,6 +21,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.fennec.codec.metadata.model.codec.CodecPackage;
+import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
+import org.eclipse.fennec.codec.metadata.model.codec.StrategyScope;
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
 
 import org.eclipse.fennec.model.metadata.impl.BaseTypeConfigImpl;
@@ -33,13 +35,38 @@ import org.eclipse.fennec.model.metadata.impl.BaseTypeConfigImpl;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getMapId <em>Map Id</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getDiscriminatorPath <em>Discriminator Path</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getDiscriminatorValue <em>Discriminator Value</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getStrategyScope <em>Strategy Scope</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getFormatScope <em>Format Scope</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getFallbackStrategy <em>Fallback Strategy</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getFallbackEClass <em>Fallback EClass</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements TypeSerializationConfig {
+	/**
+	 * The default value of the '{@link #getMapId() <em>Map Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMapId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String MAP_ID_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getMapId() <em>Map Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMapId()
+	 * @generated
+	 * @ordered
+	 */
+	protected String mapId = MAP_ID_EDEFAULT;
+
 	/**
 	 * The default value of the '{@link #getDiscriminatorPath() <em>Discriminator Path</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -81,6 +108,86 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 	protected String discriminatorValue = DISCRIMINATOR_VALUE_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #getStrategyScope() <em>Strategy Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStrategyScope()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final StrategyScope STRATEGY_SCOPE_EDEFAULT = StrategyScope.ALL;
+
+	/**
+	 * The cached value of the '{@link #getStrategyScope() <em>Strategy Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStrategyScope()
+	 * @generated
+	 * @ordered
+	 */
+	protected StrategyScope strategyScope = STRATEGY_SCOPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getFormatScope() <em>Format Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFormatScope()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final StrategyScope FORMAT_SCOPE_EDEFAULT = StrategyScope.ALL;
+
+	/**
+	 * The cached value of the '{@link #getFormatScope() <em>Format Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFormatScope()
+	 * @generated
+	 * @ordered
+	 */
+	protected StrategyScope formatScope = FORMAT_SCOPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getFallbackStrategy() <em>Fallback Strategy</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFallbackStrategy()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final FallbackStrategy FALLBACK_STRATEGY_EDEFAULT = FallbackStrategy.FALLBACK;
+
+	/**
+	 * The cached value of the '{@link #getFallbackStrategy() <em>Fallback Strategy</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFallbackStrategy()
+	 * @generated
+	 * @ordered
+	 */
+	protected FallbackStrategy fallbackStrategy = FALLBACK_STRATEGY_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getFallbackEClass() <em>Fallback EClass</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFallbackEClass()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String FALLBACK_ECLASS_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getFallbackEClass() <em>Fallback EClass</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFallbackEClass()
+	 * @generated
+	 * @ordered
+	 */
+	protected String fallbackEClass = FALLBACK_ECLASS_EDEFAULT;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -97,6 +204,29 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 	@Override
 	protected EClass eStaticClass() {
 		return CodecPackage.Literals.TYPE_SERIALIZATION_CONFIG;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getMapId() {
+		return mapId;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setMapId(String newMapId) {
+		String oldMapId = mapId;
+		mapId = newMapId;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.TYPE_SERIALIZATION_CONFIG__MAP_ID, oldMapId, mapId));
 	}
 
 	/**
@@ -151,12 +281,114 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 	 * @generated
 	 */
 	@Override
+	public StrategyScope getStrategyScope() {
+		return strategyScope;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setStrategyScope(StrategyScope newStrategyScope) {
+		StrategyScope oldStrategyScope = strategyScope;
+		strategyScope = newStrategyScope == null ? STRATEGY_SCOPE_EDEFAULT : newStrategyScope;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.TYPE_SERIALIZATION_CONFIG__STRATEGY_SCOPE, oldStrategyScope, strategyScope));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public StrategyScope getFormatScope() {
+		return formatScope;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setFormatScope(StrategyScope newFormatScope) {
+		StrategyScope oldFormatScope = formatScope;
+		formatScope = newFormatScope == null ? FORMAT_SCOPE_EDEFAULT : newFormatScope;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE, oldFormatScope, formatScope));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public FallbackStrategy getFallbackStrategy() {
+		return fallbackStrategy;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setFallbackStrategy(FallbackStrategy newFallbackStrategy) {
+		FallbackStrategy oldFallbackStrategy = fallbackStrategy;
+		fallbackStrategy = newFallbackStrategy == null ? FALLBACK_STRATEGY_EDEFAULT : newFallbackStrategy;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY, oldFallbackStrategy, fallbackStrategy));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getFallbackEClass() {
+		return fallbackEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setFallbackEClass(String newFallbackEClass) {
+		String oldFallbackEClass = fallbackEClass;
+		fallbackEClass = newFallbackEClass;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS, oldFallbackEClass, fallbackEClass));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__MAP_ID:
+				return getMapId();
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_PATH:
 				return getDiscriminatorPath();
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_VALUE:
 				return getDiscriminatorValue();
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__STRATEGY_SCOPE:
+				return getStrategyScope();
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE:
+				return getFormatScope();
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY:
+				return getFallbackStrategy();
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS:
+				return getFallbackEClass();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -169,11 +401,26 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__MAP_ID:
+				setMapId((String)newValue);
+				return;
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_PATH:
 				setDiscriminatorPath((String)newValue);
 				return;
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_VALUE:
 				setDiscriminatorValue((String)newValue);
+				return;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__STRATEGY_SCOPE:
+				setStrategyScope((StrategyScope)newValue);
+				return;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE:
+				setFormatScope((StrategyScope)newValue);
+				return;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY:
+				setFallbackStrategy((FallbackStrategy)newValue);
+				return;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS:
+				setFallbackEClass((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -187,11 +434,26 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__MAP_ID:
+				setMapId(MAP_ID_EDEFAULT);
+				return;
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_PATH:
 				setDiscriminatorPath(DISCRIMINATOR_PATH_EDEFAULT);
 				return;
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_VALUE:
 				setDiscriminatorValue(DISCRIMINATOR_VALUE_EDEFAULT);
+				return;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__STRATEGY_SCOPE:
+				setStrategyScope(STRATEGY_SCOPE_EDEFAULT);
+				return;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE:
+				setFormatScope(FORMAT_SCOPE_EDEFAULT);
+				return;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY:
+				setFallbackStrategy(FALLBACK_STRATEGY_EDEFAULT);
+				return;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS:
+				setFallbackEClass(FALLBACK_ECLASS_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -205,10 +467,20 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__MAP_ID:
+				return MAP_ID_EDEFAULT == null ? mapId != null : !MAP_ID_EDEFAULT.equals(mapId);
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_PATH:
 				return DISCRIMINATOR_PATH_EDEFAULT == null ? discriminatorPath != null : !DISCRIMINATOR_PATH_EDEFAULT.equals(discriminatorPath);
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_VALUE:
 				return DISCRIMINATOR_VALUE_EDEFAULT == null ? discriminatorValue != null : !DISCRIMINATOR_VALUE_EDEFAULT.equals(discriminatorValue);
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__STRATEGY_SCOPE:
+				return strategyScope != STRATEGY_SCOPE_EDEFAULT;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE:
+				return formatScope != FORMAT_SCOPE_EDEFAULT;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY:
+				return fallbackStrategy != FALLBACK_STRATEGY_EDEFAULT;
+			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS:
+				return FALLBACK_ECLASS_EDEFAULT == null ? fallbackEClass != null : !FALLBACK_ECLASS_EDEFAULT.equals(fallbackEClass);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -223,10 +495,20 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
-		result.append(" (discriminatorPath: ");
+		result.append(" (mapId: ");
+		result.append(mapId);
+		result.append(", discriminatorPath: ");
 		result.append(discriminatorPath);
 		result.append(", discriminatorValue: ");
 		result.append(discriminatorValue);
+		result.append(", strategyScope: ");
+		result.append(strategyScope);
+		result.append(", formatScope: ");
+		result.append(formatScope);
+		result.append(", fallbackStrategy: ");
+		result.append(fallbackStrategy);
+		result.append(", fallbackEClass: ");
+		result.append(fallbackEClass);
 		result.append(')');
 		return result.toString();
 	}

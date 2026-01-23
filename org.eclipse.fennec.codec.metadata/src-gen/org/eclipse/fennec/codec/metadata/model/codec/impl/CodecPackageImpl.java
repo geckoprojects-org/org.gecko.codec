@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.metadata.model.codec.impl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -25,12 +26,17 @@ import org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecFactory;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecPackage;
+import org.eclipse.fennec.codec.metadata.model.codec.DeserializationMode;
+import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig;
+import org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceSerializationConfig;
+import org.eclipse.fennec.codec.metadata.model.codec.StrategyScope;
 import org.eclipse.fennec.codec.metadata.model.codec.SuperTypeSerializationConfig;
+import org.eclipse.fennec.codec.metadata.model.codec.TypeHintMode;
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
 
 import org.eclipse.fennec.model.metadata.MetadataPackage;
@@ -103,7 +109,42 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass inlineTypeMappingEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass codecConfigEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum strategyScopeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum typeHintModeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum deserializationModeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum fallbackStrategyEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -184,7 +225,7 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getTypeSerializationConfig_DiscriminatorPath() {
+	public EAttribute getTypeSerializationConfig_MapId() {
 		return (EAttribute)typeSerializationConfigEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -194,8 +235,58 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getTypeSerializationConfig_DiscriminatorValue() {
+	public EAttribute getTypeSerializationConfig_DiscriminatorPath() {
 		return (EAttribute)typeSerializationConfigEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getTypeSerializationConfig_DiscriminatorValue() {
+		return (EAttribute)typeSerializationConfigEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getTypeSerializationConfig_StrategyScope() {
+		return (EAttribute)typeSerializationConfigEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getTypeSerializationConfig_FormatScope() {
+		return (EAttribute)typeSerializationConfigEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getTypeSerializationConfig_FallbackStrategy() {
+		return (EAttribute)typeSerializationConfigEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getTypeSerializationConfig_FallbackEClass() {
+		return (EAttribute)typeSerializationConfigEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -236,6 +327,26 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	@Override
 	public EAttribute getIdSerializationConfig_IdValueReaderName() {
 		return (EAttribute)idSerializationConfigEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIdSerializationConfig_StrategyScope() {
+		return (EAttribute)idSerializationConfigEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getIdSerializationConfig_FormatScope() {
+		return (EAttribute)idSerializationConfigEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -564,6 +675,66 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
+	public EReference getReferenceCodecAspect_InlineTypeMappings() {
+		return (EReference)referenceCodecAspectEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getReferenceCodecAspect_FallbackStrategy() {
+		return (EAttribute)referenceCodecAspectEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getReferenceCodecAspect_FallbackEClass() {
+		return (EAttribute)referenceCodecAspectEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getInlineTypeMapping() {
+		return inlineTypeMappingEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getInlineTypeMapping_DiscriminatorValue() {
+		return (EAttribute)inlineTypeMappingEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getInlineTypeMapping_TargetClass() {
+		return (EAttribute)inlineTypeMappingEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getCodecConfig() {
 		return codecConfigEClass;
 	}
@@ -724,6 +895,66 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getCodecConfig_TypeHintMode() {
+		return (EAttribute)codecConfigEClass.getEStructuralFeatures().get(15);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecConfig_DeserializationMode() {
+		return (EAttribute)codecConfigEClass.getEStructuralFeatures().get(16);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EEnum getStrategyScope() {
+		return strategyScopeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EEnum getTypeHintMode() {
+		return typeHintModeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EEnum getDeserializationMode() {
+		return deserializationModeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EEnum getFallbackStrategy() {
+		return fallbackStrategyEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public CodecFactory getCodecFactory() {
 		return (CodecFactory)getEFactoryInstance();
 	}
@@ -748,13 +979,20 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 
 		// Create classes and their features
 		typeSerializationConfigEClass = createEClass(TYPE_SERIALIZATION_CONFIG);
+		createEAttribute(typeSerializationConfigEClass, TYPE_SERIALIZATION_CONFIG__MAP_ID);
 		createEAttribute(typeSerializationConfigEClass, TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_PATH);
 		createEAttribute(typeSerializationConfigEClass, TYPE_SERIALIZATION_CONFIG__DISCRIMINATOR_VALUE);
+		createEAttribute(typeSerializationConfigEClass, TYPE_SERIALIZATION_CONFIG__STRATEGY_SCOPE);
+		createEAttribute(typeSerializationConfigEClass, TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE);
+		createEAttribute(typeSerializationConfigEClass, TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY);
+		createEAttribute(typeSerializationConfigEClass, TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS);
 
 		idSerializationConfigEClass = createEClass(ID_SERIALIZATION_CONFIG);
 		createEAttribute(idSerializationConfigEClass, ID_SERIALIZATION_CONFIG__ID_FEATURES);
 		createEAttribute(idSerializationConfigEClass, ID_SERIALIZATION_CONFIG__ID_VALUE_WRITER_NAME);
 		createEAttribute(idSerializationConfigEClass, ID_SERIALIZATION_CONFIG__ID_VALUE_READER_NAME);
+		createEAttribute(idSerializationConfigEClass, ID_SERIALIZATION_CONFIG__STRATEGY_SCOPE);
+		createEAttribute(idSerializationConfigEClass, ID_SERIALIZATION_CONFIG__FORMAT_SCOPE);
 
 		referenceSerializationConfigEClass = createEClass(REFERENCE_SERIALIZATION_CONFIG);
 		createEAttribute(referenceSerializationConfigEClass, REFERENCE_SERIALIZATION_CONFIG__INCLUDE_TYPE);
@@ -793,6 +1031,13 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		createEReference(referenceCodecAspectEClass, REFERENCE_CODEC_ASPECT__TYPE_CONFIG);
 		createEAttribute(referenceCodecAspectEClass, REFERENCE_CODEC_ASPECT__INHERIT_TYPE_FROM_TARGET);
 		createEAttribute(referenceCodecAspectEClass, REFERENCE_CODEC_ASPECT__EXPAND);
+		createEReference(referenceCodecAspectEClass, REFERENCE_CODEC_ASPECT__INLINE_TYPE_MAPPINGS);
+		createEAttribute(referenceCodecAspectEClass, REFERENCE_CODEC_ASPECT__FALLBACK_STRATEGY);
+		createEAttribute(referenceCodecAspectEClass, REFERENCE_CODEC_ASPECT__FALLBACK_ECLASS);
+
+		inlineTypeMappingEClass = createEClass(INLINE_TYPE_MAPPING);
+		createEAttribute(inlineTypeMappingEClass, INLINE_TYPE_MAPPING__DISCRIMINATOR_VALUE);
+		createEAttribute(inlineTypeMappingEClass, INLINE_TYPE_MAPPING__TARGET_CLASS);
 
 		codecConfigEClass = createEClass(CODEC_CONFIG);
 		createEAttribute(codecConfigEClass, CODEC_CONFIG__FORMAT);
@@ -810,6 +1055,14 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		createEAttribute(codecConfigEClass, CODEC_CONFIG__SERIALIZE_NULL);
 		createEAttribute(codecConfigEClass, CODEC_CONFIG__SERIALIZE_EMPTY);
 		createEAttribute(codecConfigEClass, CODEC_CONFIG__SERIALIZE_DEFAULTS);
+		createEAttribute(codecConfigEClass, CODEC_CONFIG__TYPE_HINT_MODE);
+		createEAttribute(codecConfigEClass, CODEC_CONFIG__DESERIALIZATION_MODE);
+
+		// Create enums
+		strategyScopeEEnum = createEEnum(STRATEGY_SCOPE);
+		typeHintModeEEnum = createEEnum(TYPE_HINT_MODE);
+		deserializationModeEEnum = createEEnum(DESERIALIZATION_MODE);
+		fallbackStrategyEEnum = createEEnum(FALLBACK_STRATEGY);
 	}
 
 	/**
@@ -854,13 +1107,20 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(typeSerializationConfigEClass, TypeSerializationConfig.class, "TypeSerializationConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getTypeSerializationConfig_MapId(), ecorePackage.getEString(), "mapId", null, 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTypeSerializationConfig_DiscriminatorPath(), ecorePackage.getEString(), "discriminatorPath", null, 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTypeSerializationConfig_DiscriminatorValue(), ecorePackage.getEString(), "discriminatorValue", null, 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeSerializationConfig_StrategyScope(), this.getStrategyScope(), "strategyScope", "ALL", 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeSerializationConfig_FormatScope(), this.getStrategyScope(), "formatScope", "ALL", 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeSerializationConfig_FallbackStrategy(), this.getFallbackStrategy(), "fallbackStrategy", "FALLBACK", 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeSerializationConfig_FallbackEClass(), ecorePackage.getEString(), "fallbackEClass", null, 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(idSerializationConfigEClass, IdSerializationConfig.class, "IdSerializationConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getIdSerializationConfig_IdFeatures(), ecorePackage.getEString(), "idFeatures", null, 0, -1, IdSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIdSerializationConfig_IdValueWriterName(), ecorePackage.getEString(), "idValueWriterName", null, 0, 1, IdSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getIdSerializationConfig_IdValueReaderName(), ecorePackage.getEString(), "idValueReaderName", null, 0, 1, IdSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIdSerializationConfig_StrategyScope(), this.getStrategyScope(), "strategyScope", "ALL", 0, 1, IdSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getIdSerializationConfig_FormatScope(), this.getStrategyScope(), "formatScope", "ALL", 0, 1, IdSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(referenceSerializationConfigEClass, ReferenceSerializationConfig.class, "ReferenceSerializationConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getReferenceSerializationConfig_IncludeType(), ecorePackage.getEBoolean(), "includeType", "true", 0, 1, ReferenceSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -899,6 +1159,13 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		initEReference(getReferenceCodecAspect_TypeConfig(), this.getTypeSerializationConfig(), null, "typeConfig", null, 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getReferenceCodecAspect_InheritTypeFromTarget(), ecorePackage.getEBoolean(), "inheritTypeFromTarget", "true", 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getReferenceCodecAspect_Expand(), ecorePackage.getEBoolean(), "expand", "false", 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getReferenceCodecAspect_InlineTypeMappings(), this.getInlineTypeMapping(), null, "inlineTypeMappings", null, 0, -1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getReferenceCodecAspect_FallbackStrategy(), this.getFallbackStrategy(), "fallbackStrategy", "FALLBACK", 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getReferenceCodecAspect_FallbackEClass(), ecorePackage.getEString(), "fallbackEClass", null, 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(inlineTypeMappingEClass, InlineTypeMapping.class, "InlineTypeMapping", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getInlineTypeMapping_DiscriminatorValue(), ecorePackage.getEString(), "discriminatorValue", null, 0, 1, InlineTypeMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getInlineTypeMapping_TargetClass(), ecorePackage.getEString(), "targetClass", null, 0, 1, InlineTypeMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(codecConfigEClass, CodecConfig.class, "CodecConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCodecConfig_Format(), theMetadataPackage.getSerializationFormat(), "format", "PLAIN", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -916,6 +1183,29 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		initEAttribute(getCodecConfig_SerializeNull(), ecorePackage.getEBoolean(), "serializeNull", "false", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCodecConfig_SerializeEmpty(), ecorePackage.getEBoolean(), "serializeEmpty", "false", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCodecConfig_SerializeDefaults(), ecorePackage.getEBoolean(), "serializeDefaults", "false", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCodecConfig_TypeHintMode(), this.getTypeHintMode(), "typeHintMode", "HINT", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCodecConfig_DeserializationMode(), this.getDeserializationMode(), "deserializationMode", "LENIENT", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		// Initialize enums and add enum literals
+		initEEnum(strategyScopeEEnum, StrategyScope.class, "StrategyScope");
+		addEEnumLiteral(strategyScopeEEnum, StrategyScope.ALL);
+		addEEnumLiteral(strategyScopeEEnum, StrategyScope.ROOT_ONLY);
+		addEEnumLiteral(strategyScopeEEnum, StrategyScope.ROOT_CONTAINMENT);
+		addEEnumLiteral(strategyScopeEEnum, StrategyScope.ROOT_NON_CONTAINMENT);
+
+		initEEnum(typeHintModeEEnum, TypeHintMode.class, "TypeHintMode");
+		addEEnumLiteral(typeHintModeEEnum, TypeHintMode.HINT);
+		addEEnumLiteral(typeHintModeEEnum, TypeHintMode.OVERRIDE);
+
+		initEEnum(deserializationModeEEnum, DeserializationMode.class, "DeserializationMode");
+		addEEnumLiteral(deserializationModeEEnum, DeserializationMode.LENIENT);
+		addEEnumLiteral(deserializationModeEEnum, DeserializationMode.STRICT);
+		addEEnumLiteral(deserializationModeEEnum, DeserializationMode.AUTO_DETECT);
+
+		initEEnum(fallbackStrategyEEnum, FallbackStrategy.class, "FallbackStrategy");
+		addEEnumLiteral(fallbackStrategyEEnum, FallbackStrategy.FALLBACK);
+		addEEnumLiteral(fallbackStrategyEEnum, FallbackStrategy.ERROR);
+		addEEnumLiteral(fallbackStrategyEEnum, FallbackStrategy.SKIP);
 
 		// Create resource
 		createResource(eNS_URI);

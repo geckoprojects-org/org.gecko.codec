@@ -50,6 +50,8 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#isSerializeNull <em>Serialize Null</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#isSerializeEmpty <em>Serialize Empty</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#isSerializeDefaults <em>Serialize Defaults</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#getTypeHintMode <em>Type Hint Mode</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#getDeserializationMode <em>Deserialization Mode</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getCodecConfig()
@@ -433,5 +435,63 @@ public interface CodecConfig extends EObject {
 	 * @generated
 	 */
 	void setSerializeDefaults(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Type Hint Mode</b></em>' attribute.
+	 * The default value is <code>"HINT"</code>.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.TypeHintMode}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * How type hints (CODEC_ROOT_OBJECT) are treated during deserialization.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Type Hint Mode</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.TypeHintMode
+	 * @see #setTypeHintMode(TypeHintMode)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getCodecConfig_TypeHintMode()
+	 * @model default="HINT"
+	 * @generated
+	 */
+	TypeHintMode getTypeHintMode();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#getTypeHintMode <em>Type Hint Mode</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Type Hint Mode</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.TypeHintMode
+	 * @see #getTypeHintMode()
+	 * @generated
+	 */
+	void setTypeHintMode(TypeHintMode value);
+
+	/**
+	 * Returns the value of the '<em><b>Deserialization Mode</b></em>' attribute.
+	 * The default value is <code>"LENIENT"</code>.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.DeserializationMode}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Type resolution strictness during deserialization.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Deserialization Mode</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.DeserializationMode
+	 * @see #setDeserializationMode(DeserializationMode)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getCodecConfig_DeserializationMode()
+	 * @model default="LENIENT"
+	 * @generated
+	 */
+	DeserializationMode getDeserializationMode();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#getDeserializationMode <em>Deserialization Mode</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Deserialization Mode</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.DeserializationMode
+	 * @see #getDeserializationMode()
+	 * @generated
+	 */
+	void setDeserializationMode(DeserializationMode value);
 
 } // CodecConfig

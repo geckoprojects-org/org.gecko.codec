@@ -76,19 +76,6 @@ public enum TypeStrategy implements Enumerator {
 	URI(2, "URI", "URI"),
 
 	/**
-	 * The '<em><b>MAPPED</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Use a mapped discriminator value for type resolution.
-	 * <!-- end-model-doc -->
-	 * @see #MAPPED_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	MAPPED(3, "MAPPED", "MAPPED"),
-
-	/**
 	 * The '<em><b>SCHEMA AND TYPE</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -99,7 +86,7 @@ public enum TypeStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	SCHEMA_AND_TYPE(4, "SCHEMA_AND_TYPE", "SCHEMA_AND_TYPE"),
+	SCHEMA_AND_TYPE(3, "SCHEMA_AND_TYPE", "SCHEMA_AND_TYPE"),
 
 	/**
 	 * The '<em><b>NUMERIC</b></em>' literal object.
@@ -112,7 +99,7 @@ public enum TypeStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	NUMERIC(5, "NUMERIC", "NUMERIC");
+	NUMERIC(4, "NUMERIC", "NUMERIC");
 
 	/**
 	 * The '<em><b>NAME</b></em>' literal value.
@@ -157,20 +144,6 @@ public enum TypeStrategy implements Enumerator {
 	public static final int URI_VALUE = 2;
 
 	/**
-	 * The '<em><b>MAPPED</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Use a mapped discriminator value for type resolution.
-	 * <!-- end-model-doc -->
-	 * @see #MAPPED
-	 * @model
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MAPPED_VALUE = 3;
-
-	/**
 	 * The '<em><b>SCHEMA AND TYPE</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -182,7 +155,7 @@ public enum TypeStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int SCHEMA_AND_TYPE_VALUE = 4;
+	public static final int SCHEMA_AND_TYPE_VALUE = 3;
 
 	/**
 	 * The '<em><b>NUMERIC</b></em>' literal value.
@@ -196,7 +169,7 @@ public enum TypeStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int NUMERIC_VALUE = 5;
+	public static final int NUMERIC_VALUE = 4;
 
 	/**
 	 * An array of all the '<em><b>Type Strategy</b></em>' enumerators.
@@ -209,7 +182,6 @@ public enum TypeStrategy implements Enumerator {
 			NAME,
 			CLASS,
 			URI,
-			MAPPED,
 			SCHEMA_AND_TYPE,
 			NUMERIC,
 		};
@@ -271,7 +243,6 @@ public enum TypeStrategy implements Enumerator {
 			case NAME_VALUE: return NAME;
 			case CLASS_VALUE: return CLASS;
 			case URI_VALUE: return URI;
-			case MAPPED_VALUE: return MAPPED;
 			case SCHEMA_AND_TYPE_VALUE: return SCHEMA_AND_TYPE;
 			case NUMERIC_VALUE: return NUMERIC;
 		}

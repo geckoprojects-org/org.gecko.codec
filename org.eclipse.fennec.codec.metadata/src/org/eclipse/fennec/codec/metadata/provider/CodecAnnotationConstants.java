@@ -106,8 +106,27 @@ public final class CodecAnnotationConstants {
      *   <details key="superTypeSerialize" value="true"/>
      * </eAnnotations>
      * }</pre>
+     *
+     * @see org.eclipse.fennec.codec.constants.AnnotationSources#CODEC
      */
     public static final String CODEC_SOURCE = "http://eclipse.org/fennec/codec";
+
+    /**
+     * Annotation source prefix for type mapping registries.
+     * <p>
+     * The full source is: {@code http://eclipse.org/fennec/codec/typeMapping/{mapId}}
+     * </p>
+     *
+     * @see org.eclipse.fennec.codec.constants.AnnotationSources#TYPE_MAPPING_PREFIX
+     */
+    public static final String TYPE_MAPPING_SOURCE_PREFIX = "http://eclipse.org/fennec/codec/typeMapping/";
+
+    /**
+     * Annotation source for inline type mappings on EReferences.
+     *
+     * @see org.eclipse.fennec.codec.constants.AnnotationSources#INLINE_MAPPING
+     */
+    public static final String INLINE_MAPPING_SOURCE = "http://eclipse.org/fennec/codec/inlineMapping";
 
     // ========================================================================
     // DETAIL KEYS - Unified format
@@ -167,6 +186,42 @@ public final class CodecAnnotationConstants {
      * Detail key for custom ID value writer name.
      */
     public static final String KEY_ID_VALUE_WRITER_NAME = "idValueWriterName";
+
+    /**
+     * Detail key for ID serialization format.
+     * Values: "PLAIN", "STRUCTURED". Default: "PLAIN".
+     */
+    public static final String KEY_ID_FORMAT = "idFormat";
+
+    /**
+     * Detail key for ID key mode.
+     * Values: "ID_ONLY", "BOTH", "FEATURE_ONLY". Default: "ID_ONLY".
+     */
+    public static final String KEY_ID_KEY_MODE = "idKeyMode";
+
+    /**
+     * Detail key for whether ID appears before type in output.
+     * Value: "true" or "false". Default: "true".
+     */
+    public static final String KEY_ID_ON_TOP = "idOnTop";
+
+    /**
+     * Detail key for whether to serialize separator in STRUCTURED ID format.
+     * Value: "true" or "false". Default: "true".
+     */
+    public static final String KEY_ID_SERIALIZE_SEPARATOR = "idSerializeSeparator";
+
+    /**
+     * Detail key for separator field name in STRUCTURED ID format.
+     * Default: "separator".
+     */
+    public static final String KEY_ID_SEPARATOR_KEY = "idSeparatorKey";
+
+    /**
+     * Detail key for ID value field name in STRUCTURED ID format.
+     * Default: "id".
+     */
+    public static final String KEY_ID_VALUE_KEY = "idValueKey";
 
     // ------------------------------------------------------------------------
     // Type configuration detail keys (prefix: type*)
@@ -252,6 +307,42 @@ public final class CodecAnnotationConstants {
      */
     public static final String KEY_TYPE_VALUE_WRITER_NAME = "typeValueWriterName";
 
+    /**
+     * Detail key for type serialization format.
+     * Values: "PLAIN", "STRUCTURED". Default: "PLAIN".
+     */
+    public static final String KEY_TYPE_FORMAT = "typeFormat";
+
+    /**
+     * Detail key for schema key in STRUCTURED/SCHEMA_AND_TYPE format.
+     * Default: "schema".
+     */
+    public static final String KEY_TYPE_SCHEMA_KEY = "typeSchemaKey";
+
+    /**
+     * Detail key for name key in STRUCTURED format.
+     * Default: "name".
+     */
+    public static final String KEY_TYPE_NAME_KEY = "typeNameKey";
+
+    /**
+     * Detail key for fallback strategy when discriminator value is not found.
+     * Values: "FALLBACK", "ERROR", "SKIP". Default: "FALLBACK".
+     * <p>
+     * Used with discriminator-based type resolution (Type Mapping Registry or Inline Mapping).
+     * </p>
+     */
+    public static final String KEY_FALLBACK_STRATEGY = "fallbackStrategy";
+
+    /**
+     * Detail key for explicit fallback EClass URI when discriminator value is not found.
+     * <p>
+     * Used when fallbackStrategy is "FALLBACK". If not specified, the fallback chain
+     * continues with feature type hint, then reference type.
+     * </p>
+     */
+    public static final String KEY_FALLBACK_ECLASS = "fallbackEClass";
+
     // ------------------------------------------------------------------------
     // SuperType configuration detail keys (prefix: superType*)
     // ------------------------------------------------------------------------
@@ -291,6 +382,71 @@ public final class CodecAnnotationConstants {
      */
     public static final String KEY_SUPERTYPE_WRITER_NAME = "superTypeWriterName";
 
+    /**
+     * Detail key for supertype serialization format.
+     * Values: "PLAIN", "STRUCTURED". Default: "PLAIN".
+     */
+    public static final String KEY_SUPERTYPE_FORMAT = "superTypeFormat";
+
+    /**
+     * Detail key for supertype schema key in STRUCTURED format.
+     * Default: "schema".
+     */
+    public static final String KEY_SUPERTYPE_SCHEMA_KEY = "superTypeSchemaKey";
+
+    /**
+     * Detail key for supertype name key in STRUCTURED format.
+     * Default: "name".
+     */
+    public static final String KEY_SUPERTYPE_NAME_KEY = "superTypeNameKey";
+
+    // ------------------------------------------------------------------------
+    // Reference configuration detail keys (prefix: ref*)
+    // ------------------------------------------------------------------------
+
+    /**
+     * Detail key for reference serialization format.
+     * Values: "PLAIN", "STRUCTURED". Default: "PLAIN".
+     */
+    public static final String KEY_REF_FORMAT = "refFormat";
+
+    /**
+     * Detail key for reference value key in STRUCTURED format.
+     * Default: "_ref".
+     */
+    public static final String KEY_REF_KEY = "refKey";
+
+    /**
+     * Detail key for reference type key in STRUCTURED format.
+     * Default: "_type".
+     */
+    public static final String KEY_REF_TYPE_KEY = "refTypeKey";
+
+    /**
+     * Detail key for expanding (inlining) referenced objects.
+     * Value: "true" or "false". Default: "false".
+     */
+    public static final String KEY_EXPAND = "expand";
+
+    /**
+     * Detail key prefix for inline type mappings on references.
+     * <p>
+     * Used to define discriminator-to-EClass mappings directly on an EReference.
+     * Format: inlineMapping.{discriminatorValue} = {EClass URI}
+     * </p>
+     *
+     * <h3>Example</h3>
+     * <pre>{@code
+     * <eStructuralFeatures xsi:type="ecore:EReference" name="contacts">
+     *   <eAnnotations source="http://eclipse.org/fennec/codec">
+     *     <details key="inlineMapping.friend" value="http://example.org#//Friend"/>
+     *     <details key="inlineMapping.enemy" value="http://example.org#//Enemy"/>
+     *   </eAnnotations>
+     * </eStructuralFeatures>
+     * }</pre>
+     */
+    public static final String KEY_INLINE_MAPPING_PREFIX = "inlineMapping.";
+
     // ------------------------------------------------------------------------
     // Feature configuration detail keys
     // ------------------------------------------------------------------------
@@ -313,6 +469,39 @@ public final class CodecAnnotationConstants {
      * Detail key for custom value writer name on a feature.
      */
     public static final String KEY_VALUE_WRITER_NAME = "valueWriterName";
+
+    /**
+     * Detail key for whether to serialize this feature.
+     * Value: "true" or "false". Default: "true".
+     * <p>
+     * Note: Use "transient" key for the inverse (transient=true means serialize=false).
+     * </p>
+     */
+    public static final String KEY_SERIALIZE = "serialize";
+
+    /**
+     * Detail key for whether to serialize null values for this feature.
+     * Value: "true" or "false". Default: "false" (codec default).
+     */
+    public static final String KEY_SERIALIZE_NULL = "serializeNull";
+
+    /**
+     * Detail key for whether to serialize empty collections for this feature.
+     * Value: "true" or "false". Default: "false" (codec default).
+     */
+    public static final String KEY_SERIALIZE_EMPTY = "serializeEmpty";
+
+    /**
+     * Detail key for whether to serialize default values for this feature.
+     * Value: "true" or "false". Default: "false" (codec default).
+     */
+    public static final String KEY_SERIALIZE_DEFAULTS = "serializeDefaults";
+
+    /**
+     * Detail key for enum serialization strategy on enum-typed features.
+     * Values: "LITERAL", "VALUE", "NAME". Default: "LITERAL".
+     */
+    public static final String KEY_ENUM_SERIALIZATION = "enumSerialization";
 
     // ========================================================================
     // STRATEGY VALUES
@@ -455,5 +644,42 @@ public final class CodecAnnotationConstants {
         }
         String value = key.substring(KEY_TYPE_DISCRIMINATOR_PREFIX.length());
         return value.isEmpty() ? null : value;
+    }
+
+    /**
+     * Extracts the discriminator value from an inline mapping key.
+     * <p>
+     * For example, given {@code "inlineMapping.friend"}, returns {@code "friend"}.
+     * </p>
+     *
+     * @param key the detail key (e.g., "inlineMapping.friend")
+     * @return the discriminator value, or null if the key is not an inline mapping key
+     */
+    public static String extractInlineMappingValue(String key) {
+        if (key == null || !key.startsWith(KEY_INLINE_MAPPING_PREFIX)) {
+            return null;
+        }
+        String value = key.substring(KEY_INLINE_MAPPING_PREFIX.length());
+        return value.isEmpty() ? null : value;
+    }
+
+    /**
+     * Checks if the given key is an inline mapping key.
+     *
+     * @param key the detail key to check
+     * @return true if the key starts with "inlineMapping."
+     */
+    public static boolean isInlineMappingKey(String key) {
+        return key != null && key.startsWith(KEY_INLINE_MAPPING_PREFIX);
+    }
+
+    /**
+     * Checks if the given key is a static discriminator key.
+     *
+     * @param key the detail key to check
+     * @return true if the key starts with "typeDiscriminator."
+     */
+    public static boolean isStaticDiscriminatorKey(String key) {
+        return key != null && key.startsWith(KEY_TYPE_DISCRIMINATOR_PREFIX);
     }
 }

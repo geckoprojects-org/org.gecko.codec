@@ -31,8 +31,13 @@ import org.osgi.annotation.versioning.ProviderType;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getMapId <em>Map Id</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getDiscriminatorPath <em>Discriminator Path</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getDiscriminatorValue <em>Discriminator Value</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getStrategyScope <em>Strategy Scope</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFormatScope <em>Format Scope</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackStrategy <em>Fallback Strategy</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackEClass <em>Fallback EClass</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig()
@@ -42,11 +47,36 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface TypeSerializationConfig extends BaseTypeConfig {
 	/**
+	 * Returns the value of the '<em><b>Map Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Identifier for type mapping registry lookup (Named Registry approach). References TypeDiscriminatorService mappings.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Map Id</em>' attribute.
+	 * @see #setMapId(String)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig_MapId()
+	 * @model
+	 * @generated
+	 */
+	String getMapId();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getMapId <em>Map Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Map Id</em>' attribute.
+	 * @see #getMapId()
+	 * @generated
+	 */
+	void setMapId(String value);
+
+	/**
 	 * Returns the value of the '<em><b>Discriminator Path</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Feature path for MAPPED strategy discriminator value.
+	 * Feature path to extract discriminator value from JSON (e.g., 'deviceInfo.profileName'). Used with mapId for Named Registry or with inlineTypeMappings for Inline Mapping.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Discriminator Path</em>' attribute.
 	 * @see #setDiscriminatorPath(String)
@@ -71,7 +101,7 @@ public interface TypeSerializationConfig extends BaseTypeConfig {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Discriminator value that maps to this type (for MAPPED strategy).
+	 * Discriminator value that maps to this type (for discriminator-based resolution).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Discriminator Value</em>' attribute.
 	 * @see #setDiscriminatorValue(String)
@@ -90,5 +120,117 @@ public interface TypeSerializationConfig extends BaseTypeConfig {
 	 * @generated
 	 */
 	void setDiscriminatorValue(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Strategy Scope</b></em>' attribute.
+	 * The default value is <code>"ALL"</code>.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.StrategyScope}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Where the type strategy applies in the object graph.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Strategy Scope</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.StrategyScope
+	 * @see #setStrategyScope(StrategyScope)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig_StrategyScope()
+	 * @model default="ALL"
+	 * @generated
+	 */
+	StrategyScope getStrategyScope();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getStrategyScope <em>Strategy Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Strategy Scope</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.StrategyScope
+	 * @see #getStrategyScope()
+	 * @generated
+	 */
+	void setStrategyScope(StrategyScope value);
+
+	/**
+	 * Returns the value of the '<em><b>Format Scope</b></em>' attribute.
+	 * The default value is <code>"ALL"</code>.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.StrategyScope}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Where the type format applies in the object graph. Independent from strategyScope.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Format Scope</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.StrategyScope
+	 * @see #setFormatScope(StrategyScope)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig_FormatScope()
+	 * @model default="ALL"
+	 * @generated
+	 */
+	StrategyScope getFormatScope();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFormatScope <em>Format Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Format Scope</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.StrategyScope
+	 * @see #getFormatScope()
+	 * @generated
+	 */
+	void setFormatScope(StrategyScope value);
+
+	/**
+	 * Returns the value of the '<em><b>Fallback Strategy</b></em>' attribute.
+	 * The default value is <code>"FALLBACK"</code>.
+	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * What to do when discriminator value is not found in mapping. Default is FALLBACK.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Fallback Strategy</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy
+	 * @see #setFallbackStrategy(FallbackStrategy)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig_FallbackStrategy()
+	 * @model default="FALLBACK"
+	 * @generated
+	 */
+	FallbackStrategy getFallbackStrategy();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackStrategy <em>Fallback Strategy</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Fallback Strategy</em>' attribute.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy
+	 * @see #getFallbackStrategy()
+	 * @generated
+	 */
+	void setFallbackStrategy(FallbackStrategy value);
+
+	/**
+	 * Returns the value of the '<em><b>Fallback EClass</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Explicit fallback EClass URI when discriminator value not found (used when fallbackStrategy is FALLBACK).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Fallback EClass</em>' attribute.
+	 * @see #setFallbackEClass(String)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig_FallbackEClass()
+	 * @model
+	 * @generated
+	 */
+	String getFallbackEClass();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackEClass <em>Fallback EClass</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Fallback EClass</em>' attribute.
+	 * @see #getFallbackEClass()
+	 * @generated
+	 */
+	void setFallbackEClass(String value);
 
 } // TypeSerializationConfig

@@ -32,10 +32,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.eclipse.fennec.codec.metadata.model.codec.CodecConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecPackage;
+import org.eclipse.fennec.codec.metadata.model.codec.DeserializationMode;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.SuperTypeSerializationConfig;
+import org.eclipse.fennec.codec.metadata.model.codec.TypeHintMode;
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
 
 import org.eclipse.fennec.model.metadata.SerializationFormat;
@@ -63,6 +65,8 @@ import org.eclipse.fennec.model.metadata.SerializationFormat;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#isSerializeNull <em>Serialize Null</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#isSerializeEmpty <em>Serialize Empty</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#isSerializeDefaults <em>Serialize Defaults</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#getTypeHintMode <em>Type Hint Mode</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#getDeserializationMode <em>Deserialization Mode</em>}</li>
  * </ul>
  *
  * @generated
@@ -297,6 +301,46 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 	 * @ordered
 	 */
 	protected boolean serializeDefaults = SERIALIZE_DEFAULTS_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getTypeHintMode() <em>Type Hint Mode</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTypeHintMode()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final TypeHintMode TYPE_HINT_MODE_EDEFAULT = TypeHintMode.HINT;
+
+	/**
+	 * The cached value of the '{@link #getTypeHintMode() <em>Type Hint Mode</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTypeHintMode()
+	 * @generated
+	 * @ordered
+	 */
+	protected TypeHintMode typeHintMode = TYPE_HINT_MODE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDeserializationMode() <em>Deserialization Mode</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDeserializationMode()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final DeserializationMode DESERIALIZATION_MODE_EDEFAULT = DeserializationMode.LENIENT;
+
+	/**
+	 * The cached value of the '{@link #getDeserializationMode() <em>Deserialization Mode</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDeserializationMode()
+	 * @generated
+	 * @ordered
+	 */
+	protected DeserializationMode deserializationMode = DESERIALIZATION_MODE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -790,6 +834,52 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 	 * @generated
 	 */
 	@Override
+	public TypeHintMode getTypeHintMode() {
+		return typeHintMode;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setTypeHintMode(TypeHintMode newTypeHintMode) {
+		TypeHintMode oldTypeHintMode = typeHintMode;
+		typeHintMode = newTypeHintMode == null ? TYPE_HINT_MODE_EDEFAULT : newTypeHintMode;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CODEC_CONFIG__TYPE_HINT_MODE, oldTypeHintMode, typeHintMode));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public DeserializationMode getDeserializationMode() {
+		return deserializationMode;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setDeserializationMode(DeserializationMode newDeserializationMode) {
+		DeserializationMode oldDeserializationMode = deserializationMode;
+		deserializationMode = newDeserializationMode == null ? DESERIALIZATION_MODE_EDEFAULT : newDeserializationMode;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CODEC_CONFIG__DESERIALIZATION_MODE, oldDeserializationMode, deserializationMode));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case CodecPackage.CODEC_CONFIG__TYPE_CONFIG:
@@ -848,6 +938,10 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 				return isSerializeEmpty();
 			case CodecPackage.CODEC_CONFIG__SERIALIZE_DEFAULTS:
 				return isSerializeDefaults();
+			case CodecPackage.CODEC_CONFIG__TYPE_HINT_MODE:
+				return getTypeHintMode();
+			case CodecPackage.CODEC_CONFIG__DESERIALIZATION_MODE:
+				return getDeserializationMode();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -907,6 +1001,12 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 			case CodecPackage.CODEC_CONFIG__SERIALIZE_DEFAULTS:
 				setSerializeDefaults((Boolean)newValue);
 				return;
+			case CodecPackage.CODEC_CONFIG__TYPE_HINT_MODE:
+				setTypeHintMode((TypeHintMode)newValue);
+				return;
+			case CodecPackage.CODEC_CONFIG__DESERIALIZATION_MODE:
+				setDeserializationMode((DeserializationMode)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -964,6 +1064,12 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 			case CodecPackage.CODEC_CONFIG__SERIALIZE_DEFAULTS:
 				setSerializeDefaults(SERIALIZE_DEFAULTS_EDEFAULT);
 				return;
+			case CodecPackage.CODEC_CONFIG__TYPE_HINT_MODE:
+				setTypeHintMode(TYPE_HINT_MODE_EDEFAULT);
+				return;
+			case CodecPackage.CODEC_CONFIG__DESERIALIZATION_MODE:
+				setDeserializationMode(DESERIALIZATION_MODE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1006,6 +1112,10 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 				return serializeEmpty != SERIALIZE_EMPTY_EDEFAULT;
 			case CodecPackage.CODEC_CONFIG__SERIALIZE_DEFAULTS:
 				return serializeDefaults != SERIALIZE_DEFAULTS_EDEFAULT;
+			case CodecPackage.CODEC_CONFIG__TYPE_HINT_MODE:
+				return typeHintMode != TYPE_HINT_MODE_EDEFAULT;
+			case CodecPackage.CODEC_CONFIG__DESERIALIZATION_MODE:
+				return deserializationMode != DESERIALIZATION_MODE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1036,6 +1146,10 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 		result.append(serializeEmpty);
 		result.append(", serializeDefaults: ");
 		result.append(serializeDefaults);
+		result.append(", typeHintMode: ");
+		result.append(typeHintMode);
+		result.append(", deserializationMode: ");
+		result.append(deserializationMode);
 		result.append(')');
 		return result.toString();
 	}

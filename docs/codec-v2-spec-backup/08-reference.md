@@ -143,9 +143,62 @@ ReferenceSerializationConfig config = ReferenceSerializationConfig.builder()
 
 ---
 
-## 4. Proxy and Expand Handling
+## 4. Per-Reference Format Configuration
 
-### 4.1 Default Behavior: Proxy Serialization
+Unlike Type (where strategy is per-class), Reference format **can be configured per-reference**. This allows different references on the same class to use different formats.
+
+### 4.1 Why Per-Reference Format is Supported
+
+| Aspect | Type Strategy | Reference Format |
+|--------|---------------|------------------|
+| **Applies to** | The object being serialized | How a reference is written |
+| **Semantic binding** | Object has one type identity | Different references may need different formats |
+| **Use case** | "Person is always identified as Person" | "employer uses STRUCTURED, friends uses PLAIN" |
+
+**Example:** An EClass with multiple references using different formats:
+
+```java
+// Reference to employer uses STRUCTURED (for type safety)
+ReferenceConfig employerConfig = ReferenceConfigBuilder
+    .forReference(PersonPackage.Literals.PERSON__EMPLOYER)
+    .format(SerializationFormat.STRUCTURED)
+    .build();
+
+// Reference to friends uses PLAIN (for compactness)
+ReferenceConfig friendsConfig = ReferenceConfigBuilder
+    .forReference(PersonPackage.Literals.PERSON__FRIENDS)
+    .format(SerializationFormat.PLAIN)
+    .build();
+```
+
+**Resulting JSON:**
+```json
+{
+  "_type": "Person",
+  "name": "John",
+  "employer": {
+    "type": "http://example.org#//Company",
+    "ref": "acme-corp"
+  },
+  "friends": ["alice", "bob"]
+}
+```
+
+### 4.2 Configuration Inheritance
+
+Reference format follows the standard configuration hierarchy:
+
+1. **Per-reference annotation/config** (highest priority)
+2. **Global codec config**
+3. **Built-in default** (`STRUCTURED`)
+
+If no per-reference format is specified, the global default applies.
+
+---
+
+## 5. Proxy and Expand Handling
+
+### 5.1 Default Behavior: Proxy Serialization
 
 Non-containment references are serialized as **proxies by default**. This requires:
 - `type`: Type information (proxy URI doesn't always indicate type)
@@ -163,7 +216,57 @@ Only objects with a URI can be serialized as references (standard EMF behavior).
 }
 ```
 
-### 4.2 Expand: Inline Serialization
+#### 5.1.1 Serialization Algorithm
+
+The serializer follows this decision tree for each reference value:
+
+```
+serializeReference(target):
+  1. Is target null?
+     → YES: Write null (if serializeNull enabled) or skip
+
+  2. Is this a containment reference AND target in same resource?
+     → YES: Serialize target inline (nested object)
+
+  3. Is this a containment reference AND target in different resource?
+     → YES: This is CROSS-DOCUMENT CONTAINMENT → serialize as reference
+
+  4. Is expand enabled for this reference AND target is resolved (not proxy)?
+     → YES: Serialize target inline (expanded reference)
+
+  5. DEFAULT: Serialize as proxy reference
+```
+
+**URI Determination:**
+
+| Scenario | URI Format | Example |
+|----------|------------|---------|
+| Same-document reference | Fragment only | `//@employees.0` |
+| Cross-document reference | Relative URI from source | `other.json#//@employees.0` |
+| Proxy (target is proxy) | Use existing proxy URI | (preserved from original) |
+| Object without resource | Fallback to EClass URI | `http://example.org/1.0#//Person` |
+
+**Proxy Detection:**
+
+When the target object `eIsProxy() == true`:
+1. The proxy is **NOT expanded** (expand only works on resolved objects)
+2. The proxy URI is obtained via `InternalEObject.eProxyURI()`
+3. The URI is serialized as-is or made relative to the source resource
+
+**Type Information:**
+
+Type is always included in proxy references to enable type-safe deserialization. When smart compression is enabled and the target type is from the same schema as the root object, only the simple name is used.
+
+**Edge Cases:**
+
+| Scenario | Behavior |
+|----------|----------|
+| Reference to unresolved proxy | Serialize using proxy URI |
+| Reference to object with no resource | Use fallback EClass URI |
+| Bidirectional reference with expand | Skip if `expandIgnoreBidirectional=true` |
+| Multi-valued reference | Array of proxy/expanded objects |
+
+### 5.2 Expand: Inline Serialization
 
 When expand is enabled and the reference is **resolved** (not a proxy), the referenced object is serialized inline instead of as a proxy reference.
 
@@ -266,7 +369,7 @@ The `expand` option accepts multiple value types:
 
 At runtime, string names are resolved against the current EClass to find the matching EReference.
 
-### 4.3 Bi-directional Reference Handling
+### 5.3 Bi-directional Reference Handling
 
 When expanding, bi-directional (opposite) references are **ignored by default** to prevent cycles:
 
@@ -504,10 +607,91 @@ When `_ref` is absent, deserialize as a full orphan object (expanded non-contain
 
 ### 8.3 Cross-Resource References
 
-When a reference URI points to another resource:
+> **Current Limitation:** Full automatic cross-resource reference resolution during deserialization is not yet implemented. The codec creates proxy objects that must be resolved manually via the ResourceSet.
+
+#### 8.3.1 Supported Behavior
+
+**Serialization:** ✓ Fully supported
+- Cross-document containment references are serialized as `_ref` URIs
+- Relative URIs are computed from source to target resource
+
+**Deserialization:** Partial (proxy creation only)
+- When a reference URI points to another resource, a **proxy object** is created
+- The proxy has its `eProxyURI` set to the reference URI
+- The proxy is **not automatically resolved**
+
+#### 8.3.2 Workaround: Manual Resolution
+
+To resolve cross-resource references after loading:
+
+**Option 1: Pre-load resources**
+
+Load all referenced resources into the ResourceSet before deserializing:
+
+```java
+ResourceSet resourceSet = new ResourceSetImpl();
+resourceSet.getResourceFactoryRegistry()
+    .getExtensionToFactoryMap()
+    .put("json", new CodecResourceFactory(...));
+
+// Pre-load all resources
+Resource companiesResource = resourceSet.getResource(
+    URI.createURI("companies.json"), true);
+Resource personsResource = resourceSet.getResource(
+    URI.createURI("persons.json"), true);
+
+// Now proxies can be resolved via EcoreUtil
+EcoreUtil.resolveAll(resourceSet);
+```
+
+**Option 2: Lazy resolution**
+
+Use EMF's lazy resolution mechanism:
+
+```java
+ResourceSet resourceSet = new ResourceSetImpl();
+resourceSet.getResourceFactoryRegistry()
+    .getExtensionToFactoryMap()
+    .put("json", new CodecResourceFactory(...));
+
+// Load main resource (creates proxies for cross-references)
+Resource resource = resourceSet.getResource(
+    URI.createURI("persons.json"), true);
+Person person = (Person) resource.getContents().get(0);
+
+// Accessing the reference triggers resolution (loads companies.json)
+Company employer = person.getEmployer();  // Resolves proxy automatically
+```
+
+**Option 3: Explicit resolution**
+
+Resolve specific proxies manually:
+
+```java
+Person person = ...; // loaded with unresolved proxy
+EObject employerProxy = person.eGet(PersonPackage.Literals.PERSON__EMPLOYER, false);
+
+if (employerProxy.eIsProxy()) {
+    URI proxyURI = ((InternalEObject) employerProxy).eProxyURI();
+    EObject resolved = resourceSet.getEObject(proxyURI, true);
+    person.setEmployer((Company) resolved);
+}
+```
+
+#### 8.3.3 Expected Future Behavior
+
+Full cross-resource resolution will:
 1. Check if resource is already loaded in ResourceSet
-2. If not loaded, attempt to load (depends on ResourceSet configuration)
-3. Create proxy if load fails or is deferred
+2. If not loaded, attempt to load (based on ResourceSet configuration)
+3. Resolve proxy to loaded object
+4. Fall back to proxy if load fails or is deferred
+
+**Configuration (planned):**
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `RESOLVE_CROSS_RESOURCE` | boolean | Auto-resolve cross-resource references during load |
+| `LOAD_REFERENCED_RESOURCES` | boolean | Auto-load referenced resources into ResourceSet |
 
 ### 8.4 Deserialization Options
 

@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 import org.eclipse.fennec.codec.metadata.model.codec.CodecPackage;
 import org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig;
+import org.eclipse.fennec.codec.metadata.model.codec.StrategyScope;
 
 import org.eclipse.fennec.model.metadata.impl.BaseIdConfigImpl;
 
@@ -42,6 +43,8 @@ import org.eclipse.fennec.model.metadata.impl.BaseIdConfigImpl;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.IdSerializationConfigImpl#getIdFeatures <em>Id Features</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.IdSerializationConfigImpl#getIdValueWriterName <em>Id Value Writer Name</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.IdSerializationConfigImpl#getIdValueReaderName <em>Id Value Reader Name</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.IdSerializationConfigImpl#getStrategyScope <em>Strategy Scope</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.IdSerializationConfigImpl#getFormatScope <em>Format Scope</em>}</li>
  * </ul>
  *
  * @generated
@@ -96,6 +99,46 @@ public class IdSerializationConfigImpl extends BaseIdConfigImpl implements IdSer
 	 * @ordered
 	 */
 	protected String idValueReaderName = ID_VALUE_READER_NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getStrategyScope() <em>Strategy Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStrategyScope()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final StrategyScope STRATEGY_SCOPE_EDEFAULT = StrategyScope.ALL;
+
+	/**
+	 * The cached value of the '{@link #getStrategyScope() <em>Strategy Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStrategyScope()
+	 * @generated
+	 * @ordered
+	 */
+	protected StrategyScope strategyScope = STRATEGY_SCOPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getFormatScope() <em>Format Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFormatScope()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final StrategyScope FORMAT_SCOPE_EDEFAULT = StrategyScope.ALL;
+
+	/**
+	 * The cached value of the '{@link #getFormatScope() <em>Format Scope</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFormatScope()
+	 * @generated
+	 * @ordered
+	 */
+	protected StrategyScope formatScope = FORMAT_SCOPE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -181,6 +224,52 @@ public class IdSerializationConfigImpl extends BaseIdConfigImpl implements IdSer
 	 * @generated
 	 */
 	@Override
+	public StrategyScope getStrategyScope() {
+		return strategyScope;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setStrategyScope(StrategyScope newStrategyScope) {
+		StrategyScope oldStrategyScope = strategyScope;
+		strategyScope = newStrategyScope == null ? STRATEGY_SCOPE_EDEFAULT : newStrategyScope;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.ID_SERIALIZATION_CONFIG__STRATEGY_SCOPE, oldStrategyScope, strategyScope));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public StrategyScope getFormatScope() {
+		return formatScope;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setFormatScope(StrategyScope newFormatScope) {
+		StrategyScope oldFormatScope = formatScope;
+		formatScope = newFormatScope == null ? FORMAT_SCOPE_EDEFAULT : newFormatScope;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.ID_SERIALIZATION_CONFIG__FORMAT_SCOPE, oldFormatScope, formatScope));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case CodecPackage.ID_SERIALIZATION_CONFIG__ID_FEATURES:
@@ -189,6 +278,10 @@ public class IdSerializationConfigImpl extends BaseIdConfigImpl implements IdSer
 				return getIdValueWriterName();
 			case CodecPackage.ID_SERIALIZATION_CONFIG__ID_VALUE_READER_NAME:
 				return getIdValueReaderName();
+			case CodecPackage.ID_SERIALIZATION_CONFIG__STRATEGY_SCOPE:
+				return getStrategyScope();
+			case CodecPackage.ID_SERIALIZATION_CONFIG__FORMAT_SCOPE:
+				return getFormatScope();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -212,6 +305,12 @@ public class IdSerializationConfigImpl extends BaseIdConfigImpl implements IdSer
 			case CodecPackage.ID_SERIALIZATION_CONFIG__ID_VALUE_READER_NAME:
 				setIdValueReaderName((String)newValue);
 				return;
+			case CodecPackage.ID_SERIALIZATION_CONFIG__STRATEGY_SCOPE:
+				setStrategyScope((StrategyScope)newValue);
+				return;
+			case CodecPackage.ID_SERIALIZATION_CONFIG__FORMAT_SCOPE:
+				setFormatScope((StrategyScope)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -233,6 +332,12 @@ public class IdSerializationConfigImpl extends BaseIdConfigImpl implements IdSer
 			case CodecPackage.ID_SERIALIZATION_CONFIG__ID_VALUE_READER_NAME:
 				setIdValueReaderName(ID_VALUE_READER_NAME_EDEFAULT);
 				return;
+			case CodecPackage.ID_SERIALIZATION_CONFIG__STRATEGY_SCOPE:
+				setStrategyScope(STRATEGY_SCOPE_EDEFAULT);
+				return;
+			case CodecPackage.ID_SERIALIZATION_CONFIG__FORMAT_SCOPE:
+				setFormatScope(FORMAT_SCOPE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -251,6 +356,10 @@ public class IdSerializationConfigImpl extends BaseIdConfigImpl implements IdSer
 				return ID_VALUE_WRITER_NAME_EDEFAULT == null ? idValueWriterName != null : !ID_VALUE_WRITER_NAME_EDEFAULT.equals(idValueWriterName);
 			case CodecPackage.ID_SERIALIZATION_CONFIG__ID_VALUE_READER_NAME:
 				return ID_VALUE_READER_NAME_EDEFAULT == null ? idValueReaderName != null : !ID_VALUE_READER_NAME_EDEFAULT.equals(idValueReaderName);
+			case CodecPackage.ID_SERIALIZATION_CONFIG__STRATEGY_SCOPE:
+				return strategyScope != STRATEGY_SCOPE_EDEFAULT;
+			case CodecPackage.ID_SERIALIZATION_CONFIG__FORMAT_SCOPE:
+				return formatScope != FORMAT_SCOPE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -271,6 +380,10 @@ public class IdSerializationConfigImpl extends BaseIdConfigImpl implements IdSer
 		result.append(idValueWriterName);
 		result.append(", idValueReaderName: ");
 		result.append(idValueReaderName);
+		result.append(", strategyScope: ");
+		result.append(strategyScope);
+		result.append(", formatScope: ");
+		result.append(formatScope);
 		result.append(')');
 		return result.toString();
 	}

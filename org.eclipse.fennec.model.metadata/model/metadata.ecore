@@ -46,17 +46,12 @@
         <details key="documentation" value="Use the EClass URI (e.g., 'http://example.org/model#//Person')."/>
       </eAnnotations>
     </eLiterals>
-    <eLiterals name="MAPPED" value="3" literal="MAPPED">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Use a mapped discriminator value for type resolution."/>
-      </eAnnotations>
-    </eLiterals>
-    <eLiterals name="SCHEMA_AND_TYPE" value="4" literal="SCHEMA_AND_TYPE">
+    <eLiterals name="SCHEMA_AND_TYPE" value="3" literal="SCHEMA_AND_TYPE">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Use separate top-level fields for schema and type."/>
       </eAnnotations>
     </eLiterals>
-    <eLiterals name="NUMERIC" value="5" literal="NUMERIC">
+    <eLiterals name="NUMERIC" value="4" literal="NUMERIC">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Use numeric classifier IDs. WARNING: IDs can change when model evolves."/>
       </eAnnotations>
@@ -220,6 +215,30 @@
         defaultValueLiteral="-">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Separator for combining multiple ID features."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="onTop" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Whether ID should appear before type in serialized output. Default true (ID first, useful for MongoDB indexing)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="serializeSeparator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Whether to include separator in STRUCTURED ID output. When true, separator is serialized allowing deserialization without pre-configuration."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="separatorKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="separator">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="JSON key for separator field in STRUCTURED ID format."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="valueKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="id">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="JSON key for the ID value in STRUCTURED format. Default is 'id'."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

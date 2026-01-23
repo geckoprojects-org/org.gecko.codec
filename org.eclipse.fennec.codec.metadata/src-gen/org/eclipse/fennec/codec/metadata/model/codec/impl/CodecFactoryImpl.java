@@ -15,6 +15,7 @@
 package org.eclipse.fennec.codec.metadata.model.codec.impl;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -76,9 +77,52 @@ public class CodecFactoryImpl extends EFactoryImpl implements CodecFactory {
 			case CodecPackage.CLASS_CODEC_ASPECT: return createClassCodecAspect();
 			case CodecPackage.FEATURE_CODEC_ASPECT: return createFeatureCodecAspect();
 			case CodecPackage.REFERENCE_CODEC_ASPECT: return createReferenceCodecAspect();
+			case CodecPackage.INLINE_TYPE_MAPPING: return createInlineTypeMapping();
 			case CodecPackage.CODEC_CONFIG: return createCodecConfig();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			case CodecPackage.STRATEGY_SCOPE:
+				return createStrategyScopeFromString(eDataType, initialValue);
+			case CodecPackage.TYPE_HINT_MODE:
+				return createTypeHintModeFromString(eDataType, initialValue);
+			case CodecPackage.DESERIALIZATION_MODE:
+				return createDeserializationModeFromString(eDataType, initialValue);
+			case CodecPackage.FALLBACK_STRATEGY:
+				return createFallbackStrategyFromString(eDataType, initialValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			case CodecPackage.STRATEGY_SCOPE:
+				return convertStrategyScopeToString(eDataType, instanceValue);
+			case CodecPackage.TYPE_HINT_MODE:
+				return convertTypeHintModeToString(eDataType, instanceValue);
+			case CodecPackage.DESERIALIZATION_MODE:
+				return convertDeserializationModeToString(eDataType, instanceValue);
+			case CodecPackage.FALLBACK_STRATEGY:
+				return convertFallbackStrategyToString(eDataType, instanceValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -176,9 +220,100 @@ public class CodecFactoryImpl extends EFactoryImpl implements CodecFactory {
 	 * @generated
 	 */
 	@Override
+	public InlineTypeMapping createInlineTypeMapping() {
+		InlineTypeMappingImpl inlineTypeMapping = new InlineTypeMappingImpl();
+		return inlineTypeMapping;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public CodecConfig createCodecConfig() {
 		CodecConfigImpl codecConfig = new CodecConfigImpl();
 		return codecConfig;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public StrategyScope createStrategyScopeFromString(EDataType eDataType, String initialValue) {
+		StrategyScope result = StrategyScope.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertStrategyScopeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public TypeHintMode createTypeHintModeFromString(EDataType eDataType, String initialValue) {
+		TypeHintMode result = TypeHintMode.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertTypeHintModeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public DeserializationMode createDeserializationModeFromString(EDataType eDataType, String initialValue) {
+		DeserializationMode result = DeserializationMode.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertDeserializationModeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public FallbackStrategy createFallbackStrategyFromString(EDataType eDataType, String initialValue) {
+		FallbackStrategy result = FallbackStrategy.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertFallbackStrategyToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

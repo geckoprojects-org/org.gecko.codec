@@ -15,6 +15,7 @@ package org.eclipse.fennec.codec.v2.module;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
@@ -117,7 +118,7 @@ public class CodecModule extends SimpleModule {
      * @param options load/save options (may be empty)
      * @return the merged effective configuration
      */
-    public EffectiveCodecConfig createEffectiveConfig(java.util.Map<String, Object> options) {
+    public EffectiveCodecConfig createEffectiveConfig(Map<String, Object> options) {
         ConfigurationMerger merger = new ConfigurationMerger(
                 configuration,
                 metadataService,

@@ -54,12 +54,30 @@ import tools.jackson.databind.json.JsonMapper;
  */
 public class CodecResourceFactory extends ResourceFactoryImpl {
 
-    private final MetadataService metadataService;
-    private final CodecConfiguration configuration;
-    private final JsonMapper.Builder mapperBuilder;
+    private MetadataService metadataService;
+    private CodecConfiguration configuration = CodecConfiguration.defaults();
+    private JsonMapper.Builder mapperBuilder;
 
     private Map<Object, Object> defaultSaveOptions = Collections.emptyMap();
     private Map<Object, Object> defaultLoadOptions = Collections.emptyMap();
+
+    /**
+     * Creates a new CodecResourceFactory for dependency injection.
+     * <p>
+     * When using this constructor, you must call {@link #setMetadataService(MetadataService)}
+     * before creating resources. The configuration defaults to {@link CodecConfiguration#defaults()}.
+     * </p>
+     * <p>
+     * This constructor is intended for DI frameworks (Spring, CDI, OSGi DS) that require
+     * a parameterless constructor and setter-based injection.
+     * </p>
+     *
+     * @see #setMetadataService(MetadataService)
+     * @see #setConfiguration(CodecConfiguration)
+     */
+    public CodecResourceFactory() {
+        // DI-friendly constructor
+    }
 
     /**
      * Creates a new CodecResourceFactory with default configuration.
@@ -96,6 +114,11 @@ public class CodecResourceFactory extends ResourceFactoryImpl {
 
     @Override
     public Resource createResource(URI uri) {
+        if (metadataService == null) {
+            throw new IllegalStateException(
+                "MetadataService not set. Call setMetadataService() before creating resources, " +
+                "or use a constructor that accepts MetadataService.");
+        }
         return new CodecResource(uri, metadataService, configuration, mapperBuilder);
     }
 
@@ -115,6 +138,48 @@ public class CodecResourceFactory extends ResourceFactoryImpl {
      */
     public CodecConfiguration getConfiguration() {
         return configuration;
+    }
+
+    /**
+     * Sets the metadata service for model metadata lookup.
+     * <p>
+     * This setter is intended for dependency injection frameworks (Spring, CDI, OSGi DS).
+     * In OSGi, use {@code @Reference} annotation on this method.
+     * </p>
+     *
+     * @param metadataService the metadata service (must not be null)
+     * @throws IllegalArgumentException if metadataService is null
+     */
+    public void setMetadataService(MetadataService metadataService) {
+        if (metadataService == null) {
+            throw new IllegalArgumentException("MetadataService must not be null");
+        }
+        this.metadataService = metadataService;
+    }
+
+    /**
+     * Sets the codec configuration.
+     * <p>
+     * This setter is intended for dependency injection frameworks. If not called,
+     * the factory uses {@link CodecConfiguration#defaults()}.
+     * </p>
+     *
+     * @param configuration the codec configuration (null resets to defaults)
+     */
+    public void setConfiguration(CodecConfiguration configuration) {
+        this.configuration = configuration != null ? configuration : CodecConfiguration.defaults();
+    }
+
+    /**
+     * Sets the JsonMapper builder for customizing Jackson configuration.
+     * <p>
+     * This setter is intended for dependency injection frameworks.
+     * </p>
+     *
+     * @param mapperBuilder the mapper builder (null for default)
+     */
+    public void setMapperBuilder(JsonMapper.Builder mapperBuilder) {
+        this.mapperBuilder = mapperBuilder;
     }
 
     /**

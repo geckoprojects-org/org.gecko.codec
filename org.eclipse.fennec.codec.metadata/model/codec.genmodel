@@ -9,14 +9,41 @@
   <foreignModel>codec.ecore</foreignModel>
   <genPackages prefix="Codec" basePackage="org.eclipse.fennec.codec.metadata.model"
       resource="XMI" disposableProviderFactory="true" ecorePackage="codec.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="codec.ecore#//StrategyScope">
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//StrategyScope/ALL"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//StrategyScope/ROOT_ONLY"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//StrategyScope/ROOT_CONTAINMENT"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//StrategyScope/ROOT_NON_CONTAINMENT"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="codec.ecore#//TypeHintMode">
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//TypeHintMode/HINT"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//TypeHintMode/OVERRIDE"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="codec.ecore#//DeserializationMode">
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//DeserializationMode/LENIENT"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//DeserializationMode/STRICT"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//DeserializationMode/AUTO_DETECT"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="codec.ecore#//FallbackStrategy">
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//FallbackStrategy/FALLBACK"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//FallbackStrategy/ERROR"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//FallbackStrategy/SKIP"/>
+    </genEnums>
     <genClasses ecoreClass="codec.ecore#//TypeSerializationConfig">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/mapId"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/discriminatorPath"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/discriminatorValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/strategyScope"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/formatScope"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/fallbackStrategy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/fallbackEClass"/>
     </genClasses>
     <genClasses ecoreClass="codec.ecore#//IdSerializationConfig">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//IdSerializationConfig/idFeatures"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//IdSerializationConfig/idValueWriterName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//IdSerializationConfig/idValueReaderName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//IdSerializationConfig/strategyScope"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//IdSerializationConfig/formatScope"/>
     </genClasses>
     <genClasses ecoreClass="codec.ecore#//ReferenceSerializationConfig">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ReferenceSerializationConfig/includeType"/>
@@ -55,6 +82,13 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec.ecore#//ReferenceCodecAspect/typeConfig"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ReferenceCodecAspect/inheritTypeFromTarget"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ReferenceCodecAspect/expand"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec.ecore#//ReferenceCodecAspect/inlineTypeMappings"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ReferenceCodecAspect/fallbackStrategy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ReferenceCodecAspect/fallbackEClass"/>
+    </genClasses>
+    <genClasses ecoreClass="codec.ecore#//InlineTypeMapping">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//InlineTypeMapping/discriminatorValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//InlineTypeMapping/targetClass"/>
     </genClasses>
     <genClasses ecoreClass="codec.ecore#//CodecConfig">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/format"/>
@@ -72,6 +106,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/serializeNull"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/serializeEmpty"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/serializeDefaults"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/typeHintMode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/deserializationMode"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

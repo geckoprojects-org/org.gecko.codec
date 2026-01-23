@@ -11,18 +11,126 @@
     <details key="resource" value="XMI"/>
     <details key="copyrightText" value="Copyright (c) 2012 - 2025 Data In Motion and others.&#xA;All rights reserved.&#xA;&#xA;This program and the accompanying materials are made&#xA;available under the terms of the Eclipse Public License 2.0&#xA;which is available at https://www.eclipse.org/legal/epl-2.0/&#xA;&#xA;SPDX-License-Identifier: EPL-2.0&#xA;&#xA;Contributors:&#xA;    Data In Motion - initial API and implementation&#xA;"/>
   </eAnnotations>
+  <eClassifiers xsi:type="ecore:EEnum" name="StrategyScope">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Controls where a configuration setting applies in the object graph."/>
+    </eAnnotations>
+    <eLiterals name="ALL" literal="ALL">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Apply to root object and all nested objects (containment and non-containment). This is the default."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="ROOT_ONLY" value="1" literal="ROOT_ONLY">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Apply only to the root object. Nested objects use their own class-level config or defaults."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="ROOT_CONTAINMENT" value="2" literal="ROOT_CONTAINMENT">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Apply to root and objects reached via containment references only."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="ROOT_NON_CONTAINMENT" value="3" literal="ROOT_NON_CONTAINMENT">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Apply to root and objects reached via non-containment references only."/>
+      </eAnnotations>
+    </eLiterals>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="TypeHintMode">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Controls how CODEC_ROOT_OBJECT type hints are treated during deserialization."/>
+    </eAnnotations>
+    <eLiterals name="HINT" literal="HINT">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Hint is used as fallback when content has no type info. Content type wins when present. This is the default."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="OVERRIDE" value="1" literal="OVERRIDE">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Hint always wins for root object, ignoring any type info in content."/>
+      </eAnnotations>
+    </eLiterals>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="DeserializationMode">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Controls type resolution strictness during deserialization."/>
+    </eAnnotations>
+    <eLiterals name="LENIENT" literal="LENIENT">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Try configured strategy first, then fallback resolution. Log warnings for mismatches. This is the default."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="STRICT" value="1" literal="STRICT">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Type field MUST match configured strategy exactly. Missing or malformed type causes ERROR."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="AUTO_DETECT" value="2" literal="AUTO_DETECT">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Ignore configured strategy. Probe JSON structure to auto-detect type format."/>
+      </eAnnotations>
+    </eLiterals>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="FallbackStrategy">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Controls behavior when a discriminator value cannot be resolved to an EClass."/>
+    </eAnnotations>
+    <eLiterals name="FALLBACK" literal="FALLBACK">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Use fallback resolution chain: fallbackEClass, then feature type hint, then reference type. This is the default."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="ERROR" value="1" literal="ERROR">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Fail deserialization immediately when discriminator value is not found."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="SKIP" value="2" literal="SKIP">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Skip the element (don't add to collection), log warning. Useful for forward compatibility."/>
+      </eAnnotations>
+    </eLiterals>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypeSerializationConfig" eSuperTypes="../../org.eclipse.fennec.model.metadata/model/metadata.ecore#//BaseTypeConfig">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Concrete configuration for type information serialization. Extends BaseTypeConfig with codec-specific settings."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="mapId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Identifier for type mapping registry lookup (Named Registry approach). References TypeDiscriminatorService mappings."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="discriminatorPath" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Feature path for MAPPED strategy discriminator value."/>
+        <details key="documentation" value="Feature path to extract discriminator value from JSON (e.g., 'deviceInfo.profileName'). Used with mapId for Named Registry or with inlineTypeMappings for Inline Mapping."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="discriminatorValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Discriminator value that maps to this type (for MAPPED strategy)."/>
+        <details key="documentation" value="Discriminator value that maps to this type (for discriminator-based resolution)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="strategyScope" eType="#//StrategyScope"
+        defaultValueLiteral="ALL">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Where the type strategy applies in the object graph."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="formatScope" eType="#//StrategyScope"
+        defaultValueLiteral="ALL">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Where the type format applies in the object graph. Independent from strategyScope."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackStrategy" eType="#//FallbackStrategy"
+        defaultValueLiteral="FALLBACK">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="What to do when discriminator value is not found in mapping. Default is FALLBACK."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackEClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Explicit fallback EClass URI when discriminator value not found (used when fallbackStrategy is FALLBACK)."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -44,6 +152,18 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="idValueReaderName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Custom value reader for ID deserialization."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="strategyScope" eType="#//StrategyScope"
+        defaultValueLiteral="ALL">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Where the ID strategy applies in the object graph."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="formatScope" eType="#//StrategyScope"
+        defaultValueLiteral="ALL">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Where the ID format applies in the object graph. Independent from strategyScope."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -223,6 +343,38 @@
         <details key="documentation" value="Whether to expand (inline) referenced objects."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inlineTypeMappings" upperBound="-1"
+        eType="#//InlineTypeMapping" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Inline type mappings for discriminator-based type resolution. Alternative to Named Registry when mappings are simple and static. Configured via EAnnotation details: inlineMapping.{discriminatorValue}={EClass URI}."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackStrategy" eType="#//FallbackStrategy"
+        defaultValueLiteral="FALLBACK">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="What to do when discriminator value from inline mapping is not found. Default is FALLBACK."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackEClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Explicit fallback EClass URI when inline mapping discriminator value not found (used when fallbackStrategy is FALLBACK)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InlineTypeMapping">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Maps a discriminator value to a target EClass for inline type resolution. Used as an alternative to Named Registry when mappings are simple and static."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="discriminatorValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The discriminator value from JSON (e.g., 'FooBar')."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The target EClass URI (e.g., 'http://example.org#//Friend')."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="CodecConfig">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -316,6 +468,18 @@
         defaultValueLiteral="false">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Default: whether to serialize default values."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeHintMode" eType="#//TypeHintMode"
+        defaultValueLiteral="HINT">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="How type hints (CODEC_ROOT_OBJECT) are treated during deserialization."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="deserializationMode" eType="#//DeserializationMode"
+        defaultValueLiteral="LENIENT">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Type resolution strictness during deserialization."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
