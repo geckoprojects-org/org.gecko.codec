@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-27 (SuperType integration complete, ready for TCK tests)
+**Last Updated:** 2026-01-27 (Validation rules integrated into spec, document 21 deprecated)
 
 ---
 
@@ -70,11 +70,25 @@ MAIN TASK: Prepare spec for TCK test creation (Type + SuperType configuration) -
 │       - Smart compression: uses ROOT schema (same as type)
 │       - superTypeKey format-dependent default: PLAIN→"_supertype", STRUCTURED→"supertype"
 │
-└── NEXT STEPS:
-    - Create 22-supertype-config-validation-rules.md (like 21 for type)
-    - Create spec tests for Type + SuperType configuration merging
-    - Verify constraints between type and supertype properties
-    - Return to main task: Create TCK tests from spec
+├── CHILD: Validation rules documentation - ✅ COMPLETE
+│   ├── Added Section 7 "Configuration Validation Rules" to 06-type.md - ✅
+│   ├── Cross-references to 07-supertype.md §6.0 and 08-discriminator-mapping.md - ✅
+│   └── Deprecated document 21 (redirects to authoritative sources) - ✅
+│
+└── NEXT STEP: Create TCK/spec tests - READY TO START
+    │
+    │  Test Categories:
+    │  1. Configuration-level tests (no serialization needed)
+    │     - Default values match spec
+    │     - Invalid config combinations → correct ERROR/WARNING
+    │     - Property applicability (wrong levels → correct diagnostic)
+    │     - Deprecation warnings (typeInclude → typeStrategy=NONE)
+    │  2. Serialization tests (later phase)
+    │     - Strategy × Format matrix output verification
+    │     - SuperType integration with Type
+    │     - Discriminator mapping behavior
+    │
+    │  Start with: TypeConfig + SuperTypeConfig validation tests
 ```
 
 ### 0.3 Task History (Completed Hierarchies)
