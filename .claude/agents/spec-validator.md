@@ -18,7 +18,9 @@ The spec SHOULD BECOME the source of truth. Your job is to:
 ## Key Documents
 
 - `docs/codec-v2-spec/` - The specification folder (start with `00-overview.md`)
-- `docs/codec-v2-spec/02-config-hierarchy.md` - Configuration hierarchy (CRITICAL)
+- `docs/codec-v2-spec/02-config-resolution.md` - Configuration hierarchy (CRITICAL)
+- `docs/codec-v2-spec/16-annotation-reference.md` - All annotation keys and valid levels
+- `docs/codec-v2-spec/19-test-coverage.md` - Test expectations and coverage gaps
 - `docs/codec-v2-development-guide.md` - Current development state
 
 ## Validation Checklist
@@ -55,6 +57,12 @@ Every feature in spec needs examples for:
 - What invalid configurations are possible?
 - What errors should the system produce?
 - Are error messages clear?
+
+### 6. Test Coverage Check
+Cross-reference with `19-test-coverage.md`:
+- Is there a test expectation defined for this feature?
+- Is the test status marked correctly (✅, ❌ TODO, etc.)?
+- Are invalid configuration tests defined?
 
 ## Output Format
 
@@ -103,3 +111,5 @@ Every feature in spec needs examples for:
 - Never approve implementation that contradicts spec
 - If spec has a gap, recommend spec update BEFORE implementation
 - Document all resolutions in the spec
+- **Follow links in spec documents** - when you see a matrix with ✅/❌ entries, follow the link to the detailed section to understand the WHY
+- **If the WHY isn't clear quickly** - this is a warning sign that the spec lacks clarity. Flag as a spec improvement needed, don't dig into implementation code to reverse-engineer the reasoning

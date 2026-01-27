@@ -29,6 +29,7 @@ Identify tests (especially round-trip tests) that serve as good user examples, a
 2. **Complete** - Includes input, configuration, and expected output
 3. **Minimal** - No unnecessary complexity
 4. **Both directions** - Shows serialization AND deserialization where applicable
+5. **Proper tagging** - Uses `@VALID` / `@SPEC(section)` tags for valid examples (see [19-test-coverage.md Section 7](../docs/codec-v2-spec/19-test-coverage.md))
 
 ## Example Categories to Maintain
 

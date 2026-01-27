@@ -17,10 +17,14 @@ import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstant
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
+
+import org.eclipse.fennec.codec.metadata.util.AnnotationParseHelper;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect;
@@ -34,10 +38,14 @@ import org.eclipse.fennec.codec.metadata.model.codec.ReferenceSerializationConfi
 import org.eclipse.fennec.codec.metadata.model.codec.SuperTypeSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
 import org.eclipse.fennec.model.metadata.ClassAspect;
+import org.eclipse.fennec.model.metadata.DiagnosticSeverity;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
+import org.eclipse.fennec.model.metadata.PackageAspect;
 import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.IdStrategy;
+import org.eclipse.fennec.model.metadata.MetadataDiagnostic;
+import org.eclipse.fennec.model.metadata.MetadataFactory;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.SuperTypeSelection;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
@@ -71,9 +79,18 @@ public class CodecAspectProvider implements AspectProvider {
     }
 
     @Override
+    public PackageAspect buildPackageAspect(EPackage ePackage) {
+        // Codec does not currently define package-level configuration
+        // Return null to indicate no package aspect is needed
+        return null;
+    }
+
+    @Override
     public ClassAspect buildClassAspect(EClass eClass) {
+        Objects.requireNonNull(eClass, "eClass must not be null");
         ClassCodecAspect aspect = factory.createClassCodecAspect();
         aspect.setTypeId(ASPECT_TYPE_ID);
+        aspect.setEClass(eClass);
 
         EAnnotation codecAnnotation = eClass.getEAnnotation(CODEC_SOURCE);
         if (codecAnnotation != null) {
@@ -85,18 +102,21 @@ public class CodecAspectProvider implements AspectProvider {
 
     @Override
     public FeatureAspect buildFeatureAspect(EStructuralFeature feature) {
-        if (feature instanceof EReference) {
-            return buildReferenceAspect((EReference) feature);
-        } else if (feature instanceof EAttribute) {
-            return buildAttributeAspect((EAttribute) feature);
+        Objects.requireNonNull(feature, "feature must not be null");
+        if (feature instanceof EReference reference) {
+            return buildReferenceAspect(reference);
+        } else if (feature instanceof EAttribute attribute) {
+            return buildAttributeAspect(attribute);
         }
-        return null;
+        throw new IllegalArgumentException("Unsupported feature type: " + feature.getClass().getName());
     }
 
     @Override
     public FeatureAspect buildAttributeAspect(EAttribute attribute) {
+        Objects.requireNonNull(attribute, "attribute must not be null");
         FeatureCodecAspect aspect = factory.createFeatureCodecAspect();
         aspect.setTypeId(ASPECT_TYPE_ID);
+        aspect.setEFeature(attribute);
 
         populateFeatureAspect(aspect, attribute);
 
@@ -105,8 +125,10 @@ public class CodecAspectProvider implements AspectProvider {
 
     @Override
     public FeatureAspect buildReferenceAspect(EReference reference) {
+        Objects.requireNonNull(reference, "reference must not be null");
         ReferenceCodecAspect aspect = factory.createReferenceCodecAspect();
         aspect.setTypeId(ASPECT_TYPE_ID);
+        aspect.setEFeature(reference);
 
         populateFeatureAspect(aspect, reference);
 
@@ -115,9 +137,13 @@ public class CodecAspectProvider implements AspectProvider {
         if (codecAnnotation != null) {
             Map<String, String> details = codecAnnotation.getDetails().map();
 
+            // Check for class-only keys and add diagnostics (keys are ignored but logged)
+            checkForClassOnlyKeys(aspect, details, reference);
+
             // Parse type config (for polymorphic references)
-            if (hasTypeConfig(details)) {
-                aspect.setTypeConfig(buildTypeConfig(details));
+            // Note: References use a subset of type config keys - class-only keys are ignored
+            if (hasReferenceTypeConfig(details)) {
+                aspect.setTypeConfig(buildReferenceTypeConfig(details));
             }
 
             // Parse reference config
@@ -126,25 +152,16 @@ public class CodecAspectProvider implements AspectProvider {
             }
 
             // Parse expand flag
-            String expandStr = details.get(KEY_EXPAND);
-            if (expandStr != null) {
-                aspect.setExpand(Boolean.parseBoolean(expandStr));
-            }
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_EXPAND, aspect::setExpand);
 
             // Parse inline type mappings (inlineMapping.{value}={EClass URI})
             parseInlineTypeMappings(aspect, details);
 
             // Parse fallback strategy for inline mappings
-            String fallbackStrategyStr = details.get(KEY_FALLBACK_STRATEGY);
-            if (fallbackStrategyStr != null) {
-                aspect.setFallbackStrategy(parseFallbackStrategy(fallbackStrategyStr));
-            }
+            AnnotationParseHelper.ifEnumPresent(details, KEY_FALLBACK_STRATEGY, FallbackStrategy.class, aspect::setFallbackStrategy);
 
             // Parse fallback EClass URI
-            String fallbackEClass = details.get(KEY_FALLBACK_ECLASS);
-            if (fallbackEClass != null) {
-                aspect.setFallbackEClass(fallbackEClass);
-            }
+            AnnotationParseHelper.ifStringPresent(details, KEY_FALLBACK_ECLASS, aspect::setFallbackEClass);
         }
 
         return aspect;
@@ -176,16 +193,10 @@ public class CodecAspectProvider implements AspectProvider {
         }
 
         // Parse inherit flag
-        String inherit = details.get(KEY_INHERIT);
-        if (inherit != null) {
-            aspect.setInheritFromParent(Boolean.parseBoolean(inherit));
-        }
+        AnnotationParseHelper.ifBooleanPresent(details, KEY_INHERIT, aspect::setInheritFromParent);
 
         // Parse type mapping discriminator (for concrete classes in MAPPED strategy)
-        String discriminator = details.get(KEY_TYPE_DISCRIMINATOR);
-        if (discriminator != null) {
-            aspect.setDiscriminatorValue(discriminator);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_DISCRIMINATOR, aspect::setDiscriminatorValue);
     }
 
     // ========================================================================
@@ -209,59 +220,30 @@ public class CodecAspectProvider implements AspectProvider {
             Map<String, String> details = codecAnnotation.getDetails().map();
 
             // Parse explicit key override - only set effectiveKey if explicitly specified
-            String explicitKey = details.get(KEY_KEY);
-            if (explicitKey != null && !explicitKey.isEmpty()) {
-                aspect.setEffectiveKey(explicitKey);
-            }
+            AnnotationParseHelper.ifStringPresent(details, KEY_KEY, aspect::setEffectiveKey);
 
             // Parse transient flag (inverse of serialize)
-            String transientStr = details.get(KEY_TRANSIENT);
-            if (transientStr != null && Boolean.parseBoolean(transientStr)) {
+            if (AnnotationParseHelper.parseBoolean(details, KEY_TRANSIENT, false)) {
                 aspect.setSerialize(false);
             }
 
             // Parse explicit serialize flag (overrides transient if both present)
-            String serializeStr = details.get(KEY_SERIALIZE);
-            if (serializeStr != null) {
-                aspect.setSerialize(Boolean.parseBoolean(serializeStr));
-            }
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_SERIALIZE, aspect::setSerialize);
 
-            // Parse serializeNull
-            String serializeNullStr = details.get(KEY_SERIALIZE_NULL);
-            if (serializeNullStr != null) {
-                aspect.setSerializeNull(Boolean.parseBoolean(serializeNullStr));
-            }
-
-            // Parse serializeEmpty
-            String serializeEmptyStr = details.get(KEY_SERIALIZE_EMPTY);
-            if (serializeEmptyStr != null) {
-                aspect.setSerializeEmpty(Boolean.parseBoolean(serializeEmptyStr));
-            }
-
-            // Parse serializeDefaults
-            String serializeDefaultsStr = details.get(KEY_SERIALIZE_DEFAULTS);
-            if (serializeDefaultsStr != null) {
-                aspect.setSerializeDefaults(Boolean.parseBoolean(serializeDefaultsStr));
-            }
+            // Parse serializeNull, serializeEmpty, serializeDefaults
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_SERIALIZE_NULL, aspect::setSerializeNull);
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_SERIALIZE_EMPTY, aspect::setSerializeEmpty);
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_SERIALIZE_DEFAULTS, aspect::setSerializeDefaults);
 
             // Parse value writer/reader names
-            String writerName = details.get(KEY_VALUE_WRITER_NAME);
-            if (writerName != null) {
-                aspect.setValueWriterName(writerName);
-            }
-
-            String readerName = details.get(KEY_VALUE_READER_NAME);
-            if (readerName != null) {
-                aspect.setValueReaderName(readerName);
-            }
+            AnnotationParseHelper.ifStringPresent(details, KEY_VALUE_WRITER_NAME, aspect::setValueWriterName);
+            AnnotationParseHelper.ifStringPresent(details, KEY_VALUE_READER_NAME, aspect::setValueReaderName);
 
             // Parse enum serialization strategy - only valid for EAttributes per spec
             // See annotation-scope-reference.md: enumSerialization is ❌ on EReference, ✅ on EAttribute
             if (feature instanceof EAttribute) {
-                String enumSerStr = details.get(KEY_ENUM_SERIALIZATION);
-                if (enumSerStr != null) {
-                    aspect.setEnumSerialization(parseEnumSerializationStrategy(enumSerStr));
-                }
+                AnnotationParseHelper.ifEnumPresent(details, KEY_ENUM_SERIALIZATION,
+                        EnumSerializationStrategy.class, aspect::setEnumSerialization);
             }
         }
     }
@@ -277,82 +259,47 @@ public class CodecAspectProvider implements AspectProvider {
         IdSerializationConfig config = factory.createIdSerializationConfig();
 
         // Strategy
-        String strategyStr = details.get(KEY_ID_STRATEGY);
-        if (strategyStr != null) {
-            config.setStrategy(parseIdStrategy(strategyStr));
-        }
+        AnnotationParseHelper.ifEnumPresent(details, KEY_ID_STRATEGY, IdStrategy.class, config::setStrategy);
 
         // Key (property name)
-        String key = details.get(KEY_ID_KEY);
-        if (key != null) {
-            config.setIdKey(key);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_ID_KEY, config::setIdKey);
 
         // Separator for combined IDs
-        String separator = details.get(KEY_ID_SEPARATOR);
-        if (separator != null) {
-            config.setSeparator(separator);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_ID_SEPARATOR, config::setSeparator);
 
         // ID features for combined strategy
         String idFeatures = details.get(KEY_ID_FEATURES);
         if (idFeatures != null) {
-            String[] features = idFeatures.split(",");
-            config.getIdFeatures().addAll(Arrays.asList(features));
+            config.getIdFeatures().addAll(Arrays.asList(idFeatures.split(",")));
         }
 
         // Custom reader/writer
-        String readerName = details.get(KEY_ID_VALUE_READER_NAME);
-        if (readerName != null) {
-            config.setIdValueReaderName(readerName);
-        }
-
-        String writerName = details.get(KEY_ID_VALUE_WRITER_NAME);
-        if (writerName != null) {
-            config.setIdValueWriterName(writerName);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_ID_VALUE_READER_NAME, config::setIdValueReaderName);
+        AnnotationParseHelper.ifStringPresent(details, KEY_ID_VALUE_WRITER_NAME, config::setIdValueWriterName);
 
         // Format (PLAIN/STRUCTURED)
-        String formatStr = details.get(KEY_ID_FORMAT);
-        if (formatStr != null) {
-            config.setFormat(parseSerializationFormat(formatStr));
-        }
+        AnnotationParseHelper.ifEnumPresent(details, KEY_ID_FORMAT, SerializationFormat.class, config::setFormat);
 
         // Key mode (ID_ONLY, BOTH, FEATURE_ONLY)
-        String keyModeStr = details.get(KEY_ID_KEY_MODE);
-        if (keyModeStr != null) {
-            config.setKeyMode(parseIdKeyMode(keyModeStr));
-        }
+        AnnotationParseHelper.ifEnumPresent(details, KEY_ID_KEY_MODE, IdKeyMode.class, config::setKeyMode);
 
         // On top (ID before type)
-        String onTopStr = details.get(KEY_ID_ON_TOP);
-        if (onTopStr != null) {
-            config.setOnTop(Boolean.parseBoolean(onTopStr));
-        }
+        AnnotationParseHelper.ifBooleanPresent(details, KEY_ID_ON_TOP, config::setOnTop);
 
         // Serialize separator
-        String serializeSeparatorStr = details.get(KEY_ID_SERIALIZE_SEPARATOR);
-        if (serializeSeparatorStr != null) {
-            config.setSerializeSeparator(Boolean.parseBoolean(serializeSeparatorStr));
-        }
+        AnnotationParseHelper.ifBooleanPresent(details, KEY_ID_SERIALIZE_SEPARATOR, config::setSerializeSeparator);
 
         // Separator key
-        String separatorKey = details.get(KEY_ID_SEPARATOR_KEY);
-        if (separatorKey != null) {
-            config.setSeparatorKey(separatorKey);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_ID_SEPARATOR_KEY, config::setSeparatorKey);
 
         // Value key (inner key in STRUCTURED format)
-        String valueKey = details.get(KEY_ID_VALUE_KEY);
-        if (valueKey != null) {
-            config.setValueKey(valueKey);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_ID_VALUE_KEY, config::setValueKey);
 
         return config;
     }
 
     /**
-     * Builds TypeSerializationConfig from annotation details.
+     * Builds TypeSerializationConfig from annotation details for EClass.
      * <p>
      * Note: Discriminator-based type resolution is now orthogonal to type strategy.
      * The discriminatorPath specifies an additional resolution mechanism that works
@@ -363,64 +310,67 @@ public class CodecAspectProvider implements AspectProvider {
         TypeSerializationConfig config = factory.createTypeSerializationConfig();
 
         // Strategy - explicit strategy only, discriminator is orthogonal
-        String strategyStr = details.get(KEY_TYPE_STRATEGY);
-        if (strategyStr != null) {
-            config.setStrategy(parseTypeStrategy(strategyStr));
-        }
-
-        // Include
-        String includeStr = details.get(KEY_TYPE_INCLUDE);
-        if (includeStr != null) {
-            config.setInclude(Boolean.parseBoolean(includeStr));
-        }
+        AnnotationParseHelper.ifEnumPresent(details, KEY_TYPE_STRATEGY, TypeStrategy.class, config::setStrategy);
 
         // Type key
-        String typeKey = details.get(KEY_TYPE_KEY);
-        if (typeKey != null) {
-            config.setTypeKey(typeKey);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_KEY, config::setTypeKey);
 
         // Discriminator path - orthogonal to strategy, provides additional resolution
-        String discriminatorPath = details.get(KEY_TYPE_DISCRIMINATOR_PATH);
-        if (discriminatorPath != null) {
-            config.setDiscriminatorPath(discriminatorPath);
-        }
+        // Class-only: defines where to find discriminator value in JSON
+        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_DISCRIMINATOR_PATH, config::setDiscriminatorPath);
 
         // Map ID for discriminator registry lookup
-        String mapId = details.get(KEY_TYPE_MAP_ID);
-        if (mapId != null) {
-            config.setMapId(mapId);
-        }
+        // Class-only: identifies the discriminator registry
+        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_MAP_ID, config::setMapId);
 
         // Format (PLAIN/STRUCTURED)
-        String formatStr = details.get(KEY_TYPE_FORMAT);
-        if (formatStr != null) {
-            config.setFormat(parseSerializationFormat(formatStr));
-        }
+        AnnotationParseHelper.ifEnumPresent(details, KEY_TYPE_FORMAT, SerializationFormat.class, config::setFormat);
 
         // Schema key
-        String schemaKey = details.get(KEY_TYPE_SCHEMA_KEY);
-        if (schemaKey != null) {
-            config.setSchemaKey(schemaKey);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_SCHEMA_KEY, config::setSchemaKey);
 
         // Name key
-        String nameKey = details.get(KEY_TYPE_NAME_KEY);
-        if (nameKey != null) {
-            config.setNameKey(nameKey);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_NAME_KEY, config::setNameKey);
 
         // Fallback strategy for discriminator resolution
-        String fallbackStrategyStr = details.get(KEY_FALLBACK_STRATEGY);
-        if (fallbackStrategyStr != null) {
-            config.setFallbackStrategy(parseFallbackStrategy(fallbackStrategyStr));
-        }
+        AnnotationParseHelper.ifEnumPresent(details, KEY_FALLBACK_STRATEGY, FallbackStrategy.class, config::setFallbackStrategy);
 
         // Fallback EClass URI
-        String fallbackEClass = details.get(KEY_FALLBACK_ECLASS);
-        if (fallbackEClass != null) {
-            config.setFallbackEClass(fallbackEClass);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_FALLBACK_ECLASS, config::setFallbackEClass);
+
+        return config;
+    }
+
+    /**
+     * Builds TypeSerializationConfig from annotation details for EReference.
+     * <p>
+     * References support a subset of type config keys. Class-only keys like
+     * typeMapId and typeDiscriminatorPath are NOT parsed here - they are ignored
+     * per spec (see 08-discriminator-mapping.md section 7).
+     * </p>
+     */
+    private TypeSerializationConfig buildReferenceTypeConfig(Map<String, String> details) {
+        TypeSerializationConfig config = factory.createTypeSerializationConfig();
+
+        // Strategy
+        AnnotationParseHelper.ifEnumPresent(details, KEY_TYPE_STRATEGY, TypeStrategy.class, config::setStrategy);
+
+        // Type key - valid on references for inline mappings
+        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_KEY, config::setTypeKey);
+
+        // Format (PLAIN/STRUCTURED)
+        AnnotationParseHelper.ifEnumPresent(details, KEY_TYPE_FORMAT, SerializationFormat.class, config::setFormat);
+
+        // Schema key
+        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_SCHEMA_KEY, config::setSchemaKey);
+
+        // Name key
+        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_NAME_KEY, config::setNameKey);
+
+        // NOTE: The following are intentionally NOT parsed for references:
+        // - typeMapId: class-only (type mapping registry is class-level)
+        // - typeDiscriminatorPath: class-only (discriminator path is defined on base class)
+        // See 08-discriminator-mapping.md section 7 "Invalid Configurations"
 
         return config;
     }
@@ -432,52 +382,25 @@ public class CodecAspectProvider implements AspectProvider {
         SuperTypeSerializationConfig config = factory.createSuperTypeSerializationConfig();
 
         // Enabled
-        String serializeStr = details.get(KEY_SUPERTYPE_SERIALIZE);
-        if (serializeStr != null) {
-            config.setEnabled(Boolean.parseBoolean(serializeStr));
-        }
+        AnnotationParseHelper.ifBooleanPresent(details, KEY_SUPERTYPE_SERIALIZE, config::setEnabled);
 
         // Key
-        String key = details.get(KEY_SUPERTYPE_KEY);
-        if (key != null) {
-            config.setSuperTypeKey(key);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_SUPERTYPE_KEY, config::setSuperTypeKey);
 
         // Strategy/Selection
-        String strategyStr = details.get(KEY_SUPERTYPE_STRATEGY);
-        if (strategyStr != null) {
-            config.setSelection(parseSuperTypeSelection(strategyStr));
-        }
+        AnnotationParseHelper.ifEnumPresent(details, KEY_SUPERTYPE_STRATEGY, SuperTypeSelection.class, config::setSelection);
 
         // As array
-        String asArrayStr = details.get(KEY_SUPERTYPE_AS_ARRAY);
-        if (asArrayStr != null) {
-            config.setAsArray(Boolean.parseBoolean(asArrayStr));
-        }
+        AnnotationParseHelper.ifBooleanPresent(details, KEY_SUPERTYPE_AS_ARRAY, config::setAsArray);
 
         // Separator
-        String separator = details.get(KEY_SUPERTYPE_SEPARATOR);
-        if (separator != null) {
-            config.setSeparator(separator);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_SUPERTYPE_SEPARATOR, config::setSeparator);
 
         // Format (PLAIN/STRUCTURED)
-        String formatStr = details.get(KEY_SUPERTYPE_FORMAT);
-        if (formatStr != null) {
-            config.setFormat(parseSerializationFormat(formatStr));
-        }
+        AnnotationParseHelper.ifEnumPresent(details, KEY_SUPERTYPE_FORMAT, SerializationFormat.class, config::setFormat);
 
-        // Schema key
-        String schemaKey = details.get(KEY_SUPERTYPE_SCHEMA_KEY);
-        if (schemaKey != null) {
-            config.setSchemaKey(schemaKey);
-        }
-
-        // Name key
-        String nameKey = details.get(KEY_SUPERTYPE_NAME_KEY);
-        if (nameKey != null) {
-            config.setNameKey(nameKey);
-        }
+        // Note: schemaKey is inherited from TypeConfig, not configured separately for supertype
+        // Note: nameKey removed - superTypeKey has format-dependent default
 
         return config;
     }
@@ -489,28 +412,16 @@ public class CodecAspectProvider implements AspectProvider {
         ReferenceSerializationConfig config = factory.createReferenceSerializationConfig();
 
         // Format (PLAIN/STRUCTURED)
-        String formatStr = details.get(KEY_REF_FORMAT);
-        if (formatStr != null) {
-            config.setFormat(parseSerializationFormat(formatStr));
-        }
+        AnnotationParseHelper.ifEnumPresent(details, KEY_REF_FORMAT, SerializationFormat.class, config::setFormat);
 
         // Ref key
-        String refKey = details.get(KEY_REF_KEY);
-        if (refKey != null) {
-            config.setRefKey(refKey);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_REF_KEY, config::setRefKey);
 
         // Type key
-        String typeKey = details.get(KEY_REF_TYPE_KEY);
-        if (typeKey != null) {
-            config.setTypeKey(typeKey);
-        }
+        AnnotationParseHelper.ifStringPresent(details, KEY_REF_TYPE_KEY, config::setTypeKey);
 
         // Expand
-        String expandStr = details.get(KEY_EXPAND);
-        if (expandStr != null) {
-            config.setExpand(Boolean.parseBoolean(expandStr));
-        }
+        AnnotationParseHelper.ifBooleanPresent(details, KEY_EXPAND, config::setExpand);
 
         return config;
     }
@@ -557,12 +468,11 @@ public class CodecAspectProvider implements AspectProvider {
     }
 
     /**
-     * Checks if the details map contains any type configuration keys.
+     * Checks if the details map contains any type configuration keys (for EClass).
      */
     private boolean hasTypeConfig(Map<String, String> details) {
         return details.containsKey(KEY_TYPE_STRATEGY)
                 || details.containsKey(KEY_TYPE_KEY)
-                || details.containsKey(KEY_TYPE_INCLUDE)
                 || details.containsKey(KEY_TYPE_MAP_ID)
                 || details.containsKey(KEY_TYPE_DISCRIMINATOR_PATH)
                 || details.containsKey(KEY_TYPE_FORMAT)
@@ -573,6 +483,22 @@ public class CodecAspectProvider implements AspectProvider {
     }
 
     /**
+     * Checks if the details map contains any type configuration keys valid for EReference.
+     * <p>
+     * Note: typeMapId and typeDiscriminatorPath are class-only and not checked here.
+     * </p>
+     */
+    private boolean hasReferenceTypeConfig(Map<String, String> details) {
+        return details.containsKey(KEY_TYPE_STRATEGY)
+                || details.containsKey(KEY_TYPE_KEY)
+                || details.containsKey(KEY_TYPE_FORMAT)
+                || details.containsKey(KEY_TYPE_SCHEMA_KEY)
+                || details.containsKey(KEY_TYPE_NAME_KEY);
+        // NOTE: KEY_TYPE_MAP_ID and KEY_TYPE_DISCRIMINATOR_PATH are NOT checked
+        // as they are class-only per spec (08-discriminator-mapping.md section 7)
+    }
+
+    /**
      * Checks if the details map contains any supertype configuration keys.
      */
     private boolean hasSuperTypeConfig(Map<String, String> details) {
@@ -580,9 +506,9 @@ public class CodecAspectProvider implements AspectProvider {
                 || details.containsKey(KEY_SUPERTYPE_KEY)
                 || details.containsKey(KEY_SUPERTYPE_STRATEGY)
                 || details.containsKey(KEY_SUPERTYPE_AS_ARRAY)
-                || details.containsKey(KEY_SUPERTYPE_FORMAT)
-                || details.containsKey(KEY_SUPERTYPE_SCHEMA_KEY)
-                || details.containsKey(KEY_SUPERTYPE_NAME_KEY);
+                || details.containsKey(KEY_SUPERTYPE_FORMAT);
+        // Note: KEY_SUPERTYPE_SCHEMA_KEY removed - supertype inherits schemaKey from Type config
+        // Note: KEY_SUPERTYPE_NAME_KEY removed - superTypeKey has format-dependent default
     }
 
     /**
@@ -595,148 +521,41 @@ public class CodecAspectProvider implements AspectProvider {
     }
 
     // ========================================================================
-    // Strategy Parsers
+    // Diagnostic Helpers
     // ========================================================================
 
     /**
-     * Parses IdStrategy from string value.
-     */
-    private IdStrategy parseIdStrategy(String value) {
-        if (value == null) {
-            return IdStrategy.ID_FIELD;
-        }
-        switch (value.toUpperCase()) {
-            case "ID_FIELD":
-                return IdStrategy.ID_FIELD;
-            case "COMBINED":
-                return IdStrategy.COMBINED;
-            case "NONE":
-                return IdStrategy.NONE;
-            default:
-                return IdStrategy.ID_FIELD;
-        }
-    }
-
-    /**
-     * Parses TypeStrategy from string value.
+     * Checks for class-only annotation keys on a reference and adds diagnostics.
      * <p>
-     * Note: MAPPED strategy has been removed. Discriminator-based type resolution
-     * is now orthogonal to type strategy and configured via discriminatorPath.
+     * Per spec (08-discriminator-mapping.md section 7), typeMapId and typeDiscriminatorPath
+     * are class-only keys. When found on a reference, they are ignored and a warning
+     * diagnostic is added to the aspect.
      * </p>
      */
-    private TypeStrategy parseTypeStrategy(String value) {
-        if (value == null) {
-            return TypeStrategy.URI;
+    private void checkForClassOnlyKeys(ReferenceCodecAspect aspect, Map<String, String> details, EReference reference) {
+        if (details.containsKey(KEY_TYPE_MAP_ID)) {
+            addDiagnostic(aspect, DiagnosticSeverity.WARNING,
+                    "Annotation key '" + KEY_TYPE_MAP_ID + "' is not valid on EReference '" +
+                    reference.getName() + "', ignored (class-only key)",
+                    KEY_TYPE_MAP_ID);
         }
-        switch (value.toUpperCase()) {
-            case "NAME":
-                return TypeStrategy.NAME;
-            case "CLASS":
-                return TypeStrategy.CLASS;
-            case "URI":
-                return TypeStrategy.URI;
-            case "SCHEMA_AND_TYPE":
-                return TypeStrategy.SCHEMA_AND_TYPE;
-            case "NUMERIC":
-                return TypeStrategy.NUMERIC;
-            default:
-                // Log warning for unknown strategy (including deprecated MAPPED)
-                return TypeStrategy.URI;
+        if (details.containsKey(KEY_TYPE_DISCRIMINATOR_PATH)) {
+            addDiagnostic(aspect, DiagnosticSeverity.WARNING,
+                    "Annotation key '" + KEY_TYPE_DISCRIMINATOR_PATH + "' is not valid on EReference '" +
+                    reference.getName() + "', ignored (class-only key)",
+                    KEY_TYPE_DISCRIMINATOR_PATH);
         }
     }
 
     /**
-     * Parses SuperTypeSelection from string value.
+     * Adds a diagnostic to the aspect.
      */
-    private SuperTypeSelection parseSuperTypeSelection(String value) {
-        if (value == null) {
-            return SuperTypeSelection.ALL;
-        }
-        switch (value.toUpperCase()) {
-            case "ALL":
-                return SuperTypeSelection.ALL;
-            case "ALL_EMF":
-                return SuperTypeSelection.ALL_EMF;
-            case "SINGLE":
-                return SuperTypeSelection.SINGLE;
-            case "NONE":
-                return SuperTypeSelection.NONE;
-            default:
-                return SuperTypeSelection.ALL;
-        }
+    private void addDiagnostic(FeatureCodecAspect aspect, DiagnosticSeverity severity, String message, String key) {
+        MetadataDiagnostic diagnostic = MetadataFactory.eINSTANCE.createMetadataDiagnostic();
+        diagnostic.setSeverity(severity);
+        diagnostic.setMessage(message);
+        diagnostic.setKey(key);
+        aspect.getDiagnostics().add(diagnostic);
     }
 
-    /**
-     * Parses SerializationFormat from string value.
-     */
-    private SerializationFormat parseSerializationFormat(String value) {
-        if (value == null) {
-            return SerializationFormat.PLAIN;
-        }
-        switch (value.toUpperCase()) {
-            case "PLAIN":
-                return SerializationFormat.PLAIN;
-            case "STRUCTURED":
-                return SerializationFormat.STRUCTURED;
-            default:
-                return SerializationFormat.PLAIN;
-        }
-    }
-
-    /**
-     * Parses IdKeyMode from string value.
-     */
-    private IdKeyMode parseIdKeyMode(String value) {
-        if (value == null) {
-            return IdKeyMode.ID_ONLY;
-        }
-        switch (value.toUpperCase()) {
-            case "ID_ONLY":
-                return IdKeyMode.ID_ONLY;
-            case "BOTH":
-                return IdKeyMode.BOTH;
-            case "FEATURE_ONLY":
-                return IdKeyMode.FEATURE_ONLY;
-            default:
-                return IdKeyMode.ID_ONLY;
-        }
-    }
-
-    /**
-     * Parses EnumSerializationStrategy from string value.
-     */
-    private EnumSerializationStrategy parseEnumSerializationStrategy(String value) {
-        if (value == null) {
-            return EnumSerializationStrategy.LITERAL;
-        }
-        switch (value.toUpperCase()) {
-            case "LITERAL":
-                return EnumSerializationStrategy.LITERAL;
-            case "VALUE":
-                return EnumSerializationStrategy.VALUE;
-            case "NAME":
-                return EnumSerializationStrategy.NAME;
-            default:
-                return EnumSerializationStrategy.LITERAL;
-        }
-    }
-
-    /**
-     * Parses FallbackStrategy from string value.
-     */
-    private FallbackStrategy parseFallbackStrategy(String value) {
-        if (value == null) {
-            return FallbackStrategy.FALLBACK;
-        }
-        switch (value.toUpperCase()) {
-            case "FALLBACK":
-                return FallbackStrategy.FALLBACK;
-            case "ERROR":
-                return FallbackStrategy.ERROR;
-            case "SKIP":
-                return FallbackStrategy.SKIP;
-            default:
-                return FallbackStrategy.FALLBACK;
-        }
-    }
 }

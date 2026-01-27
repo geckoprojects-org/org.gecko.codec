@@ -155,7 +155,7 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 	 * @generated
 	 * @ordered
 	 */
-	protected static final FallbackStrategy FALLBACK_STRATEGY_EDEFAULT = FallbackStrategy.FALLBACK;
+	protected static final FallbackStrategy FALLBACK_STRATEGY_EDEFAULT = FallbackStrategy.SKIP;
 
 	/**
 	 * The cached value of the '{@link #getFallbackStrategy() <em>Fallback Strategy</em>}' attribute.

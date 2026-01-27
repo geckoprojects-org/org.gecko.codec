@@ -15,6 +15,8 @@ Proactively find ways to misconfigure the codec and identify edge cases that cou
 3. Harden the software against misuse
 4. Document error cases in the spec
 
+**Reference:** [19-test-coverage.md Section 7](../docs/codec-v2-spec/19-test-coverage.md) for test naming conventions
+
 ## Areas to Investigate
 
 ### 1. Configuration Conflicts
@@ -86,8 +88,11 @@ Proactively find ways to misconfigure the codec and identify edge cases that cou
 - [error cases not documented in spec]
 
 ### Recommended Test Cases:
-- [ ] Test: [description] - validates [scenario]
-- [ ] Test: [description] - validates [scenario]
+Follow the naming conventions from [19-test-coverage.md Section 7](../docs/codec-v2-spec/19-test-coverage.md):
+
+- [ ] Test: `misconfig_{what}_{expected}` - validates [scenario]
+  - Model tag: `<!-- @MISCONFIG: [description] -->`
+  - Must assert: value ignored AND diagnostic added
 ```
 
 ## Error Message Quality Checklist

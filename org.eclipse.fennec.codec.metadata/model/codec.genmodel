@@ -25,9 +25,9 @@
       <genEnumLiterals ecoreEnumLiteral="codec.ecore#//DeserializationMode/AUTO_DETECT"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="codec.ecore#//FallbackStrategy">
-      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//FallbackStrategy/FALLBACK"/>
-      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//FallbackStrategy/ERROR"/>
       <genEnumLiterals ecoreEnumLiteral="codec.ecore#//FallbackStrategy/SKIP"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//FallbackStrategy/ERROR"/>
+      <genEnumLiterals ecoreEnumLiteral="codec.ecore#//FallbackStrategy/FALLBACK"/>
     </genEnums>
     <genClasses ecoreClass="codec.ecore#//TypeSerializationConfig">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/mapId"/>

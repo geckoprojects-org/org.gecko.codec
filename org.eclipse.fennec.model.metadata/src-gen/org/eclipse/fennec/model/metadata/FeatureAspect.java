@@ -14,6 +14,8 @@
  */
 package org.eclipse.fennec.model.metadata;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
+
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -25,6 +27,12 @@ import org.osgi.annotation.versioning.ProviderType;
  * Base class for aspects that attach to FeatureMetadata.
  * <!-- end-model-doc -->
  *
+ * <p>
+ * The following features are supported:
+ * </p>
+ * <ul>
+ *   <li>{@link org.eclipse.fennec.model.metadata.FeatureAspect#getEFeature <em>EFeature</em>}</li>
+ * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureAspect()
  * @model abstract="true"
@@ -32,4 +40,29 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface FeatureAspect extends Aspect {
+	/**
+	 * Returns the value of the '<em><b>EFeature</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * The EStructuralFeature this aspect was built from.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>EFeature</em>' reference.
+	 * @see #setEFeature(EStructuralFeature)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureAspect_EFeature()
+	 * @model
+	 * @generated
+	 */
+	EStructuralFeature getEFeature();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.FeatureAspect#getEFeature <em>EFeature</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>EFeature</em>' reference.
+	 * @see #getEFeature()
+	 * @generated
+	 */
+	void setEFeature(EStructuralFeature value);
+
 } // FeatureAspect

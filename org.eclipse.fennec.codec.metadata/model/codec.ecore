@@ -75,19 +75,19 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Controls behavior when a discriminator value cannot be resolved to an EClass."/>
     </eAnnotations>
-    <eLiterals name="FALLBACK" literal="FALLBACK">
+    <eLiterals name="SKIP" literal="SKIP">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Use fallback resolution chain: fallbackEClass, then feature type hint, then reference type. This is the default."/>
+        <details key="documentation" value="Log WARNING and continue to next resolution step (Type Strategy). This is the default. Useful for forward compatibility."/>
       </eAnnotations>
     </eLiterals>
     <eLiterals name="ERROR" value="1" literal="ERROR">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Fail deserialization immediately when discriminator value is not found."/>
+        <details key="documentation" value="Fail immediately when discriminator value is not found in mapping."/>
       </eAnnotations>
     </eLiterals>
-    <eLiterals name="SKIP" value="2" literal="SKIP">
+    <eLiterals name="FALLBACK" value="2" literal="FALLBACK">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Skip the element (don't add to collection), log warning. Useful for forward compatibility."/>
+        <details key="documentation" value="Use fallbackEClass (MUST be set, else ERROR). Does NOT continue to Type Strategy."/>
       </eAnnotations>
     </eLiterals>
   </eClassifiers>
@@ -123,14 +123,14 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackStrategy" eType="#//FallbackStrategy"
-        defaultValueLiteral="FALLBACK">
+        defaultValueLiteral="SKIP">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="What to do when discriminator value is not found in mapping. Default is FALLBACK."/>
+        <details key="documentation" value="What to do when discriminator value is not found in mapping. Default is SKIP (log WARNING, continue to Type Strategy)."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackEClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Explicit fallback EClass URI when discriminator value not found (used when fallbackStrategy is FALLBACK)."/>
+        <details key="documentation" value="Explicit fallback EClass URI when discriminator value not found. Required when fallbackStrategy is FALLBACK."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -350,14 +350,14 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackStrategy" eType="#//FallbackStrategy"
-        defaultValueLiteral="FALLBACK">
+        defaultValueLiteral="SKIP">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="What to do when discriminator value from inline mapping is not found. Default is FALLBACK."/>
+        <details key="documentation" value="What to do when discriminator value from inline mapping is not found. Default is SKIP (log WARNING, continue to Type Strategy)."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackEClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Explicit fallback EClass URI when inline mapping discriminator value not found (used when fallbackStrategy is FALLBACK)."/>
+        <details key="documentation" value="Explicit fallback EClass URI when inline mapping discriminator value not found. Required when fallbackStrategy is FALLBACK."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

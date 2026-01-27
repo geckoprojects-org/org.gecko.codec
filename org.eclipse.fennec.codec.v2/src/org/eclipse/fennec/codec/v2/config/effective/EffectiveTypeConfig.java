@@ -34,7 +34,10 @@ import org.eclipse.fennec.model.metadata.TypeStrategy;
  * @see <a href="docs/codec-v2-serialization-spec.md#3-type-serialization">Spec 3: Type Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+ * @deprecated Use {@link org.eclipse.fennec.codec.config.TypeConfig} instead.
+ *             This class will be removed in a future release.
  */
+@Deprecated
 public final class EffectiveTypeConfig {
 
     private final boolean enabled;

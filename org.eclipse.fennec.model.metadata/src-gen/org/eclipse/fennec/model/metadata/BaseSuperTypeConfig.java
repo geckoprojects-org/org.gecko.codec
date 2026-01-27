@@ -37,8 +37,6 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#isAsArray <em>As Array</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSeparator <em>Separator</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSuperTypeKey <em>Super Type Key</em>}</li>
- *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSchemaKey <em>Schema Key</em>}</li>
- *   <li>{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getNameKey <em>Name Key</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseSuperTypeConfig()
@@ -189,7 +187,7 @@ public interface BaseSuperTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * JSON property name for supertype information.
+	 * JSON property name for supertype information (PLAIN format) or key inside _type object (STRUCTURED format).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Super Type Key</em>' attribute.
 	 * @see #setSuperTypeKey(String)
@@ -208,57 +206,5 @@ public interface BaseSuperTypeConfig extends EObject {
 	 * @generated
 	 */
 	void setSuperTypeKey(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Schema Key</b></em>' attribute.
-	 * The default value is <code>"schema"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Key for schema in STRUCTURED format.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Schema Key</em>' attribute.
-	 * @see #setSchemaKey(String)
-	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseSuperTypeConfig_SchemaKey()
-	 * @model default="schema"
-	 * @generated
-	 */
-	String getSchemaKey();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getSchemaKey <em>Schema Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Schema Key</em>' attribute.
-	 * @see #getSchemaKey()
-	 * @generated
-	 */
-	void setSchemaKey(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Name Key</b></em>' attribute.
-	 * The default value is <code>"name"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Key for name in STRUCTURED format.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Name Key</em>' attribute.
-	 * @see #setNameKey(String)
-	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseSuperTypeConfig_NameKey()
-	 * @model default="name"
-	 * @generated
-	 */
-	String getNameKey();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseSuperTypeConfig#getNameKey <em>Name Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name Key</em>' attribute.
-	 * @see #getNameKey()
-	 * @generated
-	 */
-	void setNameKey(String value);
 
 } // BaseSuperTypeConfig

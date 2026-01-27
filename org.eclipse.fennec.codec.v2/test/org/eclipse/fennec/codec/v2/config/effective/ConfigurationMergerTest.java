@@ -263,7 +263,6 @@ class ConfigurationMergerTest {
             when(metadataService.getClassMetadata(testEClass)).thenReturn(classMetadata);
             when(classMetadata.getAspects()).thenReturn(aspects);
             when(aspect.getTypeConfig()).thenReturn(typeSerConfig);
-            when(typeSerConfig.isInclude()).thenReturn(true);
             when(typeSerConfig.getStrategy()).thenReturn(TypeStrategy.NAME);
             when(typeSerConfig.getTypeKey()).thenReturn("@class");
 

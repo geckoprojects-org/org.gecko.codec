@@ -17,7 +17,6 @@ package org.eclipse.fennec.model.metadata;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -52,7 +51,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface ClassMetadata extends EObject {
+public interface ClassMetadata extends DiagnosticContainer {
 	/**
 	 * Returns the value of the '<em><b>Package</b></em>' container reference.
 	 * It is bidirectional and its opposite is '{@link org.eclipse.fennec.model.metadata.PackageMetadata#getClasses <em>Classes</em>}'.

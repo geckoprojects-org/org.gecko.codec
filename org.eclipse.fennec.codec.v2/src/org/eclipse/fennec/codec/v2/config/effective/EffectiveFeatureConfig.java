@@ -29,7 +29,10 @@ import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
  * @see <a href="docs/codec-v2-serialization-spec.md#9-feature-serialization">Spec 9: Feature Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+ * @deprecated Use {@link org.eclipse.fennec.codec.config.FeatureConfig} instead.
+ *             This class will be removed in a future release.
  */
+@Deprecated
 public final class EffectiveFeatureConfig {
 
     private final EStructuralFeature feature;

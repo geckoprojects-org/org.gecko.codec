@@ -40,8 +40,6 @@ import org.eclipse.fennec.model.metadata.SuperTypeSelection;
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#isAsArray <em>As Array</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getSeparator <em>Separator</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getSuperTypeKey <em>Super Type Key</em>}</li>
- *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getSchemaKey <em>Schema Key</em>}</li>
- *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseSuperTypeConfigImpl#getNameKey <em>Name Key</em>}</li>
  * </ul>
  *
  * @generated
@@ -166,46 +164,6 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 	 * @ordered
 	 */
 	protected String superTypeKey = SUPER_TYPE_KEY_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getSchemaKey() <em>Schema Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSchemaKey()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String SCHEMA_KEY_EDEFAULT = "schema";
-
-	/**
-	 * The cached value of the '{@link #getSchemaKey() <em>Schema Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSchemaKey()
-	 * @generated
-	 * @ordered
-	 */
-	protected String schemaKey = SCHEMA_KEY_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getNameKey() <em>Name Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getNameKey()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String NAME_KEY_EDEFAULT = "name";
-
-	/**
-	 * The cached value of the '{@link #getNameKey() <em>Name Key</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getNameKey()
-	 * @generated
-	 * @ordered
-	 */
-	protected String nameKey = NAME_KEY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -370,52 +328,6 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 	 * @generated
 	 */
 	@Override
-	public String getSchemaKey() {
-		return schemaKey;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setSchemaKey(String newSchemaKey) {
-		String oldSchemaKey = schemaKey;
-		schemaKey = newSchemaKey;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY, oldSchemaKey, schemaKey));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String getNameKey() {
-		return nameKey;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setNameKey(String newNameKey) {
-		String oldNameKey = nameKey;
-		nameKey = newNameKey;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_SUPER_TYPE_CONFIG__NAME_KEY, oldNameKey, nameKey));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__ENABLED:
@@ -430,10 +342,6 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 				return getSeparator();
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY:
 				return getSuperTypeKey();
-			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY:
-				return getSchemaKey();
-			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__NAME_KEY:
-				return getNameKey();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -463,12 +371,6 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 				return;
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY:
 				setSuperTypeKey((String)newValue);
-				return;
-			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY:
-				setSchemaKey((String)newValue);
-				return;
-			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__NAME_KEY:
-				setNameKey((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -500,12 +402,6 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY:
 				setSuperTypeKey(SUPER_TYPE_KEY_EDEFAULT);
 				return;
-			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY:
-				setSchemaKey(SCHEMA_KEY_EDEFAULT);
-				return;
-			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__NAME_KEY:
-				setNameKey(NAME_KEY_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -530,10 +426,6 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 				return SEPARATOR_EDEFAULT == null ? separator != null : !SEPARATOR_EDEFAULT.equals(separator);
 			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY:
 				return SUPER_TYPE_KEY_EDEFAULT == null ? superTypeKey != null : !SUPER_TYPE_KEY_EDEFAULT.equals(superTypeKey);
-			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY:
-				return SCHEMA_KEY_EDEFAULT == null ? schemaKey != null : !SCHEMA_KEY_EDEFAULT.equals(schemaKey);
-			case MetadataPackage.BASE_SUPER_TYPE_CONFIG__NAME_KEY:
-				return NAME_KEY_EDEFAULT == null ? nameKey != null : !NAME_KEY_EDEFAULT.equals(nameKey);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -560,10 +452,6 @@ public abstract class BaseSuperTypeConfigImpl extends MinimalEObjectImpl.Contain
 		result.append(separator);
 		result.append(", superTypeKey: ");
 		result.append(superTypeKey);
-		result.append(", schemaKey: ");
-		result.append(schemaKey);
-		result.append(", nameKey: ");
-		result.append(nameKey);
 		result.append(')');
 		return result.toString();
 	}

@@ -80,6 +80,18 @@ public class ApiAdapterFactory extends AdapterFactoryImpl {
 	protected ApiSwitch<Adapter> modelSwitch =
 		new ApiSwitch<Adapter>() {
 			@Override
+			public Adapter caseMetadataIndexReader(MetadataIndexReader object) {
+				return createMetadataIndexReaderAdapter();
+			}
+			@Override
+			public Adapter caseMetadataIndexWriter(MetadataIndexWriter object) {
+				return createMetadataIndexWriterAdapter();
+			}
+			@Override
+			public Adapter caseMetadataIndex(MetadataIndex object) {
+				return createMetadataIndexAdapter();
+			}
+			@Override
 			public Adapter caseMetadataService(MetadataService object) {
 				return createMetadataServiceAdapter();
 			}
@@ -106,6 +118,48 @@ public class ApiAdapterFactory extends AdapterFactoryImpl {
 		return modelSwitch.doSwitch((EObject)target);
 	}
 
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader <em>Metadata Index Reader</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader
+	 * @generated
+	 */
+	public Adapter createMetadataIndexReaderAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter <em>Metadata Index Writer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter
+	 * @generated
+	 */
+	public Adapter createMetadataIndexWriterAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.api.MetadataIndex <em>Metadata Index</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndex
+	 * @generated
+	 */
+	public Adapter createMetadataIndexAdapter() {
+		return null;
+	}
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.api.MetadataService <em>Metadata Service</em>}'.

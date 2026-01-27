@@ -327,9 +327,9 @@ For `Customer extends Person extends Entity`:
 | `ALL_EMF` | `["Person", "Entity"]` (same as ALL for this example) |
 | `NONE` | (no supertype field) |
 
-**Default:** `SINGLE`
+**Default:** `ALL`
 
-> **See also:** [SuperType Serialization](09-supertype.md) for complete supertype configuration.
+> **See also:** [SuperType Serialization](07-supertype.md) for complete supertype configuration.
 
 ---
 
@@ -371,17 +371,19 @@ Controls behavior when discriminator mapping cannot resolve a type.
 ```java
 public enum FallbackStrategy {
     /**
-     * Fail deserialization with an error.
-     */
-    ERROR,
-
-    /**
-     * Skip the element (don't add to collection), log warning.
+     * Log WARNING, continue to next resolution step (Type Strategy).
+     * This is the default.
      */
     SKIP,
 
     /**
-     * Use fallback resolution chain.
+     * Fail immediately with an error.
+     */
+    ERROR,
+
+    /**
+     * Use fallbackEClass (MUST be set, else ERROR).
+     * Does NOT continue to Type Strategy.
      */
     FALLBACK
 }
@@ -389,7 +391,7 @@ public enum FallbackStrategy {
 
 See [Discriminator Mapping](08-discriminator-mapping.md) for detailed fallback behavior.
 
-**Default:** `FALLBACK`
+**Default:** `SKIP`
 
 ---
 
@@ -455,9 +457,9 @@ public enum TypeHintMode {
 | **TypeStrategy** | URI, NAME, SCHEMA_AND_TYPE, NUMERIC, NONE | URI | [Type](06-type.md) |
 | **IdStrategy** | ID_FIELD, COMBINED | ID_FIELD | [ID](07-id.md) |
 | **IdKeyMode** | ID_ONLY, BOTH, FEATURE_ONLY, NONE | ID_ONLY | [ID](07-id.md) |
-| **SuperTypeSelection** | SINGLE, ALL, ALL_EMF, NONE | SINGLE | [SuperType](09-supertype.md) |
-| **SuperTypePresentation** | ARRAY, STRING | ARRAY | [SuperType](09-supertype.md) |
-| **FallbackStrategy** | ERROR, SKIP, FALLBACK | FALLBACK | [Discriminator Mapping](08-discriminator-mapping.md) |
+| **SuperTypeSelection** | ALL, ALL_EMF, SINGLE, NONE | ALL | [SuperType](07-supertype.md) |
+| **SuperTypePresentation** | ARRAY, STRING | ARRAY | [SuperType](07-supertype.md) |
+| **FallbackStrategy** | SKIP, ERROR, FALLBACK | SKIP | [Discriminator Mapping](08-discriminator-mapping.md) |
 | **DeserializationMode** | STRICT, LENIENT, AUTO_DETECT | AUTO_DETECT | [Load/Save Options](13-load-save-options.md) |
 | **TypeHintMode** | HINT, OVERRIDE | HINT | [Load/Save Options](13-load-save-options.md) |
 

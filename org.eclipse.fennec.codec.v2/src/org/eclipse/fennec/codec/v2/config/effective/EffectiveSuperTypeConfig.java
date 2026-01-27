@@ -27,7 +27,10 @@ import org.eclipse.fennec.model.metadata.SuperTypeSelection;
  * @see <a href="docs/codec-v2-serialization-spec.md#7-supertype-serialization">Spec 7: SuperType Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+ * @deprecated Use {@link org.eclipse.fennec.codec.config.SuperTypeConfig} instead.
+ *             This class will be removed in a future release.
  */
+@Deprecated
 public final class EffectiveSuperTypeConfig {
 
     private final boolean enabled;
@@ -161,7 +164,7 @@ public final class EffectiveSuperTypeConfig {
         private String separator = ",";
         private String superTypeKey = "_supertype";
         private String schemaKey = "schema";
-        private String nameKey = "name";
+        private String nameKey = "supertype";  // Spec default: "supertype" (not "name" - that's for typeNameKey)
         private boolean useSmartCompression = false;
         private boolean validateSuperTypeHierarchy = false;
 

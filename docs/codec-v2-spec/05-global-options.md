@@ -78,6 +78,8 @@ options.put("codec.smartCompression", true);
 </eAnnotations>
 ```
 
+> **Important - Symmetry requirement:** `smartCompression` must be configured **identically** for serialization and deserialization. If you serialize with `smartCompression=true`, you must also deserialize with `smartCompression=true`. A mismatch produces a WARNING at runtime and may cause type resolution failures.
+
 ### 1.5 Examples
 
 #### Example 1: URI Strategy with Containment References

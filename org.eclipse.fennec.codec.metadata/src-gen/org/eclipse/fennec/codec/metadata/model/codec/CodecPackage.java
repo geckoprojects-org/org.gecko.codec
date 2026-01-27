@@ -107,15 +107,6 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int TYPE_SERIALIZATION_CONFIG__STRATEGY = MetadataPackage.BASE_TYPE_CONFIG__STRATEGY;
 
 	/**
-	 * The feature id for the '<em><b>Include</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_SERIALIZATION_CONFIG__INCLUDE = MetadataPackage.BASE_TYPE_CONFIG__INCLUDE;
-
-	/**
 	 * The feature id for the '<em><b>Type Key</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -515,24 +506,6 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int SUPER_TYPE_SERIALIZATION_CONFIG__SUPER_TYPE_KEY = MetadataPackage.BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY;
 
 	/**
-	 * The feature id for the '<em><b>Schema Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SUPER_TYPE_SERIALIZATION_CONFIG__SCHEMA_KEY = MetadataPackage.BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY;
-
-	/**
-	 * The feature id for the '<em><b>Name Key</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SUPER_TYPE_SERIALIZATION_CONFIG__NAME_KEY = MetadataPackage.BASE_SUPER_TYPE_CONFIG__NAME_KEY;
-
-	/**
 	 * The feature id for the '<em><b>Use Smart Compression</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -715,6 +688,24 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int CLASS_CODEC_ASPECT__TYPE_ID = MetadataPackage.CLASS_ASPECT__TYPE_ID;
 
 	/**
+	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_CODEC_ASPECT__DIAGNOSTICS = MetadataPackage.CLASS_ASPECT__DIAGNOSTICS;
+
+	/**
+	 * The feature id for the '<em><b>EClass</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_CODEC_ASPECT__ECLASS = MetadataPackage.CLASS_ASPECT__ECLASS;
+
+	/**
 	 * The feature id for the '<em><b>Type Config</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -795,6 +786,24 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int FEATURE_CODEC_ASPECT__TYPE_ID = MetadataPackage.FEATURE_ASPECT__TYPE_ID;
+
+	/**
+	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_CODEC_ASPECT__DIAGNOSTICS = MetadataPackage.FEATURE_ASPECT__DIAGNOSTICS;
+
+	/**
+	 * The feature id for the '<em><b>EFeature</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_CODEC_ASPECT__EFEATURE = MetadataPackage.FEATURE_ASPECT__EFEATURE;
 
 	/**
 	 * The feature id for the '<em><b>Effective Key</b></em>' attribute.
@@ -904,6 +913,24 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @ordered
 	 */
 	int REFERENCE_CODEC_ASPECT__TYPE_ID = FEATURE_CODEC_ASPECT__TYPE_ID;
+
+	/**
+	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_CODEC_ASPECT__DIAGNOSTICS = FEATURE_CODEC_ASPECT__DIAGNOSTICS;
+
+	/**
+	 * The feature id for the '<em><b>EFeature</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_CODEC_ASPECT__EFEATURE = FEATURE_CODEC_ASPECT__EFEATURE;
 
 	/**
 	 * The feature id for the '<em><b>Effective Key</b></em>' attribute.

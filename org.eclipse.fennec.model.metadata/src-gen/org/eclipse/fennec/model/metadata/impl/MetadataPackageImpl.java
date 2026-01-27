@@ -31,14 +31,18 @@ import org.eclipse.fennec.model.metadata.BaseSuperTypeConfig;
 import org.eclipse.fennec.model.metadata.BaseTypeConfig;
 import org.eclipse.fennec.model.metadata.ClassAspect;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
+import org.eclipse.fennec.model.metadata.DiagnosticContainer;
+import org.eclipse.fennec.model.metadata.DiagnosticSeverity;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.IdStrategy;
+import org.eclipse.fennec.model.metadata.MetadataDiagnostic;
 import org.eclipse.fennec.model.metadata.MetadataFactory;
 import org.eclipse.fennec.model.metadata.MetadataPackage;
 import org.eclipse.fennec.model.metadata.MetadataRegistry;
+import org.eclipse.fennec.model.metadata.PackageAspect;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 import org.eclipse.fennec.model.metadata.ReferenceMetadata;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
@@ -52,6 +56,20 @@ import org.eclipse.fennec.model.metadata.TypeStrategy;
  * @generated
  */
 public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass metadataDiagnosticEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass diagnosticContainerEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -86,6 +104,13 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	private EClass aspectEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass packageAspectEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -149,6 +174,13 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	private EClass metadataRegistryEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum diagnosticSeverityEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -258,6 +290,76 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
+	public EClass getMetadataDiagnostic() {
+		return metadataDiagnosticEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getMetadataDiagnostic_Severity() {
+		return (EAttribute)metadataDiagnosticEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getMetadataDiagnostic_Message() {
+		return (EAttribute)metadataDiagnosticEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getMetadataDiagnostic_Key() {
+		return (EAttribute)metadataDiagnosticEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getDiagnosticContainer() {
+		return diagnosticContainerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getDiagnosticContainer_Diagnostics() {
+		return (EReference)diagnosticContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getDiagnosticContainer_AllDiagnostics() {
+		return (EReference)diagnosticContainerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getBaseTypeConfig() {
 		return baseTypeConfigEClass;
 	}
@@ -288,7 +390,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseTypeConfig_Include() {
+	public EAttribute getBaseTypeConfig_TypeKey() {
 		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -298,7 +400,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseTypeConfig_TypeKey() {
+	public EAttribute getBaseTypeConfig_SchemaKey() {
 		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -308,18 +410,8 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseTypeConfig_SchemaKey() {
-		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EAttribute getBaseTypeConfig_NameKey() {
-		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)baseTypeConfigEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -538,26 +630,6 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseSuperTypeConfig_SchemaKey() {
-		return (EAttribute)baseSuperTypeConfigEClass.getEStructuralFeatures().get(6);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EAttribute getBaseSuperTypeConfig_NameKey() {
-		return (EAttribute)baseSuperTypeConfigEClass.getEStructuralFeatures().get(7);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EClass getAspect() {
 		return aspectEClass;
 	}
@@ -578,6 +650,36 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
+	public EReference getAspect_Diagnostics() {
+		return (EReference)aspectEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getPackageAspect() {
+		return packageAspectEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getPackageAspect_EPackage() {
+		return (EReference)packageAspectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getClassAspect() {
 		return classAspectEClass;
 	}
@@ -588,8 +690,28 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
+	public EReference getClassAspect_EClass() {
+		return (EReference)classAspectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getFeatureAspect() {
 		return featureAspectEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getFeatureAspect_EFeature() {
+		return (EReference)featureAspectEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -700,6 +822,16 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	@Override
 	public EReference getPackageMetadata_Classes() {
 		return (EReference)packageMetadataEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getPackageMetadata_Aspects() {
+		return (EReference)packageMetadataEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -1018,6 +1150,16 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
+	public EEnum getDiagnosticSeverity() {
+		return diagnosticSeverityEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getSerializationFormat() {
 		return serializationFormatEEnum;
 	}
@@ -1101,10 +1243,18 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		isCreated = true;
 
 		// Create classes and their features
+		metadataDiagnosticEClass = createEClass(METADATA_DIAGNOSTIC);
+		createEAttribute(metadataDiagnosticEClass, METADATA_DIAGNOSTIC__SEVERITY);
+		createEAttribute(metadataDiagnosticEClass, METADATA_DIAGNOSTIC__MESSAGE);
+		createEAttribute(metadataDiagnosticEClass, METADATA_DIAGNOSTIC__KEY);
+
+		diagnosticContainerEClass = createEClass(DIAGNOSTIC_CONTAINER);
+		createEReference(diagnosticContainerEClass, DIAGNOSTIC_CONTAINER__DIAGNOSTICS);
+		createEReference(diagnosticContainerEClass, DIAGNOSTIC_CONTAINER__ALL_DIAGNOSTICS);
+
 		baseTypeConfigEClass = createEClass(BASE_TYPE_CONFIG);
 		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__FORMAT);
 		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__STRATEGY);
-		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__INCLUDE);
 		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__TYPE_KEY);
 		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__SCHEMA_KEY);
 		createEAttribute(baseTypeConfigEClass, BASE_TYPE_CONFIG__NAME_KEY);
@@ -1132,15 +1282,19 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__AS_ARRAY);
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__SEPARATOR);
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY);
-		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__SCHEMA_KEY);
-		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__NAME_KEY);
 
 		aspectEClass = createEClass(ASPECT);
 		createEAttribute(aspectEClass, ASPECT__TYPE_ID);
+		createEReference(aspectEClass, ASPECT__DIAGNOSTICS);
+
+		packageAspectEClass = createEClass(PACKAGE_ASPECT);
+		createEReference(packageAspectEClass, PACKAGE_ASPECT__EPACKAGE);
 
 		classAspectEClass = createEClass(CLASS_ASPECT);
+		createEReference(classAspectEClass, CLASS_ASPECT__ECLASS);
 
 		featureAspectEClass = createEClass(FEATURE_ASPECT);
+		createEReference(featureAspectEClass, FEATURE_ASPECT__EFEATURE);
 
 		baseFeatureConfigEClass = createEClass(BASE_FEATURE_CONFIG);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__KEY);
@@ -1154,6 +1308,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		createEReference(packageMetadataEClass, PACKAGE_METADATA__EPACKAGE);
 		createEAttribute(packageMetadataEClass, PACKAGE_METADATA__NS_URI);
 		createEReference(packageMetadataEClass, PACKAGE_METADATA__CLASSES);
+		createEReference(packageMetadataEClass, PACKAGE_METADATA__ASPECTS);
 
 		classMetadataEClass = createEClass(CLASS_METADATA);
 		createEReference(classMetadataEClass, CLASS_METADATA__PACKAGE);
@@ -1192,6 +1347,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		createEReference(metadataRegistryEClass, METADATA_REGISTRY__PACKAGES);
 
 		// Create enums
+		diagnosticSeverityEEnum = createEEnum(DIAGNOSTIC_SEVERITY);
 		serializationFormatEEnum = createEEnum(SERIALIZATION_FORMAT);
 		typeStrategyEEnum = createEEnum(TYPE_STRATEGY);
 		idStrategyEEnum = createEEnum(ID_STRATEGY);
@@ -1228,16 +1384,28 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		packageAspectEClass.getESuperTypes().add(this.getAspect());
 		classAspectEClass.getESuperTypes().add(this.getAspect());
 		featureAspectEClass.getESuperTypes().add(this.getAspect());
+		packageMetadataEClass.getESuperTypes().add(this.getDiagnosticContainer());
+		classMetadataEClass.getESuperTypes().add(this.getDiagnosticContainer());
+		featureMetadataEClass.getESuperTypes().add(this.getDiagnosticContainer());
 		attributeMetadataEClass.getESuperTypes().add(this.getFeatureMetadata());
 		referenceMetadataEClass.getESuperTypes().add(this.getFeatureMetadata());
 
 		// Initialize classes, features, and operations; add parameters
+		initEClass(metadataDiagnosticEClass, MetadataDiagnostic.class, "MetadataDiagnostic", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getMetadataDiagnostic_Severity(), this.getDiagnosticSeverity(), "severity", "WARNING", 0, 1, MetadataDiagnostic.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMetadataDiagnostic_Message(), ecorePackage.getEString(), "message", null, 0, 1, MetadataDiagnostic.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMetadataDiagnostic_Key(), ecorePackage.getEString(), "key", null, 0, 1, MetadataDiagnostic.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(diagnosticContainerEClass, DiagnosticContainer.class, "DiagnosticContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getDiagnosticContainer_Diagnostics(), this.getMetadataDiagnostic(), null, "diagnostics", null, 0, -1, DiagnosticContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getDiagnosticContainer_AllDiagnostics(), this.getMetadataDiagnostic(), null, "allDiagnostics", null, 0, -1, DiagnosticContainer.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+
 		initEClass(baseTypeConfigEClass, BaseTypeConfig.class, "BaseTypeConfig", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBaseTypeConfig_Format(), this.getSerializationFormat(), "format", "PLAIN", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseTypeConfig_Strategy(), this.getTypeStrategy(), "strategy", "URI", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getBaseTypeConfig_Include(), ecorePackage.getEBoolean(), "include", "true", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseTypeConfig_TypeKey(), ecorePackage.getEString(), "typeKey", "_type", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseTypeConfig_SchemaKey(), ecorePackage.getEString(), "schemaKey", "schema", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseTypeConfig_NameKey(), ecorePackage.getEString(), "nameKey", "name", 0, 1, BaseTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1265,15 +1433,19 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEAttribute(getBaseSuperTypeConfig_AsArray(), ecorePackage.getEBoolean(), "asArray", "true", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseSuperTypeConfig_Separator(), ecorePackage.getEString(), "separator", ",", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseSuperTypeConfig_SuperTypeKey(), ecorePackage.getEString(), "superTypeKey", "_supertype", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getBaseSuperTypeConfig_SchemaKey(), ecorePackage.getEString(), "schemaKey", "schema", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getBaseSuperTypeConfig_NameKey(), ecorePackage.getEString(), "nameKey", "name", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(aspectEClass, Aspect.class, "Aspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAspect_TypeId(), ecorePackage.getEString(), "typeId", null, 0, 1, Aspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAspect_Diagnostics(), this.getMetadataDiagnostic(), null, "diagnostics", null, 0, -1, Aspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(packageAspectEClass, PackageAspect.class, "PackageAspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getPackageAspect_EPackage(), ecorePackage.getEPackage(), null, "ePackage", null, 0, 1, PackageAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(classAspectEClass, ClassAspect.class, "ClassAspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getClassAspect_EClass(), ecorePackage.getEClass(), null, "eClass", null, 0, 1, ClassAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(featureAspectEClass, FeatureAspect.class, "FeatureAspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getFeatureAspect_EFeature(), ecorePackage.getEStructuralFeature(), null, "eFeature", null, 0, 1, FeatureAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(baseFeatureConfigEClass, BaseFeatureConfig.class, "BaseFeatureConfig", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBaseFeatureConfig_Key(), ecorePackage.getEString(), "key", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1287,6 +1459,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEReference(getPackageMetadata_EPackage(), ecorePackage.getEPackage(), null, "ePackage", null, 0, 1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPackageMetadata_NsURI(), ecorePackage.getEString(), "nsURI", null, 0, 1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPackageMetadata_Classes(), this.getClassMetadata(), this.getClassMetadata_Package(), "classes", null, 0, -1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPackageMetadata_Aspects(), this.getPackageAspect(), null, "aspects", null, 0, -1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(classMetadataEClass, ClassMetadata.class, "ClassMetadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getClassMetadata_Package(), this.getPackageMetadata(), this.getPackageMetadata_Classes(), "package", null, 0, 1, ClassMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1325,6 +1498,10 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEReference(getMetadataRegistry_Packages(), this.getPackageMetadata(), null, "packages", null, 0, -1, MetadataRegistry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
+		initEEnum(diagnosticSeverityEEnum, DiagnosticSeverity.class, "DiagnosticSeverity");
+		addEEnumLiteral(diagnosticSeverityEEnum, DiagnosticSeverity.WARNING);
+		addEEnumLiteral(diagnosticSeverityEEnum, DiagnosticSeverity.ERROR);
+
 		initEEnum(serializationFormatEEnum, SerializationFormat.class, "SerializationFormat");
 		addEEnumLiteral(serializationFormatEEnum, SerializationFormat.PLAIN);
 		addEEnumLiteral(serializationFormatEEnum, SerializationFormat.STRUCTURED);
@@ -1335,6 +1512,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.URI);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.SCHEMA_AND_TYPE);
 		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.NUMERIC);
+		addEEnumLiteral(typeStrategyEEnum, TypeStrategy.NONE);
 
 		initEEnum(idStrategyEEnum, IdStrategy.class, "IdStrategy");
 		addEEnumLiteral(idStrategyEEnum, IdStrategy.ID_FIELD);

@@ -12,6 +12,62 @@
     <details key="resource" value="XMI"/>
     <details key="copyrightText" value="Copyright (c) 2012 - 2025 Data In Motion and others.&#xA;All rights reserved.&#xA;&#xA;This program and the accompanying materials are made&#xA;available under the terms of the Eclipse Public License 2.0&#xA;which is available at https://www.eclipse.org/legal/epl-2.0/&#xA;&#xA;SPDX-License-Identifier: EPL-2.0&#xA;&#xA;Contributors:&#xA;    Data In Motion - initial API and implementation&#xA;"/>
   </eAnnotations>
+  <eClassifiers xsi:type="ecore:EEnum" name="DiagnosticSeverity">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Severity level for metadata diagnostics."/>
+    </eAnnotations>
+    <eLiterals name="WARNING" literal="WARNING">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Non-fatal issue, operation continues."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="ERROR" value="1" literal="ERROR">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Fatal issue, may cause operation to fail."/>
+      </eAnnotations>
+    </eLiterals>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MetadataDiagnostic">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Diagnostic message for annotation parsing issues. The container of this diagnostic identifies the source metadata element."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="severity" eType="#//DiagnosticSeverity"
+        defaultValueLiteral="WARNING">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Severity level of the diagnostic."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Human-readable diagnostic message."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The annotation key that caused the issue (if applicable)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DiagnosticContainer" abstract="true"
+      interface="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Interface for metadata elements that can contain diagnostics."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="diagnostics" upperBound="-1"
+        eType="#//MetadataDiagnostic" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Diagnostics directly owned by this element."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="allDiagnostics" upperBound="-1"
+        eType="#//MetadataDiagnostic" changeable="false" volatile="true" transient="true"
+        derived="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="All metadata diagnostics including those from contained metadata elements. For FeatureMetadata: same as diagnostics. For ClassMetadata: diagnostics + all feature diagnostics. For PackageMetadata: diagnostics + all class allDiagnostics. Note: Aspect diagnostics are separate and not included here."/>
+        <details key="get" value="&lt;%org.eclipse.emf.common.util.EList%>&lt;&lt;%org.eclipse.fennec.model.metadata.MetadataDiagnostic%>> result = new &lt;%org.eclipse.emf.common.util.BasicEList%>&lt;>();&#xA;result.addAll(getDiagnostics());&#xA;&lt;%org.eclipse.emf.ecore.EClass%> eClassType = eClass();&#xA;if (eClassType == &lt;%org.eclipse.fennec.model.metadata.MetadataPackage%>.Literals.PACKAGE_METADATA) {&#xA;    for (&lt;%org.eclipse.fennec.model.metadata.ClassMetadata%> classMetadata : ((&lt;%org.eclipse.fennec.model.metadata.PackageMetadata%>) this).getClasses()) {&#xA;        result.addAll(classMetadata.getAllDiagnostics());&#xA;    }&#xA;} else if (eClassType == MetadataPackage.Literals.CLASS_METADATA) {&#xA;    for (&lt;%org.eclipse.fennec.model.metadata.FeatureMetadata%> featureMetadata : ((&lt;%org.eclipse.fennec.model.metadata.ClassMetadata%>) this).getFeatures()) {&#xA;        result.addAll(featureMetadata.getAllDiagnostics());&#xA;    }&#xA;}&#xA;return result;"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="SerializationFormat">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Codec-wide format strategy for serialization output. Applies uniformly to all serialization targets (type, ID, reference, supertype)."/>
@@ -54,6 +110,11 @@
     <eLiterals name="NUMERIC" value="4" literal="NUMERIC">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Use numeric classifier IDs. WARNING: IDs can change when model evolves."/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="NONE" value="5" literal="NONE">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="No type information serialized. Requires CODEC_ROOT_TYPE hint for deserialization. Replaces deprecated typeInclude=false."/>
       </eAnnotations>
     </eLiterals>
   </eClassifiers>
@@ -156,12 +217,6 @@
         defaultValueLiteral="URI">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Type serialization strategy (what information to transport)."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="include" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-        defaultValueLiteral="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Whether to include type information."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -302,19 +357,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="superTypeKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         defaultValueLiteral="_supertype">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="JSON property name for supertype information."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="schemaKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-        defaultValueLiteral="schema">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Key for schema in STRUCTURED format."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nameKey" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-        defaultValueLiteral="name">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Key for name in STRUCTURED format."/>
+        <details key="documentation" value="JSON property name for supertype information (PLAIN format) or key inside _type object (STRUCTURED format)."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -327,16 +370,42 @@
         <details key="documentation" value="Unique identifier for this aspect type (e.g., 'codec', 'orm', 'history')."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="diagnostics" upperBound="-1"
+        eType="#//MetadataDiagnostic" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Diagnostics collected during aspect creation (e.g., annotation parsing warnings)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PackageAspect" abstract="true" eSuperTypes="#//Aspect">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Base class for aspects that attach to PackageMetadata."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ePackage" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EPackage">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The EPackage this aspect was built from."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ClassAspect" abstract="true" eSuperTypes="#//Aspect">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Base class for aspects that attach to ClassMetadata."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eClass" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EClass">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The EClass this aspect was built from."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FeatureAspect" abstract="true" eSuperTypes="#//Aspect">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Base class for aspects that attach to FeatureMetadata."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="eFeature" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EStructuralFeature">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The EStructuralFeature this aspect was built from."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BaseFeatureConfig" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -373,7 +442,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PackageMetadata">
+  <eClassifiers xsi:type="ecore:EClass" name="PackageMetadata" eSuperTypes="#//DiagnosticContainer">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Pre-computed metadata for an EPackage. Contains resolved configuration and metadata for all classes in the package."/>
     </eAnnotations>
@@ -393,8 +462,14 @@
         <details key="documentation" value="Metadata for all EClasses in this package."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aspects" upperBound="-1"
+        eType="#//PackageAspect" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Aspects attached to this package (codec, ORM, etc.)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ClassMetadata">
+  <eClassifiers xsi:type="ecore:EClass" name="ClassMetadata" eSuperTypes="#//DiagnosticContainer">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Pre-computed metadata for an EClass. Contains resolved serialization configuration."/>
     </eAnnotations>
@@ -462,7 +537,7 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FeatureMetadata" abstract="true">
+  <eClassifiers xsi:type="ecore:EClass" name="FeatureMetadata" abstract="true" eSuperTypes="#//DiagnosticContainer">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Base class for pre-computed metadata about an EStructuralFeature."/>
     </eAnnotations>

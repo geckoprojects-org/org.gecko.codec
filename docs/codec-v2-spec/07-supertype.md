@@ -146,18 +146,133 @@ The `superTypeStrategy` configuration controls which supertypes to include:
 
 ## 6. SuperType Configuration
 
+### 6.0 Configuration Constraints
+
+SuperType configuration has dependencies on Type configuration:
+
+| Constraint | Condition | Result |
+|------------|-----------|--------|
+| **STRUCTURED requires Type** | `typeFormat=STRUCTURED` + `typeStrategy=NONE` + `superTypeSerialize=true` | **ERROR** - Cannot write supertype inside `_type` object when no `_type` is written |
+| **Format follows Type** | `superTypeFormat` not explicitly set | Inherits from `typeFormat` |
+| **Key default depends on format** | `superTypeKey` not explicitly set | PLAIN → `_supertype`, STRUCTURED → `supertype` |
+| **Scope follows Type** | `typeScope` controls where supertype is written | SuperType written only for objects matching `typeScope` |
+| **Separator symmetry** | Custom `superTypeSeparator` used during serialization | Same separator MUST be configured for deserialization |
+| **Custom reader conflict** | STRUCTURED + `typeValueReaderName` + `superTypeValueReaderName` | `superTypeValueReaderName` IGNORED + **WARNING** |
+| **Custom writer conflict** | STRUCTURED + `typeValueWriterName` + `superTypeValueWriterName` | `superTypeValueWriterName` IGNORED + **WARNING** |
+
+#### 6.0.1 STRUCTURED Format + typeStrategy=NONE
+
+**Invalid configuration:**
+```java
+// ERROR: supertype needs _type object but typeStrategy=NONE means no _type
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeStrategy(TypeStrategy.NONE)        // No _type field
+    .typeFormat(SerializationFormat.STRUCTURED)
+    .superTypeSerialize(true)               // Wants to write supertype
+    .build();
+```
+
+**Valid alternatives:**
+```java
+// Option 1: Use PLAIN format (supertype becomes standalone field)
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeStrategy(TypeStrategy.NONE)
+    .typeFormat(SerializationFormat.PLAIN)  // PLAIN allows standalone _supertype
+    .superTypeSerialize(true)
+    .build();
+// Output: { "_supertype": ["Entity"], "name": "John" }
+
+// Option 2: Don't serialize supertype when type is disabled
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeStrategy(TypeStrategy.NONE)
+    .superTypeSerialize(false)              // Disabled
+    .build();
+// Output: { "name": "John" }
+```
+
+#### 6.0.2 Separator Symmetry Requirement
+
+When using string presentation (`superTypeAsArray=false`) with a **non-default separator**, the same separator must be configured for both serialization and deserialization:
+
+```java
+// Serialization with custom separator
+CodecConfiguration serConfig = CodecConfiguration.builder()
+    .superTypeSerialize(true)
+    .superTypeAsArray(false)
+    .superTypeSeparator("|")  // Custom separator
+    .build();
+// Output: "_supertype": "Entity|Auditable"
+
+// Deserialization MUST match:
+CodecConfiguration deserConfig = CodecConfiguration.builder()
+    .superTypeAsArray(false)
+    .superTypeSeparator("|")  // Same separator required!
+    .build();
+// Otherwise "Entity|Auditable" won't be parsed correctly
+```
+
+#### 6.0.3 Custom ValueReader/ValueWriter Conflict in STRUCTURED Format
+
+In STRUCTURED format, the `_type` field is a JSON object containing both type and supertype information:
+```json
+{ "_type": { "schema": "...", "type": "Person", "supertype": ["Entity"] } }
+```
+
+When a **custom TypeValueReader** is configured, it reads the **entire** `_type` object. If a **SuperTypeValueReader** is also configured, there's a conflict - both want to process the same data.
+
+**Resolution:** In STRUCTURED format, when both are configured:
+- `superTypeValueReaderName` is **IGNORED**
+- A **WARNING diagnostic** is raised
+- The custom TypeValueReader is responsible for handling supertype data internally
+
+The same applies to writers: `superTypeValueWriterName` is ignored when `typeValueWriterName` is configured in STRUCTURED format.
+
+**Workaround:** Handle supertype processing inside your custom TypeValueReader/TypeValueWriter:
+
+```java
+public class MyTypeValueReader implements TypeValueReader {
+    @Override
+    public String readTypeValue(JsonNode typeNode, DeserializationContext ctx) {
+        // Read type info
+        String schema = typeNode.get("schema").asText();
+        String type = typeNode.get("type").asText();
+
+        // Also handle supertype if present (since superTypeValueReader is ignored)
+        if (typeNode.has("supertype")) {
+            JsonNode supertypeNode = typeNode.get("supertype");
+            // ... custom supertype processing
+        }
+
+        return schema + "#//" + type;
+    }
+}
+```
+
+> **Note:** In PLAIN format, there's no conflict - TypeValueReader reads `_type` (string) and SuperTypeValueReader reads `_supertype` (separate field).
+
 ### 6.1 Configuration Keys
 
 | Annotation Key | Property Key | Default | Description |
 |----------------|--------------|---------|-------------|
 | `superTypeSerialize` | `codec.superTypeSerialize` | `false` | Enable supertype serialization |
 | `superTypeStrategy` | `codec.superTypeStrategy` | `ALL` | Which supertypes to include |
-| `superTypeKey` | `codec.superTypeKey` | `_supertype` | JSON property name |
+| `superTypeKey` | `codec.superTypeKey` | (format-dependent) | JSON property name for supertype |
 | `superTypeAsArray` | `codec.superTypeAsArray` | `true` | Array (true) or string (false) |
 | `superTypeSeparator` | `codec.superTypeSeparator` | `,` | Separator for string presentation |
 | `superTypeFormat` | `codec.superTypeFormat` | (inherits from `typeFormat`) | Output format (PLAIN/STRUCTURED) |
-| `superTypeSchemaKey` | `codec.superTypeSchemaKey` | `schema` | Schema key in STRUCTURED |
-| `superTypeNameKey` | `codec.superTypeNameKey` | `type` | Name key in STRUCTURED |
+
+**`superTypeKey` default value:**
+
+The default value for `superTypeKey` depends on the effective `superTypeFormat`:
+
+| Effective Format | Default `superTypeKey` | Reason |
+|------------------|------------------------|--------|
+| PLAIN | `_supertype` | Underscore prefix for root-level metadata fields |
+| STRUCTURED | `supertype` | No underscore inside `_type` object (follows `typeNameKey` pattern) |
+
+When explicitly set, the configured value is used regardless of format.
+
+> **Note:** In STRUCTURED format, the `schemaKey` is inherited from Type configuration (see [Type Serialization](06-type.md)).
 
 > **Note:** SuperType configuration only applies at **Global** and **EClass** level. It is invalid on EReference or EAttribute (SuperType describes class inheritance, not how an object is accessed).
 
@@ -281,7 +396,47 @@ Or with STRING presentation (single value, no separator needed):
 
 ---
 
-## 8. Deserialization
+## 8. Serialization Flow
+
+SuperType serialization happens as **step 3d** in the Type Serialization Flow (see [06-type.md](06-type.md) section 5).
+
+### 8.1 Serialization Steps
+
+```
+1. Check superTypeSerialize
+   └─ false → DONE (no supertype written)
+   └─ true → Continue
+
+2. Check superTypeStrategy
+   └─ NONE → DONE (no supertype written)
+   └─ ALL/ALL_EMF/SINGLE → Collect supertypes from EClass hierarchy
+
+3. Check superTypeValueWriterName
+   ├─ Configured → Delegate to custom writer
+   │              Input: EObject, List<EClass> (collected supertypes)
+   │              Output: value to write (array or string)
+   │              Note: In STRUCTURED format with typeValueWriterName,
+   │                    superTypeValueWriterName is IGNORED (see §6.0.3)
+   │
+   └─ Not configured → Continue with built-in:
+
+4. Apply smart compression (global setting)
+   └─ For each supertype EClass:
+      ├─ Same namespace as ROOT → simple name ("Entity")
+      └─ Different namespace → full URI ("http://other/1.0#//Base")
+
+5. Format output based on superTypeAsArray
+   ├─ true → JSON array: ["Entity", "http://other/1.0#//Base"]
+   └─ false → Separator-joined string: "Entity,http://other/1.0#//Base"
+
+6. Write to JSON based on effective format
+   ├─ PLAIN → Write standalone field at superTypeKey (default: _supertype)
+   └─ STRUCTURED → Write inside _type object at superTypeKey (default: supertype)
+```
+
+---
+
+## 9. Deserialization
 
 SuperType information is typically **not needed for deserialization** since the concrete type (`_type`) fully determines the EClass to instantiate. The inheritance hierarchy is already defined in the EMF model.
 
@@ -292,25 +447,42 @@ SuperType information is typically **not needed for deserialization** since the 
 | PLAIN | Standalone `_supertype` field | `SuperTypeDeserializationEntry` |
 | STRUCTURED | Inside `_type` object as `supertype` field | `TypeDeserializationEntry` |
 
-### 8.1 Default Behavior (No Validation)
+### 9.1 Default Behavior (LENIENT mode)
 
-By default (`validateSuperTypeHierarchy=false`), the deserializer:
-1. Parses the supertype field (for both PLAIN and STRUCTURED formats)
-2. Ignores the parsed values (no validation)
-3. Resolves the EClass from the `_type` field only
-4. Creates the EObject based on the resolved type
+By default (`DeserializationMode.LENIENT` or `AUTO_DETECT`), the deserializer:
+1. **Skips** the supertype field entirely (does not read or parse)
+2. Resolves the EClass from the `_type` field only
+3. Creates the EObject based on the resolved type
 
-### 8.2 Validation Mode
+> **Note:** In LENIENT mode, the supertype field is simply ignored - no parsing overhead.
 
-When `validateSuperTypeHierarchy=true`, the deserializer:
-1. Parses the supertype field (array or separator-joined string)
-2. Resolves the EClass from the `_type` field
-3. Validates that declared supertypes match the resolved EClass's actual supertypes
-4. **Fails deserialization** if hierarchy doesn't match
+### 9.2 Strict Mode Validation
 
-**This validation applies to both formats:**
-- **PLAIN format**: Validation occurs after the `_supertype` field is parsed
-- **STRUCTURED format**: Validation occurs while parsing the `_type` object, after extracting the `supertype` field
+When `DeserializationMode.STRICT` is set, the deserializer validates supertype hierarchy:
+
+```
+1. Resolve EClass from _type field (steps 1-4 in Type Deserialization Flow)
+
+2. Check superTypeValueReaderName (PLAIN format only)
+   ├─ Configured → Delegate to custom reader
+   │              Input: raw JSON value (array or string)
+   │              Output: List<String> (supertype identifiers)
+   │              Note: In STRUCTURED format with typeValueReaderName,
+   │                    superTypeValueReaderName is IGNORED (see §6.0.3)
+   │
+   └─ Not configured → Continue with built-in:
+
+3. Parse supertype field
+   ├─ Array → Extract each element as string
+   └─ String → Split by superTypeSeparator (MUST match serialization!)
+
+4. Validate each declared supertype
+   └─ For each supertype identifier:
+      ├─ Resolve to EClass (simple name or full URI)
+      └─ Check: Is it in resolved EClass's getEAllSuperTypes()?
+         ├─ YES → Continue
+         └─ NO → Validation FAILURE
+```
 
 **Validation Rules:**
 - Each declared supertype must exist in the EClass's `getEAllSuperTypes()` hierarchy
@@ -319,21 +491,25 @@ When `validateSuperTypeHierarchy=true`, the deserializer:
 - Missing supertypes in JSON (subset) is acceptable
 - Extra supertypes in JSON (not in actual hierarchy) causes validation failure
 
-### 8.3 Configuration
+### 9.3 Configuration
 
-| Annotation Key | Property Key | Default | Description |
-|----------------|--------------|---------|-------------|
-| `superTypeValidate` | `codec.superTypeValidate` | `false` | Validate supertype hierarchy on deserialization |
+SuperType validation is controlled by `DeserializationMode` (see [Load/Save Options](13-load-save-options.md)):
+
+| Mode | SuperType Behavior |
+|------|-------------------|
+| `STRICT` | Read and validate hierarchy, fail on mismatch |
+| `LENIENT` | Skip entirely (no read, no validation) |
+| `AUTO_DETECT` | Same as LENIENT for supertype |
 
 **Java Builder:**
 ```java
-CodecConfiguration config = CodecConfiguration.builder()
-    .superTypeSerialize(true)
-    .superTypeValidate(true)  // Enable strict validation
-    .build();
+Map<String, Object> options = Map.of(
+    CodecResourceOptions.DESERIALIZATION_MODE, DeserializationMode.STRICT
+);
+resource.load(inputStream, options);
 ```
 
-### 8.4 Deserialization Examples
+### 9.4 Deserialization Examples
 
 **PLAIN format with ARRAY presentation:**
 ```json
@@ -377,7 +553,7 @@ CodecConfiguration config = CodecConfiguration.builder()
 }
 ```
 
-### 8.5 Error Handling
+### 9.5 Error Handling
 
 When validation fails:
 - Throw `SuperTypeValidationException` with descriptive message

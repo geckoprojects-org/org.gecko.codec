@@ -35,11 +35,15 @@ Standard TypeStrategy values (URI, NAME, CLASS, etc.) represent the type directl
 During deserialization, type resolution follows this priority:
 
 ```
-1. Inline Mapping (if configured on the EReference)
-2. Type Mapping Registry (if configured via typeMapping source)
+1. Type Mapping Registry (if configured on EClass or base class)
+2. Inline Mapping (if configured on the EReference)
 3. Type Strategy Resolution (URI, NAME, etc.)
-4. Fallback (CODEC_ROOT_TYPE hint, reference type)
+4. Fallback (reference type, CODEC_FEATURE_TYPE_HINTS, CODEC_ROOT_TYPE)
 ```
+
+> **Design rationale:** Type Mapping Registry has highest priority because it's our implementation of Jackson's `@JsonTypeInfo` + `@JsonSubTypes` pattern - the primary, flexible mechanism for polymorphic type handling. Inline Mapping is a simpler, more static variant for per-reference cases.
+
+See [Type Serialization - Type Resolution Flow](06-type.md#530-type-resolution-flow) for the complete deserialization flow with all decision points.
 
 ---
 
@@ -61,14 +65,15 @@ Discriminator mappings use **dedicated annotation sources** (not the main `http:
 | — | `codec.typeMapId` | ✅ | ❌ | Registry ID (embedded in annotation source URI) |
 | `typeDiscriminatorPath` | `codec.typeDiscriminatorPath` | ✅ | ❌ | JSON path to discriminator value (dot notation) |
 | `{value}` | — | ✅ | ✅ | Mapping entries as direct key/value details |
-| — | `codec.typeMappings` | ✅ | ❌ | Mappings as nested Map (for property config) |
+| — | `codec.typeMappings` | ✅ | ❌ | Mappings as nested Map (for EClass property config) |
+| — | `codec.inlineMappings` | ❌ | ✅ | Mappings as nested Map (for EReference property config) |
 | `typeDiscriminator` | `codec.typeDiscriminator` | ✅ | ❌ | This class's discriminator value (distributed registration) |
-| `fallbackStrategy` | `codec.fallbackStrategy` | ✅ | ✅ | `ERROR`, `SKIP`, `FALLBACK` (**default:** `FALLBACK`) |
+| `fallbackStrategy` | `codec.fallbackStrategy` | ✅ | ✅ | `ERROR`, `SKIP`, `FALLBACK` (**default:** `SKIP`) |
 | `fallbackEClass` | `codec.fallbackEClass` | ✅ | ✅ | Explicit fallback EClass URI |
 
 > **Note:** The `{value}` entries are mapping entries where key = discriminator value and value = EClass URI. These are direct annotation details, not prefixed with `codec.`.
 
-**Implementation:** `CodecAnnotationConstants.KEY_TYPE_MAP_ID`, `KEY_TYPE_DISCRIMINATOR`, `KEY_TYPE_DISCRIMINATOR_PATH`, `ANNOTATION_SOURCE_TYPE_MAPPING_PREFIX`, `ANNOTATION_SOURCE_INLINE_MAPPING`
+**Implementation:** `CodecAnnotationConstants.KEY_TYPE_MAP_ID`, `KEY_TYPE_DISCRIMINATOR`, `KEY_TYPE_DISCRIMINATOR_PATH`, `KEY_INLINE_MAPPINGS`, `ANNOTATION_SOURCE_TYPE_MAPPING_PREFIX`, `ANNOTATION_SOURCE_INLINE_MAPPING`
 
 ---
 
@@ -243,6 +248,42 @@ Inline mapping defines value→EClass mappings directly on an EReference using a
 ```
 → Each contact's `contactType` is looked up in inline mapping → resolves to `Friend`, `Enemy`, `Colleague` respectively
 
+### 5.1 Programmatic Configuration
+
+For property maps or builder configuration, use `codec.inlineMappings`:
+
+**Property Map:**
+```java
+// Per-EReference configuration with inline mappings
+Map<EReference, Map<String, Object>> eReferenceConfig = new HashMap<>();
+
+Map<String, Object> contactsConfig = Map.of(
+    "codec.typeKey", "contactType",
+    "codec.inlineMappings", Map.of(
+        "friend", "http://example.org#//Friend",
+        "enemy", "http://example.org#//Enemy",
+        "colleague", ExamplePackage.Literals.COLLEAGUE  // EClass instance also works
+    ),
+    "codec.fallbackStrategy", "SKIP"
+);
+eReferenceConfig.put(PersonPackage.Literals.PERSON__CONTACTS, contactsConfig);
+
+options.put("codec.eReferenceConfig", eReferenceConfig);
+```
+
+**Builder API:**
+```java
+CodecConfiguration.builder()
+    .forReference(PersonPackage.Literals.PERSON__CONTACTS)
+        .typeKey("contactType")
+        .inlineMapping("friend", FriendPackage.Literals.FRIEND)
+        .inlineMapping("enemy", EnemyPackage.Literals.ENEMY)
+        .inlineMapping("colleague", ColleaguePackage.Literals.COLLEAGUE)
+        .fallbackStrategy(FallbackStrategy.SKIP)
+        .end()
+    .build();
+```
+
 ---
 
 ## 6. Fallback and Error Handling
@@ -253,25 +294,32 @@ When a discriminator value cannot be resolved to an EClass, the behavior is cont
 
 | Value | Behavior |
 |-------|----------|
-| `ERROR` | Fail deserialization, throw exception |
-| `SKIP` | Skip the element (don't add to collection), log warning |
-| `FALLBACK` **(default)** | Use fallback resolution (see below) |
+| `SKIP` **(default)** | Log WARNING, continue to next resolution step |
+| `ERROR` | Fail immediately, throw exception |
+| `FALLBACK` | Use `fallbackEClass` (MUST be set, else ERROR) |
 
-### 6.2 Fallback Resolution Order
+**"Next resolution step" depends on where fallback occurs:**
+- Type Mapping Registry (step 1) fails with SKIP → try Inline Mapping (step 2), then Type Strategy (step 3)
+- Inline Mapping (step 2) fails with SKIP → try Type Strategy (step 3)
 
-When `fallbackStrategy=FALLBACK`:
+> **Note:** `fallbackStrategy` only applies to Type Mapping Registry and Inline Mapping (steps 1 and 2 of type resolution). Type Strategy (step 3) does not have a configurable fallback strategy - if it cannot resolve the type, it continues to step 4 (Fallback hints: reference type, CODEC_FEATURE_TYPE_HINTS, CODEC_ROOT_TYPE).
+
+### 6.2 Fallback Behavior
 
 ```
-1. Try discriminator mapping lookup
-2. If not found → check fallbackStrategy:
-   - ERROR    → throw exception
-   - SKIP     → skip element, log warning, done
-   - FALLBACK → continue to step 3
-3. Use explicit fallbackEClass (if defined in annotation/config)
-4. Use feature type hint (if defined via CODEC_FEATURE_TYPE_HINTS)
-5. Use reference type EReference.getEReferenceType() (if concrete)
-6. If reference type is abstract/interface → ERROR
+When discriminator value not found in mappings:
+
+1. Check fallbackStrategy (default: SKIP):
+   - ERROR    → Fail immediately
+   - SKIP     → WARNING, continue to next resolution step
+   - FALLBACK → Use fallbackEClass:
+                 - If fallbackEClass is set → use it, RESOLVED ✓
+                 - If fallbackEClass is NOT set → ERROR (misconfiguration)
 ```
+
+**FALLBACK requires fallbackEClass:** When using `fallbackStrategy=FALLBACK`, you MUST configure `fallbackEClass`. This is explicit by design - if you want automatic fallback to reference type or hints, use `SKIP` instead (which continues to Type Strategy and eventually the hint-based fallback in step 4).
+
+See [Type Serialization - Type Resolution Flow](06-type.md#630-type-resolution-flow) for the complete deserialization flow.
 
 ### 6.3 Relationship to Feature Type Hints
 
@@ -291,7 +339,17 @@ options.put(CODEC_FEATURE_TYPE_HINTS, hints);
 ### 6.4 Examples
 
 ```xml
+<!-- Type Mapping with default SKIP behavior -->
+<!-- If discriminator value not found → WARNING, continue to Type Strategy -->
+<eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/lorawan-devices">
+  <details key="typeDiscriminatorPath" value="info.profileName"/>
+  <!-- fallbackStrategy defaults to SKIP -->
+  <details key="temp-sensor" value="http://example.org#//TemperatureSensor"/>
+  <details key="humidity-sensor" value="http://example.org#//HumiditySensor"/>
+</eAnnotations>
+
 <!-- Type Mapping with explicit fallback EClass -->
+<!-- Unknown discriminator → use GenericMessage -->
 <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/lorawan-devices">
   <details key="typeDiscriminatorPath" value="info.profileName"/>
   <details key="fallbackStrategy" value="FALLBACK"/>
@@ -300,21 +358,14 @@ options.put(CODEC_FEATURE_TYPE_HINTS, hints);
   <details key="humidity-sensor" value="http://example.org#//HumiditySensor"/>
 </eAnnotations>
 
-<!-- Inline Mapping with SKIP for unknown types (forward compatibility) -->
-<eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
-  <details key="fallbackStrategy" value="SKIP"/>
-  <details key="friend" value="http://example.org#//Friend"/>
-  <details key="enemy" value="http://example.org#//Enemy"/>
-</eAnnotations>
-
 <!-- Inline Mapping with ERROR (fail fast, strict mode) -->
 <eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
   <details key="fallbackStrategy" value="ERROR"/>
   <details key="friend" value="http://example.org#//Friend"/>
 </eAnnotations>
 
-<!-- Inline Mapping relying on runtime hint or reference type -->
-<!-- No fallbackEClass → will use CODEC_FEATURE_TYPE_HINTS if set, else reference type -->
+<!-- Inline Mapping with default SKIP behavior -->
+<!-- Unknown value → WARNING, continue to Type Strategy resolution -->
 <eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
   <details key="friend" value="http://example.org#//Friend"/>
   <details key="enemy" value="http://example.org#//Enemy"/>

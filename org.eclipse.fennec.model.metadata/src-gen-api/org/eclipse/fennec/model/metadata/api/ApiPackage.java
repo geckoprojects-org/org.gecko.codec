@@ -75,6 +75,360 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	ApiPackage eINSTANCE = org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl.init();
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader <em>Metadata Index Reader</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader
+	 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getMetadataIndexReader()
+	 * @generated
+	 */
+	int METADATA_INDEX_READER = 0;
+
+	/**
+	 * The number of structural features of the '<em>Metadata Index Reader</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER_FEATURE_COUNT = 0;
+
+	/**
+	 * The operation id for the '<em>Find By Instance Class Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER___FIND_BY_INSTANCE_CLASS_NAME__STRING_STRING = 0;
+
+	/**
+	 * The operation id for the '<em>Find All By Instance Class Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER___FIND_ALL_BY_INSTANCE_CLASS_NAME__STRING = 1;
+
+	/**
+	 * The operation id for the '<em>Find By Class Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER___FIND_BY_CLASS_NAME__STRING_STRING = 2;
+
+	/**
+	 * The operation id for the '<em>Find All By Class Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER___FIND_ALL_BY_CLASS_NAME__STRING = 3;
+
+	/**
+	 * The operation id for the '<em>Find Class By URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER___FIND_CLASS_BY_URI__STRING = 4;
+
+	/**
+	 * The operation id for the '<em>Find Feature By URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER___FIND_FEATURE_BY_URI__STRING = 5;
+
+	/**
+	 * The operation id for the '<em>Find Classes By Annotation</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER___FIND_CLASSES_BY_ANNOTATION__STRING_STRING_STRING = 6;
+
+	/**
+	 * The operation id for the '<em>Find Features By Annotation</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER___FIND_FEATURES_BY_ANNOTATION__STRING_STRING_STRING = 7;
+
+	/**
+	 * The number of operations of the '<em>Metadata Index Reader</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_READER_OPERATION_COUNT = 8;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter <em>Metadata Index Writer</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter
+	 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getMetadataIndexWriter()
+	 * @generated
+	 */
+	int METADATA_INDEX_WRITER = 1;
+
+	/**
+	 * The number of structural features of the '<em>Metadata Index Writer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_WRITER_FEATURE_COUNT = 0;
+
+	/**
+	 * The operation id for the '<em>Index Package</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_WRITER___INDEX_PACKAGE__PACKAGEMETADATA = 0;
+
+	/**
+	 * The operation id for the '<em>Index Class</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_WRITER___INDEX_CLASS__CLASSMETADATA = 1;
+
+	/**
+	 * The operation id for the '<em>Index Feature</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_WRITER___INDEX_FEATURE__FEATUREMETADATA = 2;
+
+	/**
+	 * The operation id for the '<em>Remove Package</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_WRITER___REMOVE_PACKAGE__PACKAGEMETADATA = 3;
+
+	/**
+	 * The operation id for the '<em>Remove Class</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_WRITER___REMOVE_CLASS__CLASSMETADATA = 4;
+
+	/**
+	 * The operation id for the '<em>Remove Feature</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_WRITER___REMOVE_FEATURE__FEATUREMETADATA = 5;
+
+	/**
+	 * The operation id for the '<em>Clear</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_WRITER___CLEAR = 6;
+
+	/**
+	 * The number of operations of the '<em>Metadata Index Writer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_WRITER_OPERATION_COUNT = 7;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndex <em>Metadata Index</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndex
+	 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getMetadataIndex()
+	 * @generated
+	 */
+	int METADATA_INDEX = 2;
+
+	/**
+	 * The number of structural features of the '<em>Metadata Index</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_FEATURE_COUNT = METADATA_INDEX_READER_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Find By Instance Class Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___FIND_BY_INSTANCE_CLASS_NAME__STRING_STRING = METADATA_INDEX_READER___FIND_BY_INSTANCE_CLASS_NAME__STRING_STRING;
+
+	/**
+	 * The operation id for the '<em>Find All By Instance Class Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___FIND_ALL_BY_INSTANCE_CLASS_NAME__STRING = METADATA_INDEX_READER___FIND_ALL_BY_INSTANCE_CLASS_NAME__STRING;
+
+	/**
+	 * The operation id for the '<em>Find By Class Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___FIND_BY_CLASS_NAME__STRING_STRING = METADATA_INDEX_READER___FIND_BY_CLASS_NAME__STRING_STRING;
+
+	/**
+	 * The operation id for the '<em>Find All By Class Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___FIND_ALL_BY_CLASS_NAME__STRING = METADATA_INDEX_READER___FIND_ALL_BY_CLASS_NAME__STRING;
+
+	/**
+	 * The operation id for the '<em>Find Class By URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___FIND_CLASS_BY_URI__STRING = METADATA_INDEX_READER___FIND_CLASS_BY_URI__STRING;
+
+	/**
+	 * The operation id for the '<em>Find Feature By URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___FIND_FEATURE_BY_URI__STRING = METADATA_INDEX_READER___FIND_FEATURE_BY_URI__STRING;
+
+	/**
+	 * The operation id for the '<em>Find Classes By Annotation</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___FIND_CLASSES_BY_ANNOTATION__STRING_STRING_STRING = METADATA_INDEX_READER___FIND_CLASSES_BY_ANNOTATION__STRING_STRING_STRING;
+
+	/**
+	 * The operation id for the '<em>Find Features By Annotation</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___FIND_FEATURES_BY_ANNOTATION__STRING_STRING_STRING = METADATA_INDEX_READER___FIND_FEATURES_BY_ANNOTATION__STRING_STRING_STRING;
+
+	/**
+	 * The operation id for the '<em>Index Package</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___INDEX_PACKAGE__PACKAGEMETADATA = METADATA_INDEX_READER_OPERATION_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Index Class</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___INDEX_CLASS__CLASSMETADATA = METADATA_INDEX_READER_OPERATION_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Index Feature</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___INDEX_FEATURE__FEATUREMETADATA = METADATA_INDEX_READER_OPERATION_COUNT + 2;
+
+	/**
+	 * The operation id for the '<em>Remove Package</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___REMOVE_PACKAGE__PACKAGEMETADATA = METADATA_INDEX_READER_OPERATION_COUNT + 3;
+
+	/**
+	 * The operation id for the '<em>Remove Class</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___REMOVE_CLASS__CLASSMETADATA = METADATA_INDEX_READER_OPERATION_COUNT + 4;
+
+	/**
+	 * The operation id for the '<em>Remove Feature</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___REMOVE_FEATURE__FEATUREMETADATA = METADATA_INDEX_READER_OPERATION_COUNT + 5;
+
+	/**
+	 * The operation id for the '<em>Clear</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX___CLEAR = METADATA_INDEX_READER_OPERATION_COUNT + 6;
+
+	/**
+	 * The number of operations of the '<em>Metadata Index</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_INDEX_OPERATION_COUNT = METADATA_INDEX_READER_OPERATION_COUNT + 7;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService <em>Metadata Service</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -82,7 +436,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getMetadataService()
 	 * @generated
 	 */
-	int METADATA_SERVICE = 0;
+	int METADATA_SERVICE = 3;
 
 	/**
 	 * The number of structural features of the '<em>Metadata Service</em>' class.
@@ -94,13 +448,22 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	int METADATA_SERVICE_FEATURE_COUNT = 0;
 
 	/**
+	 * The operation id for the '<em>Get Index Reader</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_SERVICE___GET_INDEX_READER = 0;
+
+	/**
 	 * The operation id for the '<em>Register Package</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___REGISTER_PACKAGE__EPACKAGE = 0;
+	int METADATA_SERVICE___REGISTER_PACKAGE__EPACKAGE = 1;
 
 	/**
 	 * The operation id for the '<em>Unregister Package</em>' operation.
@@ -109,7 +472,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___UNREGISTER_PACKAGE__EPACKAGE = 1;
+	int METADATA_SERVICE___UNREGISTER_PACKAGE__EPACKAGE = 2;
 
 	/**
 	 * The operation id for the '<em>Get Package Metadata</em>' operation.
@@ -118,7 +481,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_PACKAGE_METADATA__STRING = 2;
+	int METADATA_SERVICE___GET_PACKAGE_METADATA__STRING = 3;
 
 	/**
 	 * The operation id for the '<em>Get Class Metadata</em>' operation.
@@ -127,7 +490,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_CLASS_METADATA__ECLASS = 3;
+	int METADATA_SERVICE___GET_CLASS_METADATA__ECLASS = 4;
 
 	/**
 	 * The operation id for the '<em>Get Class Metadata By URI</em>' operation.
@@ -136,7 +499,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_CLASS_METADATA_BY_URI__STRING = 4;
+	int METADATA_SERVICE___GET_CLASS_METADATA_BY_URI__STRING = 5;
 
 	/**
 	 * The operation id for the '<em>Get Class Metadata By Name</em>' operation.
@@ -145,7 +508,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_CLASS_METADATA_BY_NAME__STRING_STRING = 5;
+	int METADATA_SERVICE___GET_CLASS_METADATA_BY_NAME__STRING_STRING = 6;
 
 	/**
 	 * The operation id for the '<em>Get Feature Metadata</em>' operation.
@@ -154,7 +517,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_METADATA__ESTRUCTURALFEATURE = 6;
+	int METADATA_SERVICE___GET_FEATURE_METADATA__ESTRUCTURALFEATURE = 7;
 
 	/**
 	 * The operation id for the '<em>Get Feature Metadata By URI</em>' operation.
@@ -163,7 +526,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_METADATA_BY_URI__STRING = 7;
+	int METADATA_SERVICE___GET_FEATURE_METADATA_BY_URI__STRING = 8;
 
 	/**
 	 * The operation id for the '<em>Get Feature Metadata By Name</em>' operation.
@@ -172,7 +535,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_METADATA_BY_NAME__STRING_STRING_STRING = 8;
+	int METADATA_SERVICE___GET_FEATURE_METADATA_BY_NAME__STRING_STRING_STRING = 9;
 
 	/**
 	 * The operation id for the '<em>Get Feature Metadata From Class</em>' operation.
@@ -181,7 +544,16 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_METADATA_FROM_CLASS__STRING_CLASSMETADATA = 9;
+	int METADATA_SERVICE___GET_FEATURE_METADATA_FROM_CLASS__STRING_CLASSMETADATA = 10;
+
+	/**
+	 * The operation id for the '<em>Get Package Aspect</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_SERVICE___GET_PACKAGE_ASPECT__EPACKAGE_STRING = 11;
 
 	/**
 	 * The operation id for the '<em>Get Class Aspect</em>' operation.
@@ -190,7 +562,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_CLASS_ASPECT__ECLASS_STRING = 10;
+	int METADATA_SERVICE___GET_CLASS_ASPECT__ECLASS_STRING = 12;
 
 	/**
 	 * The operation id for the '<em>Get Feature Aspect</em>' operation.
@@ -199,7 +571,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_ASPECT__ESTRUCTURALFEATURE_STRING = 11;
+	int METADATA_SERVICE___GET_FEATURE_ASPECT__ESTRUCTURALFEATURE_STRING = 13;
 
 	/**
 	 * The operation id for the '<em>Get Registry</em>' operation.
@@ -208,7 +580,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_REGISTRY = 12;
+	int METADATA_SERVICE___GET_REGISTRY = 14;
 
 	/**
 	 * The operation id for the '<em>Register Aspect Provider</em>' operation.
@@ -217,7 +589,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___REGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = 13;
+	int METADATA_SERVICE___REGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = 15;
 
 	/**
 	 * The operation id for the '<em>Unregister Aspect Provider</em>' operation.
@@ -226,7 +598,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___UNREGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = 14;
+	int METADATA_SERVICE___UNREGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = 16;
 
 	/**
 	 * The operation id for the '<em>Get Aspect Providers</em>' operation.
@@ -235,7 +607,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_ASPECT_PROVIDERS = 15;
+	int METADATA_SERVICE___GET_ASPECT_PROVIDERS = 17;
 
 	/**
 	 * The number of operations of the '<em>Metadata Service</em>' class.
@@ -244,7 +616,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE_OPERATION_COUNT = 16;
+	int METADATA_SERVICE_OPERATION_COUNT = 18;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider <em>Aspect Provider</em>}' class.
@@ -254,7 +626,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getAspectProvider()
 	 * @generated
 	 */
-	int ASPECT_PROVIDER = 1;
+	int ASPECT_PROVIDER = 4;
 
 	/**
 	 * The number of structural features of the '<em>Aspect Provider</em>' class.
@@ -275,13 +647,22 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	int ASPECT_PROVIDER___GET_ASPECT_TYPE_ID = 0;
 
 	/**
+	 * The operation id for the '<em>Build Package Aspect</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ASPECT_PROVIDER___BUILD_PACKAGE_ASPECT__EPACKAGE = 1;
+
+	/**
 	 * The operation id for the '<em>Build Class Aspect</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER___BUILD_CLASS_ASPECT__ECLASS = 1;
+	int ASPECT_PROVIDER___BUILD_CLASS_ASPECT__ECLASS = 2;
 
 	/**
 	 * The operation id for the '<em>Build Feature Aspect</em>' operation.
@@ -290,7 +671,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER___BUILD_FEATURE_ASPECT__ESTRUCTURALFEATURE = 2;
+	int ASPECT_PROVIDER___BUILD_FEATURE_ASPECT__ESTRUCTURALFEATURE = 3;
 
 	/**
 	 * The operation id for the '<em>Build Attribute Aspect</em>' operation.
@@ -299,7 +680,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER___BUILD_ATTRIBUTE_ASPECT__EATTRIBUTE = 3;
+	int ASPECT_PROVIDER___BUILD_ATTRIBUTE_ASPECT__EATTRIBUTE = 4;
 
 	/**
 	 * The operation id for the '<em>Build Reference Aspect</em>' operation.
@@ -308,7 +689,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER___BUILD_REFERENCE_ASPECT__EREFERENCE = 4;
+	int ASPECT_PROVIDER___BUILD_REFERENCE_ASPECT__EREFERENCE = 5;
 
 	/**
 	 * The number of operations of the '<em>Aspect Provider</em>' class.
@@ -317,8 +698,188 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER_OPERATION_COUNT = 5;
+	int ASPECT_PROVIDER_OPERATION_COUNT = 6;
 
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader <em>Metadata Index Reader</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Metadata Index Reader</em>'.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader
+	 * @generated
+	 */
+	EClass getMetadataIndexReader();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findByInstanceClassName(java.lang.String, java.lang.String) <em>Find By Instance Class Name</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Find By Instance Class Name</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findByInstanceClassName(java.lang.String, java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataIndexReader__FindByInstanceClassName__String_String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findAllByInstanceClassName(java.lang.String) <em>Find All By Instance Class Name</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Find All By Instance Class Name</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findAllByInstanceClassName(java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataIndexReader__FindAllByInstanceClassName__String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findByClassName(java.lang.String, java.lang.String) <em>Find By Class Name</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Find By Class Name</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findByClassName(java.lang.String, java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataIndexReader__FindByClassName__String_String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findAllByClassName(java.lang.String) <em>Find All By Class Name</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Find All By Class Name</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findAllByClassName(java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataIndexReader__FindAllByClassName__String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findClassByURI(java.lang.String) <em>Find Class By URI</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Find Class By URI</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findClassByURI(java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataIndexReader__FindClassByURI__String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findFeatureByURI(java.lang.String) <em>Find Feature By URI</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Find Feature By URI</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findFeatureByURI(java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataIndexReader__FindFeatureByURI__String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findClassesByAnnotation(java.lang.String, java.lang.String, java.lang.String) <em>Find Classes By Annotation</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Find Classes By Annotation</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findClassesByAnnotation(java.lang.String, java.lang.String, java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataIndexReader__FindClassesByAnnotation__String_String_String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findFeaturesByAnnotation(java.lang.String, java.lang.String, java.lang.String) <em>Find Features By Annotation</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Find Features By Annotation</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader#findFeaturesByAnnotation(java.lang.String, java.lang.String, java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataIndexReader__FindFeaturesByAnnotation__String_String_String();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter <em>Metadata Index Writer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Metadata Index Writer</em>'.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter
+	 * @generated
+	 */
+	EClass getMetadataIndexWriter();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#indexPackage(org.eclipse.fennec.model.metadata.PackageMetadata) <em>Index Package</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Index Package</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#indexPackage(org.eclipse.fennec.model.metadata.PackageMetadata)
+	 * @generated
+	 */
+	EOperation getMetadataIndexWriter__IndexPackage__PackageMetadata();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#indexClass(org.eclipse.fennec.model.metadata.ClassMetadata) <em>Index Class</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Index Class</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#indexClass(org.eclipse.fennec.model.metadata.ClassMetadata)
+	 * @generated
+	 */
+	EOperation getMetadataIndexWriter__IndexClass__ClassMetadata();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#indexFeature(org.eclipse.fennec.model.metadata.FeatureMetadata) <em>Index Feature</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Index Feature</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#indexFeature(org.eclipse.fennec.model.metadata.FeatureMetadata)
+	 * @generated
+	 */
+	EOperation getMetadataIndexWriter__IndexFeature__FeatureMetadata();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#removePackage(org.eclipse.fennec.model.metadata.PackageMetadata) <em>Remove Package</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Remove Package</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#removePackage(org.eclipse.fennec.model.metadata.PackageMetadata)
+	 * @generated
+	 */
+	EOperation getMetadataIndexWriter__RemovePackage__PackageMetadata();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#removeClass(org.eclipse.fennec.model.metadata.ClassMetadata) <em>Remove Class</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Remove Class</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#removeClass(org.eclipse.fennec.model.metadata.ClassMetadata)
+	 * @generated
+	 */
+	EOperation getMetadataIndexWriter__RemoveClass__ClassMetadata();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#removeFeature(org.eclipse.fennec.model.metadata.FeatureMetadata) <em>Remove Feature</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Remove Feature</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#removeFeature(org.eclipse.fennec.model.metadata.FeatureMetadata)
+	 * @generated
+	 */
+	EOperation getMetadataIndexWriter__RemoveFeature__FeatureMetadata();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#clear() <em>Clear</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Clear</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter#clear()
+	 * @generated
+	 */
+	EOperation getMetadataIndexWriter__Clear();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.api.MetadataIndex <em>Metadata Index</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Metadata Index</em>'.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataIndex
+	 * @generated
+	 */
+	EClass getMetadataIndex();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.api.MetadataService <em>Metadata Service</em>}'.
@@ -329,6 +890,16 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EClass getMetadataService();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getIndexReader() <em>Get Index Reader</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Index Reader</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#getIndexReader()
+	 * @generated
+	 */
+	EOperation getMetadataService__GetIndexReader();
 
 	/**
 	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#registerPackage(org.eclipse.emf.ecore.EPackage) <em>Register Package</em>}' operation.
@@ -431,6 +1002,16 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getMetadataService__GetFeatureMetadataFromClass__String_ClassMetadata();
 
 	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getPackageAspect(org.eclipse.emf.ecore.EPackage, java.lang.String) <em>Get Package Aspect</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Package Aspect</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#getPackageAspect(org.eclipse.emf.ecore.EPackage, java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataService__GetPackageAspect__EPackage_String();
+
+	/**
 	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getClassAspect(org.eclipse.emf.ecore.EClass, java.lang.String) <em>Get Class Aspect</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -511,6 +1092,16 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getAspectProvider__GetAspectTypeId();
 
 	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildPackageAspect(org.eclipse.emf.ecore.EPackage) <em>Build Package Aspect</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Build Package Aspect</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildPackageAspect(org.eclipse.emf.ecore.EPackage)
+	 * @generated
+	 */
+	EOperation getAspectProvider__BuildPackageAspect__EPackage();
+
+	/**
 	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildClassAspect(org.eclipse.emf.ecore.EClass) <em>Build Class Aspect</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -574,6 +1165,156 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 */
 	interface Literals {
 		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexReader <em>Metadata Index Reader</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexReader
+		 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getMetadataIndexReader()
+		 * @generated
+		 */
+		EClass METADATA_INDEX_READER = eINSTANCE.getMetadataIndexReader();
+
+		/**
+		 * The meta object literal for the '<em><b>Find By Instance Class Name</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_READER___FIND_BY_INSTANCE_CLASS_NAME__STRING_STRING = eINSTANCE.getMetadataIndexReader__FindByInstanceClassName__String_String();
+
+		/**
+		 * The meta object literal for the '<em><b>Find All By Instance Class Name</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_READER___FIND_ALL_BY_INSTANCE_CLASS_NAME__STRING = eINSTANCE.getMetadataIndexReader__FindAllByInstanceClassName__String();
+
+		/**
+		 * The meta object literal for the '<em><b>Find By Class Name</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_READER___FIND_BY_CLASS_NAME__STRING_STRING = eINSTANCE.getMetadataIndexReader__FindByClassName__String_String();
+
+		/**
+		 * The meta object literal for the '<em><b>Find All By Class Name</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_READER___FIND_ALL_BY_CLASS_NAME__STRING = eINSTANCE.getMetadataIndexReader__FindAllByClassName__String();
+
+		/**
+		 * The meta object literal for the '<em><b>Find Class By URI</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_READER___FIND_CLASS_BY_URI__STRING = eINSTANCE.getMetadataIndexReader__FindClassByURI__String();
+
+		/**
+		 * The meta object literal for the '<em><b>Find Feature By URI</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_READER___FIND_FEATURE_BY_URI__STRING = eINSTANCE.getMetadataIndexReader__FindFeatureByURI__String();
+
+		/**
+		 * The meta object literal for the '<em><b>Find Classes By Annotation</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_READER___FIND_CLASSES_BY_ANNOTATION__STRING_STRING_STRING = eINSTANCE.getMetadataIndexReader__FindClassesByAnnotation__String_String_String();
+
+		/**
+		 * The meta object literal for the '<em><b>Find Features By Annotation</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_READER___FIND_FEATURES_BY_ANNOTATION__STRING_STRING_STRING = eINSTANCE.getMetadataIndexReader__FindFeaturesByAnnotation__String_String_String();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndexWriter <em>Metadata Index Writer</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.api.MetadataIndexWriter
+		 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getMetadataIndexWriter()
+		 * @generated
+		 */
+		EClass METADATA_INDEX_WRITER = eINSTANCE.getMetadataIndexWriter();
+
+		/**
+		 * The meta object literal for the '<em><b>Index Package</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_WRITER___INDEX_PACKAGE__PACKAGEMETADATA = eINSTANCE.getMetadataIndexWriter__IndexPackage__PackageMetadata();
+
+		/**
+		 * The meta object literal for the '<em><b>Index Class</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_WRITER___INDEX_CLASS__CLASSMETADATA = eINSTANCE.getMetadataIndexWriter__IndexClass__ClassMetadata();
+
+		/**
+		 * The meta object literal for the '<em><b>Index Feature</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_WRITER___INDEX_FEATURE__FEATUREMETADATA = eINSTANCE.getMetadataIndexWriter__IndexFeature__FeatureMetadata();
+
+		/**
+		 * The meta object literal for the '<em><b>Remove Package</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_WRITER___REMOVE_PACKAGE__PACKAGEMETADATA = eINSTANCE.getMetadataIndexWriter__RemovePackage__PackageMetadata();
+
+		/**
+		 * The meta object literal for the '<em><b>Remove Class</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_WRITER___REMOVE_CLASS__CLASSMETADATA = eINSTANCE.getMetadataIndexWriter__RemoveClass__ClassMetadata();
+
+		/**
+		 * The meta object literal for the '<em><b>Remove Feature</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_WRITER___REMOVE_FEATURE__FEATUREMETADATA = eINSTANCE.getMetadataIndexWriter__RemoveFeature__FeatureMetadata();
+
+		/**
+		 * The meta object literal for the '<em><b>Clear</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_INDEX_WRITER___CLEAR = eINSTANCE.getMetadataIndexWriter__Clear();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.api.MetadataIndex <em>Metadata Index</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.api.MetadataIndex
+		 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getMetadataIndex()
+		 * @generated
+		 */
+		EClass METADATA_INDEX = eINSTANCE.getMetadataIndex();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService <em>Metadata Service</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -582,6 +1323,14 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EClass METADATA_SERVICE = eINSTANCE.getMetadataService();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Index Reader</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_SERVICE___GET_INDEX_READER = eINSTANCE.getMetadataService__GetIndexReader();
 
 		/**
 		 * The meta object literal for the '<em><b>Register Package</b></em>' operation.
@@ -664,6 +1413,14 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		EOperation METADATA_SERVICE___GET_FEATURE_METADATA_FROM_CLASS__STRING_CLASSMETADATA = eINSTANCE.getMetadataService__GetFeatureMetadataFromClass__String_ClassMetadata();
 
 		/**
+		 * The meta object literal for the '<em><b>Get Package Aspect</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_SERVICE___GET_PACKAGE_ASPECT__EPACKAGE_STRING = eINSTANCE.getMetadataService__GetPackageAspect__EPackage_String();
+
+		/**
 		 * The meta object literal for the '<em><b>Get Class Aspect</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -728,6 +1485,14 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EOperation ASPECT_PROVIDER___GET_ASPECT_TYPE_ID = eINSTANCE.getAspectProvider__GetAspectTypeId();
+
+		/**
+		 * The meta object literal for the '<em><b>Build Package Aspect</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation ASPECT_PROVIDER___BUILD_PACKAGE_ASPECT__EPACKAGE = eINSTANCE.getAspectProvider__BuildPackageAspect__EPackage();
 
 		/**
 		 * The meta object literal for the '<em><b>Build Class Aspect</b></em>' operation.

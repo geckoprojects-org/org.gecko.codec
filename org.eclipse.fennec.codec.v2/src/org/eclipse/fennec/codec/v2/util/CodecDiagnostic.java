@@ -19,6 +19,8 @@ import tools.jackson.core.TokenStreamLocation;
 
 /**
  * A diagnostic implementation for codec.v2 that implements EMF's Resource.Diagnostic interface.
+ *
+ * @deprecated Use {@link org.eclipse.fennec.codec.api.diagnostic.CodecDiagnostic} instead.
  * This allows codec errors and warnings to be collected into the standard EMF resource
  * diagnostics (resource.getErrors() and resource.getWarnings()).
  *
@@ -33,6 +35,7 @@ import tools.jackson.core.TokenStreamLocation;
  *
  * @see <a href="docs/codec-v2-spec/00-overview.md#2-error-and-warning-handling">Spec: Error Handling</a>
  */
+@Deprecated
 public class CodecDiagnostic implements Resource.Diagnostic {
 
     /**

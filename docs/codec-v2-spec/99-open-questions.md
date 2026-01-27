@@ -132,9 +132,11 @@ For discriminator mappings when value doesn't match any mapping:
 
 | `fallbackStrategy` | Behavior |
 |-------------------|----------|
-| `ERROR` | Throw error **(default)** |
-| `TYPE_STRATEGY` | Fall back to normal type resolution |
-| `SPECIFIC` | Use `fallbackEClass` |
+| `SKIP` **(default)** | Log WARNING, continue to next resolution step (Type Strategy) |
+| `ERROR` | Fail immediately |
+| `FALLBACK` | Use `fallbackEClass` (MUST be set, else ERROR) |
+
+> **Note:** See [08-discriminator-mapping.md](08-discriminator-mapping.md#6-fallback-and-error-handling) for complete documentation.
 
 #### Feature Strictness
 

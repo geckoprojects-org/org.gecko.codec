@@ -14,6 +14,8 @@
  */
 package org.eclipse.fennec.model.metadata;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -32,6 +34,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.fennec.model.metadata.Aspect#getTypeId <em>Type Id</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.Aspect#getDiagnostics <em>Diagnostics</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getAspect()
@@ -64,5 +67,20 @@ public interface Aspect extends EObject {
 	 * @generated
 	 */
 	void setTypeId(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Diagnostics</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.fennec.model.metadata.MetadataDiagnostic}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Diagnostics collected during aspect creation (e.g., annotation parsing warnings).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Diagnostics</em>' containment reference list.
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getAspect_Diagnostics()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<MetadataDiagnostic> getDiagnostics();
 
 } // Aspect

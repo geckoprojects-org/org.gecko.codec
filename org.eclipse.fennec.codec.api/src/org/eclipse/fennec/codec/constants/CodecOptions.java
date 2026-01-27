@@ -272,17 +272,9 @@ public final class CodecOptions {
      */
     public static final String CODEC_SUPERTYPE_FORMAT = "codec.superTypeFormat";
 
-    /**
-     * Schema key in STRUCTURED supertype format.
-     * <p>Default: "schema"</p>
-     */
-    public static final String CODEC_SUPERTYPE_SCHEMA_KEY = "codec.superTypeSchemaKey";
-
-    /**
-     * Name key in STRUCTURED supertype format.
-     * <p>Default: "name"</p>
-     */
-    public static final String CODEC_SUPERTYPE_NAME_KEY = "codec.superTypeNameKey";
+    // Note: superTypeSchemaKey not needed - SuperTypeConfig inherits from TypeConfig
+    // Note: superTypeNameKey removed - superTypeKey has format-dependent default:
+    //       PLAIN format → "_supertype", STRUCTURED format → "supertype"
 
     /**
      * Custom value reader for supertype deserialization.

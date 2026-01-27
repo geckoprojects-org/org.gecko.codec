@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.fennec.model.metadata.AttributeMetadata;
@@ -30,10 +31,14 @@ import org.eclipse.fennec.model.metadata.ClassAspect;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
+import org.eclipse.fennec.model.metadata.PackageAspect;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 import org.eclipse.fennec.model.metadata.ReferenceMetadata;
 import org.eclipse.fennec.model.metadata.api.AspectProvider;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.impl.ClassAspectImpl;
+import org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl;
+import org.eclipse.fennec.model.metadata.impl.PackageAspectImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -370,6 +375,64 @@ class MetadataServiceImplTest {
     }
 
     // ========================================================================
+    // Package Aspect Tests
+    // ========================================================================
+
+    @Test
+    void testGetPackageAspectWithProvider() {
+        TestAspectProviderWithPackageSupport provider = new TestAspectProviderWithPackageSupport();
+        service.registerAspectProvider(provider);
+        service.registerPackage(testPackage);
+
+        PackageAspect pkgAspect = service.getPackageAspect(testPackage, "test-pkg");
+        assertNotNull(pkgAspect);
+        assertEquals("test-pkg", pkgAspect.getTypeId());
+        assertSame(testPackage, pkgAspect.getEPackage());
+    }
+
+    @Test
+    void testGetPackageAspectNotFound() {
+        service.registerPackage(testPackage);
+        PackageAspect aspect = service.getPackageAspect(testPackage, "nonexistent");
+        assertNull(aspect);
+    }
+
+    @Test
+    void testGetPackageAspectNullPackage() {
+        PackageAspect aspect = service.getPackageAspect(null, "test");
+        assertNull(aspect);
+    }
+
+    @Test
+    void testPackageAspectAppliedToExistingMetadata() {
+        // Register package first
+        service.registerPackage(testPackage);
+
+        // Now register provider with package support - should be applied to existing metadata
+        TestAspectProviderWithPackageSupport provider = new TestAspectProviderWithPackageSupport();
+        service.registerAspectProvider(provider);
+
+        PackageAspect pkgAspect = service.getPackageAspect(testPackage, "test-pkg");
+        assertNotNull(pkgAspect);
+    }
+
+    @Test
+    void testUnregisterAspectProviderRemovesPackageAspects() {
+        TestAspectProviderWithPackageSupport provider = new TestAspectProviderWithPackageSupport();
+        service.registerAspectProvider(provider);
+        service.registerPackage(testPackage);
+
+        // Verify aspect exists
+        assertNotNull(service.getPackageAspect(testPackage, "test-pkg"));
+
+        // Unregister provider
+        service.unregisterAspectProvider(provider);
+
+        // Package aspect should be removed
+        assertNull(service.getPackageAspect(testPackage, "test-pkg"));
+    }
+
+    // ========================================================================
     // Test AspectProvider Implementation
     // ========================================================================
 
@@ -384,6 +447,12 @@ class MetadataServiceImplTest {
         }
 
         @Override
+        public PackageAspect buildPackageAspect(EPackage ePackage) {
+            // No package-level aspects for testing
+            return null;
+        }
+
+        @Override
         public ClassAspect buildClassAspect(EClass eClass) {
             // Create a simple aspect - use a concrete implementation
             // For testing, we'll create an anonymous subclass
@@ -391,17 +460,17 @@ class MetadataServiceImplTest {
         }
 
         @Override
-        public FeatureAspect buildFeatureAspect(org.eclipse.emf.ecore.EStructuralFeature feature) {
+        public FeatureAspect buildFeatureAspect(EStructuralFeature feature) {
             return new TestFeatureAspect();
         }
 
         @Override
-        public FeatureAspect buildAttributeAspect(org.eclipse.emf.ecore.EAttribute attribute) {
+        public FeatureAspect buildAttributeAspect(EAttribute attribute) {
             return buildFeatureAspect(attribute);
         }
 
         @Override
-        public FeatureAspect buildReferenceAspect(org.eclipse.emf.ecore.EReference reference) {
+        public FeatureAspect buildReferenceAspect(EReference reference) {
             return buildFeatureAspect(reference);
         }
     }
@@ -409,14 +478,59 @@ class MetadataServiceImplTest {
     /**
      * Test ClassAspect implementation.
      */
-    private static class TestClassAspect extends org.eclipse.fennec.model.metadata.impl.ClassAspectImpl {
+    private static class TestClassAspect extends ClassAspectImpl {
         // Uses default implementation
     }
 
     /**
      * Test FeatureAspect implementation.
      */
-    private static class TestFeatureAspect extends org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl {
+    private static class TestFeatureAspect extends FeatureAspectImpl {
+        // Uses default implementation
+    }
+
+    /**
+     * Test AspectProvider that also creates PackageAspects.
+     */
+    private static class TestAspectProviderWithPackageSupport implements AspectProvider {
+
+        @Override
+        public String getAspectTypeId() {
+            return "test-pkg";
+        }
+
+        @Override
+        public PackageAspect buildPackageAspect(EPackage ePackage) {
+            TestPackageAspect aspect = new TestPackageAspect();
+            aspect.setEPackage(ePackage);
+            return aspect;
+        }
+
+        @Override
+        public ClassAspect buildClassAspect(EClass eClass) {
+            return null; // Not needed for package aspect tests
+        }
+
+        @Override
+        public FeatureAspect buildFeatureAspect(EStructuralFeature feature) {
+            return null;
+        }
+
+        @Override
+        public FeatureAspect buildAttributeAspect(EAttribute attribute) {
+            return null;
+        }
+
+        @Override
+        public FeatureAspect buildReferenceAspect(EReference reference) {
+            return null;
+        }
+    }
+
+    /**
+     * Test PackageAspect implementation.
+     */
+    private static class TestPackageAspect extends PackageAspectImpl {
         // Uses default implementation
     }
 }

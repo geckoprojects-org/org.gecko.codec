@@ -368,7 +368,210 @@ The codec applies its serializers/deserializers on top of the provided base conf
 
 ---
 
-## 11. Load/Save Option Keys Registry
+## 11. Property Matrix (Complete Reference)
+
+This section provides the **complete property matrix** showing all configuration properties with their valid levels, directions, and defaults. This is the authoritative reference for the 3D configuration resolution.
+
+### 11.1 Three-Dimensional Resolution
+
+Configuration resolution operates across **three dimensions**:
+
+1. **Sources (Vertical)**: Load/Save → Resource → ResourceFactory → Module → Annotation → Default
+2. **Levels (Horizontal)**: Feature → EClass → Global → Default
+3. **Direction**: Serialization (write), Deserialization (read), or Both
+
+For any property lookup:
+1. **Level resolution** (most specific wins): Feature → EClass → Global → Default
+2. **Source resolution** (highest priority wins): Options → ResourceFactory → Module → Annotation → Default
+3. **Direction filter**: Property must apply to current direction (read or write)
+
+### 11.2 Legend
+
+| Symbol | Meaning |
+|--------|---------|
+| G | Global level |
+| C | EClass level |
+| F | Feature (EAttribute/EReference) level |
+| R | Read direction (deserialization) |
+| W | Write direction (serialization) |
+| RW | Both directions |
+| (R)W | Write primary, Read potential future feature |
+| R(W) | Read primary, Write potential future feature |
+
+### 11.3 Type Properties
+
+| Property | Levels | Direction | Default | Spec Section |
+|----------|--------|-----------|---------|--------------|
+| `typeStrategy` | G, C, F | RW | `NAME` | 06-type.md |
+| `typeKey` | G, C, F | RW | `_type` | 06-type.md |
+| `typeFormat` | G, C, F | RW | `PLAIN` | 06-type.md |
+| ~~`typeInclude`~~ | — | — | — | **DEPRECATED** - use `typeStrategy=NONE` |
+| `typeSchemaKey` | G, C, F | RW | `schema` | 06-type.md |
+| `typeNameKey` | G, C, F | RW | `type` | 06-type.md |
+| `typeScope` | G | RW | `ALL` | 06-type.md |
+| `typeFormatScope` | G | RW | `ALL` | 06-type.md |
+| `typeValueReaderName` | G, C | R | `null` | 06-type.md |
+| `typeValueWriterName` | G, C | W | `null` | 06-type.md |
+
+### 11.4 ID Properties
+
+| Property | Levels | Direction | Default | Spec Section |
+|----------|--------|-----------|---------|--------------|
+| `idStrategy` | G, C | RW | `ID_FIELD` | 09-id.md |
+| `idKey` | G, C, F | RW | `_id` | 09-id.md |
+| `idValueKey` | G, C | RW | `id` | 09-id.md |
+| `idFormat` | G, C, F | RW | `PLAIN` | 09-id.md |
+| `idKeyMode` | G, C | RW | `ID_ONLY` | 09-id.md |
+| `idFeatures` | C | RW | `[]` | 09-id.md |
+| `idSeparator` | G, C | RW | `-` | 09-id.md |
+| `idSeparatorKey` | G, C | RW | `separator` | 09-id.md |
+| `idSeparatorSerialize` | G, C | (R)W | `true` | 09-id.md |
+| `idOnTop` | G, C | (R)W | `false` | 09-id.md |
+| `idScope` | G | RW | `ALL` | 09-id.md |
+| `idFormatScope` | G | RW | `ALL` | 09-id.md |
+| `idValueReaderName` | G, C | R | `null` | 09-id.md |
+| `idValueWriterName` | G, C | W | `null` | 09-id.md |
+
+### 11.5 Feature Properties
+
+| Property | Levels | Direction | Default | Spec Section |
+|----------|--------|-----------|---------|--------------|
+| `key` | F | RW | (feature name) | 11-feature.md |
+| `ignore` | G, C, F | RW | `false` | 11-feature.md |
+| `ignoreRead` | G, C, F | R | `false` | 11-feature.md |
+| `ignoreWrite` | G, C, F | W | `false` | 11-feature.md |
+| `forceRead` | G, C, F | R | `false` | 11-feature.md |
+| `forceWrite` | G, C, F | W | `false` | 11-feature.md |
+| `serializeNull` | G, C, F | (R)W | `false` | 11-feature.md |
+| `serializeEmpty` | G, C, F | (R)W | `false` | 11-feature.md |
+| `serializeDefault` | G, C, F | (R)W | `false` | 11-feature.md |
+| `enumSerialization` | G, F | RW | `LITERAL` | 11-feature.md |
+| `valueReaderName` | G, C, F | R | `null` | 14-custom-values.md |
+| `valueWriterName` | G, C, F | W | `null` | 14-custom-values.md |
+
+> **Note:** `enumSerialization` applies to EAttributes only (not EReferences). Valid values: `LITERAL`, `VALUE`, `NAME`.
+
+### 11.6 Reference Properties
+
+| Property | Levels | Direction | Default | Spec Section |
+|----------|--------|-----------|---------|--------------|
+| `refFormat` | G, F | RW | `STRUCTURED` | 10-reference.md |
+| `refKey` | G, F | RW | `$ref` | 10-reference.md |
+| `refTypeKey` | G, F | RW | `_type` | 10-reference.md |
+| `proxyKey` | G, F | RW | `$proxy` | 10-reference.md |
+| `expand` | G, C, F | RW | `false` | 10-reference.md |
+| `expandGlobal` | G, C | RW | `false` | 10-reference.md |
+| `expandDepth` | G, C, F | RW | `1` | 10-reference.md |
+| `expandIgnoreBidirectional` | G, C, F | (R)W | `true` | 10-reference.md |
+| `serializeInstanceType` | G, F | W | `true` | 12-polymorphism.md |
+
+> **Note:** `serializeInstanceType=false` is write-only and may cause deserialization failures if reference type is abstract/interface.
+>
+> **`expand` vs `expandGlobal`:**
+> - `expand` at F level: `true`/`false` - expand this specific reference
+> - `expand` at G/C level: list of EReference names/instances to expand
+> - `expandGlobal`: `true`/`false` - expand ALL non-containment references
+>
+> A reference is expanded if `expandGlobal=true` OR the reference is in the `expand` list.
+
+### 11.7 Annotation-Only Directives
+
+These keys are valid only in EAnnotations and control how annotations are processed. They do NOT participate in the property resolution matrix.
+
+| Annotation Key | Levels | Default | Description |
+|----------------|--------|---------|-------------|
+| `inherit` | G, C | `DIRECT` | Controls EAnnotation inheritance across EClass hierarchy |
+
+**`inherit` values:**
+- `DIRECT` (default): Inherit from immediate parent EClass only
+- `ALL`: Inherit from full hierarchy up to EObject
+- `NONE`: No inheritance, use only this EClass's annotations
+
+> **Note:** `inherit` affects how `CodecAspectProvider` resolves annotations when building AspectConfig. It is consumed during annotation parsing, not during runtime property resolution.
+
+### 11.8 Discriminator Mapping Properties
+
+| Property | Levels | Direction | Default | Spec Section |
+|----------|--------|-----------|---------|--------------|
+| `typeMapId` | C | RW | `null` | 08-discriminator-mapping.md |
+| `typeDiscriminatorPath` | C | RW | `null` | 08-discriminator-mapping.md |
+| `typeDiscriminator` | C | RW | `null` | 08-discriminator-mapping.md |
+| `typeMappings` | C | RW | `null` | 08-discriminator-mapping.md |
+| `inlineMappings` | F | RW | `null` | 08-discriminator-mapping.md |
+| `discriminatorPath` | F | RW | `null` | 08-discriminator-mapping.md |
+| `discriminatorValue` | F | RW | `null` | 08-discriminator-mapping.md |
+| `fallbackStrategy` | G, C, F | R(W) | `SKIP` | 08-discriminator-mapping.md |
+| `fallbackEClass` | F | R(W) | `null` | 08-discriminator-mapping.md |
+
+### 11.10 SuperType Properties
+
+| Property | Levels | Direction | Default | Spec Section |
+|----------|--------|-----------|---------|--------------|
+| `superTypeSerialize` | G, C | (R)W | `false` | 07-supertype.md |
+| `superTypeKey` | G, C | (R)W | (format-dependent)¹ | 07-supertype.md |
+| `superTypeStrategy` | G, C | (R)W | `ALL` | 07-supertype.md |
+| `superTypeAsArray` | G, C | (R)W | `true` | 07-supertype.md |
+| `superTypeSeparator` | G, C | (R)W | `,` | 07-supertype.md |
+| `superTypeFormat` | G, C | (R)W | (inherits typeFormat) | 07-supertype.md |
+| `superTypeValueReaderName` | G, C | R | `null` | 07-supertype.md |
+| `superTypeValueWriterName` | G, C | W | `null` | 07-supertype.md |
+
+> ¹ `superTypeKey` default: PLAIN format → `_supertype`, STRUCTURED format → `supertype`.
+> Note: `superTypeSchemaKey` removed - inherits from TypeConfig. `superTypeNameKey` removed - `superTypeKey` has format-dependent default.
+
+### 11.11 Strictness Properties
+
+| Property | Levels | Direction | Default | Spec Section |
+|----------|--------|-----------|---------|--------------|
+| `strictOnUnknown` | G, C | R | `false` | 11-feature.md |
+| `strictOnMissing` | G, C | R | `false` | 11-feature.md |
+| `deserializationMode` | G, C | R | `LENIENT` | 13-load-save-options.md |
+
+### 11.12 Global Options
+
+| Property | Levels | Direction | Default | Spec Section |
+|----------|--------|-----------|---------|--------------|
+| `smartCompression` | G | RW | `false` | 05-global-options.md |
+| `ignoreFeatures` | G, C | RW | `[]` | 05-global-options.md |
+| `fieldOrder` | G | (R)W | `DECLARATION` | 05-global-options.md |
+| `metadataFieldsFirst` | G | (R)W | `true` | 05-global-options.md |
+| `useNamesFromExtendedMetadata` | G | RW | `false` | 11-feature.md |
+
+> **Note:** `useNamesFromExtendedMetadata` is a runtime-only option (no EAnnotation support). When `true`, ExtendedMetaData `name` annotations are used as JSON keys (priority: codec annotation > ExtendedMetaData > feature name).
+
+### 11.13 Load/Save Options (Runtime Only)
+
+These options are only available at runtime via load/save option maps, not via EAnnotations.
+
+| Property | Levels | Direction | Default | Spec Section |
+|----------|--------|-----------|---------|--------------|
+| `rootType` | G | R | `null` | 13-load-save-options.md |
+| `rootSchema` | G | R | `null` | 13-load-save-options.md |
+| `featureTypeHints` | G | R | `null` | 13-load-save-options.md |
+| `typeHintMode` | G | R | `HINT` | 13-load-save-options.md |
+| `valueReaders` | G | R | `null` | 13-load-save-options.md |
+| `valueWriters` | G | W | `null` | 13-load-save-options.md |
+| `featureValueReaders` | G | R | `null` | 13-load-save-options.md |
+| `featureValueWriters` | G | W | `null` | 13-load-save-options.md |
+| `featureValueReaderInstances` | G | R | `null` | 13-load-save-options.md |
+| `featureValueWriterInstances` | G | W | `null` | 13-load-save-options.md |
+
+### 11.14 Direction Notes
+
+Properties marked with `(R)W` or `R(W)` indicate:
+
+- **(R)W**: Write is primary use case, Read is potential future feature
+  - `idSeparatorSerialize`: R needed to split concatenated ID back into components
+  - `idOnTop`: R for ordered parsing/validation
+  - `serializeNull/Empty/Default`: R for validation of intentional values
+  - `superType*`: R for inheritance hierarchy validation
+
+- **R(W)**: Read is primary use case, Write is potential future feature
+  - `fallbackStrategy/fallbackEClass`: W needs read/write config separation design
+
+---
+
+## 12. Load/Save Option Keys Registry
 
 This section documents all option keys that can be passed to `resource.load(options)` or `resource.save(options)`.
 

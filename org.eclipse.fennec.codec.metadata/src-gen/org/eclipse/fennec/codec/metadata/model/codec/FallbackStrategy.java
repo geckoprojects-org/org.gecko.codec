@@ -37,24 +37,24 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public enum FallbackStrategy implements Enumerator {
 	/**
-	 * The '<em><b>FALLBACK</b></em>' literal object.
+	 * The '<em><b>SKIP</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use fallback resolution chain: fallbackEClass, then feature type hint, then reference type. This is the default.
+	 * Log WARNING and continue to next resolution step (Type Strategy). This is the default. Useful for forward compatibility.
 	 * <!-- end-model-doc -->
-	 * @see #FALLBACK_VALUE
+	 * @see #SKIP_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	FALLBACK(0, "FALLBACK", "FALLBACK"),
+	SKIP(0, "SKIP", "SKIP"),
 
 	/**
 	 * The '<em><b>ERROR</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Fail deserialization immediately when discriminator value is not found.
+	 * Fail immediately when discriminator value is not found in mapping.
 	 * <!-- end-model-doc -->
 	 * @see #ERROR_VALUE
 	 * @generated
@@ -63,38 +63,38 @@ public enum FallbackStrategy implements Enumerator {
 	ERROR(1, "ERROR", "ERROR"),
 
 	/**
-	 * The '<em><b>SKIP</b></em>' literal object.
+	 * The '<em><b>FALLBACK</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Skip the element (don't add to collection), log warning. Useful for forward compatibility.
+	 * Use fallbackEClass (MUST be set, else ERROR). Does NOT continue to Type Strategy.
 	 * <!-- end-model-doc -->
-	 * @see #SKIP_VALUE
+	 * @see #FALLBACK_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	SKIP(2, "SKIP", "SKIP");
+	FALLBACK(2, "FALLBACK", "FALLBACK");
 
 	/**
-	 * The '<em><b>FALLBACK</b></em>' literal value.
+	 * The '<em><b>SKIP</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use fallback resolution chain: fallbackEClass, then feature type hint, then reference type. This is the default.
+	 * Log WARNING and continue to next resolution step (Type Strategy). This is the default. Useful for forward compatibility.
 	 * <!-- end-model-doc -->
-	 * @see #FALLBACK
+	 * @see #SKIP
 	 * @model
 	 * @generated
 	 * @ordered
 	 */
-	public static final int FALLBACK_VALUE = 0;
+	public static final int SKIP_VALUE = 0;
 
 	/**
 	 * The '<em><b>ERROR</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Fail deserialization immediately when discriminator value is not found.
+	 * Fail immediately when discriminator value is not found in mapping.
 	 * <!-- end-model-doc -->
 	 * @see #ERROR
 	 * @model
@@ -104,18 +104,18 @@ public enum FallbackStrategy implements Enumerator {
 	public static final int ERROR_VALUE = 1;
 
 	/**
-	 * The '<em><b>SKIP</b></em>' literal value.
+	 * The '<em><b>FALLBACK</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Skip the element (don't add to collection), log warning. Useful for forward compatibility.
+	 * Use fallbackEClass (MUST be set, else ERROR). Does NOT continue to Type Strategy.
 	 * <!-- end-model-doc -->
-	 * @see #SKIP
+	 * @see #FALLBACK
 	 * @model
 	 * @generated
 	 * @ordered
 	 */
-	public static final int SKIP_VALUE = 2;
+	public static final int FALLBACK_VALUE = 2;
 
 	/**
 	 * An array of all the '<em><b>Fallback Strategy</b></em>' enumerators.
@@ -125,9 +125,9 @@ public enum FallbackStrategy implements Enumerator {
 	 */
 	private static final FallbackStrategy[] VALUES_ARRAY =
 		new FallbackStrategy[] {
-			FALLBACK,
-			ERROR,
 			SKIP,
+			ERROR,
+			FALLBACK,
 		};
 
 	/**
@@ -184,9 +184,9 @@ public enum FallbackStrategy implements Enumerator {
 	 */
 	public static FallbackStrategy get(int value) {
 		switch (value) {
-			case FALLBACK_VALUE: return FALLBACK;
-			case ERROR_VALUE: return ERROR;
 			case SKIP_VALUE: return SKIP;
+			case ERROR_VALUE: return ERROR;
+			case FALLBACK_VALUE: return FALLBACK;
 		}
 		return null;
 	}

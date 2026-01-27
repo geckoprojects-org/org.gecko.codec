@@ -19,6 +19,7 @@ import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -36,6 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.fennec.model.metadata.ClassAspect;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
+import org.eclipse.fennec.model.metadata.MetadataDiagnostic;
 import org.eclipse.fennec.model.metadata.MetadataPackage;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 
@@ -47,6 +49,8 @@ import org.eclipse.fennec.model.metadata.PackageMetadata;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.ClassMetadataImpl#getDiagnostics <em>Diagnostics</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.ClassMetadataImpl#getAllDiagnostics <em>All Diagnostics</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.ClassMetadataImpl#getPackage <em>Package</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.ClassMetadataImpl#getEClass <em>EClass</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.ClassMetadataImpl#getName <em>Name</em>}</li>
@@ -63,6 +67,16 @@ import org.eclipse.fennec.model.metadata.PackageMetadata;
  * @generated
  */
 public class ClassMetadataImpl extends MinimalEObjectImpl.Container implements ClassMetadata {
+	/**
+	 * The cached value of the '{@link #getDiagnostics() <em>Diagnostics</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDiagnostics()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MetadataDiagnostic> diagnostics;
+
 	/**
 	 * The cached value of the '{@link #getEClass() <em>EClass</em>}' reference.
 	 * <!-- begin-user-doc -->
@@ -220,6 +234,41 @@ public class ClassMetadataImpl extends MinimalEObjectImpl.Container implements C
 	@Override
 	protected EClass eStaticClass() {
 		return MetadataPackage.Literals.CLASS_METADATA;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<MetadataDiagnostic> getDiagnostics() {
+		if (diagnostics == null) {
+			diagnostics = new EObjectContainmentEList<MetadataDiagnostic>(MetadataDiagnostic.class, this, MetadataPackage.CLASS_METADATA__DIAGNOSTICS);
+		}
+		return diagnostics;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<MetadataDiagnostic> getAllDiagnostics() {
+		EList<MetadataDiagnostic> result = new BasicEList<>();
+		result.addAll(getDiagnostics());
+		EClass eClassType = eClass();
+		if (eClassType == MetadataPackage.Literals.PACKAGE_METADATA) {
+		    for (ClassMetadata classMetadata : ((PackageMetadata) this).getClasses()) {
+		        result.addAll(classMetadata.getAllDiagnostics());
+		    }
+		} else if (eClassType == MetadataPackage.Literals.CLASS_METADATA) {
+		    for (FeatureMetadata featureMetadata : ((ClassMetadata) this).getFeatures()) {
+		        result.addAll(featureMetadata.getAllDiagnostics());
+		    }
+		}
+		return result;
 	}
 
 	/**
@@ -489,6 +538,8 @@ public class ClassMetadataImpl extends MinimalEObjectImpl.Container implements C
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case MetadataPackage.CLASS_METADATA__DIAGNOSTICS:
+				return ((InternalEList<?>)getDiagnostics()).basicRemove(otherEnd, msgs);
 			case MetadataPackage.CLASS_METADATA__PACKAGE:
 				return basicSetPackage(null, msgs);
 			case MetadataPackage.CLASS_METADATA__FEATURES:
@@ -521,6 +572,10 @@ public class ClassMetadataImpl extends MinimalEObjectImpl.Container implements C
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case MetadataPackage.CLASS_METADATA__DIAGNOSTICS:
+				return getDiagnostics();
+			case MetadataPackage.CLASS_METADATA__ALL_DIAGNOSTICS:
+				return getAllDiagnostics();
 			case MetadataPackage.CLASS_METADATA__PACKAGE:
 				return getPackage();
 			case MetadataPackage.CLASS_METADATA__ECLASS:
@@ -557,6 +612,10 @@ public class ClassMetadataImpl extends MinimalEObjectImpl.Container implements C
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case MetadataPackage.CLASS_METADATA__DIAGNOSTICS:
+				getDiagnostics().clear();
+				getDiagnostics().addAll((Collection<? extends MetadataDiagnostic>)newValue);
+				return;
 			case MetadataPackage.CLASS_METADATA__PACKAGE:
 				setPackage((PackageMetadata)newValue);
 				return;
@@ -607,6 +666,9 @@ public class ClassMetadataImpl extends MinimalEObjectImpl.Container implements C
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case MetadataPackage.CLASS_METADATA__DIAGNOSTICS:
+				getDiagnostics().clear();
+				return;
 			case MetadataPackage.CLASS_METADATA__PACKAGE:
 				setPackage((PackageMetadata)null);
 				return;
@@ -652,6 +714,10 @@ public class ClassMetadataImpl extends MinimalEObjectImpl.Container implements C
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case MetadataPackage.CLASS_METADATA__DIAGNOSTICS:
+				return diagnostics != null && !diagnostics.isEmpty();
+			case MetadataPackage.CLASS_METADATA__ALL_DIAGNOSTICS:
+				return !getAllDiagnostics().isEmpty();
 			case MetadataPackage.CLASS_METADATA__PACKAGE:
 				return getPackage() != null;
 			case MetadataPackage.CLASS_METADATA__ECLASS:

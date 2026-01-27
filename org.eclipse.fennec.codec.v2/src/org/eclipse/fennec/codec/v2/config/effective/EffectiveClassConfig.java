@@ -33,7 +33,11 @@ import org.eclipse.emf.ecore.EClass;
  * @see <a href="docs/codec-v2-serialization-spec.md#6-eobject-serialization">Spec 6: EObject Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+ * @deprecated This class uses deprecated config classes (EffectiveIdConfig, EffectiveTypeConfig, EffectiveSuperTypeConfig).
+ *             Use the new config classes in org.eclipse.fennec.codec.config package instead.
+ *             This class will be removed in a future release.
  */
+@Deprecated
 public final class EffectiveClassConfig {
 
     private final EClass eClass;

@@ -2,11 +2,90 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-23 (Spec Reorganization Completed)
+**Last Updated:** 2026-01-27 (SuperType integration complete, ready for TCK tests)
 
 ---
 
-## 0. Development Workflow (MUST FOLLOW)
+## 0. Active Task Hierarchy (SESSION CONTINUITY)
+
+This section tracks the current task hierarchy to prevent context loss during nested investigations.
+
+### 0.1 How to Use This Section
+
+**When starting work:** Check this section first to understand where we are.
+
+**When a new issue arises during work:**
+1. **ASK:** "Is this a child task (fix now, return to parent) or independent task (add to TODO, continue)?"
+2. **If child task:** Add it to the hierarchy below with proper indentation
+3. **If independent task:** Add to §5.4 "Remaining Work" or §10.4 "Current TODO List"
+
+**When completing a task:** Mark it ✅ and return to the parent task.
+
+**Format:**
+```
+MAIN TASK: [description] - [status: ACTIVE/PAUSED/✅]
+├── CHILD: [description] - [status]
+│   ├── CHILD: [sub-issue] - [status]
+│   └── CHILD: [sub-issue] - [status]
+└── RETURN TO: [next step after children complete]
+```
+
+### 0.2 Current Task Hierarchy
+
+```
+MAIN TASK: Prepare spec for TCK test creation (Type + SuperType configuration) - ACTIVE
+│
+│  GOAL: Verify configuration merging works correctly by:
+│        1. Clarifying spec until Claude can explain ser/deser behavior (and WHY)
+│        2. Documenting property constraints and dependencies
+│        3. Creating ser/deser flows that are testable
+│        4. Then create spec tests that verify the effective configuration
+│
+│  KEY DOCUMENTS:
+│  - 06-type.md (ser/deser flows created)
+│  - 07-supertype.md (coupled to type, needs flow integration)
+│  - 08-discriminator-mapping.md (referenced)
+│  - 16-annotation-reference.md (property definitions)
+│  - 21-type-config-validation-rules.md (constraints)
+│
+├── CHILD: Type spec clarification (06-type.md) - ✅
+│   ├── Created serialization flow (Section 5) - ✅
+│   ├── Created deserialization flow (Section 6) - ✅
+│   ├── Fix: Remove deprecated typeInclude property - ✅
+│   ├── Fix: TypeStrategy.NONE semantics - ✅
+│   └── Fix: fallbackStrategy default (FALLBACK → SKIP) - ✅
+│
+├── CHILD: SuperType spec clarification (07-supertype.md) - ✅ COMPLETE
+│   ├── Fix: SuperTypeSelection default (SINGLE → ALL) - ✅
+│   ├── Fix: Chapter references (09 → 07) - ✅
+│   ├── Fix: Remove superTypeSchemaKey (inherits from TypeConfig) - ✅
+│   ├── Fix: Remove superTypeNameKey (superTypeKey has format-dependent default) - ✅
+│   ├── Fix: Replace superTypeValidate with DeserializationMode.STRICT - ✅
+│   ├── Verify: SuperTypeConfig completeness - ✅
+│   │
+│   └── DONE: Integrate SuperType into Type ser/deser flows - ✅
+│       - Serialization: step 3d added to 06-type.md (after type, respects format)
+│       - Constraint: typeStrategy=NONE + typeFormat=STRUCTURED + superTypeSerialize=true → ERROR
+│       - Deserialization: step 5 added to 06-type.md (after type resolution)
+│       - Smart compression: uses ROOT schema (same as type)
+│       - superTypeKey format-dependent default: PLAIN→"_supertype", STRUCTURED→"supertype"
+│
+└── NEXT STEPS:
+    - Create 22-supertype-config-validation-rules.md (like 21 for type)
+    - Create spec tests for Type + SuperType configuration merging
+    - Verify constraints between type and supertype properties
+    - Return to main task: Create TCK tests from spec
+```
+
+### 0.3 Task History (Completed Hierarchies)
+
+*Move completed main tasks here for reference.*
+
+---
+
+## 1. Development Workflow (MUST FOLLOW)
+
+> **Note:** Previous section numbering started at 0. This section was previously "Section 0".
 
 ### Testing Commands (CRITICAL)
 
@@ -14,6 +93,7 @@ This document provides context for continuing codec.v2 development across sessio
 
 ```bash
 # Codec V2 projects - use these:
+./gradlew :org.eclipse.fennec.codec.api:test           # Config classes (~530+ tests)
 ./gradlew :org.eclipse.fennec.codec.v2:test
 ./gradlew :org.eclipse.fennec.codec.metadata:test
 ./gradlew :org.eclipse.fennec.model.metadata:test
@@ -89,6 +169,7 @@ We are building **codec.v2**, a new EMF serialization codec based on the specifi
 
 | Project | Purpose | Status | Architecture Doc |
 |---------|---------|--------|------------------|
+| `org.eclipse.fennec.codec.api` | Config classes (Mergeable), diagnostic API | ✅ Complete | See §10 below |
 | `org.eclipse.fennec.model.metadata` | Generic MetadataService infrastructure | ✅ Complete | [model-metadata-architecture.md](../org.eclipse.fennec.model.metadata/model-metadata-architecture.md) |
 | `org.eclipse.fennec.codec.metadata` | Codec-specific aspects and annotation parsing | ✅ Complete | [codec-metadata-architecture.md](../org.eclipse.fennec.codec.metadata/codec-metadata-architecture.md) |
 | `org.eclipse.fennec.codec.v2` | New codec implementation | ✅ Phase 3 Complete | See [00-overview.md](codec-v2-spec/00-overview.md) |
@@ -385,6 +466,31 @@ STRUCTURED format:
 - Field ordering options
 - Streaming serialization
 
+### 5.6 Spec Review TODOs (from 2026-01-25 session) - ✅ COMPLETED
+
+The following items were identified during the Type Serialization/Deserialization flow documentation work:
+
+| TODO | Description | Status |
+|------|-------------|--------|
+| **Update codec.ecore** | Change `fallbackStrategy` default from `FALLBACK` to `SKIP` in the EMF model | ✅ Done (2026-01-26) |
+| **Spec Text Review** | Verify all text in `06-type.md`, `08-discriminator-mapping.md` aligns with the new serialization/deserialization flowcharts | ✅ Done (2026-01-26) |
+| **Cross-reference Check** | Ensure `16-annotation-reference.md` and `21-type-config-validation-rules.md` reflect the corrected fallbackStrategy default | ✅ Done (2026-01-26) |
+| **Smart Compression in Deserialization** | Added step 3b' to deserialization flow documenting smart compression expansion | ✅ Done (2026-01-26) |
+
+**Changes made (2026-01-26):**
+- Updated `codec.ecore`: FallbackStrategy enum reordered (SKIP=0, ERROR=1, FALLBACK=2), defaults changed to SKIP
+- Updated `16-annotation-reference.md`: Corrected all fallbackStrategy defaults and documentation
+- Added step 3b' to `06-type.md` deserialization flow for smart compression expansion
+- All spec documents now aligned with flowcharts
+
+**Context (from 2026-01-25):**
+- Added comprehensive serialization flow (Section 5 in `06-type.md`)
+- Updated deserialization flow with corrected fallbackStrategy behavior (Section 6 in `06-type.md`)
+- Changed resolution priority: Type Mapping Registry → Inline Mapping → Type Strategy → Fallback
+- Changed fallbackStrategy default from FALLBACK to SKIP
+- FALLBACK now requires `fallbackEClass` to be set (else ERROR)
+- Added typeValueReaderName/typeValueWriterName hooks to the flows
+
 ---
 
 ## 6. Key Files Reference
@@ -625,6 +731,124 @@ Added to ID spec:
 **Documented (Feature Request):**
 - **11.1** STRICT mode for unknown field handling (future feature)
 
+### Session 2026-01-26: MetadataIndex API + Deprecation Cleanup
+
+**MetadataIndex Implementation:**
+
+Added indexed lookup support to `MetadataService` for fast CLASS/NAME TypeStrategy resolution:
+
+| Interface | Purpose |
+|-----------|---------|
+| `MetadataIndexReader` | Query interface: `findByInstanceClassName`, `findByClassName`, `findClassByURI`, etc. |
+| `MetadataIndexWriter` | Index maintenance: `indexPackage`, `removeClass`, `clear` |
+| `MetadataIndex` | Combined interface extending both |
+| `MapBasedMetadataIndex` | In-memory ConcurrentHashMap implementation |
+
+**Key Features:**
+- Context-aware lookup: `findByInstanceClassName(nsURI, className)` for specific package
+- Global search: `findAllByInstanceClassName(className)` for cross-package queries
+- Handles `java.util.Map$Entry` pattern (multiple EClasses with same instanceClassName)
+- Automatic indexing on package registration via `MetadataServiceImpl`
+
+**API Access:**
+```java
+MetadataIndexReader index = metadataService.getIndexReader();
+ClassMetadata meta = index.findByInstanceClassName(nsURI, "org.example.PersonImpl");
+```
+
+**Deprecated `typeInclude` Removed:**
+
+The deprecated `typeInclude` annotation key and `BaseTypeConfig.include` attribute have been completely removed:
+
+| Location | Change |
+|----------|--------|
+| `metadata.ecore` | Removed `include` from `BaseTypeConfig` |
+| `CodecAnnotationConstants` | Removed `KEY_TYPE_INCLUDE` |
+| `CodecAspectProvider` | Removed `typeInclude` parsing |
+| `ConfigurationMerger` | Updated `resolveTypeEnabled()` to derive from `TypeStrategy.NONE` |
+| Tests | Updated to use `TypeStrategy.NONE` instead |
+
+**Spec Updated:**
+- `06-type.md` section 6.4.5: CLASS Strategy Resolution with MetadataIndex API examples
+- Added cross-reference from NAME strategy to MetadataIndex API
+
+### Session 2026-01-24: Configuration Infrastructure Complete
+
+**New Config Classes in `org.eclipse.fennec.codec.api`:**
+
+| Class | Purpose | Test Count |
+|-------|---------|------------|
+| `IdConfig` | ID serialization configuration | 33+ tests |
+| `TypeConfig` | Type serialization configuration | 41 tests |
+| `FeatureConfig` | Feature serialization configuration | 52 tests |
+| `SuperTypeConfig` | SuperType serialization configuration | 35 tests |
+| `ReferenceConfig` | Reference serialization configuration (NEW) | 43 tests |
+| `DiscriminatorConfig` | Discriminator mapping configuration (NEW) | 58 tests |
+| `ConfigMergeHelper` | Utility for type-safe property merging | 66 tests |
+| `ConfigProperty` | Enum defining all config properties | 71 tests |
+
+**Key Design Pattern - Cascading Merge:**
+```java
+// Each config implements Mergeable<T> for cascading configuration
+defaults.mergeWith(annotation)
+        .mergeWith(module)
+        .mergeWith(factory)
+        .mergeWith(resource)
+        .mergeWith(options)
+        .validate(diagnostics);  // Returns immutable final config
+```
+
+**New Classes Created:**
+
+1. **`ReferenceConfig.java`** - Reference serialization with:
+   - Properties: format, refKey, refTypeKey, proxyKey, expand, expandGlobal, expandDepth, expandIgnoreBidirectional, serializeInstanceType, valueReaderName, valueWriterName
+   - Computed property: `shouldExpand()` returns true when expand or expandGlobal is true
+
+2. **`DiscriminatorConfig.java`** - Discriminator mapping with:
+   - Type Mapping Registry: typeMapId, typeDiscriminatorPath, typeDiscriminator, typeMappings (Map)
+   - Inline Mapping: inlineMappings (Map)
+   - Fallback: fallbackStrategy (ERROR/SKIP/FALLBACK enum), fallbackEClass
+   - Map merging support in `mergeWith()` - override entries merge into base
+   - Computed properties: hasTypeMappingRegistry(), hasInlineMapping(), isRegisteredWithRegistry()
+
+**Diagnostic System Enhanced:**
+
+Added INFO severity to `CodecDiagnostic`:
+```java
+public enum Severity { ERROR, WARNING, INFO }
+
+// New methods
+CodecDiagnostic.info(message, source);
+diagnostics.addInfo(message, source);
+```
+
+**Deprecated Classes (in `codec.v2.config.effective`):**
+
+| Class | Replacement |
+|-------|-------------|
+| `EffectiveIdConfig` | `org.eclipse.fennec.codec.config.IdConfig` |
+| `EffectiveTypeConfig` | `org.eclipse.fennec.codec.config.TypeConfig` |
+| `EffectiveFeatureConfig` | `org.eclipse.fennec.codec.config.FeatureConfig` |
+| `EffectiveSuperTypeConfig` | `org.eclipse.fennec.codec.config.SuperTypeConfig` |
+| `EffectiveClassConfig` | Use new config classes directly |
+| `EffectiveCodecConfig` | Use new config classes directly |
+| `ConfigurationMerger` | Use `Mergeable` pattern instead |
+
+**Test Coverage Summary (~530+ tests in codec.api):**
+
+All config tests follow TDD principles and validate:
+- Default values from spec
+- Builder pattern with chaining
+- `mergeWith(Map)` for property map overrides
+- `mergeWith(T)` for cascading config
+- `validate(DiagnosticCollector)` for constraint checking
+- Computed properties where applicable
+
+**Fixed Issues:**
+
+1. `TypeConfig.validate()` - Removed invalid `TypeStrategy.MAPPED` reference (discriminator mapping is separate layer)
+2. Added schemaKey validation constraint for STRUCTURED format / SCHEMA_AND_TYPE strategy
+
 ### Session 2026-01-23: Spec Reorganization Complete
 
 **Spec Structure Finalized:**
@@ -671,17 +895,43 @@ The specification reorganization is now complete. Final structure:
 
 See **[99-open-questions.md](codec-v2-spec/99-open-questions.md)** for full implementation roadmap.
 
-**High Priority (Spec vs Implementation Gaps):**
-1. **Feature Visibility Refactor** - Add `ignore*`, `force*` annotations to replace `transient`/`serialize`
-2. **Metadata Merge** - Implement `metadataMerge`/`metadataKey` for STRUCTURED format
-3. **Fallback Handling** - Implement `fallbackStrategy`/`fallbackEClass` for discriminator mappings
-4. **Feature Strictness** - Implement `strictOnUnknown`/`strictOnMissing`
-5. **Diagnostic Options** - Complete `failFast`, `suppressWarnings` implementation
+**Configuration Infrastructure Complete ✅** - All config classes now implement `Mergeable<T>`.
+
+**⚠️ IMMEDIATE: Test Reorganization (TDD Correction)**
+
+The existing ~510 tests were generated from implementation, NOT from spec. This is a TDD violation.
+
+**Plan:**
+1. Move existing tests to `test/.../config/impl/` subpackage (implementation-derived tests)
+2. Create new `test/.../config/spec/` subpackage for spec-based tests
+3. Write spec-based tests using examples from spec documents
+4. When spec is unclear → ASK before implementing
+5. Spec tests will reveal validation constraint questions (e.g., "does typeMappings require typeMapId?")
+
+**Structure:**
+```
+test/org/eclipse/fennec/codec/config/
+├── impl/                          # Existing tests (implementation-derived)
+│   ├── IdConfigTest.java
+│   ├── TypeConfigTest.java
+│   └── ...
+└── spec/                          # NEW: Spec-based tests
+    ├── IdConfigSpecTest.java
+    ├── TypeConfigSpecTest.java
+    └── ...
+```
+
+**After Test Reorganization:**
+
+**High Priority:**
+1. **Wire DiscriminatorConfig** - Connect new DiscriminatorConfig to Type resolution in codec.v2
+2. **Feature Visibility Refactor** - Add `ignore*`, `force*` annotations to replace `transient`/`serialize`
+3. **Metadata Merge** - Implement `metadataMerge`/`metadataKey` for STRUCTURED format
 
 **Medium Priority:**
+4. **Feature Strictness** - Implement `strictOnUnknown`/`strictOnMissing` using DiagnosticCollector
+5. **Diagnostic Options** - Complete `failFast`, `suppressWarnings` implementation
 6. **Type/SuperType Value Reader/Writer** - Wire existing constants
-7. **Expand Deserialization** - Deserialize expanded refs as detached EObjects
-8. **Scope Wiring** - Wire `typeScope`, `idScope` in config resolution
 
 **Design Decisions Needed:**
 - Review EPackage Scope Level proposal
@@ -756,6 +1006,14 @@ For detailed feature documentation, see:
 ## 10. Configuration Transition Work (Active)
 
 This section tracks the ongoing transition from the old configuration approach to the new unified configuration architecture defined in the spec.
+
+> **📋 Active Refactoring Plan:** See [`~/.claude/plans/compiled-dreaming-acorn.md`](/home/mark/.claude/plans/compiled-dreaming-acorn.md) for the detailed working plan including:
+> - 3D Configuration Matrix architecture (Sources × Levels × Direction)
+> - GAP tracking (GAP-001 through GAP-014)
+> - Phase-by-phase implementation order
+> - Acceptance criteria
+>
+> This development guide remains the **source of truth** for project architecture and history. The plan file is a **temporary working document** for the current refactoring effort.
 
 ### 10.1 Transition Goals
 

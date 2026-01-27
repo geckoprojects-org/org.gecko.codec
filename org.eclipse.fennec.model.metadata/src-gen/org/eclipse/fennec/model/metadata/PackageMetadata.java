@@ -16,7 +16,6 @@ package org.eclipse.fennec.model.metadata;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -37,6 +36,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.model.metadata.PackageMetadata#getEPackage <em>EPackage</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.PackageMetadata#getNsURI <em>Ns URI</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.PackageMetadata#getClasses <em>Classes</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.PackageMetadata#getAspects <em>Aspects</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getPackageMetadata()
@@ -44,7 +44,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface PackageMetadata extends EObject {
+public interface PackageMetadata extends DiagnosticContainer {
 	/**
 	 * Returns the value of the '<em><b>EPackage</b></em>' reference.
 	 * <!-- begin-user-doc -->
@@ -111,5 +111,20 @@ public interface PackageMetadata extends EObject {
 	 * @generated
 	 */
 	EList<ClassMetadata> getClasses();
+
+	/**
+	 * Returns the value of the '<em><b>Aspects</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.fennec.model.metadata.PackageAspect}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Aspects attached to this package (codec, ORM, etc.).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Aspects</em>' containment reference list.
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getPackageMetadata_Aspects()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<PackageAspect> getAspects();
 
 } // PackageMetadata

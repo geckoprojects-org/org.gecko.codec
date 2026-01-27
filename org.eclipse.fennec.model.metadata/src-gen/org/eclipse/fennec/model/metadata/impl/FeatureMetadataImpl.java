@@ -19,6 +19,7 @@ import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -35,7 +36,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
+import org.eclipse.fennec.model.metadata.MetadataDiagnostic;
 import org.eclipse.fennec.model.metadata.MetadataPackage;
+import org.eclipse.fennec.model.metadata.PackageMetadata;
 
 /**
  * <!-- begin-user-doc -->
@@ -45,6 +48,8 @@ import org.eclipse.fennec.model.metadata.MetadataPackage;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getDiagnostics <em>Diagnostics</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getAllDiagnostics <em>All Diagnostics</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getClassMetadata <em>Class Metadata</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getEFeature <em>EFeature</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureMetadataImpl#getName <em>Name</em>}</li>
@@ -56,6 +61,16 @@ import org.eclipse.fennec.model.metadata.MetadataPackage;
  * @generated
  */
 public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container implements FeatureMetadata {
+	/**
+	 * The cached value of the '{@link #getDiagnostics() <em>Diagnostics</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDiagnostics()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MetadataDiagnostic> diagnostics;
+
 	/**
 	 * The cached value of the '{@link #getEFeature() <em>EFeature</em>}' reference.
 	 * <!-- begin-user-doc -->
@@ -153,6 +168,41 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	@Override
 	protected EClass eStaticClass() {
 		return MetadataPackage.Literals.FEATURE_METADATA;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<MetadataDiagnostic> getDiagnostics() {
+		if (diagnostics == null) {
+			diagnostics = new EObjectContainmentEList<MetadataDiagnostic>(MetadataDiagnostic.class, this, MetadataPackage.FEATURE_METADATA__DIAGNOSTICS);
+		}
+		return diagnostics;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<MetadataDiagnostic> getAllDiagnostics() {
+		EList<MetadataDiagnostic> result = new BasicEList<>();
+		result.addAll(getDiagnostics());
+		EClass eClassType = eClass();
+		if (eClassType == MetadataPackage.Literals.PACKAGE_METADATA) {
+		    for (ClassMetadata classMetadata : ((PackageMetadata) this).getClasses()) {
+		        result.addAll(classMetadata.getAllDiagnostics());
+		    }
+		} else if (eClassType == MetadataPackage.Literals.CLASS_METADATA) {
+		    for (FeatureMetadata featureMetadata : ((ClassMetadata) this).getFeatures()) {
+		        result.addAll(featureMetadata.getAllDiagnostics());
+		    }
+		}
+		return result;
 	}
 
 	/**
@@ -344,6 +394,8 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case MetadataPackage.FEATURE_METADATA__DIAGNOSTICS:
+				return ((InternalEList<?>)getDiagnostics()).basicRemove(otherEnd, msgs);
 			case MetadataPackage.FEATURE_METADATA__CLASS_METADATA:
 				return basicSetClassMetadata(null, msgs);
 			case MetadataPackage.FEATURE_METADATA__ASPECTS:
@@ -374,6 +426,10 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case MetadataPackage.FEATURE_METADATA__DIAGNOSTICS:
+				return getDiagnostics();
+			case MetadataPackage.FEATURE_METADATA__ALL_DIAGNOSTICS:
+				return getAllDiagnostics();
 			case MetadataPackage.FEATURE_METADATA__CLASS_METADATA:
 				return getClassMetadata();
 			case MetadataPackage.FEATURE_METADATA__EFEATURE:
@@ -400,6 +456,10 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case MetadataPackage.FEATURE_METADATA__DIAGNOSTICS:
+				getDiagnostics().clear();
+				getDiagnostics().addAll((Collection<? extends MetadataDiagnostic>)newValue);
+				return;
 			case MetadataPackage.FEATURE_METADATA__CLASS_METADATA:
 				setClassMetadata((ClassMetadata)newValue);
 				return;
@@ -431,6 +491,9 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case MetadataPackage.FEATURE_METADATA__DIAGNOSTICS:
+				getDiagnostics().clear();
+				return;
 			case MetadataPackage.FEATURE_METADATA__CLASS_METADATA:
 				setClassMetadata((ClassMetadata)null);
 				return;
@@ -461,6 +524,10 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case MetadataPackage.FEATURE_METADATA__DIAGNOSTICS:
+				return diagnostics != null && !diagnostics.isEmpty();
+			case MetadataPackage.FEATURE_METADATA__ALL_DIAGNOSTICS:
+				return !getAllDiagnostics().isEmpty();
 			case MetadataPackage.FEATURE_METADATA__CLASS_METADATA:
 				return getClassMetadata() != null;
 			case MetadataPackage.FEATURE_METADATA__EFEATURE:

@@ -13,8 +13,15 @@
  */
 package org.eclipse.fennec.codec.v2.config.effective;
 
-import java.util.List;
+import static org.eclipse.fennec.codec.config.ConfigMergeHelper.getBoolean;
+import static org.eclipse.fennec.codec.config.ConfigMergeHelper.getEnum;
+import static org.eclipse.fennec.codec.config.ConfigMergeHelper.getList;
+import static org.eclipse.fennec.codec.config.ConfigMergeHelper.getString;
 
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.fennec.codec.config.ConfigProperty;
 import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.IdStrategy;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
@@ -30,7 +37,10 @@ import org.eclipse.fennec.model.metadata.SerializationFormat;
  * @see <a href="docs/codec-v2-serialization-spec.md#4-id-serialization">Spec 4: ID Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+ * @deprecated Use {@link org.eclipse.fennec.codec.config.IdConfig} instead.
+ *             This class will be removed in a future release.
  */
+@Deprecated
 public final class EffectiveIdConfig {
 
     private final boolean enabled;

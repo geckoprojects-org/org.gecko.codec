@@ -15,6 +15,10 @@
 /**
  * Effective (fully merged) configuration classes for codec v2.
  * <p>
+ * <b>DEPRECATED:</b> This package is deprecated. Use the new config classes in
+ * {@link org.eclipse.fennec.codec.config} package instead.
+ * </p>
+ * <p>
  * This package contains immutable, fully-resolved configuration classes that represent
  * the effective merged configuration from all sources:
  * <ol>
@@ -26,24 +30,21 @@
  * </ol>
  * </p>
  * <p>
- * Key classes:
+ * Key classes (all deprecated):
  * <ul>
- *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig} - Top-level config with caching</li>
- *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveClassConfig} - Per-EClass configuration</li>
- *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig} - Per-feature configuration</li>
- *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveIdConfig} - ID serialization settings</li>
- *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig} - Type serialization settings</li>
- *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig} - SuperType serialization settings</li>
- *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.ConfigurationMerger} - Merges all config sources</li>
+ *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig} - Use new config classes instead</li>
+ *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveClassConfig} - Use new config classes instead</li>
+ *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig} - Use {@link org.eclipse.fennec.codec.config.FeatureConfig}</li>
+ *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveIdConfig} - Use {@link org.eclipse.fennec.codec.config.IdConfig}</li>
+ *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig} - Use {@link org.eclipse.fennec.codec.config.TypeConfig}</li>
+ *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig} - Use {@link org.eclipse.fennec.codec.config.SuperTypeConfig}</li>
+ *   <li>{@link org.eclipse.fennec.codec.v2.config.effective.ConfigurationMerger} - Use Mergeable pattern instead</li>
  * </ul>
  * </p>
- * <p>
- * The {@link org.eclipse.fennec.codec.v2.config.effective.ConfigurationMerger} is the single point
- * where configuration resolution order is implemented. All serializers use the resulting effective
- * configurations without any fallback logic.
- * </p>
  *
+ * @see org.eclipse.fennec.codec.config
  * @see <a href="docs/codec-v2-serialization-spec.md#16-configuration-hierarchy">Spec 16: Configuration Hierarchy</a>
+ * @deprecated Use the new config classes in {@link org.eclipse.fennec.codec.config} package.
  */
 @org.osgi.annotation.bundle.Export
 @org.osgi.annotation.versioning.Version("1.0.0")

@@ -14,6 +14,8 @@
  */
 package org.eclipse.fennec.model.metadata;
 
+import org.eclipse.emf.ecore.EClass;
+
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -25,6 +27,12 @@ import org.osgi.annotation.versioning.ProviderType;
  * Base class for aspects that attach to ClassMetadata.
  * <!-- end-model-doc -->
  *
+ * <p>
+ * The following features are supported:
+ * </p>
+ * <ul>
+ *   <li>{@link org.eclipse.fennec.model.metadata.ClassAspect#getEClass <em>EClass</em>}</li>
+ * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassAspect()
  * @model abstract="true"
@@ -32,4 +40,29 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface ClassAspect extends Aspect {
+	/**
+	 * Returns the value of the '<em><b>EClass</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * The EClass this aspect was built from.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>EClass</em>' reference.
+	 * @see #setEClass(EClass)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassAspect_EClass()
+	 * @model
+	 * @generated
+	 */
+	EClass getEClass();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.ClassAspect#getEClass <em>EClass</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>EClass</em>' reference.
+	 * @see #getEClass()
+	 * @generated
+	 */
+	void setEClass(EClass value);
+
 } // ClassAspect

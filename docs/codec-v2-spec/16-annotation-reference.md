@@ -498,13 +498,15 @@ Type configuration describes how type information is serialized/deserialized.
 | `typeKey` | `codec.typeKey` | ✅ | ✅ | ✅ | ❌ | Outer JSON key (**default:** `_type`) |
 | `typeNameKey` | `codec.typeNameKey` | ✅ | ✅ | ✅ | ❌ | Inner type name key in STRUCTURED (**default:** `type`) |
 | `typeSchemaKey` | `codec.typeSchemaKey` | ✅ | ✅ | ✅ | ❌ | Inner schema key in STRUCTURED (**default:** `schema`) |
-| `typeInclude` | `codec.typeInclude` | ✅ | ✅ | 🔶 | ❌ | Whether to include type info (**default:** `true`) |
+| ~~`typeInclude`~~ | ~~`codec.typeInclude`~~ | ⚠️ | ⚠️ | ⚠️ | ❌ | **DEPRECATED** - use `typeStrategy=NONE` instead ([migration guide](06-type.md#7-deprecated-typeinclude)) |
 | `typeValueReaderName` | `codec.typeValueReaderName` | ✅ | ✅ | ❌ | ❌ | Custom value reader service name |
 | `typeValueWriterName` | `codec.typeValueWriterName` | ✅ | ✅ | ❌ | ❌ | Custom value writer service name |
 | — | `codec.typeScope` | 🔧 | ❌ | ❌ | ❌ | Strategy scope (see [StrategyScope](#strategyscope)) |
 | — | `codec.typeFormatScope` | 🔧 | ❌ | ❌ | ❌ | Format scope (see [StrategyScope](#strategyscope)) |
 
 > **Why `typeScope`/`typeFormatScope` are runtime-only:** These properties control *where* a strategy applies (ROOT_ONLY, ROOT_CONTAINMENT, etc.), which is a runtime/operational concern rather than a model-intrinsic property. Additionally, their semantics become unclear with cross-package references. See [EPackage Scope Proposal](../codec-v2-spec-working/epackage-scope-proposal.md) for discussion.
+
+> **Recommendation:** Use keys that start with `_` or `@` (like `_type`, `@type`) for `typeKey`, `typeSchemaKey`, and `typeNameKey`. This helps distinguish metadata from data fields and prevents collision with ordinary data keys during deserialization.
 
 **Implementation:** `CodecAnnotationConstants.KEY_TYPE_*`
 
@@ -516,9 +518,9 @@ Values for the `typeStrategy` annotation key. These control **what information**
 |-------|---------------------|----------------------------|
 | `URI` **(default)** | Full EClass URI: `"http://example.org#//Person"` | Self-describing, resolvable via EPackage registry |
 | `NAME` | Simple EClass name: `"Person"` | Requires schema context (`CODEC_ROOT_SCHEMA` or `CODEC_ROOT_TYPE`) |
-| `CLASS` | Java class name: `"org.example.PersonImpl"` | Requires class to be loadable |
+| `CLASS` | Java class name: `"org.example.PersonImpl"` | **Requires** `EClass.getInstanceClassName()` to be set (ERROR if null) |
 | `SCHEMA_AND_TYPE` | Two fields: `"_schema": "...", "_type": "Person"` | Schema + name combined |
-| `NUMERIC` | EMF classifier ID: `"3"` | Requires schema context, IDs are positional (fragile) |
+| `NUMERIC` | EMF classifier ID: `"3"` | **Requires** `CODEC_ROOT_SCHEMA` or `CODEC_ROOT_TYPE` - IDs are package-specific |
 | `NONE` | No type field written | `CODEC_ROOT_TYPE` required, or reference must be concrete |
 
 > **Note:** `MAPPED` was removed from TypeStrategy. Discriminator-based type resolution is now a separate optional layer. See [Discriminator Mapping Configuration](#discriminator-mapping-configuration) below.
@@ -527,11 +529,39 @@ Values for the `typeStrategy` annotation key. These control **what information**
 
 | Misconfiguration | Severity | Reason |
 |------------------|----------|--------|
+| `typeInclude` (any level) | WARNING | **DEPRECATED** - use `typeStrategy=NONE` instead |
 | `typeValueReaderName` on EReference | ERROR | Value reader/writer is class-intrinsic |
 | `typeValueWriterName` on EReference | ERROR | Value reader/writer is class-intrinsic |
-| `typeScope` via EAnnotation | ERROR | Scope is runtime-only (🔧) |
-| `typeFormatScope` via EAnnotation | ERROR | Scope is runtime-only (🔧) |
+| `typeScope` via EAnnotation | WARNING | Runtime-only (🔧), annotation is ignored |
+| `typeFormatScope` via EAnnotation | WARNING | Runtime-only (🔧), annotation is ignored |
 | Any `type*` key on EAttribute | ERROR | Type config not applicable to attributes |
+
+### Annotation-Only Directive: `inherit`
+
+The `inherit` key controls how codec annotations are inherited across the EClass hierarchy. It is an **annotation-only directive** - it does NOT have a property equivalent and is consumed during annotation parsing.
+
+| Annotation Key | Global | EClass | Default | Description |
+|----------------|:------:|:------:|---------|-------------|
+| `inherit` | ✅ | ✅ | `DIRECT` | Annotation inheritance level |
+
+**Values:**
+
+| Value | Description |
+|-------|-------------|
+| `DIRECT` **(default)** | Inherit from immediate parent EClass only |
+| `ALL` | Inherit from full hierarchy up to EObject |
+| `NONE` | No inheritance, use only this EClass's annotations |
+
+**Example:**
+```xml
+<eClassifiers xsi:type="ecore:EClass" name="Employee" eSuperTypes="#//Person">
+  <eAnnotations source="http://eclipse.org/fennec/codec">
+    <details key="inherit" value="ALL"/>
+  </eAnnotations>
+</eClassifiers>
+```
+
+> **Note:** `inherit` affects how `CodecAspectProvider` resolves annotations when building AspectConfig. It is NOT a runtime property and does NOT participate in the property resolution matrix. See [12-polymorphism.md](12-polymorphism.md#2-annotation-inheritance-levels) for details.
 
 ---
 
@@ -544,15 +574,18 @@ SuperType describes class inheritance hierarchy. This is an **extension of Type*
 | Annotation Key | Property Key | Global | EClass | ERef | EAttr | Description |
 |----------------|--------------|:------:|:------:|:----:|:-----:|-------------|
 | `superTypeSerialize` | `codec.superTypeSerialize` | ✅ | ✅ | ❌ | ❌ | Enable supertype serialization (**default:** `false`) |
-| `superTypeKey` | `codec.superTypeKey` | ✅ | ✅ | ❌ | ❌ | JSON key (**default:** `_superTypes`) |
+| `superTypeKey` | `codec.superTypeKey` | ✅ | ✅ | ❌ | ❌ | JSON key (**default:** format-dependent, see below) |
 | `superTypeStrategy` | `codec.superTypeStrategy` | ✅ | ✅ | ❌ | ❌ | Which supertypes to include (see below) |
 | `superTypeAsArray` | `codec.superTypeAsArray` | ✅ | ✅ | ❌ | ❌ | Array vs string (**default:** `true`) |
 | `superTypeSeparator` | `codec.superTypeSeparator` | ✅ | ✅ | ❌ | ❌ | Separator for string (**default:** `,`) |
 | `superTypeFormat` | `codec.superTypeFormat` | ✅ | ✅ | ❌ | ❌ | Output format (see [SerializationFormat](#serializationformat)) |
-| `superTypeSchemaKey` | `codec.superTypeSchemaKey` | ✅ | ✅ | ❌ | ❌ | Schema key in STRUCTURED |
-| `superTypeNameKey` | `codec.superTypeNameKey` | ✅ | ✅ | ❌ | ❌ | Name key in STRUCTURED |
 | `superTypeValueReaderName` | `codec.superTypeValueReaderName` | ✅ | ✅ | ❌ | ❌ | Custom value reader service name |
 | `superTypeValueWriterName` | `codec.superTypeValueWriterName` | ✅ | ✅ | ❌ | ❌ | Custom value writer service name |
+
+> **Note:** `superTypeSchemaKey` removed - SuperType inherits `schemaKey` from TypeConfig.
+> **Note:** `superTypeNameKey` removed - `superTypeKey` has format-dependent default:
+> - **PLAIN format:** `_supertype` (underscore prefix for root-level metadata)
+> - **STRUCTURED format:** `supertype` (no underscore inside `_type` object)
 
 **Implementation:** `CodecAnnotationConstants.KEY_SUPERTYPE_*`
 
@@ -620,18 +653,19 @@ Discriminator mappings use **dedicated annotation sources** (not the main `http:
 | — | `codec.typeMapId` | ✅ | ❌ | Registry ID (embedded in annotation source URI) |
 | `typeDiscriminatorPath` | `codec.typeDiscriminatorPath` | ✅ | ❌ | JSON path to discriminator value |
 | `{value}` | — | ✅ | ✅ | Mapping entries as direct key/value details |
-| — | `codec.typeMappings` | ✅ | ❌ | Mappings as nested Map (for property config) |
+| — | `codec.typeMappings` | ✅ | ❌ | Mappings as nested Map (for EClass property config) |
+| — | `codec.inlineMappings` | ❌ | ✅ | Mappings as nested Map (for EReference property config) |
 | `typeDiscriminator` | `codec.typeDiscriminator` | ✅ | ❌ | This class's discriminator value (distributed registration) |
-| `fallbackStrategy` | `codec.fallbackStrategy` | ✅ | ✅ | `ERROR`, `SKIP`, `FALLBACK` (**default:** `FALLBACK`) |
+| `fallbackStrategy` | `codec.fallbackStrategy` | ✅ | ✅ | `ERROR`, `SKIP`, `FALLBACK` (**default:** `SKIP`) |
 | `fallbackEClass` | `codec.fallbackEClass` | ✅ | ✅ | Explicit fallback EClass URI |
 
-**Implementation:** `CodecAnnotationConstants.KEY_TYPE_MAP_ID`, `KEY_TYPE_DISCRIMINATOR`, `KEY_TYPE_DISCRIMINATOR_PATH`, `ANNOTATION_SOURCE_TYPE_MAPPING_PREFIX`, `ANNOTATION_SOURCE_INLINE_MAPPING`
+**Implementation:** `CodecAnnotationConstants.KEY_TYPE_MAP_ID`, `KEY_TYPE_DISCRIMINATOR`, `KEY_TYPE_DISCRIMINATOR_PATH`, `KEY_INLINE_MAPPINGS`, `ANNOTATION_SOURCE_TYPE_MAPPING_PREFIX`, `ANNOTATION_SOURCE_INLINE_MAPPING`
 
 **Resolution priority during deserialization:**
-1. **Inline Mapping** (if configured on the EReference)
-2. **Type Mapping Registry** (if configured via typeMapping source)
+1. **Type Mapping Registry** (if configured on EClass) - highest priority
+2. **Inline Mapping** (if configured on the EReference)
 3. **Type Strategy Resolution** (URI, NAME, etc.)
-4. **Fallback** (`CODEC_ROOT_TYPE` hint, reference type)
+4. **Fallback** (reference type, `CODEC_FEATURE_TYPE_HINTS`, `CODEC_ROOT_TYPE`)
 
 ### Fallback and Error Handling
 
@@ -639,30 +673,31 @@ When a discriminator value cannot be resolved to an EClass, the behavior is cont
 
 | Detail Key | Values | Default | Description |
 |------------|--------|---------|-------------|
-| `fallbackStrategy` | `ERROR`, `SKIP`, `FALLBACK` | `FALLBACK` | What to do when discriminator value not found |
-| `fallbackEClass` | EClass URI | — | Explicit fallback type (used when strategy is `FALLBACK`) |
+| `fallbackStrategy` | `ERROR`, `SKIP`, `FALLBACK` | `SKIP` | What to do when discriminator value not found |
+| `fallbackEClass` | EClass URI | — | Explicit fallback type (required when strategy is `FALLBACK`) |
 
 **FallbackStrategy values:**
 
 | Value | Behavior |
 |-------|----------|
-| `ERROR` | Fail deserialization, throw exception |
-| `SKIP` | Skip the element (don't add to collection), log warning |
-| `FALLBACK` **(default)** | Use fallback resolution (see below) |
+| `SKIP` **(default)** | Log WARNING, continue to next resolution step (Type Strategy) |
+| `ERROR` | Fail immediately, throw exception |
+| `FALLBACK` | Use `fallbackEClass` (MUST be set, else ERROR) |
 
-**Fallback resolution order (when `fallbackStrategy=FALLBACK`):**
+**Fallback behavior:**
 
 ```
-1. Try discriminator mapping lookup
-2. If not found → check fallbackStrategy:
-   - ERROR    → throw exception
-   - SKIP     → skip element, log warning, done
-   - FALLBACK → continue to step 3
-3. Use explicit fallbackEClass (if defined in annotation/config)
-4. Use feature type hint (if defined via CODEC_FEATURE_TYPE_HINTS)
-5. Use reference type EReference.getEReferenceType() (if concrete)
-6. If reference type is abstract/interface → ERROR
+When discriminator value not found in mappings:
+
+1. Check fallbackStrategy (default: SKIP):
+   - ERROR    → Fail immediately
+   - SKIP     → WARNING, continue to next resolution step (Type Strategy)
+   - FALLBACK → Use fallbackEClass:
+                 - If fallbackEClass is set → use it, RESOLVED ✓
+                 - If fallbackEClass is NOT set → ERROR (misconfiguration)
 ```
+
+**Note:** `SKIP` is the default because it enables graceful continuation to Type Strategy resolution, which then has its own fallback chain (reference type, CODEC_FEATURE_TYPE_HINTS, CODEC_ROOT_TYPE). Use `FALLBACK` only when you want to explicitly specify a fallback type without continuing to Type Strategy.
 
 **Relationship to Feature Type Hints:**
 
@@ -682,7 +717,17 @@ options.put(CODEC_FEATURE_TYPE_HINTS, hints);
 **Examples:**
 
 ```xml
+<!-- Type Mapping with default SKIP behavior -->
+<!-- If discriminator value not found → WARNING, continue to Type Strategy -->
+<eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/lorawan-devices">
+  <details key="typeDiscriminatorPath" value="info.profileName"/>
+  <!-- fallbackStrategy defaults to SKIP -->
+  <details key="temp-sensor" value="http://example.org#//TemperatureSensor"/>
+  <details key="humidity-sensor" value="http://example.org#//HumiditySensor"/>
+</eAnnotations>
+
 <!-- Type Mapping with explicit fallback EClass -->
+<!-- Unknown discriminator → use GenericMessage -->
 <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/lorawan-devices">
   <details key="typeDiscriminatorPath" value="info.profileName"/>
   <details key="fallbackStrategy" value="FALLBACK"/>
@@ -691,21 +736,14 @@ options.put(CODEC_FEATURE_TYPE_HINTS, hints);
   <details key="humidity-sensor" value="http://example.org#//HumiditySensor"/>
 </eAnnotations>
 
-<!-- Inline Mapping with SKIP for unknown types (forward compatibility) -->
-<eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
-  <details key="fallbackStrategy" value="SKIP"/>
-  <details key="friend" value="http://example.org#//Friend"/>
-  <details key="enemy" value="http://example.org#//Enemy"/>
-</eAnnotations>
-
 <!-- Inline Mapping with ERROR (fail fast, strict mode) -->
 <eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
   <details key="fallbackStrategy" value="ERROR"/>
   <details key="friend" value="http://example.org#//Friend"/>
 </eAnnotations>
 
-<!-- Inline Mapping relying on runtime hint or reference type -->
-<!-- No fallbackEClass → will use CODEC_FEATURE_TYPE_HINTS if set, else reference type -->
+<!-- Inline Mapping with default SKIP behavior -->
+<!-- Unknown value → WARNING, continue to Type Strategy resolution -->
 <eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
   <details key="friend" value="http://example.org#//Friend"/>
   <details key="enemy" value="http://example.org#//Enemy"/>
@@ -718,6 +756,28 @@ options.put(CODEC_FEATURE_TYPE_HINTS, hints);
 |--------------|-------------|
 | `codec.fallbackStrategy` | `ERROR`, `SKIP`, `FALLBACK` |
 | `codec.fallbackEClass` | EClass URI string or EClass instance |
+| `codec.typeMappings` | `Map<String, String>` or `Map<String, EClass>` (EClass level) |
+| `codec.inlineMappings` | `Map<String, String>` or `Map<String, EClass>` (EReference level) |
+
+**Programmatic Inline Mapping Example:**
+
+```java
+// Per-EReference configuration with inline mappings
+Map<EReference, Map<String, Object>> eReferenceConfig = new HashMap<>();
+
+Map<String, Object> contactsConfig = Map.of(
+    "codec.typeKey", "contactType",
+    "codec.inlineMappings", Map.of(
+        "friend", "http://example.org#//Friend",
+        "enemy", "http://example.org#//Enemy",
+        "colleague", ExamplePackage.Literals.COLLEAGUE  // EClass instance also works
+    ),
+    "codec.fallbackStrategy", "SKIP"
+);
+eReferenceConfig.put(PersonPackage.Literals.PERSON__CONTACTS, contactsConfig);
+
+options.put("codec.eReferenceConfig", eReferenceConfig);
+```
 
 ### Type Mapping Registry (on EClass)
 
@@ -1211,10 +1271,19 @@ Reference configuration describes how non-containment references (and cross-docu
 | `refFormat` | `codec.refFormat` | ✅ | ❌ | ✅ | ❌ | Output format (see [SerializationFormat](#serializationformat)) |
 | `refKey` | `codec.refKey` | ✅ | ❌ | ✅ | ❌ | Reference value key (**default:** `_ref`) |
 | `refTypeKey` | `codec.refTypeKey` | ✅ | ❌ | ✅ | ❌ | Type key in STRUCTURED (**default:** `_type`) |
-| `expand` | `codec.expand` | ✅ | ❌ | ✅ | ❌ | Inline full object vs proxy (**default:** `false`) |
+| `expand` | `codec.expand` | ✅ | ✅ | ✅ | ❌ | Inline specific refs (list at G/C, boolean at F) (**default:** `false`/empty) |
+| `expandGlobal` | `codec.expandGlobal` | ✅ | ✅ | ❌ | ❌ | Expand ALL non-containment references (**default:** `false`) |
+| `expandDepth` | `codec.expandDepth` | ✅ | ✅ | ✅ | ❌ | Max depth for nested expansion (**default:** `1`) |
+| `expandIgnoreBidirectional` | `codec.expandIgnoreBidirectional` | ✅ | ✅ | ✅ | ❌ | Skip opposite references during expand (**default:** `true`) |
 | `serializeInstanceType` | `codec.serializeInstanceType` | ✅ | ❌ | ✅ | ❌ | Write instance type vs reference type (**default:** `true`) |
 
-**Implementation:** `CodecAnnotationConstants.KEY_REF_*`, `CodecAnnotationConstants.KEY_EXPAND`, `CodecAnnotationConstants.KEY_SERIALIZE_INSTANCE_TYPE`
+**Implementation:** `CodecAnnotationConstants.KEY_REF_*`, `CodecAnnotationConstants.KEY_EXPAND`, `CodecAnnotationConstants.KEY_EXPAND_GLOBAL`, `CodecAnnotationConstants.KEY_SERIALIZE_INSTANCE_TYPE`
+
+**Expand behavior:**
+- `expandGlobal=true`: Expand ALL non-containment references
+- `expand` at F level: `true`/`false` - expand THIS specific reference
+- `expand` at G/C level: list of reference names to expand
+- A reference is expanded if `expandGlobal=true` OR it's in the `expand` list
 
 **Serialization behavior:**
 - `expand=false` **(default)**: Write reference as proxy (`"_ref": "/persons/123"`)
@@ -1672,8 +1741,8 @@ This section tracks the implementation status of features documented in this ref
 | `superTypeAsArray` | ✅ `KEY_SUPERTYPE_AS_ARRAY` | ✅ `BaseSuperTypeConfig.asArray` | ✅ | ✅ | ✅ | ✅ |
 | `superTypeSeparator` | ✅ `KEY_SUPERTYPE_SEPARATOR` | ✅ `BaseSuperTypeConfig.separator` | ✅ | ✅ | ✅ | ✅ |
 | `superTypeFormat` | ✅ `KEY_SUPERTYPE_FORMAT` | ✅ `SuperTypeSerializationConfig.format` | ✅ | ✅ | ✅ | ✅ |
-| `superTypeSchemaKey` | ✅ `KEY_SUPERTYPE_SCHEMA_KEY` | ✅ `SuperTypeSerializationConfig.schemaKey` | ✅ | ✅ | ✅ | ✅ |
-| `superTypeNameKey` | ✅ `KEY_SUPERTYPE_NAME_KEY` | ✅ `SuperTypeSerializationConfig.nameKey` | ✅ | ✅ | ✅ | ✅ |
+| `superTypeSchemaKey` | ❌ removed | ❌ removed | ❌ | ❌ | ❌ | ✅ inherits from TypeConfig |
+| `superTypeNameKey` | ❌ removed | ❌ removed | ❌ | ❌ | ❌ | ✅ superTypeKey has format-dependent default |
 | `superTypeValueReaderName` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | `superTypeValueWriterName` | ✅ `KEY_SUPERTYPE_WRITER_NAME` | ❌ | ❌ | ❌ | ❌ | 🔶 |
 

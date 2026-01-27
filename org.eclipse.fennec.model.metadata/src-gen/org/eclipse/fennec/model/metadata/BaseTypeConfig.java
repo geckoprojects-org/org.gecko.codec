@@ -33,7 +33,6 @@ import org.osgi.annotation.versioning.ProviderType;
  * <ul>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getFormat <em>Format</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getStrategy <em>Strategy</em>}</li>
- *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#isInclude <em>Include</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getTypeKey <em>Type Key</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getSchemaKey <em>Schema Key</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#getNameKey <em>Name Key</em>}</li>
@@ -102,32 +101,6 @@ public interface BaseTypeConfig extends EObject {
 	 * @generated
 	 */
 	void setStrategy(TypeStrategy value);
-
-	/**
-	 * Returns the value of the '<em><b>Include</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Whether to include type information.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Include</em>' attribute.
-	 * @see #setInclude(boolean)
-	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseTypeConfig_Include()
-	 * @model default="true"
-	 * @generated
-	 */
-	boolean isInclude();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseTypeConfig#isInclude <em>Include</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Include</em>' attribute.
-	 * @see #isInclude()
-	 * @generated
-	 */
-	void setInclude(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Type Key</b></em>' attribute.

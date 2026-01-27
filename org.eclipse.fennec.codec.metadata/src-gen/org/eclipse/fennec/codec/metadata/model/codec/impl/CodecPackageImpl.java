@@ -1112,7 +1112,7 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		initEAttribute(getTypeSerializationConfig_DiscriminatorValue(), ecorePackage.getEString(), "discriminatorValue", null, 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTypeSerializationConfig_StrategyScope(), this.getStrategyScope(), "strategyScope", "ALL", 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTypeSerializationConfig_FormatScope(), this.getStrategyScope(), "formatScope", "ALL", 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getTypeSerializationConfig_FallbackStrategy(), this.getFallbackStrategy(), "fallbackStrategy", "FALLBACK", 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getTypeSerializationConfig_FallbackStrategy(), this.getFallbackStrategy(), "fallbackStrategy", "SKIP", 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTypeSerializationConfig_FallbackEClass(), ecorePackage.getEString(), "fallbackEClass", null, 0, 1, TypeSerializationConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(idSerializationConfigEClass, IdSerializationConfig.class, "IdSerializationConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1160,7 +1160,7 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		initEAttribute(getReferenceCodecAspect_InheritTypeFromTarget(), ecorePackage.getEBoolean(), "inheritTypeFromTarget", "true", 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getReferenceCodecAspect_Expand(), ecorePackage.getEBoolean(), "expand", "false", 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getReferenceCodecAspect_InlineTypeMappings(), this.getInlineTypeMapping(), null, "inlineTypeMappings", null, 0, -1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getReferenceCodecAspect_FallbackStrategy(), this.getFallbackStrategy(), "fallbackStrategy", "FALLBACK", 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getReferenceCodecAspect_FallbackStrategy(), this.getFallbackStrategy(), "fallbackStrategy", "SKIP", 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getReferenceCodecAspect_FallbackEClass(), ecorePackage.getEString(), "fallbackEClass", null, 0, 1, ReferenceCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(inlineTypeMappingEClass, InlineTypeMapping.class, "InlineTypeMapping", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1203,9 +1203,9 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		addEEnumLiteral(deserializationModeEEnum, DeserializationMode.AUTO_DETECT);
 
 		initEEnum(fallbackStrategyEEnum, FallbackStrategy.class, "FallbackStrategy");
-		addEEnumLiteral(fallbackStrategyEEnum, FallbackStrategy.FALLBACK);
-		addEEnumLiteral(fallbackStrategyEEnum, FallbackStrategy.ERROR);
 		addEEnumLiteral(fallbackStrategyEEnum, FallbackStrategy.SKIP);
+		addEEnumLiteral(fallbackStrategyEEnum, FallbackStrategy.ERROR);
+		addEEnumLiteral(fallbackStrategyEEnum, FallbackStrategy.FALLBACK);
 
 		// Create resource
 		createResource(eNS_URI);

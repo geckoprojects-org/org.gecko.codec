@@ -33,7 +33,7 @@ Both can have independent **scopes** (`typeScope`, `typeFormatScope`) that contr
 | SCHEMA_AND_TYPE | `"_schema": "http://example.org/person/1.0", "_type": "Person"` |
 | NONE | (no type field written) |
 
-> **Note:** CLASS strategy uses the simple Java class name and only works with EMF-generated code where `EClass.getInstanceClassName()` is set.
+> **Note:** CLASS strategy requires `EClass.getInstanceClassName()` to be set (typical for EMF-generated code). If the instance class name is null, serialization fails with an ERROR. See [section 6.4.5](#645-class-strategy-resolution) for deserialization details and recommendations.
 
 ### 1.2 STRUCTURED Format Examples
 
@@ -62,13 +62,16 @@ Discriminator-based type resolution is **not** a TypeStrategy - it's an **orthog
 - **Legacy APIs** - where type information is encoded in application-specific fields
 
 **Resolution priority during deserialization:**
-1. Discriminator Mapping (if configured) - inline mapping first, then named registry
-2. Type Strategy Resolution (URI, NAME, etc.)
-3. Fallback (CODEC_ROOT_TYPE hint, reference type)
+1. Type Mapping Registry (if configured on EClass) - highest priority
+2. Inline Mapping (if configured on EReference)
+3. Type Strategy Resolution (URI, NAME, etc.)
+4. Fallback (reference type, CODEC_FEATURE_TYPE_HINTS, CODEC_ROOT_TYPE)
 
 ### 1.4 NONE Strategy
 
 The `NONE` strategy indicates that no type information should be written or expected.
+
+> **Note:** `TypeStrategy.NONE` replaces the deprecated `typeInclude=false` property. Both have identical behavior, but `NONE` is the preferred approach going forward. See [Deprecated: typeInclude](#deprecated-typeinclude) below.
 
 **Serialization with NONE:**
 - No type field (`_type`) is written
@@ -146,7 +149,7 @@ Type strategy configuration applies **per-class**, not globally to all objects i
 
 **Key Rule:** SCHEMA_AND_TYPE is a **root-only strategy**. It establishes a context schema at the root level but does not propagate to contained objects.
 
-#### 1.5.2 Example: SCHEMA_AND_TYPE with Containments
+#### 1.7.2 Example: SCHEMA_AND_TYPE with Containments
 
 **Model:**
 - `Company` (configured with SCHEMA_AND_TYPE)
@@ -267,6 +270,8 @@ The NUMERIC strategy uses EMF classifier IDs instead of type names for compactne
 
 > **Warning:** Classifier IDs are positional and can change when the model evolves. See [Global Options - NUMERIC Strategy](05-global-options.md#2-numeric-strategy) for details.
 
+> **Deserialization requirement:** NUMERIC strategy **requires** a schema hint (`CODEC_ROOT_SCHEMA` or `CODEC_ROOT_TYPE`) for deserialization. Classifier IDs are package-specific - without knowing which package, the ID cannot be resolved to an EClass.
+
 ---
 
 ## 2. SuperType in STRUCTURED Format
@@ -303,14 +308,16 @@ The configuration defines **format, strategy, and keys** - not actual values. Va
 |----------------|--------------|---------|-------------|
 | `typeStrategy` | `codec.typeStrategy` | `URI` | What type information to transport |
 | `typeFormat` | `codec.typeFormat` | `PLAIN` | How data is presented (flat vs nested) |
-| `typeInclude` | `codec.typeInclude` | `true` | Whether to include type info |
 | `typeKey` | `codec.typeKey` | `_type` | Outer key (both formats) |
 | `typeNameKey` | `codec.typeNameKey` | `type` | Inner type name key (STRUCTURED only) |
 | `typeSchemaKey` | `codec.typeSchemaKey` | `schema` | Inner schema key (STRUCTURED only) |
 | — | `codec.typeScope` | `ALL` | Strategy scope (runtime-only, see below) |
 | — | `codec.typeFormatScope` | `ALL` | Format scope (runtime-only, see below) |
+| ~~`typeInclude`~~ | ~~`codec.typeInclude`~~ | — | **DEPRECATED** - use `typeStrategy=NONE` instead |
 
-> **Note:** `typeScope` and `typeFormatScope` are **runtime-only** configuration - no EAnnotation equivalent. They control where strategy/format applies (ROOT_ONLY, ROOT_CONTAINMENT, etc.). See [Configuration Resolution](02-config-resolution.md) (section 5).
+> **Note:** `typeScope` and `typeFormatScope` are **runtime-only** configuration - no EAnnotation equivalent. They control where strategy/format applies (ROOT_ONLY, ROOT_CONTAINMENT, etc.). If found in EAnnotation, a WARNING is logged and the annotation is ignored. See [Configuration Resolution](02-config-resolution.md) (section 5).
+
+> **Recommendation:** Use keys that start with `_` or `@` (like `_type`, `@type`) for `typeKey`, `typeSchemaKey`, and `typeNameKey`. This helps distinguish metadata from data fields. Without such prefixes, there's risk of collision with ordinary data keys during deserialization - the deserializer might misinterpret a data field as type information.
 
 ### 3.2 EAnnotation (on EClass or EReference)
 
@@ -433,9 +440,10 @@ CodecConfiguration config = CodecConfiguration.builder()
 | Type Key | `codec.typeKey` | `_type` |
 | Schema Key | `codec.typeSchemaKey` | `schema` |
 | Name Key | `codec.typeNameKey` | `type` |
-| Include | `codec.typeInclude` | `true` |
 | Scope | `codec.typeScope` | `ALL` |
 | Format Scope | `codec.typeFormatScope` | `ALL` |
+
+> **Note:** To disable type serialization, use `typeStrategy=NONE` instead of the deprecated `typeInclude=false`.
 
 **Default Output (PLAIN + URI):**
 ```json
@@ -456,9 +464,174 @@ CodecConfiguration config = CodecConfiguration.builder()
 
 ---
 
-## 5. Deserialization
+## 5. Serialization
 
-### 5.1 Type Key Recognition
+The serializer writes type information based on a **priority chain**: discriminator mappings first, then type strategy.
+
+### 5.0 Type Serialization Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                     TYPE SERIALIZATION FLOW                                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: EObject to serialize, context (EReference if nested, save options)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. TYPE MAPPING REGISTRY (on EClass)                                        │
+│    ─────────────────────────────────────────────────────────────────────────│
+│    Is there a typeMapping annotation on this EClass (or its base)?          │
+│                                                                             │
+│    NO → Continue to step 2                                                  │
+│                                                                             │
+│    YES:                                                                     │
+│      → Get discriminatorPath (e.g., "info.profileName")                     │
+│      → Get discriminatorValue for this EClass:                              │
+│          - From typeDiscriminator annotation on this EClass, OR             │
+│          - Reverse lookup in registry mappings (EClass → value)             │
+│      → Found? ────────────────────────────────────────────────────────────  │
+│        │ YES → Write discriminatorValue at discriminatorPath                │
+│        │       Do NOT write _type field ─────────────────→ DONE ✓           │
+│        │                                                                    │
+│        └ NO (EClass not in registry) → Check fallbackStrategy (default:SKIP)│
+│            - ERROR    → Fail immediately                                    │
+│            - SKIP     → WARNING, continue to step 2                         │
+│            - FALLBACK → Use fallbackEClass (MUST be set, else ERROR)        │
+│                         Write fallbackEClass's discriminatorValue           │
+│                         → DONE ✓                                            │
+│                                                                             │
+│    Note: The discriminatorPath replaces _type entirely. Type Mapping        │
+│    Registry is our implementation of Jackson's @JsonTypeInfo + @JsonSubTypes│
+│    pattern. See: 08-discriminator-mapping.md for full documentation.        │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 2. INLINE MAPPING (on EReference)                                           │
+│    ─────────────────────────────────────────────────────────────────────────│
+│    Is this a nested object (accessed via EReference)?                       │
+│                                                                             │
+│    NO (root object) → Continue to step 3                                    │
+│                                                                             │
+│    YES:                                                                     │
+│      Is there an inlineMapping annotation on this EReference?               │
+│                                                                             │
+│      NO → Continue to step 3                                                │
+│                                                                             │
+│      YES:                                                                   │
+│        → Get typeKey (configured on EReference or default _type)            │
+│        → Get discriminatorValue for this EClass:                            │
+│            Reverse lookup in inline mappings (EClass → value)               │
+│        → Found? ──────────────────────────────────────────────────────────  │
+│          │ YES → Write discriminatorValue at typeKey                        │
+│          │       Do NOT proceed to Type Strategy ────────→ DONE ✓           │
+│          │                                                                  │
+│          └ NO (EClass not in inline mappings) → Check fallbackStrategy      │
+│              (default: SKIP):                                               │
+│              - ERROR    → Fail immediately                                  │
+│              - SKIP     → WARNING, continue to step 3                       │
+│              - FALLBACK → Use fallbackEClass (MUST be set, else ERROR)      │
+│                           Write fallbackEClass's discriminatorValue         │
+│                           → DONE ✓                                          │
+│                                                                             │
+│    Note: Inline mapping uses typeKey, not a custom path. It's a simpler,    │
+│    more static variant of Type Mapping Registry.                            │
+│    See: 08-discriminator-mapping.md section 5 for full documentation.       │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 3. TYPE STRATEGY RESOLUTION                                                 │
+│    ─────────────────────────────────────────────────────────────────────────│
+│    Get effective config from annotations + save options:                    │
+│      - typeStrategy (default: URI)                                          │
+│      - typeFormat (default: PLAIN)                                          │
+│      - typeKey (default: _type)                                             │
+│      - typeNameKey (default: type)      ← for STRUCTURED format             │
+│      - typeSchemaKey (default: schema)  ← for STRUCTURED format             │
+│      - smartCompression (default: false)                                    │
+│                                                                             │
+│    If typeStrategy = NONE:                                                  │
+│      → Do NOT write any type field ──────────────────────→ DONE ✓           │
+│                                                                             │
+│    3a. DETERMINE TYPE VALUE                                                 │
+│                                                                             │
+│        Is typeValueWriterName configured?                                   │
+│        ├─ YES → Delegate to custom TypeValueWriter service                  │
+│        │        - Input: EClass (or EObject)                                │
+│        │        - Does: custom transformation, "magic"                      │
+│        │        - Output: type value string to write                        │
+│        │        - STRUCTURED format: Also responsible for supertype!        │
+│        │          (superTypeValueWriterName is IGNORED, see 07-supertype.md)│
+│        │                                                                    │
+│        └─ NO → Use built-in value generation (strategy-dependent):          │
+│            ┌─────────────────────────────────────────────────────────────┐  │
+│            │ Strategy        │ Value                                     │  │
+│            ├─────────────────┼───────────────────────────────────────────┤  │
+│            │ URI             │ EcoreUtil.getURI(eClass).toString()       │  │
+│            │ NAME            │ eClass.getName()                          │  │
+│            │ CLASS           │ eClass.getInstanceClassName()             │  │
+│            │                 │ → ERROR if null!                          │  │
+│            │ NUMERIC         │ String.valueOf(eClass.getClassifierID())  │  │
+│            │ SCHEMA_AND_TYPE │ schema: ePackage.getNsURI()               │  │
+│            │                 │ type: eClass.getName()                    │  │
+│            └─────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│    3b. Apply smartCompression (if enabled)                                  │
+│        Is this a nested object AND same schema as root?                     │
+│        ├─ YES → Use simple name instead of full URI                         │
+│        └─ NO  → Use value from 3a as-is                                     │
+│                                                                             │
+│    3c. WRITE TYPE based on format                                           │
+│        ┌─────────────────────────────────────────────────────────────────┐  │
+│        │ Format + Strategy      │ Output                                 │  │
+│        ├────────────────────────┼────────────────────────────────────────┤  │
+│        │ PLAIN + URI/NAME/CLASS │ "_type": "<value>"                     │  │
+│        │ PLAIN + NUMERIC        │ "_type": "<classifierID>"              │  │
+│        │ PLAIN + SCHEMA_AND_TYPE│ "_schema": "...", "_type": "..."       │  │
+│        │ STRUCTURED + any       │ "_type": { <nested object> }           │  │
+│        └─────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│    If strategy fails (e.g., CLASS with null instanceClassName):             │
+│      → ERROR (no fallback - user misconfiguration)                          │
+│                                                                             │
+│    3d. WRITE SUPERTYPE (if superTypeSerialize=true)                         │
+│        See [SuperType Serialization](07-supertype.md) for full details.     │
+│                                                                             │
+│        ┌─────────────────────────────────────────────────────────────────┐  │
+│        │ Type Format  │ SuperType Output                                 │  │
+│        ├──────────────┼──────────────────────────────────────────────────┤  │
+│        │ PLAIN        │ Standalone "_supertype" field at root level      │  │
+│        │ STRUCTURED   │ "supertype" field inside "_type" object          │  │
+│        └─────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│        SuperType values use smart compression based on ROOT schema:         │
+│        - Same namespace as root → simple name (e.g., "Entity")              │
+│        - Different namespace → full URI (e.g., "http://other/1.0#//Base")   │
+│                                                                             │
+│        Note: SuperType is written even when discriminator mapping (steps    │
+│        1-2) handled type resolution. Discriminator only affects _type,      │
+│        not supertype information.                                           │
+│                                                                             │
+│    ──────────────────────────────────────────────────────→ DONE ✓           │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 5.0.1 Serialization Priority Summary
+
+| Priority | Mechanism | Configured On | Applies To |
+|----------|-----------|---------------|------------|
+| 1 | Type Mapping Registry | EClass (base) | All objects of that type |
+| 2 | Inline Mapping | EReference | Objects accessed via that reference |
+| 3 | Type Strategy | EClass, EReference, Global | Standard type field writing |
+
+> **Note:** Unlike deserialization, serialization has no step 4 (Fallback hints). If discriminator/inline mappings fail with `fallbackStrategy=FALLBACK` but no `fallbackEClass`, or if Type Strategy fails, it's an ERROR.
+
+---
+
+## 6. Deserialization
+
+### 6.1 Type Key Recognition
 
 The deserializer automatically recognizes the following property names as type discriminators:
 
@@ -486,25 +659,250 @@ Or via EAnnotation on the EPackage:
 </eAnnotations>
 ```
 
-### 5.2 Format Detection
+### 6.2 Format Detection
 
 Deserializers detect the format from the JSON structure:
 
-| Input | Detected Format | Strategy Detection |
-|-------|-----------------|-------------------|
-| `"_type": "string"` | PLAIN | Detect by content: URI (contains `#//`), CLASS (contains `.`), NAME (simple string) |
-| `"_type": { ... }` | STRUCTURED | Read inner keys to determine strategy |
-| `"_schema": ..., "_type": "string"` | PLAIN | SCHEMA_AND_TYPE strategy (two separate fields) |
+| Input | Detected Format | Strategy |
+|-------|-----------------|----------|
+| `"_type": "string"` | PLAIN (auto-detected) | From effective config (NOT auto-detected) |
+| `"_type": { ... }` | STRUCTURED (auto-detected) | From effective config (NOT auto-detected) |
+| `"_schema": ..., "_type": "string"` | PLAIN (auto-detected) | SCHEMA_AND_TYPE (from config) |
 
-### 5.3 Type Resolution
+> **Important:** Format is auto-detected from JSON structure, but strategy must be configured to match serialization. Strategy auto-detection is a future feature.
 
-The deserializer resolves the EClass based on the detected format and strategy:
+### 6.3 Type Resolution
 
-1. Detect format (PLAIN or STRUCTURED) from JSON structure
-2. Extract type information based on strategy
-3. Lookup EPackage in MetadataService by namespace URI
-4. Resolve EClass by name within the package
-5. Create and populate EObject
+The deserializer resolves the EClass based on a **priority chain**: discriminator mappings first, then type strategy, then fallback hints.
+
+#### 6.3.0 Type Resolution Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                     TYPE DESERIALIZATION FLOW                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: JSON object, context (EReference if nested, load options)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. TYPE MAPPING REGISTRY (on EClass)                                        │
+│    ─────────────────────────────────────────────────────────────────────────│
+│    Is there a typeMapping annotation on the expected EClass (or its base)?  │
+│                                                                             │
+│    NO → Continue to step 2                                                  │
+│                                                                             │
+│    YES:                                                                     │
+│      → Read value from discriminatorPath (e.g., "info.profileName")         │
+│      → Lookup value in registry mappings                                    │
+│      → Found? ────────────────────────────────────────────→ RESOLVED ✓      │
+│      → Not found? Check fallbackStrategy (default: SKIP):                   │
+│          - ERROR    → Fail immediately                                      │
+│          - SKIP     → WARNING, continue to step 2                           │
+│          - FALLBACK → Use fallbackEClass (MUST be set, else ERROR)          │
+│                       → RESOLVED ✓                                          │
+│                                                                             │
+│    Note: Type Mapping Registry is our implementation of Jackson's           │
+│    @JsonTypeInfo + @JsonSubTypes pattern. It's the primary, flexible        │
+│    mechanism for discriminator-based type resolution.                       │
+│    See: 08-discriminator-mapping.md for full documentation.                 │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 2. INLINE MAPPING (on EReference)                                           │
+│    ─────────────────────────────────────────────────────────────────────────│
+│    Is this a nested object (accessed via EReference)?                       │
+│                                                                             │
+│    NO (root object) → Continue to step 3                                    │
+│                                                                             │
+│    YES:                                                                     │
+│      Is there an inlineMapping annotation on this EReference?               │
+│                                                                             │
+│      NO → Continue to step 3                                                │
+│                                                                             │
+│      YES:                                                                   │
+│        → Read value from typeKey (configured on EReference or default)      │
+│        → Lookup value in inline mappings                                    │
+│        → Found? ──────────────────────────────────────────→ RESOLVED ✓      │
+│        → Not found? Check fallbackStrategy (default: SKIP):                 │
+│            - ERROR    → Fail immediately                                    │
+│            - SKIP     → WARNING, continue to step 3                         │
+│            - FALLBACK → Use fallbackEClass (MUST be set, else ERROR)        │
+│                         → RESOLVED ✓                                        │
+│                                                                             │
+│    Note: Inline Mapping is a simpler, more static variant of Type Mapping   │
+│    Registry. It's per-reference only and less flexible.                     │
+│    See: 08-discriminator-mapping.md section 5 for full documentation.       │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 3. TYPE STRATEGY RESOLUTION                                                 │
+│    ─────────────────────────────────────────────────────────────────────────│
+│    Get effective config from annotations + load options:                    │
+│      - typeStrategy (default: URI)      ← MUST match serialization config!  │
+│      - typeFormat (default: PLAIN)      ← can be auto-detected from JSON    │
+│      - typeKey (default: _type)                                             │
+│      - typeNameKey (default: type)      ← for STRUCTURED format             │
+│      - typeSchemaKey (default: schema)  ← for STRUCTURED format             │
+│      - smartCompression (default: false)← MUST match serialization config!  │
+│                                                                             │
+│    If typeStrategy = NONE:                                                  │
+│      → Skip type field processing entirely                                  │
+│      → Go directly to step 4 (Fallback)                                     │
+│                                                                             │
+│    3a. DETECT FORMAT from JSON structure (auto-detection OK)                │
+│        - Type field value is STRING? → PLAIN                                │
+│        - Type field value is OBJECT? → STRUCTURED                           │
+│        - Type field not present? → Go to step 4 (Fallback)                  │
+│                                                                             │
+│    3b. EXTRACT TYPE VALUE                                                   │
+│                                                                             │
+│        Is typeValueReaderName configured?                                   │
+│        ├─ YES → Delegate to custom TypeValueReader service                  │
+│        │        - Input: raw JSON value (type field or structure)           │
+│        │        - Does: custom extraction, transformation, "magic"          │
+│        │        - Output: EClass URI (ready for resolution in 3c)           │
+│        │        - STRUCTURED format: Also responsible for supertype!        │
+│        │          (superTypeValueReaderName is IGNORED, see 07-supertype.md)│
+│        │                                                                    │
+│        └─ NO → Use built-in extraction (strategy-dependent):                │
+│            ┌─────────────────────────────────────────────────────────────┐  │
+│            │ Strategy        │ Extraction                                │  │
+│            ├─────────────────┼───────────────────────────────────────────┤  │
+│            │ URI             │ Read single value from typeKey            │  │
+│            │ NAME            │ Read single value from typeKey            │  │
+│            │ CLASS           │ Read single value from typeKey            │  │
+│            │ NUMERIC (PLAIN) │ Read single value from typeKey            │  │
+│            │ NUMERIC (STRUCT)│ Read schema + classifier from nested obj  │  │
+│            │ SCHEMA_AND_TYPE │ Read schema + type (two fields or nested) │  │
+│            └─────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│    3b'. APPLY SMART COMPRESSION EXPANSION (if smartCompression = true)      │
+│                                                                             │
+│        Smart compression writes simple names for same-schema types.         │
+│        On deserialization, we must expand simple names back to full URIs.   │
+│        See: 05-global-options.md section 1.6 for full rules.                │
+│                                                                             │
+│        Is the extracted type value a SIMPLE NAME (no "#" or "://")?         │
+│        ├─ YES → Expand using context schema:                                │
+│        │        - Context schema from: root's URI, CODEC_ROOT_SCHEMA, etc.  │
+│        │        - Result: contextSchema + "#//" + simpleName                │
+│        │        - Example: "Person" → "http://example.org/1.0#//Person"     │
+│        │                                                                    │
+│        └─ NO (already full URI) → Use value as-is                           │
+│                                                                             │
+│        Note: This is the REVERSE of serialization step 3b in section 5.     │
+│        If serialization compressed "http://example.org/1.0#//Person" to     │
+│        "Person", deserialization expands it back.                           │
+│                                                                             │
+│    3c. RESOLVE EClass based on CONFIGURED strategy (NO auto-detection!)     │
+│                                                                             │
+│        Note: If smartCompression was applied in 3b', value is now a         │
+│        full URI. The strategy-based resolution below handles both cases.    │
+│                                                                             │
+│        Strategy-based resolution:                                           │
+│        ┌─────────────────────────────────────────────────────────────────┐  │
+│        │ Strategy        │ Resolution                                    │  │
+│        ├─────────────────┼───────────────────────────────────────────────┤  │
+│        │ URI             │ Parse full URI (scheme://...#//ClassName)     │  │
+│        │ NAME            │ Simple name + context schema                  │  │
+│        │ CLASS           │ Lookup by instanceClassName                   │  │
+│        │ NUMERIC         │ Classifier ID + hint package (REQUIRED!)      │  │
+│        │ SCHEMA_AND_TYPE │ Compose URI from extracted schema + name      │  │
+│        └─────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│    Resolved? ─────────────────────────────────────────────→ RESOLVED ✓      │
+│    Not resolved? → Continue to step 4                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 4. FALLBACK (see section 6.5.1 for TypeHintMode details)                    │
+│    ─────────────────────────────────────────────────────────────────────────│
+│    Check CODEC_TYPE_HINT_MODE (default: HINT)                               │
+│                                                                             │
+│    ┌─────────────────────────────────────────────────────────────────────┐  │
+│    │ HINT MODE (default)                                                 │  │
+│    │ ───────────────────────────────────────────────────────────────────│  │
+│    │ Try in order:                                                       │  │
+│    │   1. EReference.getEReferenceType() (if concrete)                   │  │
+│    │   2. CODEC_FEATURE_TYPE_HINTS (per-feature runtime hint)            │  │
+│    │   3. CODEC_ROOT_TYPE (root type hint)                               │  │
+│    │                                                                     │  │
+│    │ If resolved → log WARNING, RESOLVED ✓                               │  │
+│    │ If reference type is abstract and no hints resolve → step 4c        │  │
+│    └─────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│    ┌─────────────────────────────────────────────────────────────────────┐  │
+│    │ OVERRIDE MODE                                                       │  │
+│    │ ───────────────────────────────────────────────────────────────────│  │
+│    │ Try in order (reference type IGNORED):                              │  │
+│    │   1. CODEC_FEATURE_TYPE_HINTS (per-feature runtime hint)            │  │
+│    │   2. CODEC_ROOT_TYPE (root type hint)                               │  │
+│    │                                                                     │  │
+│    │ If resolved → log WARNING, RESOLVED ✓                               │  │
+│    │ If neither hint is set → ERROR (fail, no implicit fallback)         │  │
+│    └─────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│    4c. FINAL FAILURE (no fallback resolved)                                 │
+│                                                                             │
+│        Is this the ROOT object?                                             │
+│        ├─ YES → ERROR (mandatory - cannot deserialize without root type)    │
+│        │        DeserializationMode doesn't apply here                      │
+│        │                                                                    │
+│        └─ NO (nested object) → Check DeserializationMode:                   │
+│             ├─ LENIENT (default) → WARNING + skip:                          │
+│             │    - Single reference: set to null                            │
+│             │    - Multi reference: don't add element to collection         │
+│             │                                                               │
+│             └─ STRICT → ERROR                                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 5. SUPERTYPE PARSING (after type resolution complete)                       │
+│    ─────────────────────────────────────────────────────────────────────────│
+│    See [SuperType Serialization](07-supertype.md) section 8 for full details.│
+│                                                                             │
+│    SuperType parsing is OPTIONAL and does NOT affect type resolution.       │
+│    The type (EClass) is already resolved from steps 1-4.                    │
+│                                                                             │
+│    If type field was detected as PLAIN format:                              │
+│      → Look for standalone supertype field (superTypeKey, default _supertype)│
+│      → Parse if present (array or separator-joined string)                  │
+│                                                                             │
+│    If type field was detected as STRUCTURED format:                         │
+│      → Look for supertype inside _type object (key: supertype)              │
+│      → Parse if present (array or separator-joined string)                  │
+│                                                                             │
+│    Validation (based on DeserializationMode):                               │
+│      ┌─────────────────────────────────────────────────────────────────────┐│
+│      │ LENIENT (default) │ Parse supertype, IGNORE values (no validation)  ││
+│      │ STRICT            │ Validate declared supertypes match EClass       ││
+│      │                   │ hierarchy. Fail if mismatch.                    ││
+│      │ AUTO_DETECT       │ Same as LENIENT for supertype                   ││
+│      └─────────────────────────────────────────────────────────────────────┘│
+│                                                                             │
+│    Note: SuperType parsing happens even if discriminator mapping (steps 1-2)│
+│    resolved the type. SuperType is independent of how type was resolved.    │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+#### 6.3.1 Resolution Priority Summary
+
+| Priority | Mechanism | Configured On | Applies To |
+|----------|-----------|---------------|------------|
+| 1 | Type Mapping Registry | EClass (base) | All objects of that type |
+| 2 | Inline Mapping | EReference | Objects accessed via that reference |
+| 3 | Type Strategy | EClass, EReference, Global | Standard type field resolution |
+| 4 | Fallback | Load options | Last resort when above fail |
+
+> **Design rationale:** Type Mapping Registry has highest priority because it's our implementation of Jackson's `@JsonTypeInfo` + `@JsonSubTypes` pattern - the primary, flexible mechanism for polymorphic type handling. Inline Mapping is a simpler, more static variant for per-reference cases.
+
+> **Important - Symmetry requirement:** The `typeStrategy` and `smartCompression` settings must match between serialization and deserialization. Format can be auto-detected, but strategy cannot.
+
+> **Future feature:** Auto-detection of strategy from content is not currently supported.
 
 **Example (PLAIN + URI):**
 ```json
@@ -526,7 +924,7 @@ The deserializer extracts `http://example.org/person/1.0` as namespace URI and `
 }
 ```
 
-### 5.3.1 Unknown Type Handling
+### 6.3.2 Unknown Type Handling
 
 When the deserializer cannot resolve a type value to a known EClass, the behavior depends on whether a **type hint** is available.
 
@@ -560,7 +958,7 @@ resource.load(inputStream, Collections.emptyMap());
 
 When resolving type values, the deserializer tries multiple strategies:
 
-1. **Full URI** - If value contains `#//`, treat as EMF EClass URI
+1. **Full URI** - If value matches EMF URI pattern (`scheme://...#//ClassName`), resolve directly
 2. **Java class name** - If value contains `.`, look up by instance class name
 3. **Discriminator mapping** - Check TypeDiscriminatorService for mapped values
 4. **Simple name** - Look up by class name in context schema
@@ -576,11 +974,11 @@ When resolving type values, the deserializer tries multiple strategies:
 
 See [Error Handling](00-overview.md#2-error-and-warning-handling) for the complete error scenarios table.
 
-### 5.4 Context Schema and NAME Strategy
+### 6.4 Context Schema and NAME Strategy
 
 The **NAME strategy** writes only the simple EClass name (e.g., `"Person"` instead of `"http://example.org/1.0#//Person"`). For deserialization, this requires a **Context Schema** to resolve the simple name back to a full EClass URI.
 
-#### 5.4.1 CODEC_ROOT_SCHEMA Option
+#### 6.4.1 CODEC_ROOT_SCHEMA Option
 
 Explicitly sets the context schema for deserialization:
 
@@ -610,7 +1008,7 @@ With this option, all simple type names are resolved against the specified schem
 }
 ```
 
-#### 5.4.2 CODEC_ROOT_TYPE Option
+#### 6.4.2 CODEC_ROOT_TYPE Option
 
 Specifies the expected root EClass for deserialization. **Additionally**, it implicitly sets the context schema from the EClass's package URI.
 
@@ -639,7 +1037,7 @@ This provides **two benefits**:
 }
 ```
 
-#### 5.4.3 Context Schema Resolution Order
+#### 6.4.3 Context Schema Resolution Order
 
 | Source | Priority | Description |
 |--------|----------|-------------|
@@ -650,7 +1048,9 @@ This provides **two benefits**:
 
 > **Warning:** Without a context schema, NAME strategy searches all registered packages for a matching class name. This is **non-deterministic** if multiple packages contain classes with the same name.
 
-#### 5.4.4 Smart Compression
+NAME strategy uses `MetadataIndexReader.findByClassName(nsURI, className)` for context-aware lookup and `findAllByClassName(className)` for global search. See [CLASS Strategy Resolution](#645-class-strategy-resolution) for the full MetadataIndex API.
+
+#### 6.4.4 Smart Compression
 
 When the root object uses a full URI, the schema is automatically extracted and used for nested objects:
 
@@ -670,7 +1070,113 @@ The deserializer:
 2. Extracts context schema: `http://example.org/company/1.0`
 3. Resolves `"Person"` → `http://example.org/company/1.0#//Person`
 
-### 5.5 Type Resolution Rules
+> **Important:** Smart compression requires symmetric configuration. If content was serialized with `smartCompression=true`, deserialization must also use `smartCompression=true`. A mismatch produces a WARNING. See [Global Options - Smart Compression](05-global-options.md#1-smart-compression) for details.
+
+#### 6.4.5 CLASS Strategy Resolution
+
+The **CLASS strategy** writes the Java class name (`EClass.getInstanceClassName()`) as the type value. Deserialization must reverse this lookup.
+
+##### Serialization
+
+```java
+// Writes: "_type": "org.example.model.impl.PersonImpl"
+String typeValue = eClass.getInstanceClassName();
+```
+
+> **Requirement:** `EClass.getInstanceClassName()` must be non-null. This is typical for EMF-generated code. If null, serialization fails with ERROR.
+
+##### Deserialization
+
+CLASS strategy resolution uses the **MetadataService** to lookup EClass by `instanceClassName`. The resolution follows the **context schema** pattern (same as NAME strategy):
+
+**ROOT OBJECT:**
+```
+1. Check CODEC_ROOT_TYPE hint → extract context package nsURI
+2. Check CODEC_ROOT_SCHEMA hint → use as context package nsURI
+3. If context nsURI exists:
+   → MetadataService.findByInstanceClassName(nsUri, className)
+   → If found → RESOLVED ✓
+4. No hint or not found in context package:
+   → MetadataService.findAllByInstanceClassName(className)
+   → If exactly ONE match → RESOLVED ✓
+   → If ZERO matches → ERROR ("EClass not found for instanceClassName: {className}")
+   → If MULTIPLE matches → ERROR (see "Ambiguous Resolution" below)
+```
+
+**NESTED OBJECT:**
+```
+1. Get context from EReference.getEReferenceType().getEPackage().getNsURI()
+2. MetadataService.findByInstanceClassName(contextNsUri, className)
+3. If found → RESOLVED ✓
+4. If not found → fall back to full registry search (same as root step 4)
+```
+
+##### Ambiguous Resolution (Multiple Matches)
+
+When multiple EClasses share the same `instanceClassName` (common with typed maps like `java.util.Map$Entry`), and no context schema narrows the search:
+
+- **Severity:** ERROR
+- **Message:** `Ambiguous instanceClassName "{className}": found in multiple packages: [{uri1}, {uri2}, ...]. Use CODEC_ROOT_SCHEMA to disambiguate.`
+
+This is a **standard EMF pattern** (typed map entries), so we cannot treat duplicate `instanceClassName` as a configuration error. Instead, users must provide context via `CODEC_ROOT_SCHEMA` or `CODEC_ROOT_TYPE`.
+
+##### Recommendation
+
+**Strongly recommend** using `CODEC_ROOT_SCHEMA` or `CODEC_ROOT_TYPE` with CLASS strategy:
+
+```java
+// Good: Context provided, unambiguous resolution
+Map<String, Object> options = Map.of(
+    CodecResourceOptions.CODEC_ROOT_SCHEMA, "http://example.org/model/1.0"
+);
+resource.load(inputStream, options);
+
+// Risky: No context, may fail if className exists in multiple packages
+resource.load(inputStream, Collections.emptyMap());
+```
+
+##### MetadataIndex API
+
+The `MetadataIndexReader` (accessed via `MetadataService.getIndexReader()`) provides indexed lookup for CLASS strategy resolution:
+
+```java
+interface MetadataIndexReader {
+    // Lookup by instanceClassName within a specific package (context-aware)
+    ClassMetadata findByInstanceClassName(String nsURI, String instanceClassName);
+
+    // Lookup across all registered packages (may return multiple)
+    EList<ClassMetadata> findAllByInstanceClassName(String instanceClassName);
+
+    // Similar methods for NAME strategy
+    ClassMetadata findByClassName(String nsURI, String className);
+    EList<ClassMetadata> findAllByClassName(String className);
+
+    // URI strategy uses direct lookup
+    ClassMetadata findClassByURI(String uri);
+}
+```
+
+**Usage Example:**
+```java
+MetadataService metadataService = ...; // OSGi service or injected
+MetadataIndexReader index = metadataService.getIndexReader();
+
+// Context-aware lookup (preferred)
+String contextNsURI = eReference.getEReferenceType().getEPackage().getNsURI();
+ClassMetadata meta = index.findByInstanceClassName(contextNsURI, "org.example.PersonImpl");
+
+// Global search (when no context available)
+EList<ClassMetadata> matches = index.findAllByInstanceClassName("org.example.PersonImpl");
+if (matches.size() == 1) {
+    // Unambiguous
+} else if (matches.size() > 1) {
+    // ERROR: Ambiguous, need CODEC_ROOT_SCHEMA
+}
+```
+
+The index is built automatically when EPackages are registered via `MetadataService.registerPackage()`. Current implementation (`MapBasedMetadataIndex`) uses in-memory ConcurrentHashMaps; future versions may use Lucene for large-scale deployments.
+
+### 6.5 Type Resolution Rules
 
 | Content has `_type` | `CODEC_ROOT_TYPE` set | Behavior |
 |---------------------|-------------------------|----------|
@@ -685,7 +1191,7 @@ When both content type and hint are present but differ:
 - Continue with content type (content wins)
 - Example: Hint says `Person`, content says `Employee` → use `Employee`, log warning
 
-#### 5.5.1 Type Hint Mode (CODEC_TYPE_MODE)
+#### 6.5.1 Type Hint Mode (CODEC_TYPE_MODE)
 
 By default, `CODEC_ROOT_TYPE` and `CODEC_ROOT_SCHEMA` behave as **hints/fallbacks**, not as highest-priority overrides. This is an **intentional deviation** from the standard configuration hierarchy (where Load/Save options have highest priority).
 
@@ -751,7 +1257,7 @@ options.put(CODEC_TYPE_MODE, TypeHintMode.OVERRIDE);
 
 > **Note:** This behavior deviates from the general configuration hierarchy principle where Load/Save options (Level 1) have highest priority. The deviation exists for practical usability reasons.
 
-#### 5.5.2 Deserialization Mode (Type Resolution Strictness)
+#### 6.5.2 Deserialization Mode (Type Resolution Strictness)
 
 The `DeserializationMode` controls how strictly the deserializer follows the configured type strategy when resolving types.
 
@@ -820,13 +1326,13 @@ WARNING: Type resolved via fallback. Config: typeStrategy=SCHEMA_AND_TYPE,
 
 > **Note:** `DeserializationMode` controls **type resolution** strictness. For **feature handling** strictness (unknown/missing features), see [Feature Strictness](11-feature.md#7-feature-strictness).
 
-### 5.6 Field Order Independence
+### 6.6 Field Order Independence
 
 JSON field order is **irrelevant** for deserialization. The `_type` field can appear anywhere in the object - data fields appearing before it are deferred and processed after type resolution.
 
 > **See also:** [Architecture](01-architecture.md) (section 5.1 - Deferred Properties) for the general mechanism that applies to all metadata fields (`_type`, `_id`, etc.).
 
-### 5.7 Polymorphic Containment References
+### 6.7 Polymorphic Containment References
 
 When an EReference points to an abstract EClass, the concrete type must be specified in the JSON:
 
@@ -1004,6 +1510,117 @@ resource.load(inputStream, options);
 | `coordinates` → `data` | `.useNamesFromExtendedMetaData(true)` |
 | Context schema for NAME | `CODEC_ROOT_SCHEMA` option |
 | Array coordinates | Automatic (see [Feature Serialization - Array Attributes](11-feature.md#6-array-attributes)) |
+
+---
+
+## 7. Configuration Validation Rules
+
+This section documents validation rules for Type Configuration that are checked when building the effective configuration.
+
+### 7.1 Property Applicability Rules
+
+| Rule ID | Property | Invalid At | Severity | Description |
+|---------|----------|------------|----------|-------------|
+| T-V1 | `typeValueReaderName` | EReference | ERROR | Value reader is class-intrinsic (applies to objects of that EClass, not reference-specific) |
+| T-V2 | `typeValueWriterName` | EReference | ERROR | Value writer is class-intrinsic (applies to objects of that EClass, not reference-specific) |
+| T-V3 | `typeScope` | EAnnotation | WARNING | Runtime-only property, ignored if found in EAnnotation |
+| T-V4 | `typeFormatScope` | EAnnotation | WARNING | Runtime-only property, ignored if found in EAnnotation |
+| T-V5 | Any `type*` key | EAttribute | ERROR | Type configuration not applicable to attributes |
+| T-V6 | `typeDiscriminatorPath` | EReference | ERROR | Discriminator path is per-class (see [08-discriminator-mapping.md](08-discriminator-mapping.md)) |
+| T-V7 | `typeDiscriminator` | EReference | ERROR | Discriminator value is per-class (see [08-discriminator-mapping.md](08-discriminator-mapping.md)) |
+
+### 7.2 Strategy-Specific Rules
+
+| Rule ID | Condition | Severity | Description |
+|---------|-----------|----------|-------------|
+| T-V10 | CLASS strategy + `instanceClassName` is null | ERROR | CLASS strategy requires `EClass.getInstanceClassName()` to be set |
+
+### 7.3 Format-Dependent Warnings
+
+| Rule ID | Condition | Severity | Description |
+|---------|-----------|----------|-------------|
+| T-V20 | `typeNameKey` set + format=PLAIN | WARNING | `typeNameKey` is only used in STRUCTURED format; value ignored |
+| T-V21 | `typeSchemaKey` set + format=PLAIN + strategy≠SCHEMA_AND_TYPE | WARNING | `typeSchemaKey` is only used in STRUCTURED format or PLAIN+SCHEMA_AND_TYPE; value ignored |
+
+### 7.4 Deprecation Rules
+
+| Rule ID | Condition | Severity | Description |
+|---------|-----------|----------|-------------|
+| T-V30 | `typeInclude` annotation present | WARNING | DEPRECATED - use `typeStrategy=NONE` instead. Internally translated to NONE. |
+| T-V31 | Both `typeInclude` and `typeStrategy` set | WARNING | `typeStrategy` takes precedence; `typeInclude` ignored |
+
+### 7.5 Serialization/Deserialization Symmetry
+
+These properties must be configured **symmetrically** for serialization and deserialization to work correctly:
+
+| Property | Auto-Detectable? | Symmetry Required | Mismatch Behavior |
+|----------|------------------|-------------------|-------------------|
+| `typeStrategy` | ❌ NO | ✅ YES - must match | Type resolution fails or produces wrong EClass |
+| `typeFormat` | ✅ YES (from JSON structure) | ❌ NO | N/A - auto-detected |
+| `smartCompression` | ❌ NO | ✅ YES - must match | WARNING, type may not resolve correctly |
+| `typeKey` | ❌ NO | Should match | Deserializer auto-recognizes common keys (_type, @type, _class, eClass) |
+
+> **Future feature:** Auto-detection of `typeStrategy` and `smartCompression` from content is not currently supported.
+
+### 7.6 Related Validation Rules
+
+- **SuperType Configuration:** See [07-supertype.md section 6.0](07-supertype.md#60-configuration-constraints) for SuperType-specific validation rules
+- **Discriminator Mapping:** See [08-discriminator-mapping.md](08-discriminator-mapping.md) for discriminator-related validation rules
+
+---
+
+## 8. Deprecated: typeInclude
+
+> **DEPRECATED:** The `typeInclude` property is deprecated and will be removed in a future version. Use `TypeStrategy.NONE` instead.
+
+### 8.1 Migration
+
+| Old (deprecated) | New (recommended) |
+|------------------|-------------------|
+| `typeInclude=false` | `typeStrategy=NONE` |
+| `typeInclude=true` | (default behavior, no configuration needed) |
+
+**Old approach (deprecated):**
+```xml
+<eAnnotations source="http://eclipse.org/fennec/codec">
+  <details key="typeInclude" value="false"/>
+</eAnnotations>
+```
+
+**New approach (recommended):**
+```xml
+<eAnnotations source="http://eclipse.org/fennec/codec">
+  <details key="typeStrategy" value="NONE"/>
+</eAnnotations>
+```
+
+**Java Builder - Old:**
+```java
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeInclude(false)  // DEPRECATED
+    .build();
+```
+
+**Java Builder - New:**
+```java
+CodecConfiguration config = CodecConfiguration.builder()
+    .typeStrategy(TypeStrategy.NONE)  // Recommended
+    .build();
+```
+
+### 8.2 Rationale
+
+The `typeInclude` property was redundant:
+- `typeInclude=false` has **identical behavior** to `typeStrategy=NONE`
+- Having two ways to disable type serialization caused confusion
+- `TypeStrategy.NONE` is more explicit and aligns with the strategy pattern
+
+### 8.3 Backward Compatibility
+
+For backward compatibility:
+- `typeInclude=false` will continue to work but logs a deprecation WARNING
+- Internally, `typeInclude=false` is translated to `typeStrategy=NONE`
+- If both `typeInclude=false` AND `typeStrategy` are set, `typeStrategy` takes precedence
 
 ---
 

@@ -263,7 +263,76 @@ for (Diagnostic error : resource.getErrors()) {
 | Invalid scope value | ERROR | `Invalid StrategyScope value: {value}` | Operation fails |
 | Invalid option type | ERROR | `Expected {expected} for option '{key}' but got {actual}` | Operation fails |
 
-### 6.10 Custom Value Reader/Writer Errors
+### 6.10 Annotation Parsing Errors (Metadata Layer)
+
+These errors occur during EPackage registration when the `codec.metadata` layer parses EAnnotations into Aspect objects. The metadata layer **validates annotations** and ensures only valid configurations are stored in Aspect objects.
+
+**Key principle:** Aspect objects always contain valid configurations. Invalid annotations are **ignored** (not applied) and **logged as diagnostics**.
+
+| Scenario | Severity | Message Template | Recovery |
+|----------|----------|------------------|----------|
+| Annotation key at wrong level | WARNING | `Annotation key '{key}' is not valid on {elementType}, ignored` | Key ignored, not applied to Aspect |
+| Unknown annotation key | WARNING | `Unknown annotation key '{key}' on {element}` | Key ignored |
+| Invalid enum value | WARNING | `Invalid value '{value}' for enum {enumType}, using default` | Default value used |
+| Invalid boolean value | WARNING | `Invalid boolean value '{value}' for key '{key}'` | Default value used |
+
+**Examples:**
+
+```
+WARNING: Annotation key 'typeMapId' is not valid on EReference, ignored
+WARNING: Annotation key 'typeDiscriminatorPath' is not valid on EReference, ignored
+WARNING: Annotation key 'idStrategy' is not valid on EAttribute, ignored
+WARNING: Unknown annotation key 'fooBar' on EClass 'Person'
+```
+
+**Diagnostic Collection Pattern:**
+
+Diagnostics are collected hierarchically in the metadata model. Each metadata element owns its diagnostics (the container identifies the source), with derived `allDiagnostics` features for convenient aggregation:
+
+```
+PackageMetadata
+  ├── diagnostics: EList<MetadataDiagnostic>     [own package-level issues]
+  └── allDiagnostics: EList<MetadataDiagnostic>  [derived] = own + all class diagnostics
+      │
+      └── ClassMetadata
+            ├── diagnostics: EList<MetadataDiagnostic>     [own class-level issues]
+            └── allDiagnostics: EList<MetadataDiagnostic>  [derived] = own + all feature diagnostics
+                  │
+                  └── FeatureMetadata
+                        └── diagnostics: EList<MetadataDiagnostic>  [own feature-level issues]
+```
+
+**Interface:** `DiagnosticContainer` provides the `diagnostics` containment reference, implemented by `PackageMetadata`, `ClassMetadata`, and `FeatureMetadata`.
+
+**Accessing diagnostics:**
+
+```java
+MetadataService metadataService = ...;
+PackageMetadata metadata = metadataService.getPackageMetadata(myPackage);
+
+// Get all diagnostics for entire package (including all classes and features)
+for (MetadataDiagnostic diagnostic : metadata.getAllDiagnostics()) {
+    System.out.println(diagnostic.getSeverity() + ": " + diagnostic.getMessage());
+    // Container of diagnostic identifies the source element
+    EObject source = diagnostic.eContainer();
+}
+
+// Get diagnostics for a specific class (including its features)
+ClassMetadata classMetadata = metadata.getClasses().get(0);
+for (MetadataDiagnostic diagnostic : classMetadata.getAllDiagnostics()) {
+    // ...
+}
+
+// Get only direct diagnostics for a feature
+FeatureMetadata featureMetadata = classMetadata.getFeatures().get(0);
+for (MetadataDiagnostic diagnostic : featureMetadata.getDiagnostics()) {
+    // ...
+}
+```
+
+**Implementation:** See [Annotation Reference](16-annotation-reference.md) for which keys are valid at each EMF element level (EClass, EReference, EAttribute).
+
+### 6.11 Custom Value Reader/Writer Errors
 
 Custom value readers and writers (see [Custom Values](14-custom-values.md)) can report diagnostics via their context. The source name defaults to the reader/writer's `getName()` value.
 

@@ -1,0 +1,994 @@
+/**
+ * Copyright (c) 2012 - 2026 Data In Motion and others.
+ * All rights reserved.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ */
+package org.eclipse.fennec.codec.metadata.provider;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.IOException;
+
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect;
+import org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect;
+import org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig;
+import org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping;
+import org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect;
+import org.eclipse.fennec.codec.metadata.model.codec.ReferenceSerializationConfig;
+import org.eclipse.fennec.codec.metadata.model.codec.SuperTypeSerializationConfig;
+import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
+import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
+import org.eclipse.fennec.model.metadata.ClassAspect;
+import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
+import org.eclipse.fennec.model.metadata.FeatureAspect;
+import org.eclipse.fennec.model.metadata.IdKeyMode;
+import org.eclipse.fennec.model.metadata.IdStrategy;
+import org.eclipse.fennec.model.metadata.SerializationFormat;
+import org.eclipse.fennec.model.metadata.SuperTypeSelection;
+import org.eclipse.fennec.model.metadata.TypeStrategy;
+import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Tests for valid codec annotation configurations.
+ * <p>
+ * These tests verify that correctly placed annotation keys are parsed
+ * into the appropriate Aspect EMF objects.
+ * </p>
+ * <p>
+ * All test models use @VALID tags in test-codec-annotations.ecore.
+ * </p>
+ *
+ * @see CodecAspectProvider
+ * @see CodecAspectProviderMisconfigTest for misconfiguration tests
+ */
+@DisplayName("CodecAspectProvider - Valid Configurations")
+class CodecAspectProviderValidConfigTest {
+
+    private static final String TEST_ECORE = "test-codec-annotations.ecore";
+
+    private CodecAspectProvider provider;
+    private EcoreHelper helper;
+    private EPackage testPackage;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        provider = new CodecAspectProvider();
+        helper = new EcoreHelper(CodecAspectProviderValidConfigTest.class);
+        testPackage = helper.loadEcore(TEST_ECORE);
+    }
+
+    @AfterEach
+    void tearDown() {
+        helper.releaseAll();
+    }
+
+    // ========================================================================
+    // Basic Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Basic Aspect Creation")
+    class BasicTests {
+
+        /** @HELPER Tests provider type ID. */
+        @Test
+        @DisplayName("provider returns 'codec' type ID")
+        void helper_aspectTypeId_returnsCodec() {
+            assertEquals("codec", provider.getAspectTypeId());
+        }
+
+        /** @VALID @SPEC(16-annotation-reference.md) Tests class without annotations uses defaults. */
+        @Test
+        @DisplayName("class without annotations uses defaults")
+        void validConfig_classNoAnnotations_usesDefaults() {
+            EClass simpleClass = helper.getEClass(testPackage, "SimpleClass");
+
+            ClassAspect aspect = provider.buildClassAspect(simpleClass);
+
+            assertNotNull(aspect);
+            assertTrue(aspect instanceof ClassCodecAspect);
+            assertEquals("codec", aspect.getTypeId());
+
+            ClassCodecAspect codecAspect = (ClassCodecAspect) aspect;
+            assertNull(codecAspect.getIdConfig());
+            assertNull(codecAspect.getTypeConfig());
+            assertNull(codecAspect.getSuperTypeConfig());
+            assertTrue(codecAspect.isInheritFromParent());
+        }
+
+        /** @VALID Tests attribute without annotations uses defaults. */
+        @Test
+        @DisplayName("attribute without annotations uses defaults")
+        void validConfig_attributeNoAnnotations_usesDefaults() {
+            EClass simpleClass = helper.getEClass(testPackage, "SimpleClass");
+            EAttribute nameAttr = (EAttribute) helper.getFeature(simpleClass, "name");
+
+            FeatureAspect aspect = provider.buildAttributeAspect(nameAttr);
+
+            assertNotNull(aspect);
+            assertTrue(aspect instanceof FeatureCodecAspect);
+            assertEquals("codec", aspect.getTypeId());
+
+            FeatureCodecAspect codecAspect = (FeatureCodecAspect) aspect;
+            assertTrue(codecAspect.isSerialize());
+            assertNull(codecAspect.getEffectiveKey());
+            assertNull(codecAspect.getValueWriterName());
+            assertNull(codecAspect.getValueReaderName());
+        }
+
+        /** @VALID Tests reference without annotations uses defaults. */
+        @Test
+        @DisplayName("reference without annotations uses defaults")
+        void validConfig_referenceNoAnnotations_usesDefaults() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithTypedReference");
+            EReference addressRef = (EReference) helper.getFeature(personClass, "address");
+
+            // Remove annotation for this test
+            addressRef.getEAnnotations().clear();
+
+            FeatureAspect aspect = provider.buildReferenceAspect(addressRef);
+
+            assertNotNull(aspect);
+            assertTrue(aspect instanceof ReferenceCodecAspect);
+            assertEquals("codec", aspect.getTypeId());
+
+            ReferenceCodecAspect codecAspect = (ReferenceCodecAspect) aspect;
+            assertTrue(codecAspect.isSerialize());
+            assertNull(codecAspect.getEffectiveKey());
+        }
+
+        /** @HELPER Tests delegation from buildFeatureAspect. */
+        @Test
+        @DisplayName("buildFeatureAspect delegates to correct method")
+        void helper_featureAspectDelegation_delegatesCorrectly() {
+            EClass simpleClass = helper.getEClass(testPackage, "SimpleClass");
+            EAttribute nameAttr = (EAttribute) helper.getFeature(simpleClass, "name");
+
+            EClass personClass = helper.getEClass(testPackage, "PersonWithTypedReference");
+            EReference addressRef = (EReference) helper.getFeature(personClass, "address");
+
+            FeatureAspect attrAspect = provider.buildFeatureAspect(nameAttr);
+            assertTrue(attrAspect instanceof FeatureCodecAspect);
+            assertFalse(attrAspect instanceof ReferenceCodecAspect);
+
+            FeatureAspect refAspect = provider.buildFeatureAspect(addressRef);
+            assertTrue(refAspect instanceof ReferenceCodecAspect);
+        }
+    }
+
+    // ========================================================================
+    // ID Configuration Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("ID Configuration")
+    class IdConfigTests {
+
+        /** @VALID @SPEC(09-id.md) Tests ID_FIELD strategy parsing. */
+        @Test
+        @DisplayName("ID_FIELD strategy parsed correctly")
+        void validConfig_idFieldStrategy_parsedCorrectly() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithIdField");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(personClass);
+
+            assertNotNull(aspect.getIdConfig());
+            IdSerializationConfig idConfig = aspect.getIdConfig();
+            assertEquals(IdStrategy.ID_FIELD, idConfig.getStrategy());
+            assertEquals("_id", idConfig.getIdKey());
+        }
+
+        /** @VALID @SPEC(09-id.md) Tests COMBINED strategy with features and separator. */
+        @Test
+        @DisplayName("COMBINED strategy with features and separator")
+        void validConfig_combinedIdStrategy_parsedWithFeaturesAndSeparator() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithCombinedId");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(personClass);
+
+            assertNotNull(aspect.getIdConfig());
+            IdSerializationConfig idConfig = aspect.getIdConfig();
+            assertEquals(IdStrategy.COMBINED, idConfig.getStrategy());
+            assertEquals("-", idConfig.getSeparator());
+            assertEquals(2, idConfig.getIdFeatures().size());
+            assertTrue(idConfig.getIdFeatures().contains("firstName"));
+            assertTrue(idConfig.getIdFeatures().contains("lastName"));
+        }
+
+        /** @VALID @SPEC(09-id.md) Tests NONE strategy. */
+        @Test
+        @DisplayName("NONE strategy parsed correctly")
+        void validConfig_idNoneStrategy_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithNoId");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getIdConfig());
+            assertEquals(IdStrategy.NONE, aspect.getIdConfig().getStrategy());
+        }
+
+        /** @VALID @SPEC(09-id.md) Tests custom ID reader/writer names. */
+        @Test
+        @DisplayName("custom ID reader/writer names")
+        void validConfig_customIdReaderWriter_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithCustomIdHandlers");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getIdConfig());
+            assertEquals("CustomIdReader", aspect.getIdConfig().getIdValueReaderName());
+            assertEquals("CustomIdWriter", aspect.getIdConfig().getIdValueWriterName());
+        }
+
+        /** @VALID @SPEC(09-id.md) Tests structured ID config with format/keyMode/onTop. */
+        @Test
+        @DisplayName("structured ID config with format/keyMode/onTop")
+        void validConfig_structuredIdConfig_allFieldsParsed() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithStructuredId");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(personClass);
+
+            assertNotNull(aspect.getIdConfig());
+            IdSerializationConfig idConfig = aspect.getIdConfig();
+
+            assertEquals(IdStrategy.COMBINED, idConfig.getStrategy());
+            assertEquals(SerializationFormat.STRUCTURED, idConfig.getFormat());
+            assertEquals(IdKeyMode.BOTH, idConfig.getKeyMode());
+            assertFalse(idConfig.isOnTop());
+            assertTrue(idConfig.isSerializeSeparator());
+            assertEquals("sep", idConfig.getSeparatorKey());
+            assertEquals(2, idConfig.getIdFeatures().size());
+        }
+
+        /** @VALID @SPEC(09-id.md) Tests idValueKey for structured format. */
+        @Test
+        @DisplayName("idValueKey for structured format")
+        void validConfig_idValueKey_parsedCorrectly() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithIdValueKey");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(personClass);
+
+            assertNotNull(aspect.getIdConfig());
+            IdSerializationConfig idConfig = aspect.getIdConfig();
+
+            assertEquals(IdStrategy.COMBINED, idConfig.getStrategy());
+            assertEquals(SerializationFormat.STRUCTURED, idConfig.getFormat());
+            assertEquals("identifier", idConfig.getValueKey());
+            assertEquals(2, idConfig.getIdFeatures().size());
+        }
+    }
+
+    // ========================================================================
+    // Type Configuration Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Type Configuration")
+    class TypeConfigTests {
+
+        /** @VALID @SPEC(06-type.md) Tests URI type strategy. */
+        @Test
+        @DisplayName("URI type strategy parsed correctly")
+        void validConfig_typeStrategyUri_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "TypedEntityUri");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+            assertEquals(TypeStrategy.URI, typeConfig.getStrategy());
+            assertEquals("_type", typeConfig.getTypeKey());
+        }
+
+        /** @VALID @SPEC(06-type.md) Tests NAME type strategy. */
+        @Test
+        @DisplayName("NAME type strategy parsed correctly")
+        void validConfig_typeStrategyName_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "TypedEntityName");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            assertEquals(TypeStrategy.NAME, aspect.getTypeConfig().getStrategy());
+        }
+
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests discriminator path. */
+        @Test
+        @DisplayName("discriminator path parsed correctly")
+        void validConfig_discriminatorPath_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "TypedEntityWithDiscriminator");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+            assertEquals(TypeStrategy.NAME, typeConfig.getStrategy());
+            assertEquals("deviceInfo.profileName", typeConfig.getDiscriminatorPath());
+        }
+
+        /** @VALID @SPEC(06-type.md) Tests TypeStrategy.NONE for suppressing type info. */
+        @Test
+        @DisplayName("TypeStrategy.NONE suppresses type information")
+        void validConfig_typeStrategyNone_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "TypedEntityNoInclude");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            assertEquals(TypeStrategy.NONE, aspect.getTypeConfig().getStrategy());
+        }
+
+        /** @VALID @SPEC(06-type.md) Tests structured type config with format/schemaKey/nameKey. */
+        @Test
+        @DisplayName("structured type config with format/schemaKey/nameKey")
+        void validConfig_structuredTypeConfig_allFieldsParsed() {
+            EClass entityClass = helper.getEClass(testPackage, "TypedEntityStructured");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+
+            assertEquals(TypeStrategy.SCHEMA_AND_TYPE, typeConfig.getStrategy());
+            assertEquals(SerializationFormat.STRUCTURED, typeConfig.getFormat());
+            assertEquals("$schema", typeConfig.getSchemaKey());
+            assertEquals("typeName", typeConfig.getNameKey());
+            assertEquals("typeInfo", typeConfig.getTypeKey());
+        }
+
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests typeMapId for registry lookup. */
+        @Test
+        @DisplayName("typeMapId for registry lookup")
+        void validConfig_typeMapId_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "TypedEntityWithMapId");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+
+            assertEquals(TypeStrategy.NAME, typeConfig.getStrategy());
+            assertEquals("my-custom-registry", typeConfig.getMapId());
+        }
+    }
+
+    // ========================================================================
+    // SuperType Configuration Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("SuperType Configuration")
+    class SuperTypeConfigTests {
+
+        /** @VALID @SPEC(07-supertype.md) Tests supertype serialization enabled. */
+        @Test
+        @DisplayName("supertype serialization enabled")
+        void validConfig_superTypeEnabled_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSuperTypes");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getSuperTypeConfig());
+            SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+            assertTrue(superConfig.isEnabled());
+            assertEquals("_superTypes", superConfig.getSuperTypeKey());
+            assertEquals(SuperTypeSelection.ALL, superConfig.getSelection());
+        }
+
+        /** @VALID @SPEC(07-supertype.md) Tests SINGLE supertype selection. */
+        @Test
+        @DisplayName("SINGLE supertype selection")
+        void validConfig_singleSuperTypeStrategy_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSingleSuperType");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getSuperTypeConfig());
+            assertEquals(SuperTypeSelection.SINGLE, aspect.getSuperTypeConfig().getSelection());
+        }
+
+        /** @VALID @SPEC(07-supertype.md) Tests asArray=false. */
+        @Test
+        @DisplayName("asArray=false parsed correctly")
+        void validConfig_superTypeAsArrayFalse_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSuperTypesNotAsArray");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getSuperTypeConfig());
+            SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+            assertTrue(superConfig.isEnabled());
+            assertFalse(superConfig.isAsArray());
+        }
+
+        /** @VALID @SPEC(07-supertype.md) Tests custom separator. */
+        @Test
+        @DisplayName("custom separator parsed correctly")
+        void validConfig_superTypeSeparator_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSuperTypesSeparator");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getSuperTypeConfig());
+            SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+            assertTrue(superConfig.isEnabled());
+            assertFalse(superConfig.isAsArray());
+            assertEquals("|", superConfig.getSeparator());
+        }
+
+        /** @VALID @SPEC(07-supertype.md) Tests default asArray=true when not specified. */
+        @Test
+        @DisplayName("default asArray=true when not specified")
+        void validConfig_superTypeDefaultAsArrayTrue_defaultApplied() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSuperTypes");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getSuperTypeConfig());
+            SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+            assertTrue(superConfig.isAsArray());
+        }
+
+        /** @VALID @SPEC(07-supertype.md) Tests default separator when asArray=false. */
+        @Test
+        @DisplayName("default separator when asArray=false")
+        void validConfig_superTypeDefaultSeparator_defaultApplied() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSuperTypesNotAsArray");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getSuperTypeConfig());
+            SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+            assertEquals(",", superConfig.getSeparator());
+        }
+
+        /** @VALID @SPEC(07-supertype.md) Tests structured supertype config. */
+        @Test
+        @DisplayName("structured supertype config")
+        void validConfig_structuredSuperTypeConfig_allFieldsParsed() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithStructuredSuperType");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getSuperTypeConfig());
+            SuperTypeSerializationConfig superConfig = aspect.getSuperTypeConfig();
+
+            assertTrue(superConfig.isEnabled());
+            assertEquals(SerializationFormat.STRUCTURED, superConfig.getFormat());
+            // Note: schemaKey removed from SuperTypeConfig - codec uses TypeConfig.getSchemaKey()
+            // Note: nameKey removed - superTypeKey has format-dependent default
+            assertEquals("typeName", superConfig.getSuperTypeKey());
+        }
+    }
+
+    // ========================================================================
+    // Discriminator and Fallback Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Discriminator and Fallback Configuration")
+    class DiscriminatorFallbackTests {
+
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests discriminator value. */
+        @Test
+        @DisplayName("discriminator value parsed correctly")
+        void validConfig_discriminatorValue_parsedCorrectly() {
+            EClass deviceClass = helper.getEClass(testPackage, "DraginoDevice");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(deviceClass);
+
+            assertEquals("Dragino_LSE01", aspect.getDiscriminatorValue());
+        }
+
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests fallback ERROR strategy. */
+        @Test
+        @DisplayName("fallback ERROR strategy")
+        void validConfig_fallbackError_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithFallbackError");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+
+            assertEquals(TypeStrategy.NAME, typeConfig.getStrategy());
+            assertEquals("deviceType", typeConfig.getDiscriminatorPath());
+            assertEquals(FallbackStrategy.ERROR, typeConfig.getFallbackStrategy());
+            assertNull(typeConfig.getFallbackEClass());
+        }
+
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests fallback SKIP strategy. */
+        @Test
+        @DisplayName("fallback SKIP strategy")
+        void validConfig_fallbackSkip_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithFallbackSkip");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+
+            assertEquals(TypeStrategy.NAME, typeConfig.getStrategy());
+            assertEquals("deviceType", typeConfig.getDiscriminatorPath());
+            assertEquals(FallbackStrategy.SKIP, typeConfig.getFallbackStrategy());
+            assertNull(typeConfig.getFallbackEClass());
+        }
+
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests explicit fallback EClass. */
+        @Test
+        @DisplayName("explicit fallback EClass")
+        void validConfig_explicitFallbackEClass_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithExplicitFallback");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+
+            assertEquals(TypeStrategy.NAME, typeConfig.getStrategy());
+            assertEquals("deviceType", typeConfig.getDiscriminatorPath());
+            assertEquals(FallbackStrategy.FALLBACK, typeConfig.getFallbackStrategy());
+            assertEquals("http://test.codec.example.org/1.0#//SimpleClass", typeConfig.getFallbackEClass());
+        }
+    }
+
+    // ========================================================================
+    // Feature Configuration Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Feature Configuration")
+    class FeatureConfigTests {
+
+        /** @VALID @SPEC(11-feature.md) Tests transient=true on attribute. */
+        @Test
+        @DisplayName("transient=true on attribute")
+        void validConfig_attributeTransient_serializeFalse() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithTransientField");
+            EAttribute secretAttr = (EAttribute) helper.getFeature(entityClass, "secretData");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(secretAttr);
+
+            assertFalse(aspect.isSerialize());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests attribute without transient. */
+        @Test
+        @DisplayName("attribute without transient serializes")
+        void validConfig_attributeNoTransient_serializeTrue() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithTransientField");
+            EAttribute publicAttr = (EAttribute) helper.getFeature(entityClass, "publicData");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(publicAttr);
+
+            assertTrue(aspect.isSerialize());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests transient=true on reference. */
+        @Test
+        @DisplayName("transient=true on reference")
+        void validConfig_referenceTransient_serializeFalse() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithTransientReference");
+            EReference cachedRef = (EReference) helper.getFeature(entityClass, "cachedAddress");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(cachedRef);
+
+            assertFalse(aspect.isSerialize());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests explicit serialize=true. */
+        @Test
+        @DisplayName("explicit serialize=true")
+        void validConfig_explicitSerialize_serializeTrue() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSerializeOptions");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "explicitSerialize");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertTrue(aspect.isSerialize());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests serialize=false. */
+        @Test
+        @DisplayName("serialize=false")
+        void validConfig_serializeFalse_serializeFalse() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSerializeOptions");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "noSerialize");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertFalse(aspect.isSerialize());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests serialize=true overrides transient=true. */
+        @Test
+        @DisplayName("serialize=true overrides transient=true")
+        void validConfig_serializeOverridesTransient_serializeTrue() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSerializeOptions");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "conflictSerializeWins");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertTrue(aspect.isSerialize());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests serializeNull=true. */
+        @Test
+        @DisplayName("serializeNull=true")
+        void validConfig_serializeNull_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSerializeOptions");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "nullableField");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertTrue(aspect.isSerializeNull());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests serializeEmpty=true. */
+        @Test
+        @DisplayName("serializeEmpty=true")
+        void validConfig_serializeEmpty_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSerializeOptions");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "emptyListField");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertTrue(aspect.isSerializeEmpty());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests serializeDefaults=true. */
+        @Test
+        @DisplayName("serializeDefaults=true")
+        void validConfig_serializeDefaults_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithSerializeOptions");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "defaultValueField");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertTrue(aspect.isSerializeDefaults());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests custom key on attribute. */
+        @Test
+        @DisplayName("custom key on attribute")
+        void validConfig_attributeCustomKey_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithCustomKeys");
+            EAttribute firstNameAttr = (EAttribute) helper.getFeature(entityClass, "firstName");
+            EAttribute lastNameAttr = (EAttribute) helper.getFeature(entityClass, "lastName");
+
+            FeatureCodecAspect firstNameAspect = (FeatureCodecAspect) provider.buildAttributeAspect(firstNameAttr);
+            FeatureCodecAspect lastNameAspect = (FeatureCodecAspect) provider.buildAttributeAspect(lastNameAttr);
+
+            assertEquals("first_name", firstNameAspect.getEffectiveKey());
+            assertEquals("last_name", lastNameAspect.getEffectiveKey());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests custom key on reference. */
+        @Test
+        @DisplayName("custom key on reference")
+        void validConfig_referenceCustomKey_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithCustomKeys");
+            EReference homeAddressRef = (EReference) helper.getFeature(entityClass, "homeAddress");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(homeAddressRef);
+
+            assertEquals("home_address", aspect.getEffectiveKey());
+        }
+    }
+
+    // ========================================================================
+    // Value Reader/Writer Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Value Reader/Writer Configuration")
+    class ValueHandlerTests {
+
+        /** @VALID @SPEC(14-custom-values.md) Tests valueWriterName only. */
+        @Test
+        @DisplayName("valueWriterName only")
+        void validConfig_valueWriterOnly_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithCustomValueHandlers");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "onlyWriter");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertEquals("CustomWriter", aspect.getValueWriterName());
+            assertNull(aspect.getValueReaderName());
+        }
+
+        /** @VALID @SPEC(14-custom-values.md) Tests valueReaderName only. */
+        @Test
+        @DisplayName("valueReaderName only")
+        void validConfig_valueReaderOnly_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithCustomValueHandlers");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "onlyReader");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertEquals("CustomReader", aspect.getValueReaderName());
+            assertNull(aspect.getValueWriterName());
+        }
+
+        /** @VALID @SPEC(14-custom-values.md) Tests both reader and writer. */
+        @Test
+        @DisplayName("both reader and writer")
+        void validConfig_bothReaderAndWriter_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithCustomValueHandlers");
+            EAttribute birthDateAttr = (EAttribute) helper.getFeature(entityClass, "birthDate");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(birthDateAttr);
+
+            assertEquals("ISO8601DateWriter", aspect.getValueWriterName());
+            assertEquals("FlexibleDateReader", aspect.getValueReaderName());
+        }
+    }
+
+    // ========================================================================
+    // Enum Serialization Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Enum Serialization Configuration")
+    class EnumSerializationTests {
+
+        /** @VALID @SPEC(11-feature.md) Tests LITERAL enum strategy. */
+        @Test
+        @DisplayName("LITERAL enum strategy")
+        void validConfig_enumLiteral_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithEnumFields");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "statusLiteral");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertEquals(EnumSerializationStrategy.LITERAL, aspect.getEnumSerialization());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests VALUE enum strategy. */
+        @Test
+        @DisplayName("VALUE enum strategy")
+        void validConfig_enumValue_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithEnumFields");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "statusValue");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertEquals(EnumSerializationStrategy.VALUE, aspect.getEnumSerialization());
+        }
+
+        /** @VALID @SPEC(11-feature.md) Tests NAME enum strategy. */
+        @Test
+        @DisplayName("NAME enum strategy")
+        void validConfig_enumName_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "EntityWithEnumFields");
+            EAttribute attr = (EAttribute) helper.getFeature(entityClass, "statusName");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(attr);
+
+            assertEquals(EnumSerializationStrategy.NAME, aspect.getEnumSerialization());
+        }
+    }
+
+    // ========================================================================
+    // Reference Configuration Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Reference Configuration")
+    class ReferenceConfigTests {
+
+        /** @VALID @SPEC(10-reference.md) Tests type config on reference. */
+        @Test
+        @DisplayName("type config on reference")
+        void validConfig_referenceTypeConfig_parsedCorrectly() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithTypedReference");
+            EReference addressRef = (EReference) helper.getFeature(personClass, "address");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(addressRef);
+
+            assertNotNull(aspect.getTypeConfig());
+            assertEquals(TypeStrategy.NAME, aspect.getTypeConfig().getStrategy());
+            assertEquals("_refType", aspect.getTypeConfig().getTypeKey());
+        }
+
+        /** @VALID @SPEC(10-reference.md) Tests full refConfig. */
+        @Test
+        @DisplayName("full refConfig with format/refKey/typeKey/expand")
+        void validConfig_fullRefConfig_allFieldsParsed() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithRefConfig");
+            EReference employerRef = (EReference) helper.getFeature(personClass, "employer");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(employerRef);
+
+            assertNotNull(aspect.getReferenceConfig());
+            ReferenceSerializationConfig refConfig = aspect.getReferenceConfig();
+
+            assertEquals(SerializationFormat.STRUCTURED, refConfig.getFormat());
+            assertEquals("$ref", refConfig.getRefKey());
+            assertEquals("$type", refConfig.getTypeKey());
+            assertTrue(refConfig.isExpand());
+            assertTrue(aspect.isExpand());
+        }
+
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests inline type mappings on reference. */
+        @Test
+        @DisplayName("inline type mappings on reference")
+        void validConfig_inlineTypeMappings_parsedCorrectly() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithContacts");
+            EReference contactsRef = (EReference) helper.getFeature(personClass, "contacts");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(contactsRef);
+
+            // Should have 3 inline mappings
+            assertEquals(3, aspect.getInlineTypeMappings().size());
+
+            // Find specific mappings
+            InlineTypeMapping friendMapping = aspect.getInlineTypeMappings().stream()
+                    .filter(m -> "friend".equals(m.getDiscriminatorValue()))
+                    .findFirst()
+                    .orElse(null);
+            assertNotNull(friendMapping);
+            assertEquals("http://test.codec.example.org/1.0#//Friend", friendMapping.getTargetClass());
+
+            InlineTypeMapping enemyMapping = aspect.getInlineTypeMappings().stream()
+                    .filter(m -> "enemy".equals(m.getDiscriminatorValue()))
+                    .findFirst()
+                    .orElse(null);
+            assertNotNull(enemyMapping);
+            assertEquals("http://test.codec.example.org/1.0#//Enemy", enemyMapping.getTargetClass());
+
+            InlineTypeMapping colleagueMapping = aspect.getInlineTypeMappings().stream()
+                    .filter(m -> "colleague".equals(m.getDiscriminatorValue()))
+                    .findFirst()
+                    .orElse(null);
+            assertNotNull(colleagueMapping);
+            assertEquals("http://test.codec.example.org/1.0#//Contact", colleagueMapping.getTargetClass());
+        }
+
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests fallback on reference. */
+        @Test
+        @DisplayName("fallback config on reference")
+        void validConfig_referenceFallbackConfig_parsedCorrectly() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithFallbackReference");
+            EReference contactsRef = (EReference) helper.getFeature(personClass, "contacts");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(contactsRef);
+
+            // Should have fallback configuration
+            assertEquals(FallbackStrategy.SKIP, aspect.getFallbackStrategy());
+            assertEquals("http://test.codec.example.org/1.0#//Contact", aspect.getFallbackEClass());
+
+            // Should have inline mapping for friend
+            assertEquals(1, aspect.getInlineTypeMappings().size());
+            InlineTypeMapping friendMapping = aspect.getInlineTypeMappings().get(0);
+            assertEquals("friend", friendMapping.getDiscriminatorValue());
+            assertEquals("http://test.codec.example.org/1.0#//Friend", friendMapping.getTargetClass());
+        }
+    }
+
+    // ========================================================================
+    // Configuration Hierarchy Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Configuration Hierarchy")
+    class HierarchyTests {
+
+        /** @VALID Tests reference without override has no type config (inheritance at runtime). */
+        @Test
+        @DisplayName("reference without override has no type config")
+        void validConfig_referenceNoOverride_noTypeConfig() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithHierarchyConfig");
+            EReference primaryAddressRef = (EReference) helper.getFeature(personClass, "primaryAddress");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(primaryAddressRef);
+
+            assertNull(aspect.getTypeConfig());
+        }
+
+        /** @VALID Tests reference with full override. */
+        @Test
+        @DisplayName("reference overrides type config")
+        void validConfig_referenceOverridesTypeConfig_parsedCorrectly() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithHierarchyConfig");
+            EReference businessAddressRef = (EReference) helper.getFeature(personClass, "businessAddress");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(businessAddressRef);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+
+            assertEquals(TypeStrategy.NAME, typeConfig.getStrategy());
+            assertEquals(SerializationFormat.STRUCTURED, typeConfig.getFormat());
+            assertEquals("addressType", typeConfig.getTypeKey());
+        }
+
+        /** @VALID Tests reference with partial override. */
+        @Test
+        @DisplayName("reference partially overrides type config")
+        void validConfig_referencePartiallyOverrides_parsedCorrectly() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithHierarchyConfig");
+            EReference shippingAddressRef = (EReference) helper.getFeature(personClass, "shippingAddress");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(shippingAddressRef);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+
+            assertEquals(SerializationFormat.STRUCTURED, typeConfig.getFormat());
+            assertEquals(TypeStrategy.URI, typeConfig.getStrategy()); // Default
+            assertEquals("_type", typeConfig.getTypeKey()); // EMF model default
+        }
+
+        /** @VALID Tests class-level type config. */
+        @Test
+        @DisplayName("class-level type config")
+        void validConfig_classTypeConfig_parsedCorrectly() {
+            EClass personClass = helper.getEClass(testPackage, "PersonWithHierarchyConfig");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(personClass);
+
+            assertNotNull(aspect.getTypeConfig());
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+
+            assertEquals(TypeStrategy.URI, typeConfig.getStrategy());
+            assertEquals(SerializationFormat.PLAIN, typeConfig.getFormat());
+            assertEquals("_type", typeConfig.getTypeKey());
+        }
+    }
+
+    // ========================================================================
+    // Combined Annotations Tests
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Combined Annotations")
+    class CombinedTests {
+
+        /** @VALID Tests class with all config types in single annotation. */
+        @Test
+        @DisplayName("class with all config types")
+        void validConfig_allConfigsCombined_allParsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "FullyConfiguredEntity");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertNotNull(aspect.getIdConfig());
+            assertNotNull(aspect.getTypeConfig());
+            assertNotNull(aspect.getSuperTypeConfig());
+            assertTrue(aspect.isInheritFromParent());
+
+            assertEquals(IdStrategy.ID_FIELD, aspect.getIdConfig().getStrategy());
+            assertEquals(TypeStrategy.URI, aspect.getTypeConfig().getStrategy());
+            assertTrue(aspect.getSuperTypeConfig().isEnabled());
+        }
+
+        /** @VALID Tests inherit annotation. */
+        @Test
+        @DisplayName("inherit annotation")
+        void validConfig_inheritAnnotation_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "InheritingEntity");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+
+            assertTrue(aspect.isInheritFromParent());
+        }
+    }
+}

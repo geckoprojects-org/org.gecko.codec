@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012 - 2025 Data In Motion and others.
+ * Copyright (c) 2012 - 2026 Data In Motion and others.
  * All rights reserved.
  *
  * This program and the accompanying materials are made
@@ -35,9 +35,12 @@ import org.eclipse.fennec.model.metadata.FeatureAspect;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.MetadataFactory;
 import org.eclipse.fennec.model.metadata.MetadataRegistry;
+import org.eclipse.fennec.model.metadata.PackageAspect;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 import org.eclipse.fennec.model.metadata.ReferenceMetadata;
 import org.eclipse.fennec.model.metadata.api.AspectProvider;
+import org.eclipse.fennec.model.metadata.api.MetadataIndex;
+import org.eclipse.fennec.model.metadata.api.MetadataIndexReader;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 
 /**
@@ -47,6 +50,10 @@ import org.eclipse.fennec.model.metadata.api.MetadataService;
  * When an EPackage is registered, metadata is built for all its classes and features,
  * and all registered AspectProviders are called to contribute their aspects.
  * </p>
+ * <p>
+ * Uses a {@link MetadataIndex} internally for fast indexed lookups. The index is
+ * automatically updated when packages are registered or unregistered.
+ * </p>
  *
  * @author Mark Hoffmann
  * @since 2025-12-09
@@ -55,31 +62,57 @@ public class MetadataServiceImpl implements MetadataService {
 
     private final MetadataRegistry registry;
     private final List<AspectProvider> aspectProviders = new CopyOnWriteArrayList<>();
+    private final MetadataIndex index;
 
-    // Fast lookup maps
+    // Fast lookup maps for EClass/EStructuralFeature -> Metadata (not indexed by string)
     private final Map<String, PackageMetadata> packagesByNsURI = new ConcurrentHashMap<>();
     private final Map<EClass, ClassMetadata> classesByEClass = new ConcurrentHashMap<>();
-    private final Map<String, ClassMetadata> classesByURI = new ConcurrentHashMap<>();
     private final Map<EStructuralFeature, FeatureMetadata> featuresByEFeature = new ConcurrentHashMap<>();
-    private final Map<String, FeatureMetadata> featuresByURI = new ConcurrentHashMap<>();
 
     /**
-     * Creates a new MetadataServiceImpl with an empty registry.
+     * Creates a new MetadataServiceImpl with an empty registry and default Map-based index.
      */
     public MetadataServiceImpl() {
-        this.registry = MetadataFactory.eINSTANCE.createMetadataRegistry();
+        this(new MapBasedMetadataIndex());
     }
 
     /**
-     * Creates a new MetadataServiceImpl with the given registry.
+     * Creates a new MetadataServiceImpl with an empty registry and the specified index.
+     *
+     * @param index the metadata index to use
+     */
+    public MetadataServiceImpl(MetadataIndex index) {
+        this.registry = MetadataFactory.eINSTANCE.createMetadataRegistry();
+        this.index = index;
+    }
+
+    /**
+     * Creates a new MetadataServiceImpl with the given registry and default Map-based index.
      * Use this constructor to load a pre-computed registry.
      *
      * @param registry the pre-computed registry
      */
     public MetadataServiceImpl(MetadataRegistry registry) {
+        this(registry, new MapBasedMetadataIndex());
+    }
+
+    /**
+     * Creates a new MetadataServiceImpl with the given registry and index.
+     * Use this constructor to load a pre-computed registry with a custom index.
+     *
+     * @param registry the pre-computed registry
+     * @param index the metadata index to use
+     */
+    public MetadataServiceImpl(MetadataRegistry registry, MetadataIndex index) {
         this.registry = registry;
-        // Rebuild lookup maps from registry
+        this.index = index;
+        // Rebuild lookup maps and index from registry
         rebuildLookupMaps();
+    }
+
+    @Override
+    public MetadataIndexReader getIndexReader() {
+        return index;
     }
 
     @Override
@@ -101,6 +134,15 @@ public class MetadataServiceImpl implements MetadataService {
         pkgMetadata.setEPackage(ePackage);
         pkgMetadata.setNsURI(nsURI);
 
+        // Apply all aspect providers to package
+        for (AspectProvider provider : aspectProviders) {
+            PackageAspect aspect = provider.buildPackageAspect(ePackage);
+            if (aspect != null) {
+                aspect.setTypeId(provider.getAspectTypeId());
+                pkgMetadata.getAspects().add(aspect);
+            }
+        }
+
         // Process all EClasses
         for (EClassifier classifier : ePackage.getEClassifiers()) {
             if (classifier instanceof EClass eClass) {
@@ -116,6 +158,9 @@ public class MetadataServiceImpl implements MetadataService {
         registry.getPackages().add(pkgMetadata);
         packagesByNsURI.put(nsURI, pkgMetadata);
 
+        // Index the package
+        index.indexPackage(pkgMetadata);
+
         return pkgMetadata;
     }
 
@@ -129,19 +174,20 @@ public class MetadataServiceImpl implements MetadataService {
         PackageMetadata pkgMetadata = packagesByNsURI.remove(nsURI);
 
         if (pkgMetadata != null) {
+            // Remove from index first
+            index.removePackage(pkgMetadata);
+
             // Remove from lookup maps
             for (ClassMetadata classMetadata : pkgMetadata.getClasses()) {
                 EClass eClass = classMetadata.getEClass();
                 if (eClass != null) {
                     classesByEClass.remove(eClass);
-                    classesByURI.remove(classMetadata.getTypeURI());
                 }
 
                 for (FeatureMetadata featureMetadata : classMetadata.getFeatures()) {
                     EStructuralFeature feature = featureMetadata.getEFeature();
                     if (feature != null) {
                         featuresByEFeature.remove(feature);
-                        featuresByURI.remove(buildFeatureURI(feature));
                     }
                 }
             }
@@ -166,20 +212,12 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public ClassMetadata getClassMetadataByURI(String uri) {
-        return classesByURI.get(uri);
+        return index.findClassByURI(uri);
     }
 
     @Override
     public ClassMetadata getClassMetadataByName(String className, String nsURI) {
-        PackageMetadata pkgMetadata = packagesByNsURI.get(nsURI);
-        if (pkgMetadata != null) {
-            for (ClassMetadata classMetadata : pkgMetadata.getClasses()) {
-                if (className.equals(classMetadata.getName())) {
-                    return classMetadata;
-                }
-            }
-        }
-        return null;
+        return index.findByClassName(nsURI, className);
     }
 
     @Override
@@ -192,7 +230,7 @@ public class MetadataServiceImpl implements MetadataService {
 
     @Override
     public FeatureMetadata getFeatureMetadataByURI(String uri) {
-        return featuresByURI.get(uri);
+        return index.findFeatureByURI(uri);
     }
 
     @Override
@@ -212,6 +250,22 @@ public class MetadataServiceImpl implements MetadataService {
         for (FeatureMetadata featureMetadata : classMetadata.getFeatures()) {
             if (featureName.equals(featureMetadata.getName())) {
                 return featureMetadata;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public PackageAspect getPackageAspect(EPackage ePackage, String aspectTypeId) {
+        if (ePackage == null) {
+            return null;
+        }
+        PackageMetadata pkgMetadata = packagesByNsURI.get(ePackage.getNsURI());
+        if (pkgMetadata != null) {
+            for (PackageAspect aspect : pkgMetadata.getAspects()) {
+                if (aspectTypeId.equals(aspect.getTypeId())) {
+                    return aspect;
+                }
             }
         }
         return null;
@@ -304,9 +358,8 @@ public class MetadataServiceImpl implements MetadataService {
             }
         }
 
-        // Add to lookup maps
+        // Add to EClass lookup map
         classesByEClass.put(eClass, classMetadata);
-        classesByURI.put(classMetadata.getTypeURI(), classMetadata);
 
         // Apply all aspect providers
         for (AspectProvider provider : aspectProviders) {
@@ -346,10 +399,8 @@ public class MetadataServiceImpl implements MetadataService {
         featureMetadata.setFeatureID(feature.getFeatureID());
         featureMetadata.setExtendedMetaDataName(getExtendedMetaDataName(feature));
 
-        // Add to lookup maps
-        String featureURI = buildFeatureURI(feature);
+        // Add to EFeature lookup map
         featuresByEFeature.put(feature, featureMetadata);
-        featuresByURI.put(featureURI, featureMetadata);
 
         // Apply all aspect providers
         for (AspectProvider provider : aspectProviders) {
@@ -415,6 +466,13 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void applyProviderToPackage(AspectProvider provider, PackageMetadata pkgMetadata) {
+        // Build package aspect
+        PackageAspect pkgAspect = provider.buildPackageAspect(pkgMetadata.getEPackage());
+        if (pkgAspect != null) {
+            pkgAspect.setTypeId(provider.getAspectTypeId());
+            pkgMetadata.getAspects().add(pkgAspect);
+        }
+
         for (ClassMetadata classMetadata : pkgMetadata.getClasses()) {
             // Build class aspect
             ClassAspect classAspect = provider.buildClassAspect(classMetadata.getEClass());
@@ -445,6 +503,9 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void removeAspectsFromPackage(String typeId, PackageMetadata pkgMetadata) {
+        // Remove package aspects
+        pkgMetadata.getAspects().removeIf(a -> typeId.equals(a.getTypeId()));
+
         for (ClassMetadata classMetadata : pkgMetadata.getClasses()) {
             classMetadata.getAspects().removeIf(a -> typeId.equals(a.getTypeId()));
 
@@ -457,9 +518,8 @@ public class MetadataServiceImpl implements MetadataService {
     private void rebuildLookupMaps() {
         packagesByNsURI.clear();
         classesByEClass.clear();
-        classesByURI.clear();
         featuresByEFeature.clear();
-        featuresByURI.clear();
+        index.clear();
 
         for (PackageMetadata pkgMetadata : registry.getPackages()) {
             packagesByNsURI.put(pkgMetadata.getNsURI(), pkgMetadata);
@@ -469,24 +529,18 @@ public class MetadataServiceImpl implements MetadataService {
                 if (eClass != null) {
                     classesByEClass.put(eClass, classMetadata);
                 }
-                String typeURI = classMetadata.getTypeURI();
-                if (typeURI != null) {
-                    classesByURI.put(typeURI, classMetadata);
-                }
 
                 for (FeatureMetadata featureMetadata : classMetadata.getFeatures()) {
                     EStructuralFeature feature = featureMetadata.getEFeature();
                     if (feature != null) {
                         featuresByEFeature.put(feature, featureMetadata);
-                        featuresByURI.put(buildFeatureURI(feature), featureMetadata);
                     }
                 }
             }
-        }
-    }
 
-    private String buildFeatureURI(EStructuralFeature feature) {
-        return EcoreUtil.getURI(feature).toString();
+            // Index the package
+            index.indexPackage(pkgMetadata);
+        }
     }
 
     /**

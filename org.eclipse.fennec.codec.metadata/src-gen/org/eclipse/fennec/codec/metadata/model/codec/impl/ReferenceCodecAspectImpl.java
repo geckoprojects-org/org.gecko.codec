@@ -134,7 +134,7 @@ public class ReferenceCodecAspectImpl extends FeatureCodecAspectImpl implements 
 	 * @generated
 	 * @ordered
 	 */
-	protected static final FallbackStrategy FALLBACK_STRATEGY_EDEFAULT = FallbackStrategy.FALLBACK;
+	protected static final FallbackStrategy FALLBACK_STRATEGY_EDEFAULT = FallbackStrategy.SKIP;
 
 	/**
 	 * The cached value of the '{@link #getFallbackStrategy() <em>Fallback Strategy</em>}' attribute.

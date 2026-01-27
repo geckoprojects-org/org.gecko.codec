@@ -16,11 +16,13 @@ package org.eclipse.fennec.model.metadata.api;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import org.eclipse.fennec.model.metadata.ClassAspect;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
+import org.eclipse.fennec.model.metadata.PackageAspect;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -50,6 +52,17 @@ public interface AspectProvider {
 	 * @generated
 	 */
 	String getAspectTypeId();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Build a PackageAspect for the given EPackage. Returns null if not applicable.
+	 * <!-- end-model-doc -->
+	 * @model
+	 * @generated
+	 */
+	PackageAspect buildPackageAspect(EPackage ePackage);
 
 	/**
 	 * <!-- begin-user-doc -->

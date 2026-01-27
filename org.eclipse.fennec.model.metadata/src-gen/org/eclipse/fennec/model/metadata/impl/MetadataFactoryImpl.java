@@ -69,6 +69,7 @@ public class MetadataFactoryImpl extends EFactoryImpl implements MetadataFactory
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
+			case MetadataPackage.METADATA_DIAGNOSTIC: return createMetadataDiagnostic();
 			case MetadataPackage.PACKAGE_METADATA: return createPackageMetadata();
 			case MetadataPackage.CLASS_METADATA: return createClassMetadata();
 			case MetadataPackage.ATTRIBUTE_METADATA: return createAttributeMetadata();
@@ -87,6 +88,8 @@ public class MetadataFactoryImpl extends EFactoryImpl implements MetadataFactory
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
+			case MetadataPackage.DIAGNOSTIC_SEVERITY:
+				return createDiagnosticSeverityFromString(eDataType, initialValue);
 			case MetadataPackage.SERIALIZATION_FORMAT:
 				return createSerializationFormatFromString(eDataType, initialValue);
 			case MetadataPackage.TYPE_STRATEGY:
@@ -112,6 +115,8 @@ public class MetadataFactoryImpl extends EFactoryImpl implements MetadataFactory
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
+			case MetadataPackage.DIAGNOSTIC_SEVERITY:
+				return convertDiagnosticSeverityToString(eDataType, instanceValue);
 			case MetadataPackage.SERIALIZATION_FORMAT:
 				return convertSerializationFormatToString(eDataType, instanceValue);
 			case MetadataPackage.TYPE_STRATEGY:
@@ -127,6 +132,17 @@ public class MetadataFactoryImpl extends EFactoryImpl implements MetadataFactory
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public MetadataDiagnostic createMetadataDiagnostic() {
+		MetadataDiagnosticImpl metadataDiagnostic = new MetadataDiagnosticImpl();
+		return metadataDiagnostic;
 	}
 
 	/**
@@ -182,6 +198,26 @@ public class MetadataFactoryImpl extends EFactoryImpl implements MetadataFactory
 	public MetadataRegistry createMetadataRegistry() {
 		MetadataRegistryImpl metadataRegistry = new MetadataRegistryImpl();
 		return metadataRegistry;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public DiagnosticSeverity createDiagnosticSeverityFromString(EDataType eDataType, String initialValue) {
+		DiagnosticSeverity result = DiagnosticSeverity.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertDiagnosticSeverityToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

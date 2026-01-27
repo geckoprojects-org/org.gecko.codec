@@ -153,10 +153,18 @@ Building annotation parsing in `org.eclipse.fennec.codec.metadata` that:
 
 ### Workflow Rules
 
-1. **Specification First**
-   - Always check the spec (`docs/codec-v2-spec/`) before implementing
-   - If spec is unclear, clarify it first - spec is our source of truth
+1. **Specification First (ALWAYS)**
+   - **NEVER check codebase before checking spec** - spec is the source of truth
+   - Always check the spec (`docs/codec-v2-spec/`) before implementing OR investigating
+   - For any question (error handling, behavior, configuration) → check spec FIRST
+   - If spec is unclear, clarify it first - don't reverse-engineer from code
    - Never implement something that contradicts the spec
+   - **Follow links in spec documents** - when you see a matrix with ✅/❌ entries, follow the link to the detailed section to understand the WHY
+   - **If the WHY isn't clear quickly** - this is a warning sign that the spec lacks clarity. Ask the user or flag as a spec improvement, don't dig into implementation code to reverse-engineer the reasoning
+   - **Key spec documents:**
+     - `15-error-handling.md` - Error handling, diagnostics, logging
+     - `16-annotation-reference.md` - All annotation keys and valid levels
+     - `08-discriminator-mapping.md` - Discriminator and inline mappings
 
 2. **Test-Driven Development**
    - Create/update tests BEFORE implementation
@@ -172,16 +180,42 @@ Building annotation parsing in `org.eclipse.fennec.codec.metadata` that:
      - Spec gap that needs clarification?
    - Even if the failing test seems unrelated, investigate - it may reveal important side effects
 
-4. **Code Quality**
+4. **Contradictions & Uncertainty (IMPORTANT)**
+   - When you detect a **contradiction** between spec, implementation, and tests - **ASK the user early**
+   - If investigation takes more than **2-3 search/read cycles** without clarity - **stop and ask**
+   - **If you become unsure during investigation** - stop and ask immediately
+     - Don't continue down a potentially wrong path
+     - Wrong assumptions compound and waste context
+   - Present the issue clearly:
+     - "Spec says X, but implementation does Y, and test expects Z"
+     - "I found conflicting information in [files]"
+     - "I'm unsure whether [A] or [B] is the intended behavior"
+   - Offer options:
+     - "Would you like me to investigate further?"
+     - "Can you clarify which behavior is intended?"
+     - "Should I update the spec/implementation/test to align?"
+   - **Don't spend 10+ minutes investigating when you could get a hint in seconds**
+   - **Staying on the right track is more valuable than exhaustive investigation**
+
+5. **Code Quality**
    - Use imports, NEVER fully qualified class names
    - Look for `@claude` or `@CLAUDE` comments - these are instructions
    - Review for performance and Java best practices
 
-5. **Cross-Project Changes**
+6. **Cross-Project Changes**
    - Update spec FIRST
    - Check consistency with existing behavior
    - Then test, then implement
 
-6. **Session Handoff**
+7. **Session Handoff**
    - Update `docs/codec-v2-development-guide.md` at session end
    - Document: what was done, what's next, any blockers
+
+8. **Codec V2 Refactoring Plan (CRITICAL)**
+   - **ALWAYS read `~/.claude/plans/compiled-dreaming-acorn.md` first** when working on codec.v2
+   - This plan contains the Architecture Strategy and Package Migration rules
+   - Key rules from that plan:
+     - **Old packages**: `org.eclipse.fennec.codec.v2.*` (deprecate, eventually delete)
+     - **New packages**: `org.eclipse.fennec.codec.*` (spec-compliant, the future)
+     - **Don't modify existing v2 classes** - create new classes in `codec.*` package instead
+     - New spec-compliant code lives alongside old code until migration complete

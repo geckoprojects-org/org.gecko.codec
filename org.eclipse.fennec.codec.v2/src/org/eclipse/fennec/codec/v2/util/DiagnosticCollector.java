@@ -23,6 +23,8 @@ import tools.jackson.core.TokenStreamLocation;
 
 /**
  * Collects diagnostics during serialization/deserialization operations.
+ *
+ * @deprecated Use {@link org.eclipse.fennec.codec.api.diagnostic.DiagnosticCollector} instead.
  * This collector aggregates errors and warnings that can then be added
  * to the EMF Resource's diagnostic lists.
  *
@@ -40,6 +42,7 @@ import tools.jackson.core.TokenStreamLocation;
  *
  * @see <a href="docs/codec-v2-spec/00-overview.md#2-error-and-warning-handling">Spec: Error Handling</a>
  */
+@Deprecated
 public class DiagnosticCollector {
 
     private final List<CodecDiagnostic> errors = Collections.synchronizedList(new ArrayList<>());

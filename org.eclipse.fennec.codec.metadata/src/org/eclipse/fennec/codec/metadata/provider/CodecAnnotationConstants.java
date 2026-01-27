@@ -240,12 +240,6 @@ public final class CodecAnnotationConstants {
     public static final String KEY_TYPE_KEY = "typeKey";
 
     /**
-     * Detail key for whether to include type information.
-     * Value: "true" or "false". Default: "true".
-     */
-    public static final String KEY_TYPE_INCLUDE = "typeInclude";
-
-    /**
      * Detail key for type mapping ID (MAPPED strategy).
      * <p>
      * Identifies a specific type discrimination context. Both base class and
@@ -388,17 +382,9 @@ public final class CodecAnnotationConstants {
      */
     public static final String KEY_SUPERTYPE_FORMAT = "superTypeFormat";
 
-    /**
-     * Detail key for supertype schema key in STRUCTURED format.
-     * Default: "schema".
-     */
-    public static final String KEY_SUPERTYPE_SCHEMA_KEY = "superTypeSchemaKey";
-
-    /**
-     * Detail key for supertype name key in STRUCTURED format.
-     * Default: "name".
-     */
-    public static final String KEY_SUPERTYPE_NAME_KEY = "superTypeNameKey";
+    // Note: superTypeSchemaKey not needed - SuperTypeConfig inherits from TypeConfig
+    // Note: superTypeNameKey removed - superTypeKey has format-dependent default:
+    //       PLAIN format → "_supertype", STRUCTURED format → "supertype"
 
     // ------------------------------------------------------------------------
     // Reference configuration detail keys (prefix: ref*)

@@ -78,6 +78,18 @@ public class MetadataSwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
+			case MetadataPackage.METADATA_DIAGNOSTIC: {
+				MetadataDiagnostic metadataDiagnostic = (MetadataDiagnostic)theEObject;
+				T result = caseMetadataDiagnostic(metadataDiagnostic);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MetadataPackage.DIAGNOSTIC_CONTAINER: {
+				DiagnosticContainer diagnosticContainer = (DiagnosticContainer)theEObject;
+				T result = caseDiagnosticContainer(diagnosticContainer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MetadataPackage.BASE_TYPE_CONFIG: {
 				BaseTypeConfig baseTypeConfig = (BaseTypeConfig)theEObject;
 				T result = caseBaseTypeConfig(baseTypeConfig);
@@ -108,6 +120,13 @@ public class MetadataSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MetadataPackage.PACKAGE_ASPECT: {
+				PackageAspect packageAspect = (PackageAspect)theEObject;
+				T result = casePackageAspect(packageAspect);
+				if (result == null) result = caseAspect(packageAspect);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MetadataPackage.CLASS_ASPECT: {
 				ClassAspect classAspect = (ClassAspect)theEObject;
 				T result = caseClassAspect(classAspect);
@@ -131,18 +150,21 @@ public class MetadataSwitch<T> extends Switch<T> {
 			case MetadataPackage.PACKAGE_METADATA: {
 				PackageMetadata packageMetadata = (PackageMetadata)theEObject;
 				T result = casePackageMetadata(packageMetadata);
+				if (result == null) result = caseDiagnosticContainer(packageMetadata);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case MetadataPackage.CLASS_METADATA: {
 				ClassMetadata classMetadata = (ClassMetadata)theEObject;
 				T result = caseClassMetadata(classMetadata);
+				if (result == null) result = caseDiagnosticContainer(classMetadata);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case MetadataPackage.FEATURE_METADATA: {
 				FeatureMetadata featureMetadata = (FeatureMetadata)theEObject;
 				T result = caseFeatureMetadata(featureMetadata);
+				if (result == null) result = caseDiagnosticContainer(featureMetadata);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -150,6 +172,7 @@ public class MetadataSwitch<T> extends Switch<T> {
 				AttributeMetadata attributeMetadata = (AttributeMetadata)theEObject;
 				T result = caseAttributeMetadata(attributeMetadata);
 				if (result == null) result = caseFeatureMetadata(attributeMetadata);
+				if (result == null) result = caseDiagnosticContainer(attributeMetadata);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -157,6 +180,7 @@ public class MetadataSwitch<T> extends Switch<T> {
 				ReferenceMetadata referenceMetadata = (ReferenceMetadata)theEObject;
 				T result = caseReferenceMetadata(referenceMetadata);
 				if (result == null) result = caseFeatureMetadata(referenceMetadata);
+				if (result == null) result = caseDiagnosticContainer(referenceMetadata);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -168,6 +192,36 @@ public class MetadataSwitch<T> extends Switch<T> {
 			}
 			default: return defaultCase(theEObject);
 		}
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Diagnostic</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Diagnostic</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMetadataDiagnostic(MetadataDiagnostic object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Diagnostic Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Diagnostic Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseDiagnosticContainer(DiagnosticContainer object) {
+		return null;
 	}
 
 	/**
@@ -242,6 +296,21 @@ public class MetadataSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseAspect(Aspect object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Package Aspect</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Package Aspect</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T casePackageAspect(PackageAspect object) {
 		return null;
 	}
 

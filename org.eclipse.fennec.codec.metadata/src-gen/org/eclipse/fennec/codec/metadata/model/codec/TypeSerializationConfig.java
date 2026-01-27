@@ -181,18 +181,18 @@ public interface TypeSerializationConfig extends BaseTypeConfig {
 
 	/**
 	 * Returns the value of the '<em><b>Fallback Strategy</b></em>' attribute.
-	 * The default value is <code>"FALLBACK"</code>.
+	 * The default value is <code>"SKIP"</code>.
 	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * What to do when discriminator value is not found in mapping. Default is FALLBACK.
+	 * What to do when discriminator value is not found in mapping. Default is SKIP (log WARNING, continue to Type Strategy).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Fallback Strategy</em>' attribute.
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy
 	 * @see #setFallbackStrategy(FallbackStrategy)
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig_FallbackStrategy()
-	 * @model default="FALLBACK"
+	 * @model default="SKIP"
 	 * @generated
 	 */
 	FallbackStrategy getFallbackStrategy();
@@ -213,7 +213,7 @@ public interface TypeSerializationConfig extends BaseTypeConfig {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Explicit fallback EClass URI when discriminator value not found (used when fallbackStrategy is FALLBACK).
+	 * Explicit fallback EClass URI when discriminator value not found. Required when fallbackStrategy is FALLBACK.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Fallback EClass</em>' attribute.
 	 * @see #setFallbackEClass(String)

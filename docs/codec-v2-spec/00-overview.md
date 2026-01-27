@@ -108,6 +108,10 @@ Complete, working examples that combine multiple features: minimal configuration
 
 Test coverage matrix mapping spec sections to test files. Use this to find tests for specific features or to identify coverage gaps. Lists all test models and advanced scenario coverage.
 
+### [20 - Code Conventions](20-code-conventions.md)
+
+Java code conventions, patterns, and helper classes for the codec implementation. Covers Java 17+ idioms, null safety with `java.util.Objects`, EMF-specific patterns, and the catalog of existing and planned helper classes. This is a living document updated through code review feedback.
+
 ### [99 - Open Questions](99-open-questions.md)
 
 Unresolved design questions and future considerations. Check here before proposing changes - your question may already be captured.

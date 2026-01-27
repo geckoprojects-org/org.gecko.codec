@@ -25,6 +25,7 @@ import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.MetadataRegistry;
+import org.eclipse.fennec.model.metadata.PackageAspect;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -35,7 +36,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Main service interface for accessing pre-computed model metadata.
+ * Main service interface for accessing pre-computed model metadata. Provides package registration/lifecycle and access to the MetadataIndexReader for fast indexed queries.
  * <!-- end-model-doc -->
  *
  *
@@ -49,7 +50,18 @@ public interface MetadataService {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Register an EPackage and build metadata for all its classes.
+	 * Get the index reader for fast metadata lookups. The index is automatically maintained when packages are registered/unregistered.
+	 * <!-- end-model-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	MetadataIndexReader getIndexReader();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Register an EPackage and build metadata for all its classes. Automatically indexes the metadata.
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated
@@ -60,7 +72,7 @@ public interface MetadataService {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Unregister an EPackage and remove all associated metadata.
+	 * Unregister an EPackage and remove all associated metadata. Automatically removes from index.
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated
@@ -154,6 +166,17 @@ public interface MetadataService {
 	 * @generated
 	 */
 	FeatureMetadata getFeatureMetadataFromClass(String featureName, ClassMetadata classMetadata);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Get a specific aspect from an EPackage by aspect type ID.
+	 * <!-- end-model-doc -->
+	 * @model
+	 * @generated
+	 */
+	PackageAspect getPackageAspect(EPackage ePackage, String aspectTypeId);
 
 	/**
 	 * <!-- begin-user-doc -->

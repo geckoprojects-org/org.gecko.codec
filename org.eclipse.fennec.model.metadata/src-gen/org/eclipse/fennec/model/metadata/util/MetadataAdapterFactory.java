@@ -80,6 +80,14 @@ public class MetadataAdapterFactory extends AdapterFactoryImpl {
 	protected MetadataSwitch<Adapter> modelSwitch =
 		new MetadataSwitch<Adapter>() {
 			@Override
+			public Adapter caseMetadataDiagnostic(MetadataDiagnostic object) {
+				return createMetadataDiagnosticAdapter();
+			}
+			@Override
+			public Adapter caseDiagnosticContainer(DiagnosticContainer object) {
+				return createDiagnosticContainerAdapter();
+			}
+			@Override
 			public Adapter caseBaseTypeConfig(BaseTypeConfig object) {
 				return createBaseTypeConfigAdapter();
 			}
@@ -98,6 +106,10 @@ public class MetadataAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseAspect(Aspect object) {
 				return createAspectAdapter();
+			}
+			@Override
+			public Adapter casePackageAspect(PackageAspect object) {
+				return createPackageAspectAdapter();
 			}
 			@Override
 			public Adapter caseClassAspect(ClassAspect object) {
@@ -154,6 +166,34 @@ public class MetadataAdapterFactory extends AdapterFactoryImpl {
 		return modelSwitch.doSwitch((EObject)target);
 	}
 
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.MetadataDiagnostic <em>Diagnostic</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.MetadataDiagnostic
+	 * @generated
+	 */
+	public Adapter createMetadataDiagnosticAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.DiagnosticContainer <em>Diagnostic Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.DiagnosticContainer
+	 * @generated
+	 */
+	public Adapter createDiagnosticContainerAdapter() {
+		return null;
+	}
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.BaseTypeConfig <em>Base Type Config</em>}'.
@@ -222,6 +262,20 @@ public class MetadataAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createAspectAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.PackageAspect <em>Package Aspect</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.PackageAspect
+	 * @generated
+	 */
+	public Adapter createPackageAspectAdapter() {
 		return null;
 	}
 

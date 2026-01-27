@@ -37,6 +37,15 @@ public interface MetadataFactory extends EFactory {
 	MetadataFactory eINSTANCE = org.eclipse.fennec.model.metadata.impl.MetadataFactoryImpl.init();
 
 	/**
+	 * Returns a new object of class '<em>Diagnostic</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Diagnostic</em>'.
+	 * @generated
+	 */
+	MetadataDiagnostic createMetadataDiagnostic();
+
+	/**
 	 * Returns a new object of class '<em>Package Metadata</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

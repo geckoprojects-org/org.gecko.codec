@@ -53,7 +53,11 @@ import org.eclipse.fennec.codec.v2.util.AnnotationHelper;
  * @see <a href="docs/codec-v2-serialization-spec.md#16-configuration-hierarchy">Spec 16: Configuration Hierarchy</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+ * @deprecated Use the new Mergeable pattern with config classes in org.eclipse.fennec.codec.config package.
+ *             Each config class (IdConfig, TypeConfig, etc.) now has its own mergeWith() method.
+ *             This class will be removed in a future release.
  */
+@Deprecated
 public class ConfigurationMerger {
 
     private final CodecConfiguration moduleConfig;
@@ -322,9 +326,15 @@ public class ConfigurationMerger {
     // ========================================================================
 
     private boolean resolveTypeEnabled(TypeSerializationConfig aspectConfig) {
-        if (aspectConfig != null) {
-            return aspectConfig.isInclude();
+        // TypeStrategy.NONE means type serialization is disabled
+        if (aspectConfig != null && aspectConfig.getStrategy() == TypeStrategy.NONE) {
+            return false;
         }
+        // If strategy is explicitly set to something other than NONE, enable it
+        if (aspectConfig != null && aspectConfig.getStrategy() != null) {
+            return true;
+        }
+        // Fall back to module config
         return moduleConfig.isSerializeType();
     }
 
@@ -438,10 +448,17 @@ public class ConfigurationMerger {
         return moduleConfig.getSuperTypeKey();
     }
 
+    /**
+     * Resolves the schemaKey for STRUCTURED supertype serialization.
+     * <p>
+     * Note: SuperTypeConfig no longer has its own schemaKey - codec uses TypeConfig's schemaKey directly.
+     * This method returns a default for backwards compatibility with the deprecated EffectiveSuperTypeConfig.
+     *
+     * @deprecated SuperType schemaKey should be obtained from TypeConfig.getSchemaKey()
+     */
+    @SuppressWarnings("unused")  // Parameter kept for signature compatibility
     private String resolveSuperTypeSchemaKey(SuperTypeSerializationConfig aspectConfig) {
-        if (aspectConfig != null && isNonEmpty(aspectConfig.getSchemaKey())) {
-            return aspectConfig.getSchemaKey();
-        }
+        // SuperType inherits schemaKey from TypeConfig, but this deprecated class still needs a value
         return "schema";
     }
 
@@ -449,7 +466,7 @@ public class ConfigurationMerger {
         if (aspectConfig != null && isNonEmpty(aspectConfig.getNameKey())) {
             return aspectConfig.getNameKey();
         }
-        return "name";
+        return "supertype";  // Spec default: "supertype" (not "name" - that's for typeNameKey)
     }
 
     private boolean resolveSuperTypeAsArray(SuperTypeSerializationConfig aspectConfig) {

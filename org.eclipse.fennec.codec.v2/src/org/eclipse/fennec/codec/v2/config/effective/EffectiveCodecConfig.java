@@ -54,7 +54,11 @@ import org.eclipse.fennec.model.metadata.api.MetadataService;
  * @see <a href="docs/codec-v2-serialization-spec.md#16-configuration-hierarchy">Spec 16: Configuration Hierarchy</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+ * @deprecated This class uses deprecated config classes (EffectiveIdConfig, EffectiveTypeConfig, EffectiveSuperTypeConfig, etc.).
+ *             Use the new config classes in org.eclipse.fennec.codec.config package instead.
+ *             This class will be removed in a future release.
  */
+@Deprecated
 public final class EffectiveCodecConfig {
 
     // ========================================================================

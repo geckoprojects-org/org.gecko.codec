@@ -99,7 +99,20 @@ public enum TypeStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	NUMERIC(4, "NUMERIC", "NUMERIC");
+	NUMERIC(4, "NUMERIC", "NUMERIC"),
+
+	/**
+	 * The '<em><b>NONE</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * No type information serialized. Requires CODEC_ROOT_TYPE hint for deserialization. Replaces deprecated typeInclude=false.
+	 * <!-- end-model-doc -->
+	 * @see #NONE_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	NONE(5, "NONE", "NONE");
 
 	/**
 	 * The '<em><b>NAME</b></em>' literal value.
@@ -172,6 +185,20 @@ public enum TypeStrategy implements Enumerator {
 	public static final int NUMERIC_VALUE = 4;
 
 	/**
+	 * The '<em><b>NONE</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * No type information serialized. Requires CODEC_ROOT_TYPE hint for deserialization. Replaces deprecated typeInclude=false.
+	 * <!-- end-model-doc -->
+	 * @see #NONE
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int NONE_VALUE = 5;
+
+	/**
 	 * An array of all the '<em><b>Type Strategy</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -184,6 +211,7 @@ public enum TypeStrategy implements Enumerator {
 			URI,
 			SCHEMA_AND_TYPE,
 			NUMERIC,
+			NONE,
 		};
 
 	/**
@@ -245,6 +273,7 @@ public enum TypeStrategy implements Enumerator {
 			case URI_VALUE: return URI;
 			case SCHEMA_AND_TYPE_VALUE: return SCHEMA_AND_TYPE;
 			case NUMERIC_VALUE: return NUMERIC;
+			case NONE_VALUE: return NONE;
 		}
 		return null;
 	}
