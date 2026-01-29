@@ -208,7 +208,6 @@ public class ConfigurationMerger {
                 .separator(resolveSuperTypeSeparator(aspectConfig))
                 .superTypeKey(resolveSuperTypeKey(aspectConfig))
                 .schemaKey(resolveSuperTypeSchemaKey(aspectConfig))
-                .nameKey(resolveSuperTypeNameKey(aspectConfig))
                 .useSmartCompression(aspectConfig != null && aspectConfig.isUseSmartCompression())
                 .validateSuperTypeHierarchy(resolveSuperTypeValidation())
                 .build();
@@ -460,13 +459,6 @@ public class ConfigurationMerger {
     private String resolveSuperTypeSchemaKey(SuperTypeSerializationConfig aspectConfig) {
         // SuperType inherits schemaKey from TypeConfig, but this deprecated class still needs a value
         return "schema";
-    }
-
-    private String resolveSuperTypeNameKey(SuperTypeSerializationConfig aspectConfig) {
-        if (aspectConfig != null && isNonEmpty(aspectConfig.getNameKey())) {
-            return aspectConfig.getNameKey();
-        }
-        return "supertype";  // Spec default: "supertype" (not "name" - that's for typeNameKey)
     }
 
     private boolean resolveSuperTypeAsArray(SuperTypeSerializationConfig aspectConfig) {

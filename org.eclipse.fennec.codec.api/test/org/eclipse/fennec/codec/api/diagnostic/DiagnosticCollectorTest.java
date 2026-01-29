@@ -22,6 +22,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,11 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link DiagnosticCollector}.
  *
  * @see <a href="docs/codec-v2-spec/00-overview.md#2-error-and-warning-handling">Spec: Error Handling</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.diagnostic}. Tests kept for migration reference.
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.diagnostic - kept for migration reference")
+@SuppressWarnings("deprecation")
 @DisplayName("DiagnosticCollector")
 class DiagnosticCollectorTest {
 

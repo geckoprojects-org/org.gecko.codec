@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.fennec.codec.api.diagnostic.DiagnosticCollector;
+import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 
 /**
  * Immutable discriminator mapping configuration.
@@ -160,7 +160,7 @@ public final class DiscriminatorConfig implements Mergeable<DiscriminatorConfig>
     /**
      * Returns the fallback strategy when discriminator value cannot be resolved.
      * <p>
-     * Default: FALLBACK
+     * Default: SKIP (enables graceful continuation to Type Strategy resolution)
      */
     public FallbackStrategy getFallbackStrategy() {
         return fallbackStrategy;
@@ -336,7 +336,7 @@ public final class DiscriminatorConfig implements Mergeable<DiscriminatorConfig>
         private String typeDiscriminator = null;
         private Map<String, String> typeMappings = null;
         private Map<String, String> inlineMappings = null;
-        private FallbackStrategy fallbackStrategy = FallbackStrategy.FALLBACK;
+        private FallbackStrategy fallbackStrategy = FallbackStrategy.SKIP;  // Spec default: SKIP
         private String fallbackEClass = null;
 
         private Builder() {}

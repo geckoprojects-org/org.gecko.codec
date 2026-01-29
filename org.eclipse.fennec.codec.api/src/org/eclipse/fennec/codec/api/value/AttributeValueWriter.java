@@ -43,7 +43,10 @@ import org.eclipse.emf.ecore.EAttribute;
  * @see CodecValueWriter
  * @see AttributeValueReader
  * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
+ * @deprecated Use {@link org.eclipse.fennec.codec.value.AttributeValueWriter} instead, which provides
+ *             access to effective configuration via context object
  */
+@Deprecated
 public interface AttributeValueWriter<T> extends CodecValueWriter<T, EAttribute> {
 
     /**

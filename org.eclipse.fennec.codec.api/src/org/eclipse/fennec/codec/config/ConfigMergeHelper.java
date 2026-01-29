@@ -154,7 +154,7 @@ public final class ConfigMergeHelper {
     /**
      * Gets an enum value from the source map.
      * <p>
-     * Supports both enum instances and String values (matched by name).
+     * Supports both enum instances and String values (matched by name, case-insensitive).
      *
      * @param source the source property map
      * @param property the property to look up
@@ -173,9 +173,17 @@ public final class ConfigMergeHelper {
         if (enumType.isInstance(value)) {
             return (E) value;
         }
+        String stringValue = value.toString();
+        // Try exact match first
         try {
-            return Enum.valueOf(enumType, value.toString());
+            return Enum.valueOf(enumType, stringValue);
         } catch (IllegalArgumentException e) {
+            // Try case-insensitive match
+            for (E constant : enumType.getEnumConstants()) {
+                if (constant.name().equalsIgnoreCase(stringValue)) {
+                    return constant;
+                }
+            }
             return fallback;
         }
     }

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.fennec.codec.api.diagnostic.DiagnosticCollector;
+import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.IdStrategy;
 import org.eclipse.fennec.model.metadata.SerializationFormat;

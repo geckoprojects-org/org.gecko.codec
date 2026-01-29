@@ -56,7 +56,7 @@ public enum ConfigProperty {
     // Type Properties (11.3)
     // ========================================================================
 
-    TYPE_STRATEGY("typeStrategy", String.class, "NAME",
+    TYPE_STRATEGY("typeStrategy", String.class, "URI",
         levels(GLOBAL, ECLASS, FEATURE), directions(READ, WRITE)),
 
     TYPE_KEY("typeKey", String.class, "_type",
@@ -231,7 +231,7 @@ public enum ConfigProperty {
     DISCRIMINATOR_VALUE("discriminatorValue", String.class, null,
         levels(FEATURE), directions(READ, WRITE)),
 
-    FALLBACK_STRATEGY("fallbackStrategy", String.class, "FALLBACK",
+    FALLBACK_STRATEGY("fallbackStrategy", String.class, "SKIP",  // Spec default: SKIP
         levels(GLOBAL, ECLASS, FEATURE), directions(READ), directions(WRITE)),  // R(W)
 
     FALLBACK_ECLASS("fallbackEClass", String.class, null,

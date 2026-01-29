@@ -21,7 +21,7 @@ import static org.eclipse.fennec.codec.config.ConfigMergeHelper.getString;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.fennec.codec.api.diagnostic.DiagnosticCollector;
+import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.IdStrategy;
 import org.eclipse.fennec.model.metadata.SerializationFormat;

@@ -14,6 +14,10 @@
 /**
  * Custom value readers and writers API for EMF codec serialization.
  * <p>
+ * <strong>DEPRECATED:</strong> This package is deprecated. Use {@link org.eclipse.fennec.codec.value}
+ * instead, which provides context-aware interfaces with access to effective configuration.
+ * </p>
+ * <p>
  * This package provides the API interfaces for custom value transformation:
  * </p>
  * <ul>
@@ -22,7 +26,9 @@
  *   <li>{@link org.eclipse.fennec.codec.api.value.CodecValueRegistry} - Registry for named readers/writers</li>
  * </ul>
  *
+ * @see org.eclipse.fennec.codec.value
  * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
+ * @deprecated Use {@link org.eclipse.fennec.codec.value} package instead
  */
 @org.osgi.annotation.bundle.Export
 @org.osgi.annotation.versioning.Version("1.0.0")

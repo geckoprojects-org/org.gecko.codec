@@ -12,6 +12,52 @@
 
 The codec uses EMF's standard diagnostic mechanism for reporting errors and warnings during serialization and deserialization.
 
+## 0. Validation Layers
+
+Validation happens at **four distinct layers**, each with different timing and scope:
+
+| Layer | When | What | Where Implemented |
+|-------|------|------|-------------------|
+| **1. Annotation Parsing** | EPackage registration | Invalid annotation keys, wrong level, invalid values | `codec.metadata` (AspectProvider) |
+| **2. Config Resolution** | First access to config | Self-contained constraints (e.g., nameKey with PLAIN format) | `Config.validate()` methods |
+| **3. Cross-Config Validation** | Config resolution | Multi-config constraints (e.g., STRUCTURED + NONE + superType) | `ConfigurationResolver.validateCrossConfig()` |
+| **4. Runtime (Ser/Deser)** | During operation | Data-dependent errors (e.g., CLASS strategy + null instanceClassName) | Serializer/Deserializer entries |
+
+### Layer 1: Annotation Parsing
+
+Occurs when an EPackage is registered with the MetadataService. Validates:
+- Annotation keys are at correct level (e.g., `typeMapId` only on EClass, not EReference)
+- Enum values are valid
+- Boolean values are valid
+
+**Implementation:** `CodecAspectProvider.checkForClassOnlyKeys()` in `codec.metadata` project.
+
+See [Section 6.10](#610-annotation-parsing-errors-metadata-layer) for error scenarios.
+
+### Layer 2: Config Resolution (Self-Contained)
+
+Occurs when configuration is first resolved for an EClass/EStructuralFeature. Each `Config.validate()` method checks:
+- Properties that are ignored in certain modes (e.g., `typeNameKey` ignored when format is PLAIN)
+- Property dependencies within the same config
+
+### Layer 3: Cross-Config Validation
+
+Occurs after config resolution when multiple configs interact. Examples:
+- **STRUCTURED + NONE + superTypeSerialize=true** → ERROR (can't write supertype in _type object when no _type)
+- **STRUCTURED + both value readers** → WARNING (superType reader ignored)
+- **STRUCTURED + both value writers** → WARNING (superType writer ignored)
+
+### Layer 4: Runtime (Serialization/Deserialization)
+
+Occurs during actual serialization or deserialization. Examples:
+- **CLASS strategy + instanceClassName is null** → ERROR
+- **Abstract type without concrete resolution** → ERROR
+- **Unknown discriminator value** → depends on `fallbackStrategy`
+
+See [Section 6](#6-complete-error-scenarios) for comprehensive error scenarios.
+
+---
+
 ## 1. Principles
 
 - All errors and warnings are collected in the EMF Resource's diagnostics (`resource.getErrors()`, `resource.getWarnings()`)

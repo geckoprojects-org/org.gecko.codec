@@ -60,7 +60,10 @@ import tools.jackson.databind.DeserializationContext;
  * @param <T> the type of value to read (value type for attributes, String URI for references)
  * @param <F> the feature type (EAttribute or EReference)
  * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
+ * @deprecated Use {@link org.eclipse.fennec.codec.value.CodecValueReader} instead, which provides
+ *             access to effective configuration via context object
  */
+@Deprecated
 @FunctionalInterface
 public interface CodecValueReader<T, F extends EStructuralFeature> {
 

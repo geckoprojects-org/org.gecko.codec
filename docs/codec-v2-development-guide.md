@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-27 (Validation rules integrated into spec, document 21 deprecated)
+**Last Updated:** 2026-01-28 (ConfigurationResolver + cross-config validation complete, Layer 1 annotation validation gaps documented)
 
 ---
 
@@ -33,7 +33,36 @@ MAIN TASK: [description] - [status: ACTIVE/PAUSED/✅]
 ### 0.2 Current Task Hierarchy
 
 ```
-MAIN TASK: Prepare spec for TCK test creation (Type + SuperType configuration) - ACTIVE
+NEXT TASK: Complete Layer 1 Annotation Validation in CodecAspectProvider - PENDING
+│
+│  GOAL: Expand annotation validation to cover all spec rules (T-V1 through T-V7, T-V30)
+│
+│  LOCATION: org.eclipse.fennec.codec.metadata/src/.../provider/CodecAspectProvider.java
+│
+│  ALREADY DONE:
+│  - typeMapId on EReference → WARNING ✅
+│  - typeDiscriminatorPath on EReference → WARNING ✅
+│  - Infrastructure: MetadataDiagnostic, addDiagnostic() helper
+│
+│  TODO (expand checkForClassOnlyKeys or add new validation methods):
+│  ├── T-V1: typeValueReaderName on EReference → ERROR
+│  ├── T-V2: typeValueWriterName on EReference → ERROR
+│  ├── T-V3: typeScope in EAnnotation → WARNING (runtime-only)
+│  ├── T-V4: typeFormatScope in EAnnotation → WARNING (runtime-only)
+│  ├── T-V5: Any type* key on EAttribute → ERROR
+│  ├── T-V7: typeDiscriminator on EReference → ERROR
+│  └── T-V30: typeInclude deprecation → WARNING
+│
+│  SPEC REFERENCES:
+│  - 06-type.md Section 7 "Configuration Validation Rules"
+│  - 15-error-handling.md Section 0 "Validation Layers"
+│  - 15-error-handling.md Section 6.10 "Annotation Parsing Errors"
+│
+└── RETURN TO: Runtime validation (Layer 4) after Layer 1 complete
+
+---
+
+COMPLETED: Prepare spec for TCK test creation (Type + SuperType configuration) - ✅
 │
 │  GOAL: Verify configuration merging works correctly by:
 │        1. Clarifying spec until Claude can explain ser/deser behavior (and WHY)
@@ -595,6 +624,79 @@ The **[16-annotation-reference.md](codec-v2-spec/16-annotation-reference.md)** d
 5. **Feature Configuration** → EReference + EAttribute (per-feature settings)
 6. **Scope Settings** → Global/CodecConfig only (NOT in EAnnotations)
 
+### Session 2026-01-28: ConfigurationResolver Created
+
+**Gap Closed: The missing ConfigurationMerger replacement is now complete.**
+
+The deprecated `ConfigurationMerger` in `org.eclipse.fennec.codec.v2.config.effective` has been replaced by:
+
+| New Class | Purpose |
+|-----------|---------|
+| `org.eclipse.fennec.codec.config.ConfigurationResolver` | Orchestrates cascading merge from all 6 configuration levels |
+
+**What ConfigurationResolver does:**
+1. Takes all 6 property map layers as input (OPTIONS → RESOURCE → FACTORY → MODULE → ANNOTATION → DEFAULT)
+2. For each config type (TypeConfig, IdConfig, etc.), calls `.defaults().mergeWith(...).validate(...)`
+3. Handles the two-dimensional resolution (Source × Level): vertical source priority + horizontal scope chain
+4. Caches resolved configs per EClass/EStructuralFeature for efficiency
+
+**Test Coverage:**
+- `ConfigurationResolverTest.java` - 25+ unit tests
+- `ConfigurationResolverSpecTest.java` - 15+ spec tests validating spec section 02-config-resolution.md
+
+**Usage:**
+```java
+ConfigurationResolver resolver = ConfigurationResolver.builder()
+    .annotationProperties(annotationMap)      // Level 5
+    .moduleProperties(moduleMap)              // Level 4
+    .factoryProperties(factoryMap)            // Level 3
+    .resourceProperties(resourceMap)          // Level 2
+    .optionsProperties(optionsMap)            // Level 1 (highest)
+    .build();
+
+TypeConfig config = resolver.resolveTypeConfig(personClass, diagnostics);
+FeatureConfig featureConfig = resolver.resolveFeatureConfig(firstNameAttr, diagnostics);
+```
+
+**Validation Gap Analysis (Spec vs Implementation):**
+
+See [15-error-handling.md §0 "Validation Layers"](docs/codec-v2-spec/15-error-handling.md) for the complete validation architecture.
+
+| Layer | Current Status | Where Implemented |
+|-------|----------------|-------------------|
+| **1. Annotation Parsing** | ⚠️ Partial | `CodecAspectProvider.checkForClassOnlyKeys()` |
+| **2. Config Resolution (Self-Contained)** | ✅ Done | `Config.validate()` methods |
+| **3. Cross-Config Validation** | ✅ Done | `ConfigurationResolver.validateCrossConfig()` |
+| **4. Runtime (Ser/Deser)** | ❌ Not done | Serializer/Deserializer entries |
+
+**Layer 1 Status (Annotation Parsing in `CodecAspectProvider`):**
+
+| Validation | Status | Rule ID |
+|------------|--------|---------|
+| `typeMapId` on EReference → WARNING | ✅ Done | D-3 |
+| `typeDiscriminatorPath` on EReference → WARNING | ✅ Done | D-2 |
+| `typeValueReaderName` on EReference → ERROR | ❌ Missing | T-V1 |
+| `typeValueWriterName` on EReference → ERROR | ❌ Missing | T-V2 |
+| `typeScope` in EAnnotation → WARNING | ❌ Missing | T-V3 |
+| `typeFormatScope` in EAnnotation → WARNING | ❌ Missing | T-V4 |
+| Any `type*` key on EAttribute → ERROR | ❌ Missing | T-V5 |
+| `typeDiscriminator` on EReference → ERROR | ❌ Missing | T-V7 |
+| `typeInclude` deprecation → WARNING | ❌ Missing | T-V30 |
+
+**Remaining Work:**
+- Annotation parser: expand `checkForClassOnlyKeys()` to cover all T-V rules
+- Runtime serializer: CLASS strategy + instanceClassName null (T-V10)
+
+**Architecture:**
+1. **Config classes** → Self-contained validation ✅
+2. **ConfigurationResolver** → Merge orchestration + caching + cross-config validation ✅
+3. **Annotation Parser** → Context-dependent validation (when EAnnotations → property maps) ❌
+4. **Cross-Config validation** → Add to ConfigurationResolver ❌
+
+**Next Steps:**
+- Add cross-config validation to ConfigurationResolver (STRUCTURED + NONE + superTypeSerialize)
+- Annotation parser will handle feature-level applicability when built
+
 ### Session 2026-01-20: Major Clarifications
 
 | Topic | Decision | Section |
@@ -846,7 +948,7 @@ diagnostics.addInfo(message, source);
 | `EffectiveSuperTypeConfig` | `org.eclipse.fennec.codec.config.SuperTypeConfig` |
 | `EffectiveClassConfig` | Use new config classes directly |
 | `EffectiveCodecConfig` | Use new config classes directly |
-| `ConfigurationMerger` | Use `Mergeable` pattern instead |
+| `ConfigurationMerger` | `org.eclipse.fennec.codec.config.ConfigurationResolver` |
 
 **Test Coverage Summary (~530+ tests in codec.api):**
 
@@ -1189,7 +1291,94 @@ Serialization:
 
 ---
 
-## 11. Session Continuity Tips
+## 11. Migration Policy
+
+This section documents key decisions about how we handle the migration from old codec to new codec.v2.
+
+### 11.1 No Backward Compatibility Required
+
+**Decision:** We do NOT need backward compatibility between old and new codec APIs.
+
+**Rationale:** This is a major version upgrade (v1 → v2). The old and new implementations coexist during development, but:
+- Users will migrate to v2 wholesale, not incrementally
+- API changes are expected and acceptable
+- Breaking changes are documented but not prevented
+
+### 11.2 Old Tests as Migration Checklist
+
+**Decision:** Keep old tests as documentation/checklist, deprecate AND disable them after migration.
+
+**Pattern:**
+```java
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.value - kept for migration reference")
+@SuppressWarnings("deprecation")
+class OldFeatureTest {
+    // Original test code preserved for reference
+}
+```
+
+**Rationale:**
+- Old tests document what the old code did
+- They serve as a checklist during migration (ensure new code covers same scenarios)
+- Deprecation indicates WHY they are disabled
+- Disabling prevents noise in test reports
+- Keeping them (vs. deleting) allows future reference if questions arise
+
+### 11.3 Migration Workflow
+
+1. **Create new implementation** in `org.eclipse.fennec.codec.*` package
+2. **Create new spec tests** in `test/.../spec/` subpackage
+3. **Mark old interfaces** with `@Deprecated` annotation
+4. **Mark old tests** with `@Deprecated` AND `@Disabled`
+5. **Keep old code** for reference until migration is complete
+
+### 11.4 Example: Value Reader/Writer Migration
+
+**Old package:** `org.eclipse.fennec.codec.api.value`
+- Interfaces without context objects
+- Tests in `test/org/eclipse/fennec/codec/api/value/`
+
+**New package:** `org.eclipse.fennec.codec.value`
+- Interfaces with `CodecReaderContext` / `CodecWriterContext`
+- Auto-registration via `getName()` method
+- Tests in `test/org/eclipse/fennec/codec/value/`
+
+**Migration steps taken:**
+1. Created new interfaces in `org.eclipse.fennec.codec.value`
+2. Created new tests in `test/org/eclipse/fennec/codec/value/`
+3. Marked old interfaces with `@Deprecated`
+4. Marked all 12 old test classes with `@Deprecated` + `@Disabled`
+5. Old tests now show as "40 ignored" in test report
+
+### 11.5 Example: Diagnostic Migration
+
+**Old package:** `org.eclipse.fennec.codec.api.diagnostic`
+- `CodecDiagnostic`, `DiagnosticCollector`
+- Tests in `test/org/eclipse/fennec/codec/api/diagnostic/`
+
+**New package:** `org.eclipse.fennec.codec.diagnostic`
+- Same classes, updated spec references
+- Tests in `test/org/eclipse/fennec/codec/diagnostic/`
+
+**Migration steps taken:**
+1. Created new classes in `org.eclipse.fennec.codec.diagnostic`
+2. Created new tests in `test/org/eclipse/fennec/codec/diagnostic/`
+3. Marked old classes with `@Deprecated`
+4. Marked old tests with `@Deprecated` + `@Disabled`
+5. Updated all usages in `codec.config`, `codec.value` packages to use new package
+
+### 11.6 Completed Migrations
+
+| Component | Old Package | New Package | Status |
+|-----------|-------------|-------------|--------|
+| Value Reader/Writer | `codec.api.value` | `codec.value` | ✅ Complete |
+| Diagnostic | `codec.api.diagnostic` | `codec.diagnostic` | ✅ Complete |
+| Config classes | `codec.api.config` | `codec.config` | ✅ Already in new package |
+
+---
+
+## 12. Session Continuity Tips
 
 If context is lost:
 

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
-import org.eclipse.fennec.codec.api.diagnostic.DiagnosticCollector;
+import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,7 @@ class TypeConfigTest {
 
             assertTrue(config.isInclude());
             assertEquals(SerializationFormat.PLAIN, config.getFormat());
-            assertEquals(TypeStrategy.NAME, config.getStrategy());
+            assertEquals(TypeStrategy.URI, config.getStrategy());  // Spec: URI is default
             assertEquals("_type", config.getTypeKey());
             assertEquals("schema", config.getSchemaKey());
             assertEquals("type", config.getNameKey());
@@ -138,11 +138,11 @@ class TypeConfigTest {
         @DisplayName("overrides strategy from source using short key")
         void overridesStrategyFromSourceUsingShortKey() {
             TypeConfig config = TypeConfig.defaults();
-            assertEquals(TypeStrategy.NAME, config.getStrategy());
+            assertEquals(TypeStrategy.URI, config.getStrategy());  // Spec: URI is default
 
-            TypeConfig result = config.mergeWith(Map.of("typeStrategy", "URI"));
+            TypeConfig result = config.mergeWith(Map.of("typeStrategy", "NAME"));
 
-            assertEquals(TypeStrategy.URI, result.getStrategy());
+            assertEquals(TypeStrategy.NAME, result.getStrategy());
         }
 
         @Test
@@ -382,7 +382,7 @@ class TypeConfigTest {
 
             assertTrue(copy.isInclude());
             assertEquals(SerializationFormat.PLAIN, copy.getFormat());
-            assertEquals(TypeStrategy.NAME, copy.getStrategy());
+            assertEquals(TypeStrategy.URI, copy.getStrategy());  // Spec: URI is default
             assertEquals("_type", copy.getTypeKey());
         }
 

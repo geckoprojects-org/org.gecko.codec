@@ -23,7 +23,10 @@ import org.junit.jupiter.api.BeforeEach;
  * </p>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.value}. Tests kept for migration reference.
  */
+@Deprecated
+@SuppressWarnings("deprecation")
 abstract class CodecValueRegistryTestBase {
 
     protected CodecValueRegistry registry;

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.fennec.codec.api.diagnostic.DiagnosticCollector;
+import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 import org.eclipse.fennec.codec.config.DiscriminatorConfig.FallbackStrategy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,7 +50,7 @@ class DiscriminatorConfigTest {
             assertNull(config.getTypeDiscriminator());
             assertEquals(Map.of(), config.getTypeMappings());
             assertEquals(Map.of(), config.getInlineMappings());
-            assertEquals(FallbackStrategy.FALLBACK, config.getFallbackStrategy());
+            assertEquals(FallbackStrategy.SKIP, config.getFallbackStrategy());  // Spec: SKIP is default
             assertNull(config.getFallbackEClass());
         }
     }

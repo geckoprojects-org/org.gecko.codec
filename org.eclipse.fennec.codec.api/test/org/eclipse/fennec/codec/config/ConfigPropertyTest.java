@@ -178,9 +178,9 @@ class ConfigPropertyTest {
         }
 
         @Test
-        @DisplayName("TYPE_STRATEGY default is NAME")
-        void typeStrategyDefaultIsName() {
-            assertEquals("NAME", ConfigProperty.TYPE_STRATEGY.getDefaultValue());
+        @DisplayName("TYPE_STRATEGY default is URI")
+        void typeStrategyDefaultIsUri() {
+            assertEquals("URI", ConfigProperty.TYPE_STRATEGY.getDefaultValue());
         }
 
         @Test

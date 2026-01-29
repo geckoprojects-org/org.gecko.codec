@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.api.value;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,11 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link CodecValueRegistry#hasWriter(String)} and {@link CodecValueRegistry#hasReader(String)}.
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.value}. Tests kept for migration reference.
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.value - kept for migration reference")
+@SuppressWarnings("deprecation")
 @DisplayName("CodecValueRegistry hasWriter and hasReader")
 class CodecValueRegistryHasWriterReaderTest extends CodecValueRegistryTestBase {
 

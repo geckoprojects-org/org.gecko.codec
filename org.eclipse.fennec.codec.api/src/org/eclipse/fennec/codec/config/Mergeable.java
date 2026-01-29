@@ -15,7 +15,7 @@ package org.eclipse.fennec.codec.config;
 
 import java.util.Map;
 
-import org.eclipse.fennec.codec.api.diagnostic.DiagnosticCollector;
+import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 
 /**
  * Interface for immutable configuration objects that support cascading merge and validation.

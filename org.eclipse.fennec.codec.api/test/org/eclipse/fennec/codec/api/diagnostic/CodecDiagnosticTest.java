@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,11 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link CodecDiagnostic}.
  *
  * @see <a href="docs/codec-v2-spec/00-overview.md#2-error-and-warning-handling">Spec: Error Handling</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.diagnostic}. Tests kept for migration reference.
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.diagnostic - kept for migration reference")
+@SuppressWarnings("deprecation")
 @DisplayName("CodecDiagnostic")
 class CodecDiagnosticTest {
 

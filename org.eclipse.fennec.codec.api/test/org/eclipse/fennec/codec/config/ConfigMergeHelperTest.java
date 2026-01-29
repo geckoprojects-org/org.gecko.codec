@@ -540,15 +540,15 @@ class ConfigMergeHelperTest {
         }
 
         @Test
-        @DisplayName("is case-sensitive for enum name parsing")
-        void isCaseSensitiveForEnumNameParsing() {
+        @DisplayName("is case-insensitive for enum name parsing (per spec)")
+        void isCaseInsensitiveForEnumNameParsing() {
             Map<String, Object> source = Map.of("idKey", "cmyk");
 
             ColorMode result = ConfigMergeHelper.getEnum(source, ConfigProperty.ID_KEY, ColorMode.class,
                     ColorMode.GRAYSCALE);
 
-            // Should return fallback because case is wrong
-            assertEquals(ColorMode.GRAYSCALE, result);
+            // Should return CMYK because case-insensitive matching is supported per spec
+            assertEquals(ColorMode.CMYK, result);
         }
 
         @Test

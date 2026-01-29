@@ -19,7 +19,7 @@ import static org.eclipse.fennec.codec.config.ConfigMergeHelper.getString;
 
 import java.util.Map;
 
-import org.eclipse.fennec.codec.api.diagnostic.DiagnosticCollector;
+import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 
@@ -86,7 +86,7 @@ public final class TypeConfig implements Mergeable<TypeConfig> {
 
     /**
      * Returns the type serialization strategy.
-     * Default: NAME
+     * Default: URI
      */
     public TypeStrategy getStrategy() {
         return strategy;

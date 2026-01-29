@@ -74,6 +74,122 @@ Tests for the `DiagnosticContainer` interface and `MetadataDiagnostic` model.
 
 ---
 
+## 1.4 Config Spec Tests (NEW)
+
+**Project:** `org.eclipse.fennec.codec.api`
+**Package:** `test/org/eclipse/fennec/codec/config/spec/`
+**Purpose:** Verify configuration classes match spec defaults, constraints, and validation rules.
+
+These tests verify that the immutable config classes (`TypeConfig`, `SuperTypeConfig`, `DiscriminatorConfig`, etc.) correctly implement the spec-defined behavior for:
+- Default values
+- Property merging
+- Validation rules (cross-property constraints)
+
+### 1.4.1 Test Commands
+
+```bash
+# Run all codec.api tests (includes config spec tests)
+./gradlew :org.eclipse.fennec.codec.api:test
+```
+
+### 1.4.2 TypeConfig Spec Tests
+
+**Test Class:** `TypeConfigSpecTest.java`
+**Spec Reference:** [06-type.md](06-type.md)
+
+| Test Category | Tests | Description |
+|---------------|-------|-------------|
+| Defaults | 4 | Verify spec-defined defaults (URI strategy, PLAIN format, etc.) |
+| Validation | 6 | Invalid strategy/format combinations produce errors |
+| Merge | 4 | Property merging and cascade behavior |
+| Strategy values | 6 | Each TypeStrategy value accepted correctly |
+| Format combinations | 4 | Strategy × Format matrix validation |
+
+### 1.4.3 SuperTypeConfig Spec Tests
+
+**Test Class:** `SuperTypeConfigSpecTest.java`
+**Spec Reference:** [07-supertype.md](07-supertype.md)
+
+| Test Category | Tests | Description |
+|---------------|-------|-------------|
+| Defaults | 4 | Verify spec-defined defaults (disabled, ALL selection, etc.) |
+| Validation | 5 | Invalid combinations produce appropriate diagnostics |
+| Merge | 4 | Property merging and cascade behavior |
+| Selection values | 4 | Each SuperTypeSelection value accepted correctly |
+| Format combinations | 5 | Format-dependent default keys |
+
+### 1.4.4 DiscriminatorConfig Spec Tests
+
+**Test Class:** `DiscriminatorConfigSpecTest.java`
+**Spec Reference:** [08-discriminator-mapping.md](08-discriminator-mapping.md)
+
+| Test Category | Tests | Description |
+|---------------|-------|-------------|
+| Defaults | 5 | Verify spec-defined defaults (SKIP fallback, empty mappings) |
+| Validation | 8 | Invalid fallback configurations, duplicate mappings |
+| Merge | 6 | Type mappings and inline mappings merge correctly |
+| FallbackStrategy | 6 | Each fallback strategy behavior verified |
+| Mapping operations | 4 | Add/remove/lookup type mappings |
+
+### 1.4.5 Test Naming Convention
+
+Spec tests use the naming pattern: `{category}_{whatIsTested}_{expectation}`
+
+```java
+@Test
+void defaults_typeStrategyIsUri()
+@Test
+void validation_noneWithStructuredFormat_producesError()
+@Test
+void merge_overridesTakesPrecedence()
+```
+
+---
+
+## 1.5 Package Migration & Test Structure
+
+The codec.v2 migration uses a consistent package structure. Tests follow the same pattern as source code.
+
+### 1.5.1 Package Structure
+
+| Old Package (deprecated) | New Package | Status |
+|--------------------------|-------------|--------|
+| `o.e.f.codec.api.value` | `o.e.f.codec.value` | ✅ Migrated |
+| `o.e.f.codec.api.diagnostic` | `o.e.f.codec.diagnostic` | ✅ Migrated |
+| `o.e.f.codec.api.config` | `o.e.f.codec.config` | ✅ Already in new location |
+
+### 1.5.2 Test Location Pattern
+
+```
+Source: src/org/eclipse/fennec/codec/{package}/
+Tests:  test/org/eclipse/fennec/codec/{package}/
+Spec:   test/org/eclipse/fennec/codec/{package}/spec/  (optional)
+```
+
+### 1.5.3 Deprecated Test Handling
+
+Deprecated tests are kept as migration reference but disabled:
+
+```java
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.{package} - kept for migration reference")
+@SuppressWarnings("deprecation")
+class OldTest { ... }
+```
+
+### 1.5.4 Current Test Counts (codec.api)
+
+| Category | Active Tests | Ignored Tests |
+|----------|--------------|---------------|
+| Config (impl + spec) | ~280 | 0 |
+| Value (new) | 54 | 0 |
+| Diagnostic (new) | 76 | 0 |
+| Value (old, deprecated) | 0 | 40 |
+| Diagnostic (old, deprecated) | 0 | 76 |
+| **Total** | ~603 | 116 |
+
+---
+
 ## 2. AspectProvider Test Expectations
 
 **Test Class:** `CodecAspectProviderTest.java`

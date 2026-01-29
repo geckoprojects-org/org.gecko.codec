@@ -39,7 +39,9 @@ import tools.jackson.core.TokenStreamLocation;
  * but typically used single-threaded within one load/save operation.
  *
  * @see <a href="docs/codec-v2-spec/00-overview.md#2-error-and-warning-handling">Spec: Error Handling</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.diagnostic.DiagnosticCollector}. This class will be removed in a future release.
  */
+@Deprecated
 public class DiagnosticCollector {
 
     private final List<CodecDiagnostic> errors = Collections.synchronizedList(new ArrayList<>());

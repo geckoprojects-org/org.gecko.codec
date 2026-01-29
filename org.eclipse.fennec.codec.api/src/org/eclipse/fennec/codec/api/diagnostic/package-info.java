@@ -11,6 +11,12 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
+/**
+ * Diagnostic support for codec operations.
+ *
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.diagnostic}. This package will be removed in a future release.
+ */
+@Deprecated
 @org.osgi.annotation.bundle.Export
 @org.osgi.annotation.versioning.Version("1.0.0")
 package org.eclipse.fennec.codec.api.diagnostic;

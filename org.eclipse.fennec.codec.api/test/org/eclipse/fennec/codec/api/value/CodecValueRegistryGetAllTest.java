@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Map;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,11 @@ import org.junit.jupiter.api.Test;
  * Tests for {@link CodecValueRegistry#getWriters()} and {@link CodecValueRegistry#getReaders()}.
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.value}. Tests kept for migration reference.
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.value - kept for migration reference")
+@SuppressWarnings("deprecation")
 @DisplayName("CodecValueRegistry getWriters and getReaders")
 class CodecValueRegistryGetAllTest extends CodecValueRegistryTestBase {
 

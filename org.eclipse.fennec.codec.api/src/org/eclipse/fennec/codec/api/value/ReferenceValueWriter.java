@@ -46,7 +46,10 @@ import org.eclipse.emf.ecore.EReference;
  * @see CodecValueWriter
  * @see ReferenceValueReader
  * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
+ * @deprecated Use {@link org.eclipse.fennec.codec.value.ReferenceValueWriter} instead, which provides
+ *             access to effective configuration via context object
  */
+@Deprecated
 public interface ReferenceValueWriter<T extends EObject> extends CodecValueWriter<T, EReference> {
 
     /**

@@ -32,7 +32,9 @@ import tools.jackson.core.TokenStreamLocation;
  * </ul>
  *
  * @see <a href="docs/codec-v2-spec/00-overview.md#2-error-and-warning-handling">Spec: Error Handling</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.diagnostic.CodecDiagnostic}. This class will be removed in a future release.
  */
+@Deprecated
 public class CodecDiagnostic implements Resource.Diagnostic {
 
     /**

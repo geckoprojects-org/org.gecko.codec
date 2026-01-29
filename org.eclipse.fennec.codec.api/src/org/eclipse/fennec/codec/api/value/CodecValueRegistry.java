@@ -39,7 +39,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
  * </pre>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#10-custom-value-readerswriters">Spec 10: Custom Value Readers/Writers</a>
+ * @deprecated Use {@link org.eclipse.fennec.codec.value.CodecValueRegistry} instead, which works
+ *             with the context-aware reader/writer interfaces
  */
+@Deprecated
 public class CodecValueRegistry {
 
     private final Map<String, CodecValueWriter<?, ?>> writers = new ConcurrentHashMap<>();
