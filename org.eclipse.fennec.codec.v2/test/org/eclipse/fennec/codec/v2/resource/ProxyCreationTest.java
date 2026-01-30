@@ -36,6 +36,7 @@ import org.eclipse.fennec.codec.v2.deser.DeserializationState.UnresolvedReferenc
 import org.eclipse.fennec.codec.v2.ser.SerializationState;
 import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

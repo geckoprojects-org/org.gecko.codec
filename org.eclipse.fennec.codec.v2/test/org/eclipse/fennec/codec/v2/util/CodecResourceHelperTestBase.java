@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.service.MetadataServiceImpl;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +34,7 @@ abstract class CodecResourceHelperTestBase {
 
     protected static final String TEST_ECORE = "test-resource-helper.ecore";
 
-    protected MetadataService metadataService;
+    protected MetadataWhiteboard metadataService;
     protected CodecResourceHelper helper;
     protected EcoreHelper ecoreHelper;
     protected EPackage testPackage;

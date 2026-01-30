@@ -166,7 +166,7 @@ class CodecAspectProviderValidConfigTest {
             assertEquals("codec", aspect.getTypeId());
 
             FeatureCodecAspect codecAspect = (FeatureCodecAspect) aspect;
-            assertTrue(codecAspect.isSerialize());
+            assertFalse(codecAspect.isIgnore());
             assertNull(codecAspect.getEffectiveKey());
             assertNull(codecAspect.getValueWriterName());
             assertNull(codecAspect.getValueReaderName());
@@ -189,7 +189,7 @@ class CodecAspectProviderValidConfigTest {
             assertEquals("codec", aspect.getTypeId());
 
             ReferenceCodecAspect codecAspect = (ReferenceCodecAspect) aspect;
-            assertTrue(codecAspect.isSerialize());
+            assertFalse(codecAspect.isIgnore());
             assertNull(codecAspect.getEffectiveKey());
         }
 
@@ -613,76 +613,76 @@ class CodecAspectProviderValidConfigTest {
     @DisplayName("Feature Configuration")
     class FeatureConfigTests {
 
-        /** @VALID @SPEC(11-feature.md) Tests transient=true on attribute. */
+        /** @VALID @SPEC(11-feature.md) Tests ignore=true on attribute. */
         @Test
-        @DisplayName("transient=true on attribute")
-        void validConfig_attributeTransient_serializeFalse() {
+        @DisplayName("ignore=true on attribute sets ignore=true")
+        void validConfig_attributeIgnore_ignoreTrue() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithTransientField");
             EAttribute secretAttr = (EAttribute) helper.getFeature(entityClass, "secretData");
 
             FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(secretAttr));
 
-            assertFalse(aspect.isSerialize());
+            assertTrue(aspect.isIgnore());
         }
 
-        /** @VALID @SPEC(11-feature.md) Tests attribute without transient. */
+        /** @VALID @SPEC(11-feature.md) Tests attribute without ignore is not ignored. */
         @Test
-        @DisplayName("attribute without transient serializes")
-        void validConfig_attributeNoTransient_serializeTrue() {
+        @DisplayName("attribute without ignore is not ignored")
+        void validConfig_attributeNoIgnore_ignoreFalse() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithTransientField");
             EAttribute publicAttr = (EAttribute) helper.getFeature(entityClass, "publicData");
 
             FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(publicAttr));
 
-            assertTrue(aspect.isSerialize());
+            assertFalse(aspect.isIgnore());
         }
 
-        /** @VALID @SPEC(11-feature.md) Tests transient=true on reference. */
+        /** @VALID @SPEC(11-feature.md) Tests ignore=true on reference. */
         @Test
-        @DisplayName("transient=true on reference")
-        void validConfig_referenceTransient_serializeFalse() {
+        @DisplayName("ignore=true on reference sets ignore=true")
+        void validConfig_referenceIgnore_ignoreTrue() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithTransientReference");
             EReference cachedRef = (EReference) helper.getFeature(entityClass, "cachedAddress");
 
             ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(cachedRef));
 
-            assertFalse(aspect.isSerialize());
+            assertTrue(aspect.isIgnore());
         }
 
-        /** @VALID @SPEC(11-feature.md) Tests explicit serialize=true. */
+        /** @VALID @SPEC(11-feature.md) Tests explicit ignore=false keeps ignore=false. */
         @Test
-        @DisplayName("explicit serialize=true")
-        void validConfig_explicitSerialize_serializeTrue() {
+        @DisplayName("explicit ignore=false keeps ignore=false")
+        void validConfig_explicitIgnoreFalse_ignoreFalse() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithSerializeOptions");
             EAttribute attr = (EAttribute) helper.getFeature(entityClass, "explicitSerialize");
 
             FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(attr));
 
-            assertTrue(aspect.isSerialize());
+            assertFalse(aspect.isIgnore());
         }
 
-        /** @VALID @SPEC(11-feature.md) Tests serialize=false. */
+        /** @VALID @SPEC(11-feature.md) Tests ignore=true. */
         @Test
-        @DisplayName("serialize=false")
-        void validConfig_serializeFalse_serializeFalse() {
+        @DisplayName("ignore=true sets ignore=true")
+        void validConfig_ignoreTrue_ignoreTrue() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithSerializeOptions");
             EAttribute attr = (EAttribute) helper.getFeature(entityClass, "noSerialize");
 
             FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(attr));
 
-            assertFalse(aspect.isSerialize());
+            assertTrue(aspect.isIgnore());
         }
 
-        /** @VALID @SPEC(11-feature.md) Tests serialize=true overrides transient=true. */
+        /** @VALID @SPEC(11-feature.md) Tests explicit ignore=false. */
         @Test
-        @DisplayName("serialize=true overrides transient=true")
-        void validConfig_serializeOverridesTransient_serializeTrue() {
+        @DisplayName("explicit ignore=false keeps ignore=false")
+        void validConfig_explicitIgnoreFalse_ignoreFalse2() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithSerializeOptions");
             EAttribute attr = (EAttribute) helper.getFeature(entityClass, "conflictSerializeWins");
 
             FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(attr));
 
-            assertTrue(aspect.isSerialize());
+            assertFalse(aspect.isIgnore());
         }
 
         /** @VALID @SPEC(11-feature.md) Tests serializeNull=true. */

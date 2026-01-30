@@ -32,7 +32,11 @@ import org.osgi.annotation.versioning.ProviderType;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getKey <em>Key</em>}</li>
- *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerialize <em>Serialize</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnore <em>Ignore</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnoreRead <em>Ignore Read</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnoreWrite <em>Ignore Write</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getForceRead <em>Force Read</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getForceWrite <em>Force Write</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerializeNull <em>Serialize Null</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerializeEmpty <em>Serialize Empty</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerializeDefaults <em>Serialize Defaults</em>}</li>
@@ -71,29 +75,129 @@ public interface BaseFeatureConfig extends EObject {
 	void setKey(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Serialize</b></em>' attribute.
+	 * Returns the value of the '<em><b>Ignore</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Whether this feature is serialized. Null means true (serialize by default). Set to false to make the feature transient (skipped during serialization and deserialization).
+	 * Skip this feature for both serialization and deserialization. Null means false (not ignored). Set to true to make the feature invisible to the codec in both directions.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Serialize</em>' attribute.
-	 * @see #setSerialize(Boolean)
-	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseFeatureConfig_Serialize()
+	 * @return the value of the '<em>Ignore</em>' attribute.
+	 * @see #setIgnore(Boolean)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseFeatureConfig_Ignore()
 	 * @model
 	 * @generated
 	 */
-	Boolean getSerialize();
+	Boolean getIgnore();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerialize <em>Serialize</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnore <em>Ignore</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Serialize</em>' attribute.
-	 * @see #getSerialize()
+	 * @param value the new value of the '<em>Ignore</em>' attribute.
+	 * @see #getIgnore()
 	 * @generated
 	 */
-	void setSerialize(Boolean value);
+	void setIgnore(Boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Ignore Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Skip this feature during deserialization only. Null means false. Set to true to prevent reading this feature from input while still writing it to output.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Ignore Read</em>' attribute.
+	 * @see #setIgnoreRead(Boolean)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseFeatureConfig_IgnoreRead()
+	 * @model
+	 * @generated
+	 */
+	Boolean getIgnoreRead();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnoreRead <em>Ignore Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Ignore Read</em>' attribute.
+	 * @see #getIgnoreRead()
+	 * @generated
+	 */
+	void setIgnoreRead(Boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Ignore Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Skip this feature during serialization only. Null means false. Set to true to prevent writing this feature to output while still reading it from input.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Ignore Write</em>' attribute.
+	 * @see #setIgnoreWrite(Boolean)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseFeatureConfig_IgnoreWrite()
+	 * @model
+	 * @generated
+	 */
+	Boolean getIgnoreWrite();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnoreWrite <em>Ignore Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Ignore Write</em>' attribute.
+	 * @see #getIgnoreWrite()
+	 * @generated
+	 */
+	void setIgnoreWrite(Boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Force Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Force deserialization of EMF transient/volatile features. Null means false. Set to true to override the default skipping of transient/volatile features during deserialization.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Force Read</em>' attribute.
+	 * @see #setForceRead(Boolean)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseFeatureConfig_ForceRead()
+	 * @model
+	 * @generated
+	 */
+	Boolean getForceRead();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getForceRead <em>Force Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Force Read</em>' attribute.
+	 * @see #getForceRead()
+	 * @generated
+	 */
+	void setForceRead(Boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Force Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Force serialization of EMF transient/volatile/derived features. Null means false. Set to true to override the default skipping of transient/volatile/derived features during serialization.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Force Write</em>' attribute.
+	 * @see #setForceWrite(Boolean)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getBaseFeatureConfig_ForceWrite()
+	 * @model
+	 * @generated
+	 */
+	Boolean getForceWrite();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getForceWrite <em>Force Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Force Write</em>' attribute.
+	 * @see #getForceWrite()
+	 * @generated
+	 */
+	void setForceWrite(Boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Serialize Null</b></em>' attribute.

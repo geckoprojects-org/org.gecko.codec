@@ -516,13 +516,49 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	int BASE_FEATURE_CONFIG__KEY = 0;
 
 	/**
-	 * The feature id for the '<em><b>Serialize</b></em>' attribute.
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_FEATURE_CONFIG__SERIALIZE = 1;
+	int BASE_FEATURE_CONFIG__IGNORE = 1;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_FEATURE_CONFIG__IGNORE_READ = 2;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_FEATURE_CONFIG__IGNORE_WRITE = 3;
+
+	/**
+	 * The feature id for the '<em><b>Force Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_FEATURE_CONFIG__FORCE_READ = 4;
+
+	/**
+	 * The feature id for the '<em><b>Force Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BASE_FEATURE_CONFIG__FORCE_WRITE = 5;
 
 	/**
 	 * The feature id for the '<em><b>Serialize Null</b></em>' attribute.
@@ -531,7 +567,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_FEATURE_CONFIG__SERIALIZE_NULL = 2;
+	int BASE_FEATURE_CONFIG__SERIALIZE_NULL = 6;
 
 	/**
 	 * The feature id for the '<em><b>Serialize Empty</b></em>' attribute.
@@ -540,7 +576,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_FEATURE_CONFIG__SERIALIZE_EMPTY = 3;
+	int BASE_FEATURE_CONFIG__SERIALIZE_EMPTY = 7;
 
 	/**
 	 * The feature id for the '<em><b>Serialize Defaults</b></em>' attribute.
@@ -549,7 +585,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS = 4;
+	int BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS = 8;
 
 	/**
 	 * The feature id for the '<em><b>Enum Serialization</b></em>' attribute.
@@ -558,7 +594,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_FEATURE_CONFIG__ENUM_SERIALIZATION = 5;
+	int BASE_FEATURE_CONFIG__ENUM_SERIALIZATION = 9;
 
 	/**
 	 * The number of structural features of the '<em>Base Feature Config</em>' class.
@@ -567,7 +603,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BASE_FEATURE_CONFIG_FEATURE_COUNT = 6;
+	int BASE_FEATURE_CONFIG_FEATURE_COUNT = 10;
 
 	/**
 	 * The number of operations of the '<em>Base Feature Config</em>' class.
@@ -1978,15 +2014,59 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getBaseFeatureConfig_Key();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerialize <em>Serialize</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnore <em>Ignore</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Serialize</em>'.
-	 * @see org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerialize()
+	 * @return the meta object for the attribute '<em>Ignore</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnore()
 	 * @see #getBaseFeatureConfig()
 	 * @generated
 	 */
-	EAttribute getBaseFeatureConfig_Serialize();
+	EAttribute getBaseFeatureConfig_Ignore();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnoreRead <em>Ignore Read</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ignore Read</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnoreRead()
+	 * @see #getBaseFeatureConfig()
+	 * @generated
+	 */
+	EAttribute getBaseFeatureConfig_IgnoreRead();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnoreWrite <em>Ignore Write</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ignore Write</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseFeatureConfig#getIgnoreWrite()
+	 * @see #getBaseFeatureConfig()
+	 * @generated
+	 */
+	EAttribute getBaseFeatureConfig_IgnoreWrite();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getForceRead <em>Force Read</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Force Read</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseFeatureConfig#getForceRead()
+	 * @see #getBaseFeatureConfig()
+	 * @generated
+	 */
+	EAttribute getBaseFeatureConfig_ForceRead();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getForceWrite <em>Force Write</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Force Write</em>'.
+	 * @see org.eclipse.fennec.model.metadata.BaseFeatureConfig#getForceWrite()
+	 * @see #getBaseFeatureConfig()
+	 * @generated
+	 */
+	EAttribute getBaseFeatureConfig_ForceWrite();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig#getSerializeNull <em>Serialize Null</em>}'.
@@ -2977,12 +3057,44 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute BASE_FEATURE_CONFIG__KEY = eINSTANCE.getBaseFeatureConfig_Key();
 
 		/**
-		 * The meta object literal for the '<em><b>Serialize</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Ignore</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute BASE_FEATURE_CONFIG__SERIALIZE = eINSTANCE.getBaseFeatureConfig_Serialize();
+		EAttribute BASE_FEATURE_CONFIG__IGNORE = eINSTANCE.getBaseFeatureConfig_Ignore();
+
+		/**
+		 * The meta object literal for the '<em><b>Ignore Read</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_FEATURE_CONFIG__IGNORE_READ = eINSTANCE.getBaseFeatureConfig_IgnoreRead();
+
+		/**
+		 * The meta object literal for the '<em><b>Ignore Write</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_FEATURE_CONFIG__IGNORE_WRITE = eINSTANCE.getBaseFeatureConfig_IgnoreWrite();
+
+		/**
+		 * The meta object literal for the '<em><b>Force Read</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_FEATURE_CONFIG__FORCE_READ = eINSTANCE.getBaseFeatureConfig_ForceRead();
+
+		/**
+		 * The meta object literal for the '<em><b>Force Write</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute BASE_FEATURE_CONFIG__FORCE_WRITE = eINSTANCE.getBaseFeatureConfig_ForceWrite();
 
 		/**
 		 * The meta object literal for the '<em><b>Serialize Null</b></em>' attribute feature.

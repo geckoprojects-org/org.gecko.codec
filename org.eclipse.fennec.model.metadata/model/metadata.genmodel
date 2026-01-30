@@ -89,7 +89,11 @@
     </genClasses>
     <genClasses image="false" ecoreClass="metadata.ecore#//BaseFeatureConfig">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/key"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serialize"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/ignore"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/ignoreRead"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/ignoreWrite"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/forceRead"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/forceWrite"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serializeNull"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serializeEmpty"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute metadata.ecore#//BaseFeatureConfig/serializeDefaults"/>

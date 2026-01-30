@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

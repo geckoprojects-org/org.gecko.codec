@@ -552,13 +552,49 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_SERIALIZATION_CONFIG__KEY = MetadataPackage.BASE_FEATURE_CONFIG__KEY;
 
 	/**
-	 * The feature id for the '<em><b>Serialize</b></em>' attribute.
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_SERIALIZATION_CONFIG__SERIALIZE = MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE;
+	int FEATURE_SERIALIZATION_CONFIG__IGNORE = MetadataPackage.BASE_FEATURE_CONFIG__IGNORE;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_SERIALIZATION_CONFIG__IGNORE_READ = MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_READ;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_SERIALIZATION_CONFIG__IGNORE_WRITE = MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_WRITE;
+
+	/**
+	 * The feature id for the '<em><b>Force Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_SERIALIZATION_CONFIG__FORCE_READ = MetadataPackage.BASE_FEATURE_CONFIG__FORCE_READ;
+
+	/**
+	 * The feature id for the '<em><b>Force Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_SERIALIZATION_CONFIG__FORCE_WRITE = MetadataPackage.BASE_FEATURE_CONFIG__FORCE_WRITE;
 
 	/**
 	 * The feature id for the '<em><b>Serialize Null</b></em>' attribute.
@@ -815,13 +851,49 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_CODEC_ASPECT__EFFECTIVE_KEY = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Serialize</b></em>' attribute.
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT__SERIALIZE = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 1;
+	int FEATURE_CODEC_ASPECT__IGNORE = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_CODEC_ASPECT__IGNORE_READ = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_CODEC_ASPECT__IGNORE_WRITE = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Force Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_CODEC_ASPECT__FORCE_READ = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Force Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_CODEC_ASPECT__FORCE_WRITE = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Serialize Null</b></em>' attribute.
@@ -830,7 +902,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT__SERIALIZE_NULL = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 2;
+	int FEATURE_CODEC_ASPECT__SERIALIZE_NULL = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Serialize Empty</b></em>' attribute.
@@ -839,7 +911,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT__SERIALIZE_EMPTY = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 3;
+	int FEATURE_CODEC_ASPECT__SERIALIZE_EMPTY = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Serialize Defaults</b></em>' attribute.
@@ -848,7 +920,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT__SERIALIZE_DEFAULTS = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 4;
+	int FEATURE_CODEC_ASPECT__SERIALIZE_DEFAULTS = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Value Writer Name</b></em>' attribute.
@@ -857,7 +929,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT__VALUE_WRITER_NAME = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 5;
+	int FEATURE_CODEC_ASPECT__VALUE_WRITER_NAME = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Value Reader Name</b></em>' attribute.
@@ -866,7 +938,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT__VALUE_READER_NAME = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 6;
+	int FEATURE_CODEC_ASPECT__VALUE_READER_NAME = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Enum Serialization</b></em>' attribute.
@@ -875,7 +947,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 7;
+	int FEATURE_CODEC_ASPECT__ENUM_SERIALIZATION = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 11;
 
 	/**
 	 * The number of structural features of the '<em>Feature Codec Aspect</em>' class.
@@ -884,7 +956,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT_FEATURE_COUNT = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 8;
+	int FEATURE_CODEC_ASPECT_FEATURE_COUNT = MetadataPackage.FEATURE_ASPECT_FEATURE_COUNT + 12;
 
 	/**
 	 * The number of operations of the '<em>Feature Codec Aspect</em>' class.
@@ -942,13 +1014,49 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int REFERENCE_CODEC_ASPECT__EFFECTIVE_KEY = FEATURE_CODEC_ASPECT__EFFECTIVE_KEY;
 
 	/**
-	 * The feature id for the '<em><b>Serialize</b></em>' attribute.
+	 * The feature id for the '<em><b>Ignore</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REFERENCE_CODEC_ASPECT__SERIALIZE = FEATURE_CODEC_ASPECT__SERIALIZE;
+	int REFERENCE_CODEC_ASPECT__IGNORE = FEATURE_CODEC_ASPECT__IGNORE;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_CODEC_ASPECT__IGNORE_READ = FEATURE_CODEC_ASPECT__IGNORE_READ;
+
+	/**
+	 * The feature id for the '<em><b>Ignore Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_CODEC_ASPECT__IGNORE_WRITE = FEATURE_CODEC_ASPECT__IGNORE_WRITE;
+
+	/**
+	 * The feature id for the '<em><b>Force Read</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_CODEC_ASPECT__FORCE_READ = FEATURE_CODEC_ASPECT__FORCE_READ;
+
+	/**
+	 * The feature id for the '<em><b>Force Write</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_CODEC_ASPECT__FORCE_WRITE = FEATURE_CODEC_ASPECT__FORCE_WRITE;
 
 	/**
 	 * The feature id for the '<em><b>Serialize Null</b></em>' attribute.
@@ -1840,15 +1948,59 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getFeatureCodecAspect_EffectiveKey();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isSerialize <em>Serialize</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnore <em>Ignore</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Serialize</em>'.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isSerialize()
+	 * @return the meta object for the attribute '<em>Ignore</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnore()
 	 * @see #getFeatureCodecAspect()
 	 * @generated
 	 */
-	EAttribute getFeatureCodecAspect_Serialize();
+	EAttribute getFeatureCodecAspect_Ignore();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnoreRead <em>Ignore Read</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ignore Read</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnoreRead()
+	 * @see #getFeatureCodecAspect()
+	 * @generated
+	 */
+	EAttribute getFeatureCodecAspect_IgnoreRead();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnoreWrite <em>Ignore Write</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Ignore Write</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnoreWrite()
+	 * @see #getFeatureCodecAspect()
+	 * @generated
+	 */
+	EAttribute getFeatureCodecAspect_IgnoreWrite();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isForceRead <em>Force Read</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Force Read</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isForceRead()
+	 * @see #getFeatureCodecAspect()
+	 * @generated
+	 */
+	EAttribute getFeatureCodecAspect_ForceRead();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isForceWrite <em>Force Write</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Force Write</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isForceWrite()
+	 * @see #getFeatureCodecAspect()
+	 * @generated
+	 */
+	EAttribute getFeatureCodecAspect_ForceWrite();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isSerializeNull <em>Serialize Null</em>}'.
@@ -2646,12 +2798,44 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute FEATURE_CODEC_ASPECT__EFFECTIVE_KEY = eINSTANCE.getFeatureCodecAspect_EffectiveKey();
 
 		/**
-		 * The meta object literal for the '<em><b>Serialize</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Ignore</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute FEATURE_CODEC_ASPECT__SERIALIZE = eINSTANCE.getFeatureCodecAspect_Serialize();
+		EAttribute FEATURE_CODEC_ASPECT__IGNORE = eINSTANCE.getFeatureCodecAspect_Ignore();
+
+		/**
+		 * The meta object literal for the '<em><b>Ignore Read</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute FEATURE_CODEC_ASPECT__IGNORE_READ = eINSTANCE.getFeatureCodecAspect_IgnoreRead();
+
+		/**
+		 * The meta object literal for the '<em><b>Ignore Write</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute FEATURE_CODEC_ASPECT__IGNORE_WRITE = eINSTANCE.getFeatureCodecAspect_IgnoreWrite();
+
+		/**
+		 * The meta object literal for the '<em><b>Force Read</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute FEATURE_CODEC_ASPECT__FORCE_READ = eINSTANCE.getFeatureCodecAspect_ForceRead();
+
+		/**
+		 * The meta object literal for the '<em><b>Force Write</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute FEATURE_CODEC_ASPECT__FORCE_WRITE = eINSTANCE.getFeatureCodecAspect_ForceWrite();
 
 		/**
 		 * The meta object literal for the '<em><b>Serialize Null</b></em>' attribute feature.

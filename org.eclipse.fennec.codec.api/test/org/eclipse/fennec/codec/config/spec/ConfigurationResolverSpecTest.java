@@ -44,9 +44,11 @@ import org.junit.jupiter.api.Test;
  * These tests verify the generic two-dimensional resolution algorithm using TypeConfig
  * as the representative config type. Per-config-type resolution tests are in separate files:
  * <ul>
+ *   <li>{@link TypeConfigResolverSpecTest} - Type configuration resolution</li>
  *   <li>{@link IdConfigResolverSpecTest} - ID configuration resolution</li>
  *   <li>{@link SuperTypeConfigResolverSpecTest} - SuperType configuration resolution + cross-config validation</li>
  *   <li>{@link DiscriminatorConfigResolverSpecTest} - Discriminator configuration resolution</li>
+ *   <li>{@link FeatureConfigResolverSpecTest} - Feature configuration resolution</li>
  * </ul>
  * <p>
  * Spec reference: {@code docs/codec-v2-spec/02-config-resolution.md}

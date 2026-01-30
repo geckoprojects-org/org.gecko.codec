@@ -148,12 +148,12 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
-  <!-- Class with transient attribute -->
+  <!-- Class with ignored attribute -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithTransientField">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="publicData" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="secretData" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <details key="transient" value="true"/>
+        <details key="ignore" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -195,12 +195,12 @@
     </eStructuralFeatures>
   </eClassifiers>
 
-  <!-- Class with transient reference -->
+  <!-- Class with ignored reference -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithTransientReference">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="cachedAddress" eType="#//Address">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <details key="transient" value="true"/>
+        <details key="ignore" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -319,25 +319,24 @@
        FEATURE SERIALIZE OPTIONS TESTS
        ======================================================================== -->
 
-  <!-- Class with various serialize options on attributes -->
+  <!-- Class with various visibility and serialize options on attributes -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithSerializeOptions">
-    <!-- Explicitly serialize=true (opposite of transient) -->
+    <!-- Explicitly ignore=false (not ignored) -->
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="explicitSerialize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <details key="serialize" value="true"/>
+        <details key="ignore" value="false"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <!-- serialize=false (same as transient=true) -->
+    <!-- ignore=true (skip both read and write) -->
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="noSerialize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <details key="serialize" value="false"/>
+        <details key="ignore" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <!-- Both serialize and transient - serialize wins -->
+    <!-- ignore=false explicitly set -->
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="conflictSerializeWins" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <details key="transient" value="true"/>
-        <details key="serialize" value="true"/>
+        <details key="ignore" value="false"/>
       </eAnnotations>
     </eStructuralFeatures>
     <!-- serializeNull=true -->

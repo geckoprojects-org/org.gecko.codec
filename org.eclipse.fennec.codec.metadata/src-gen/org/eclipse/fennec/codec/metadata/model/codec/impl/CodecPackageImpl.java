@@ -571,7 +571,7 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureCodecAspect_Serialize() {
+	public EAttribute getFeatureCodecAspect_Ignore() {
 		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -581,7 +581,7 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureCodecAspect_SerializeNull() {
+	public EAttribute getFeatureCodecAspect_IgnoreRead() {
 		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -591,7 +591,7 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureCodecAspect_SerializeEmpty() {
+	public EAttribute getFeatureCodecAspect_IgnoreWrite() {
 		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -601,7 +601,7 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureCodecAspect_SerializeDefaults() {
+	public EAttribute getFeatureCodecAspect_ForceRead() {
 		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -611,7 +611,7 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureCodecAspect_ValueWriterName() {
+	public EAttribute getFeatureCodecAspect_ForceWrite() {
 		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(5);
 	}
 
@@ -621,7 +621,7 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureCodecAspect_ValueReaderName() {
+	public EAttribute getFeatureCodecAspect_SerializeNull() {
 		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(6);
 	}
 
@@ -631,8 +631,48 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
-	public EAttribute getFeatureCodecAspect_EnumSerialization() {
+	public EAttribute getFeatureCodecAspect_SerializeEmpty() {
 		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getFeatureCodecAspect_SerializeDefaults() {
+		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getFeatureCodecAspect_ValueWriterName() {
+		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getFeatureCodecAspect_ValueReaderName() {
+		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getFeatureCodecAspect_EnumSerialization() {
+		return (EAttribute)featureCodecAspectEClass.getEStructuralFeatures().get(11);
 	}
 
 	/**
@@ -1094,7 +1134,11 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 
 		featureCodecAspectEClass = createEClass(FEATURE_CODEC_ASPECT);
 		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__EFFECTIVE_KEY);
-		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__SERIALIZE);
+		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__IGNORE);
+		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__IGNORE_READ);
+		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__IGNORE_WRITE);
+		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__FORCE_READ);
+		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__FORCE_WRITE);
 		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__SERIALIZE_NULL);
 		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__SERIALIZE_EMPTY);
 		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__SERIALIZE_DEFAULTS);
@@ -1232,7 +1276,11 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 
 		initEClass(featureCodecAspectEClass, FeatureCodecAspect.class, "FeatureCodecAspect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getFeatureCodecAspect_EffectiveKey(), ecorePackage.getEString(), "effectiveKey", null, 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getFeatureCodecAspect_Serialize(), ecorePackage.getEBoolean(), "serialize", "true", 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecAspect_Ignore(), ecorePackage.getEBoolean(), "ignore", "false", 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecAspect_IgnoreRead(), ecorePackage.getEBoolean(), "ignoreRead", "false", 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecAspect_IgnoreWrite(), ecorePackage.getEBoolean(), "ignoreWrite", "false", 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecAspect_ForceRead(), ecorePackage.getEBoolean(), "forceRead", "false", 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getFeatureCodecAspect_ForceWrite(), ecorePackage.getEBoolean(), "forceWrite", "false", 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecAspect_SerializeNull(), ecorePackage.getEBoolean(), "serializeNull", "false", 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecAspect_SerializeEmpty(), ecorePackage.getEBoolean(), "serializeEmpty", "false", 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureCodecAspect_SerializeDefaults(), ecorePackage.getEBoolean(), "serializeDefaults", "false", 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

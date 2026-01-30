@@ -14,15 +14,20 @@
 package org.eclipse.fennec.codec.v2.util;
 
 import org.eclipse.fennec.codec.metadata.provider.CodecAspectProvider;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.service.MetadataServiceImpl;
 
 /**
- * Factory for creating MetadataService instances configured for codec.v2.
+ * Factory for creating {@link MetadataWhiteboard} instances configured for codec.v2.
  * <p>
  * This factory ensures that the {@link CodecAspectProvider} is registered
- * with the MetadataService so that EAnnotations from Ecore models are
+ * with the MetadataWhiteboard so that EAnnotations from Ecore models are
  * properly parsed into codec aspects.
+ * </p>
+ * <p>
+ * Returns {@link MetadataWhiteboard} so callers can register packages.
+ * Pass as {@link org.eclipse.fennec.model.metadata.api.MetadataService MetadataService}
+ * to consumers that only need read access (e.g., {@code CodecResource}).
  * </p>
  *
  * @author Mark Hoffmann
@@ -35,35 +40,35 @@ public final class MetadataServiceFactory {
     }
 
     /**
-     * Creates a new MetadataService with the CodecAspectProvider registered.
+     * Creates a new MetadataWhiteboard with the CodecAspectProvider registered.
      * <p>
-     * This is the recommended way to create a MetadataService for codec.v2
-     * when not running in an OSGi environment. In OSGi, the MetadataService
+     * This is the recommended way to create a MetadataWhiteboard for codec.v2
+     * when not running in an OSGi environment. In OSGi, the MetadataWhiteboard
      * is typically provided via DS and the CodecAspectProvider is registered
      * separately.
      * </p>
      *
-     * @return a new MetadataService configured for codec serialization
+     * @return a new MetadataWhiteboard configured for codec serialization
      */
     @SuppressWarnings("restriction")
-	public static MetadataService create() {
+	public static MetadataWhiteboard create() {
 		MetadataServiceImpl service = new MetadataServiceImpl();
         service.registerAspectProvider(new CodecAspectProvider());
         return service;
     }
 
     /**
-     * Registers the CodecAspectProvider with an existing MetadataService.
+     * Registers the CodecAspectProvider with an existing MetadataWhiteboard.
      * <p>
-     * Use this method when you have an existing MetadataService and need
+     * Use this method when you have an existing MetadataWhiteboard and need
      * to add codec aspect support to it.
      * </p>
      *
-     * @param service the MetadataService to configure
-     * @return the same MetadataService for chaining
+     * @param whiteboard the MetadataWhiteboard to configure
+     * @return the same MetadataWhiteboard for chaining
      */
-    public static MetadataService configureForCodec(MetadataService service) {
-        service.registerAspectProvider(new CodecAspectProvider());
-        return service;
+    public static MetadataWhiteboard configureForCodec(MetadataWhiteboard whiteboard) {
+        whiteboard.registerAspectProvider(new CodecAspectProvider());
+        return whiteboard;
     }
 }

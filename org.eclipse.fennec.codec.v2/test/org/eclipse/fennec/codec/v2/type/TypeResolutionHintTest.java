@@ -30,6 +30,7 @@ import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.codec.v2.resource.CodecResource;
 import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +51,7 @@ class TypeResolutionHintTest {
 
     private static final String TEST_ECORE = "test-hint.ecore";
 
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
     private EcoreHelper ecoreHelper;
 
     private EPackage testPackage;

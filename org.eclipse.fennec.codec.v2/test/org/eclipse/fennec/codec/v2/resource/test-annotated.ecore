@@ -20,10 +20,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="price" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
 
-    <!-- Transient feature - should not be serialized -->
+    <!-- Ignored feature - should not be serialized -->
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="internalCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <details key="transient" value="true"/>
+        <details key="ignore" value="true"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

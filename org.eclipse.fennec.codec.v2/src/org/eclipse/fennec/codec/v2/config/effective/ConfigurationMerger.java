@@ -539,9 +539,9 @@ public class ConfigurationMerger {
             }
             // Force-serialize enabled, continue to check aspect
         }
-        // Check aspect
+        // Check aspect: ignore=true means don't serialize
         if (aspect != null) {
-            return aspect.isSerialize();
+            return !aspect.isIgnore();
         }
         return true;
     }

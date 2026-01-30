@@ -377,7 +377,7 @@ class ConfigurationMergerTest {
             when(metadataService.getFeatureMetadata(nameAttribute)).thenReturn(featureMetadata);
             when(featureMetadata.getAspects()).thenReturn(aspects);
             when(aspect.getEffectiveKey()).thenReturn("firstName");
-            when(aspect.isSerialize()).thenReturn(true);
+            when(aspect.isIgnore()).thenReturn(false);
 
             ConfigurationMerger merger = new ConfigurationMerger(moduleConfig, metadataService, null, null);
             EffectiveCodecConfig config = merger.merge();
@@ -445,7 +445,7 @@ class ConfigurationMergerTest {
 
             when(metadataService.getFeatureMetadata(nameAttribute)).thenReturn(featureMetadata);
             when(featureMetadata.getAspects()).thenReturn(aspects);
-            when(aspect.isSerialize()).thenReturn(true);
+            when(aspect.isIgnore()).thenReturn(false);
             when(aspect.isSerializeNull()).thenReturn(true);
             when(aspect.isSerializeEmpty()).thenReturn(true);
 

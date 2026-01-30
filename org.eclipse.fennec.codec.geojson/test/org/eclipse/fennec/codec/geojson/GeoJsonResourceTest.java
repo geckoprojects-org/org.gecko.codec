@@ -28,9 +28,9 @@ import java.util.Collections;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.geojson.BoundingBox;
 import org.geojson.Coordinates;
 import org.geojson.Feature;
@@ -66,7 +66,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("GeoJsonResource Tests")
 class GeoJsonResourceTest {
 
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
     private GeoJsonPackage geoPackage;
     private GeoJsonFactory geoFactory;
 

@@ -36,6 +36,7 @@ import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.codec.v2.resource.CodecResource;
 import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,7 +63,7 @@ class ArrayAttributeSerializationTest {
     private static final String TEST_NS_URI = "http://test.fennec/arrays";
 
     private EPackage testPackage;
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
 
     // EClasses
     private EClass arrayHolderClass;

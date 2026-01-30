@@ -40,6 +40,7 @@ import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +69,7 @@ class EnumSerializationTest {
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
 
     private EClass taskClass;
     private EAttribute nameAttribute;
@@ -333,7 +334,7 @@ class EnumSerializationTest {
 
     private String serialize(EObject object, EnumSerializationStrategy strategy) throws IOException {
         // Create metadata service with enum strategy configured via aspect
-        MetadataService ms = MetadataServiceFactory.create();
+        MetadataWhiteboard ms = MetadataServiceFactory.create();
         ms.registerPackage(testPackage);
 
         // Set enum strategy on feature metadata
@@ -357,7 +358,7 @@ class EnumSerializationTest {
 
     private EObject deserialize(String json, EnumSerializationStrategy strategy) throws IOException {
         // Create metadata service with enum strategy configured via aspect
-        MetadataService ms = MetadataServiceFactory.create();
+        MetadataWhiteboard ms = MetadataServiceFactory.create();
         ms.registerPackage(testPackage);
 
         // Set enum strategy on feature metadata
@@ -379,7 +380,7 @@ class EnumSerializationTest {
         return resource.getContents().isEmpty() ? null : resource.getContents().get(0);
     }
 
-    private void setEnumStrategy(MetadataService ms, EAttribute attribute, EnumSerializationStrategy strategy) {
+    private void setEnumStrategy(MetadataWhiteboard ms, EAttribute attribute, EnumSerializationStrategy strategy) {
         FeatureMetadata featureMetadata = ms.getFeatureMetadata(attribute);
         if (featureMetadata != null) {
             // Find or create FeatureCodecAspect

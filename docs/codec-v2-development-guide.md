@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-29 (Resolver spec tests for SuperType + Discriminator; refactored into per-config-type files; Feature deserialization gate analysis)
+**Last Updated:** 2026-01-30 (Feature visibility model: replaced serialize with 5 directional flags; Feature spec tests complete; all config spec tests done except Reference)
 
 ---
 
@@ -33,40 +33,70 @@ MAIN TASK: [description] - [status: ACTIVE/PAUSED/✅]
 ### 0.2 Current Task Hierarchy
 
 ```
-ACTIVE: Feature Config Spec Tests + Deserialization Flow Review - IN PROGRESS (2026-01-29)
+NEXT: ReferenceConfig Spec Tests - NOT STARTED
 │
-│  CONTEXT: Before writing FeatureConfigSpecTest and FeatureConfigResolverSpecTest,
-│  we need to review the deserialization flow because Feature config is about
-│  gating (visibility control) and key customization, NOT strategy/format combinations.
+│  CONTEXT: All other config types (Type, SuperType, ID, Discriminator, Feature)
+│  have complete spec tests. Reference is the last remaining gap.
 │
-│  KEY FINDING: v2 Deserialization Gate Bug
+│  STEPS:
+│  │  1. Create ReferenceConfigSpecTest
+│  │  2. Create ReferenceConfigResolverSpecTest
+│  │  3. Verify all tests pass
+│
+│  AFTER REFERENCE:
+│  │  - All config spec tests complete (6/6)
+│  │  - Ready for Phase 2: Serialization/Deserialization integration tests
+│  │  - Known bug: v2 deserialization gate uses isSerialize() instead of shouldDeserialize()
+│  │    (see completed Feature task below for details)
+│
+---
+
+COMPLETED: Feature Visibility Model + Spec Tests - ✅ (2026-01-30)
+│
+│  PHASE 1: Model Change — replaced `serialize` with 5 directional visibility flags
+│  │  - codec.ecore: FeatureCodecAspect — removed serialize (EBoolean, default=true),
+│  │    added ignore/ignoreRead/ignoreWrite/forceRead/forceWrite (EBoolean, default=false)
+│  │  - metadata.ecore: BaseFeatureConfig — same 5 fields as EBooleanObject (nullable)
+│  │  - CodecAnnotationConstants: Added KEY_IGNORE, KEY_IGNORE_READ, KEY_IGNORE_WRITE,
+│  │    KEY_FORCE_READ, KEY_FORCE_WRITE; deprecated KEY_SERIALIZE, KEY_TRANSIENT
+│  │  - CodecAspectProvider: Updated populateFeatureAspect() and buildFeatureConfig()
+│  │  - User removed deprecated transient/serialize legacy parsing
+│  │  - All test ecore files migrated: transient=true → ignore=true, serialize → ignore
+│  │  - All tests fixed: isSerialize() → isIgnore() with inverted boolean logic
+│  │
+│  PHASE 2: Spec Tests
+│  │  - FeatureConfigSpecTest.java — 64 tests across 9 sections
+│  │    1. Default Values (12) — all 12 fields verified
+│  │    2. Directional Visibility Flags (6)
+│  │    3. Computed Properties shouldSerialize/shouldDeserialize (12) — full truth tables
+│  │    4. Validation Rules (9) — 3 contradictory combos, multiple warnings, clean
+│  │    5. Serialize Value Flags (4)
+│  │    6. Enum Serialization Strategy (4)
+│  │    7. Key Customization (3)
+│  │    8. Custom Value Reader/Writer (5)
+│  │    9. Merge Behavior (9)
+│  │
+│  │  - FeatureConfigResolverSpecTest.java — 30 tests across 8 sections
+│  │    1. Source Hierarchy (6) — Options→Resource→Factory→Module→Annotation
+│  │    2. Scope Chain (6) — Feature→Class→Global (3-level)
+│  │    3. Combined Resolution (4)
+│  │    4. Directional Visibility through Resolver (3)
+│  │    5. Feature-specific Properties (4)
+│  │    6. Caching (3)
+│  │    7. Validation Integration (2)
+│  │    8. Global Feature Config (2)
+│  │
+│  KEY FINDING: v2 Deserialization Gate Bug (NOT YET FIXED)
 │  │  LOCATION: CodecEObjectDeserializer.java:649 (buildDeserializationEntries)
 │  │  BUG: Uses `featureConfig.isSerialize()` for deserialization gate
-│  │  SHOULD USE: `featureConfig.shouldDeserialize()` which respects:
-│  │    - ignoreRead (directional ignore for deserialization)
-│  │    - forceRead (directional force for deserialization)
-│  │    - Separate from shouldSerialize() which uses ignoreWrite/forceWrite
+│  │  SHOULD USE: `featureConfig.shouldDeserialize()`
+│  │  IMPACT: Features with ignoreRead=true still deserialized;
+│  │          features with forceRead=true + ignore=true incorrectly gated
 │  │
-│  │  IMPACT: Features with ignoreRead=true are still deserialized
-│  │          Features with forceRead=true but ignore=true are incorrectly gated
-│  │
-│  │  SPEC REFERENCE: 11-feature.md §1.2 (Visibility Control)
-│  │    - FeatureConfig has separate shouldSerialize() and shouldDeserialize()
-│  │    - shouldDeserialize() = forceRead overrides (ignore OR ignoreRead)
-│  │    - shouldSerialize() = forceWrite overrides (ignore OR ignoreWrite)
-│
-│  SPEC GAPS IDENTIFIED:
+│  SPEC GAPS IDENTIFIED (NOT YET ADDRESSED):
 │  │  1. Spec §1.2 doesn't document the entry-build pattern (buildDeserializationEntries)
 │  │  2. Spec §1.2 doesn't explicitly state deserialization gate should use shouldDeserialize()
 │  │  3. Spec doesn't document the isChangeable() pre-check for non-changeable features
-│
-│  NEXT STEPS:
-│  │  1. Review v2 deserialization code (buildDeserializationEntries) for gate bug fix
-│  │  2. Verify key→feature mapping handles directional ignore flags correctly
-│  │  3. Check if spec §1.2 needs updating for entry-build pattern
-│  │  4. Create FeatureConfigSpecTest
-│  │  5. Create FeatureConfigResolverSpecTest
-│  │  6. Create ReferenceConfigSpecTest + ReferenceConfigResolverSpecTest
 │
 ---
 
@@ -103,14 +133,14 @@ COMPLETED: SuperType + Discriminator Resolver Spec Tests + Refactoring - ✅ (20
 │
 │  ALL 75 TESTS PASSING
 │
-│  SPEC TEST COVERAGE STATUS:
+│  SPEC TEST COVERAGE STATUS (updated 2026-01-30):
 │  │  | Config Class       | Unit Tests | Spec Tests | Resolver Spec Tests |
 │  │  |--------------------|------------|------------|---------------------|
-│  │  | TypeConfig         | 41         | 33         | 20 (shared)         |
-│  │  | IdConfig           | 27         | 56         | 17                  |
-│  │  | SuperTypeConfig    | 31         | 28         | 21                  |
-│  │  | DiscriminatorConfig| 61         | 29         | 17                  |
-│  │  | FeatureConfig      | 52         | MISSING    | MISSING             |
+│  │  | TypeConfig         | 41         | 54         | 24 + 20 (shared)    |
+│  │  | IdConfig           | 27         | 78         | 17                  |
+│  │  | SuperTypeConfig    | 31         | 48         | 21                  |
+│  │  | DiscriminatorConfig| 61         | 38         | 17                  |
+│  │  | FeatureConfig      | 52         | 64         | 30                  |
 │  │  | ReferenceConfig    | 43         | MISSING    | MISSING             |
 │
 ---
@@ -480,7 +510,7 @@ COMPLETED: Prepare spec for TCK test creation (Type + SuperType configuration) -
 
 ```bash
 # Codec V2 projects - use these:
-./gradlew :org.eclipse.fennec.codec.api:test           # Config classes (~530+ tests)
+./gradlew :org.eclipse.fennec.codec.api:test           # Config classes (~630+ tests)
 ./gradlew :org.eclipse.fennec.codec.v2:test
 ./gradlew :org.eclipse.fennec.codec.metadata:test
 ./gradlew :org.eclipse.fennec.model.metadata:test
@@ -1258,7 +1288,7 @@ The deprecated `typeInclude` has been completely removed from both code (2026-01
 |-------|---------|------------|
 | `IdConfig` | ID serialization configuration | 83+ tests (27 unit + 56 spec) |
 | `TypeConfig` | Type serialization configuration | 41 tests |
-| `FeatureConfig` | Feature serialization configuration | 52 tests |
+| `FeatureConfig` | Feature serialization configuration | 146 tests (52 unit + 64 spec + 30 resolver) |
 | `SuperTypeConfig` | SuperType serialization configuration | 35 tests |
 | `ReferenceConfig` | Reference serialization configuration (NEW) | 43 tests |
 | `DiscriminatorConfig` | Discriminator mapping configuration (NEW) | 58 tests |

@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +72,7 @@ class CodecResourceSmartCompressionTest {
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
 
     // EClasses
     private EClass dogClass;

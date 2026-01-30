@@ -18,7 +18,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
-import org.eclipse.fennec.model.openapi.OpenApiPackage;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -54,8 +53,6 @@ public class OpenApiResourceFactoryImpl extends ResourceFactoryImpl {
 	@Activate
 	public OpenApiResourceFactoryImpl(@Reference MetadataService metadataService) {
 		this.metadataService = metadataService;
-		// Ensure OpenAPI package is registered
-		metadataService.registerPackage(OpenApiPackage.eINSTANCE);
 	}
 
 	/**
@@ -63,7 +60,6 @@ public class OpenApiResourceFactoryImpl extends ResourceFactoryImpl {
 	 */
 	public OpenApiResourceFactoryImpl() {
 		this.metadataService = MetadataServiceFactory.create();
-		metadataService.registerPackage(OpenApiPackage.eINSTANCE);
 	}
 
 	@Override

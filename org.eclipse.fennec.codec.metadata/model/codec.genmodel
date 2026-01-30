@@ -69,7 +69,11 @@
     </genClasses>
     <genClasses ecoreClass="codec.ecore#//FeatureCodecAspect">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/effectiveKey"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/serialize"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/ignore"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/ignoreRead"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/ignoreWrite"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/forceRead"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/forceWrite"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/serializeNull"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/serializeEmpty"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/serializeDefaults"/>

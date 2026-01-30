@@ -18,6 +18,8 @@ import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstant
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_EXPAND;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_FALLBACK_ECLASS;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_FALLBACK_STRATEGY;
+import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_FORCE_READ;
+import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_FORCE_WRITE;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_ID_FEATURES;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_ID_FORMAT;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_ID_FORMAT_SCOPE;
@@ -32,12 +34,14 @@ import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstant
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_ID_VALUE_KEY;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_ID_VALUE_READER_NAME;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_ID_VALUE_WRITER_NAME;
+import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_IGNORE;
+import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_IGNORE_READ;
+import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_IGNORE_WRITE;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_INHERIT;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_KEY;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_REF_FORMAT;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_REF_KEY;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_REF_TYPE_KEY;
-import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SERIALIZE;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SERIALIZE_DEFAULTS;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SERIALIZE_EMPTY;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SERIALIZE_NULL;
@@ -47,7 +51,6 @@ import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstant
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SUPERTYPE_SEPARATOR;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SUPERTYPE_SERIALIZE;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SUPERTYPE_STRATEGY;
-import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_TRANSIENT;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_TYPE_DISCRIMINATOR;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_TYPE_DISCRIMINATOR_PATH;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_TYPE_FORMAT;
@@ -344,8 +347,12 @@ public class CodecAspectProvider implements AspectProvider {
                     ? featureAspect.getEffectiveKey()
                     : featureMeta.getName());
 
-            // Serialize flags
-            config.setSerialize(featureAspect.isSerialize());
+            // Visibility flags
+            config.setIgnore(featureAspect.isIgnore());
+            config.setIgnoreRead(featureAspect.isIgnoreRead());
+            config.setIgnoreWrite(featureAspect.isIgnoreWrite());
+            config.setForceRead(featureAspect.isForceRead());
+            config.setForceWrite(featureAspect.isForceWrite());
             config.setSerializeNull(featureAspect.isSerializeNull());
             config.setSerializeEmpty(featureAspect.isSerializeEmpty());
             config.setSerializeDefaults(featureAspect.isSerializeDefaults());
@@ -368,9 +375,8 @@ public class CodecAspectProvider implements AspectProvider {
                 config.setExpand(refAspect.isExpand());
             }
         } else {
-            // No aspect: apply defaults
+            // No aspect: apply defaults (all ignore/force flags default to false)
             config.setKey(featureMeta.getName());
-            config.setSerialize(true);
         }
 
         return config;
@@ -433,8 +439,7 @@ public class CodecAspectProvider implements AspectProvider {
      * </p>
      */
     private void populateFeatureAspect(FeatureCodecAspect aspect, EStructuralFeature feature) {
-        // Default: serialize = true
-        aspect.setSerialize(true);
+        // Defaults: all ignore/force flags are false (set by ecore default)
 
         EAnnotation codecAnnotation = feature.getEAnnotation(CODEC_SOURCE);
         if (codecAnnotation != null) {
@@ -443,13 +448,12 @@ public class CodecAspectProvider implements AspectProvider {
             // Parse explicit key override - only set effectiveKey if explicitly specified
             AnnotationParseHelper.ifStringPresent(details, KEY_KEY, aspect::setEffectiveKey);
 
-            // Parse transient flag (inverse of serialize)
-            if (AnnotationParseHelper.parseBoolean(details, KEY_TRANSIENT, false)) {
-                aspect.setSerialize(false);
-            }
-
-            // Parse explicit serialize flag (overrides transient if both present)
-            AnnotationParseHelper.ifBooleanPresent(details, KEY_SERIALIZE, aspect::setSerialize);
+            // Parse directional visibility flags
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_IGNORE, aspect::setIgnore);
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_IGNORE_READ, aspect::setIgnoreRead);
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_IGNORE_WRITE, aspect::setIgnoreWrite);
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_FORCE_READ, aspect::setForceRead);
+            AnnotationParseHelper.ifBooleanPresent(details, KEY_FORCE_WRITE, aspect::setForceWrite);
 
             // Parse serializeNull, serializeEmpty, serializeDefaults
             AnnotationParseHelper.ifBooleanPresent(details, KEY_SERIALIZE_NULL, aspect::setSerializeNull);

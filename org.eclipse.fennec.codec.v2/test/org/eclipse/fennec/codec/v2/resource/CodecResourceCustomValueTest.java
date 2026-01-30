@@ -32,6 +32,7 @@ import org.eclipse.fennec.codec.api.value.CodecValueReader;
 import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.api.value.CodecValueWriter;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +59,7 @@ class CodecResourceCustomValueTest {
     private EClass personClass;
     private EAttribute nameAttribute;
     private EAttribute ageAttribute;
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
     private CodecValueRegistry valueRegistry;
 
     @BeforeEach

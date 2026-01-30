@@ -666,7 +666,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseFeatureConfig_Serialize() {
+	public EAttribute getBaseFeatureConfig_Ignore() {
 		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -676,7 +676,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseFeatureConfig_SerializeNull() {
+	public EAttribute getBaseFeatureConfig_IgnoreRead() {
 		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -686,7 +686,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseFeatureConfig_SerializeEmpty() {
+	public EAttribute getBaseFeatureConfig_IgnoreWrite() {
 		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -696,7 +696,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseFeatureConfig_SerializeDefaults() {
+	public EAttribute getBaseFeatureConfig_ForceRead() {
 		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -706,8 +706,48 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EAttribute getBaseFeatureConfig_EnumSerialization() {
+	public EAttribute getBaseFeatureConfig_ForceWrite() {
 		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseFeatureConfig_SerializeNull() {
+		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseFeatureConfig_SerializeEmpty() {
+		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseFeatureConfig_SerializeDefaults() {
+		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getBaseFeatureConfig_EnumSerialization() {
+		return (EAttribute)baseFeatureConfigEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -1361,7 +1401,11 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 
 		baseFeatureConfigEClass = createEClass(BASE_FEATURE_CONFIG);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__KEY);
-		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__SERIALIZE);
+		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__IGNORE);
+		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__IGNORE_READ);
+		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__IGNORE_WRITE);
+		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__FORCE_READ);
+		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__FORCE_WRITE);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__SERIALIZE_NULL);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__SERIALIZE_EMPTY);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS);
@@ -1520,7 +1564,11 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 
 		initEClass(baseFeatureConfigEClass, BaseFeatureConfig.class, "BaseFeatureConfig", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBaseFeatureConfig_Key(), ecorePackage.getEString(), "key", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getBaseFeatureConfig_Serialize(), ecorePackage.getEBooleanObject(), "serialize", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseFeatureConfig_Ignore(), ecorePackage.getEBooleanObject(), "ignore", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseFeatureConfig_IgnoreRead(), ecorePackage.getEBooleanObject(), "ignoreRead", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseFeatureConfig_IgnoreWrite(), ecorePackage.getEBooleanObject(), "ignoreWrite", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseFeatureConfig_ForceRead(), ecorePackage.getEBooleanObject(), "forceRead", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getBaseFeatureConfig_ForceWrite(), ecorePackage.getEBooleanObject(), "forceWrite", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseFeatureConfig_SerializeNull(), ecorePackage.getEBooleanObject(), "serializeNull", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseFeatureConfig_SerializeEmpty(), ecorePackage.getEBooleanObject(), "serializeEmpty", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseFeatureConfig_SerializeDefaults(), ecorePackage.getEBooleanObject(), "serializeDefaults", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

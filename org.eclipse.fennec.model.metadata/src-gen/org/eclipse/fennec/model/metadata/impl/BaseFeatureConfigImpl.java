@@ -34,7 +34,11 @@ import org.eclipse.fennec.model.metadata.MetadataPackage;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getKey <em>Key</em>}</li>
- *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getSerialize <em>Serialize</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getIgnore <em>Ignore</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getIgnoreRead <em>Ignore Read</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getIgnoreWrite <em>Ignore Write</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getForceRead <em>Force Read</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getForceWrite <em>Force Write</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getSerializeNull <em>Serialize Null</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getSerializeEmpty <em>Serialize Empty</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl#getSerializeDefaults <em>Serialize Defaults</em>}</li>
@@ -65,24 +69,104 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 	protected String key = KEY_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getSerialize() <em>Serialize</em>}' attribute.
+	 * The default value of the '{@link #getIgnore() <em>Ignore</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getSerialize()
+	 * @see #getIgnore()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Boolean SERIALIZE_EDEFAULT = null;
+	protected static final Boolean IGNORE_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getSerialize() <em>Serialize</em>}' attribute.
+	 * The cached value of the '{@link #getIgnore() <em>Ignore</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getSerialize()
+	 * @see #getIgnore()
 	 * @generated
 	 * @ordered
 	 */
-	protected Boolean serialize = SERIALIZE_EDEFAULT;
+	protected Boolean ignore = IGNORE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getIgnoreRead() <em>Ignore Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIgnoreRead()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Boolean IGNORE_READ_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getIgnoreRead() <em>Ignore Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIgnoreRead()
+	 * @generated
+	 * @ordered
+	 */
+	protected Boolean ignoreRead = IGNORE_READ_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getIgnoreWrite() <em>Ignore Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIgnoreWrite()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Boolean IGNORE_WRITE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getIgnoreWrite() <em>Ignore Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getIgnoreWrite()
+	 * @generated
+	 * @ordered
+	 */
+	protected Boolean ignoreWrite = IGNORE_WRITE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getForceRead() <em>Force Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getForceRead()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Boolean FORCE_READ_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getForceRead() <em>Force Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getForceRead()
+	 * @generated
+	 * @ordered
+	 */
+	protected Boolean forceRead = FORCE_READ_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getForceWrite() <em>Force Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getForceWrite()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Boolean FORCE_WRITE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getForceWrite() <em>Force Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getForceWrite()
+	 * @generated
+	 * @ordered
+	 */
+	protected Boolean forceWrite = FORCE_WRITE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getSerializeNull() <em>Serialize Null</em>}' attribute.
@@ -212,8 +296,8 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 	 * @generated
 	 */
 	@Override
-	public Boolean getSerialize() {
-		return serialize;
+	public Boolean getIgnore() {
+		return ignore;
 	}
 
 	/**
@@ -222,11 +306,103 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 	 * @generated
 	 */
 	@Override
-	public void setSerialize(Boolean newSerialize) {
-		Boolean oldSerialize = serialize;
-		serialize = newSerialize;
+	public void setIgnore(Boolean newIgnore) {
+		Boolean oldIgnore = ignore;
+		ignore = newIgnore;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE, oldSerialize, serialize));
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_FEATURE_CONFIG__IGNORE, oldIgnore, ignore));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Boolean getIgnoreRead() {
+		return ignoreRead;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setIgnoreRead(Boolean newIgnoreRead) {
+		Boolean oldIgnoreRead = ignoreRead;
+		ignoreRead = newIgnoreRead;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_READ, oldIgnoreRead, ignoreRead));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Boolean getIgnoreWrite() {
+		return ignoreWrite;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setIgnoreWrite(Boolean newIgnoreWrite) {
+		Boolean oldIgnoreWrite = ignoreWrite;
+		ignoreWrite = newIgnoreWrite;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_WRITE, oldIgnoreWrite, ignoreWrite));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Boolean getForceRead() {
+		return forceRead;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setForceRead(Boolean newForceRead) {
+		Boolean oldForceRead = forceRead;
+		forceRead = newForceRead;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_FEATURE_CONFIG__FORCE_READ, oldForceRead, forceRead));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Boolean getForceWrite() {
+		return forceWrite;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setForceWrite(Boolean newForceWrite) {
+		Boolean oldForceWrite = forceWrite;
+		forceWrite = newForceWrite;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.BASE_FEATURE_CONFIG__FORCE_WRITE, oldForceWrite, forceWrite));
 	}
 
 	/**
@@ -331,8 +507,16 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 		switch (featureID) {
 			case MetadataPackage.BASE_FEATURE_CONFIG__KEY:
 				return getKey();
-			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE:
-				return getSerialize();
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE:
+				return getIgnore();
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_READ:
+				return getIgnoreRead();
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_WRITE:
+				return getIgnoreWrite();
+			case MetadataPackage.BASE_FEATURE_CONFIG__FORCE_READ:
+				return getForceRead();
+			case MetadataPackage.BASE_FEATURE_CONFIG__FORCE_WRITE:
+				return getForceWrite();
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_NULL:
 				return getSerializeNull();
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_EMPTY:
@@ -356,8 +540,20 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 			case MetadataPackage.BASE_FEATURE_CONFIG__KEY:
 				setKey((String)newValue);
 				return;
-			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE:
-				setSerialize((Boolean)newValue);
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE:
+				setIgnore((Boolean)newValue);
+				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_READ:
+				setIgnoreRead((Boolean)newValue);
+				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_WRITE:
+				setIgnoreWrite((Boolean)newValue);
+				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__FORCE_READ:
+				setForceRead((Boolean)newValue);
+				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__FORCE_WRITE:
+				setForceWrite((Boolean)newValue);
 				return;
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_NULL:
 				setSerializeNull((Boolean)newValue);
@@ -386,8 +582,20 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 			case MetadataPackage.BASE_FEATURE_CONFIG__KEY:
 				setKey(KEY_EDEFAULT);
 				return;
-			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE:
-				setSerialize(SERIALIZE_EDEFAULT);
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE:
+				setIgnore(IGNORE_EDEFAULT);
+				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_READ:
+				setIgnoreRead(IGNORE_READ_EDEFAULT);
+				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_WRITE:
+				setIgnoreWrite(IGNORE_WRITE_EDEFAULT);
+				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__FORCE_READ:
+				setForceRead(FORCE_READ_EDEFAULT);
+				return;
+			case MetadataPackage.BASE_FEATURE_CONFIG__FORCE_WRITE:
+				setForceWrite(FORCE_WRITE_EDEFAULT);
 				return;
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_NULL:
 				setSerializeNull(SERIALIZE_NULL_EDEFAULT);
@@ -415,8 +623,16 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 		switch (featureID) {
 			case MetadataPackage.BASE_FEATURE_CONFIG__KEY:
 				return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE:
-				return SERIALIZE_EDEFAULT == null ? serialize != null : !SERIALIZE_EDEFAULT.equals(serialize);
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE:
+				return IGNORE_EDEFAULT == null ? ignore != null : !IGNORE_EDEFAULT.equals(ignore);
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_READ:
+				return IGNORE_READ_EDEFAULT == null ? ignoreRead != null : !IGNORE_READ_EDEFAULT.equals(ignoreRead);
+			case MetadataPackage.BASE_FEATURE_CONFIG__IGNORE_WRITE:
+				return IGNORE_WRITE_EDEFAULT == null ? ignoreWrite != null : !IGNORE_WRITE_EDEFAULT.equals(ignoreWrite);
+			case MetadataPackage.BASE_FEATURE_CONFIG__FORCE_READ:
+				return FORCE_READ_EDEFAULT == null ? forceRead != null : !FORCE_READ_EDEFAULT.equals(forceRead);
+			case MetadataPackage.BASE_FEATURE_CONFIG__FORCE_WRITE:
+				return FORCE_WRITE_EDEFAULT == null ? forceWrite != null : !FORCE_WRITE_EDEFAULT.equals(forceWrite);
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_NULL:
 				return SERIALIZE_NULL_EDEFAULT == null ? serializeNull != null : !SERIALIZE_NULL_EDEFAULT.equals(serializeNull);
 			case MetadataPackage.BASE_FEATURE_CONFIG__SERIALIZE_EMPTY:
@@ -441,8 +657,16 @@ public abstract class BaseFeatureConfigImpl extends MinimalEObjectImpl.Container
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (key: ");
 		result.append(key);
-		result.append(", serialize: ");
-		result.append(serialize);
+		result.append(", ignore: ");
+		result.append(ignore);
+		result.append(", ignoreRead: ");
+		result.append(ignoreRead);
+		result.append(", ignoreWrite: ");
+		result.append(ignoreWrite);
+		result.append(", forceRead: ");
+		result.append(forceRead);
+		result.append(", forceWrite: ");
+		result.append(forceWrite);
 		result.append(", serializeNull: ");
 		result.append(serializeNull);
 		result.append(", serializeEmpty: ");

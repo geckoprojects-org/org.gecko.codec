@@ -31,6 +31,7 @@ import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,7 +62,7 @@ class CodecResourceCrossPackageTest {
     private EcoreHelper ecoreHelper;
     private EPackage basePackage;
     private EPackage extPackage;
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
     private TypeDiscriminatorService typeService;
 
     // Base package EClasses

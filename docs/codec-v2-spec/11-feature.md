@@ -1023,4 +1023,504 @@ for (Diagnostic warning : resource.getWarnings()) {
 
 ---
 
+## 12. Feature Serialization Flow
+
+This section documents the complete serialization pipeline for features. Serialization is **EMF-driven**: the codec iterates EStructuralFeatures to build entries, then iterates entries to write JSON.
+
+### 12.0 Feature Serialization Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    FEATURE SERIALIZATION FLOW                               │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: EObject, EStructuralFeature, effective config (annotations + save options)
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. VISIBILITY GATE (build-time: determines if entry is created)            │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    1a. IGNORE CHECK                                                         │
+│        Is ignore=true OR ignoreWrite=true?                                  │
+│        ├─ YES → SKIP (no entry created) ───────────────────→ DONE ✗        │
+│        └─ NO  → continue                                                   │
+│                                                                             │
+│    1b. RUNTIME IGNORE LIST CHECK                                            │
+│        Is feature in ignoreFeatures list?                                   │
+│        (ignoreFeatures accepts: comma-separated string, List<String>,       │
+│         or List<EStructuralFeature>)                                        │
+│        ├─ YES → SKIP ──────────────────────────────────────→ DONE ✗        │
+│        └─ NO  → continue                                                   │
+│                                                                             │
+│    1c. EMF STRUCTURAL CHECK                                                 │
+│        Is feature transient OR volatile OR derived?                         │
+│        ├─ YES → Is forceWrite=true?                                         │
+│        │        ├─ YES → continue (forced)                                  │
+│        │        └─ NO  → SKIP ─────────────────────────────→ DONE ✗        │
+│        └─ NO  → continue                                                   │
+│                                                                             │
+│    Feature passed visibility gate → create SerializationEntry               │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 2. KEY RESOLUTION (build-time: determines JSON property name)              │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Resolve JSON key from highest to lowest priority:                        │
+│                                                                             │
+│    ┌───────┬──────────────────────────────────────────────────────────────┐ │
+│    │ Prio  │ Source                                                       │ │
+│    ├───────┼──────────────────────────────────────────────────────────────┤ │
+│    │  1    │ Config Builder / Load-Save option override                   │ │
+│    │  2    │ EAnnotation: <details key="key" value="..."/>               │ │
+│    │  3    │ ExtendedMetaData name (only if useNamesFromExtendedMetadata  │ │
+│    │       │ =true; source "http:///org/eclipse/emf/ecore/util/          │ │
+│    │       │ ExtendedMetaData", key "name")                              │ │
+│    │  4    │ EStructuralFeature.getName() (EMF feature name)             │ │
+│    └───────┴──────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│    Result: effectiveKey (used as JSON property name)                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 3. CUSTOM VALUE WRITER CHECK (build-time: determines delegation)           │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Is valueWriterName configured for this feature?                          │
+│    ├─ YES → Full delegation to named ValueWriter service                   │
+│    │        - Writer receives: EObject, feature, JsonGenerator, config     │
+│    │        - Writer handles key writing AND value writing                  │
+│    │        - Framework skips steps 4-5 ───────────────────→ DONE ✓        │
+│    │                                                                       │
+│    └─ NO  → Continue with built-in serialization (step 4)                  │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 4. VALUE GATE (runtime: per-value check, entry.shouldSerialize())          │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Read value from EObject: Object value = eObject.eGet(feature)           │
+│                                                                             │
+│    4a. NULL CHECK                                                           │
+│        Is value null?                                                       │
+│        ├─ YES → Is serializeNull=true?                                      │
+│        │        ├─ YES → Write: "key": null ───────────────→ DONE ✓        │
+│        │        └─ NO  → SKIP (omit from output) ─────────→ DONE ✗        │
+│        └─ NO  → continue                                                   │
+│                                                                             │
+│    4b. EMPTY CHECK (multi-valued features only)                             │
+│        Is feature.isMany() AND collection is empty?                         │
+│        ├─ YES → Is serializeEmpty=true?                                     │
+│        │        ├─ YES → Write: "key": [] ─────────────────→ DONE ✓        │
+│        │        └─ NO  → SKIP (omit from output) ─────────→ DONE ✗        │
+│        └─ NO  → continue                                                   │
+│                                                                             │
+│    4c. DEFAULT CHECK (single-valued features only)                          │
+│        Is value equal to the feature's default value?                       │
+│        ├─ YES → Is serializeDefaults=true?                                  │
+│        │        ├─ YES → continue (write the default)                       │
+│        │        └─ NO  → SKIP (omit from output) ─────────→ DONE ✗        │
+│        └─ NO  → continue                                                   │
+│                                                                             │
+│    Value passed all gates → proceed to write                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 5. VALUE WRITING (runtime: produces JSON output)                           │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Write JSON property name: gen.writeFieldName(effectiveKey)               │
+│                                                                             │
+│    5a. FEATURE TYPE DISPATCH                                                │
+│                                                                             │
+│        ┌──────────────────────────┬────────────────────────────────────────┐│
+│        │ Feature Type             │ Handling                               ││
+│        ├──────────────────────────┼────────────────────────────────────────┤│
+│        │ EAttribute (single)      │ Write scalar value (see 5b)           ││
+│        │ EAttribute (many)        │ Write JSON array of scalar values     ││
+│        │ EAttribute (array type)  │ Write JSON array (possibly nested)    ││
+│        │ EAttribute (EJavaObject) │ Write native JSON value (any type)    ││
+│        │ EReference (single)      │ See Reference flow (10-reference.md)  ││
+│        │ EReference (many)        │ Write JSON array of objects/refs      ││
+│        │ EReference (EMap)        │ Write JSON object (key-value pairs)   ││
+│        └──────────────────────────┴────────────────────────────────────────┘│
+│                                                                             │
+│    5b. ATTRIBUTE VALUE SERIALIZATION                                        │
+│                                                                             │
+│        ┌──────────────────────────┬────────────────────────────────────────┐│
+│        │ Attribute Type           │ JSON Output                            ││
+│        ├──────────────────────────┼────────────────────────────────────────┤│
+│        │ EString                  │ String: "value"                        ││
+│        │ EInt, ELong, EShort      │ Number: 42                             ││
+│        │ EFloat, EDouble          │ Number: 3.14                           ││
+│        │ EBoolean                 │ Boolean: true/false                    ││
+│        │ EDate                    │ String: ISO format                     ││
+│        │ EBigDecimal, EBigInteger │ Number or String (configurable)       ││
+│        │ EEnum                    │ See 5c                                 ││
+│        │ EJavaObject              │ Native JSON (map→object, list→array)  ││
+│        │ Array EDataType          │ JSON array (1D, 2D, 3D, ...)          ││
+│        └──────────────────────────┴────────────────────────────────────────┘│
+│                                                                             │
+│    5c. ENUM SERIALIZATION (see §4)                                          │
+│                                                                             │
+│        ┌──────────────────────────┬────────────────────────────────────────┐│
+│        │ Strategy                 │ Output                                 ││
+│        ├──────────────────────────┼────────────────────────────────────────┤│
+│        │ LITERAL (default)        │ String: enum literal name              ││
+│        │ NAME                     │ String: enum name                      ││
+│        │ VALUE                    │ Integer: enum ordinal value            ││
+│        └──────────────────────────┴────────────────────────────────────────┘│
+│                                                                             │
+│    ──────────────────────────────────────────────────────→ DONE ✓           │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 12.0.1 Serialization Gate Summary
+
+The feature serialization pipeline has **two levels of gating**:
+
+| Gate | When | What | Decides |
+|------|------|------|---------|
+| **Visibility Gate** (step 1) | Build-time (entry creation) | ignore, ignoreWrite, ignoreFeatures, transient/volatile + forceWrite | Whether feature participates at all |
+| **Value Gate** (step 4) | Runtime (per-object) | null/empty/default + serializeNull/serializeEmpty/serializeDefaults | Whether this specific value is written |
+
+> **Design rationale:** The two-level gate separates structural decisions (which features exist) from value decisions (which values are interesting). This means the entry map is built once per EClass, while value checks run per object instance.
+
+---
+
+## 13. Feature Deserialization Flow
+
+This section documents the complete deserialization pipeline for features.
+
+Unlike serialization (which is **EMF-driven** — iterates features, writes JSON), deserialization is **JSON-driven** — Jackson iterates JSON tokens and the codec looks up matching entries. This fundamental asymmetry shapes the entire flow.
+
+### 13.0 Object-Level Deserialization Flow (Jackson-Driven)
+
+Jackson calls `CodecEObjectDeserializer.deserialize(parser, ctxt)` with the parser positioned at `START_OBJECT`. The deserializer must resolve the type **before** it can process any feature — because it doesn't know which EClass (and thus which features) to expect until the `_type` field is read.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│              OBJECT DESERIALIZATION FLOW (Jackson-Driven)                   │
+│                                                                             │
+│  INPUT: JsonParser at START_OBJECT, optional EClass hint (from             │
+│         containment reference type or CODEC_ROOT_OBJECT option)            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ PHASE 1: TYPE-FIRST SCAN (before any feature processing)                   │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Jackson's token loop drives the scan:                                    │
+│                                                                             │
+│    while (parser.nextToken() != END_OBJECT) {                              │
+│        propertyName = parser.currentName()                                  │
+│        parser.nextToken()  // move to value                                │
+│                                                                             │
+│        ┌─────────────────────────────────────────────────────────────────┐  │
+│        │ Is this the _schema key?                                        │  │
+│        │ ├─ YES → store schemaValue, continue                           │  │
+│        │ │        (used for PLAIN SCHEMA_AND_TYPE format)               │  │
+│        │ │                                                               │  │
+│        │ ├─ Is this the _type key?                                       │  │
+│        │ │  ├─ YES → RESOLVE TYPE (see Type Deser Flow, 06-type.md)     │  │
+│        │ │  │        EClass now known → create EObject                   │  │
+│        │ │  │        → replay deferred properties (Phase 2)             │  │
+│        │ │  │        → switch to Phase 3 (normal processing)            │  │
+│        │ │  │                                                            │  │
+│        │ │  └─ NO  → DEFER this property                                │  │
+│        │ │           Read value as raw Java object (String, Long,       │  │
+│        │ │           Double, Boolean, Map, List, null)                   │  │
+│        │ │           Store in deferredProperties map                     │  │
+│        │ └───────────────────────────────────────────────────────────────│  │
+│        └─────────────────────────────────────────────────────────────────┘  │
+│    }                                                                        │
+│                                                                             │
+│    If END_OBJECT reached without _type → fall back to hint EClass          │
+│    If no hint either → ERROR: "no type information found"                  │
+│                                                                             │
+│    KEY INSIGHT: JSON field order is unpredictable. Fields appearing         │
+│    BEFORE _type are deferred. Fields AFTER _type are processed directly.   │
+│    This means any field can be deferred — not just data fields.            │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ PHASE 2: REPLAY DEFERRED PROPERTIES                                        │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    EClass is now resolved → build deserialization entries (see §13.1)      │
+│                                                                             │
+│    For each deferred property:                                              │
+│    ┌────────────────────────────────────────────────────────────────────┐   │
+│    │ 1. Look up entry by property name in entries map                   │   │
+│    │ 2. If found and value is not null:                                 │   │
+│    │    → Create TokenBuffer, write deferred value into it              │   │
+│    │    → Create parser from TokenBuffer                                │   │
+│    │    → Call entry.deserialize(state, bufferParser, ctxt)             │   │
+│    │                                                                    │   │
+│    │ Why TokenBuffer? Deferred values are stored as raw Java objects    │   │
+│    │ (e.g., Long not BigInteger). Replaying through TokenBuffer gives  │   │
+│    │ the entry proper JSON tokens for type-correct conversion.          │   │
+│    └────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│    After replay → continue with Phase 3 for remaining JSON fields          │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ PHASE 3: NORMAL PROPERTY PROCESSING (remaining JSON fields)                │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Jackson continues the token loop from where Phase 1 left off:           │
+│                                                                             │
+│    while (parser.nextToken() != END_OBJECT) {                              │
+│        propertyName = parser.currentName()                                  │
+│        parser.nextToken()  // move to value                                │
+│                                                                             │
+│        → deserializeProperty(state, propertyName, parser, ctxt)            │
+│          (see §13.2: Per-Field Processing)                                 │
+│    }                                                                        │
+│                                                                             │
+│    After END_OBJECT → return EObject                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 13.1 Feature Entry Building (Visibility Gate)
+
+Before any feature can be deserialized, the codec builds a `Map<String, DeserializationEntry>` that maps JSON property names to feature handlers. This is the **visibility gate** — features excluded here cannot be deserialized regardless of what appears in the JSON.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ BUILD DESERIALIZATION ENTRIES (once per EClass)                             │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Input: resolved EClass                                                   │
+│    Output: Map<String, DeserializationEntry>                               │
+│                                                                             │
+│    Step 1: Add metadata entries                                             │
+│    ┌────────────────────────────────────────────────────────────────────┐   │
+│    │ _type entry     → if typeConfig.isEnabled()                        │   │
+│    │ _id entry       → if idConfig.isEnabled()                          │   │
+│    │ _supertype entry → if superTypeConfig is present                   │   │
+│    └────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│    Step 2: Add feature entries                                              │
+│    For each feature in eClass.getEAllStructuralFeatures():                 │
+│                                                                             │
+│    ┌────────────────────────────────────────────────────────────────────┐   │
+│    │ VISIBILITY GATE                                                    │   │
+│    │                                                                    │   │
+│    │ Gate 1: DESERIALIZE CHECK                                          │   │
+│    │   EffectiveFeatureConfig.shouldDeserialize()                       │   │
+│    │   Evaluates (in order):                                            │   │
+│    │   a. ignore=true OR ignoreRead=true?        → SKIP               │   │
+│    │   b. feature in ignoreFeatures list?         → SKIP               │   │
+│    │   c. EMF transient OR volatile?                                    │   │
+│    │      └─ forceRead=true?                                            │   │
+│    │         ├─ YES → continue (forced)                                 │   │
+│    │         └─ NO  → SKIP                                              │   │
+│    │   d. All checks passed                       → VISIBLE            │   │
+│    │                                                                    │   │
+│    │ Gate 2: CHANGEABLE CHECK                                           │   │
+│    │   feature.isChangeable()?                                          │   │
+│    │   ├─ NO  → SKIP (cannot set values, even with forceRead)          │   │
+│    │   └─ YES → continue                                               │   │
+│    │                                                                    │   │
+│    │ Note: Unlike serialization (which also checks derived),            │   │
+│    │ deserialization only checks transient/volatile + changeable.       │   │
+│    │ Derived features that are changeable and not transient CAN         │   │
+│    │ be deserialized.                                                   │   │
+│    └────────────────────────────────────────────────────────────────────┘   │
+│                               │                                             │
+│                               ▼                                             │
+│    ┌────────────────────────────────────────────────────────────────────┐   │
+│    │ KEY RESOLUTION (same as serialization, see §12.0 step 2)          │   │
+│    │                                                                    │   │
+│    │ 1. Config Builder override                                         │   │
+│    │ 2. EAnnotation key                                                 │   │
+│    │ 3. ExtendedMetaData name (if useNamesFromExtendedMetadata=true)   │   │
+│    │ 4. EStructuralFeature.getName()                                    │   │
+│    │                                                                    │   │
+│    │ Result: effectiveKey (used to match incoming JSON property names)  │   │
+│    └────────────────────────────────────────────────────────────────────┘   │
+│                               │                                             │
+│                               ▼                                             │
+│    ┌────────────────────────────────────────────────────────────────────┐   │
+│    │ CREATE ENTRY                                                       │   │
+│    │                                                                    │   │
+│    │ ┌──────────────────────────┬──────────────────────────────────┐    │   │
+│    │ │ Feature Type             │ Entry Type                       │    │   │
+│    │ ├──────────────────────────┼──────────────────────────────────┤    │   │
+│    │ │ EAttribute               │ AttributeDeserializationEntry   │    │   │
+│    │ │ EReference               │ ReferenceDeserializationEntry   │    │   │
+│    │ └──────────────────────────┴──────────────────────────────────┘    │   │
+│    │                                                                    │   │
+│    │ entries.put(effectiveKey, entry)                                   │   │
+│    └────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│    Result: Map<effectiveKey → DeserializationEntry>                         │
+│    Contains: metadata entries + visible feature entries                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 13.2 Per-Field Processing (JSON-Driven)
+
+For each JSON field (whether from Phase 2 replay or Phase 3 normal processing), the codec looks up the entry and delegates:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ PER-FIELD PROCESSING                                                        │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Input: propertyName (from JSON), parser (positioned at value token)     │
+│                                                                             │
+│ ┌───────────────────────────────────────────────────────────────────────┐   │
+│ │ Step 1: ENTRY LOOKUP                                                  │   │
+│ │                                                                       │   │
+│ │   entry = entries.get(propertyName)                                   │   │
+│ │                                                                       │   │
+│ │   ├─ FOUND → entry.deserialize(state, parser, ctxt)                  │   │
+│ │   │          (delegate to entry — see Step 2/3 below)                │   │
+│ │   │                                                                   │   │
+│ │   └─ NOT FOUND → UNKNOWN FIELD                                       │   │
+│ │                   parser.skipChildren()                               │   │
+│ │                   (skip value including nested objects/arrays)        │   │
+│ │                                                                       │   │
+│ │   Note: In the current v2 implementation, unknown fields are         │   │
+│ │   silently skipped (LENIENT mode). The strictOnUnknown option        │   │
+│ │   (§11) is not yet wired — this is planned for the effective         │   │
+│ │   config layer.                                                       │   │
+│ └───────────────────────────────────────────────────────────────────────┘   │
+│                               │                                             │
+│                               ▼                                             │
+│ ┌───────────────────────────────────────────────────────────────────────┐   │
+│ │ Step 2: ATTRIBUTE DESERIALIZATION (AttributeDeserializationEntry)      │   │
+│ │                                                                       │   │
+│ │   2a. CUSTOM VALUE READER CHECK                                       │   │
+│ │       Is valueReaderName configured?                                  │   │
+│ │       ├─ YES → Delegate to named ValueReader service                 │   │
+│ │       │        Reader handles parsing AND setting the value          │   │
+│ │       │        → DONE                                                 │   │
+│ │       └─ NO  → continue                                              │   │
+│ │                                                                       │   │
+│ │   2b. SINGLE vs MULTI-VALUED DISPATCH                                 │   │
+│ │       ┌──────────────────────────────────────────────────────────┐    │   │
+│ │       │ feature.isMany()?                                        │    │   │
+│ │       │ ├─ YES → Parser token is START_ARRAY?                    │    │   │
+│ │       │ │        ├─ YES → iterate array, parse each element     │    │   │
+│ │       │ │        │        add to EList via eObject.eGet(feature) │    │   │
+│ │       │ │        └─ NO  → single value in array context          │    │   │
+│ │       │ │                 (wrap and add to EList)                 │    │   │
+│ │       │ │                                                        │    │   │
+│ │       │ └─ NO  → Parse single value, eObject.eSet(feature, val) │    │   │
+│ │       └──────────────────────────────────────────────────────────┘    │   │
+│ │                                                                       │   │
+│ │   2c. VALUE PARSING (readValue per token type)                        │   │
+│ │                                                                       │   │
+│ │       ┌──────────────────────────┬──────────────────────────────────┐ │   │
+│ │       │ JSON Token               │ Conversion                       │ │   │
+│ │       ├──────────────────────────┼──────────────────────────────────┤ │   │
+│ │       │ VALUE_NULL               │ Object type → eSet(null)         │ │   │
+│ │       │                          │ Primitive → reset to EMF default │ │   │
+│ │       │                          │ Multi-valued → no-op (ignored)   │ │   │
+│ │       │ VALUE_STRING             │ convertFromString(dataType)      │ │   │
+│ │       │ VALUE_NUMBER_INT         │ EEnum? → enum by ordinal         │ │   │
+│ │       │                          │ else → convertFromInteger(class) │ │   │
+│ │       │ VALUE_NUMBER_FLOAT       │ convertFromFloat(class)          │ │   │
+│ │       │ VALUE_TRUE / VALUE_FALSE │ Boolean conversion               │ │   │
+│ │       │ START_ARRAY              │ Array EDataType → Java array     │ │   │
+│ │       │                          │ (double[], int[], nested, etc.)  │ │   │
+│ │       │ START_OBJECT             │ EString → JSON-to-string (§8)    │ │   │
+│ │       │                          │ EJavaObject → Map<String,Object> │ │   │
+│ │       └──────────────────────────┴──────────────────────────────────┘ │   │
+│ │                                                                       │   │
+│ │   2d. ENUM DESERIALIZATION (§4.3)                                     │   │
+│ │       ┌──────────────────────────┬──────────────────────────────────┐ │   │
+│ │       │ JSON Value               │ Resolution                       │ │   │
+│ │       ├──────────────────────────┼──────────────────────────────────┤ │   │
+│ │       │ String                   │ Try name first, then literal     │ │   │
+│ │       │ Integer                  │ Lookup by enum ordinal value     │ │   │
+│ │       └──────────────────────────┴──────────────────────────────────┘ │   │
+│ └───────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│ ┌───────────────────────────────────────────────────────────────────────┐   │
+│ │ Step 3: REFERENCE DESERIALIZATION (ReferenceDeserializationEntry)      │   │
+│ │                                                                       │   │
+│ │   3a. SINGLE vs MULTI-VALUED DISPATCH (same as attributes)            │   │
+│ │                                                                       │   │
+│ │   3b. PER-ELEMENT: CONTAINMENT vs NON-CONTAINMENT                     │   │
+│ │                                                                       │   │
+│ │       ┌────────────────────────────────────────────────────────────┐  │   │
+│ │       │ reference.isContainment()?                                  │  │   │
+│ │       │                                                             │  │   │
+│ │       │ YES (Containment) → RECURSIVE DESERIALIZATION               │  │   │
+│ │       │   1. Resolve type hint for child:                           │  │   │
+│ │       │      - Runtime CODEC_FEATURE_TYPE_HINTS option              │  │   │
+│ │       │      - Custom valueReaderName                               │  │   │
+│ │       │      - Declared reference.getEReferenceType()               │  │   │
+│ │       │   2. Set hint via ContextHelper.setExpectedType()           │  │   │
+│ │       │   3. Call Jackson: deser.deserialize(parser, ctxt)          │  │   │
+│ │       │      → Re-enters CodecEObjectDeserializer.deserialize()    │  │   │
+│ │       │      → Child object follows same Phase 1-3 flow            │  │   │
+│ │       │   4. eObject.eSet(reference, childObject)                   │  │   │
+│ │       │                                                             │  │   │
+│ │       │ NO (Non-containment) → BUFFER AND INSPECT                   │  │   │
+│ │       │   1. Buffer entire JSON object into TokenBuffer             │  │   │
+│ │       │   2. Scan buffered content for _ref field                   │  │   │
+│ │       │   3. Three cases:                                           │  │   │
+│ │       │      ┌──────────────────────────────────────────────────┐   │  │   │
+│ │       │      │ _ref only          │ Create proxy URI            │   │  │   │
+│ │       │      │                    │ → add to unresolvedRefs     │   │  │   │
+│ │       │      │                    │   (resolved post-load)      │   │  │   │
+│ │       │      ├────────────────────┼─────────────────────────────┤   │  │   │
+│ │       │      │ _ref + data fields │ Deserialize full object     │   │  │   │
+│ │       │      │ (projection)       │ → set proxy URI on result   │   │  │   │
+│ │       │      │                    │   (projection pattern)      │   │  │   │
+│ │       │      ├────────────────────┼─────────────────────────────┤   │  │   │
+│ │       │      │ no _ref            │ Deserialize as orphan       │   │  │   │
+│ │       │      │ (expanded ref)     │ → set directly on feature   │   │  │   │
+│ │       │      └──────────────────────────────────────────────────┘   │  │   │
+│ │       └────────────────────────────────────────────────────────────┘  │   │
+│ └───────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│ ┌───────────────────────────────────────────────────────────────────────┐   │
+│ │ Step 4: POST-PROCESSING (after all JSON fields consumed)              │   │
+│ │                                                                       │   │
+│ │   4a. UNRESOLVED REFERENCES                                           │   │
+│ │       Collected in shared list across entire object tree              │   │
+│ │       Resolved by CodecResource after load completes                 │   │
+│ │       (URI-based resolution via Resource.getEObject())               │   │
+│ │                                                                       │   │
+│ │   4b. MISSING FIELD BEHAVIOR (§11, strictOnMissing)                   │   │
+│ │       Features without matching JSON fields retain EMF defaults      │   │
+│ │       With strictOnMissing=true → error for required features        │   │
+│ │       Default behavior: silent (no warning for missing fields)       │   │
+│ └───────────────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 13.3 Serialization vs Deserialization Comparison
+
+| Aspect | Serialization | Deserialization |
+|--------|---------------|-----------------|
+| **Driver** | **EMF-driven**: iterate features → write JSON | **JSON-driven**: Jackson iterates tokens → look up features |
+| **Type handling** | Write `_type` at known position | Must scan for `_type` first; defer all fields seen before it |
+| **Entry building** | Build entries → iterate them in order | Build entries → use as lookup map for incoming JSON fields |
+| **Visibility gate** | `shouldSerialize()`: ignore, ignoreWrite, ignoreFeatures, transient/volatile/derived + forceWrite | `shouldDeserialize()`: ignore, ignoreRead, ignoreFeatures, transient/volatile + forceRead, changeable |
+| **Value gate** | `shouldSerialize(state)`: null/empty/default checks | None — if JSON field present and entry exists, always process |
+| **Unknown fields** | N/A (only writes known features) | Skip unknown (LENIENT) or error (STRICT) |
+| **Missing fields** | Omitted by value gate (null/empty/default) | Retain EMF defaults (LENIENT) or error (STRICT) |
+| **Ordering** | Controlled (idOnTop, alphabetical) | JSON field order (unpredictable) |
+| **Nested objects** | Direct recursive call to serializer | Recursive call via Jackson with type hint in context |
+| **References** | Inline or `{_ref: "..."}` | Buffer + inspect for `_ref` field (three-case dispatch) |
+| **Custom handler** | valueWriterName | valueReaderName |
+
+> **Key insight:** The fundamental asymmetry is that serialization *controls* the output order and structure, while deserialization must *react* to whatever JSON arrives. This is why deserialization needs the deferred properties pattern and the buffer-inspect-dispatch pattern for references.
+
+---
+
 [Next: Polymorphism →](12-polymorphism.md)

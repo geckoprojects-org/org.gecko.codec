@@ -36,7 +36,11 @@ import org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#getEffectiveKey <em>Effective Key</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isSerialize <em>Serialize</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isIgnore <em>Ignore</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isIgnoreRead <em>Ignore Read</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isIgnoreWrite <em>Ignore Write</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isForceRead <em>Force Read</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isForceWrite <em>Force Write</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isSerializeNull <em>Serialize Null</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isSerializeEmpty <em>Serialize Empty</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl#isSerializeDefaults <em>Serialize Defaults</em>}</li>
@@ -69,24 +73,104 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 	protected String effectiveKey = EFFECTIVE_KEY_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isSerialize() <em>Serialize</em>}' attribute.
+	 * The default value of the '{@link #isIgnore() <em>Ignore</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSerialize()
+	 * @see #isIgnore()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean SERIALIZE_EDEFAULT = true;
+	protected static final boolean IGNORE_EDEFAULT = false;
 
 	/**
-	 * The cached value of the '{@link #isSerialize() <em>Serialize</em>}' attribute.
+	 * The cached value of the '{@link #isIgnore() <em>Ignore</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSerialize()
+	 * @see #isIgnore()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean serialize = SERIALIZE_EDEFAULT;
+	protected boolean ignore = IGNORE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isIgnoreRead() <em>Ignore Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIgnoreRead()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean IGNORE_READ_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isIgnoreRead() <em>Ignore Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIgnoreRead()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean ignoreRead = IGNORE_READ_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isIgnoreWrite() <em>Ignore Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIgnoreWrite()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean IGNORE_WRITE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isIgnoreWrite() <em>Ignore Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isIgnoreWrite()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean ignoreWrite = IGNORE_WRITE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isForceRead() <em>Force Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isForceRead()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean FORCE_READ_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isForceRead() <em>Force Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isForceRead()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean forceRead = FORCE_READ_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isForceWrite() <em>Force Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isForceWrite()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean FORCE_WRITE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isForceWrite() <em>Force Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isForceWrite()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean forceWrite = FORCE_WRITE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isSerializeNull() <em>Serialize Null</em>}' attribute.
@@ -256,8 +340,8 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 	 * @generated
 	 */
 	@Override
-	public boolean isSerialize() {
-		return serialize;
+	public boolean isIgnore() {
+		return ignore;
 	}
 
 	/**
@@ -266,11 +350,103 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 	 * @generated
 	 */
 	@Override
-	public void setSerialize(boolean newSerialize) {
-		boolean oldSerialize = serialize;
-		serialize = newSerialize;
+	public void setIgnore(boolean newIgnore) {
+		boolean oldIgnore = ignore;
+		ignore = newIgnore;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE, oldSerialize, serialize));
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.FEATURE_CODEC_ASPECT__IGNORE, oldIgnore, ignore));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isIgnoreRead() {
+		return ignoreRead;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setIgnoreRead(boolean newIgnoreRead) {
+		boolean oldIgnoreRead = ignoreRead;
+		ignoreRead = newIgnoreRead;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_READ, oldIgnoreRead, ignoreRead));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isIgnoreWrite() {
+		return ignoreWrite;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setIgnoreWrite(boolean newIgnoreWrite) {
+		boolean oldIgnoreWrite = ignoreWrite;
+		ignoreWrite = newIgnoreWrite;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_WRITE, oldIgnoreWrite, ignoreWrite));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isForceRead() {
+		return forceRead;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setForceRead(boolean newForceRead) {
+		boolean oldForceRead = forceRead;
+		forceRead = newForceRead;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.FEATURE_CODEC_ASPECT__FORCE_READ, oldForceRead, forceRead));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isForceWrite() {
+		return forceWrite;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setForceWrite(boolean newForceWrite) {
+		boolean oldForceWrite = forceWrite;
+		forceWrite = newForceWrite;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.FEATURE_CODEC_ASPECT__FORCE_WRITE, oldForceWrite, forceWrite));
 	}
 
 	/**
@@ -421,8 +597,16 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 		switch (featureID) {
 			case CodecPackage.FEATURE_CODEC_ASPECT__EFFECTIVE_KEY:
 				return getEffectiveKey();
-			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE:
-				return isSerialize();
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE:
+				return isIgnore();
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_READ:
+				return isIgnoreRead();
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_WRITE:
+				return isIgnoreWrite();
+			case CodecPackage.FEATURE_CODEC_ASPECT__FORCE_READ:
+				return isForceRead();
+			case CodecPackage.FEATURE_CODEC_ASPECT__FORCE_WRITE:
+				return isForceWrite();
 			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE_NULL:
 				return isSerializeNull();
 			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE_EMPTY:
@@ -450,8 +634,20 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 			case CodecPackage.FEATURE_CODEC_ASPECT__EFFECTIVE_KEY:
 				setEffectiveKey((String)newValue);
 				return;
-			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE:
-				setSerialize((Boolean)newValue);
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE:
+				setIgnore((Boolean)newValue);
+				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_READ:
+				setIgnoreRead((Boolean)newValue);
+				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_WRITE:
+				setIgnoreWrite((Boolean)newValue);
+				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__FORCE_READ:
+				setForceRead((Boolean)newValue);
+				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__FORCE_WRITE:
+				setForceWrite((Boolean)newValue);
 				return;
 			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE_NULL:
 				setSerializeNull((Boolean)newValue);
@@ -486,8 +682,20 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 			case CodecPackage.FEATURE_CODEC_ASPECT__EFFECTIVE_KEY:
 				setEffectiveKey(EFFECTIVE_KEY_EDEFAULT);
 				return;
-			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE:
-				setSerialize(SERIALIZE_EDEFAULT);
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE:
+				setIgnore(IGNORE_EDEFAULT);
+				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_READ:
+				setIgnoreRead(IGNORE_READ_EDEFAULT);
+				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_WRITE:
+				setIgnoreWrite(IGNORE_WRITE_EDEFAULT);
+				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__FORCE_READ:
+				setForceRead(FORCE_READ_EDEFAULT);
+				return;
+			case CodecPackage.FEATURE_CODEC_ASPECT__FORCE_WRITE:
+				setForceWrite(FORCE_WRITE_EDEFAULT);
 				return;
 			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE_NULL:
 				setSerializeNull(SERIALIZE_NULL_EDEFAULT);
@@ -521,8 +729,16 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 		switch (featureID) {
 			case CodecPackage.FEATURE_CODEC_ASPECT__EFFECTIVE_KEY:
 				return EFFECTIVE_KEY_EDEFAULT == null ? effectiveKey != null : !EFFECTIVE_KEY_EDEFAULT.equals(effectiveKey);
-			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE:
-				return serialize != SERIALIZE_EDEFAULT;
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE:
+				return ignore != IGNORE_EDEFAULT;
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_READ:
+				return ignoreRead != IGNORE_READ_EDEFAULT;
+			case CodecPackage.FEATURE_CODEC_ASPECT__IGNORE_WRITE:
+				return ignoreWrite != IGNORE_WRITE_EDEFAULT;
+			case CodecPackage.FEATURE_CODEC_ASPECT__FORCE_READ:
+				return forceRead != FORCE_READ_EDEFAULT;
+			case CodecPackage.FEATURE_CODEC_ASPECT__FORCE_WRITE:
+				return forceWrite != FORCE_WRITE_EDEFAULT;
 			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE_NULL:
 				return serializeNull != SERIALIZE_NULL_EDEFAULT;
 			case CodecPackage.FEATURE_CODEC_ASPECT__SERIALIZE_EMPTY:
@@ -551,8 +767,16 @@ public class FeatureCodecAspectImpl extends FeatureAspectImpl implements Feature
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (effectiveKey: ");
 		result.append(effectiveKey);
-		result.append(", serialize: ");
-		result.append(serialize);
+		result.append(", ignore: ");
+		result.append(ignore);
+		result.append(", ignoreRead: ");
+		result.append(ignoreRead);
+		result.append(", ignoreWrite: ");
+		result.append(ignoreWrite);
+		result.append(", forceRead: ");
+		result.append(forceRead);
+		result.append(", forceWrite: ");
+		result.append(forceWrite);
 		result.append(", serializeNull: ");
 		result.append(serializeNull);
 		result.append(", serializeEmpty: ");

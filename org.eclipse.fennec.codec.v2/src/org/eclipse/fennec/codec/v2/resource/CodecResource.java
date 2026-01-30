@@ -184,10 +184,8 @@ public class CodecResource extends ResourceImpl {
         EClass eClass = rootObject.eClass();
         EPackage ePackage = eClass.getEPackage();
 
-        // Ensure package is registered with MetadataService
-        if (isNull(ensurePackageRegistered(ePackage))) {
-            throw new IOException("Failed to register package metadata for " + ePackage.getNsURI());
-        }
+        // Verify package is registered with MetadataService
+        requirePackageRegistered(ePackage);
 
         // Merge options with configuration hierarchy
         Map<String, Object> effectiveOptions = (Map<String, Object>) mergeOptions(options);
@@ -240,9 +238,7 @@ public class CodecResource extends ResourceImpl {
         // If hint is provided, ensure its package is registered
         if (nonNull(rootEClassHint)) {
             EPackage ePackage = rootEClassHint.getEPackage();
-            if (isNull(ensurePackageRegistered(ePackage))) {
-                throw new IOException("Failed to register package metadata for " + ePackage.getNsURI());
-            }
+            requirePackageRegistered(ePackage);
         }
 
         // Merge options with configuration hierarchy
@@ -354,15 +350,24 @@ public class CodecResource extends ResourceImpl {
     // ========================================================================
 
     /**
-     * Ensures the package is registered with the MetadataService.
+     * Requires that the package is already registered with the MetadataService.
+     * <p>
+     * Packages must be registered before use (e.g., via {@code MetadataWhiteboard.registerPackage()}
+     * or {@code MetadataServiceFactory}). The resource is a read-only consumer and does not
+     * perform registration itself.
+     * </p>
      *
-     * @param ePackage the package to register
-     * @return the PackageMetadata, or null if registration failed
+     * @param ePackage the package to check
+     * @return the PackageMetadata
+     * @throws IOException if the package is not registered
      */
-    private PackageMetadata ensurePackageRegistered(EPackage ePackage) {
+    private PackageMetadata requirePackageRegistered(EPackage ePackage) throws IOException {
         PackageMetadata metadata = metadataService.getPackageMetadata(ePackage.getNsURI());
         if (isNull(metadata)) {
-            metadata = metadataService.registerPackage(ePackage);
+            throw new IOException(String.format(
+                "Package '%s' is not registered with MetadataService. " +
+                "Register it via MetadataWhiteboard.registerPackage() before using CodecResource.",
+                ePackage.getNsURI()));
         }
         return metadata;
     }

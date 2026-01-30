@@ -39,6 +39,7 @@ import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.IdStrategy;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ class CodecResourceAnnotationTest {
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
 
     // EClasses
     private EClass productClass;
@@ -220,7 +221,7 @@ class CodecResourceAnnotationTest {
                     .orElse(null);
 
             assertNotNull(aspect, "FeatureCodecAspect should exist");
-            assertFalse(aspect.isSerialize(), "Transient feature should have serialize=false");
+            assertTrue(aspect.isIgnore(), "Transient feature should have ignore=true");
         }
 
         @Test

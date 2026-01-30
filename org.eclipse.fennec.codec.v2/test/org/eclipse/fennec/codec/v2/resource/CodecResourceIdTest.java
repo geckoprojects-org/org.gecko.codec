@@ -35,6 +35,7 @@ import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.eclipse.fennec.model.metadata.IdKeyMode;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,7 +63,7 @@ class CodecResourceIdTest {
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
 
     // EClasses
     private EClass personClass;

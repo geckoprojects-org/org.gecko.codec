@@ -33,7 +33,11 @@ import org.osgi.annotation.versioning.ProviderType;
  * </p>
  * <ul>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#getEffectiveKey <em>Effective Key</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isSerialize <em>Serialize</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnore <em>Ignore</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnoreRead <em>Ignore Read</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnoreWrite <em>Ignore Write</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isForceRead <em>Force Read</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isForceWrite <em>Force Write</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isSerializeNull <em>Serialize Null</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isSerializeEmpty <em>Serialize Empty</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isSerializeDefaults <em>Serialize Defaults</em>}</li>
@@ -74,30 +78,134 @@ public interface FeatureCodecAspect extends FeatureAspect {
 	void setEffectiveKey(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Serialize</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
+	 * Returns the value of the '<em><b>Ignore</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Whether to serialize this feature (false = transient).
+	 * Skip this feature for both serialization and deserialization.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Serialize</em>' attribute.
-	 * @see #setSerialize(boolean)
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getFeatureCodecAspect_Serialize()
-	 * @model default="true"
+	 * @return the value of the '<em>Ignore</em>' attribute.
+	 * @see #setIgnore(boolean)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getFeatureCodecAspect_Ignore()
+	 * @model default="false"
 	 * @generated
 	 */
-	boolean isSerialize();
+	boolean isIgnore();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isSerialize <em>Serialize</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnore <em>Ignore</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Serialize</em>' attribute.
-	 * @see #isSerialize()
+	 * @param value the new value of the '<em>Ignore</em>' attribute.
+	 * @see #isIgnore()
 	 * @generated
 	 */
-	void setSerialize(boolean value);
+	void setIgnore(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Ignore Read</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Skip this feature during deserialization only.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Ignore Read</em>' attribute.
+	 * @see #setIgnoreRead(boolean)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getFeatureCodecAspect_IgnoreRead()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isIgnoreRead();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnoreRead <em>Ignore Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Ignore Read</em>' attribute.
+	 * @see #isIgnoreRead()
+	 * @generated
+	 */
+	void setIgnoreRead(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Ignore Write</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Skip this feature during serialization only.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Ignore Write</em>' attribute.
+	 * @see #setIgnoreWrite(boolean)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getFeatureCodecAspect_IgnoreWrite()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isIgnoreWrite();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isIgnoreWrite <em>Ignore Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Ignore Write</em>' attribute.
+	 * @see #isIgnoreWrite()
+	 * @generated
+	 */
+	void setIgnoreWrite(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Force Read</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Force deserialization of EMF transient/volatile features.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Force Read</em>' attribute.
+	 * @see #setForceRead(boolean)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getFeatureCodecAspect_ForceRead()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isForceRead();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isForceRead <em>Force Read</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Force Read</em>' attribute.
+	 * @see #isForceRead()
+	 * @generated
+	 */
+	void setForceRead(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Force Write</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Force serialization of EMF transient/volatile/derived features.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Force Write</em>' attribute.
+	 * @see #setForceWrite(boolean)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getFeatureCodecAspect_ForceWrite()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isForceWrite();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect#isForceWrite <em>Force Write</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Force Write</em>' attribute.
+	 * @see #isForceWrite()
+	 * @generated
+	 */
+	void setForceWrite(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Serialize Null</b></em>' attribute.

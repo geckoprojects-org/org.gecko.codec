@@ -72,7 +72,8 @@ class CodecProfileBuildTest {
     private EClass addressClass;
     private EAttribute nameAttr;
 
-    @BeforeEach
+    @SuppressWarnings("restriction")
+	@BeforeEach
     void setUp() {
         service = new MetadataServiceImpl();
         createTestPackage();
@@ -414,7 +415,7 @@ class CodecProfileBuildTest {
             assertNotNull(nameConfig, "Should have feature config for 'name'");
 
             assertEquals("name", nameConfig.getKey(), "Key should default to feature name");
-            assertEquals(Boolean.TRUE, nameConfig.getSerialize(), "Should serialize by default");
+            assertEquals(Boolean.FALSE, nameConfig.getIgnore(), "Should not be ignored by default");
             assertNull(nameConfig.getValueWriterName());
             assertNull(nameConfig.getValueReaderName());
             assertEquals(EnumSerializationStrategy.LITERAL, nameConfig.getEnumSerialization(),
@@ -433,7 +434,7 @@ class CodecProfileBuildTest {
             assertNotNull(addressConfig, "Should have feature config for 'address'");
 
             assertEquals("address", addressConfig.getKey());
-            assertEquals(Boolean.TRUE, addressConfig.getSerialize());
+            assertEquals(Boolean.FALSE, addressConfig.getIgnore(), "Should not be ignored by default");
             assertNull(addressConfig.getReferenceConfig(), "No reference config without annotation");
             assertNull(addressConfig.getTypeConfig(), "No type config without annotation");
         }
@@ -614,7 +615,7 @@ class CodecProfileBuildTest {
             transientAttr.setName("secret");
             transientAttr.setEType(EcorePackage.Literals.ESTRING);
             entityClass.getEStructuralFeatures().add(transientAttr);
-            addFeatureAnnotation(transientAttr, "transient", "true");
+            addFeatureAnnotation(transientAttr, "ignore", "true");
 
             // Reference with type config
             typedRef = EcoreFactory.eINSTANCE.createEReference();
@@ -659,11 +660,11 @@ class CodecProfileBuildTest {
             assertNotNull(config);
 
             assertEquals("first_name", config.getKey());
-            assertEquals(Boolean.TRUE, config.getSerialize());
+            assertEquals(Boolean.FALSE, config.getIgnore(), "Should not be ignored");
         }
 
         @Test
-        @DisplayName("transient feature has serialize=false")
+        @DisplayName("transient feature has ignore=true")
         void testTransientFeature() {
             CodecClassProfile profile = getEntityProfile();
 
@@ -673,7 +674,7 @@ class CodecProfileBuildTest {
                     .orElse(null);
             assertNotNull(config);
 
-            assertEquals(Boolean.FALSE, config.getSerialize());
+            assertEquals(Boolean.TRUE, config.getIgnore());
         }
 
         @Test

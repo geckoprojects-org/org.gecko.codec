@@ -140,8 +140,39 @@ public final class CodecAnnotationConstants {
     /**
      * Detail key for marking a feature as transient (not serialized).
      * Value: "true" or "false". Default: "false".
+     * @deprecated Use {@link #KEY_IGNORE} instead for bidirectional control.
      */
     public static final String KEY_TRANSIENT = "transient";
+
+    /**
+     * Detail key for ignoring a feature in both serialization and deserialization.
+     * Value: "true" or "false". Default: "false".
+     */
+    public static final String KEY_IGNORE = "ignore";
+
+    /**
+     * Detail key for ignoring a feature during deserialization only.
+     * Value: "true" or "false". Default: "false".
+     */
+    public static final String KEY_IGNORE_READ = "ignoreRead";
+
+    /**
+     * Detail key for ignoring a feature during serialization only.
+     * Value: "true" or "false". Default: "false".
+     */
+    public static final String KEY_IGNORE_WRITE = "ignoreWrite";
+
+    /**
+     * Detail key for forcing deserialization of EMF transient/volatile features.
+     * Value: "true" or "false". Default: "false".
+     */
+    public static final String KEY_FORCE_READ = "forceRead";
+
+    /**
+     * Detail key for forcing serialization of EMF transient/volatile/derived features.
+     * Value: "true" or "false". Default: "false".
+     */
+    public static final String KEY_FORCE_WRITE = "forceWrite";
 
     /**
      * Detail key for enabling cross-package annotation inheritance.
@@ -509,9 +540,7 @@ public final class CodecAnnotationConstants {
     /**
      * Detail key for whether to serialize this feature.
      * Value: "true" or "false". Default: "true".
-     * <p>
-     * Note: Use "transient" key for the inverse (transient=true means serialize=false).
-     * </p>
+     * @deprecated Use {@link #KEY_IGNORE} instead. serialize=false maps to ignore=true.
      */
     public static final String KEY_SERIALIZE = "serialize";
 
