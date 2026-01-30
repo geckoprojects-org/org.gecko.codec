@@ -28,7 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * and utility methods for working with them.
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
- * Codec-wide format strategy for serialization output. Applies uniformly to all serialization targets (type, ID, reference, supertype).
+ * Format strategy for serialization output. Controls whether metadata fields (type, ID, reference, supertype) are written as simple values or nested objects. Applies uniformly across all serialization targets.
  * <!-- end-model-doc -->
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getSerializationFormat()
  * @model
@@ -41,7 +41,7 @@ public enum SerializationFormat implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Simple value output - string, number, or array of simple values.
+	 * Simple value output. Writes a single string, number, or array of simple values. Example: {"_type": "http://example.org/model#//Person"}
 	 * <!-- end-model-doc -->
 	 * @see #PLAIN_VALUE
 	 * @generated
@@ -54,7 +54,7 @@ public enum SerializationFormat implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Nested object output with configurable keys.
+	 * Nested object output with configurable keys. Example: {"_type": {"schema": "http://example.org/model", "name": "Person"}}
 	 * <!-- end-model-doc -->
 	 * @see #STRUCTURED_VALUE
 	 * @generated
@@ -67,7 +67,7 @@ public enum SerializationFormat implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Simple value output - string, number, or array of simple values.
+	 * Simple value output. Writes a single string, number, or array of simple values. Example: {"_type": "http://example.org/model#//Person"}
 	 * <!-- end-model-doc -->
 	 * @see #PLAIN
 	 * @model
@@ -81,7 +81,7 @@ public enum SerializationFormat implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Nested object output with configurable keys.
+	 * Nested object output with configurable keys. Example: {"_type": {"schema": "http://example.org/model", "name": "Person"}}
 	 * <!-- end-model-doc -->
 	 * @see #STRUCTURED
 	 * @model

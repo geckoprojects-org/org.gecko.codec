@@ -223,6 +223,26 @@ public final class CodecAnnotationConstants {
      */
     public static final String KEY_ID_VALUE_KEY = "idValueKey";
 
+    /**
+     * Detail key for ID strategy scope (runtime-only, not valid in EAnnotations).
+     * Values: "ALL", "ROOT_ONLY", "ROOT_CONTAINMENT", "ROOT_NON_CONTAINMENT". Default: "ALL".
+     * <p>
+     * This is a runtime-only property. If found in an EAnnotation, it is ignored
+     * with a WARNING diagnostic (ID-V11).
+     * </p>
+     */
+    public static final String KEY_ID_SCOPE = "idScope";
+
+    /**
+     * Detail key for ID format scope (runtime-only, not valid in EAnnotations).
+     * Values: "ALL", "ROOT_ONLY", "ROOT_CONTAINMENT", "ROOT_NON_CONTAINMENT". Default: "ALL".
+     * <p>
+     * This is a runtime-only property. If found in an EAnnotation, it is ignored
+     * with a WARNING diagnostic (ID-V12).
+     * </p>
+     */
+    public static final String KEY_ID_FORMAT_SCOPE = "idFormatScope";
+
     // ------------------------------------------------------------------------
     // Type configuration detail keys (prefix: type*)
     // ------------------------------------------------------------------------
@@ -318,6 +338,36 @@ public final class CodecAnnotationConstants {
      * Default: "name".
      */
     public static final String KEY_TYPE_NAME_KEY = "typeNameKey";
+
+    /**
+     * Detail key for type strategy scope (runtime-only, not valid in EAnnotations).
+     * Values: "ALL", "ROOT_ONLY", "ROOT_CONTAINMENT", "ROOT_NON_CONTAINMENT". Default: "ALL".
+     * <p>
+     * This is a runtime-only property. If found in an EAnnotation, it is ignored
+     * with a WARNING diagnostic (T-V3).
+     * </p>
+     */
+    public static final String KEY_TYPE_SCOPE = "typeScope";
+
+    /**
+     * Detail key for type format scope (runtime-only, not valid in EAnnotations).
+     * Values: "ALL", "ROOT_ONLY", "ROOT_CONTAINMENT", "ROOT_NON_CONTAINMENT". Default: "ALL".
+     * <p>
+     * This is a runtime-only property. If found in an EAnnotation, it is ignored
+     * with a WARNING diagnostic (T-V4).
+     * </p>
+     */
+    public static final String KEY_TYPE_FORMAT_SCOPE = "typeFormatScope";
+
+    /**
+     * Detail key for deprecated type include flag.
+     * <p>
+     * DEPRECATED: Use {@code typeStrategy=NONE} instead.
+     * If found, a WARNING diagnostic is generated (T-V30).
+     * If both typeInclude and typeStrategy are set, typeStrategy takes precedence (T-V31).
+     * </p>
+     */
+    public static final String KEY_TYPE_INCLUDE = "typeInclude";
 
     /**
      * Detail key for fallback strategy when discriminator value is not found.

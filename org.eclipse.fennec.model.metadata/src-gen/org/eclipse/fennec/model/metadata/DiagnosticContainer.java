@@ -26,7 +26,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Interface for metadata elements that can contain diagnostics.
+ * Interface for metadata elements that can contain diagnostics. Implemented by PackageMetadata, ClassMetadata, and FeatureMetadata. Provides both direct diagnostics and aggregated diagnostics from the containment subtree.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -49,7 +49,7 @@ public interface DiagnosticContainer extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Diagnostics directly owned by this element.
+	 * Diagnostics directly owned by this metadata element. Does not include diagnostics from contained children or aspects.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Diagnostics</em>' containment reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getDiagnosticContainer_Diagnostics()
@@ -64,7 +64,7 @@ public interface DiagnosticContainer extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * All metadata diagnostics including those from contained metadata elements. For FeatureMetadata: same as diagnostics. For ClassMetadata: diagnostics + all feature diagnostics. For PackageMetadata: diagnostics + all class allDiagnostics. Note: Aspect diagnostics are separate and not included here.
+	 * All diagnostics from this element and its contained metadata subtree. For FeatureMetadata: same as diagnostics (leaf node). For ClassMetadata: own diagnostics + all feature diagnostics. For PackageMetadata: own diagnostics + all class allDiagnostics. Note: Aspect diagnostics are managed separately and not aggregated here.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>All Diagnostics</em>' reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getDiagnosticContainer_AllDiagnostics()

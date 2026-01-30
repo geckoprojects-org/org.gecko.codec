@@ -497,217 +497,6 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	int BASE_SUPER_TYPE_CONFIG_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.AspectImpl <em>Aspect</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.fennec.model.metadata.impl.AspectImpl
-	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getAspect()
-	 * @generated
-	 */
-	int ASPECT = 6;
-
-	/**
-	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ASPECT__TYPE_ID = 0;
-
-	/**
-	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ASPECT__DIAGNOSTICS = 1;
-
-	/**
-	 * The number of structural features of the '<em>Aspect</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ASPECT_FEATURE_COUNT = 2;
-
-	/**
-	 * The number of operations of the '<em>Aspect</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ASPECT_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.PackageAspectImpl <em>Package Aspect</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.fennec.model.metadata.impl.PackageAspectImpl
-	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getPackageAspect()
-	 * @generated
-	 */
-	int PACKAGE_ASPECT = 7;
-
-	/**
-	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PACKAGE_ASPECT__TYPE_ID = ASPECT__TYPE_ID;
-
-	/**
-	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PACKAGE_ASPECT__DIAGNOSTICS = ASPECT__DIAGNOSTICS;
-
-	/**
-	 * The feature id for the '<em><b>EPackage</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PACKAGE_ASPECT__EPACKAGE = ASPECT_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Package Aspect</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PACKAGE_ASPECT_FEATURE_COUNT = ASPECT_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Package Aspect</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PACKAGE_ASPECT_OPERATION_COUNT = ASPECT_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.ClassAspectImpl <em>Class Aspect</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.fennec.model.metadata.impl.ClassAspectImpl
-	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getClassAspect()
-	 * @generated
-	 */
-	int CLASS_ASPECT = 8;
-
-	/**
-	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CLASS_ASPECT__TYPE_ID = ASPECT__TYPE_ID;
-
-	/**
-	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CLASS_ASPECT__DIAGNOSTICS = ASPECT__DIAGNOSTICS;
-
-	/**
-	 * The feature id for the '<em><b>EClass</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CLASS_ASPECT__ECLASS = ASPECT_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Class Aspect</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CLASS_ASPECT_FEATURE_COUNT = ASPECT_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Class Aspect</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CLASS_ASPECT_OPERATION_COUNT = ASPECT_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl <em>Feature Aspect</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl
-	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getFeatureAspect()
-	 * @generated
-	 */
-	int FEATURE_ASPECT = 9;
-
-	/**
-	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int FEATURE_ASPECT__TYPE_ID = ASPECT__TYPE_ID;
-
-	/**
-	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int FEATURE_ASPECT__DIAGNOSTICS = ASPECT__DIAGNOSTICS;
-
-	/**
-	 * The feature id for the '<em><b>EFeature</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int FEATURE_ASPECT__EFEATURE = ASPECT_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Feature Aspect</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int FEATURE_ASPECT_FEATURE_COUNT = ASPECT_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Feature Aspect</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int FEATURE_ASPECT_OPERATION_COUNT = ASPECT_OPERATION_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl <em>Base Feature Config</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -715,7 +504,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getBaseFeatureConfig()
 	 * @generated
 	 */
-	int BASE_FEATURE_CONFIG = 10;
+	int BASE_FEATURE_CONFIG = 6;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -790,6 +579,300 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	int BASE_FEATURE_CONFIG_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.AspectImpl <em>Aspect</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.impl.AspectImpl
+	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getAspect()
+	 * @generated
+	 */
+	int ASPECT = 7;
+
+	/**
+	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ASPECT__TYPE_ID = 0;
+
+	/**
+	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ASPECT__DIAGNOSTICS = 1;
+
+	/**
+	 * The number of structural features of the '<em>Aspect</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ASPECT_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Aspect</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ASPECT_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.PackageAspectImpl <em>Package Aspect</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.impl.PackageAspectImpl
+	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getPackageAspect()
+	 * @generated
+	 */
+	int PACKAGE_ASPECT = 8;
+
+	/**
+	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_ASPECT__TYPE_ID = ASPECT__TYPE_ID;
+
+	/**
+	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_ASPECT__DIAGNOSTICS = ASPECT__DIAGNOSTICS;
+
+	/**
+	 * The feature id for the '<em><b>Package Metadata</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_ASPECT__PACKAGE_METADATA = ASPECT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Package Aspect</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_ASPECT_FEATURE_COUNT = ASPECT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Package Aspect</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_ASPECT_OPERATION_COUNT = ASPECT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.ClassAspectImpl <em>Class Aspect</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.impl.ClassAspectImpl
+	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getClassAspect()
+	 * @generated
+	 */
+	int CLASS_ASPECT = 9;
+
+	/**
+	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_ASPECT__TYPE_ID = ASPECT__TYPE_ID;
+
+	/**
+	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_ASPECT__DIAGNOSTICS = ASPECT__DIAGNOSTICS;
+
+	/**
+	 * The feature id for the '<em><b>Class Metadata</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_ASPECT__CLASS_METADATA = ASPECT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Class Aspect</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_ASPECT_FEATURE_COUNT = ASPECT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Class Aspect</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_ASPECT_OPERATION_COUNT = ASPECT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl <em>Feature Aspect</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl
+	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getFeatureAspect()
+	 * @generated
+	 */
+	int FEATURE_ASPECT = 10;
+
+	/**
+	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_ASPECT__TYPE_ID = ASPECT__TYPE_ID;
+
+	/**
+	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_ASPECT__DIAGNOSTICS = ASPECT__DIAGNOSTICS;
+
+	/**
+	 * The feature id for the '<em><b>Feature Metadata</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_ASPECT__FEATURE_METADATA = ASPECT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Feature Aspect</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_ASPECT_FEATURE_COUNT = ASPECT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Feature Aspect</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int FEATURE_ASPECT_OPERATION_COUNT = ASPECT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.PackageProfileImpl <em>Package Profile</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.impl.PackageProfileImpl
+	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getPackageProfile()
+	 * @generated
+	 */
+	int PACKAGE_PROFILE = 11;
+
+	/**
+	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_PROFILE__TYPE_ID = 0;
+
+	/**
+	 * The feature id for the '<em><b>Class Profiles</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_PROFILE__CLASS_PROFILES = 1;
+
+	/**
+	 * The number of structural features of the '<em>Package Profile</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_PROFILE_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>Package Profile</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_PROFILE_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.ClassProfileImpl <em>Class Profile</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.impl.ClassProfileImpl
+	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getClassProfile()
+	 * @generated
+	 */
+	int CLASS_PROFILE = 12;
+
+	/**
+	 * The feature id for the '<em><b>EClass</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_PROFILE__ECLASS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Class Profile</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_PROFILE_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Class Profile</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_PROFILE_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.impl.PackageMetadataImpl <em>Package Metadata</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -797,7 +880,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getPackageMetadata()
 	 * @generated
 	 */
-	int PACKAGE_METADATA = 11;
+	int PACKAGE_METADATA = 13;
 
 	/**
 	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
@@ -854,13 +937,22 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	int PACKAGE_METADATA__ASPECTS = DIAGNOSTIC_CONTAINER_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Profiles</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_METADATA__PROFILES = DIAGNOSTIC_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
 	 * The number of structural features of the '<em>Package Metadata</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_METADATA_FEATURE_COUNT = DIAGNOSTIC_CONTAINER_FEATURE_COUNT + 4;
+	int PACKAGE_METADATA_FEATURE_COUNT = DIAGNOSTIC_CONTAINER_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of operations of the '<em>Package Metadata</em>' class.
@@ -879,7 +971,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getClassMetadata()
 	 * @generated
 	 */
-	int CLASS_METADATA = 12;
+	int CLASS_METADATA = 14;
 
 	/**
 	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
@@ -1024,7 +1116,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getFeatureMetadata()
 	 * @generated
 	 */
-	int FEATURE_METADATA = 13;
+	int FEATURE_METADATA = 15;
 
 	/**
 	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
@@ -1124,7 +1216,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getAttributeMetadata()
 	 * @generated
 	 */
-	int ATTRIBUTE_METADATA = 14;
+	int ATTRIBUTE_METADATA = 16;
 
 	/**
 	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
@@ -1251,7 +1343,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getReferenceMetadata()
 	 * @generated
 	 */
-	int REFERENCE_METADATA = 15;
+	int REFERENCE_METADATA = 17;
 
 	/**
 	 * The feature id for the '<em><b>Diagnostics</b></em>' containment reference list.
@@ -1396,7 +1488,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getMetadataRegistry()
 	 * @generated
 	 */
-	int METADATA_REGISTRY = 16;
+	int METADATA_REGISTRY = 18;
 
 	/**
 	 * The feature id for the '<em><b>Packages</b></em>' containment reference list.
@@ -1433,7 +1525,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getDiagnosticSeverity()
 	 * @generated
 	 */
-	int DIAGNOSTIC_SEVERITY = 17;
+	int DIAGNOSTIC_SEVERITY = 19;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.SerializationFormat <em>Serialization Format</em>}' enum.
@@ -1443,7 +1535,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getSerializationFormat()
 	 * @generated
 	 */
-	int SERIALIZATION_FORMAT = 18;
+	int SERIALIZATION_FORMAT = 20;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.TypeStrategy <em>Type Strategy</em>}' enum.
@@ -1453,7 +1545,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getTypeStrategy()
 	 * @generated
 	 */
-	int TYPE_STRATEGY = 19;
+	int TYPE_STRATEGY = 21;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.IdStrategy <em>Id Strategy</em>}' enum.
@@ -1463,7 +1555,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getIdStrategy()
 	 * @generated
 	 */
-	int ID_STRATEGY = 20;
+	int ID_STRATEGY = 22;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.IdKeyMode <em>Id Key Mode</em>}' enum.
@@ -1473,7 +1565,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getIdKeyMode()
 	 * @generated
 	 */
-	int ID_KEY_MODE = 21;
+	int ID_KEY_MODE = 23;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.SuperTypeSelection <em>Super Type Selection</em>}' enum.
@@ -1483,7 +1575,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getSuperTypeSelection()
 	 * @generated
 	 */
-	int SUPER_TYPE_SELECTION = 22;
+	int SUPER_TYPE_SELECTION = 24;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.EnumSerializationStrategy <em>Enum Serialization Strategy</em>}' enum.
@@ -1493,7 +1585,7 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getEnumSerializationStrategy()
 	 * @generated
 	 */
-	int ENUM_SERIALIZATION_STRATEGY = 23;
+	int ENUM_SERIALIZATION_STRATEGY = 25;
 
 
 	/**
@@ -1865,101 +1957,6 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getBaseSuperTypeConfig_SuperTypeKey();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.Aspect <em>Aspect</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Aspect</em>'.
-	 * @see org.eclipse.fennec.model.metadata.Aspect
-	 * @generated
-	 */
-	EClass getAspect();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.Aspect#getTypeId <em>Type Id</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Type Id</em>'.
-	 * @see org.eclipse.fennec.model.metadata.Aspect#getTypeId()
-	 * @see #getAspect()
-	 * @generated
-	 */
-	EAttribute getAspect_TypeId();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.fennec.model.metadata.Aspect#getDiagnostics <em>Diagnostics</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Diagnostics</em>'.
-	 * @see org.eclipse.fennec.model.metadata.Aspect#getDiagnostics()
-	 * @see #getAspect()
-	 * @generated
-	 */
-	EReference getAspect_Diagnostics();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.PackageAspect <em>Package Aspect</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Package Aspect</em>'.
-	 * @see org.eclipse.fennec.model.metadata.PackageAspect
-	 * @generated
-	 */
-	EClass getPackageAspect();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.fennec.model.metadata.PackageAspect#getEPackage <em>EPackage</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>EPackage</em>'.
-	 * @see org.eclipse.fennec.model.metadata.PackageAspect#getEPackage()
-	 * @see #getPackageAspect()
-	 * @generated
-	 */
-	EReference getPackageAspect_EPackage();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.ClassAspect <em>Class Aspect</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Class Aspect</em>'.
-	 * @see org.eclipse.fennec.model.metadata.ClassAspect
-	 * @generated
-	 */
-	EClass getClassAspect();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.fennec.model.metadata.ClassAspect#getEClass <em>EClass</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>EClass</em>'.
-	 * @see org.eclipse.fennec.model.metadata.ClassAspect#getEClass()
-	 * @see #getClassAspect()
-	 * @generated
-	 */
-	EReference getClassAspect_EClass();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.FeatureAspect <em>Feature Aspect</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Feature Aspect</em>'.
-	 * @see org.eclipse.fennec.model.metadata.FeatureAspect
-	 * @generated
-	 */
-	EClass getFeatureAspect();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.fennec.model.metadata.FeatureAspect#getEFeature <em>EFeature</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>EFeature</em>'.
-	 * @see org.eclipse.fennec.model.metadata.FeatureAspect#getEFeature()
-	 * @see #getFeatureAspect()
-	 * @generated
-	 */
-	EReference getFeatureAspect_EFeature();
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig <em>Base Feature Config</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2036,6 +2033,154 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getBaseFeatureConfig_EnumSerialization();
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.Aspect <em>Aspect</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Aspect</em>'.
+	 * @see org.eclipse.fennec.model.metadata.Aspect
+	 * @generated
+	 */
+	EClass getAspect();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.Aspect#getTypeId <em>Type Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type Id</em>'.
+	 * @see org.eclipse.fennec.model.metadata.Aspect#getTypeId()
+	 * @see #getAspect()
+	 * @generated
+	 */
+	EAttribute getAspect_TypeId();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.fennec.model.metadata.Aspect#getDiagnostics <em>Diagnostics</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Diagnostics</em>'.
+	 * @see org.eclipse.fennec.model.metadata.Aspect#getDiagnostics()
+	 * @see #getAspect()
+	 * @generated
+	 */
+	EReference getAspect_Diagnostics();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.PackageAspect <em>Package Aspect</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Package Aspect</em>'.
+	 * @see org.eclipse.fennec.model.metadata.PackageAspect
+	 * @generated
+	 */
+	EClass getPackageAspect();
+
+	/**
+	 * Returns the meta object for the container reference '{@link org.eclipse.fennec.model.metadata.PackageAspect#getPackageMetadata <em>Package Metadata</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Package Metadata</em>'.
+	 * @see org.eclipse.fennec.model.metadata.PackageAspect#getPackageMetadata()
+	 * @see #getPackageAspect()
+	 * @generated
+	 */
+	EReference getPackageAspect_PackageMetadata();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.ClassAspect <em>Class Aspect</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Class Aspect</em>'.
+	 * @see org.eclipse.fennec.model.metadata.ClassAspect
+	 * @generated
+	 */
+	EClass getClassAspect();
+
+	/**
+	 * Returns the meta object for the container reference '{@link org.eclipse.fennec.model.metadata.ClassAspect#getClassMetadata <em>Class Metadata</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Class Metadata</em>'.
+	 * @see org.eclipse.fennec.model.metadata.ClassAspect#getClassMetadata()
+	 * @see #getClassAspect()
+	 * @generated
+	 */
+	EReference getClassAspect_ClassMetadata();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.FeatureAspect <em>Feature Aspect</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Feature Aspect</em>'.
+	 * @see org.eclipse.fennec.model.metadata.FeatureAspect
+	 * @generated
+	 */
+	EClass getFeatureAspect();
+
+	/**
+	 * Returns the meta object for the container reference '{@link org.eclipse.fennec.model.metadata.FeatureAspect#getFeatureMetadata <em>Feature Metadata</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Feature Metadata</em>'.
+	 * @see org.eclipse.fennec.model.metadata.FeatureAspect#getFeatureMetadata()
+	 * @see #getFeatureAspect()
+	 * @generated
+	 */
+	EReference getFeatureAspect_FeatureMetadata();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.PackageProfile <em>Package Profile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Package Profile</em>'.
+	 * @see org.eclipse.fennec.model.metadata.PackageProfile
+	 * @generated
+	 */
+	EClass getPackageProfile();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.model.metadata.PackageProfile#getTypeId <em>Type Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type Id</em>'.
+	 * @see org.eclipse.fennec.model.metadata.PackageProfile#getTypeId()
+	 * @see #getPackageProfile()
+	 * @generated
+	 */
+	EAttribute getPackageProfile_TypeId();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.fennec.model.metadata.PackageProfile#getClassProfiles <em>Class Profiles</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Class Profiles</em>'.
+	 * @see org.eclipse.fennec.model.metadata.PackageProfile#getClassProfiles()
+	 * @see #getPackageProfile()
+	 * @generated
+	 */
+	EReference getPackageProfile_ClassProfiles();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.ClassProfile <em>Class Profile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Class Profile</em>'.
+	 * @see org.eclipse.fennec.model.metadata.ClassProfile
+	 * @generated
+	 */
+	EClass getClassProfile();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.fennec.model.metadata.ClassProfile#getEClass <em>EClass</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>EClass</em>'.
+	 * @see org.eclipse.fennec.model.metadata.ClassProfile#getEClass()
+	 * @see #getClassProfile()
+	 * @generated
+	 */
+	EReference getClassProfile_EClass();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.PackageMetadata <em>Package Metadata</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2088,6 +2233,17 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EReference getPackageMetadata_Aspects();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.fennec.model.metadata.PackageMetadata#getProfiles <em>Profiles</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Profiles</em>'.
+	 * @see org.eclipse.fennec.model.metadata.PackageMetadata#getProfiles()
+	 * @see #getPackageMetadata()
+	 * @generated
+	 */
+	EReference getPackageMetadata_Profiles();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.ClassMetadata <em>Class Metadata</em>}'.
@@ -2803,86 +2959,6 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY = eINSTANCE.getBaseSuperTypeConfig_SuperTypeKey();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.AspectImpl <em>Aspect</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.fennec.model.metadata.impl.AspectImpl
-		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getAspect()
-		 * @generated
-		 */
-		EClass ASPECT = eINSTANCE.getAspect();
-
-		/**
-		 * The meta object literal for the '<em><b>Type Id</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ASPECT__TYPE_ID = eINSTANCE.getAspect_TypeId();
-
-		/**
-		 * The meta object literal for the '<em><b>Diagnostics</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ASPECT__DIAGNOSTICS = eINSTANCE.getAspect_Diagnostics();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.PackageAspectImpl <em>Package Aspect</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.fennec.model.metadata.impl.PackageAspectImpl
-		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getPackageAspect()
-		 * @generated
-		 */
-		EClass PACKAGE_ASPECT = eINSTANCE.getPackageAspect();
-
-		/**
-		 * The meta object literal for the '<em><b>EPackage</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PACKAGE_ASPECT__EPACKAGE = eINSTANCE.getPackageAspect_EPackage();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.ClassAspectImpl <em>Class Aspect</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.fennec.model.metadata.impl.ClassAspectImpl
-		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getClassAspect()
-		 * @generated
-		 */
-		EClass CLASS_ASPECT = eINSTANCE.getClassAspect();
-
-		/**
-		 * The meta object literal for the '<em><b>EClass</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference CLASS_ASPECT__ECLASS = eINSTANCE.getClassAspect_EClass();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl <em>Feature Aspect</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl
-		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getFeatureAspect()
-		 * @generated
-		 */
-		EClass FEATURE_ASPECT = eINSTANCE.getFeatureAspect();
-
-		/**
-		 * The meta object literal for the '<em><b>EFeature</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference FEATURE_ASPECT__EFEATURE = eINSTANCE.getFeatureAspect_EFeature();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.BaseFeatureConfigImpl <em>Base Feature Config</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2941,6 +3017,130 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute BASE_FEATURE_CONFIG__ENUM_SERIALIZATION = eINSTANCE.getBaseFeatureConfig_EnumSerialization();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.AspectImpl <em>Aspect</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.impl.AspectImpl
+		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getAspect()
+		 * @generated
+		 */
+		EClass ASPECT = eINSTANCE.getAspect();
+
+		/**
+		 * The meta object literal for the '<em><b>Type Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ASPECT__TYPE_ID = eINSTANCE.getAspect_TypeId();
+
+		/**
+		 * The meta object literal for the '<em><b>Diagnostics</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ASPECT__DIAGNOSTICS = eINSTANCE.getAspect_Diagnostics();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.PackageAspectImpl <em>Package Aspect</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.impl.PackageAspectImpl
+		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getPackageAspect()
+		 * @generated
+		 */
+		EClass PACKAGE_ASPECT = eINSTANCE.getPackageAspect();
+
+		/**
+		 * The meta object literal for the '<em><b>Package Metadata</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PACKAGE_ASPECT__PACKAGE_METADATA = eINSTANCE.getPackageAspect_PackageMetadata();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.ClassAspectImpl <em>Class Aspect</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.impl.ClassAspectImpl
+		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getClassAspect()
+		 * @generated
+		 */
+		EClass CLASS_ASPECT = eINSTANCE.getClassAspect();
+
+		/**
+		 * The meta object literal for the '<em><b>Class Metadata</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CLASS_ASPECT__CLASS_METADATA = eINSTANCE.getClassAspect_ClassMetadata();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl <em>Feature Aspect</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl
+		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getFeatureAspect()
+		 * @generated
+		 */
+		EClass FEATURE_ASPECT = eINSTANCE.getFeatureAspect();
+
+		/**
+		 * The meta object literal for the '<em><b>Feature Metadata</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference FEATURE_ASPECT__FEATURE_METADATA = eINSTANCE.getFeatureAspect_FeatureMetadata();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.PackageProfileImpl <em>Package Profile</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.impl.PackageProfileImpl
+		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getPackageProfile()
+		 * @generated
+		 */
+		EClass PACKAGE_PROFILE = eINSTANCE.getPackageProfile();
+
+		/**
+		 * The meta object literal for the '<em><b>Type Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PACKAGE_PROFILE__TYPE_ID = eINSTANCE.getPackageProfile_TypeId();
+
+		/**
+		 * The meta object literal for the '<em><b>Class Profiles</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PACKAGE_PROFILE__CLASS_PROFILES = eINSTANCE.getPackageProfile_ClassProfiles();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.ClassProfileImpl <em>Class Profile</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.impl.ClassProfileImpl
+		 * @see org.eclipse.fennec.model.metadata.impl.MetadataPackageImpl#getClassProfile()
+		 * @generated
+		 */
+		EClass CLASS_PROFILE = eINSTANCE.getClassProfile();
+
+		/**
+		 * The meta object literal for the '<em><b>EClass</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CLASS_PROFILE__ECLASS = eINSTANCE.getClassProfile_EClass();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.PackageMetadataImpl <em>Package Metadata</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2981,6 +3181,14 @@ public interface MetadataPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EReference PACKAGE_METADATA__ASPECTS = eINSTANCE.getPackageMetadata_Aspects();
+
+		/**
+		 * The meta object literal for the '<em><b>Profiles</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PACKAGE_METADATA__PROFILES = eINSTANCE.getPackageMetadata_Profiles();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.impl.ClassMetadataImpl <em>Class Metadata</em>}' class.

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012 - 2025 Data In Motion and others.
+ * Copyright (c) 2012 - 2026 Data In Motion and others.
  * All rights reserved.
  *
  * This program and the accompanying materials are made
@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.fennec.model.metadata.AttributeMetadata;
@@ -33,9 +32,10 @@ import org.eclipse.fennec.model.metadata.FeatureAspect;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.PackageAspect;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
+import org.eclipse.fennec.model.metadata.PackageProfile;
 import org.eclipse.fennec.model.metadata.ReferenceMetadata;
 import org.eclipse.fennec.model.metadata.api.AspectProvider;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.impl.ClassAspectImpl;
 import org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl;
 import org.eclipse.fennec.model.metadata.impl.PackageAspectImpl;
@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
  */
 class MetadataServiceImplTest {
 
-    private MetadataService service;
+    private MetadataWhiteboard service;
     private EPackage testPackage;
     private EClass personClass;
     private EClass addressClass;
@@ -301,6 +301,46 @@ class MetadataServiceImplTest {
     }
 
     // ========================================================================
+    // Bidirectional Aspect-Metadata References Tests
+    // ========================================================================
+
+    @Test
+    void testClassAspectBackReference() {
+        TestAspectProvider provider = new TestAspectProvider();
+        service.registerAspectProvider(provider);
+        service.registerPackage(testPackage);
+
+        ClassMetadata personMeta = service.getClassMetadata(personClass);
+        ClassAspect aspect = personMeta.getAspects().get(0);
+        assertSame(personMeta, aspect.getClassMetadata(),
+                "ClassAspect should have back-reference to its ClassMetadata");
+    }
+
+    @Test
+    void testFeatureAspectBackReference() {
+        TestAspectProvider provider = new TestAspectProvider();
+        service.registerAspectProvider(provider);
+        service.registerPackage(testPackage);
+
+        FeatureMetadata nameMeta = service.getFeatureMetadata(nameAttr);
+        FeatureAspect aspect = nameMeta.getAspects().get(0);
+        assertSame(nameMeta, aspect.getFeatureMetadata(),
+                "FeatureAspect should have back-reference to its FeatureMetadata");
+    }
+
+    @Test
+    void testPackageAspectBackReference() {
+        TestAspectProviderWithPackageSupport provider = new TestAspectProviderWithPackageSupport();
+        service.registerAspectProvider(provider);
+        service.registerPackage(testPackage);
+
+        PackageMetadata pkgMeta = service.getPackageMetadata("http://test.example.org/1.0");
+        PackageAspect aspect = pkgMeta.getAspects().get(0);
+        assertSame(pkgMeta, aspect.getPackageMetadata(),
+                "PackageAspect should have back-reference to its PackageMetadata");
+    }
+
+    // ========================================================================
     // AspectProvider Tests
     // ========================================================================
 
@@ -387,7 +427,9 @@ class MetadataServiceImplTest {
         PackageAspect pkgAspect = service.getPackageAspect(testPackage, "test-pkg");
         assertNotNull(pkgAspect);
         assertEquals("test-pkg", pkgAspect.getTypeId());
-        assertSame(testPackage, pkgAspect.getEPackage());
+        // Navigate via bidirectional ref to verify package access
+        assertNotNull(pkgAspect.getPackageMetadata());
+        assertSame(testPackage, pkgAspect.getPackageMetadata().getEPackage());
     }
 
     @Test
@@ -433,7 +475,49 @@ class MetadataServiceImplTest {
     }
 
     // ========================================================================
-    // Test AspectProvider Implementation
+    // Index Management Tests
+    // ========================================================================
+
+    @Test
+    void testSetMetadataIndex() {
+        service.registerPackage(testPackage);
+
+        // Replace with new index
+        MapBasedMetadataIndex newIndex = new MapBasedMetadataIndex();
+        service.setMetadataIndex(newIndex);
+
+        assertSame(newIndex, service.getMetadataIndex());
+        // New index should be populated with existing metadata
+        assertNotNull(service.getClassMetadataByName("Person", "http://test.example.org/1.0"));
+    }
+
+    @Test
+    void testUnsetMetadataIndex() {
+        service.registerPackage(testPackage);
+        assertNotNull(service.getMetadataIndex());
+
+        service.unsetMetadataIndex(service.getMetadataIndex());
+
+        assertNull(service.getMetadataIndex());
+        // Index-based lookups should return null now
+        assertNull(service.getClassMetadataByURI("anything"));
+    }
+
+    @Test
+    void testUnsetMetadataIndexWrongInstance() {
+        MapBasedMetadataIndex originalIndex = new MapBasedMetadataIndex();
+        MetadataServiceImpl svc = new MetadataServiceImpl(originalIndex);
+
+        // Try to unset with a different index — should be no-op
+        MapBasedMetadataIndex otherIndex = new MapBasedMetadataIndex();
+        svc.unsetMetadataIndex(otherIndex);
+
+        assertSame(originalIndex, svc.getMetadataIndex(),
+                "Unset with wrong instance should be a no-op");
+    }
+
+    // ========================================================================
+    // Test AspectProvider Implementations
     // ========================================================================
 
     /**
@@ -447,31 +531,33 @@ class MetadataServiceImplTest {
         }
 
         @Override
-        public PackageAspect buildPackageAspect(EPackage ePackage) {
-            // No package-level aspects for testing
+        public PackageAspect buildPackageAspect(PackageMetadata packageMetadata) {
             return null;
         }
 
         @Override
-        public ClassAspect buildClassAspect(EClass eClass) {
-            // Create a simple aspect - use a concrete implementation
-            // For testing, we'll create an anonymous subclass
+        public ClassAspect buildClassAspect(ClassMetadata classMetadata) {
             return new TestClassAspect();
         }
 
         @Override
-        public FeatureAspect buildFeatureAspect(EStructuralFeature feature) {
+        public FeatureAspect buildFeatureAspect(FeatureMetadata featureMetadata) {
             return new TestFeatureAspect();
         }
 
         @Override
-        public FeatureAspect buildAttributeAspect(EAttribute attribute) {
-            return buildFeatureAspect(attribute);
+        public FeatureAspect buildAttributeAspect(AttributeMetadata attributeMetadata) {
+            return buildFeatureAspect(attributeMetadata);
         }
 
         @Override
-        public FeatureAspect buildReferenceAspect(EReference reference) {
-            return buildFeatureAspect(reference);
+        public FeatureAspect buildReferenceAspect(ReferenceMetadata referenceMetadata) {
+            return buildFeatureAspect(referenceMetadata);
+        }
+
+        @Override
+        public PackageProfile buildProfiles(PackageMetadata filteredMetadataCopy) {
+            return null;
         }
     }
 
@@ -500,29 +586,32 @@ class MetadataServiceImplTest {
         }
 
         @Override
-        public PackageAspect buildPackageAspect(EPackage ePackage) {
-            TestPackageAspect aspect = new TestPackageAspect();
-            aspect.setEPackage(ePackage);
-            return aspect;
+        public PackageAspect buildPackageAspect(PackageMetadata packageMetadata) {
+            return new TestPackageAspect();
         }
 
         @Override
-        public ClassAspect buildClassAspect(EClass eClass) {
-            return null; // Not needed for package aspect tests
-        }
-
-        @Override
-        public FeatureAspect buildFeatureAspect(EStructuralFeature feature) {
+        public ClassAspect buildClassAspect(ClassMetadata classMetadata) {
             return null;
         }
 
         @Override
-        public FeatureAspect buildAttributeAspect(EAttribute attribute) {
+        public FeatureAspect buildFeatureAspect(FeatureMetadata featureMetadata) {
             return null;
         }
 
         @Override
-        public FeatureAspect buildReferenceAspect(EReference reference) {
+        public FeatureAspect buildAttributeAspect(AttributeMetadata attributeMetadata) {
+            return null;
+        }
+
+        @Override
+        public FeatureAspect buildReferenceAspect(ReferenceMetadata referenceMetadata) {
+            return null;
+        }
+
+        @Override
+        public PackageProfile buildProfiles(PackageMetadata filteredMetadataCopy) {
             return null;
         }
     }

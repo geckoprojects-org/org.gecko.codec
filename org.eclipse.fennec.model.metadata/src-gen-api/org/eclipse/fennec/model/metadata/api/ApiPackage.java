@@ -457,31 +457,13 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	int METADATA_SERVICE___GET_INDEX_READER = 0;
 
 	/**
-	 * The operation id for the '<em>Register Package</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int METADATA_SERVICE___REGISTER_PACKAGE__EPACKAGE = 1;
-
-	/**
-	 * The operation id for the '<em>Unregister Package</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int METADATA_SERVICE___UNREGISTER_PACKAGE__EPACKAGE = 2;
-
-	/**
 	 * The operation id for the '<em>Get Package Metadata</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_PACKAGE_METADATA__STRING = 3;
+	int METADATA_SERVICE___GET_PACKAGE_METADATA__STRING = 1;
 
 	/**
 	 * The operation id for the '<em>Get Class Metadata</em>' operation.
@@ -490,7 +472,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_CLASS_METADATA__ECLASS = 4;
+	int METADATA_SERVICE___GET_CLASS_METADATA__ECLASS = 2;
 
 	/**
 	 * The operation id for the '<em>Get Class Metadata By URI</em>' operation.
@@ -499,7 +481,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_CLASS_METADATA_BY_URI__STRING = 5;
+	int METADATA_SERVICE___GET_CLASS_METADATA_BY_URI__STRING = 3;
 
 	/**
 	 * The operation id for the '<em>Get Class Metadata By Name</em>' operation.
@@ -508,7 +490,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_CLASS_METADATA_BY_NAME__STRING_STRING = 6;
+	int METADATA_SERVICE___GET_CLASS_METADATA_BY_NAME__STRING_STRING = 4;
 
 	/**
 	 * The operation id for the '<em>Get Feature Metadata</em>' operation.
@@ -517,7 +499,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_METADATA__ESTRUCTURALFEATURE = 7;
+	int METADATA_SERVICE___GET_FEATURE_METADATA__ESTRUCTURALFEATURE = 5;
 
 	/**
 	 * The operation id for the '<em>Get Feature Metadata By URI</em>' operation.
@@ -526,7 +508,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_METADATA_BY_URI__STRING = 8;
+	int METADATA_SERVICE___GET_FEATURE_METADATA_BY_URI__STRING = 6;
 
 	/**
 	 * The operation id for the '<em>Get Feature Metadata By Name</em>' operation.
@@ -535,7 +517,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_METADATA_BY_NAME__STRING_STRING_STRING = 9;
+	int METADATA_SERVICE___GET_FEATURE_METADATA_BY_NAME__STRING_STRING_STRING = 7;
 
 	/**
 	 * The operation id for the '<em>Get Feature Metadata From Class</em>' operation.
@@ -544,7 +526,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_METADATA_FROM_CLASS__STRING_CLASSMETADATA = 10;
+	int METADATA_SERVICE___GET_FEATURE_METADATA_FROM_CLASS__STRING_CLASSMETADATA = 8;
 
 	/**
 	 * The operation id for the '<em>Get Package Aspect</em>' operation.
@@ -553,7 +535,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_PACKAGE_ASPECT__EPACKAGE_STRING = 11;
+	int METADATA_SERVICE___GET_PACKAGE_ASPECT__EPACKAGE_STRING = 9;
 
 	/**
 	 * The operation id for the '<em>Get Class Aspect</em>' operation.
@@ -562,7 +544,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_CLASS_ASPECT__ECLASS_STRING = 12;
+	int METADATA_SERVICE___GET_CLASS_ASPECT__ECLASS_STRING = 10;
 
 	/**
 	 * The operation id for the '<em>Get Feature Aspect</em>' operation.
@@ -571,7 +553,43 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_FEATURE_ASPECT__ESTRUCTURALFEATURE_STRING = 13;
+	int METADATA_SERVICE___GET_FEATURE_ASPECT__ESTRUCTURALFEATURE_STRING = 11;
+
+	/**
+	 * The operation id for the '<em>Get Package Profile</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_SERVICE___GET_PACKAGE_PROFILE__EPACKAGE_STRING = 12;
+
+	/**
+	 * The operation id for the '<em>Get Package Profile By Ns URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_SERVICE___GET_PACKAGE_PROFILE_BY_NS_URI__STRING_STRING = 13;
+
+	/**
+	 * The operation id for the '<em>Get Class Profile</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_SERVICE___GET_CLASS_PROFILE__ECLASS_STRING = 14;
+
+	/**
+	 * The operation id for the '<em>Get Class Profile By URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_SERVICE___GET_CLASS_PROFILE_BY_URI__STRING_STRING = 15;
 
 	/**
 	 * The operation id for the '<em>Get Registry</em>' operation.
@@ -580,34 +598,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE___GET_REGISTRY = 14;
-
-	/**
-	 * The operation id for the '<em>Register Aspect Provider</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int METADATA_SERVICE___REGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = 15;
-
-	/**
-	 * The operation id for the '<em>Unregister Aspect Provider</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int METADATA_SERVICE___UNREGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = 16;
-
-	/**
-	 * The operation id for the '<em>Get Aspect Providers</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int METADATA_SERVICE___GET_ASPECT_PROVIDERS = 17;
+	int METADATA_SERVICE___GET_REGISTRY = 16;
 
 	/**
 	 * The number of operations of the '<em>Metadata Service</em>' class.
@@ -616,7 +607,260 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int METADATA_SERVICE_OPERATION_COUNT = 18;
+	int METADATA_SERVICE_OPERATION_COUNT = 17;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard <em>Metadata Whiteboard</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard
+	 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getMetadataWhiteboard()
+	 * @generated
+	 */
+	int METADATA_WHITEBOARD = 4;
+
+	/**
+	 * The number of structural features of the '<em>Metadata Whiteboard</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD_FEATURE_COUNT = METADATA_SERVICE_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Get Index Reader</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_INDEX_READER = METADATA_SERVICE___GET_INDEX_READER;
+
+	/**
+	 * The operation id for the '<em>Get Package Metadata</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_PACKAGE_METADATA__STRING = METADATA_SERVICE___GET_PACKAGE_METADATA__STRING;
+
+	/**
+	 * The operation id for the '<em>Get Class Metadata</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_CLASS_METADATA__ECLASS = METADATA_SERVICE___GET_CLASS_METADATA__ECLASS;
+
+	/**
+	 * The operation id for the '<em>Get Class Metadata By URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_CLASS_METADATA_BY_URI__STRING = METADATA_SERVICE___GET_CLASS_METADATA_BY_URI__STRING;
+
+	/**
+	 * The operation id for the '<em>Get Class Metadata By Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_CLASS_METADATA_BY_NAME__STRING_STRING = METADATA_SERVICE___GET_CLASS_METADATA_BY_NAME__STRING_STRING;
+
+	/**
+	 * The operation id for the '<em>Get Feature Metadata</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_FEATURE_METADATA__ESTRUCTURALFEATURE = METADATA_SERVICE___GET_FEATURE_METADATA__ESTRUCTURALFEATURE;
+
+	/**
+	 * The operation id for the '<em>Get Feature Metadata By URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_FEATURE_METADATA_BY_URI__STRING = METADATA_SERVICE___GET_FEATURE_METADATA_BY_URI__STRING;
+
+	/**
+	 * The operation id for the '<em>Get Feature Metadata By Name</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_FEATURE_METADATA_BY_NAME__STRING_STRING_STRING = METADATA_SERVICE___GET_FEATURE_METADATA_BY_NAME__STRING_STRING_STRING;
+
+	/**
+	 * The operation id for the '<em>Get Feature Metadata From Class</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_FEATURE_METADATA_FROM_CLASS__STRING_CLASSMETADATA = METADATA_SERVICE___GET_FEATURE_METADATA_FROM_CLASS__STRING_CLASSMETADATA;
+
+	/**
+	 * The operation id for the '<em>Get Package Aspect</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_PACKAGE_ASPECT__EPACKAGE_STRING = METADATA_SERVICE___GET_PACKAGE_ASPECT__EPACKAGE_STRING;
+
+	/**
+	 * The operation id for the '<em>Get Class Aspect</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_CLASS_ASPECT__ECLASS_STRING = METADATA_SERVICE___GET_CLASS_ASPECT__ECLASS_STRING;
+
+	/**
+	 * The operation id for the '<em>Get Feature Aspect</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_FEATURE_ASPECT__ESTRUCTURALFEATURE_STRING = METADATA_SERVICE___GET_FEATURE_ASPECT__ESTRUCTURALFEATURE_STRING;
+
+	/**
+	 * The operation id for the '<em>Get Package Profile</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_PACKAGE_PROFILE__EPACKAGE_STRING = METADATA_SERVICE___GET_PACKAGE_PROFILE__EPACKAGE_STRING;
+
+	/**
+	 * The operation id for the '<em>Get Package Profile By Ns URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_PACKAGE_PROFILE_BY_NS_URI__STRING_STRING = METADATA_SERVICE___GET_PACKAGE_PROFILE_BY_NS_URI__STRING_STRING;
+
+	/**
+	 * The operation id for the '<em>Get Class Profile</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_CLASS_PROFILE__ECLASS_STRING = METADATA_SERVICE___GET_CLASS_PROFILE__ECLASS_STRING;
+
+	/**
+	 * The operation id for the '<em>Get Class Profile By URI</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_CLASS_PROFILE_BY_URI__STRING_STRING = METADATA_SERVICE___GET_CLASS_PROFILE_BY_URI__STRING_STRING;
+
+	/**
+	 * The operation id for the '<em>Get Registry</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_REGISTRY = METADATA_SERVICE___GET_REGISTRY;
+
+	/**
+	 * The operation id for the '<em>Register Package</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___REGISTER_PACKAGE__EPACKAGE = METADATA_SERVICE_OPERATION_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Unregister Package</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___UNREGISTER_PACKAGE__EPACKAGE = METADATA_SERVICE_OPERATION_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Register Aspect Provider</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___REGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = METADATA_SERVICE_OPERATION_COUNT + 2;
+
+	/**
+	 * The operation id for the '<em>Unregister Aspect Provider</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___UNREGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = METADATA_SERVICE_OPERATION_COUNT + 3;
+
+	/**
+	 * The operation id for the '<em>Get Aspect Providers</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_ASPECT_PROVIDERS = METADATA_SERVICE_OPERATION_COUNT + 4;
+
+	/**
+	 * The operation id for the '<em>Get Metadata Index</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___GET_METADATA_INDEX = METADATA_SERVICE_OPERATION_COUNT + 5;
+
+	/**
+	 * The operation id for the '<em>Set Metadata Index</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___SET_METADATA_INDEX__METADATAINDEX = METADATA_SERVICE_OPERATION_COUNT + 6;
+
+	/**
+	 * The operation id for the '<em>Unset Metadata Index</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD___UNSET_METADATA_INDEX__METADATAINDEX = METADATA_SERVICE_OPERATION_COUNT + 7;
+
+	/**
+	 * The number of operations of the '<em>Metadata Whiteboard</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METADATA_WHITEBOARD_OPERATION_COUNT = METADATA_SERVICE_OPERATION_COUNT + 8;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider <em>Aspect Provider</em>}' class.
@@ -626,7 +870,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getAspectProvider()
 	 * @generated
 	 */
-	int ASPECT_PROVIDER = 4;
+	int ASPECT_PROVIDER = 5;
 
 	/**
 	 * The number of structural features of the '<em>Aspect Provider</em>' class.
@@ -653,7 +897,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER___BUILD_PACKAGE_ASPECT__EPACKAGE = 1;
+	int ASPECT_PROVIDER___BUILD_PACKAGE_ASPECT__PACKAGEMETADATA = 1;
 
 	/**
 	 * The operation id for the '<em>Build Class Aspect</em>' operation.
@@ -662,7 +906,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER___BUILD_CLASS_ASPECT__ECLASS = 2;
+	int ASPECT_PROVIDER___BUILD_CLASS_ASPECT__CLASSMETADATA = 2;
 
 	/**
 	 * The operation id for the '<em>Build Feature Aspect</em>' operation.
@@ -671,7 +915,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER___BUILD_FEATURE_ASPECT__ESTRUCTURALFEATURE = 3;
+	int ASPECT_PROVIDER___BUILD_FEATURE_ASPECT__FEATUREMETADATA = 3;
 
 	/**
 	 * The operation id for the '<em>Build Attribute Aspect</em>' operation.
@@ -680,7 +924,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER___BUILD_ATTRIBUTE_ASPECT__EATTRIBUTE = 4;
+	int ASPECT_PROVIDER___BUILD_ATTRIBUTE_ASPECT__ATTRIBUTEMETADATA = 4;
 
 	/**
 	 * The operation id for the '<em>Build Reference Aspect</em>' operation.
@@ -689,7 +933,16 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER___BUILD_REFERENCE_ASPECT__EREFERENCE = 5;
+	int ASPECT_PROVIDER___BUILD_REFERENCE_ASPECT__REFERENCEMETADATA = 5;
+
+	/**
+	 * The operation id for the '<em>Build Profiles</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ASPECT_PROVIDER___BUILD_PROFILES__PACKAGEMETADATA = 6;
 
 	/**
 	 * The number of operations of the '<em>Aspect Provider</em>' class.
@@ -698,7 +951,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ASPECT_PROVIDER_OPERATION_COUNT = 6;
+	int ASPECT_PROVIDER_OPERATION_COUNT = 7;
 
 
 	/**
@@ -902,26 +1155,6 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getMetadataService__GetIndexReader();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#registerPackage(org.eclipse.emf.ecore.EPackage) <em>Register Package</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Register Package</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#registerPackage(org.eclipse.emf.ecore.EPackage)
-	 * @generated
-	 */
-	EOperation getMetadataService__RegisterPackage__EPackage();
-
-	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#unregisterPackage(org.eclipse.emf.ecore.EPackage) <em>Unregister Package</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Unregister Package</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#unregisterPackage(org.eclipse.emf.ecore.EPackage)
-	 * @generated
-	 */
-	EOperation getMetadataService__UnregisterPackage__EPackage();
-
-	/**
 	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getPackageMetadata(java.lang.String) <em>Get Package Metadata</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1032,6 +1265,46 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getMetadataService__GetFeatureAspect__EStructuralFeature_String();
 
 	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getPackageProfile(org.eclipse.emf.ecore.EPackage, java.lang.String) <em>Get Package Profile</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Package Profile</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#getPackageProfile(org.eclipse.emf.ecore.EPackage, java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataService__GetPackageProfile__EPackage_String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getPackageProfileByNsURI(java.lang.String, java.lang.String) <em>Get Package Profile By Ns URI</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Package Profile By Ns URI</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#getPackageProfileByNsURI(java.lang.String, java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataService__GetPackageProfileByNsURI__String_String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getClassProfile(org.eclipse.emf.ecore.EClass, java.lang.String) <em>Get Class Profile</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Class Profile</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#getClassProfile(org.eclipse.emf.ecore.EClass, java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataService__GetClassProfile__EClass_String();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getClassProfileByURI(java.lang.String, java.lang.String) <em>Get Class Profile By URI</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Class Profile By URI</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#getClassProfileByURI(java.lang.String, java.lang.String)
+	 * @generated
+	 */
+	EOperation getMetadataService__GetClassProfileByURI__String_String();
+
+	/**
 	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getRegistry() <em>Get Registry</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1042,34 +1315,94 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getMetadataService__GetRegistry();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#registerAspectProvider(org.eclipse.fennec.model.metadata.api.AspectProvider) <em>Register Aspect Provider</em>}' operation.
+	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard <em>Metadata Whiteboard</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Metadata Whiteboard</em>'.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard
+	 * @generated
+	 */
+	EClass getMetadataWhiteboard();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#registerPackage(org.eclipse.emf.ecore.EPackage) <em>Register Package</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Register Package</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#registerPackage(org.eclipse.emf.ecore.EPackage)
+	 * @generated
+	 */
+	EOperation getMetadataWhiteboard__RegisterPackage__EPackage();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#unregisterPackage(org.eclipse.emf.ecore.EPackage) <em>Unregister Package</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Unregister Package</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#unregisterPackage(org.eclipse.emf.ecore.EPackage)
+	 * @generated
+	 */
+	EOperation getMetadataWhiteboard__UnregisterPackage__EPackage();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#registerAspectProvider(org.eclipse.fennec.model.metadata.api.AspectProvider) <em>Register Aspect Provider</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Register Aspect Provider</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#registerAspectProvider(org.eclipse.fennec.model.metadata.api.AspectProvider)
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#registerAspectProvider(org.eclipse.fennec.model.metadata.api.AspectProvider)
 	 * @generated
 	 */
-	EOperation getMetadataService__RegisterAspectProvider__AspectProvider();
+	EOperation getMetadataWhiteboard__RegisterAspectProvider__AspectProvider();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#unregisterAspectProvider(org.eclipse.fennec.model.metadata.api.AspectProvider) <em>Unregister Aspect Provider</em>}' operation.
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#unregisterAspectProvider(org.eclipse.fennec.model.metadata.api.AspectProvider) <em>Unregister Aspect Provider</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Unregister Aspect Provider</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#unregisterAspectProvider(org.eclipse.fennec.model.metadata.api.AspectProvider)
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#unregisterAspectProvider(org.eclipse.fennec.model.metadata.api.AspectProvider)
 	 * @generated
 	 */
-	EOperation getMetadataService__UnregisterAspectProvider__AspectProvider();
+	EOperation getMetadataWhiteboard__UnregisterAspectProvider__AspectProvider();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataService#getAspectProviders() <em>Get Aspect Providers</em>}' operation.
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#getAspectProviders() <em>Get Aspect Providers</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Get Aspect Providers</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.MetadataService#getAspectProviders()
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#getAspectProviders()
 	 * @generated
 	 */
-	EOperation getMetadataService__GetAspectProviders();
+	EOperation getMetadataWhiteboard__GetAspectProviders();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#getMetadataIndex() <em>Get Metadata Index</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Metadata Index</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#getMetadataIndex()
+	 * @generated
+	 */
+	EOperation getMetadataWhiteboard__GetMetadataIndex();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#setMetadataIndex(org.eclipse.fennec.model.metadata.api.MetadataIndex) <em>Set Metadata Index</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Set Metadata Index</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#setMetadataIndex(org.eclipse.fennec.model.metadata.api.MetadataIndex)
+	 * @generated
+	 */
+	EOperation getMetadataWhiteboard__SetMetadataIndex__MetadataIndex();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#unsetMetadataIndex(org.eclipse.fennec.model.metadata.api.MetadataIndex) <em>Unset Metadata Index</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Unset Metadata Index</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard#unsetMetadataIndex(org.eclipse.fennec.model.metadata.api.MetadataIndex)
+	 * @generated
+	 */
+	EOperation getMetadataWhiteboard__UnsetMetadataIndex__MetadataIndex();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.model.metadata.api.AspectProvider <em>Aspect Provider</em>}'.
@@ -1092,54 +1425,64 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 	EOperation getAspectProvider__GetAspectTypeId();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildPackageAspect(org.eclipse.emf.ecore.EPackage) <em>Build Package Aspect</em>}' operation.
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildPackageAspect(org.eclipse.fennec.model.metadata.PackageMetadata) <em>Build Package Aspect</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Build Package Aspect</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildPackageAspect(org.eclipse.emf.ecore.EPackage)
+	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildPackageAspect(org.eclipse.fennec.model.metadata.PackageMetadata)
 	 * @generated
 	 */
-	EOperation getAspectProvider__BuildPackageAspect__EPackage();
+	EOperation getAspectProvider__BuildPackageAspect__PackageMetadata();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildClassAspect(org.eclipse.emf.ecore.EClass) <em>Build Class Aspect</em>}' operation.
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildClassAspect(org.eclipse.fennec.model.metadata.ClassMetadata) <em>Build Class Aspect</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Build Class Aspect</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildClassAspect(org.eclipse.emf.ecore.EClass)
+	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildClassAspect(org.eclipse.fennec.model.metadata.ClassMetadata)
 	 * @generated
 	 */
-	EOperation getAspectProvider__BuildClassAspect__EClass();
+	EOperation getAspectProvider__BuildClassAspect__ClassMetadata();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildFeatureAspect(org.eclipse.emf.ecore.EStructuralFeature) <em>Build Feature Aspect</em>}' operation.
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildFeatureAspect(org.eclipse.fennec.model.metadata.FeatureMetadata) <em>Build Feature Aspect</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Build Feature Aspect</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildFeatureAspect(org.eclipse.emf.ecore.EStructuralFeature)
+	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildFeatureAspect(org.eclipse.fennec.model.metadata.FeatureMetadata)
 	 * @generated
 	 */
-	EOperation getAspectProvider__BuildFeatureAspect__EStructuralFeature();
+	EOperation getAspectProvider__BuildFeatureAspect__FeatureMetadata();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildAttributeAspect(org.eclipse.emf.ecore.EAttribute) <em>Build Attribute Aspect</em>}' operation.
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildAttributeAspect(org.eclipse.fennec.model.metadata.AttributeMetadata) <em>Build Attribute Aspect</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Build Attribute Aspect</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildAttributeAspect(org.eclipse.emf.ecore.EAttribute)
+	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildAttributeAspect(org.eclipse.fennec.model.metadata.AttributeMetadata)
 	 * @generated
 	 */
-	EOperation getAspectProvider__BuildAttributeAspect__EAttribute();
+	EOperation getAspectProvider__BuildAttributeAspect__AttributeMetadata();
 
 	/**
-	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildReferenceAspect(org.eclipse.emf.ecore.EReference) <em>Build Reference Aspect</em>}' operation.
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildReferenceAspect(org.eclipse.fennec.model.metadata.ReferenceMetadata) <em>Build Reference Aspect</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Build Reference Aspect</em>' operation.
-	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildReferenceAspect(org.eclipse.emf.ecore.EReference)
+	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildReferenceAspect(org.eclipse.fennec.model.metadata.ReferenceMetadata)
 	 * @generated
 	 */
-	EOperation getAspectProvider__BuildReferenceAspect__EReference();
+	EOperation getAspectProvider__BuildReferenceAspect__ReferenceMetadata();
+
+	/**
+	 * Returns the meta object for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider#buildProfiles(org.eclipse.fennec.model.metadata.PackageMetadata) <em>Build Profiles</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Build Profiles</em>' operation.
+	 * @see org.eclipse.fennec.model.metadata.api.AspectProvider#buildProfiles(org.eclipse.fennec.model.metadata.PackageMetadata)
+	 * @generated
+	 */
+	EOperation getAspectProvider__BuildProfiles__PackageMetadata();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1333,22 +1676,6 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		EOperation METADATA_SERVICE___GET_INDEX_READER = eINSTANCE.getMetadataService__GetIndexReader();
 
 		/**
-		 * The meta object literal for the '<em><b>Register Package</b></em>' operation.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EOperation METADATA_SERVICE___REGISTER_PACKAGE__EPACKAGE = eINSTANCE.getMetadataService__RegisterPackage__EPackage();
-
-		/**
-		 * The meta object literal for the '<em><b>Unregister Package</b></em>' operation.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EOperation METADATA_SERVICE___UNREGISTER_PACKAGE__EPACKAGE = eINSTANCE.getMetadataService__UnregisterPackage__EPackage();
-
-		/**
 		 * The meta object literal for the '<em><b>Get Package Metadata</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1437,6 +1764,38 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		EOperation METADATA_SERVICE___GET_FEATURE_ASPECT__ESTRUCTURALFEATURE_STRING = eINSTANCE.getMetadataService__GetFeatureAspect__EStructuralFeature_String();
 
 		/**
+		 * The meta object literal for the '<em><b>Get Package Profile</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_SERVICE___GET_PACKAGE_PROFILE__EPACKAGE_STRING = eINSTANCE.getMetadataService__GetPackageProfile__EPackage_String();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Package Profile By Ns URI</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_SERVICE___GET_PACKAGE_PROFILE_BY_NS_URI__STRING_STRING = eINSTANCE.getMetadataService__GetPackageProfileByNsURI__String_String();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Class Profile</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_SERVICE___GET_CLASS_PROFILE__ECLASS_STRING = eINSTANCE.getMetadataService__GetClassProfile__EClass_String();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Class Profile By URI</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_SERVICE___GET_CLASS_PROFILE_BY_URI__STRING_STRING = eINSTANCE.getMetadataService__GetClassProfileByURI__String_String();
+
+		/**
 		 * The meta object literal for the '<em><b>Get Registry</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1445,12 +1804,38 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		EOperation METADATA_SERVICE___GET_REGISTRY = eINSTANCE.getMetadataService__GetRegistry();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.api.MetadataWhiteboard <em>Metadata Whiteboard</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.model.metadata.api.MetadataWhiteboard
+		 * @see org.eclipse.fennec.model.metadata.api.impl.ApiPackageImpl#getMetadataWhiteboard()
+		 * @generated
+		 */
+		EClass METADATA_WHITEBOARD = eINSTANCE.getMetadataWhiteboard();
+
+		/**
+		 * The meta object literal for the '<em><b>Register Package</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_WHITEBOARD___REGISTER_PACKAGE__EPACKAGE = eINSTANCE.getMetadataWhiteboard__RegisterPackage__EPackage();
+
+		/**
+		 * The meta object literal for the '<em><b>Unregister Package</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_WHITEBOARD___UNREGISTER_PACKAGE__EPACKAGE = eINSTANCE.getMetadataWhiteboard__UnregisterPackage__EPackage();
+
+		/**
 		 * The meta object literal for the '<em><b>Register Aspect Provider</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation METADATA_SERVICE___REGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = eINSTANCE.getMetadataService__RegisterAspectProvider__AspectProvider();
+		EOperation METADATA_WHITEBOARD___REGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = eINSTANCE.getMetadataWhiteboard__RegisterAspectProvider__AspectProvider();
 
 		/**
 		 * The meta object literal for the '<em><b>Unregister Aspect Provider</b></em>' operation.
@@ -1458,7 +1843,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation METADATA_SERVICE___UNREGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = eINSTANCE.getMetadataService__UnregisterAspectProvider__AspectProvider();
+		EOperation METADATA_WHITEBOARD___UNREGISTER_ASPECT_PROVIDER__ASPECTPROVIDER = eINSTANCE.getMetadataWhiteboard__UnregisterAspectProvider__AspectProvider();
 
 		/**
 		 * The meta object literal for the '<em><b>Get Aspect Providers</b></em>' operation.
@@ -1466,7 +1851,31 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation METADATA_SERVICE___GET_ASPECT_PROVIDERS = eINSTANCE.getMetadataService__GetAspectProviders();
+		EOperation METADATA_WHITEBOARD___GET_ASPECT_PROVIDERS = eINSTANCE.getMetadataWhiteboard__GetAspectProviders();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Metadata Index</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_WHITEBOARD___GET_METADATA_INDEX = eINSTANCE.getMetadataWhiteboard__GetMetadataIndex();
+
+		/**
+		 * The meta object literal for the '<em><b>Set Metadata Index</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_WHITEBOARD___SET_METADATA_INDEX__METADATAINDEX = eINSTANCE.getMetadataWhiteboard__SetMetadataIndex__MetadataIndex();
+
+		/**
+		 * The meta object literal for the '<em><b>Unset Metadata Index</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation METADATA_WHITEBOARD___UNSET_METADATA_INDEX__METADATAINDEX = eINSTANCE.getMetadataWhiteboard__UnsetMetadataIndex__MetadataIndex();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.model.metadata.api.AspectProvider <em>Aspect Provider</em>}' class.
@@ -1492,7 +1901,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation ASPECT_PROVIDER___BUILD_PACKAGE_ASPECT__EPACKAGE = eINSTANCE.getAspectProvider__BuildPackageAspect__EPackage();
+		EOperation ASPECT_PROVIDER___BUILD_PACKAGE_ASPECT__PACKAGEMETADATA = eINSTANCE.getAspectProvider__BuildPackageAspect__PackageMetadata();
 
 		/**
 		 * The meta object literal for the '<em><b>Build Class Aspect</b></em>' operation.
@@ -1500,7 +1909,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation ASPECT_PROVIDER___BUILD_CLASS_ASPECT__ECLASS = eINSTANCE.getAspectProvider__BuildClassAspect__EClass();
+		EOperation ASPECT_PROVIDER___BUILD_CLASS_ASPECT__CLASSMETADATA = eINSTANCE.getAspectProvider__BuildClassAspect__ClassMetadata();
 
 		/**
 		 * The meta object literal for the '<em><b>Build Feature Aspect</b></em>' operation.
@@ -1508,7 +1917,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation ASPECT_PROVIDER___BUILD_FEATURE_ASPECT__ESTRUCTURALFEATURE = eINSTANCE.getAspectProvider__BuildFeatureAspect__EStructuralFeature();
+		EOperation ASPECT_PROVIDER___BUILD_FEATURE_ASPECT__FEATUREMETADATA = eINSTANCE.getAspectProvider__BuildFeatureAspect__FeatureMetadata();
 
 		/**
 		 * The meta object literal for the '<em><b>Build Attribute Aspect</b></em>' operation.
@@ -1516,7 +1925,7 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation ASPECT_PROVIDER___BUILD_ATTRIBUTE_ASPECT__EATTRIBUTE = eINSTANCE.getAspectProvider__BuildAttributeAspect__EAttribute();
+		EOperation ASPECT_PROVIDER___BUILD_ATTRIBUTE_ASPECT__ATTRIBUTEMETADATA = eINSTANCE.getAspectProvider__BuildAttributeAspect__AttributeMetadata();
 
 		/**
 		 * The meta object literal for the '<em><b>Build Reference Aspect</b></em>' operation.
@@ -1524,7 +1933,15 @@ public interface ApiPackage extends org.eclipse.emf.ecore.EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation ASPECT_PROVIDER___BUILD_REFERENCE_ASPECT__EREFERENCE = eINSTANCE.getAspectProvider__BuildReferenceAspect__EReference();
+		EOperation ASPECT_PROVIDER___BUILD_REFERENCE_ASPECT__REFERENCEMETADATA = eINSTANCE.getAspectProvider__BuildReferenceAspect__ReferenceMetadata();
+
+		/**
+		 * The meta object literal for the '<em><b>Build Profiles</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation ASPECT_PROVIDER___BUILD_PROFILES__PACKAGEMETADATA = eINSTANCE.getAspectProvider__BuildProfiles__PackageMetadata();
 
 	}
 

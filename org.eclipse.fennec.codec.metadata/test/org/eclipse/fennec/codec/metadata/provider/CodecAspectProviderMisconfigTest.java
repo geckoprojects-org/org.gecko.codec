@@ -13,7 +13,10 @@
  */
 package org.eclipse.fennec.codec.metadata.provider;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -24,7 +27,13 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect;
+import org.eclipse.fennec.model.metadata.AttributeMetadata;
+import org.eclipse.fennec.model.metadata.ClassMetadata;
+import org.eclipse.fennec.model.metadata.DiagnosticSeverity;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
+import org.eclipse.fennec.model.metadata.MetadataDiagnostic;
+import org.eclipse.fennec.model.metadata.MetadataFactory;
+import org.eclipse.fennec.model.metadata.ReferenceMetadata;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -75,6 +84,33 @@ class CodecAspectProviderMisconfigTest {
     }
 
     // ========================================================================
+    // Wrapper Helpers for Metadata Types
+    // ========================================================================
+
+    private ClassMetadata wrapClass(EClass eClass) {
+        ClassMetadata md = MetadataFactory.eINSTANCE.createClassMetadata();
+        md.setEClass(eClass);
+        md.setName(eClass.getName());
+        return md;
+    }
+
+    private AttributeMetadata wrapAttribute(EAttribute attr) {
+        AttributeMetadata md = MetadataFactory.eINSTANCE.createAttributeMetadata();
+        md.setEFeature(attr);
+        md.setEAttribute(attr);
+        md.setName(attr.getName());
+        return md;
+    }
+
+    private ReferenceMetadata wrapReference(EReference ref) {
+        ReferenceMetadata md = MetadataFactory.eINSTANCE.createReferenceMetadata();
+        md.setEFeature(ref);
+        md.setEReference(ref);
+        md.setName(ref.getName());
+        return md;
+    }
+
+    // ========================================================================
     // Keys on Wrong Level: EClass
     // ========================================================================
 
@@ -83,24 +119,26 @@ class CodecAspectProviderMisconfigTest {
     class ClassMisconfigTests {
 
         /**
-         * @MISCONFIG @SPEC(10-reference.md)
-         * Tests that refFormat/refKey on EClass are ignored.
+         * @MISCONFIG @SPEC(10-reference.md#R-V1)
+         * Tests that refFormat/refKey on EClass are ignored with WARNING diagnostics.
          * These keys are reference-only per spec.
          */
         @Test
-        @DisplayName("refFormat/refKey on EClass - ignored")
+        @DisplayName("refFormat/refKey on EClass - ignored with WARNING diagnostics (R-V1)")
         void misconfig_refConfigKeysOnClass_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "ClassWithRefConfigMisplaced");
 
-            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
 
             // Valid key was parsed
             assertNotNull(aspect.getTypeConfig());
             assertEquals(TypeStrategy.URI, aspect.getTypeConfig().getStrategy());
 
-            // ClassCodecAspect doesn't have getReferenceConfig() - that's correct
-            // The refFormat/refKey keys are simply ignored for classes
-            // Note: Diagnostics for class-level misconfig not yet implemented
+            // R-V1: ref* keys on EClass → WARNING
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> d.getKey().startsWith("ref")
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for ref* keys on EClass (R-V1)");
         }
 
         /**
@@ -113,7 +151,7 @@ class CodecAspectProviderMisconfigTest {
         void misconfig_inlineMappingKeysOnClass_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "ClassWithInlineMappingMisplaced");
 
-            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(entityClass);
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
 
             // Valid key was parsed
             assertNotNull(aspect.getTypeConfig());
@@ -133,44 +171,58 @@ class CodecAspectProviderMisconfigTest {
     class ReferenceMisconfigTests {
 
         /**
-         * @MISCONFIG @SPEC(09-id.md)
-         * Tests that idStrategy/idFeatures on EReference are ignored.
+         * @MISCONFIG @SPEC(09-id.md#ID-V1, ID-V2)
+         * Tests that idStrategy/idFeatures on EReference are ignored with ERROR diagnostics.
          * These keys are class-only per spec.
          */
         @Test
-        @DisplayName("idStrategy/idFeatures on EReference - ignored")
+        @DisplayName("idStrategy/idFeatures on EReference - ignored with ERROR diagnostics")
         void misconfig_idConfigKeysOnReference_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "RefWithIdConfigMisplaced");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
-            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(addressRef);
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
 
             // Valid key was parsed
             assertNotNull(aspect.getTypeConfig());
             assertEquals(TypeStrategy.NAME, aspect.getTypeConfig().getStrategy());
 
-            // ReferenceCodecAspect doesn't have getIdConfig() - that's correct
-            // The idStrategy/idFeatures keys are simply ignored for references
+            // ID-V1/ID-V2: idStrategy/idFeatures on EReference → ERROR
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "idStrategy".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR diagnostic for idStrategy on EReference (ID-V1)");
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "idFeatures".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR diagnostic for idFeatures on EReference (ID-V2)");
         }
 
         /**
-         * @MISCONFIG @SPEC(07-supertype.md)
-         * Tests that superType* keys on EReference are ignored.
-         * These keys are class-only per spec.
+         * @MISCONFIG @SPEC(16-annotation-reference.md, ST-V1)
+         * Tests that superType* keys on EReference are ignored with ERROR diagnostics.
+         * SuperType is class-intrinsic, not reference-specific.
          */
         @Test
-        @DisplayName("superType* on EReference - ignored")
+        @DisplayName("superType* on EReference - ignored with ERROR diagnostics (ST-V1)")
         void misconfig_superTypeConfigKeysOnReference_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "RefWithSuperTypeMisplaced");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
-            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(addressRef);
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
 
             // Valid key was parsed
             assertEquals("addr", aspect.getEffectiveKey());
 
-            // ReferenceCodecAspect doesn't have getSuperTypeConfig() - that's correct
-            // The superType* keys are simply ignored for references
+            // ST-V1: superType* keys on EReference → ERROR diagnostics
+            assertTrue(aspect.getDiagnostics().size() >= 1,
+                "Should have at least 1 ERROR diagnostic for superType* keys on EReference");
+            for (MetadataDiagnostic d : aspect.getDiagnostics()) {
+                assertEquals(DiagnosticSeverity.ERROR, d.getSeverity(),
+                    "All superType* key diagnostics on EReference should be ERROR severity");
+                assertTrue(d.getKey().startsWith("superType"),
+                    "Diagnostic key should start with 'superType', got: " + d.getKey());
+            }
         }
 
         /**
@@ -184,7 +236,7 @@ class CodecAspectProviderMisconfigTest {
             EClass entityClass = helper.getEClass(testPackage, "RefWithEnumSerializationMisplaced");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
-            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(addressRef);
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
 
             // Valid key was parsed
             assertEquals("addr", aspect.getEffectiveKey());
@@ -194,24 +246,27 @@ class CodecAspectProviderMisconfigTest {
         }
 
         /**
-         * @MISCONFIG @SPEC(08-discriminator-mapping.md)
-         * Tests that typeDiscriminator value on EReference is ignored.
+         * @MISCONFIG @SPEC(08-discriminator-mapping.md, 06-type.md#T-V7)
+         * Tests that typeDiscriminator value on EReference is ignored with ERROR diagnostic.
          * This key is class-only per spec.
          */
         @Test
-        @DisplayName("typeDiscriminator on EReference - ignored")
+        @DisplayName("typeDiscriminator on EReference - ignored with ERROR diagnostic (T-V7)")
         void misconfig_typeDiscriminatorOnReference_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "RefWithDiscriminatorMisplaced");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
-            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(addressRef);
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
 
             // Valid key was parsed
             assertNotNull(aspect.getTypeConfig());
             assertEquals(TypeStrategy.NAME, aspect.getTypeConfig().getStrategy());
 
-            // ReferenceCodecAspect doesn't have getDiscriminatorValue() - that's correct
-            // The typeDiscriminator key is simply ignored for references
+            // T-V7: typeDiscriminator on EReference → ERROR diagnostic
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "typeDiscriminator".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR diagnostic for typeDiscriminator on EReference");
         }
 
         /**
@@ -225,7 +280,7 @@ class CodecAspectProviderMisconfigTest {
             EClass personClass = helper.getEClass(testPackage, "PersonWithContacts");
             EReference contactsRef = (EReference) helper.getFeature(personClass, "contacts");
 
-            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(contactsRef);
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(contactsRef));
 
             // 1. Value is NOT applied - typeConfig should be null
             assertNull(aspect.getTypeConfig(),
@@ -251,7 +306,7 @@ class CodecAspectProviderMisconfigTest {
             EClass entityClass = helper.getEClass(testPackage, "RefWithTypeMapIdMisplaced");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
-            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(addressRef);
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
 
             // Valid key was parsed
             assertNotNull(aspect.getTypeConfig());
@@ -262,23 +317,27 @@ class CodecAspectProviderMisconfigTest {
         }
 
         /**
-         * @MISCONFIG @SPEC(09-id.md)
-         * Tests that additional id* keys on EReference are ignored.
-         * idSeparator, idKeyMode, idOnTop, idValueKey, idFormat are class-only.
+         * @MISCONFIG @SPEC(09-id.md#ID-V3 through ID-V8)
+         * Tests that additional class-only id* keys on EReference are ignored with ERROR diagnostics.
+         * idSeparator, idKeyMode, idOnTop, idValueKey are class-only.
+         * Note: idFormat and idKey ARE valid on EReference per spec.
          */
         @Test
-        @DisplayName("more id* keys on EReference - ignored")
+        @DisplayName("more id* class-only keys on EReference - ignored with ERROR diagnostics")
         void misconfig_moreIdConfigKeysOnReference_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "RefWithMoreIdConfigMisplaced");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
-            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(addressRef);
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
 
             // Valid key was parsed
             assertEquals("addr", aspect.getEffectiveKey());
 
-            // ReferenceCodecAspect doesn't have getIdConfig() - that's correct
-            // All id* keys are simply ignored for references
+            // Class-only id* keys → ERROR diagnostics
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> d.getKey().startsWith("id")
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have at least 1 ERROR diagnostic for class-only id* keys on EReference");
         }
 
         /**
@@ -291,7 +350,7 @@ class CodecAspectProviderMisconfigTest {
             EClass personClass = helper.getEClass(testPackage, "PersonWithFallbackReference");
             EReference contactsRef = (EReference) helper.getFeature(personClass, "contacts");
 
-            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(contactsRef);
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(contactsRef));
 
             // 1. typeDiscriminatorPath is class-only - should be IGNORED
             assertNull(aspect.getTypeConfig(),
@@ -331,7 +390,7 @@ class CodecAspectProviderMisconfigTest {
             EClass entityClass = helper.getEClass(testPackage, "AttrWithTypeConfigMisplaced");
             EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
 
-            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(nameAttr);
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
 
             // Valid key was parsed
             assertEquals("attr_name", aspect.getEffectiveKey());
@@ -341,64 +400,72 @@ class CodecAspectProviderMisconfigTest {
         }
 
         /**
-         * @MISCONFIG @SPEC(07-supertype.md)
-         * Tests that superType* keys on EAttribute are ignored.
-         * These keys are class-only per spec.
+         * @MISCONFIG @SPEC(16-annotation-reference.md, ST-V2)
+         * Tests that superType* keys on EAttribute are ignored with ERROR diagnostics.
+         * SuperType is not applicable to attributes.
          */
         @Test
-        @DisplayName("superType* keys on EAttribute - ignored")
+        @DisplayName("superType* keys on EAttribute - ignored with ERROR diagnostics (ST-V2)")
         void misconfig_superTypeConfigKeysOnAttribute_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "AttrWithSuperTypeMisplaced");
             EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
 
-            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(nameAttr);
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
 
             // Valid key was parsed
             assertEquals("attr_name", aspect.getEffectiveKey());
 
-            // FeatureCodecAspect doesn't have getSuperTypeConfig() - that's correct
-            // The superType* keys are simply ignored for attributes
+            // ST-V2: superType* keys on EAttribute → ERROR diagnostics
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> d.getKey().startsWith("superType")
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have at least 1 ERROR diagnostic for superType* keys on EAttribute");
         }
 
         /**
-         * @MISCONFIG @SPEC(09-id.md)
-         * Tests that id* keys on EAttribute are ignored.
-         * These keys are class-only per spec.
+         * @MISCONFIG @SPEC(09-id.md#ID-V13)
+         * Tests that id* keys on EAttribute are ignored with ERROR diagnostics.
+         * ID configuration is not applicable to attributes.
          */
         @Test
-        @DisplayName("id* keys on EAttribute - ignored")
+        @DisplayName("id* keys on EAttribute - ignored with ERROR diagnostics (ID-V13)")
         void misconfig_idConfigKeysOnAttribute_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "AttrWithIdConfigMisplaced");
             EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
 
-            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(nameAttr);
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
 
             // Valid key was parsed
             assertEquals("attr_name", aspect.getEffectiveKey());
 
-            // FeatureCodecAspect doesn't have getIdConfig() - that's correct
-            // The id* keys are simply ignored for attributes
+            // ID-V13: id* keys on EAttribute → ERROR
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> d.getKey().startsWith("id")
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have at least 1 ERROR diagnostic for id* keys on EAttribute");
         }
 
         /**
-         * @MISCONFIG @SPEC(10-reference.md)
-         * Tests that ref* keys on EAttribute are ignored.
+         * @MISCONFIG @SPEC(10-reference.md#R-V2)
+         * Tests that ref* keys on EAttribute are ignored with ERROR diagnostics.
          * These keys are reference-only per spec.
          */
         @Test
-        @DisplayName("ref* keys on EAttribute - ignored")
+        @DisplayName("ref* keys on EAttribute - ignored with ERROR diagnostics (R-V2)")
         void misconfig_refConfigKeysOnAttribute_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "AttrWithRefConfigMisplaced");
             EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
 
-            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(nameAttr);
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
 
             // Valid key was parsed
             assertEquals("attr_name", aspect.getEffectiveKey());
 
-            // FeatureCodecAspect doesn't have getReferenceConfig() - that's correct
-            // The ref* keys are simply ignored for attributes
-            assertFalse(aspect instanceof ReferenceCodecAspect);
+            // R-V2: ref* keys on EAttribute → ERROR
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> d.getKey().startsWith("ref")
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR diagnostic for ref* keys on EAttribute (R-V2)");
         }
 
         /**
@@ -412,7 +479,7 @@ class CodecAspectProviderMisconfigTest {
             EClass entityClass = helper.getEClass(testPackage, "AttrWithInlineMappingMisplaced");
             EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
 
-            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(nameAttr);
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
 
             // Valid key was parsed
             assertEquals("attr_name", aspect.getEffectiveKey());
@@ -432,7 +499,7 @@ class CodecAspectProviderMisconfigTest {
             EClass entityClass = helper.getEClass(testPackage, "AttrWithFallbackMisplaced");
             EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
 
-            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(nameAttr);
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
 
             // Valid key was parsed
             assertEquals("attr_name", aspect.getEffectiveKey());
@@ -442,47 +509,308 @@ class CodecAspectProviderMisconfigTest {
         }
 
         /**
-         * @MISCONFIG @SPEC(10-reference.md)
-         * Tests that expand on EAttribute is ignored.
+         * @MISCONFIG @SPEC(10-reference.md#R-V4)
+         * Tests that expand on EAttribute is ignored with ERROR diagnostic.
          * This key is reference-only per spec.
          */
         @Test
-        @DisplayName("expand on EAttribute - ignored")
+        @DisplayName("expand on EAttribute - ignored with ERROR diagnostic (R-V4)")
         void misconfig_expandOnAttribute_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "AttrWithExpandMisplaced");
             EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
 
-            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(nameAttr);
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
 
             // Valid key was parsed
             assertEquals("attr_name", aspect.getEffectiveKey());
 
-            // FeatureCodecAspect doesn't have isExpand() that makes sense for attributes
-            // The expand key is simply ignored for attributes
-            assertFalse(aspect instanceof ReferenceCodecAspect);
+            // R-V4: expand on EAttribute → ERROR
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "expand".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR diagnostic for expand on EAttribute (R-V4)");
         }
 
         /**
-         * @MISCONFIG @SPEC(14-custom-values.md)
-         * Tests that typeValueReaderName/WriterName on EReference are ignored.
-         * These keys are typically for class-level ID handling.
+         * @MISCONFIG @SPEC(06-type.md#T-V1, T-V2)
+         * Tests that typeValueReaderName/WriterName on EReference are ignored with ERROR diagnostics.
+         * These keys are class-intrinsic per spec.
          */
         @Test
-        @DisplayName("typeValueReaderName/WriterName on EReference - ignored")
-        void misconfig_typeValueHandlersOnReference_ignored() {
+        @DisplayName("typeValueReaderName/WriterName on EReference - ignored with ERROR diagnostic (T-V1, T-V2)")
+        void misconfig_typeValueHandlersOnReference_ignoredWithDiagnostic() {
             EClass entityClass = helper.getEClass(testPackage, "RefWithTypeValueHandlersMisplaced");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
-            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(addressRef);
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
 
             // Valid key was parsed
             assertEquals("addr", aspect.getEffectiveKey());
 
-            // ReferenceCodecAspect inherits value reader/writer from FeatureCodecAspect
-            // but these are for attribute values, not for type value handling on references
-            // The keys should be ignored and reader/writer stay null
-            assertNull(aspect.getValueReaderName());
-            assertNull(aspect.getValueWriterName());
+            // T-V1: typeValueReaderName on EReference → ERROR
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "typeValueReaderName".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR diagnostic for typeValueReaderName on EReference (T-V1)");
+
+            // T-V2: typeValueWriterName on EReference → ERROR
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "typeValueWriterName".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR diagnostic for typeValueWriterName on EReference (T-V2)");
+
+            // Should have exactly 2 diagnostics
+            assertEquals(2, aspect.getDiagnostics().size(),
+                "Should have exactly 2 ERROR diagnostics for typeValueReaderName and typeValueWriterName");
+        }
+    }
+
+    // ========================================================================
+    // Layer 1 Annotation Validation Tests (06-type.md section 7)
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Layer 1 Annotation Validation - Type Config Rules")
+    class Layer1ValidationTests {
+
+        // ---- T-V3/T-V4: Runtime-only keys in EAnnotation ----
+
+        /**
+         * @MISCONFIG @SPEC(06-type.md#T-V3, T-V4)
+         * Tests that typeScope and typeFormatScope on EClass generate WARNING diagnostics.
+         * These are runtime-only properties, not valid in EAnnotations.
+         */
+        @Test
+        @DisplayName("T-V3/T-V4: typeScope/typeFormatScope on EClass - WARNING diagnostics")
+        void validation_runtimeOnlyKeysOnClass_warningDiagnostics() {
+            EClass entityClass = helper.getEClass(testPackage, "ClassWithRuntimeOnlyKeys");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            // Valid key was parsed
+            assertNotNull(aspect.getTypeConfig());
+            assertEquals(TypeStrategy.URI, aspect.getTypeConfig().getStrategy());
+
+            // T-V3: typeScope → WARNING
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "typeScope".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for typeScope in EAnnotation (T-V3)");
+
+            // T-V4: typeFormatScope → WARNING
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "typeFormatScope".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for typeFormatScope in EAnnotation (T-V4)");
+
+            assertEquals(2, aspect.getDiagnostics().size(),
+                "Should have exactly 2 WARNING diagnostics for runtime-only keys");
+        }
+
+        /**
+         * @MISCONFIG @SPEC(06-type.md#T-V3, T-V4)
+         * Tests that typeScope and typeFormatScope on EReference generate WARNING diagnostics.
+         */
+        @Test
+        @DisplayName("T-V3/T-V4: typeScope/typeFormatScope on EReference - WARNING diagnostics")
+        void validation_runtimeOnlyKeysOnReference_warningDiagnostics() {
+            EClass entityClass = helper.getEClass(testPackage, "RefWithRuntimeOnlyKeys");
+            EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
+
+            // Valid key was parsed
+            assertNotNull(aspect.getTypeConfig());
+            assertEquals(TypeStrategy.NAME, aspect.getTypeConfig().getStrategy());
+
+            // T-V3: typeScope → WARNING
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "typeScope".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for typeScope in EAnnotation (T-V3)");
+
+            // T-V4: typeFormatScope → WARNING
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "typeFormatScope".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for typeFormatScope in EAnnotation (T-V4)");
+
+            assertEquals(2, aspect.getDiagnostics().size(),
+                "Should have exactly 2 WARNING diagnostics for runtime-only keys");
+        }
+
+        // ---- T-V5: Any type* key on EAttribute ----
+
+        /**
+         * @MISCONFIG @SPEC(06-type.md#T-V5)
+         * Tests that type* keys on EAttribute generate ERROR diagnostics.
+         * Type configuration is not applicable to attributes.
+         */
+        @Test
+        @DisplayName("T-V5: type* keys on EAttribute - ERROR diagnostics")
+        void validation_typeKeysOnAttribute_errorDiagnostics() {
+            EClass entityClass = helper.getEClass(testPackage, "AttrWithTypeConfigMisplaced");
+            EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
+
+            // Valid key was parsed
+            assertEquals("attr_name", aspect.getEffectiveKey());
+
+            // T-V5: All type* keys → ERROR
+            // The test ecore has typeStrategy, typeFormat, typeKey on the attribute
+            assertTrue(aspect.getDiagnostics().size() >= 3,
+                "Should have at least 3 ERROR diagnostics for type* keys on EAttribute (typeStrategy, typeFormat, typeKey)");
+
+            for (MetadataDiagnostic d : aspect.getDiagnostics()) {
+                assertEquals(DiagnosticSeverity.ERROR, d.getSeverity(),
+                    "All type* key diagnostics on EAttribute should be ERROR severity");
+                assertTrue(d.getKey().startsWith("type"),
+                    "Diagnostic key should start with 'type', got: " + d.getKey());
+            }
+        }
+
+        // ---- T-V7: typeDiscriminator on EReference ----
+
+        /**
+         * @MISCONFIG @SPEC(06-type.md#T-V7)
+         * Tests that typeDiscriminator on EReference generates ERROR diagnostic.
+         * Dedicated test with only typeDiscriminator as the invalid key.
+         */
+        @Test
+        @DisplayName("T-V7: typeDiscriminator on EReference (only) - ERROR diagnostic")
+        void validation_typeDiscriminatorOnReference_errorDiagnostic() {
+            EClass entityClass = helper.getEClass(testPackage, "RefWithTypeDiscriminatorOnly");
+            EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
+
+            // Valid key was parsed
+            assertEquals("addr", aspect.getEffectiveKey());
+
+            // T-V7: typeDiscriminator on EReference → ERROR
+            assertEquals(1, aspect.getDiagnostics().size(),
+                "Should have exactly 1 diagnostic for typeDiscriminator on EReference");
+            MetadataDiagnostic diagnostic = aspect.getDiagnostics().get(0);
+            assertEquals("typeDiscriminator", diagnostic.getKey());
+            assertEquals(DiagnosticSeverity.ERROR, diagnostic.getSeverity());
+        }
+
+        // ---- T-V30/T-V31: Deprecated typeInclude ----
+
+        /**
+         * @MISCONFIG @SPEC(06-type.md#T-V30)
+         * Tests that typeInclude on EClass generates WARNING diagnostic.
+         * Deprecated: use typeStrategy=NONE instead.
+         */
+        @Test
+        @DisplayName("T-V30: typeInclude on EClass - WARNING diagnostic (deprecated)")
+        void validation_deprecatedTypeInclude_warningDiagnostic() {
+            EClass entityClass = helper.getEClass(testPackage, "ClassWithDeprecatedTypeInclude");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            // T-V30: typeInclude → WARNING (deprecated)
+            assertEquals(1, aspect.getDiagnostics().size(),
+                "Should have exactly 1 diagnostic for deprecated typeInclude");
+            MetadataDiagnostic diagnostic = aspect.getDiagnostics().get(0);
+            assertEquals("typeInclude", diagnostic.getKey());
+            assertEquals(DiagnosticSeverity.WARNING, diagnostic.getSeverity());
+            assertTrue(diagnostic.getMessage().contains("DEPRECATED"),
+                "Diagnostic message should mention DEPRECATED");
+        }
+
+        /**
+         * @MISCONFIG @SPEC(06-type.md#T-V31)
+         * Tests that both typeInclude and typeStrategy on EClass generates WARNING diagnostic.
+         * typeStrategy takes precedence, typeInclude is ignored.
+         */
+        @Test
+        @DisplayName("T-V31: both typeInclude and typeStrategy - WARNING, strategy takes precedence")
+        void validation_bothTypeIncludeAndStrategy_warningDiagnostic() {
+            EClass entityClass = helper.getEClass(testPackage, "ClassWithBothTypeIncludeAndStrategy");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            // Valid typeStrategy should be parsed
+            assertNotNull(aspect.getTypeConfig());
+            assertEquals(TypeStrategy.NAME, aspect.getTypeConfig().getStrategy());
+
+            // T-V31: Both present → WARNING (typeStrategy takes precedence)
+            assertEquals(1, aspect.getDiagnostics().size(),
+                "Should have exactly 1 diagnostic for deprecated typeInclude when typeStrategy is also set");
+            MetadataDiagnostic diagnostic = aspect.getDiagnostics().get(0);
+            assertEquals("typeInclude", diagnostic.getKey());
+            assertEquals(DiagnosticSeverity.WARNING, diagnostic.getSeverity());
+            assertTrue(diagnostic.getMessage().contains("DEPRECATED"),
+                "Diagnostic message should mention DEPRECATED");
+            assertTrue(diagnostic.getMessage().contains("typeStrategy"),
+                "Diagnostic message should mention that typeStrategy takes precedence");
+        }
+
+        // ---- ID-V11/ID-V12: Runtime-only ID keys in EAnnotation ----
+
+        /**
+         * @MISCONFIG @SPEC(09-id.md#ID-V11, ID-V12)
+         * Tests that idScope and idFormatScope on EClass generate WARNING diagnostics.
+         * These are runtime-only properties, not valid in EAnnotations.
+         */
+        @Test
+        @DisplayName("ID-V11/ID-V12: idScope/idFormatScope on EClass - WARNING diagnostics")
+        void validation_idRuntimeOnlyKeysOnClass_warningDiagnostics() {
+            EClass entityClass = helper.getEClass(testPackage, "ClassWithIdRuntimeOnlyKeys");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            // Valid key was parsed
+            assertNotNull(aspect.getIdConfig());
+            assertEquals(org.eclipse.fennec.model.metadata.IdStrategy.ID_FIELD, aspect.getIdConfig().getStrategy());
+
+            // ID-V11: idScope → WARNING
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "idScope".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for idScope in EAnnotation (ID-V11)");
+
+            // ID-V12: idFormatScope → WARNING
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "idFormatScope".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for idFormatScope in EAnnotation (ID-V12)");
+
+            assertEquals(2, aspect.getDiagnostics().size(),
+                "Should have exactly 2 WARNING diagnostics for runtime-only ID keys");
+        }
+
+        /**
+         * @MISCONFIG @SPEC(09-id.md#ID-V11, ID-V12)
+         * Tests that idScope and idFormatScope on EReference generate WARNING diagnostics.
+         */
+        @Test
+        @DisplayName("ID-V11/ID-V12: idScope/idFormatScope on EReference - WARNING diagnostics")
+        void validation_idRuntimeOnlyKeysOnReference_warningDiagnostics() {
+            EClass entityClass = helper.getEClass(testPackage, "RefWithIdRuntimeOnlyKeys");
+            EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
+
+            // Valid key was parsed
+            assertEquals("addr", aspect.getEffectiveKey());
+
+            // ID-V11: idScope → WARNING
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "idScope".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for idScope in EAnnotation (ID-V11)");
+
+            // ID-V12: idFormatScope → WARNING
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "idFormatScope".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for idFormatScope in EAnnotation (ID-V12)");
+
+            assertEquals(2, aspect.getDiagnostics().size(),
+                "Should have exactly 2 WARNING diagnostics for runtime-only ID keys");
         }
     }
 }

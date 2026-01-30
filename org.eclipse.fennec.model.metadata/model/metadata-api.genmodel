@@ -65,12 +65,6 @@
     <genClasses image="false" ecoreClass="metadata-api.ecore#//MetadataIndex"/>
     <genClasses image="false" ecoreClass="metadata-api.ecore#//MetadataService">
       <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/getIndexReader"/>
-      <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/registerPackage">
-        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/registerPackage/ePackage"/>
-      </genOperations>
-      <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/unregisterPackage">
-        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/unregisterPackage/ePackage"/>
-      </genOperations>
       <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/getPackageMetadata">
         <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getPackageMetadata/nsURI"/>
       </genOperations>
@@ -111,31 +105,65 @@
         <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getFeatureAspect/feature"/>
         <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getFeatureAspect/aspectTypeId"/>
       </genOperations>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/getPackageProfile">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getPackageProfile/ePackage"/>
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getPackageProfile/typeId"/>
+      </genOperations>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/getPackageProfileByNsURI">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getPackageProfileByNsURI/nsURI"/>
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getPackageProfileByNsURI/typeId"/>
+      </genOperations>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/getClassProfile">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getClassProfile/eClass"/>
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getClassProfile/typeId"/>
+      </genOperations>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/getClassProfileByURI">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getClassProfileByURI/eClassURI"/>
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/getClassProfileByURI/typeId"/>
+      </genOperations>
       <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/getRegistry"/>
-      <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/registerAspectProvider">
-        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/registerAspectProvider/provider"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="metadata-api.ecore#//MetadataWhiteboard">
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataWhiteboard/registerPackage">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataWhiteboard/registerPackage/ePackage"/>
       </genOperations>
-      <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/unregisterAspectProvider">
-        <genParameters ecoreParameter="metadata-api.ecore#//MetadataService/unregisterAspectProvider/provider"/>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataWhiteboard/unregisterPackage">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataWhiteboard/unregisterPackage/ePackage"/>
       </genOperations>
-      <genOperations ecoreOperation="metadata-api.ecore#//MetadataService/getAspectProviders"/>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataWhiteboard/registerAspectProvider">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataWhiteboard/registerAspectProvider/provider"/>
+      </genOperations>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataWhiteboard/unregisterAspectProvider">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataWhiteboard/unregisterAspectProvider/provider"/>
+      </genOperations>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataWhiteboard/getAspectProviders"/>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataWhiteboard/getMetadataIndex"/>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataWhiteboard/setMetadataIndex">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataWhiteboard/setMetadataIndex/index"/>
+      </genOperations>
+      <genOperations ecoreOperation="metadata-api.ecore#//MetadataWhiteboard/unsetMetadataIndex">
+        <genParameters ecoreParameter="metadata-api.ecore#//MetadataWhiteboard/unsetMetadataIndex/index"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="metadata-api.ecore#//AspectProvider">
       <genOperations ecoreOperation="metadata-api.ecore#//AspectProvider/getAspectTypeId"/>
       <genOperations ecoreOperation="metadata-api.ecore#//AspectProvider/buildPackageAspect">
-        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildPackageAspect/ePackage"/>
+        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildPackageAspect/packageMetadata"/>
       </genOperations>
       <genOperations ecoreOperation="metadata-api.ecore#//AspectProvider/buildClassAspect">
-        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildClassAspect/eClass"/>
+        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildClassAspect/classMetadata"/>
       </genOperations>
       <genOperations ecoreOperation="metadata-api.ecore#//AspectProvider/buildFeatureAspect">
-        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildFeatureAspect/feature"/>
+        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildFeatureAspect/featureMetadata"/>
       </genOperations>
       <genOperations ecoreOperation="metadata-api.ecore#//AspectProvider/buildAttributeAspect">
-        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildAttributeAspect/attribute"/>
+        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildAttributeAspect/attributeMetadata"/>
       </genOperations>
       <genOperations ecoreOperation="metadata-api.ecore#//AspectProvider/buildReferenceAspect">
-        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildReferenceAspect/reference"/>
+        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildReferenceAspect/referenceMetadata"/>
+      </genOperations>
+      <genOperations ecoreOperation="metadata-api.ecore#//AspectProvider/buildProfiles">
+        <genParameters ecoreParameter="metadata-api.ecore#//AspectProvider/buildProfiles/filteredMetadataCopy"/>
       </genOperations>
     </genClasses>
   </genPackages>

@@ -26,7 +26,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Write interface for index maintenance. Used internally by MetadataService to keep the index in sync with registered packages.
+ * Write interface for index maintenance. Used internally by MetadataService to keep the index in sync when packages are registered or unregistered. Not intended for direct consumer use.
  * <!-- end-model-doc -->
  *
  *
@@ -40,7 +40,7 @@ public interface MetadataIndexWriter {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Index a PackageMetadata and all its contained ClassMetadata and FeatureMetadata.
+	 * Index a PackageMetadata and all its contained ClassMetadata and FeatureMetadata. Called by MetadataService after registerPackage completes.
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated
@@ -73,7 +73,7 @@ public interface MetadataIndexWriter {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Remove a PackageMetadata and all its contained metadata from the index.
+	 * Remove a PackageMetadata and all its contained metadata from the index. Called by MetadataService during unregisterPackage.
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated
@@ -106,7 +106,7 @@ public interface MetadataIndexWriter {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Clear all index entries.
+	 * Clear all index entries. Called during MetadataService shutdown or when replacing the index implementation.
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated

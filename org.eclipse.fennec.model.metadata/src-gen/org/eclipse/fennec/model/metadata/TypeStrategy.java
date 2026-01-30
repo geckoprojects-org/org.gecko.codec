@@ -28,7 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * and utility methods for working with them.
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
- * Strategy for serializing type information.
+ * Strategy for serializing type information. Determines what kind of type identifier is written to the output for each EObject.
  * <!-- end-model-doc -->
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getTypeStrategy()
  * @model
@@ -41,7 +41,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the simple EClass name (e.g., 'Person').
+	 * Use the simple EClass name (e.g., 'Person'). Requires unique class names within the deserialization context.
 	 * <!-- end-model-doc -->
 	 * @see #NAME_VALUE
 	 * @generated
@@ -54,7 +54,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the fully qualified instance class name.
+	 * Use the fully qualified Java instance class name (e.g., 'org.example.model.Person').
 	 * <!-- end-model-doc -->
 	 * @see #CLASS_VALUE
 	 * @generated
@@ -67,7 +67,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the EClass URI (e.g., 'http://example.org/model#//Person').
+	 * Use the full EMF EClass URI (e.g., 'http://example.org/model#//Person'). Most precise, always unique.
 	 * <!-- end-model-doc -->
 	 * @see #URI_VALUE
 	 * @generated
@@ -80,7 +80,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use separate top-level fields for schema and type.
+	 * Use separate top-level fields for schema (nsURI) and type (class name). Useful for formats that benefit from split metadata.
 	 * <!-- end-model-doc -->
 	 * @see #SCHEMA_AND_TYPE_VALUE
 	 * @generated
@@ -93,7 +93,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use numeric classifier IDs. WARNING: IDs can change when model evolves.
+	 * Use numeric classifier IDs from the EPackage. Compact but fragile: IDs can change when the model evolves. Use only in controlled environments.
 	 * <!-- end-model-doc -->
 	 * @see #NUMERIC_VALUE
 	 * @generated
@@ -106,7 +106,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * No type information serialized. Requires CODEC_ROOT_TYPE hint for deserialization. Replaces deprecated typeInclude=false.
+	 * No type information serialized. For deserialization, the EClass must be provided via CODEC_ROOT_TYPE hint or be unambiguous from context.
 	 * <!-- end-model-doc -->
 	 * @see #NONE_VALUE
 	 * @generated
@@ -119,7 +119,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the simple EClass name (e.g., 'Person').
+	 * Use the simple EClass name (e.g., 'Person'). Requires unique class names within the deserialization context.
 	 * <!-- end-model-doc -->
 	 * @see #NAME
 	 * @model
@@ -133,7 +133,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the fully qualified instance class name.
+	 * Use the fully qualified Java instance class name (e.g., 'org.example.model.Person').
 	 * <!-- end-model-doc -->
 	 * @see #CLASS
 	 * @model
@@ -147,7 +147,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the EClass URI (e.g., 'http://example.org/model#//Person').
+	 * Use the full EMF EClass URI (e.g., 'http://example.org/model#//Person'). Most precise, always unique.
 	 * <!-- end-model-doc -->
 	 * @see #URI
 	 * @model
@@ -161,7 +161,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use separate top-level fields for schema and type.
+	 * Use separate top-level fields for schema (nsURI) and type (class name). Useful for formats that benefit from split metadata.
 	 * <!-- end-model-doc -->
 	 * @see #SCHEMA_AND_TYPE
 	 * @model
@@ -175,7 +175,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use numeric classifier IDs. WARNING: IDs can change when model evolves.
+	 * Use numeric classifier IDs from the EPackage. Compact but fragile: IDs can change when the model evolves. Use only in controlled environments.
 	 * <!-- end-model-doc -->
 	 * @see #NUMERIC
 	 * @model
@@ -189,7 +189,7 @@ public enum TypeStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * No type information serialized. Requires CODEC_ROOT_TYPE hint for deserialization. Replaces deprecated typeInclude=false.
+	 * No type information serialized. For deserialization, the EClass must be provided via CODEC_ROOT_TYPE hint or be unambiguous from context.
 	 * <!-- end-model-doc -->
 	 * @see #NONE
 	 * @model

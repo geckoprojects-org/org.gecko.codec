@@ -28,7 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * and utility methods for working with them.
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
- * Strategy for determining which features form the ID.
+ * Strategy for determining which EStructuralFeatures form the serialized ID of an EObject.
  * <!-- end-model-doc -->
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getIdStrategy()
  * @model
@@ -41,7 +41,7 @@ public enum IdStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use features marked with eID=true.
+	 * Use features marked with eID=true in the Ecore model. The standard EMF approach.
 	 * <!-- end-model-doc -->
 	 * @see #ID_FIELD_VALUE
 	 * @generated
@@ -54,7 +54,7 @@ public enum IdStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use explicitly specified features combined with separator.
+	 * Use explicitly specified features combined with a separator. The features and separator are configured via idFeatures and idSeparator annotation keys.
 	 * <!-- end-model-doc -->
 	 * @see #COMBINED_VALUE
 	 * @generated
@@ -67,7 +67,7 @@ public enum IdStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * No ID serialization.
+	 * No ID serialization. Objects are identified by position or other means.
 	 * <!-- end-model-doc -->
 	 * @see #NONE_VALUE
 	 * @generated
@@ -80,7 +80,7 @@ public enum IdStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use features marked with eID=true.
+	 * Use features marked with eID=true in the Ecore model. The standard EMF approach.
 	 * <!-- end-model-doc -->
 	 * @see #ID_FIELD
 	 * @model
@@ -94,7 +94,7 @@ public enum IdStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use explicitly specified features combined with separator.
+	 * Use explicitly specified features combined with a separator. The features and separator are configured via idFeatures and idSeparator annotation keys.
 	 * <!-- end-model-doc -->
 	 * @see #COMBINED
 	 * @model
@@ -108,7 +108,7 @@ public enum IdStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * No ID serialization.
+	 * No ID serialization. Objects are identified by position or other means.
 	 * <!-- end-model-doc -->
 	 * @see #NONE
 	 * @model

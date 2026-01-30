@@ -43,7 +43,7 @@ During deserialization, type resolution follows this priority:
 
 > **Design rationale:** Type Mapping Registry has highest priority because it's our implementation of Jackson's `@JsonTypeInfo` + `@JsonSubTypes` pattern - the primary, flexible mechanism for polymorphic type handling. Inline Mapping is a simpler, more static variant for per-reference cases.
 
-See [Type Serialization - Type Resolution Flow](06-type.md#530-type-resolution-flow) for the complete deserialization flow with all decision points.
+See [Type Deserialization - Type Resolution Flow](06-type.md#630-type-resolution-flow) for the complete deserialization flow with all decision points.
 
 ---
 

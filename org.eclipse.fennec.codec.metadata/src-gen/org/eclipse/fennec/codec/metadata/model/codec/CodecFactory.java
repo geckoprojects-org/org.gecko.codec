@@ -118,6 +118,24 @@ public interface CodecFactory extends EFactory {
 	InlineTypeMapping createInlineTypeMapping();
 
 	/**
+	 * Returns a new object of class '<em>Package Profile</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Package Profile</em>'.
+	 * @generated
+	 */
+	CodecPackageProfile createCodecPackageProfile();
+
+	/**
+	 * Returns a new object of class '<em>Class Profile</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Class Profile</em>'.
+	 * @generated
+	 */
+	CodecClassProfile createCodecClassProfile();
+
+	/**
 	 * Returns a new object of class '<em>Config</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

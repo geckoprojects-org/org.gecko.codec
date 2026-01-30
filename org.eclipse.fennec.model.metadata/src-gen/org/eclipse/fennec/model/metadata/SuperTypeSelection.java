@@ -28,7 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * and utility methods for working with them.
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
- * Which supertypes to include in serialization.
+ * Controls which supertypes of an EClass are included when supertype information is serialized.
  * <!-- end-model-doc -->
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getSuperTypeSelection()
  * @model
@@ -41,7 +41,7 @@ public enum SuperTypeSelection implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * All domain model supertypes (excludes EMF base classes).
+	 * All domain model supertypes in the inheritance hierarchy. Excludes EMF infrastructure classes (EObject, etc.).
 	 * <!-- end-model-doc -->
 	 * @see #ALL_VALUE
 	 * @generated
@@ -54,7 +54,7 @@ public enum SuperTypeSelection implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * All supertypes including EMF base classes (EObject, etc.).
+	 * All supertypes including EMF base classes (EObject, etc.). Use when full type hierarchy is needed.
 	 * <!-- end-model-doc -->
 	 * @see #ALL_EMF_VALUE
 	 * @generated
@@ -67,7 +67,7 @@ public enum SuperTypeSelection implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Only the immediate/direct supertype.
+	 * Only the immediate/direct supertype. Reduces output size when only the parent type is relevant.
 	 * <!-- end-model-doc -->
 	 * @see #SINGLE_VALUE
 	 * @generated
@@ -80,7 +80,7 @@ public enum SuperTypeSelection implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * No supertypes serialized.
+	 * No supertype information serialized.
 	 * <!-- end-model-doc -->
 	 * @see #NONE_VALUE
 	 * @generated
@@ -93,7 +93,7 @@ public enum SuperTypeSelection implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * All domain model supertypes (excludes EMF base classes).
+	 * All domain model supertypes in the inheritance hierarchy. Excludes EMF infrastructure classes (EObject, etc.).
 	 * <!-- end-model-doc -->
 	 * @see #ALL
 	 * @model
@@ -107,7 +107,7 @@ public enum SuperTypeSelection implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * All supertypes including EMF base classes (EObject, etc.).
+	 * All supertypes including EMF base classes (EObject, etc.). Use when full type hierarchy is needed.
 	 * <!-- end-model-doc -->
 	 * @see #ALL_EMF
 	 * @model
@@ -121,7 +121,7 @@ public enum SuperTypeSelection implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Only the immediate/direct supertype.
+	 * Only the immediate/direct supertype. Reduces output size when only the parent type is relevant.
 	 * <!-- end-model-doc -->
 	 * @see #SINGLE
 	 * @model
@@ -135,7 +135,7 @@ public enum SuperTypeSelection implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * No supertypes serialized.
+	 * No supertype information serialized.
 	 * <!-- end-model-doc -->
 	 * @see #NONE
 	 * @model

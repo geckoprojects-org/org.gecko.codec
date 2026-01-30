@@ -71,8 +71,6 @@ Discriminator-based type resolution is **not** a TypeStrategy - it's an **orthog
 
 The `NONE` strategy indicates that no type information should be written or expected.
 
-> **Note:** `TypeStrategy.NONE` replaces the deprecated `typeInclude=false` property. Both have identical behavior, but `NONE` is the preferred approach going forward. See [Deprecated: typeInclude](#deprecated-typeinclude) below.
-
 **Serialization with NONE:**
 - No type field (`_type`) is written
 - Useful for homogeneous collections, APIs that don't expect type metadata, or compact output
@@ -311,9 +309,10 @@ The configuration defines **format, strategy, and keys** - not actual values. Va
 | `typeKey` | `codec.typeKey` | `_type` | Outer key (both formats) |
 | `typeNameKey` | `codec.typeNameKey` | `type` | Inner type name key (STRUCTURED only) |
 | `typeSchemaKey` | `codec.typeSchemaKey` | `schema` | Inner schema key (STRUCTURED only) |
+| `typeValueWriterName` | `codec.typeValueWriterName` | — | Custom value writer service name (full delegation, see [§5.0 step 3a](#50-type-serialization-flow)) |
+| `typeValueReaderName` | `codec.typeValueReaderName` | — | Custom value reader service name (full delegation, see [§6.3.0 step 3a](#630-type-deserialization-flow)) |
 | — | `codec.typeScope` | `ALL` | Strategy scope (runtime-only, see below) |
 | — | `codec.typeFormatScope` | `ALL` | Format scope (runtime-only, see below) |
-| ~~`typeInclude`~~ | ~~`codec.typeInclude`~~ | — | **DEPRECATED** - use `typeStrategy=NONE` instead |
 
 > **Note:** `typeScope` and `typeFormatScope` are **runtime-only** configuration - no EAnnotation equivalent. They control where strategy/format applies (ROOT_ONLY, ROOT_CONTAINMENT, etc.). If found in EAnnotation, a WARNING is logged and the annotation is ignored. See [Configuration Resolution](02-config-resolution.md) (section 5).
 
@@ -443,7 +442,7 @@ CodecConfiguration config = CodecConfiguration.builder()
 | Scope | `codec.typeScope` | `ALL` |
 | Format Scope | `codec.typeFormatScope` | `ALL` |
 
-> **Note:** To disable type serialization, use `typeStrategy=NONE` instead of the deprecated `typeInclude=false`.
+> **Note:** To disable type serialization, use `typeStrategy=NONE`.
 
 **Default Output (PLAIN + URI):**
 ```json
@@ -554,15 +553,14 @@ INPUT: EObject to serialize, context (EReference if nested, save options)
 │    If typeStrategy = NONE:                                                  │
 │      → Do NOT write any type field ──────────────────────→ DONE ✓           │
 │                                                                             │
-│    3a. DETERMINE TYPE VALUE                                                 │
+│    3a. CHECK CUSTOM VALUE WRITER                                            │
 │                                                                             │
 │        Is typeValueWriterName configured?                                   │
-│        ├─ YES → Delegate to custom TypeValueWriter service                  │
-│        │        - Input: EClass (or EObject)                                │
-│        │        - Does: custom transformation, "magic"                      │
-│        │        - Output: type value string to write                        │
-│        │        - STRUCTURED format: Also responsible for supertype!        │
-│        │          (superTypeValueWriterName is IGNORED, see 07-supertype.md)│
+│        ├─ YES → Full delegation to custom TypeValueWriter service           │
+│        │        - Has: JsonGenerator, EffectiveCodecConfig, DiagnosticCollector│
+│        │        - Writer handles everything: value, format, keys, supertype │
+│        │        - Framework does NOT apply format/strategy/smartCompression  │
+│        │        → DONE ✓                                                    │
 │        │                                                                    │
 │        └─ NO → Use built-in value generation (strategy-dependent):          │
 │            ┌─────────────────────────────────────────────────────────────┐  │
@@ -626,6 +624,19 @@ INPUT: EObject to serialize, context (EReference if nested, save options)
 | 3 | Type Strategy | EClass, EReference, Global | Standard type field writing |
 
 > **Note:** Unlike deserialization, serialization has no step 4 (Fallback hints). If discriminator/inline mappings fail with `fallbackStrategy=FALLBACK` but no `fallbackEClass`, or if Type Strategy fails, it's an ERROR.
+
+### 5.0.2 Runtime Ordering Constraint (idOnTop)
+
+The type serialization flow above determines **what** type information to write. The **position** of this output relative to `_id` is controlled by the `idOnTop` property (see [09-id.md §8.7](09-id.md#87-metadata-field-ordering-idontop)):
+
+| `idOnTop` | Metadata Write Order |
+|-----------|----------------------|
+| `true` | `_id` → `_type` → `_supertype` → features |
+| `false` **(default)** | `_type` → `_supertype` → `_id` → features |
+
+This is a **runtime orchestration constraint** — the `CodecEObjectSerializer` evaluates `idOnTop` from the effective ID config and invokes the type and ID serialization entries in the appropriate order. The type flow itself does not need to know about `idOnTop`; the orchestrator handles the sequencing.
+
+> **Deserialization:** Field order is irrelevant — JSON objects are unordered. See [Architecture §5.1](01-architecture.md#51-deferred-properties-order-independent-parsing).
 
 ---
 
@@ -751,22 +762,24 @@ INPUT: JSON object, context (EReference if nested, load options)
 │      → Skip type field processing entirely                                  │
 │      → Go directly to step 4 (Fallback)                                     │
 │                                                                             │
-│    3a. DETECT FORMAT from JSON structure (auto-detection OK)                │
+│    3a. CHECK CUSTOM VALUE READER                                            │
+│                                                                             │
+│        Is typeValueReaderName configured?                                   │
+│        ├─ YES → Full delegation to custom TypeValueReader service           │
+│        │        - Has: JsonParser, EffectiveCodecConfig, DiagnosticCollector│
+│        │        - Reader handles everything: locate field, parse, resolve   │
+│        │        - Framework does NOT apply format detection/strategy        │
+│        │        → RESOLVED ✓                                                │
+│        │                                                                    │
+│        └─ NO → Continue with built-in logic (step 3b)                       │
+│                                                                             │
+│    3b. DETECT FORMAT from JSON structure (auto-detection OK)                │
 │        - Type field value is STRING? → PLAIN                                │
 │        - Type field value is OBJECT? → STRUCTURED                           │
 │        - Type field not present? → Go to step 4 (Fallback)                  │
 │                                                                             │
-│    3b. EXTRACT TYPE VALUE                                                   │
+│    3c. EXTRACT TYPE VALUE (built-in, strategy-dependent)                    │
 │                                                                             │
-│        Is typeValueReaderName configured?                                   │
-│        ├─ YES → Delegate to custom TypeValueReader service                  │
-│        │        - Input: raw JSON value (type field or structure)           │
-│        │        - Does: custom extraction, transformation, "magic"          │
-│        │        - Output: EClass URI (ready for resolution in 3c)           │
-│        │        - STRUCTURED format: Also responsible for supertype!        │
-│        │          (superTypeValueReaderName is IGNORED, see 07-supertype.md)│
-│        │                                                                    │
-│        └─ NO → Use built-in extraction (strategy-dependent):                │
 │            ┌─────────────────────────────────────────────────────────────┐  │
 │            │ Strategy        │ Extraction                                │  │
 │            ├─────────────────┼───────────────────────────────────────────┤  │
@@ -778,7 +791,7 @@ INPUT: JSON object, context (EReference if nested, load options)
 │            │ SCHEMA_AND_TYPE │ Read schema + type (two fields or nested) │  │
 │            └─────────────────────────────────────────────────────────────┘  │
 │                                                                             │
-│    3b'. APPLY SMART COMPRESSION EXPANSION (if smartCompression = true)      │
+│    3c'. APPLY SMART COMPRESSION EXPANSION (if smartCompression = true)      │
 │                                                                             │
 │        Smart compression writes simple names for same-schema types.         │
 │        On deserialization, we must expand simple names back to full URIs.   │
@@ -796,9 +809,9 @@ INPUT: JSON object, context (EReference if nested, load options)
 │        If serialization compressed "http://example.org/1.0#//Person" to     │
 │        "Person", deserialization expands it back.                           │
 │                                                                             │
-│    3c. RESOLVE EClass based on CONFIGURED strategy (NO auto-detection!)     │
+│    3d. RESOLVE EClass based on CONFIGURED strategy (NO auto-detection!)     │
 │                                                                             │
-│        Note: If smartCompression was applied in 3b', value is now a         │
+│        Note: If smartCompression was applied in 3c', value is now a         │
 │        full URI. The strategy-based resolution below handles both cases.    │
 │                                                                             │
 │        Strategy-based resolution:                                           │
@@ -1542,14 +1555,7 @@ This section documents validation rules for Type Configuration that are checked 
 | T-V20 | `typeNameKey` set + format=PLAIN | WARNING | `typeNameKey` is only used in STRUCTURED format; value ignored |
 | T-V21 | `typeSchemaKey` set + format=PLAIN + strategy≠SCHEMA_AND_TYPE | WARNING | `typeSchemaKey` is only used in STRUCTURED format or PLAIN+SCHEMA_AND_TYPE; value ignored |
 
-### 7.4 Deprecation Rules
-
-| Rule ID | Condition | Severity | Description |
-|---------|-----------|----------|-------------|
-| T-V30 | `typeInclude` annotation present | WARNING | DEPRECATED - use `typeStrategy=NONE` instead. Internally translated to NONE. |
-| T-V31 | Both `typeInclude` and `typeStrategy` set | WARNING | `typeStrategy` takes precedence; `typeInclude` ignored |
-
-### 7.5 Serialization/Deserialization Symmetry
+### 7.4 Serialization/Deserialization Symmetry
 
 These properties must be configured **symmetrically** for serialization and deserialization to work correctly:
 
@@ -1566,61 +1572,6 @@ These properties must be configured **symmetrically** for serialization and dese
 
 - **SuperType Configuration:** See [07-supertype.md section 6.0](07-supertype.md#60-configuration-constraints) for SuperType-specific validation rules
 - **Discriminator Mapping:** See [08-discriminator-mapping.md](08-discriminator-mapping.md) for discriminator-related validation rules
-
----
-
-## 8. Deprecated: typeInclude
-
-> **DEPRECATED:** The `typeInclude` property is deprecated and will be removed in a future version. Use `TypeStrategy.NONE` instead.
-
-### 8.1 Migration
-
-| Old (deprecated) | New (recommended) |
-|------------------|-------------------|
-| `typeInclude=false` | `typeStrategy=NONE` |
-| `typeInclude=true` | (default behavior, no configuration needed) |
-
-**Old approach (deprecated):**
-```xml
-<eAnnotations source="http://eclipse.org/fennec/codec">
-  <details key="typeInclude" value="false"/>
-</eAnnotations>
-```
-
-**New approach (recommended):**
-```xml
-<eAnnotations source="http://eclipse.org/fennec/codec">
-  <details key="typeStrategy" value="NONE"/>
-</eAnnotations>
-```
-
-**Java Builder - Old:**
-```java
-CodecConfiguration config = CodecConfiguration.builder()
-    .typeInclude(false)  // DEPRECATED
-    .build();
-```
-
-**Java Builder - New:**
-```java
-CodecConfiguration config = CodecConfiguration.builder()
-    .typeStrategy(TypeStrategy.NONE)  // Recommended
-    .build();
-```
-
-### 8.2 Rationale
-
-The `typeInclude` property was redundant:
-- `typeInclude=false` has **identical behavior** to `typeStrategy=NONE`
-- Having two ways to disable type serialization caused confusion
-- `TypeStrategy.NONE` is more explicit and aligns with the strategy pattern
-
-### 8.3 Backward Compatibility
-
-For backward compatibility:
-- `typeInclude=false` will continue to work but logs a deprecation WARNING
-- Internally, `typeInclude=false` is translated to `typeStrategy=NONE`
-- If both `typeInclude=false` AND `typeStrategy` are set, `typeStrategy` takes precedence
 
 ---
 

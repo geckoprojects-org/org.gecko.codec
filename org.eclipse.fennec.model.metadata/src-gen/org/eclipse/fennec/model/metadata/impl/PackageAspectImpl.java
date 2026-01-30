@@ -15,15 +15,18 @@
 package org.eclipse.fennec.model.metadata.impl;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import org.eclipse.fennec.model.metadata.MetadataPackage;
 import org.eclipse.fennec.model.metadata.PackageAspect;
+import org.eclipse.fennec.model.metadata.PackageMetadata;
 
 /**
  * <!-- begin-user-doc -->
@@ -33,22 +36,12 @@ import org.eclipse.fennec.model.metadata.PackageAspect;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.fennec.model.metadata.impl.PackageAspectImpl#getEPackage <em>EPackage</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.PackageAspectImpl#getPackageMetadata <em>Package Metadata</em>}</li>
  * </ul>
  *
  * @generated
  */
 public abstract class PackageAspectImpl extends AspectImpl implements PackageAspect {
-	/**
-	 * The cached value of the '{@link #getEPackage() <em>EPackage</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getEPackage()
-	 * @generated
-	 * @ordered
-	 */
-	protected EPackage ePackage;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -74,16 +67,9 @@ public abstract class PackageAspectImpl extends AspectImpl implements PackageAsp
 	 * @generated
 	 */
 	@Override
-	public EPackage getEPackage() {
-		if (ePackage != null && ePackage.eIsProxy()) {
-			InternalEObject oldEPackage = (InternalEObject)ePackage;
-			ePackage = (EPackage)eResolveProxy(oldEPackage);
-			if (ePackage != oldEPackage) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MetadataPackage.PACKAGE_ASPECT__EPACKAGE, oldEPackage, ePackage));
-			}
-		}
-		return ePackage;
+	public PackageMetadata getPackageMetadata() {
+		if (eContainerFeatureID() != MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA) return null;
+		return (PackageMetadata)eInternalContainer();
 	}
 
 	/**
@@ -91,8 +77,9 @@ public abstract class PackageAspectImpl extends AspectImpl implements PackageAsp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EPackage basicGetEPackage() {
-		return ePackage;
+	public NotificationChain basicSetPackageMetadata(PackageMetadata newPackageMetadata, NotificationChain msgs) {
+		msgs = eBasicSetContainer((InternalEObject)newPackageMetadata, MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA, msgs);
+		return msgs;
 	}
 
 	/**
@@ -101,11 +88,64 @@ public abstract class PackageAspectImpl extends AspectImpl implements PackageAsp
 	 * @generated
 	 */
 	@Override
-	public void setEPackage(EPackage newEPackage) {
-		EPackage oldEPackage = ePackage;
-		ePackage = newEPackage;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.PACKAGE_ASPECT__EPACKAGE, oldEPackage, ePackage));
+	public void setPackageMetadata(PackageMetadata newPackageMetadata) {
+		if (newPackageMetadata != eInternalContainer() || (eContainerFeatureID() != MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA && newPackageMetadata != null)) {
+			if (EcoreUtil.isAncestor(this, newPackageMetadata))
+				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+			NotificationChain msgs = null;
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			if (newPackageMetadata != null)
+				msgs = ((InternalEObject)newPackageMetadata).eInverseAdd(this, MetadataPackage.PACKAGE_METADATA__ASPECTS, PackageMetadata.class, msgs);
+			msgs = basicSetPackageMetadata(newPackageMetadata, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA, newPackageMetadata, newPackageMetadata));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA:
+				if (eInternalContainer() != null)
+					msgs = eBasicRemoveFromContainer(msgs);
+				return basicSetPackageMetadata((PackageMetadata)otherEnd, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA:
+				return basicSetPackageMetadata(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+		switch (eContainerFeatureID()) {
+			case MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA:
+				return eInternalContainer().eInverseRemove(this, MetadataPackage.PACKAGE_METADATA__ASPECTS, PackageMetadata.class, msgs);
+		}
+		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
 
 	/**
@@ -116,9 +156,8 @@ public abstract class PackageAspectImpl extends AspectImpl implements PackageAsp
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MetadataPackage.PACKAGE_ASPECT__EPACKAGE:
-				if (resolve) return getEPackage();
-				return basicGetEPackage();
+			case MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA:
+				return getPackageMetadata();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -131,8 +170,8 @@ public abstract class PackageAspectImpl extends AspectImpl implements PackageAsp
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MetadataPackage.PACKAGE_ASPECT__EPACKAGE:
-				setEPackage((EPackage)newValue);
+			case MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA:
+				setPackageMetadata((PackageMetadata)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -146,8 +185,8 @@ public abstract class PackageAspectImpl extends AspectImpl implements PackageAsp
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MetadataPackage.PACKAGE_ASPECT__EPACKAGE:
-				setEPackage((EPackage)null);
+			case MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA:
+				setPackageMetadata((PackageMetadata)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -161,8 +200,8 @@ public abstract class PackageAspectImpl extends AspectImpl implements PackageAsp
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MetadataPackage.PACKAGE_ASPECT__EPACKAGE:
-				return ePackage != null;
+			case MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA:
+				return getPackageMetadata() != null;
 		}
 		return super.eIsSet(featureID);
 	}

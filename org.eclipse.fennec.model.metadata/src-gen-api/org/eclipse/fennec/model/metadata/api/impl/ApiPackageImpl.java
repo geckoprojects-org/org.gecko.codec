@@ -29,6 +29,7 @@ import org.eclipse.fennec.model.metadata.api.MetadataIndex;
 import org.eclipse.fennec.model.metadata.api.MetadataIndexReader;
 import org.eclipse.fennec.model.metadata.api.MetadataIndexWriter;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 
 /**
  * <!-- begin-user-doc -->
@@ -64,6 +65,13 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	private EClass metadataServiceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass metadataWhiteboardEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -341,7 +349,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__RegisterPackage__EPackage() {
+	public EOperation getMetadataService__GetPackageMetadata__String() {
 		return metadataServiceEClass.getEOperations().get(1);
 	}
 
@@ -351,7 +359,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__UnregisterPackage__EPackage() {
+	public EOperation getMetadataService__GetClassMetadata__EClass() {
 		return metadataServiceEClass.getEOperations().get(2);
 	}
 
@@ -361,7 +369,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetPackageMetadata__String() {
+	public EOperation getMetadataService__GetClassMetadataByURI__String() {
 		return metadataServiceEClass.getEOperations().get(3);
 	}
 
@@ -371,7 +379,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetClassMetadata__EClass() {
+	public EOperation getMetadataService__GetClassMetadataByName__String_String() {
 		return metadataServiceEClass.getEOperations().get(4);
 	}
 
@@ -381,7 +389,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetClassMetadataByURI__String() {
+	public EOperation getMetadataService__GetFeatureMetadata__EStructuralFeature() {
 		return metadataServiceEClass.getEOperations().get(5);
 	}
 
@@ -391,7 +399,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetClassMetadataByName__String_String() {
+	public EOperation getMetadataService__GetFeatureMetadataByURI__String() {
 		return metadataServiceEClass.getEOperations().get(6);
 	}
 
@@ -401,7 +409,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetFeatureMetadata__EStructuralFeature() {
+	public EOperation getMetadataService__GetFeatureMetadataByName__String_String_String() {
 		return metadataServiceEClass.getEOperations().get(7);
 	}
 
@@ -411,7 +419,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetFeatureMetadataByURI__String() {
+	public EOperation getMetadataService__GetFeatureMetadataFromClass__String_ClassMetadata() {
 		return metadataServiceEClass.getEOperations().get(8);
 	}
 
@@ -421,7 +429,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetFeatureMetadataByName__String_String_String() {
+	public EOperation getMetadataService__GetPackageAspect__EPackage_String() {
 		return metadataServiceEClass.getEOperations().get(9);
 	}
 
@@ -431,7 +439,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetFeatureMetadataFromClass__String_ClassMetadata() {
+	public EOperation getMetadataService__GetClassAspect__EClass_String() {
 		return metadataServiceEClass.getEOperations().get(10);
 	}
 
@@ -441,7 +449,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetPackageAspect__EPackage_String() {
+	public EOperation getMetadataService__GetFeatureAspect__EStructuralFeature_String() {
 		return metadataServiceEClass.getEOperations().get(11);
 	}
 
@@ -451,7 +459,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetClassAspect__EClass_String() {
+	public EOperation getMetadataService__GetPackageProfile__EPackage_String() {
 		return metadataServiceEClass.getEOperations().get(12);
 	}
 
@@ -461,7 +469,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetFeatureAspect__EStructuralFeature_String() {
+	public EOperation getMetadataService__GetPackageProfileByNsURI__String_String() {
 		return metadataServiceEClass.getEOperations().get(13);
 	}
 
@@ -471,7 +479,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetRegistry() {
+	public EOperation getMetadataService__GetClassProfile__EClass_String() {
 		return metadataServiceEClass.getEOperations().get(14);
 	}
 
@@ -481,7 +489,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__RegisterAspectProvider__AspectProvider() {
+	public EOperation getMetadataService__GetClassProfileByURI__String_String() {
 		return metadataServiceEClass.getEOperations().get(15);
 	}
 
@@ -491,7 +499,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__UnregisterAspectProvider__AspectProvider() {
+	public EOperation getMetadataService__GetRegistry() {
 		return metadataServiceEClass.getEOperations().get(16);
 	}
 
@@ -501,8 +509,88 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getMetadataService__GetAspectProviders() {
-		return metadataServiceEClass.getEOperations().get(17);
+	public EClass getMetadataWhiteboard() {
+		return metadataWhiteboardEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataWhiteboard__RegisterPackage__EPackage() {
+		return metadataWhiteboardEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataWhiteboard__UnregisterPackage__EPackage() {
+		return metadataWhiteboardEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataWhiteboard__RegisterAspectProvider__AspectProvider() {
+		return metadataWhiteboardEClass.getEOperations().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataWhiteboard__UnregisterAspectProvider__AspectProvider() {
+		return metadataWhiteboardEClass.getEOperations().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataWhiteboard__GetAspectProviders() {
+		return metadataWhiteboardEClass.getEOperations().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataWhiteboard__GetMetadataIndex() {
+		return metadataWhiteboardEClass.getEOperations().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataWhiteboard__SetMetadataIndex__MetadataIndex() {
+		return metadataWhiteboardEClass.getEOperations().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getMetadataWhiteboard__UnsetMetadataIndex__MetadataIndex() {
+		return metadataWhiteboardEClass.getEOperations().get(7);
 	}
 
 	/**
@@ -531,7 +619,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getAspectProvider__BuildPackageAspect__EPackage() {
+	public EOperation getAspectProvider__BuildPackageAspect__PackageMetadata() {
 		return aspectProviderEClass.getEOperations().get(1);
 	}
 
@@ -541,7 +629,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getAspectProvider__BuildClassAspect__EClass() {
+	public EOperation getAspectProvider__BuildClassAspect__ClassMetadata() {
 		return aspectProviderEClass.getEOperations().get(2);
 	}
 
@@ -551,7 +639,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getAspectProvider__BuildFeatureAspect__EStructuralFeature() {
+	public EOperation getAspectProvider__BuildFeatureAspect__FeatureMetadata() {
 		return aspectProviderEClass.getEOperations().get(3);
 	}
 
@@ -561,7 +649,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getAspectProvider__BuildAttributeAspect__EAttribute() {
+	public EOperation getAspectProvider__BuildAttributeAspect__AttributeMetadata() {
 		return aspectProviderEClass.getEOperations().get(4);
 	}
 
@@ -571,8 +659,18 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 	 * @generated
 	 */
 	@Override
-	public EOperation getAspectProvider__BuildReferenceAspect__EReference() {
+	public EOperation getAspectProvider__BuildReferenceAspect__ReferenceMetadata() {
 		return aspectProviderEClass.getEOperations().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EOperation getAspectProvider__BuildProfiles__PackageMetadata() {
+		return aspectProviderEClass.getEOperations().get(6);
 	}
 
 	/**
@@ -627,8 +725,6 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 
 		metadataServiceEClass = createEClass(METADATA_SERVICE);
 		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_INDEX_READER);
-		createEOperation(metadataServiceEClass, METADATA_SERVICE___REGISTER_PACKAGE__EPACKAGE);
-		createEOperation(metadataServiceEClass, METADATA_SERVICE___UNREGISTER_PACKAGE__EPACKAGE);
 		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_PACKAGE_METADATA__STRING);
 		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_CLASS_METADATA__ECLASS);
 		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_CLASS_METADATA_BY_URI__STRING);
@@ -640,18 +736,30 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_PACKAGE_ASPECT__EPACKAGE_STRING);
 		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_CLASS_ASPECT__ECLASS_STRING);
 		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_FEATURE_ASPECT__ESTRUCTURALFEATURE_STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_PACKAGE_PROFILE__EPACKAGE_STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_PACKAGE_PROFILE_BY_NS_URI__STRING_STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_CLASS_PROFILE__ECLASS_STRING);
+		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_CLASS_PROFILE_BY_URI__STRING_STRING);
 		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_REGISTRY);
-		createEOperation(metadataServiceEClass, METADATA_SERVICE___REGISTER_ASPECT_PROVIDER__ASPECTPROVIDER);
-		createEOperation(metadataServiceEClass, METADATA_SERVICE___UNREGISTER_ASPECT_PROVIDER__ASPECTPROVIDER);
-		createEOperation(metadataServiceEClass, METADATA_SERVICE___GET_ASPECT_PROVIDERS);
+
+		metadataWhiteboardEClass = createEClass(METADATA_WHITEBOARD);
+		createEOperation(metadataWhiteboardEClass, METADATA_WHITEBOARD___REGISTER_PACKAGE__EPACKAGE);
+		createEOperation(metadataWhiteboardEClass, METADATA_WHITEBOARD___UNREGISTER_PACKAGE__EPACKAGE);
+		createEOperation(metadataWhiteboardEClass, METADATA_WHITEBOARD___REGISTER_ASPECT_PROVIDER__ASPECTPROVIDER);
+		createEOperation(metadataWhiteboardEClass, METADATA_WHITEBOARD___UNREGISTER_ASPECT_PROVIDER__ASPECTPROVIDER);
+		createEOperation(metadataWhiteboardEClass, METADATA_WHITEBOARD___GET_ASPECT_PROVIDERS);
+		createEOperation(metadataWhiteboardEClass, METADATA_WHITEBOARD___GET_METADATA_INDEX);
+		createEOperation(metadataWhiteboardEClass, METADATA_WHITEBOARD___SET_METADATA_INDEX__METADATAINDEX);
+		createEOperation(metadataWhiteboardEClass, METADATA_WHITEBOARD___UNSET_METADATA_INDEX__METADATAINDEX);
 
 		aspectProviderEClass = createEClass(ASPECT_PROVIDER);
 		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___GET_ASPECT_TYPE_ID);
-		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_PACKAGE_ASPECT__EPACKAGE);
-		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_CLASS_ASPECT__ECLASS);
-		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_FEATURE_ASPECT__ESTRUCTURALFEATURE);
-		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_ATTRIBUTE_ASPECT__EATTRIBUTE);
-		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_REFERENCE_ASPECT__EREFERENCE);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_PACKAGE_ASPECT__PACKAGEMETADATA);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_CLASS_ASPECT__CLASSMETADATA);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_FEATURE_ASPECT__FEATUREMETADATA);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_ATTRIBUTE_ASPECT__ATTRIBUTEMETADATA);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_REFERENCE_ASPECT__REFERENCEMETADATA);
+		createEOperation(aspectProviderEClass, ASPECT_PROVIDER___BUILD_PROFILES__PACKAGEMETADATA);
 	}
 
 	/**
@@ -687,6 +795,7 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		// Add supertypes to classes
 		metadataIndexEClass.getESuperTypes().add(this.getMetadataIndexReader());
 		metadataIndexEClass.getESuperTypes().add(this.getMetadataIndexWriter());
+		metadataWhiteboardEClass.getESuperTypes().add(this.getMetadataService());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(metadataIndexReaderEClass, MetadataIndexReader.class, "MetadataIndexReader", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -749,12 +858,6 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 
 		initEOperation(getMetadataService__GetIndexReader(), this.getMetadataIndexReader(), "getIndexReader", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getMetadataService__RegisterPackage__EPackage(), theMetadataPackage.getPackageMetadata(), "registerPackage", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEPackage(), "ePackage", 0, 1, IS_UNIQUE, IS_ORDERED);
-
-		op = initEOperation(getMetadataService__UnregisterPackage__EPackage(), null, "unregisterPackage", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEPackage(), "ePackage", 0, 1, IS_UNIQUE, IS_ORDERED);
-
 		op = initEOperation(getMetadataService__GetPackageMetadata__String(), theMetadataPackage.getPackageMetadata(), "getPackageMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "nsURI", 0, 1, IS_UNIQUE, IS_ORDERED);
 
@@ -795,34 +898,69 @@ public class ApiPackageImpl extends EPackageImpl implements ApiPackage {
 		addEParameter(op, ecorePackage.getEStructuralFeature(), "feature", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "aspectTypeId", 0, 1, IS_UNIQUE, IS_ORDERED);
 
+		op = initEOperation(getMetadataService__GetPackageProfile__EPackage_String(), theMetadataPackage.getPackageProfile(), "getPackageProfile", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEPackage(), "ePackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "typeId", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetPackageProfileByNsURI__String_String(), theMetadataPackage.getPackageProfile(), "getPackageProfileByNsURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "nsURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "typeId", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetClassProfile__EClass_String(), theMetadataPackage.getClassProfile(), "getClassProfile", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEClass(), "eClass", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "typeId", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataService__GetClassProfileByURI__String_String(), theMetadataPackage.getClassProfile(), "getClassProfileByURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "eClassURI", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "typeId", 0, 1, IS_UNIQUE, IS_ORDERED);
+
 		initEOperation(getMetadataService__GetRegistry(), theMetadataPackage.getMetadataRegistry(), "getRegistry", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getMetadataService__RegisterAspectProvider__AspectProvider(), null, "registerAspectProvider", 0, 1, IS_UNIQUE, IS_ORDERED);
+		initEClass(metadataWhiteboardEClass, MetadataWhiteboard.class, "MetadataWhiteboard", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		op = initEOperation(getMetadataWhiteboard__RegisterPackage__EPackage(), theMetadataPackage.getPackageMetadata(), "registerPackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEPackage(), "ePackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataWhiteboard__UnregisterPackage__EPackage(), null, "unregisterPackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEPackage(), "ePackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataWhiteboard__RegisterAspectProvider__AspectProvider(), null, "registerAspectProvider", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getAspectProvider(), "provider", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getMetadataService__UnregisterAspectProvider__AspectProvider(), null, "unregisterAspectProvider", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getMetadataWhiteboard__UnregisterAspectProvider__AspectProvider(), null, "unregisterAspectProvider", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getAspectProvider(), "provider", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		initEOperation(getMetadataService__GetAspectProviders(), this.getAspectProvider(), "getAspectProviders", 0, -1, IS_UNIQUE, IS_ORDERED);
+		initEOperation(getMetadataWhiteboard__GetAspectProviders(), this.getAspectProvider(), "getAspectProviders", 0, -1, IS_UNIQUE, IS_ORDERED);
+
+		initEOperation(getMetadataWhiteboard__GetMetadataIndex(), this.getMetadataIndex(), "getMetadataIndex", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataWhiteboard__SetMetadataIndex__MetadataIndex(), null, "setMetadataIndex", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getMetadataIndex(), "index", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getMetadataWhiteboard__UnsetMetadataIndex__MetadataIndex(), null, "unsetMetadataIndex", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getMetadataIndex(), "index", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(aspectProviderEClass, AspectProvider.class, "AspectProvider", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEOperation(getAspectProvider__GetAspectTypeId(), ecorePackage.getEString(), "getAspectTypeId", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getAspectProvider__BuildPackageAspect__EPackage(), theMetadataPackage.getPackageAspect(), "buildPackageAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEPackage(), "ePackage", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getAspectProvider__BuildPackageAspect__PackageMetadata(), theMetadataPackage.getPackageAspect(), "buildPackageAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theMetadataPackage.getPackageMetadata(), "packageMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getAspectProvider__BuildClassAspect__EClass(), theMetadataPackage.getClassAspect(), "buildClassAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEClass(), "eClass", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getAspectProvider__BuildClassAspect__ClassMetadata(), theMetadataPackage.getClassAspect(), "buildClassAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theMetadataPackage.getClassMetadata(), "classMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getAspectProvider__BuildFeatureAspect__EStructuralFeature(), theMetadataPackage.getFeatureAspect(), "buildFeatureAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEStructuralFeature(), "feature", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getAspectProvider__BuildFeatureAspect__FeatureMetadata(), theMetadataPackage.getFeatureAspect(), "buildFeatureAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theMetadataPackage.getFeatureMetadata(), "featureMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getAspectProvider__BuildAttributeAspect__EAttribute(), theMetadataPackage.getFeatureAspect(), "buildAttributeAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEAttribute(), "attribute", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getAspectProvider__BuildAttributeAspect__AttributeMetadata(), theMetadataPackage.getFeatureAspect(), "buildAttributeAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theMetadataPackage.getAttributeMetadata(), "attributeMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getAspectProvider__BuildReferenceAspect__EReference(), theMetadataPackage.getFeatureAspect(), "buildReferenceAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEReference(), "reference", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getAspectProvider__BuildReferenceAspect__ReferenceMetadata(), theMetadataPackage.getFeatureAspect(), "buildReferenceAspect", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theMetadataPackage.getReferenceMetadata(), "referenceMetadata", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getAspectProvider__BuildProfiles__PackageMetadata(), theMetadataPackage.getPackageProfile(), "buildProfiles", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, theMetadataPackage.getPackageMetadata(), "filteredMetadataCopy", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

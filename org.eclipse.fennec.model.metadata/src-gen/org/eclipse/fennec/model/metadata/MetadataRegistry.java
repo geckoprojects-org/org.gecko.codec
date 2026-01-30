@@ -26,7 +26,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Registry containing all pre-computed package metadata. Can be persisted for fast startup.
+ * Root container for all pre-computed package metadata. Serves as the serializable root for persisting/caching the entire metadata state. Contains all PackageMetadata instances registered with the MetadataService.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -48,7 +48,7 @@ public interface MetadataRegistry extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * All registered package metadata.
+	 * All registered PackageMetadata instances. Each PackageMetadata contains the complete metadata tree for one EPackage (classes, features, aspects, profiles).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Packages</em>' containment reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getMetadataRegistry_Packages()

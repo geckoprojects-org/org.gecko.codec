@@ -376,6 +376,42 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
+  <!-- ==================== Profiles ==================== -->
+  <eClassifiers xsi:type="ecore:EClass" name="CodecPackageProfile" eSuperTypes="../../org.eclipse.fennec.model.metadata/model/metadata.ecore#//PackageProfile">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Codec-specific package profile containing pre-computed, fully resolved annotation-layer configurations for all classes in a package. Built by CodecAspectProvider.buildProfiles() after all metadata and aspects are constructed. Contains one CodecClassProfile per EClass with annotation-internal inheritance already applied (feature inherits from class, class inherits from package defaults). At runtime, serves as the static base that dynamic configuration (options, resource, factory, module) merges on top of."/>
+    </eAnnotations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CodecClassProfile" eSuperTypes="../../org.eclipse.fennec.model.metadata/model/metadata.ecore#//ClassProfile">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Codec-specific class profile containing the fully resolved annotation-layer configuration for one EClass and all its features. All annotation-internal inheritance is pre-merged: feature inherits from class, class inherits from package defaults. Contains the effective type/ID/supertype configs, forward/reverse key mappings, feature serialization order, and per-feature configs. At runtime, the ConfigurationResolver merges dynamic overrides (levels 1-4) on top of this profile (levels 5+6)."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="typeConfig" eType="#//TypeSerializationConfig"
+        containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Effective type serialization configuration after annotation-internal inheritance merge. Null means no type info configured at any level."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="idConfig" eType="#//IdSerializationConfig"
+        containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Effective ID serialization configuration after annotation-internal inheritance merge. Null means no ID config at any level."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="superTypeConfig" eType="#//SuperTypeSerializationConfig"
+        containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Effective supertype serialization configuration after annotation-internal inheritance merge. Null means no supertype config at any level."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="featureConfigs" upperBound="-1"
+        eType="#//FeatureSerializationConfig" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Pre-computed per-feature serialization configurations. One entry per serializable feature, in serialization order. Each config has the effective key, serialize flag, and any feature-specific overrides already resolved."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <!-- ==================== Codec Config ==================== -->
   <eClassifiers xsi:type="ecore:EClass" name="CodecConfig">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Root configuration for codec serialization behavior."/>

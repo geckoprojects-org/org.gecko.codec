@@ -15,14 +15,17 @@
 package org.eclipse.fennec.model.metadata.impl;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import org.eclipse.fennec.model.metadata.FeatureAspect;
+import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.MetadataPackage;
 
 /**
@@ -33,22 +36,12 @@ import org.eclipse.fennec.model.metadata.MetadataPackage;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl#getEFeature <em>EFeature</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.FeatureAspectImpl#getFeatureMetadata <em>Feature Metadata</em>}</li>
  * </ul>
  *
  * @generated
  */
 public abstract class FeatureAspectImpl extends AspectImpl implements FeatureAspect {
-	/**
-	 * The cached value of the '{@link #getEFeature() <em>EFeature</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getEFeature()
-	 * @generated
-	 * @ordered
-	 */
-	protected EStructuralFeature eFeature;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -74,16 +67,9 @@ public abstract class FeatureAspectImpl extends AspectImpl implements FeatureAsp
 	 * @generated
 	 */
 	@Override
-	public EStructuralFeature getEFeature() {
-		if (eFeature != null && eFeature.eIsProxy()) {
-			InternalEObject oldEFeature = (InternalEObject)eFeature;
-			eFeature = (EStructuralFeature)eResolveProxy(oldEFeature);
-			if (eFeature != oldEFeature) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MetadataPackage.FEATURE_ASPECT__EFEATURE, oldEFeature, eFeature));
-			}
-		}
-		return eFeature;
+	public FeatureMetadata getFeatureMetadata() {
+		if (eContainerFeatureID() != MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA) return null;
+		return (FeatureMetadata)eInternalContainer();
 	}
 
 	/**
@@ -91,8 +77,9 @@ public abstract class FeatureAspectImpl extends AspectImpl implements FeatureAsp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EStructuralFeature basicGetEFeature() {
-		return eFeature;
+	public NotificationChain basicSetFeatureMetadata(FeatureMetadata newFeatureMetadata, NotificationChain msgs) {
+		msgs = eBasicSetContainer((InternalEObject)newFeatureMetadata, MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA, msgs);
+		return msgs;
 	}
 
 	/**
@@ -101,11 +88,64 @@ public abstract class FeatureAspectImpl extends AspectImpl implements FeatureAsp
 	 * @generated
 	 */
 	@Override
-	public void setEFeature(EStructuralFeature newEFeature) {
-		EStructuralFeature oldEFeature = eFeature;
-		eFeature = newEFeature;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.FEATURE_ASPECT__EFEATURE, oldEFeature, eFeature));
+	public void setFeatureMetadata(FeatureMetadata newFeatureMetadata) {
+		if (newFeatureMetadata != eInternalContainer() || (eContainerFeatureID() != MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA && newFeatureMetadata != null)) {
+			if (EcoreUtil.isAncestor(this, newFeatureMetadata))
+				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+			NotificationChain msgs = null;
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			if (newFeatureMetadata != null)
+				msgs = ((InternalEObject)newFeatureMetadata).eInverseAdd(this, MetadataPackage.FEATURE_METADATA__ASPECTS, FeatureMetadata.class, msgs);
+			msgs = basicSetFeatureMetadata(newFeatureMetadata, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA, newFeatureMetadata, newFeatureMetadata));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA:
+				if (eInternalContainer() != null)
+					msgs = eBasicRemoveFromContainer(msgs);
+				return basicSetFeatureMetadata((FeatureMetadata)otherEnd, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA:
+				return basicSetFeatureMetadata(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+		switch (eContainerFeatureID()) {
+			case MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA:
+				return eInternalContainer().eInverseRemove(this, MetadataPackage.FEATURE_METADATA__ASPECTS, FeatureMetadata.class, msgs);
+		}
+		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
 
 	/**
@@ -116,9 +156,8 @@ public abstract class FeatureAspectImpl extends AspectImpl implements FeatureAsp
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MetadataPackage.FEATURE_ASPECT__EFEATURE:
-				if (resolve) return getEFeature();
-				return basicGetEFeature();
+			case MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA:
+				return getFeatureMetadata();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -131,8 +170,8 @@ public abstract class FeatureAspectImpl extends AspectImpl implements FeatureAsp
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MetadataPackage.FEATURE_ASPECT__EFEATURE:
-				setEFeature((EStructuralFeature)newValue);
+			case MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA:
+				setFeatureMetadata((FeatureMetadata)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -146,8 +185,8 @@ public abstract class FeatureAspectImpl extends AspectImpl implements FeatureAsp
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MetadataPackage.FEATURE_ASPECT__EFEATURE:
-				setEFeature((EStructuralFeature)null);
+			case MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA:
+				setFeatureMetadata((FeatureMetadata)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -161,8 +200,8 @@ public abstract class FeatureAspectImpl extends AspectImpl implements FeatureAsp
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MetadataPackage.FEATURE_ASPECT__EFEATURE:
-				return eFeature != null;
+			case MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA:
+				return getFeatureMetadata() != null;
 		}
 		return super.eIsSet(featureID);
 	}

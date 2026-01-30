@@ -24,7 +24,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base configuration for type information serialization.
+ * Base configuration for type information serialization. Controls how EClass type identity is written to the output. Shared by class-level and reference-level type configurations.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -51,7 +51,7 @@ public interface BaseTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Serialization format (PLAIN or STRUCTURED).
+	 * Output format for type information: PLAIN writes a single value, STRUCTURED writes a nested object with schema/name keys.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Format</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.SerializationFormat
@@ -80,7 +80,7 @@ public interface BaseTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Type serialization strategy (what information to transport).
+	 * Type identification strategy. Determines what kind of type identifier is written (NAME, CLASS, URI, SCHEMA_AND_TYPE, NUMERIC, NONE).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Strategy</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.TypeStrategy
@@ -108,7 +108,7 @@ public interface BaseTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * JSON property name for type.
+	 * JSON property name for the type field. Default is '_type'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Type Key</em>' attribute.
 	 * @see #setTypeKey(String)
@@ -134,7 +134,7 @@ public interface BaseTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Key for schema in STRUCTURED/SCHEMA_AND_TYPE.
+	 * JSON property name for the schema (nsURI) when using STRUCTURED format or SCHEMA_AND_TYPE strategy. Default is 'schema'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Schema Key</em>' attribute.
 	 * @see #setSchemaKey(String)
@@ -160,7 +160,7 @@ public interface BaseTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Key for name in STRUCTURED.
+	 * JSON property name for the type name inside a STRUCTURED type object. Default is 'name'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name Key</em>' attribute.
 	 * @see #setNameKey(String)

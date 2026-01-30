@@ -78,6 +78,8 @@ public class CodecFactoryImpl extends EFactoryImpl implements CodecFactory {
 			case CodecPackage.FEATURE_CODEC_ASPECT: return createFeatureCodecAspect();
 			case CodecPackage.REFERENCE_CODEC_ASPECT: return createReferenceCodecAspect();
 			case CodecPackage.INLINE_TYPE_MAPPING: return createInlineTypeMapping();
+			case CodecPackage.CODEC_PACKAGE_PROFILE: return createCodecPackageProfile();
+			case CodecPackage.CODEC_CLASS_PROFILE: return createCodecClassProfile();
 			case CodecPackage.CODEC_CONFIG: return createCodecConfig();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -223,6 +225,28 @@ public class CodecFactoryImpl extends EFactoryImpl implements CodecFactory {
 	public InlineTypeMapping createInlineTypeMapping() {
 		InlineTypeMappingImpl inlineTypeMapping = new InlineTypeMappingImpl();
 		return inlineTypeMapping;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public CodecPackageProfile createCodecPackageProfile() {
+		CodecPackageProfileImpl codecPackageProfile = new CodecPackageProfileImpl();
+		return codecPackageProfile;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public CodecClassProfile createCodecClassProfile() {
+		CodecClassProfileImpl codecClassProfile = new CodecClassProfileImpl();
+		return codecClassProfile;
 	}
 
 	/**

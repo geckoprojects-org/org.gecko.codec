@@ -39,6 +39,7 @@ import org.eclipse.fennec.model.metadata.MetadataDiagnostic;
 import org.eclipse.fennec.model.metadata.MetadataPackage;
 import org.eclipse.fennec.model.metadata.PackageAspect;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
+import org.eclipse.fennec.model.metadata.PackageProfile;
 
 /**
  * <!-- begin-user-doc -->
@@ -54,6 +55,7 @@ import org.eclipse.fennec.model.metadata.PackageMetadata;
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.PackageMetadataImpl#getNsURI <em>Ns URI</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.PackageMetadataImpl#getClasses <em>Classes</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.impl.PackageMetadataImpl#getAspects <em>Aspects</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.impl.PackageMetadataImpl#getProfiles <em>Profiles</em>}</li>
  * </ul>
  *
  * @generated
@@ -118,6 +120,16 @@ public class PackageMetadataImpl extends MinimalEObjectImpl.Container implements
 	 * @ordered
 	 */
 	protected EList<PackageAspect> aspects;
+
+	/**
+	 * The cached value of the '{@link #getProfiles() <em>Profiles</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getProfiles()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<PackageProfile> profiles;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -257,9 +269,22 @@ public class PackageMetadataImpl extends MinimalEObjectImpl.Container implements
 	@Override
 	public EList<PackageAspect> getAspects() {
 		if (aspects == null) {
-			aspects = new EObjectContainmentEList<PackageAspect>(PackageAspect.class, this, MetadataPackage.PACKAGE_METADATA__ASPECTS);
+			aspects = new EObjectContainmentWithInverseEList<PackageAspect>(PackageAspect.class, this, MetadataPackage.PACKAGE_METADATA__ASPECTS, MetadataPackage.PACKAGE_ASPECT__PACKAGE_METADATA);
 		}
 		return aspects;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EList<PackageProfile> getProfiles() {
+		if (profiles == null) {
+			profiles = new EObjectContainmentEList<PackageProfile>(PackageProfile.class, this, MetadataPackage.PACKAGE_METADATA__PROFILES);
+		}
+		return profiles;
 	}
 
 	/**
@@ -273,6 +298,8 @@ public class PackageMetadataImpl extends MinimalEObjectImpl.Container implements
 		switch (featureID) {
 			case MetadataPackage.PACKAGE_METADATA__CLASSES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getClasses()).basicAdd(otherEnd, msgs);
+			case MetadataPackage.PACKAGE_METADATA__ASPECTS:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getAspects()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -291,6 +318,8 @@ public class PackageMetadataImpl extends MinimalEObjectImpl.Container implements
 				return ((InternalEList<?>)getClasses()).basicRemove(otherEnd, msgs);
 			case MetadataPackage.PACKAGE_METADATA__ASPECTS:
 				return ((InternalEList<?>)getAspects()).basicRemove(otherEnd, msgs);
+			case MetadataPackage.PACKAGE_METADATA__PROFILES:
+				return ((InternalEList<?>)getProfiles()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -316,6 +345,8 @@ public class PackageMetadataImpl extends MinimalEObjectImpl.Container implements
 				return getClasses();
 			case MetadataPackage.PACKAGE_METADATA__ASPECTS:
 				return getAspects();
+			case MetadataPackage.PACKAGE_METADATA__PROFILES:
+				return getProfiles();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -347,6 +378,10 @@ public class PackageMetadataImpl extends MinimalEObjectImpl.Container implements
 				getAspects().clear();
 				getAspects().addAll((Collection<? extends PackageAspect>)newValue);
 				return;
+			case MetadataPackage.PACKAGE_METADATA__PROFILES:
+				getProfiles().clear();
+				getProfiles().addAll((Collection<? extends PackageProfile>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -374,6 +409,9 @@ public class PackageMetadataImpl extends MinimalEObjectImpl.Container implements
 			case MetadataPackage.PACKAGE_METADATA__ASPECTS:
 				getAspects().clear();
 				return;
+			case MetadataPackage.PACKAGE_METADATA__PROFILES:
+				getProfiles().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -398,6 +436,8 @@ public class PackageMetadataImpl extends MinimalEObjectImpl.Container implements
 				return classes != null && !classes.isEmpty();
 			case MetadataPackage.PACKAGE_METADATA__ASPECTS:
 				return aspects != null && !aspects.isEmpty();
+			case MetadataPackage.PACKAGE_METADATA__PROFILES:
+				return profiles != null && !profiles.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

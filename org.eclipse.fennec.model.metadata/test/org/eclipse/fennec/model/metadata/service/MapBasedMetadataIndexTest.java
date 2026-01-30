@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
 import org.eclipse.fennec.model.metadata.api.MetadataIndex;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -48,7 +48,7 @@ import org.junit.jupiter.api.Test;
  */
 class MapBasedMetadataIndexTest {
 
-    private MetadataService service;
+    private MetadataWhiteboard service;
     private MetadataIndex index;
 
     // Test package 1

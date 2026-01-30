@@ -260,6 +260,8 @@ public class MyTypeValueReader implements TypeValueReader {
 | `superTypeAsArray` | `codec.superTypeAsArray` | `true` | Array (true) or string (false) |
 | `superTypeSeparator` | `codec.superTypeSeparator` | `,` | Separator for string presentation |
 | `superTypeFormat` | `codec.superTypeFormat` | (inherits from `typeFormat`) | Output format (PLAIN/STRUCTURED) |
+| `superTypeValueWriterName` | `codec.superTypeValueWriterName` | — | Custom value writer service name (see [§8.1 step 3](#81-serialization-steps) and [§6.0.3](#603-custom-valuereadervaluewriter-conflict-in-structured-format)) |
+| `superTypeValueReaderName` | `codec.superTypeValueReaderName` | — | Custom value reader service name (see [§9.2 step 2](#92-strict-mode-validation) and [§6.0.3](#603-custom-valuereadervaluewriter-conflict-in-structured-format)) |
 
 **`superTypeKey` default value:**
 

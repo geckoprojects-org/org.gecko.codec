@@ -90,6 +90,13 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//InlineTypeMapping/discriminatorValue"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//InlineTypeMapping/targetClass"/>
     </genClasses>
+    <genClasses ecoreClass="codec.ecore#//CodecPackageProfile"/>
+    <genClasses ecoreClass="codec.ecore#//CodecClassProfile">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec.ecore#//CodecClassProfile/typeConfig"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec.ecore#//CodecClassProfile/idConfig"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec.ecore#//CodecClassProfile/superTypeConfig"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec.ecore#//CodecClassProfile/featureConfigs"/>
+    </genClasses>
     <genClasses ecoreClass="codec.ecore#//CodecConfig">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/format"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/useNumericIds"/>

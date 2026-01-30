@@ -28,7 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * and utility methods for working with them.
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
- * Controls how ID is represented in the output.
+ * Controls how the ID value is represented in the serialized output. Determines whether a dedicated ID key, the original feature keys, or both are written.
  * <!-- end-model-doc -->
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getIdKeyMode()
  * @model
@@ -41,7 +41,7 @@ public enum IdKeyMode implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Only the ID key (e.g., '_id') is written.
+	 * Only the dedicated ID key (e.g., '_id') is written. The original feature value is not duplicated under its feature name.
 	 * <!-- end-model-doc -->
 	 * @see #ID_ONLY_VALUE
 	 * @generated
@@ -54,7 +54,7 @@ public enum IdKeyMode implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Both ID key and original feature names are written.
+	 * Both the dedicated ID key and the original feature name(s) are written. Useful when consumers need both an ID field and the raw feature values.
 	 * <!-- end-model-doc -->
 	 * @see #BOTH_VALUE
 	 * @generated
@@ -67,20 +67,33 @@ public enum IdKeyMode implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Only original feature names, no ID key.
+	 * Only the original feature name(s) are written, no dedicated ID key. The ID is implicit from the feature values.
 	 * <!-- end-model-doc -->
 	 * @see #FEATURE_ONLY_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	FEATURE_ONLY(2, "FEATURE_ONLY", "FEATURE_ONLY");
+	FEATURE_ONLY(2, "FEATURE_ONLY", "FEATURE_ONLY"),
+
+	/**
+	 * The '<em><b>NONE</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * No ID output at all. Both the dedicated ID key and the feature-based ID are suppressed entirely.
+	 * <!-- end-model-doc -->
+	 * @see #NONE_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	NONE(3, "NONE", "NONE");
 
 	/**
 	 * The '<em><b>ID ONLY</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Only the ID key (e.g., '_id') is written.
+	 * Only the dedicated ID key (e.g., '_id') is written. The original feature value is not duplicated under its feature name.
 	 * <!-- end-model-doc -->
 	 * @see #ID_ONLY
 	 * @model
@@ -94,7 +107,7 @@ public enum IdKeyMode implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Both ID key and original feature names are written.
+	 * Both the dedicated ID key and the original feature name(s) are written. Useful when consumers need both an ID field and the raw feature values.
 	 * <!-- end-model-doc -->
 	 * @see #BOTH
 	 * @model
@@ -108,7 +121,7 @@ public enum IdKeyMode implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Only original feature names, no ID key.
+	 * Only the original feature name(s) are written, no dedicated ID key. The ID is implicit from the feature values.
 	 * <!-- end-model-doc -->
 	 * @see #FEATURE_ONLY
 	 * @model
@@ -116,6 +129,20 @@ public enum IdKeyMode implements Enumerator {
 	 * @ordered
 	 */
 	public static final int FEATURE_ONLY_VALUE = 2;
+
+	/**
+	 * The '<em><b>NONE</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * No ID output at all. Both the dedicated ID key and the feature-based ID are suppressed entirely.
+	 * <!-- end-model-doc -->
+	 * @see #NONE
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int NONE_VALUE = 3;
 
 	/**
 	 * An array of all the '<em><b>Id Key Mode</b></em>' enumerators.
@@ -128,6 +155,7 @@ public enum IdKeyMode implements Enumerator {
 			ID_ONLY,
 			BOTH,
 			FEATURE_ONLY,
+			NONE,
 		};
 
 	/**
@@ -187,6 +215,7 @@ public enum IdKeyMode implements Enumerator {
 			case ID_ONLY_VALUE: return ID_ONLY;
 			case BOTH_VALUE: return BOTH;
 			case FEATURE_ONLY_VALUE: return FEATURE_ONLY;
+			case NONE_VALUE: return NONE;
 		}
 		return null;
 	}

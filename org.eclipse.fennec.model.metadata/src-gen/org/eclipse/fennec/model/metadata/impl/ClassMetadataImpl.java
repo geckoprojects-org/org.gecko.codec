@@ -506,7 +506,7 @@ public class ClassMetadataImpl extends MinimalEObjectImpl.Container implements C
 	@Override
 	public EList<ClassAspect> getAspects() {
 		if (aspects == null) {
-			aspects = new EObjectContainmentEList<ClassAspect>(ClassAspect.class, this, MetadataPackage.CLASS_METADATA__ASPECTS);
+			aspects = new EObjectContainmentWithInverseEList<ClassAspect>(ClassAspect.class, this, MetadataPackage.CLASS_METADATA__ASPECTS, MetadataPackage.CLASS_ASPECT__CLASS_METADATA);
 		}
 		return aspects;
 	}
@@ -526,6 +526,8 @@ public class ClassMetadataImpl extends MinimalEObjectImpl.Container implements C
 				return basicSetPackage((PackageMetadata)otherEnd, msgs);
 			case MetadataPackage.CLASS_METADATA__FEATURES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getFeatures()).basicAdd(otherEnd, msgs);
+			case MetadataPackage.CLASS_METADATA__ASPECTS:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getAspects()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}

@@ -23,9 +23,11 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect;
+import org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecFactory;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecPackage;
+import org.eclipse.fennec.codec.metadata.model.codec.CodecPackageProfile;
 import org.eclipse.fennec.codec.metadata.model.codec.DeserializationMode;
 import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect;
@@ -110,6 +112,20 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	private EClass inlineTypeMappingEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass codecPackageProfileEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass codecClassProfileEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -735,6 +751,66 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
+	public EClass getCodecPackageProfile() {
+		return codecPackageProfileEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getCodecClassProfile() {
+		return codecClassProfileEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getCodecClassProfile_TypeConfig() {
+		return (EReference)codecClassProfileEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getCodecClassProfile_IdConfig() {
+		return (EReference)codecClassProfileEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getCodecClassProfile_SuperTypeConfig() {
+		return (EReference)codecClassProfileEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getCodecClassProfile_FeatureConfigs() {
+		return (EReference)codecClassProfileEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getCodecConfig() {
 		return codecConfigEClass;
 	}
@@ -1039,6 +1115,14 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		createEAttribute(inlineTypeMappingEClass, INLINE_TYPE_MAPPING__DISCRIMINATOR_VALUE);
 		createEAttribute(inlineTypeMappingEClass, INLINE_TYPE_MAPPING__TARGET_CLASS);
 
+		codecPackageProfileEClass = createEClass(CODEC_PACKAGE_PROFILE);
+
+		codecClassProfileEClass = createEClass(CODEC_CLASS_PROFILE);
+		createEReference(codecClassProfileEClass, CODEC_CLASS_PROFILE__TYPE_CONFIG);
+		createEReference(codecClassProfileEClass, CODEC_CLASS_PROFILE__ID_CONFIG);
+		createEReference(codecClassProfileEClass, CODEC_CLASS_PROFILE__SUPER_TYPE_CONFIG);
+		createEReference(codecClassProfileEClass, CODEC_CLASS_PROFILE__FEATURE_CONFIGS);
+
 		codecConfigEClass = createEClass(CODEC_CONFIG);
 		createEAttribute(codecConfigEClass, CODEC_CONFIG__FORMAT);
 		createEAttribute(codecConfigEClass, CODEC_CONFIG__USE_NUMERIC_IDS);
@@ -1104,6 +1188,8 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		classCodecAspectEClass.getESuperTypes().add(theMetadataPackage.getClassAspect());
 		featureCodecAspectEClass.getESuperTypes().add(theMetadataPackage.getFeatureAspect());
 		referenceCodecAspectEClass.getESuperTypes().add(this.getFeatureCodecAspect());
+		codecPackageProfileEClass.getESuperTypes().add(theMetadataPackage.getPackageProfile());
+		codecClassProfileEClass.getESuperTypes().add(theMetadataPackage.getClassProfile());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(typeSerializationConfigEClass, TypeSerializationConfig.class, "TypeSerializationConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1166,6 +1252,14 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		initEClass(inlineTypeMappingEClass, InlineTypeMapping.class, "InlineTypeMapping", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getInlineTypeMapping_DiscriminatorValue(), ecorePackage.getEString(), "discriminatorValue", null, 0, 1, InlineTypeMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getInlineTypeMapping_TargetClass(), ecorePackage.getEString(), "targetClass", null, 0, 1, InlineTypeMapping.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(codecPackageProfileEClass, CodecPackageProfile.class, "CodecPackageProfile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(codecClassProfileEClass, CodecClassProfile.class, "CodecClassProfile", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getCodecClassProfile_TypeConfig(), this.getTypeSerializationConfig(), null, "typeConfig", null, 0, 1, CodecClassProfile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCodecClassProfile_IdConfig(), this.getIdSerializationConfig(), null, "idConfig", null, 0, 1, CodecClassProfile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCodecClassProfile_SuperTypeConfig(), this.getSuperTypeSerializationConfig(), null, "superTypeConfig", null, 0, 1, CodecClassProfile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getCodecClassProfile_FeatureConfigs(), this.getFeatureSerializationConfig(), null, "featureConfigs", null, 0, -1, CodecClassProfile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(codecConfigEClass, CodecConfig.class, "CodecConfig", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCodecConfig_Format(), theMetadataPackage.getSerializationFormat(), "format", "PLAIN", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

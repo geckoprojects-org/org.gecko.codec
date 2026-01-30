@@ -225,7 +225,6 @@ Each annotation key should have a test verifying it's parsed correctly.
 | `typeKey` | `testBuildClassAspectWithTypeUriStrategy` | ✅ |
 | `typeNameKey` | `testBuildClassAspectWithStructuredTypeConfig` | ✅ |
 | `typeSchemaKey` | `testBuildClassAspectWithStructuredTypeConfig` | ✅ |
-| `typeInclude` | `testBuildClassAspectWithTypeIncludeFalse` | ✅ |
 | `typeMapId` | `testBuildClassAspectWithTypeMapId` | ✅ |
 
 #### SuperType Configuration ([07-supertype.md](07-supertype.md))

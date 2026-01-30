@@ -322,8 +322,8 @@ public final class IdConfig implements Mergeable<IdConfig> {
         private String separatorKey = ConfigProperty.ID_SEPARATOR_KEY.getDefaultValue();
         private boolean serializeSeparator = ConfigProperty.ID_SEPARATOR_SERIALIZE.getDefaultValue();
         private boolean onTop = ConfigProperty.ID_ON_TOP.getDefaultValue();
-        private String valueWriterName = ConfigProperty.ID_VALUE_READER_NAME.getDefaultValue();
-        private String valueReaderName = ConfigProperty.ID_VALUE_WRITER_NAME.getDefaultValue();
+        private String valueWriterName = ConfigProperty.ID_VALUE_WRITER_NAME.getDefaultValue();
+        private String valueReaderName = ConfigProperty.ID_VALUE_READER_NAME.getDefaultValue();
 
         private Builder() {}
 

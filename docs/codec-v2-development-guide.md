@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-28 (ConfigurationResolver + cross-config validation complete, Layer 1 annotation validation gaps documented)
+**Last Updated:** 2026-01-29 (Resolver spec tests for SuperType + Discriminator; refactored into per-config-type files; Feature deserialization gate analysis)
 
 ---
 
@@ -33,33 +33,377 @@ MAIN TASK: [description] - [status: ACTIVE/PAUSED/✅]
 ### 0.2 Current Task Hierarchy
 
 ```
-NEXT TASK: Complete Layer 1 Annotation Validation in CodecAspectProvider - PENDING
+ACTIVE: Feature Config Spec Tests + Deserialization Flow Review - IN PROGRESS (2026-01-29)
 │
-│  GOAL: Expand annotation validation to cover all spec rules (T-V1 through T-V7, T-V30)
+│  CONTEXT: Before writing FeatureConfigSpecTest and FeatureConfigResolverSpecTest,
+│  we need to review the deserialization flow because Feature config is about
+│  gating (visibility control) and key customization, NOT strategy/format combinations.
+│
+│  KEY FINDING: v2 Deserialization Gate Bug
+│  │  LOCATION: CodecEObjectDeserializer.java:649 (buildDeserializationEntries)
+│  │  BUG: Uses `featureConfig.isSerialize()` for deserialization gate
+│  │  SHOULD USE: `featureConfig.shouldDeserialize()` which respects:
+│  │    - ignoreRead (directional ignore for deserialization)
+│  │    - forceRead (directional force for deserialization)
+│  │    - Separate from shouldSerialize() which uses ignoreWrite/forceWrite
+│  │
+│  │  IMPACT: Features with ignoreRead=true are still deserialized
+│  │          Features with forceRead=true but ignore=true are incorrectly gated
+│  │
+│  │  SPEC REFERENCE: 11-feature.md §1.2 (Visibility Control)
+│  │    - FeatureConfig has separate shouldSerialize() and shouldDeserialize()
+│  │    - shouldDeserialize() = forceRead overrides (ignore OR ignoreRead)
+│  │    - shouldSerialize() = forceWrite overrides (ignore OR ignoreWrite)
+│
+│  SPEC GAPS IDENTIFIED:
+│  │  1. Spec §1.2 doesn't document the entry-build pattern (buildDeserializationEntries)
+│  │  2. Spec §1.2 doesn't explicitly state deserialization gate should use shouldDeserialize()
+│  │  3. Spec doesn't document the isChangeable() pre-check for non-changeable features
+│
+│  NEXT STEPS:
+│  │  1. Review v2 deserialization code (buildDeserializationEntries) for gate bug fix
+│  │  2. Verify key→feature mapping handles directional ignore flags correctly
+│  │  3. Check if spec §1.2 needs updating for entry-build pattern
+│  │  4. Create FeatureConfigSpecTest
+│  │  5. Create FeatureConfigResolverSpecTest
+│  │  6. Create ReferenceConfigSpecTest + ReferenceConfigResolverSpecTest
+│
+---
+
+COMPLETED: SuperType + Discriminator Resolver Spec Tests + Refactoring - ✅ (2026-01-29)
+│
+│  GOAL: Add resolver spec tests for SuperType and Discriminator config types,
+│        then refactor the growing ConfigurationResolverSpecTest into per-config-type files.
+│
+│  PHASE 1: Added tests to ConfigurationResolverSpecTest
+│  │  - SuperType section: 17 tests (ST.1-ST.17)
+│  │  - Discriminator section: 17 tests (DM.1-DM.17)
+│  │  - Total grew to 75 tests (~1700 lines)
+│
+│  PHASE 2: Refactored into per-config-type files
+│  │  - ConfigurationResolverSpecTest.java — 20 tests (shared resolution mechanics)
+│  │    Source hierarchy (7), Scope chain (4), Combined (3), EffectiveConfig (4), Validation (2)
+│  │  - IdConfigResolverSpecTest.java — 17 tests (ID resolution)
+│  │    ID.1-ID.6 source hierarchy, ID.7-ID.8 scope chain, ID.9-ID.10 combined,
+│  │    ID.11-ID.12 caching, ID.13-ID.14 validation, ID.15-ID.17 ID-specific
+│  │  - SuperTypeConfigResolverSpecTest.java — 21 tests (SuperType + Cross-Config)
+│  │    ST.1-ST.17 SuperType resolution + 4 Cross-Config validation tests
+│  │    (STRUCTURED + NONE + superTypeSerialize, custom reader/writer conflicts)
+│  │  - DiscriminatorConfigResolverSpecTest.java — 17 tests (Discriminator resolution)
+│  │    DM.1-DM.6 source hierarchy, DM.7-DM.8 scope chain, DM.9-DM.10 combined,
+│  │    DM.11-DM.12 caching, DM.13-DM.14 validation, DM.15-DM.17 specific properties
+│
+│  FILES CREATED:
+│  - org.eclipse.fennec.codec.api/test/.../config/spec/IdConfigResolverSpecTest.java
+│  - org.eclipse.fennec.codec.api/test/.../config/spec/SuperTypeConfigResolverSpecTest.java
+│  - org.eclipse.fennec.codec.api/test/.../config/spec/DiscriminatorConfigResolverSpecTest.java
+│
+│  FILES MODIFIED:
+│  - ConfigurationResolverSpecTest.java (reduced from 75 to 20 tests — shared only)
+│
+│  ALL 75 TESTS PASSING
+│
+│  SPEC TEST COVERAGE STATUS:
+│  │  | Config Class       | Unit Tests | Spec Tests | Resolver Spec Tests |
+│  │  |--------------------|------------|------------|---------------------|
+│  │  | TypeConfig         | 41         | 33         | 20 (shared)         |
+│  │  | IdConfig           | 27         | 56         | 17                  |
+│  │  | SuperTypeConfig    | 31         | 28         | 21                  |
+│  │  | DiscriminatorConfig| 61         | 29         | 17                  |
+│  │  | FeatureConfig      | 52         | MISSING    | MISSING             |
+│  │  | ReferenceConfig    | 43         | MISSING    | MISSING             |
+│
+---
+
+COMPLETED: Layer 1 Annotation Validation for Type Config - ✅ (2026-01-29)
 │
 │  LOCATION: org.eclipse.fennec.codec.metadata/src/.../provider/CodecAspectProvider.java
 │
-│  ALREADY DONE:
-│  - typeMapId on EReference → WARNING ✅
-│  - typeDiscriminatorPath on EReference → WARNING ✅
-│  - Infrastructure: MetadataDiagnostic, addDiagnostic() helper
+│  DONE:
+│  - typeMapId on EReference → WARNING ✅ (D-3, pre-existing)
+│  - typeDiscriminatorPath on EReference → WARNING ✅ (D-2, pre-existing)
+│  - T-V1: typeValueReaderName on EReference → ERROR ✅
+│  - T-V2: typeValueWriterName on EReference → ERROR ✅
+│  - T-V3: typeScope in EAnnotation → WARNING (runtime-only) ✅
+│  - T-V4: typeFormatScope in EAnnotation → WARNING (runtime-only) ✅
+│  - T-V5: Any type* key on EAttribute → ERROR ✅
+│  - T-V7: typeDiscriminator on EReference → ERROR ✅
+│  - T-V30: typeInclude deprecation → WARNING ✅ (removed from spec 2026-01-29, typeInclude fully deleted)
+│  - T-V31: Both typeInclude + typeStrategy → WARNING ✅ (removed from spec 2026-01-29, typeInclude fully deleted)
 │
-│  TODO (expand checkForClassOnlyKeys or add new validation methods):
-│  ├── T-V1: typeValueReaderName on EReference → ERROR
-│  ├── T-V2: typeValueWriterName on EReference → ERROR
-│  ├── T-V3: typeScope in EAnnotation → WARNING (runtime-only)
-│  ├── T-V4: typeFormatScope in EAnnotation → WARNING (runtime-only)
-│  ├── T-V5: Any type* key on EAttribute → ERROR
-│  ├── T-V7: typeDiscriminator on EReference → ERROR
-│  └── T-V30: typeInclude deprecation → WARNING
+│  NEW METHODS ADDED:
+│  - checkForRuntimeOnlyKeys() (class + feature overloads)
+│  - checkForTypeKeysOnAttribute()
+│  - checkForDeprecatedTypeInclude()
+│  - isTypeConfigKey()
+│  - addClassDiagnostic()
+│
+│  NEW CONSTANTS:
+│  - KEY_TYPE_SCOPE, KEY_TYPE_FORMAT_SCOPE, KEY_TYPE_INCLUDE
+│
+│  TESTS: 6 new Layer1ValidationTests + 2 updated existing tests
 │
 │  SPEC REFERENCES:
 │  - 06-type.md Section 7 "Configuration Validation Rules"
-│  - 15-error-handling.md Section 0 "Validation Layers"
 │  - 15-error-handling.md Section 6.10 "Annotation Parsing Errors"
 │
-└── RETURN TO: Runtime validation (Layer 4) after Layer 1 complete
+---
 
+COMPLETED: Layer 1 Annotation Validation for SuperType, ID, Reference - ✅ (2026-01-29)
+│
+│  ── SuperType: DONE ──
+│  │  - checkForSuperTypeKeysOnReference() → ERROR diagnostics (ST-V1)
+│  │  - checkForSuperTypeKeysOnAttribute() → ERROR diagnostics (ST-V2)
+│  │  - isSuperTypeConfigKey() helper
+│  │  - Updated existing tests with diagnostic verification
+│  │
+│  ── ID: DONE ──
+│  │  - Spec: Added §11 "Configuration Validation Rules" to 09-id.md (ID-V1..V13)
+│  │  - Constants: KEY_ID_SCOPE, KEY_ID_FORMAT_SCOPE
+│  │  - checkForIdClassOnlyKeysOnReference() → ERROR (ID-V1..V10)
+│  │  - checkForIdKeysOnAttribute() → ERROR (ID-V13)
+│  │  - checkForIdRuntimeOnlyKeys() (class + feature overloads) → WARNING (ID-V11/V12)
+│  │  - isIdConfigKey(), isIdClassOnlyKey() helpers
+│  │  - Note: idFormat and idKey ARE valid on EReference (presentation varies by context)
+│  │
+│  ── Reference: DONE ──
+│  │  - Spec: Added §10 "Configuration Validation Rules" to 10-reference.md (R-V1..V4)
+│  │  - Spec: Added §10.2 "Ownership Boundaries" documenting that inlineMapping.*,
+│  │    fallbackStrategy, fallbackEClass belong to Discriminator Mapping (08-discriminator-mapping.md)
+│  │  - checkForReferenceOnlyKeysOnClass() → WARNING (R-V1/R-V3)
+│  │  - checkForReferenceOnlyKeysOnAttribute() → ERROR (R-V2/R-V4)
+│  │  - isRefConfigKey() helper
+│  │
+│  ALL TESTS PASSING
+│
+---
+
+COMPLETED: 09-id.md vs 16-annotation-reference.md Gap Analysis & Fixes - ✅ (2026-01-29)
+│
+│  GOAL: Verify 09-id.md covers all properties from 16-annotation-reference.md ID section,
+│        fix contradictions, add ser/deser flow diagrams (like 06-type.md).
+│
+│  FINDINGS & FIXES:
+│  1. Severity mismatch: idScope/idFormatScope in EAnnotation
+│     - 09-id.md said WARNING, 16-annotation-reference.md said ERROR
+│     - Fix: Aligned 16-annotation-reference.md to WARNING (matches type spec pattern + implementation)
+│
+│  2. IdKeyMode.NONE missing from 09-id.md
+│     - 16-annotation-reference.md had NONE; 09-id.md §2 did not
+│     - Fix: Added NONE to metadata.ecore IdKeyMode enum (value=3)
+│     - Fix: Added NONE to 09-id.md §2 table + note
+│     - Fix: Added test model entry (PersonWithIdKeyModeNone) + parsing test
+│
+│  3. STRUCTURED format example contradiction
+│     - 09-id.md §3.3 showed feature name ("myId") as inner key
+│     - 16-annotation-reference.md showed idValueKey default ("id") as inner key
+│     - Fix: Corrected §3.3, §3.4, §6 Example 2, §7 Complete Examples Summary
+│     - Added notes explaining idValueKey role + IdKeyMode interaction
+│
+│  4. §7 expanded to full IdKeyMode × Format matrix (matching 16-annotation-reference.md)
+│     - All 4 IdKeyMode values × PLAIN/STRUCTURED for both single and multiple features
+│     - Added NONE rows
+│
+│  5. Created §10 "ID Serialization Flow" (ASCII diagram, 6 steps)
+│     - Steps: useId check → NONE check → resolve features → determine value → apply format → apply keyMode → field ordering
+│
+│  6. Created §11 "ID Deserialization Flow" (ASCII diagram, 4 steps)
+│     - Steps: locate ID field → detect format → resolve features → parse value (PLAIN/STRUCTURED)
+│
+│  7. Renumbered sections: §10→Ser Flow, §11→Deser Flow, §12→Defaults, §13→Validation Rules
+│
+│  8. Added §6 Example 4 (NONE mode)
+│
+│  FILES MODIFIED:
+│  - docs/codec-v2-spec/09-id.md (major update)
+│  - docs/codec-v2-spec/16-annotation-reference.md (severity fix)
+│  - org.eclipse.fennec.model.metadata/model/metadata.ecore (IdKeyMode.NONE)
+│  - test-codec-annotations.ecore (PersonWithIdKeyModeNone)
+│  - CodecAspectProviderValidConfigTest.java (NONE parsing test)
+│
+│  ALL TESTS PASSING
+│
+---
+
+COMPLETED: Remove useId/useType boolean toggles from spec - ✅ (2026-01-29)
+│
+│  RATIONALE: useId=false is semantically identical to IdKeyMode.NONE.
+│             useType=false is semantically identical to TypeStrategy.NONE.
+│             Having both a boolean toggle AND an enum value for the same behavior
+│             is redundant. The enum approach is more explicit and avoids confusion.
+│
+│  CHANGES:
+│  - 09-id.md: Removed useId from §8.3 scope table (replaced with idKeyMode),
+│    §8.6 dependency table (now uses idKeyMode=NONE), §10 ser flow (step 1 only checks NONE)
+│  - 09-id.md §8 alignment table: "useType/useId" row → "TypeStrategy.NONE/IdKeyMode.NONE"
+│  - 02-config-resolution.md: Builder example .useId(true)→.idKeyMode(ID_ONLY),
+│    removed .useType(true) (redundant with .typeStrategy(NAME))
+│  - 17-format-abstraction.md: Builder example .useId(false)→.idKeyMode(IdKeyMode.NONE)
+│  - Added migration note in §8.6 explaining the v1→v2 change
+│
+│  NOTE: Old v2 CodecConfiguration.java still has useId field (not modified per
+│        refactoring plan rules — new code uses IdKeyMode.NONE instead)
+│
+---
+
+COMPLETED: ValueWriter/ValueReader Priority in Ser/Deser Flows - ✅ (2026-01-29)
+│
+│  RATIONALE: Custom ValueWriter/ValueReader should be full delegation — when set,
+│             they take over entirely (have the generator/parser + config).
+│             NONE is an early break from effective config (known before JSON parsing).
+│             ValueReader/Writer comes right after NONE, before any built-in logic.
+│
+│  PRIORITY CHAINS (all flows updated):
+│
+│  ── TYPE SERIALIZATION (06-type.md §5.0) ──
+│  1. Discriminator Mapping (on EClass)
+│  2. Inline Mapping (on EReference)
+│  3. NONE check → early break
+│  3a. ValueWriter (if set → full delegation → DONE)
+│  3b-3c. Built-in logic (strategy → value → format → write)
+│
+│  ── TYPE DESERIALIZATION (06-type.md §6.3.0) ──
+│  1. Discriminator Mapping (on EClass)
+│  2. Inline Mapping (on EReference)
+│  3. NONE check → early break (skip to fallback)
+│  3a. ValueReader (if set → full delegation → DONE)
+│  3b. Format detection
+│  3c. Built-in extraction (strategy-dependent)
+│  3d. Resolve EClass
+│  4. Fallback hints
+│
+│  ── ID SERIALIZATION (09-id.md §10) ──
+│  1. NONE check → early break
+│  2. ValueWriter (if set → full delegation → DONE)
+│  3. Resolve features
+│  4-5. Built-in logic (strategy → value → format → keyMode)
+│  6. Field ordering (idOnTop)
+│
+│  ── ID DESERIALIZATION (09-id.md §11) ──
+│  1. NONE check → early break
+│  2. ValueReader (if set → full delegation → DONE)
+│  3. Locate ID field (idKey)
+│  4. Format detection
+│  5. Resolve features + parse value
+│
+│  NOTE: NONE + ValueWriter/Reader configured = NONE wins (disabled is disabled).
+│
+│  TESTS ADDED: TypeConfigSpecTest Section 7 (9 tests for ValueWriter/ValueReader
+│  flow effectiveness at config level) - all passing
+│
+---
+
+COMPLETED: idOnTop Runtime Ordering Constraint Documentation - ✅ (2026-01-29)
+│
+│  RATIONALE: idOnTop is configured on ID config but controls the orchestrator
+│             (CodecEObjectSerializer) invocation order of both Type and ID entries.
+│             This was only documented in 09-id.md §8.7 but had no mention in
+│             06-type.md, 01-architecture.md, or 05-global-options.md.
+│
+│  CHANGES:
+│  - 06-type.md: Added §5.0.2 "Runtime Ordering Constraint (idOnTop)"
+│  - 09-id.md §8.7: Renamed to "Runtime Orchestration Constraint", updated table
+│  - 01-architecture.md §4: Added metadata field ordering as orchestrator concern
+│  - 05-global-options.md §3: Fixed ordering list for idOnTop awareness
+│
+---
+
+COMPLETED: Cross-Verification of Spec Docs 06-09 vs 16-annotation-reference.md - ✅ (2026-01-29)
+│
+│  GOAL: Verify docs 06-type.md, 07-supertype.md, 08-discriminator-mapping.md,
+│        09-id.md are consistent with 16-annotation-reference.md (leader doc).
+│
+│  FINDINGS & FIXES:
+│
+│  1. CONTRADICTION: idOnTop default
+│     - 06-type.md §5.0.2 and 09-id.md §8.7 said "true (default)"
+│     - 09-id.md §5.0, §12, and 16-ref said "false"
+│     - Fix: Aligned ALL to "false" across 06-type.md, 09-id.md, 01-architecture.md,
+│       05-global-options.md (16-ref was already correct)
+│
+│  2. GAP: 06-type.md §3.1 missing typeValueReaderName/typeValueWriterName
+│     - Flow diagrams referenced them but config keys table did not
+│     - Fix: Added both keys to §3.1 with cross-references to flow steps
+│
+│  3. GAP: 07-supertype.md §6.1 missing superTypeValueReaderName/superTypeValueWriterName
+│     - Flow sections referenced them but config keys table did not
+│     - Fix: Added both keys to §6.1 with cross-references to flow steps and §6.0.3
+│
+│  4. MINOR: 08-discriminator-mapping.md §1.3 broken anchor
+│     - Referenced #530-type-resolution-flow (nonexistent)
+│     - Fix: Corrected to #630-type-resolution-flow and fixed link text
+│
+│  5. CLEANUP: Removed deprecated typeInclude entirely from ALL spec docs
+│     - Primary: 06-type.md (§1.4 note, §3.1 row, §4 note, §7.4 rules, §8 section)
+│     - Primary: 16-annotation-reference.md (config table, invalid configs, impl status)
+│     - Secondary: 02-config-resolution.md, 19-test-coverage.md, 21-type-config-validation-rules.md
+│     - Zero typeInclude references remain in entire spec
+│
+│  CLEAN MATCHES (no issues found):
+│  - All TypeStrategy/IdStrategy/IdKeyMode/SuperTypeStrategy values
+│  - All scope levels (Global/EClass/ERef/EAttr)
+│  - All invalid configuration tables
+│  - All flow diagrams internally consistent
+│  - Discriminator Mapping properties, annotation sources, fallback handling
+│  - ValueWriter/ValueReader full delegation pattern across all flows
+│  - NONE as hard disable consistent across Type and ID
+│
+│  FILES MODIFIED:
+│  - 06-type.md, 07-supertype.md, 08-discriminator-mapping.md, 09-id.md
+│  - 01-architecture.md, 05-global-options.md
+│  - 16-annotation-reference.md
+│  - 02-config-resolution.md, 19-test-coverage.md, 21-type-config-validation-rules.md
+
+---
+
+COMPLETED: ID Spec Tests + Bug Fix (codec.api + codec.metadata audit) - ✅ (2026-01-29)
+│
+│  GOAL: Create comprehensive ID spec tests at codec.api level and verify
+│        codec.metadata level coverage is complete.
+│
+│  BUG FIX: IdConfig.java Builder had swapped ConfigProperty defaults
+│  │  - Line 325: valueWriterName was initialized from ID_VALUE_READER_NAME (wrong)
+│  │  - Line 326: valueReaderName was initialized from ID_VALUE_WRITER_NAME (wrong)
+│  │  - Impact: None (both defaults are null), but semantically incorrect
+│  │  - Fix: Swapped to correct ConfigProperty references
+│
+│  NEW TEST FILE: IdConfigSpecTest.java (56 tests)
+│  │  Location: org.eclipse.fennec.codec.api/test/.../config/spec/IdConfigSpecTest.java
+│  │  Sections:
+│  │  1. Default Values (spec §12) — 12 tests
+│  │  2. IdStrategy Values (spec §5.0) — 3 tests
+│  │  3. IdKeyMode Values (spec §2) — 4 tests
+│  │  4. Format × Strategy Combinations (spec §3) — 9 tests
+│  │  5. Validation Rules (spec §13.1) — 6 tests
+│  │  6. Merge Behavior — 8 tests
+│  │  7. ValueWriter/ValueReader Flow Effectiveness (spec §10/§11) — 9 tests
+│  │  8. idOnTop Ordering Constraint (spec §8.7) — 5 tests
+│
+│  ENHANCED: ConfigurationResolverSpecTest.java (ID tests later extracted to IdConfigResolverSpecTest)
+│  │  Note: Originally added as section in ConfigurationResolverSpecTest, later extracted
+│  │  to standalone IdConfigResolverSpecTest.java (17 tests) during per-config-type refactoring.
+│  │  See "SuperType + Discriminator Resolver Spec Tests + Refactoring" task for details.
+│
+│  CODEC.METADATA AUDIT: Already comprehensive ✅
+│  │  - CodecAspectProvider.buildIdConfig() parses all 14 annotation keys
+│  │  - CodecAspectProviderValidConfigTest → IdConfigTests: 7 tests (all strategies, formats,
+│  │    key modes, value key, custom reader/writer, structured config)
+│  │  - CodecAspectProviderMisconfigTest: 5+ ID validation tests (ID-V1..V13)
+│  │  - test-codec-annotations.ecore: 8+ EClasses with ID annotation fixtures
+│  │  - No gaps found — Level 1 annotation parsing fully covered
+│
+│  TOTAL ID TEST COVERAGE:
+│  │  codec.api:
+│  │  - IdConfigSpecTest: 56 spec tests (NEW)
+│  │  - IdConfigTest: 27 unit tests (existing)
+│  │  - ConfigurationResolverSpecTest: 17 ID tests (NEW)
+│  │  - ConfigurationResolverTest: 2 ID tests (existing)
+│  │  codec.metadata:
+│  │  - CodecAspectProviderValidConfigTest: 7 ID tests (existing)
+│  │  - CodecAspectProviderMisconfigTest: 5+ ID validation tests (existing)
+│  │
+│  ALL TESTS PASSING (both codec.api and codec.metadata)
+│
 ---
 
 COMPLETED: Prepare spec for TCK test creation (Type + SuperType configuration) - ✅
@@ -80,7 +424,7 @@ COMPLETED: Prepare spec for TCK test creation (Type + SuperType configuration) -
 ├── CHILD: Type spec clarification (06-type.md) - ✅
 │   ├── Created serialization flow (Section 5) - ✅
 │   ├── Created deserialization flow (Section 6) - ✅
-│   ├── Fix: Remove deprecated typeInclude property - ✅
+│   ├── Fix: Remove deprecated typeInclude property - ✅ (fully removed from spec 2026-01-29)
 │   ├── Fix: TypeStrategy.NONE semantics - ✅
 │   └── Fix: fallbackStrategy default (FALLBACK → SKIP) - ✅
 │
@@ -111,7 +455,7 @@ COMPLETED: Prepare spec for TCK test creation (Type + SuperType configuration) -
     │     - Default values match spec
     │     - Invalid config combinations → correct ERROR/WARNING
     │     - Property applicability (wrong levels → correct diagnostic)
-    │     - Deprecation warnings (typeInclude → typeStrategy=NONE)
+    │     - TypeStrategy.NONE disabling behavior
     │  2. Serialization tests (later phase)
     │     - Strategy × Format matrix output verification
     │     - SuperType integration with Type
@@ -347,9 +691,9 @@ All codec annotations use source: `http://eclipse.org/fennec/codec`
 ```
 strategy = URI
 typeKey = "_type"
-include = true
+format = PLAIN
 schemaKey = "schema"
-nameKey = "name"
+nameKey = "type"
 ```
 
 **ID Configuration:**
@@ -642,7 +986,11 @@ The deprecated `ConfigurationMerger` in `org.eclipse.fennec.codec.v2.config.effe
 
 **Test Coverage:**
 - `ConfigurationResolverTest.java` - 25+ unit tests
-- `ConfigurationResolverSpecTest.java` - 15+ spec tests validating spec section 02-config-resolution.md
+- `ConfigurationResolverSpecTest.java` - 20 spec tests (shared resolution mechanics)
+- `IdConfigResolverSpecTest.java` - 17 spec tests (ID resolution)
+- `SuperTypeConfigResolverSpecTest.java` - 21 spec tests (SuperType + Cross-Config validation)
+- `DiscriminatorConfigResolverSpecTest.java` - 17 spec tests (Discriminator resolution)
+- Total: 75 resolver spec tests validating spec section 02-config-resolution.md
 
 **Usage:**
 ```java
@@ -675,17 +1023,30 @@ See [15-error-handling.md §0 "Validation Layers"](docs/codec-v2-spec/15-error-h
 |------------|--------|---------|
 | `typeMapId` on EReference → WARNING | ✅ Done | D-3 |
 | `typeDiscriminatorPath` on EReference → WARNING | ✅ Done | D-2 |
-| `typeValueReaderName` on EReference → ERROR | ❌ Missing | T-V1 |
-| `typeValueWriterName` on EReference → ERROR | ❌ Missing | T-V2 |
-| `typeScope` in EAnnotation → WARNING | ❌ Missing | T-V3 |
-| `typeFormatScope` in EAnnotation → WARNING | ❌ Missing | T-V4 |
-| Any `type*` key on EAttribute → ERROR | ❌ Missing | T-V5 |
-| `typeDiscriminator` on EReference → ERROR | ❌ Missing | T-V7 |
-| `typeInclude` deprecation → WARNING | ❌ Missing | T-V30 |
+| `typeValueReaderName` on EReference → ERROR | ✅ Done (2026-01-29) | T-V1 |
+| `typeValueWriterName` on EReference → ERROR | ✅ Done (2026-01-29) | T-V2 |
+| `typeScope` in EAnnotation → WARNING | ✅ Done (2026-01-29) | T-V3 |
+| `typeFormatScope` in EAnnotation → WARNING | ✅ Done (2026-01-29) | T-V4 |
+| Any `type*` key on EAttribute → ERROR | ✅ Done (2026-01-29) | T-V5 |
+| `typeDiscriminator` on EReference → ERROR | ✅ Done (2026-01-29) | T-V7 |
+| ~~`typeInclude` deprecation → WARNING~~ | ~~✅ Done~~ → Removed from spec (2026-01-29) | ~~T-V30~~ |
+| ~~Both `typeInclude` + `typeStrategy` → WARNING~~ | ~~✅ Done~~ → Removed from spec (2026-01-29) | ~~T-V31~~ |
+| `superType*` on EReference → ERROR | ✅ Done (2026-01-29) | ST-V1 |
+| `superType*` on EAttribute → ERROR | ✅ Done (2026-01-29) | ST-V2 |
+| `id*` class-only keys on EReference → ERROR | ✅ Done (2026-01-29) | ID-V1..V10 |
+| `idScope`/`idFormatScope` in EAnnotation → WARNING | ✅ Done (2026-01-29) | ID-V11/V12 |
+| `id*` on EAttribute → ERROR | ✅ Done (2026-01-29) | ID-V13 |
+| `ref*` on EClass → WARNING | ✅ Done (2026-01-29) | R-V1 |
+| `ref*` on EAttribute → ERROR | ✅ Done (2026-01-29) | R-V2 |
+| `expand` on EClass → WARNING | ✅ Done (2026-01-29) | R-V3 |
+| `expand` on EAttribute → ERROR | ✅ Done (2026-01-29) | R-V4 |
 
-**Remaining Work:**
-- Annotation parser: expand `checkForClassOnlyKeys()` to cover all T-V rules
+**Layer 1 Annotation Validation: COMPLETE ✅**
+
+**Remaining Work (Layer 4 - Runtime):**
 - Runtime serializer: CLASS strategy + instanceClassName null (T-V10)
+- Runtime format-dependent warnings (T-V20, T-V21)
+- SuperType cross-config constraints (07-supertype.md §6.0) - already in ConfigurationResolver
 
 **Architecture:**
 1. **Config classes** → Self-contained validation ✅
@@ -771,8 +1132,8 @@ Updated `07-id.md` to align with Type handling patterns:
 - Updated `00-overview.md` §2.1 error scenarios to match actual implementation
 
 **Metadata Field Ordering (2.4):**
-- Documented existing `idOnTop` feature in `07-id.md` §8.7
-- Default `idOnTop=true` puts `_id` before `_type` (useful for MongoDB)
+- Documented existing `idOnTop` feature in `09-id.md` §8.7
+- Default `idOnTop=false` puts `_type` before `_id` (human-readable, API conventions)
 - Added `codec.id.onTop` to annotation key registry in `00-overview.md`
 
 **Option Keys Registry (3.1):**
@@ -872,9 +1233,9 @@ MetadataIndexReader index = metadataService.getIndexReader();
 ClassMetadata meta = index.findByInstanceClassName(nsURI, "org.example.PersonImpl");
 ```
 
-**Deprecated `typeInclude` Removed:**
+**Deprecated `typeInclude` Removed (code + spec):**
 
-The deprecated `typeInclude` annotation key and `BaseTypeConfig.include` attribute have been completely removed:
+The deprecated `typeInclude` has been completely removed from both code (2026-01-26) and spec (2026-01-29):
 
 | Location | Change |
 |----------|--------|
@@ -883,6 +1244,7 @@ The deprecated `typeInclude` annotation key and `BaseTypeConfig.include` attribu
 | `CodecAspectProvider` | Removed `typeInclude` parsing |
 | `ConfigurationMerger` | Updated `resolveTypeEnabled()` to derive from `TypeStrategy.NONE` |
 | Tests | Updated to use `TypeStrategy.NONE` instead |
+| **Spec docs** (2026-01-29) | Removed all `typeInclude` references from 06-type.md, 16-annotation-reference.md, 02-config-resolution.md, 19-test-coverage.md, 21-type-config-validation-rules.md |
 
 **Spec Updated:**
 - `06-type.md` section 6.4.5: CLASS Strategy Resolution with MetadataIndex API examples
@@ -894,7 +1256,7 @@ The deprecated `typeInclude` annotation key and `BaseTypeConfig.include` attribu
 
 | Class | Purpose | Test Count |
 |-------|---------|------------|
-| `IdConfig` | ID serialization configuration | 33+ tests |
+| `IdConfig` | ID serialization configuration | 83+ tests (27 unit + 56 spec) |
 | `TypeConfig` | Type serialization configuration | 41 tests |
 | `FeatureConfig` | Feature serialization configuration | 52 tests |
 | `SuperTypeConfig` | SuperType serialization configuration | 35 tests |
@@ -1201,7 +1563,7 @@ This section summarizes the Ecore model changes required for the new configurati
 | Change | Type | Element | Status |
 |--------|------|---------|--------|
 | Remove `MAPPED` | DELETE | `TypeStrategy.MAPPED` literal | ✅ Done |
-| Add `onTop` | ADD | `BaseIdConfig.onTop : EBoolean = true` | Pending |
+| Add `onTop` | ADD | `BaseIdConfig.onTop : EBoolean = false` | Pending |
 | Add `serializeSeparator` | ADD | `BaseIdConfig.serializeSeparator : EBoolean = true` | Pending |
 | Add `separatorKey` | ADD | `BaseIdConfig.separatorKey : EString = "separator"` | Pending |
 
@@ -1224,7 +1586,7 @@ This section summarizes the Ecore model changes required for the new configurati
 **For org.eclipse.fennec.model.metadata:**
 | Test | Description |
 |------|-------------|
-| `BaseIdConfigDefaultsTest` | Verify `onTop=true`, `serializeSeparator=true`, `separatorKey="separator"` defaults |
+| `BaseIdConfigDefaultsTest` | Verify `onTop=false`, `serializeSeparator=true`, `separatorKey="separator"` defaults |
 | `TypeStrategyEnumTest` | Verify remaining values: NAME, CLASS, URI, SCHEMA_AND_TYPE, NUMERIC, NONE |
 
 **For org.eclipse.fennec.codec.metadata:**
@@ -1245,7 +1607,7 @@ This section summarizes the Ecore model changes required for the new configurati
 | `IdScopeSerializationTest` | Verify ID respects scope during serialization |
 | `TypeHintModeDeserializationTest` | Verify HINT vs OVERRIDE behavior |
 | `DeserializationModeTest` | Verify STRICT/LENIENT/AUTO_DETECT behavior |
-| `IdOnTopSerializationTest` | Verify `_id` appears before `_type` when onTop=true |
+| `IdOnTopSerializationTest` | Verify `_id` appears before `_type` when onTop=true (default is false → `_type` first) |
 
 ### 10.6 MAPPED → Discriminator Migration
 

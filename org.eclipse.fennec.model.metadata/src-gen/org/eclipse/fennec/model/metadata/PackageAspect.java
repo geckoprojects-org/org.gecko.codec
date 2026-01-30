@@ -14,8 +14,6 @@
  */
 package org.eclipse.fennec.model.metadata;
 
-import org.eclipse.emf.ecore.EPackage;
-
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -24,14 +22,14 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base class for aspects that attach to PackageMetadata.
+ * Base class for aspects attached to PackageMetadata. Provides a bidirectional reference to the owning PackageMetadata, enabling navigation from the aspect back to the metadata context.
  * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.fennec.model.metadata.PackageAspect#getEPackage <em>EPackage</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.PackageAspect#getPackageMetadata <em>Package Metadata</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getPackageAspect()
@@ -41,28 +39,30 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface PackageAspect extends Aspect {
 	/**
-	 * Returns the value of the '<em><b>EPackage</b></em>' reference.
+	 * Returns the value of the '<em><b>Package Metadata</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link org.eclipse.fennec.model.metadata.PackageMetadata#getAspects <em>Aspects</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * The EPackage this aspect was built from.
+	 * The PackageMetadata that contains this aspect. Bidirectional opposite of PackageMetadata.aspects. Use packageMetadata.getEPackage() to access the original EPackage.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>EPackage</em>' reference.
-	 * @see #setEPackage(EPackage)
-	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getPackageAspect_EPackage()
-	 * @model
+	 * @return the value of the '<em>Package Metadata</em>' container reference.
+	 * @see #setPackageMetadata(PackageMetadata)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getPackageAspect_PackageMetadata()
+	 * @see org.eclipse.fennec.model.metadata.PackageMetadata#getAspects
+	 * @model opposite="aspects" transient="false"
 	 * @generated
 	 */
-	EPackage getEPackage();
+	PackageMetadata getPackageMetadata();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.PackageAspect#getEPackage <em>EPackage</em>}' reference.
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.PackageAspect#getPackageMetadata <em>Package Metadata</em>}' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>EPackage</em>' reference.
-	 * @see #getEPackage()
+	 * @param value the new value of the '<em>Package Metadata</em>' container reference.
+	 * @see #getPackageMetadata()
 	 * @generated
 	 */
-	void setEPackage(EPackage value);
+	void setPackageMetadata(PackageMetadata value);
 
 } // PackageAspect

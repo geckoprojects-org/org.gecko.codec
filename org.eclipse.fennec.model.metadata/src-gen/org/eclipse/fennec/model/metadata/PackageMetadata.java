@@ -26,7 +26,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Pre-computed metadata for an EPackage. Contains resolved configuration and metadata for all classes in the package.
+ * Pre-computed metadata for an EPackage. Root of the metadata tree for a package, containing ClassMetadata for all EClasses, aspects from all registered AspectProviders, and profiles built by providers. Created by MetadataService.registerPackage() and indexed for fast lookups.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -37,6 +37,7 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.model.metadata.PackageMetadata#getNsURI <em>Ns URI</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.PackageMetadata#getClasses <em>Classes</em>}</li>
  *   <li>{@link org.eclipse.fennec.model.metadata.PackageMetadata#getAspects <em>Aspects</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.PackageMetadata#getProfiles <em>Profiles</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getPackageMetadata()
@@ -75,7 +76,7 @@ public interface PackageMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Cached namespace URI for fast lookup.
+	 * Cached namespace URI of the EPackage. Used for fast lookup without dereferencing the EPackage.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Ns URI</em>' attribute.
 	 * @see #setNsURI(String)
@@ -102,7 +103,7 @@ public interface PackageMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Metadata for all EClasses in this package.
+	 * Metadata for all EClasses in this package. Bidirectional: each ClassMetadata has a back-reference via ClassMetadata.package.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Classes</em>' containment reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getPackageMetadata_Classes()
@@ -115,16 +116,33 @@ public interface PackageMetadata extends DiagnosticContainer {
 	/**
 	 * Returns the value of the '<em><b>Aspects</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.fennec.model.metadata.PackageAspect}.
+	 * It is bidirectional and its opposite is '{@link org.eclipse.fennec.model.metadata.PackageAspect#getPackageMetadata <em>Package Metadata</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Aspects attached to this package (codec, ORM, etc.).
+	 * Aspects attached to this package by registered AspectProviders. One aspect per provider (identified by typeId). Bidirectional: each PackageAspect has a back-reference via PackageAspect.packageMetadata.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Aspects</em>' containment reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getPackageMetadata_Aspects()
-	 * @model containment="true"
+	 * @see org.eclipse.fennec.model.metadata.PackageAspect#getPackageMetadata
+	 * @model opposite="packageMetadata" containment="true"
 	 * @generated
 	 */
 	EList<PackageAspect> getAspects();
+
+	/**
+	 * Returns the value of the '<em><b>Profiles</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.fennec.model.metadata.PackageProfile}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Pre-computed profiles built by AspectProviders. One profile per provider (identified by typeId). Profiles contain the fully resolved annotation-layer configuration for all classes. Built after all metadata, aspects, and cross-references are complete.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Profiles</em>' containment reference list.
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getPackageMetadata_Profiles()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<PackageProfile> getProfiles();
 
 } // PackageMetadata

@@ -22,7 +22,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Combined index interface for metadata lookups and maintenance. Extends both MetadataIndexReader (query operations) and MetadataIndexWriter (index maintenance). Implementations include MapBasedMetadataIndex (in-memory) and potentially LuceneMetadataIndex (future).
+ * Combined index interface for metadata lookups and maintenance. Extends both MetadataIndexReader (query operations) and MetadataIndexWriter (index maintenance). Implementations include MapBasedMetadataIndex (in-memory hash maps) and potentially LuceneMetadataIndex (future). Injected into MetadataWhiteboard via setMetadataIndex/unsetMetadataIndex for OSGi DS lifecycle management.
  * <!-- end-model-doc -->
  *
  *

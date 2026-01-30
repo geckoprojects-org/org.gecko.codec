@@ -29,7 +29,6 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.config.FeatureConfig;
-import org.eclipse.fennec.codec.config.SuperTypeConfig;
 import org.eclipse.fennec.codec.config.TypeConfig;
 import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
@@ -40,22 +39,28 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * Spec-based tests for {@link ConfigurationResolver}.
+ * Spec-based tests for {@link ConfigurationResolver} — shared resolution mechanics.
  * <p>
- * These tests are derived directly from the codec-v2 specification:
+ * These tests verify the generic two-dimensional resolution algorithm using TypeConfig
+ * as the representative config type. Per-config-type resolution tests are in separate files:
  * <ul>
- *   <li>{@code docs/codec-v2-spec/02-config-resolution.md} - Configuration Resolution</li>
+ *   <li>{@link IdConfigResolverSpecTest} - ID configuration resolution</li>
+ *   <li>{@link SuperTypeConfigResolverSpecTest} - SuperType configuration resolution + cross-config validation</li>
+ *   <li>{@link DiscriminatorConfigResolverSpecTest} - Discriminator configuration resolution</li>
  * </ul>
  * <p>
- * Test organization follows the spec sections:
+ * Spec reference: {@code docs/codec-v2-spec/02-config-resolution.md}
+ * <p>
+ * Test sections:
  * <ul>
  *   <li>Section 2: Source Hierarchy (Vertical) - OPTIONS → RESOURCE → FACTORY → MODULE → ANNOTATION → DEFAULT</li>
  *   <li>Section 3: Scope Chain (Horizontal) - FEATURE → ECLASS → GLOBAL</li>
  *   <li>Section 4: Combined Resolution Algorithm</li>
  *   <li>Section 8: EffectiveConfig Pattern</li>
+ *   <li>Validation Integration</li>
  * </ul>
  */
-@DisplayName("ConfigurationResolver Spec Tests")
+@DisplayName("ConfigurationResolver Spec Tests (shared resolution mechanics)")
 class ConfigurationResolverSpecTest {
 
     private DiagnosticCollector diagnostics;
@@ -521,116 +526,6 @@ class ConfigurationResolverSpecTest {
             // Should have collected the warning
             assertTrue(collector.hasWarnings(),
                     "Diagnostics should be collected from validation");
-        }
-    }
-
-    // ========================================================================
-    // Cross-Config Validation (Spec 07-supertype.md Section 6.0)
-    // ========================================================================
-
-    @Nested
-    @DisplayName("Cross-Config Validation (spec 07-supertype.md §6.0)")
-    class CrossConfigValidation {
-
-        /**
-         * Spec 07-supertype.md §6.0:
-         * "STRUCTURED requires Type: typeFormat=STRUCTURED + typeStrategy=NONE + superTypeSerialize=true → ERROR
-         *  Cannot write supertype inside _type object when no _type is written"
-         */
-        @Test
-        @DisplayName("6.0.1 STRUCTURED + NONE + superTypeSerialize=true is ERROR")
-        void structuredRequiresType() {
-            ConfigurationResolver resolver = ConfigurationResolver.builder()
-                    .optionsProperties(Map.of(
-                            "typeFormat", "STRUCTURED",
-                            "typeStrategy", "NONE",
-                            "superTypeSerialize", true
-                    ))
-                    .build();
-
-            TypeConfig typeConfig = resolver.resolveTypeConfig(personClass, diagnostics);
-            SuperTypeConfig superTypeConfig = resolver.resolveSuperTypeConfig(personClass, diagnostics);
-            resolver.validateCrossConfig(typeConfig, superTypeConfig, diagnostics);
-
-            assertTrue(diagnostics.hasErrors(),
-                    "Spec §6.0: STRUCTURED + NONE + superTypeSerialize=true must produce ERROR");
-        }
-
-        /**
-         * Spec 07-supertype.md §6.0:
-         * "Custom reader conflict: STRUCTURED + typeValueReaderName + superTypeValueReaderName → superTypeValueReaderName IGNORED + WARNING"
-         */
-        @Test
-        @DisplayName("6.0.2 Custom reader conflict in STRUCTURED produces WARNING")
-        void customReaderConflict() {
-            ConfigurationResolver resolver = ConfigurationResolver.builder()
-                    .optionsProperties(Map.of(
-                            "typeFormat", "STRUCTURED",
-                            "typeValueReaderName", "typeReader",
-                            "superTypeValueReaderName", "superTypeReader"
-                    ))
-                    .build();
-
-            TypeConfig typeConfig = resolver.resolveTypeConfig(personClass, diagnostics);
-            SuperTypeConfig superTypeConfig = resolver.resolveSuperTypeConfig(personClass, diagnostics);
-            resolver.validateCrossConfig(typeConfig, superTypeConfig, diagnostics);
-
-            assertTrue(diagnostics.hasWarnings(),
-                    "Spec §6.0: Custom reader conflict in STRUCTURED must produce WARNING");
-        }
-
-        /**
-         * Spec 07-supertype.md §6.0:
-         * "Custom writer conflict: STRUCTURED + typeValueWriterName + superTypeValueWriterName → superTypeValueWriterName IGNORED + WARNING"
-         */
-        @Test
-        @DisplayName("6.0.3 Custom writer conflict in STRUCTURED produces WARNING")
-        void customWriterConflict() {
-            ConfigurationResolver resolver = ConfigurationResolver.builder()
-                    .optionsProperties(Map.of(
-                            "typeFormat", "STRUCTURED",
-                            "typeValueWriterName", "typeWriter",
-                            "superTypeValueWriterName", "superTypeWriter"
-                    ))
-                    .build();
-
-            TypeConfig typeConfig = resolver.resolveTypeConfig(personClass, diagnostics);
-            SuperTypeConfig superTypeConfig = resolver.resolveSuperTypeConfig(personClass, diagnostics);
-            resolver.validateCrossConfig(typeConfig, superTypeConfig, diagnostics);
-
-            assertTrue(diagnostics.hasWarnings(),
-                    "Spec §6.0: Custom writer conflict in STRUCTURED must produce WARNING");
-        }
-
-        /**
-         * Spec 07-supertype.md §6.0:
-         * "Format follows Type: superTypeFormat not explicitly set → Inherits from typeFormat"
-         *
-         * This test verifies that when superTypeFormat is not set, STRUCTURED is inherited
-         * and the constraint (NONE + serialize=true) still applies.
-         */
-        @Test
-        @DisplayName("6.0.4 Inherited format triggers STRUCTURED constraint")
-        void inheritedFormatTriggersConstraint() {
-            // superTypeFormat not set → inherits STRUCTURED from typeFormat
-            ConfigurationResolver resolver = ConfigurationResolver.builder()
-                    .optionsProperties(Map.of(
-                            "typeFormat", "STRUCTURED",   // inherited by supertype
-                            "typeStrategy", "NONE",
-                            "superTypeSerialize", true
-                            // superTypeFormat NOT SET → inherits STRUCTURED
-                    ))
-                    .build();
-
-            TypeConfig typeConfig = resolver.resolveTypeConfig(personClass, diagnostics);
-            SuperTypeConfig superTypeConfig = resolver.resolveSuperTypeConfig(personClass, diagnostics);
-
-            // SuperTypeConfig.format should be null (not explicitly set)
-            // Cross-config validation should use typeConfig.format as effective format
-            resolver.validateCrossConfig(typeConfig, superTypeConfig, diagnostics);
-
-            assertTrue(diagnostics.hasErrors(),
-                    "Spec §6.0: Inherited STRUCTURED format must trigger constraint");
         }
     }
 }

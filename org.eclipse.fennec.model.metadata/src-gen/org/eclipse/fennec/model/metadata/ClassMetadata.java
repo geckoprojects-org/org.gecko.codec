@@ -26,7 +26,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Pre-computed metadata for an EClass. Contains resolved serialization configuration.
+ * Pre-computed metadata for an EClass. Contains cached properties for fast access, feature metadata for all EStructuralFeatures, pre-resolved supertype and ID information, and aspects from all registered AspectProviders. Contained by PackageMetadata.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -58,7 +58,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * The parent package metadata.
+	 * The parent PackageMetadata. Bidirectional opposite of PackageMetadata.classes. Navigate to package.getEPackage() to access the original EPackage.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Package</em>' container reference.
 	 * @see #setPackage(PackageMetadata)
@@ -109,7 +109,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Cached class name for fast lookup.
+	 * Cached EClass name. Avoids repeated eClass.getName() calls during serialization and index lookups.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
@@ -135,7 +135,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Cached classifier ID for numeric serialization.
+	 * Cached EClassifier ID from the EPackage. Used by NUMERIC TypeStrategy for compact type serialization. Value -1 indicates uninitialized.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Classifier ID</em>' attribute.
 	 * @see #setClassifierID(int)
@@ -160,7 +160,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Pre-computed full type URI (nsURI#//className).
+	 * Pre-computed full type URI in the form 'nsURI#//className'. Used by URI TypeStrategy for type serialization. Computed once at registration time to avoid string concatenation during serialization.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Type URI</em>' attribute.
 	 * @see #setTypeURI(String)
@@ -187,7 +187,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Metadata for all EStructuralFeatures of this class.
+	 * Metadata for all EStructuralFeatures of this EClass. Bidirectional: each FeatureMetadata has a back-reference via FeatureMetadata.classMetadata. Order matches the EClass feature order.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Features</em>' containment reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassMetadata_Features()
@@ -203,7 +203,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Pre-resolved direct supertype metadata.
+	 * Pre-resolved metadata for the direct supertypes of this EClass. Resolved during package registration after all ClassMetadata are created.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Super Types</em>' reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassMetadata_SuperTypes()
@@ -218,7 +218,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * All supertypes in hierarchy (transitive closure).
+	 * Pre-resolved metadata for all supertypes in the full inheritance hierarchy (transitive closure). Resolved during package registration.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>All Super Types</em>' reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassMetadata_AllSuperTypes()
@@ -233,7 +233,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Pre-resolved features that form the ID (in order).
+	 * Pre-resolved features that form the object ID, in order. For ID_FIELD strategy: features with eID=true. For COMBINED strategy: explicitly configured features. Empty when IdStrategy is NONE.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Id Features</em>' reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassMetadata_IdFeatures()
@@ -248,7 +248,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Whether this class has ID features.
+	 * Whether this EClass has at least one ID feature (eID=true). Quick check to avoid iterating features during serialization.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Has Id</em>' attribute.
 	 * @see #setHasId(boolean)
@@ -271,14 +271,16 @@ public interface ClassMetadata extends DiagnosticContainer {
 	/**
 	 * Returns the value of the '<em><b>Aspects</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.fennec.model.metadata.ClassAspect}.
+	 * It is bidirectional and its opposite is '{@link org.eclipse.fennec.model.metadata.ClassAspect#getClassMetadata <em>Class Metadata</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Aspects attached to this class (codec, ORM, etc.).
+	 * Aspects attached to this class by registered AspectProviders. One aspect per provider (identified by typeId). Bidirectional: each ClassAspect has a back-reference via ClassAspect.classMetadata.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Aspects</em>' containment reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassMetadata_Aspects()
-	 * @model containment="true"
+	 * @see org.eclipse.fennec.model.metadata.ClassAspect#getClassMetadata
+	 * @model opposite="classMetadata" containment="true"
 	 * @generated
 	 */
 	EList<ClassAspect> getAspects();

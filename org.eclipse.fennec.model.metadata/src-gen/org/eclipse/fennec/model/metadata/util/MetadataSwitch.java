@@ -114,6 +114,12 @@ public class MetadataSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MetadataPackage.BASE_FEATURE_CONFIG: {
+				BaseFeatureConfig baseFeatureConfig = (BaseFeatureConfig)theEObject;
+				T result = caseBaseFeatureConfig(baseFeatureConfig);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MetadataPackage.ASPECT: {
 				Aspect aspect = (Aspect)theEObject;
 				T result = caseAspect(aspect);
@@ -141,9 +147,15 @@ public class MetadataSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case MetadataPackage.BASE_FEATURE_CONFIG: {
-				BaseFeatureConfig baseFeatureConfig = (BaseFeatureConfig)theEObject;
-				T result = caseBaseFeatureConfig(baseFeatureConfig);
+			case MetadataPackage.PACKAGE_PROFILE: {
+				PackageProfile packageProfile = (PackageProfile)theEObject;
+				T result = casePackageProfile(packageProfile);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MetadataPackage.CLASS_PROFILE: {
+				ClassProfile classProfile = (ClassProfile)theEObject;
+				T result = caseClassProfile(classProfile);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -285,6 +297,21 @@ public class MetadataSwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Base Feature Config</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Base Feature Config</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseBaseFeatureConfig(BaseFeatureConfig object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Aspect</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -345,17 +372,32 @@ public class MetadataSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Base Feature Config</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Package Profile</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Base Feature Config</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Package Profile</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseBaseFeatureConfig(BaseFeatureConfig object) {
+	public T casePackageProfile(PackageProfile object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Class Profile</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Class Profile</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseClassProfile(ClassProfile object) {
 		return null;
 	}
 

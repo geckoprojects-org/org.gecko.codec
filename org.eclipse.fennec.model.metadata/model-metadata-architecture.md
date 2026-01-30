@@ -29,12 +29,13 @@ The architecture follows a **Feature-Aspect pattern** implemented entirely in EM
 │                              metadata.ecore                                  │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
-│  ┌──────────────────┐         ┌──────────────────┐                          │
-│  │ MetadataRegistry │────────▶│ PackageMetadata  │                          │
-│  │                  │ *       │                  │                          │
-│  └──────────────────┘         │ - ePackage       │                          │
-│                               │ - nsURI          │                          │
-│                               └────────┬─────────┘                          │
+│  ┌──────────────────┐         ┌──────────────────────────────────┐          │
+│  │ MetadataRegistry │────────▶│      PackageMetadata             │          │
+│  │                  │ *       │                                  │          │
+│  └──────────────────┘         │ - ePackage                       │          │
+│                               │ - nsURI                          │          │
+│                               │ - profiles: PackageProfile[*]    │          │
+│                               └────────┬─────────────────────────┘          │
 │                                        │ contains *                         │
 │                               ┌────────▼─────────┐                          │
 │                               │  ClassMetadata   │                          │
@@ -80,17 +81,41 @@ The architecture follows a **Feature-Aspect pattern** implemented entirely in EM
 │                        │ - typeId    │                                       │
 │                        └──────┬──────┘                                       │
 │                               │                                              │
-│              ┌────────────────┼────────────────┐                             │
-│              │                                 │                             │
-│     ┌────────▼────────┐              ┌────────▼────────┐                    │
-│     │   ClassAspect   │ (abstract)   │  FeatureAspect  │ (abstract)         │
-│     └────────┬────────┘              └────────┬────────┘                    │
-│              │                                │                             │
-│              │ extended by codec.ecore        │ extended by codec.ecore     │
-│              ▼                                ▼                             │
-│     ClassCodecAspect               FeatureCodecAspect                       │
-│     ClassORMAspect                 FeatureORMAspect                         │
-│     ClassHistoryAspect             FeatureHistoryAspect                     │
+│              ┌────────────────┼────────────────┬─────────────────┐           │
+│              │                │                │                 │           │
+│     ┌────────▼────────┐  ┌────▼──────┐  ┌────────▼────────┐     │           │
+│     │ PackageAspect   │  │ClassAspect│  │  FeatureAspect  │     │           │
+│     │   (abstract)    │  │ (abstract)│  │   (abstract)    │     │           │
+│     └─────────────────┘  └────┬──────┘  └────────┬────────┘     │           │
+│                               │                  │               │           │
+│                               │ extended by codec.ecore          │           │
+│                               ▼                  ▼               │           │
+│                      ClassCodecAspect    FeatureCodecAspect      │           │
+│                      ClassORMAspect      FeatureORMAspect        │           │
+│                      ClassHistoryAspect  FeatureHistoryAspect    │           │
+│                                                                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                            PROFILE HIERARCHY                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│                    ┌─────────────────┐                                       │
+│                    │ PackageProfile  │                                       │
+│                    │                 │                                       │
+│                    │ - typeId        │                                       │
+│                    │ - classProfiles │                                       │
+│                    └────────┬────────┘                                       │
+│                             │ contains *                                    │
+│                    ┌────────▼────────┐                                       │
+│                    │  ClassProfile   │                                       │
+│                    │                 │                                       │
+│                    │ - eClass        │                                       │
+│                    │ - typeId        │                                       │
+│                    └─────────────────┘                                       │
+│                             ▲                                                │
+│                             │ extended by codec.ecore                       │
+│                             ▼                                                │
+│                    CodecClassProfile                                         │
+│                    ORMClassProfile                                           │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -103,6 +128,7 @@ The architecture follows a **Feature-Aspect pattern** implemented entirely in EM
 - Reference to the original `EPackage`
 - Cached `nsURI` for fast lookup
 - Contains all `ClassMetadata` for classes in this package
+- Contains `profiles: PackageProfile[*]` - pre-computed configuration profiles per provider
 
 **ClassMetadata** - Wraps an `EClass`:
 - Reference to the original `EClass`
@@ -125,6 +151,15 @@ The architecture follows a **Feature-Aspect pattern** implemented entirely in EM
 - `containment` flag
 - Pre-resolved `targetClassMetadata`, `oppositeMetadata`
 
+**PackageProfile** - Pre-computed configuration profile for a package:
+- `typeId` - identifies the provider that created this profile
+- Contains `ClassProfile[*]` - pre-computed configuration per class
+
+**ClassProfile** - Pre-computed configuration for a class:
+- `eClass` - reference to the EClass
+- `typeId` - identifies the provider that created this profile
+- Extended by codec.ecore, orm.ecore, etc.
+
 ### 3.3. Aspect Base Classes
 
 **Aspect** (abstract) - Base for all aspects:
@@ -136,6 +171,7 @@ public interface Aspect extends EObject {
 }
 ```
 
+**PackageAspect** (abstract) extends Aspect - For package-level configuration
 **ClassAspect** (abstract) extends Aspect - For class-level configuration
 **FeatureAspect** (abstract) extends Aspect - For feature-level configuration
 
@@ -160,6 +196,7 @@ FeatureCodecAspect extends FeatureAspect
   - serialize: boolean
   - serializeNull/Empty/Defaults: boolean
   - valueWriterName, valueReaderName: String
+  - enumSerialization: EnumSerializationStrategy
 
 ReferenceCodecAspect extends FeatureCodecAspect
   - referenceConfig: ReferenceSerializationConfig
@@ -220,6 +257,10 @@ BaseIdConfig (abstract)
   - format: SerializationFormat = PLAIN
   - idKey: String = "_id"
   - separator: String = "-"
+  - onTop: boolean = false
+  - serializeSeparator: boolean = false
+  - separatorKey: String = "_separator"
+  - valueKey: String = "_value"
 
 BaseReferenceConfig (abstract)
   - format: SerializationFormat = PLAIN
@@ -231,6 +272,8 @@ BaseSuperTypeConfig (abstract)
   - selection: SuperTypeSelection = ALL
   - format: SerializationFormat = PLAIN
   - superTypeKey: String = "_supertype"
+  - asArray: boolean = true
+  - separator: String = "/"
 ```
 
 Concrete config classes in `codec.ecore` extend these to add codec-specific fields.
@@ -244,14 +287,48 @@ TypeStrategy: NAME, CLASS, URI, MAPPED, STRUCTURED, SCHEMA_AND_TYPE, NUMERIC
 
 IdStrategy: ID_FIELD, COMBINED, NONE
 
-IdKeyMode: ID_ONLY, BOTH, FEATURE_ONLY
+IdKeyMode: ID_ONLY, BOTH, FEATURE_ONLY, NONE
 
 SuperTypeSelection: ALL, ALL_EMF, SINGLE, NONE
+
+EnumSerializationStrategy: LITERAL, VALUE, NAME
 ```
 
-## 7. Resolution Strategy (The "Builder" Logic)
+## 7. Resolution Strategy (The Registration Lifecycle)
 
-When `registerPackage(EPackage)` is called, the service builds the metadata using a **3-Layer Cascade**. The first source to provide a value wins.
+When `registerPackage(EPackage)` is called, the service executes the following lifecycle:
+
+### 7.1. Registration Lifecycle
+
+**Phase 1: Build Metadata Wrappers**
+1. Create `PackageMetadata` wrapper for the `EPackage`
+2. Build `ClassMetadata` for each `EClass` in the package
+3. Build `FeatureMetadata` (AttributeMetadata/ReferenceMetadata) for each `EStructuralFeature`
+
+**Phase 2: Build Aspects**
+- For each registered `AspectProvider`:
+  1. Call `buildPackageAspect(packageMetadata)` → attach to PackageMetadata
+  2. For each ClassMetadata: call `buildClassAspect(classMetadata)` → attach to ClassMetadata
+  3. For each FeatureMetadata:
+     - If AttributeMetadata: call `buildAttributeAspect(attributeMetadata)`
+     - If ReferenceMetadata: call `buildReferenceAspect(referenceMetadata)`
+     - Attach resulting FeatureAspect to FeatureMetadata
+
+**Phase 3: Resolve Cross-References**
+- Resolve supertype references between ClassMetadata objects
+- Resolve target class references for ReferenceMetadata
+- Resolve opposite references for ReferenceMetadata
+
+**Phase 4: Build Profiles (Provider Isolation)**
+- For each registered `AspectProvider`:
+  1. Create a **filtered copy** of `PackageMetadata` containing ONLY aspects with this provider's `typeId`
+  2. Call `provider.buildProfiles(filteredMetadataCopy)`
+  3. Provider returns a `PackageProfile` containing `ClassProfile` objects with pre-computed configuration
+  4. Store the `PackageProfile` in `PackageMetadata.profiles`
+
+### 7.2. Aspect Resolution (3-Layer Cascade)
+
+When building aspects, providers follow a **3-Layer Cascade**. The first source to provide a value wins:
 
 1. **Level 1: External Configuration (Highest Priority)**
    - Source: A dedicated DSL (`.modelinfo` file) or Java Config class.
@@ -266,112 +343,179 @@ When `registerPackage(EPackage)` is called, the service builds the metadata usin
    - Source: EMF default values in config classes.
    - Logic: Default values defined in `metadata.ecore` and `codec.ecore`.
 
+### 7.3. Profile Building
+
+Profiles provide **pre-computed, provider-specific configuration** that combines:
+- Annotation-layer configuration from aspects
+- Resolved inheritance and cross-references
+- Provider-specific computation logic
+
+**Provider Isolation:**
+- Each provider receives a filtered copy containing ONLY its own aspects
+- Providers cannot see or depend on other providers' aspects
+- This ensures clean separation between codec, ORM, history, etc.
+
+**Example:** CodecAspectProvider receives filtered metadata with only `ClassCodecAspect` and `FeatureCodecAspect` objects, builds `CodecClassProfile` with fully resolved type/id/supertype/reference configuration.
+
 ## 8. Service API (metadata-api.ecore)
 
 The service interfaces are defined in EMF (`metadata-api.ecore`), enabling type-safe operations and code generation.
 
-### 8.1 MetadataService
+### 8.1 MetadataService (Consumer API - Read-Only)
 
-Main service interface for metadata lookup and provider management:
+Main service interface for metadata lookup. This is the interface used by consumers (serializers, ORM mappers, etc.):
 
 ```
 MetadataService (interface)
-  // Package operations
-  +registerPackage(ePackage: EPackage): PackageMetadata
-  +unregisterPackage(ePackage: EPackage): void
-  +getPackageMetadata(nsURI: EString): PackageMetadata
+  // Package operations (read-only)
+  +getPackageMetadata(nsURI: String): PackageMetadata
 
   // Class lookup
   +getClassMetadata(eClass: EClass): ClassMetadata
-  +getClassMetadataByURI(uri: EString): ClassMetadata
-  +getClassMetadataByName(className: EString, nsURI: EString): ClassMetadata
+  +getClassMetadataByURI(uri: String): ClassMetadata
+  +getClassMetadataByName(className: String, nsURI: String): ClassMetadata
 
   // Feature lookup
   +getFeatureMetadata(feature: EStructuralFeature): FeatureMetadata
-  +getFeatureMetadataByURI(uri: EString): FeatureMetadata
-  +getFeatureMetadataByName(featureName: EString, className: EString, nsURI: EString): FeatureMetadata
-  +getFeatureMetadataFromClass(featureName: EString, classMetadata: ClassMetadata): FeatureMetadata
+  +getFeatureMetadataByURI(uri: String): FeatureMetadata
+  +getFeatureMetadataByName(featureName: String, className: String, nsURI: String): FeatureMetadata
+  +getFeatureMetadataFromClass(featureName: String, classMetadata: ClassMetadata): FeatureMetadata
 
   // Aspect lookup (convenience)
-  +getClassAspect(eClass: EClass, aspectTypeId: EString): ClassAspect
-  +getFeatureAspect(feature: EStructuralFeature, aspectTypeId: EString): FeatureAspect
+  +getPackageAspect(ePackage: EPackage, aspectTypeId: String): PackageAspect
+  +getClassAspect(eClass: EClass, aspectTypeId: String): ClassAspect
+  +getFeatureAspect(feature: EStructuralFeature, aspectTypeId: String): FeatureAspect
+
+  // Profile lookup
+  +getPackageProfile(ePackage: EPackage, typeId: String): PackageProfile
+  +getPackageProfileByNsURI(nsURI: String, typeId: String): PackageProfile
+  +getClassProfile(eClass: EClass, typeId: String): ClassProfile
+  +getClassProfileByURI(eClassURI: String, typeId: String): ClassProfile
 
   // Registry access
   +getRegistry(): MetadataRegistry
+  +getIndexReader(): MetadataIndexReader
+```
 
-  // Provider management (dynamic)
+### 8.2 MetadataWhiteboard (Admin API - Extends MetadataService)
+
+Extended interface for administrative operations (package registration, provider management):
+
+```
+MetadataWhiteboard extends MetadataService
+  // Package registration
+  +registerPackage(ePackage: EPackage): PackageMetadata
+  +unregisterPackage(ePackage: EPackage): void
+
+  // Provider management
   +registerAspectProvider(provider: AspectProvider): void
   +unregisterAspectProvider(provider: AspectProvider): void
   +getAspectProviders(): EList<AspectProvider>
+
+  // Index management
+  +getMetadataIndex(): MetadataIndex
+  +setMetadataIndex(index: MetadataIndex): void
+  +unsetMetadataIndex(index: MetadataIndex): void
 ```
 
-### 8.2 AspectProvider
+### 8.3 AspectProvider
 
-Extension point for contributing aspects to metadata:
+Extension point for contributing aspects and profiles to metadata:
 
 ```
 AspectProvider (interface)
-  +getAspectTypeId(): EString                              // e.g., "codec", "orm", "history"
-  +buildClassAspect(eClass: EClass): ClassAspect           // Build aspect for class
-  +buildFeatureAspect(feature: EStructuralFeature): FeatureAspect  // Build for any feature
-  +buildAttributeAspect(attribute: EAttribute): FeatureAspect      // Specific for attributes
-  +buildReferenceAspect(reference: EReference): FeatureAspect      // Specific for references
+  +getAspectTypeId(): String                                     // e.g., "codec", "orm", "history"
+  +buildPackageAspect(packageMetadata: PackageMetadata): PackageAspect
+  +buildClassAspect(classMetadata: ClassMetadata): ClassAspect
+  +buildFeatureAspect(featureMetadata: FeatureMetadata): FeatureAspect
+  +buildAttributeAspect(attributeMetadata: AttributeMetadata): FeatureAspect
+  +buildReferenceAspect(referenceMetadata: ReferenceMetadata): FeatureAspect
+  +buildProfiles(filteredMetadataCopy: PackageMetadata): PackageProfile
 ```
 
+**Key Points:**
+- Methods receive **metadata wrappers** (PackageMetadata, ClassMetadata, etc.), NOT raw ECore objects
+- Metadata wrappers provide access to the original ECore objects AND to other metadata
+- `buildProfiles` receives a **filtered copy** containing only this provider's aspects
+- Profiles are built AFTER all cross-references are resolved
+
 **Provider Flow:**
-1. `MetadataService.registerAspectProvider(codecProvider)` - Register provider
-2. `MetadataService.registerPackage(MyPackage.eINSTANCE)` - Triggers all providers
-3. For each EClass/EFeature, providers build aspects
-4. Aspects are attached to ClassMetadata/FeatureMetadata
+1. `MetadataWhiteboard.registerAspectProvider(codecProvider)` - Register provider
+2. `MetadataWhiteboard.registerPackage(MyPackage.eINSTANCE)` - Triggers all providers
+3. For each EPackage/EClass/EFeature, providers build aspects
+4. Cross-references are resolved
+5. For each provider, build profiles with filtered metadata copy
+6. Profiles are stored in PackageMetadata
 
 ## 9. Usage Example
 
 ```java
-// Get metadata service
+// Get metadata service (read-only consumer API)
 MetadataService service = ...;
 
-// Register package (triggers metadata computation)
-PackageMetadata pkgMeta = service.registerPackage(MyPackage.eINSTANCE);
+// Fast lookup - no Optional, returns null when not found
+ClassMetadata classMeta = service.getClassMetadata(PersonPackage.Literals.PERSON);
 
-// Fast lookup - O(1), no EAnnotation parsing
-ClassMetadata classMeta = service.getClassMetadata(MyPackage.Literals.PERSON).get();
+if (classMeta != null) {
+    // Get codec aspect (type-safe EMF object)
+    ClassCodecAspect codecAspect = classMeta.getAspects().stream()
+        .filter(a -> a instanceof ClassCodecAspect)
+        .map(ClassCodecAspect.class::cast)
+        .findFirst()
+        .orElse(null);
 
-// Get codec aspect (type-safe EMF object)
-ClassCodecAspect codecAspect = classMeta.getAspects().stream()
-    .filter(a -> a instanceof ClassCodecAspect)
-    .map(ClassCodecAspect.class::cast)
-    .findFirst()
-    .orElse(null);
+    // Or use convenience method
+    ClassAspect aspect = service.getClassAspect(
+        PersonPackage.Literals.PERSON,
+        "codec"
+    );
 
-// Or use convenience method
-ClassCodecAspect codecAspect = service.getClassAspect(
-    MyPackage.Literals.PERSON,
-    ClassCodecAspect.class
-).orElse(null);
+    if (aspect instanceof ClassCodecAspect codecAspect2) {
+        // Access annotation-layer configuration
+        TypeSerializationConfig typeConfig = codecAspect2.getTypeConfig();
+        TypeStrategy strategy = typeConfig.getStrategy();  // URI, NAME, etc.
+        String typeKey = typeConfig.getTypeKey();          // "_type"
 
-// Access pre-computed values
-if (codecAspect != null) {
-    TypeSerializationConfig typeConfig = codecAspect.getTypeConfig();
-    TypeStrategy strategy = typeConfig.getStrategy();  // URI, NAME, etc.
-    String typeKey = typeConfig.getTypeKey();          // "_type"
+        IdSerializationConfig idConfig = codecAspect2.getIdConfig();
+        IdStrategy idStrategy = idConfig.getStrategy();    // ID_FIELD, COMBINED, NONE
+    }
+}
 
-    IdSerializationConfig idConfig = codecAspect.getIdConfig();
-    IdStrategy idStrategy = idConfig.getStrategy();    // ID_FIELD, COMBINED, NONE
+// Profile lookup - fully resolved configuration
+ClassProfile classProfile = service.getClassProfile(PersonPackage.Literals.PERSON, "codec");
+if (classProfile instanceof CodecClassProfile codecProfile) {
+    // Access pre-computed, fully resolved configuration
+    TypeSerializationConfig typeConfig = codecProfile.getTypeConfig();
+    // This includes inheritance resolution, defaults, etc.
 }
 
 // Feature-level lookup
 FeatureMetadata featureMeta = service.getFeatureMetadata(
-    MyPackage.Literals.PERSON__FIRST_NAME
-).get();
+    PersonPackage.Literals.PERSON__FIRST_NAME
+);
 
-FeatureCodecAspect featureAspect = featureMeta.getAspects().stream()
-    .filter(a -> a instanceof FeatureCodecAspect)
-    .map(FeatureCodecAspect.class::cast)
-    .findFirst()
-    .orElse(null);
+if (featureMeta != null) {
+    FeatureCodecAspect featureAspect = featureMeta.getAspects().stream()
+        .filter(a -> a instanceof FeatureCodecAspect)
+        .map(FeatureCodecAspect.class::cast)
+        .findFirst()
+        .orElse(null);
 
-String jsonKey = featureAspect.getEffectiveKey();  // "firstName" or custom
-boolean serialize = featureAspect.isSerialize();    // true/false
+    if (featureAspect != null) {
+        String jsonKey = featureAspect.getEffectiveKey();  // "firstName" or custom
+        boolean serialize = featureAspect.isSerialize();    // true/false
+    }
+}
+
+// Admin operations (requires MetadataWhiteboard)
+MetadataWhiteboard whiteboard = ...;
+
+// Register package (triggers metadata computation)
+PackageMetadata pkgMeta = whiteboard.registerPackage(PersonPackage.eINSTANCE);
+
+// Register aspect provider
+AspectProvider codecProvider = new CodecAspectProvider();
+whiteboard.registerAspectProvider(codecProvider);
 ```
 
 ## 10. Persistence & Caching
@@ -387,7 +531,7 @@ resource.save(Collections.emptyMap());
 // Load pre-computed metadata at startup (skip EAnnotation parsing)
 Resource resource = resourceSet.getResource(URI.createURI("metadata.xmi"), true);
 MetadataRegistry registry = (MetadataRegistry) resource.getContents().get(0);
-service.loadRegistry(registry);
+whiteboard.loadRegistry(registry);
 ```
 
 ## 11. Benefits of EMF-Based Approach
@@ -399,3 +543,5 @@ service.loadRegistry(registry);
 5. **Extensibility:** New aspects via Ecore inheritance
 6. **Introspection:** Full EMF reflective API available
 7. **Performance:** Pre-computed metadata, O(1) lookups at runtime
+8. **Provider Isolation:** Filtered metadata copies ensure clean separation between providers
+9. **Profile Caching:** Pre-computed profiles avoid runtime configuration resolution

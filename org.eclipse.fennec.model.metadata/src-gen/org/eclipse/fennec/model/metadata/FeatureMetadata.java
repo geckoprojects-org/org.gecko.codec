@@ -26,7 +26,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base class for pre-computed metadata about an EStructuralFeature.
+ * Abstract base class for pre-computed metadata about an EStructuralFeature. Contains cached properties for fast access and aspects from registered AspectProviders. Concrete subclasses: AttributeMetadata (for EAttribute) and ReferenceMetadata (for EReference). Contained by ClassMetadata.features.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -53,7 +53,7 @@ public interface FeatureMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * The parent class metadata.
+	 * The parent ClassMetadata. Bidirectional opposite of ClassMetadata.features. Navigate to classMetadata.getPackage() to reach the PackageMetadata.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Class Metadata</em>' container reference.
 	 * @see #setClassMetadata(ClassMetadata)
@@ -104,7 +104,7 @@ public interface FeatureMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Cached feature name.
+	 * Cached feature name. Avoids repeated eFeature.getName() calls during serialization.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
@@ -129,7 +129,7 @@ public interface FeatureMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Alternative name from EMF ExtendedMetaData annotation. Used for XSD-generated models where the XML element/attribute name differs from the Java-friendly EMF feature name. Null if no ExtendedMetaData annotation present.
+	 * Alternative name from EMF ExtendedMetaData annotation (source: http://www.eclipse.org/emf/2002/Ecore). Present in XSD-generated models where the XML element/attribute name differs from the Java-friendly EMF feature name. Null if no ExtendedMetaData 'name' annotation exists.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Extended Meta Data Name</em>' attribute.
 	 * @see #setExtendedMetaDataName(String)
@@ -155,7 +155,7 @@ public interface FeatureMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Cached feature ID for numeric serialization.
+	 * Cached feature ID from the EClass. Used for fast feature lookup by numeric ID. Value -1 indicates uninitialized.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Feature ID</em>' attribute.
 	 * @see #setFeatureID(int)
@@ -178,14 +178,16 @@ public interface FeatureMetadata extends DiagnosticContainer {
 	/**
 	 * Returns the value of the '<em><b>Aspects</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.fennec.model.metadata.FeatureAspect}.
+	 * It is bidirectional and its opposite is '{@link org.eclipse.fennec.model.metadata.FeatureAspect#getFeatureMetadata <em>Feature Metadata</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Aspects attached to this feature (codec, ORM, etc.).
+	 * Aspects attached to this feature by registered AspectProviders. One aspect per provider (identified by typeId). Bidirectional: each FeatureAspect has a back-reference via FeatureAspect.featureMetadata.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Aspects</em>' containment reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureMetadata_Aspects()
-	 * @model containment="true"
+	 * @see org.eclipse.fennec.model.metadata.FeatureAspect#getFeatureMetadata
+	 * @model opposite="featureMetadata" containment="true"
 	 * @generated
 	 */
 	EList<FeatureAspect> getAspects();

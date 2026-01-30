@@ -24,7 +24,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base configuration for supertype serialization.
+ * Base configuration for supertype information serialization. Controls whether and how the EClass inheritance hierarchy is included in the output. Supertype serialization is a sub-aspect of type serialization and is implicitly disabled when type serialization is disabled.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -51,7 +51,7 @@ public interface BaseSuperTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Enable supertype serialization.
+	 * Whether supertype information is serialized. Default is false (supertypes are not written).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Enabled</em>' attribute.
 	 * @see #setEnabled(boolean)
@@ -78,7 +78,7 @@ public interface BaseSuperTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Which supertypes to include.
+	 * Which supertypes to include when enabled: ALL (domain types only), ALL_EMF (including EObject etc.), SINGLE (direct parent only), NONE.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Selection</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.SuperTypeSelection
@@ -107,7 +107,7 @@ public interface BaseSuperTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Serialization format for supertype entries.
+	 * Output format for supertype entries. Inherits from the parent type configuration format if not explicitly set.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Format</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.SerializationFormat
@@ -135,7 +135,7 @@ public interface BaseSuperTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Store supertypes as JSON array (true) or as separator-joined string (false).
+	 * Whether to write supertypes as a JSON array (true) or as a separator-joined string (false). Default is true (array).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>As Array</em>' attribute.
 	 * @see #setAsArray(boolean)
@@ -161,7 +161,7 @@ public interface BaseSuperTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Separator character when asArray=false. Default is comma.
+	 * Separator character when asArray=false. Default is comma. Only used when supertypes are joined into a single string.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Separator</em>' attribute.
 	 * @see #setSeparator(String)
@@ -187,7 +187,7 @@ public interface BaseSuperTypeConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * JSON property name for supertype information (PLAIN format) or key inside _type object (STRUCTURED format).
+	 * JSON property name for supertype information. In PLAIN format, this is a top-level field. In STRUCTURED format, this is a key inside the type object. Default is '_supertype'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Super Type Key</em>' attribute.
 	 * @see #setSuperTypeKey(String)

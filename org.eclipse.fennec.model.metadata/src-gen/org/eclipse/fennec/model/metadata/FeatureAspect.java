@@ -14,8 +14,6 @@
  */
 package org.eclipse.fennec.model.metadata;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
-
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -24,14 +22,14 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base class for aspects that attach to FeatureMetadata.
+ * Base class for aspects attached to FeatureMetadata. Provides a bidirectional reference to the owning FeatureMetadata, enabling navigation from the aspect back to the metadata context and up to the class level.
  * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.fennec.model.metadata.FeatureAspect#getEFeature <em>EFeature</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.FeatureAspect#getFeatureMetadata <em>Feature Metadata</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureAspect()
@@ -41,28 +39,30 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface FeatureAspect extends Aspect {
 	/**
-	 * Returns the value of the '<em><b>EFeature</b></em>' reference.
+	 * Returns the value of the '<em><b>Feature Metadata</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link org.eclipse.fennec.model.metadata.FeatureMetadata#getAspects <em>Aspects</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * The EStructuralFeature this aspect was built from.
+	 * The FeatureMetadata that contains this aspect. Bidirectional opposite of FeatureMetadata.aspects. Use featureMetadata.getEFeature() to access the original EStructuralFeature. Navigate featureMetadata.getClassMetadata() to reach the owning class.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>EFeature</em>' reference.
-	 * @see #setEFeature(EStructuralFeature)
-	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureAspect_EFeature()
-	 * @model
+	 * @return the value of the '<em>Feature Metadata</em>' container reference.
+	 * @see #setFeatureMetadata(FeatureMetadata)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getFeatureAspect_FeatureMetadata()
+	 * @see org.eclipse.fennec.model.metadata.FeatureMetadata#getAspects
+	 * @model opposite="aspects" transient="false"
 	 * @generated
 	 */
-	EStructuralFeature getEFeature();
+	FeatureMetadata getFeatureMetadata();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.FeatureAspect#getEFeature <em>EFeature</em>}' reference.
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.FeatureAspect#getFeatureMetadata <em>Feature Metadata</em>}' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>EFeature</em>' reference.
-	 * @see #getEFeature()
+	 * @param value the new value of the '<em>Feature Metadata</em>' container reference.
+	 * @see #getFeatureMetadata()
 	 * @generated
 	 */
-	void setEFeature(EStructuralFeature value);
+	void setFeatureMetadata(FeatureMetadata value);
 
 } // FeatureAspect

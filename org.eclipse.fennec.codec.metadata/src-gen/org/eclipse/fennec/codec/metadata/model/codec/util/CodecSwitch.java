@@ -28,7 +28,9 @@ import org.eclipse.fennec.model.metadata.BaseReferenceConfig;
 import org.eclipse.fennec.model.metadata.BaseSuperTypeConfig;
 import org.eclipse.fennec.model.metadata.BaseTypeConfig;
 import org.eclipse.fennec.model.metadata.ClassAspect;
+import org.eclipse.fennec.model.metadata.ClassProfile;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
+import org.eclipse.fennec.model.metadata.PackageProfile;
 
 /**
  * <!-- begin-user-doc -->
@@ -150,6 +152,20 @@ public class CodecSwitch<T> extends Switch<T> {
 			case CodecPackage.INLINE_TYPE_MAPPING: {
 				InlineTypeMapping inlineTypeMapping = (InlineTypeMapping)theEObject;
 				T result = caseInlineTypeMapping(inlineTypeMapping);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecPackage.CODEC_PACKAGE_PROFILE: {
+				CodecPackageProfile codecPackageProfile = (CodecPackageProfile)theEObject;
+				T result = caseCodecPackageProfile(codecPackageProfile);
+				if (result == null) result = casePackageProfile(codecPackageProfile);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodecPackage.CODEC_CLASS_PROFILE: {
+				CodecClassProfile codecClassProfile = (CodecClassProfile)theEObject;
+				T result = caseCodecClassProfile(codecClassProfile);
+				if (result == null) result = caseClassProfile(codecClassProfile);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -299,6 +315,36 @@ public class CodecSwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Package Profile</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Package Profile</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCodecPackageProfile(CodecPackageProfile object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Class Profile</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Class Profile</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCodecClassProfile(CodecClassProfile object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Config</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -430,6 +476,36 @@ public class CodecSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseFeatureAspect(FeatureAspect object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Package Profile</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Package Profile</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T casePackageProfile(PackageProfile object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Class Profile</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Class Profile</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseClassProfile(ClassProfile object) {
 		return null;
 	}
 

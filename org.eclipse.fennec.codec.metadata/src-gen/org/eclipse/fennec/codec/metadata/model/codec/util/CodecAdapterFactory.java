@@ -30,7 +30,9 @@ import org.eclipse.fennec.model.metadata.BaseReferenceConfig;
 import org.eclipse.fennec.model.metadata.BaseSuperTypeConfig;
 import org.eclipse.fennec.model.metadata.BaseTypeConfig;
 import org.eclipse.fennec.model.metadata.ClassAspect;
+import org.eclipse.fennec.model.metadata.ClassProfile;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
+import org.eclipse.fennec.model.metadata.PackageProfile;
 
 /**
  * <!-- begin-user-doc -->
@@ -125,6 +127,14 @@ public class CodecAdapterFactory extends AdapterFactoryImpl {
 				return createInlineTypeMappingAdapter();
 			}
 			@Override
+			public Adapter caseCodecPackageProfile(CodecPackageProfile object) {
+				return createCodecPackageProfileAdapter();
+			}
+			@Override
+			public Adapter caseCodecClassProfile(CodecClassProfile object) {
+				return createCodecClassProfileAdapter();
+			}
+			@Override
 			public Adapter caseCodecConfig(CodecConfig object) {
 				return createCodecConfigAdapter();
 			}
@@ -159,6 +169,14 @@ public class CodecAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseFeatureAspect(FeatureAspect object) {
 				return createFeatureAspectAdapter();
+			}
+			@Override
+			public Adapter casePackageProfile(PackageProfile object) {
+				return createPackageProfileAdapter();
+			}
+			@Override
+			public Adapter caseClassProfile(ClassProfile object) {
+				return createClassProfileAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -307,6 +325,34 @@ public class CodecAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecPackageProfile <em>Package Profile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackageProfile
+	 * @generated
+	 */
+	public Adapter createCodecPackageProfileAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile <em>Class Profile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile
+	 * @generated
+	 */
+	public Adapter createCodecClassProfileAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig <em>Config</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -429,6 +475,34 @@ public class CodecAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createFeatureAspectAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.PackageProfile <em>Package Profile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.PackageProfile
+	 * @generated
+	 */
+	public Adapter createPackageProfileAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.ClassProfile <em>Class Profile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.ClassProfile
+	 * @generated
+	 */
+	public Adapter createClassProfileAdapter() {
 		return null;
 	}
 

@@ -498,7 +498,6 @@ Type configuration describes how type information is serialized/deserialized.
 | `typeKey` | `codec.typeKey` | ✅ | ✅ | ✅ | ❌ | Outer JSON key (**default:** `_type`) |
 | `typeNameKey` | `codec.typeNameKey` | ✅ | ✅ | ✅ | ❌ | Inner type name key in STRUCTURED (**default:** `type`) |
 | `typeSchemaKey` | `codec.typeSchemaKey` | ✅ | ✅ | ✅ | ❌ | Inner schema key in STRUCTURED (**default:** `schema`) |
-| ~~`typeInclude`~~ | ~~`codec.typeInclude`~~ | ⚠️ | ⚠️ | ⚠️ | ❌ | **DEPRECATED** - use `typeStrategy=NONE` instead ([migration guide](06-type.md#7-deprecated-typeinclude)) |
 | `typeValueReaderName` | `codec.typeValueReaderName` | ✅ | ✅ | ❌ | ❌ | Custom value reader service name |
 | `typeValueWriterName` | `codec.typeValueWriterName` | ✅ | ✅ | ❌ | ❌ | Custom value writer service name |
 | — | `codec.typeScope` | 🔧 | ❌ | ❌ | ❌ | Strategy scope (see [StrategyScope](#strategyscope)) |
@@ -529,7 +528,6 @@ Values for the `typeStrategy` annotation key. These control **what information**
 
 | Misconfiguration | Severity | Reason |
 |------------------|----------|--------|
-| `typeInclude` (any level) | WARNING | **DEPRECATED** - use `typeStrategy=NONE` instead |
 | `typeValueReaderName` on EReference | ERROR | Value reader/writer is class-intrinsic |
 | `typeValueWriterName` on EReference | ERROR | Value reader/writer is class-intrinsic |
 | `typeScope` via EAnnotation | WARNING | Runtime-only (🔧), annotation is ignored |
@@ -1134,8 +1132,8 @@ The inner key for the combined/single ID value is configurable via `idValueKey` 
 | `idOnTop` on EReference | ERROR | Field ordering is class-specific |
 | `idValueReaderName` on EReference | ERROR | Value reader/writer is class-intrinsic |
 | `idValueWriterName` on EReference | ERROR | Value reader/writer is class-intrinsic |
-| `idScope` via EAnnotation | ERROR | Scope is runtime-only (🔧) |
-| `idFormatScope` via EAnnotation | ERROR | Scope is runtime-only (🔧) |
+| `idScope` via EAnnotation | WARNING | Scope is runtime-only (🔧) — ignored, not harmful |
+| `idFormatScope` via EAnnotation | WARNING | Scope is runtime-only (🔧) — ignored, not harmful |
 | Any `id*` key on EAttribute | ERROR | ID config not applicable to attributes |
 
 ---
@@ -1725,7 +1723,6 @@ This section tracks the implementation status of features documented in this ref
 | `typeKey` | ✅ `KEY_TYPE_KEY` | ✅ `BaseTypeConfig.typeKey` | ✅ | ✅ | ✅ | ✅ |
 | `typeNameKey` | ✅ `KEY_TYPE_NAME_KEY` | ✅ `BaseTypeConfig.nameKey` | ✅ | ✅ | ✅ | ✅ |
 | `typeSchemaKey` | ✅ `KEY_TYPE_SCHEMA_KEY` | ✅ `BaseTypeConfig.schemaKey` | ✅ | ✅ | ✅ | ✅ |
-| `typeInclude` | ✅ `KEY_TYPE_INCLUDE` | ✅ `BaseTypeConfig.include` | ✅ | ✅ | ✅ | ✅ |
 | `typeValueReaderName` | ✅ `KEY_TYPE_VALUE_READER_NAME` | ❌ | ❌ | ❌ | ❌ | 🔶 |
 | `typeValueWriterName` | ✅ `KEY_TYPE_VALUE_WRITER_NAME` | ❌ | ❌ | ❌ | ❌ | 🔶 |
 | `typeScope` | N/A (runtime) | ✅ `TypeSerializationConfig.strategyScope` | N/A | 🔶 | 🔶 | ✅ |

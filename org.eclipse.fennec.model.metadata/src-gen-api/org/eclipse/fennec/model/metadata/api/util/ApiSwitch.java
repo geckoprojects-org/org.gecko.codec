@@ -104,6 +104,13 @@ public class ApiSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case ApiPackage.METADATA_WHITEBOARD: {
+				MetadataWhiteboard metadataWhiteboard = (MetadataWhiteboard)theEObject;
+				T result = caseMetadataWhiteboard(metadataWhiteboard);
+				if (result == null) result = caseMetadataService(metadataWhiteboard);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case ApiPackage.ASPECT_PROVIDER: {
 				AspectProvider aspectProvider = (AspectProvider)theEObject;
 				T result = caseAspectProvider(aspectProvider);
@@ -171,6 +178,21 @@ public class ApiSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseMetadataService(MetadataService object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Metadata Whiteboard</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Metadata Whiteboard</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMetadataWhiteboard(MetadataWhiteboard object) {
 		return null;
 	}
 

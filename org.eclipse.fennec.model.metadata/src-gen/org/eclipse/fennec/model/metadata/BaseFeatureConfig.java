@@ -24,7 +24,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base configuration for feature serialization.
+ * Base configuration for EStructuralFeature serialization. Controls visibility, key naming, null/empty/default handling, and enum strategy for individual features. These settings can be configured per-feature via EAnnotations or globally via runtime options.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -50,7 +50,7 @@ public interface BaseFeatureConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Custom JSON property name (null = use feature name).
+	 * Custom JSON property name for this feature. When null, the feature name (or extendedMetaDataName if useNamesFromExtendedMetadata is enabled) is used.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Key</em>' attribute.
 	 * @see #setKey(String)
@@ -75,7 +75,7 @@ public interface BaseFeatureConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Whether to serialize this feature (null = true, false = transient).
+	 * Whether this feature is serialized. Null means true (serialize by default). Set to false to make the feature transient (skipped during serialization and deserialization).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Serialize</em>' attribute.
 	 * @see #setSerialize(Boolean)
@@ -100,7 +100,7 @@ public interface BaseFeatureConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Serialize null values (null = use codec default).
+	 * Whether to write this feature when its value is null. Null means use the codec-level default. When true, null values are explicitly written (e.g., {"name": null}).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Serialize Null</em>' attribute.
 	 * @see #setSerializeNull(Boolean)
@@ -125,7 +125,7 @@ public interface BaseFeatureConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Serialize empty collections (null = use codec default).
+	 * Whether to write this feature when its collection value is empty. Null means use the codec-level default. When true, empty collections are explicitly written (e.g., {"items": []}).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Serialize Empty</em>' attribute.
 	 * @see #setSerializeEmpty(Boolean)
@@ -150,7 +150,7 @@ public interface BaseFeatureConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Serialize default values (null = use codec default).
+	 * Whether to write this feature when its value equals the EMF default value. Null means use the codec-level default. When false, features with default values are omitted from output.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Serialize Defaults</em>' attribute.
 	 * @see #setSerializeDefaults(Boolean)
@@ -176,7 +176,7 @@ public interface BaseFeatureConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Strategy for serializing enum values (null = use LITERAL default).
+	 * Strategy for serializing enum-typed features (LITERAL, VALUE, or NAME). Null means use LITERAL as default.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Enum Serialization</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.EnumSerializationStrategy

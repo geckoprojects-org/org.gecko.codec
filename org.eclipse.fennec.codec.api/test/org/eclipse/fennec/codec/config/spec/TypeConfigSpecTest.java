@@ -46,6 +46,9 @@ import org.junit.jupiter.api.Test;
  *   <li>Section 2: Validation rules (from spec section 7)</li>
  *   <li>Section 3: TypeStrategy behavior</li>
  *   <li>Section 4: Format × Strategy combinations</li>
+ *   <li>Section 5: Merge behavior</li>
+ *   <li>Section 6: Deprecation</li>
+ *   <li>Section 7: ValueWriter/ValueReader flow effectiveness (from spec §5.0, §6)</li>
  * </ul>
  */
 @DisplayName("TypeConfig Spec Tests")
@@ -535,6 +538,221 @@ class TypeConfigSpecTest {
             assertFalse(config.isInclude());
             assertEquals(TypeStrategy.NAME, config.getStrategy());
             // Note: Higher-level code determines which one takes precedence
+        }
+    }
+
+    // ========================================================================
+    // Section 7: ValueWriter/ValueReader Flow Effectiveness
+    // Spec reference: 06-type.md section 5.0 (ser flow) and section 6 (deser flow)
+    //
+    // Flow priority (ser):  NONE check → ValueWriter (full delegation → DONE) → built-in logic
+    // Flow priority (deser): NONE check → ValueReader (full delegation → DONE) → built-in logic
+    // ========================================================================
+
+    @Nested
+    @DisplayName("7. ValueWriter/ValueReader Flow Effectiveness (spec §5.0, §6)")
+    class ValueWriterReaderFlowEffectiveness {
+
+        // ----------------------------------------------------------------
+        // 7.1: ValueWriter configuration is carried through
+        // ----------------------------------------------------------------
+
+        /**
+         * Spec §5.0 step 3a: "Is typeValueWriterName configured?"
+         * When valueWriterName is set, it should be accessible after build.
+         */
+        @Test
+        @DisplayName("7.1 valueWriterName is carried through config")
+        void valueWriterName_carriedThroughConfig() {
+            TypeConfig config = TypeConfig.builder()
+                    .strategy(TypeStrategy.URI)
+                    .valueWriterName("myCustomTypeWriter")
+                    .build();
+
+            assertEquals("myCustomTypeWriter", config.getValueWriterName());
+            assertEquals(TypeStrategy.URI, config.getStrategy());
+        }
+
+        /**
+         * Spec §6 step 3a: "Is typeValueReaderName configured?"
+         * When valueReaderName is set, it should be accessible after build.
+         */
+        @Test
+        @DisplayName("7.2 valueReaderName is carried through config")
+        void valueReaderName_carriedThroughConfig() {
+            TypeConfig config = TypeConfig.builder()
+                    .strategy(TypeStrategy.NAME)
+                    .valueReaderName("myCustomTypeReader")
+                    .build();
+
+            assertEquals("myCustomTypeReader", config.getValueReaderName());
+            assertEquals(TypeStrategy.NAME, config.getStrategy());
+        }
+
+        // ----------------------------------------------------------------
+        // 7.3: NONE + ValueWriter/ValueReader → NONE wins (hard disable)
+        // Spec §5.0 step 3: "NONE check → early break (ValueWriter is also ignored)"
+        // ----------------------------------------------------------------
+
+        /**
+         * Spec §5.0: TypeStrategy.NONE is a hard disable — even if a valueWriterName
+         * is configured, the NONE check happens first and skips everything.
+         * Config can hold both values; the flow enforces priority.
+         */
+        @Test
+        @DisplayName("7.3 NONE strategy + valueWriterName: both are stored (flow enforces priority)")
+        void noneStrategy_withValueWriterName_bothStored() {
+            TypeConfig config = TypeConfig.builder()
+                    .strategy(TypeStrategy.NONE)
+                    .valueWriterName("myTypeWriter")
+                    .build();
+
+            // Both values are stored in config
+            assertEquals(TypeStrategy.NONE, config.getStrategy());
+            assertEquals("myTypeWriter", config.getValueWriterName());
+            // At runtime, the flow checks NONE first → early break → writer is never invoked
+        }
+
+        /**
+         * Spec §6: TypeStrategy.NONE disables deserialization — even if a valueReaderName
+         * is configured, the NONE check happens first and skips everything.
+         */
+        @Test
+        @DisplayName("7.4 NONE strategy + valueReaderName: both are stored (flow enforces priority)")
+        void noneStrategy_withValueReaderName_bothStored() {
+            TypeConfig config = TypeConfig.builder()
+                    .strategy(TypeStrategy.NONE)
+                    .valueReaderName("myTypeReader")
+                    .build();
+
+            // Both values are stored in config
+            assertEquals(TypeStrategy.NONE, config.getStrategy());
+            assertEquals("myTypeReader", config.getValueReaderName());
+            // At runtime, the flow checks NONE first → early break → reader is never invoked
+        }
+
+        // ----------------------------------------------------------------
+        // 7.5: Merge preserves ValueWriter/ValueReader through cascading
+        // ----------------------------------------------------------------
+
+        /**
+         * Spec §5.0/§6: ValueWriter/ValueReader names should be mergeable
+         * from higher-priority property maps (load/save options).
+         */
+        @Test
+        @DisplayName("7.5 valueWriterName/valueReaderName merge from property map")
+        void valueWriterReaderName_mergeFromPropertyMap() {
+            TypeConfig base = TypeConfig.builder()
+                    .strategy(TypeStrategy.URI)
+                    .build();
+
+            assertNull(base.getValueWriterName());
+            assertNull(base.getValueReaderName());
+
+            Map<String, Object> override = new HashMap<>();
+            override.put("codec.typeValueWriterName", "runtimeTypeWriter");
+            override.put("codec.typeValueReaderName", "runtimeTypeReader");
+
+            TypeConfig merged = base.mergeWith(override);
+
+            assertEquals("runtimeTypeWriter", merged.getValueWriterName());
+            assertEquals("runtimeTypeReader", merged.getValueReaderName());
+            assertEquals(TypeStrategy.URI, merged.getStrategy()); // unchanged
+        }
+
+        /**
+         * Spec: Higher-priority source overrides lower-priority valueWriterName.
+         */
+        @Test
+        @DisplayName("7.6 higher-priority valueWriterName overrides lower-priority")
+        void valueWriterName_higherPriorityOverrides() {
+            TypeConfig base = TypeConfig.builder()
+                    .strategy(TypeStrategy.NAME)
+                    .valueWriterName("annotationWriter")
+                    .build();
+
+            Map<String, Object> override = new HashMap<>();
+            override.put("codec.typeValueWriterName", "runtimeWriter");
+
+            TypeConfig merged = base.mergeWith(override);
+
+            assertEquals("runtimeWriter", merged.getValueWriterName());
+        }
+
+        // ----------------------------------------------------------------
+        // 7.7: ValueWriter/ValueReader with different strategies
+        // ----------------------------------------------------------------
+
+        /**
+         * Spec §5.0 step 3a: ValueWriter provides full delegation regardless of strategy.
+         * Config should accept writer with any strategy — the writer overrides built-in logic.
+         */
+        @Test
+        @DisplayName("7.7 valueWriterName valid with any strategy (full delegation)")
+        void valueWriterName_validWithAnyStrategy() {
+            for (TypeStrategy strategy : TypeStrategy.values()) {
+                if (strategy == TypeStrategy.NONE) continue; // NONE disables, tested separately
+
+                TypeConfig config = TypeConfig.builder()
+                        .strategy(strategy)
+                        .valueWriterName("customWriter")
+                        .build();
+
+                DiagnosticCollector diagnostics = new DiagnosticCollector();
+                config.validate(diagnostics);
+
+                assertEquals("customWriter", config.getValueWriterName(),
+                    "valueWriterName should be stored with strategy " + strategy);
+                assertFalse(diagnostics.hasErrors(),
+                    "valueWriterName should not cause errors with strategy " + strategy);
+            }
+        }
+
+        /**
+         * Spec §6 step 3a: ValueReader provides full delegation regardless of strategy.
+         * Config should accept reader with any strategy — the reader overrides built-in logic.
+         */
+        @Test
+        @DisplayName("7.8 valueReaderName valid with any strategy (full delegation)")
+        void valueReaderName_validWithAnyStrategy() {
+            for (TypeStrategy strategy : TypeStrategy.values()) {
+                if (strategy == TypeStrategy.NONE) continue; // NONE disables, tested separately
+
+                TypeConfig config = TypeConfig.builder()
+                        .strategy(strategy)
+                        .valueReaderName("customReader")
+                        .build();
+
+                DiagnosticCollector diagnostics = new DiagnosticCollector();
+                config.validate(diagnostics);
+
+                assertEquals("customReader", config.getValueReaderName(),
+                    "valueReaderName should be stored with strategy " + strategy);
+                assertFalse(diagnostics.hasErrors(),
+                    "valueReaderName should not cause errors with strategy " + strategy);
+            }
+        }
+
+        // ----------------------------------------------------------------
+        // 7.9: Both valueWriterName and valueReaderName can be set simultaneously
+        // ----------------------------------------------------------------
+
+        /**
+         * Spec §5.0/§6: A config can have both writer and reader configured.
+         * Ser flow uses writer, deser flow uses reader — they are independent.
+         */
+        @Test
+        @DisplayName("7.9 both valueWriterName and valueReaderName can be set")
+        void bothWriterAndReader_canBeSet() {
+            TypeConfig config = TypeConfig.builder()
+                    .strategy(TypeStrategy.URI)
+                    .valueWriterName("myTypeWriter")
+                    .valueReaderName("myTypeReader")
+                    .build();
+
+            assertEquals("myTypeWriter", config.getValueWriterName());
+            assertEquals("myTypeReader", config.getValueReaderName());
+            assertEquals(TypeStrategy.URI, config.getStrategy());
         }
     }
 }

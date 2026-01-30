@@ -14,8 +14,6 @@
  */
 package org.eclipse.fennec.model.metadata;
 
-import org.eclipse.emf.ecore.EClass;
-
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -24,14 +22,14 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base class for aspects that attach to ClassMetadata.
+ * Base class for aspects attached to ClassMetadata. Provides a bidirectional reference to the owning ClassMetadata, enabling navigation from the aspect back to the metadata context and its feature tree.
  * <!-- end-model-doc -->
  *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.eclipse.fennec.model.metadata.ClassAspect#getEClass <em>EClass</em>}</li>
+ *   <li>{@link org.eclipse.fennec.model.metadata.ClassAspect#getClassMetadata <em>Class Metadata</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassAspect()
@@ -41,28 +39,30 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface ClassAspect extends Aspect {
 	/**
-	 * Returns the value of the '<em><b>EClass</b></em>' reference.
+	 * Returns the value of the '<em><b>Class Metadata</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link org.eclipse.fennec.model.metadata.ClassMetadata#getAspects <em>Aspects</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * The EClass this aspect was built from.
+	 * The ClassMetadata that contains this aspect. Bidirectional opposite of ClassMetadata.aspects. Use classMetadata.getEClass() to access the original EClass. Navigate classMetadata.getFeatures() to access feature metadata and their aspects.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>EClass</em>' reference.
-	 * @see #setEClass(EClass)
-	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassAspect_EClass()
-	 * @model
+	 * @return the value of the '<em>Class Metadata</em>' container reference.
+	 * @see #setClassMetadata(ClassMetadata)
+	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassAspect_ClassMetadata()
+	 * @see org.eclipse.fennec.model.metadata.ClassMetadata#getAspects
+	 * @model opposite="aspects" transient="false"
 	 * @generated
 	 */
-	EClass getEClass();
+	ClassMetadata getClassMetadata();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.ClassAspect#getEClass <em>EClass</em>}' reference.
+	 * Sets the value of the '{@link org.eclipse.fennec.model.metadata.ClassAspect#getClassMetadata <em>Class Metadata</em>}' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>EClass</em>' reference.
-	 * @see #getEClass()
+	 * @param value the new value of the '<em>Class Metadata</em>' container reference.
+	 * @see #getClassMetadata()
 	 * @generated
 	 */
-	void setEClass(EClass value);
+	void setClassMetadata(ClassMetadata value);
 
 } // ClassAspect

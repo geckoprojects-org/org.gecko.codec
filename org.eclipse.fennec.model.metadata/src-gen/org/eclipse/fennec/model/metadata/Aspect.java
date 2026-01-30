@@ -26,7 +26,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base class for all aspects. An aspect represents a cross-cutting concern (codec, ORM, history, etc.) attached to model metadata.
+ * Base class for all aspects. An aspect represents a cross-cutting concern (e.g., codec, ORM, history) attached to model metadata. Aspects are created by AspectProviders during package registration and contained by their respective metadata elements (PackageMetadata, ClassMetadata, or FeatureMetadata).
  * <!-- end-model-doc -->
  *
  * <p>
@@ -48,7 +48,7 @@ public interface Aspect extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Unique identifier for this aspect type (e.g., 'codec', 'orm', 'history').
+	 * Unique identifier for the aspect type (e.g., 'codec', 'orm', 'history'). Set by the MetadataService from the AspectProvider's getAspectTypeId() value. Used to look up specific aspects by type.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Type Id</em>' attribute.
 	 * @see #setTypeId(String)
@@ -74,7 +74,7 @@ public interface Aspect extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Diagnostics collected during aspect creation (e.g., annotation parsing warnings).
+	 * Diagnostics collected during aspect creation (e.g., annotation parsing warnings, invalid key combinations). Managed separately from the metadata element's own diagnostics.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Diagnostics</em>' containment reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getAspect_Diagnostics()

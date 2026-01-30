@@ -424,10 +424,12 @@ Controls the order of properties in serialized output.
 | `metadataFieldsFirst` | `true` | Place `_type`, `_id`, `_supertype` before features |
 
 When `metadataFieldsFirst=true`, the output order is:
-1. `_id` (if enabled)
-2. `_type` (if enabled)
-3. `_supertype` (if enabled)
+1. `_type` (if enabled) — default first when `idOnTop=false`
+2. `_supertype` (if enabled)
+3. `_id` (if enabled) — or first if `idOnTop=true`
 4. Features (in configured order)
+
+> **Note:** The relative order of `_id` and `_type` is controlled by `idOnTop` (see [09-id.md §8.7](09-id.md#87-metadata-field-ordering-idontop)). The default (`idOnTop=false`) places `_type` before `_id`.
 
 **Java Builder (proposed):**
 ```java

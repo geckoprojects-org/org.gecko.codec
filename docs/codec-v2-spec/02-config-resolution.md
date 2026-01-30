@@ -405,7 +405,6 @@ For any property lookup:
 | `typeStrategy` | G, C, F | RW | `NAME` | 06-type.md |
 | `typeKey` | G, C, F | RW | `_type` | 06-type.md |
 | `typeFormat` | G, C, F | RW | `PLAIN` | 06-type.md |
-| ~~`typeInclude`~~ | — | — | — | **DEPRECATED** - use `typeStrategy=NONE` |
 | `typeSchemaKey` | G, C, F | RW | `schema` | 06-type.md |
 | `typeNameKey` | G, C, F | RW | `type` | 06-type.md |
 | `typeScope` | G | RW | `ALL` | 06-type.md |
@@ -684,11 +683,10 @@ For most use cases, the type-safe `CodecConfiguration.Builder` is preferred over
 CodecConfiguration config = CodecConfiguration.builder()
     // Global settings
     .smartCompression(true)
-    .useType(true)
     .typeStrategy(TypeStrategy.NAME)
 
     // ID settings
-    .useId(true)
+    .idKeyMode(IdKeyMode.ID_ONLY)
     .idOnTop(true)
     .idKey("_id")
 

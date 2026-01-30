@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -365,7 +366,7 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	@Override
 	public EList<FeatureAspect> getAspects() {
 		if (aspects == null) {
-			aspects = new EObjectContainmentEList<FeatureAspect>(FeatureAspect.class, this, MetadataPackage.FEATURE_METADATA__ASPECTS);
+			aspects = new EObjectContainmentWithInverseEList<FeatureAspect>(FeatureAspect.class, this, MetadataPackage.FEATURE_METADATA__ASPECTS, MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA);
 		}
 		return aspects;
 	}
@@ -375,6 +376,7 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -382,6 +384,8 @@ public abstract class FeatureMetadataImpl extends MinimalEObjectImpl.Container i
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetClassMetadata((ClassMetadata)otherEnd, msgs);
+			case MetadataPackage.FEATURE_METADATA__ASPECTS:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getAspects()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}

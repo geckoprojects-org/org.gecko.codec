@@ -104,6 +104,10 @@ public class MetadataAdapterFactory extends AdapterFactoryImpl {
 				return createBaseSuperTypeConfigAdapter();
 			}
 			@Override
+			public Adapter caseBaseFeatureConfig(BaseFeatureConfig object) {
+				return createBaseFeatureConfigAdapter();
+			}
+			@Override
 			public Adapter caseAspect(Aspect object) {
 				return createAspectAdapter();
 			}
@@ -120,8 +124,12 @@ public class MetadataAdapterFactory extends AdapterFactoryImpl {
 				return createFeatureAspectAdapter();
 			}
 			@Override
-			public Adapter caseBaseFeatureConfig(BaseFeatureConfig object) {
-				return createBaseFeatureConfigAdapter();
+			public Adapter casePackageProfile(PackageProfile object) {
+				return createPackageProfileAdapter();
+			}
+			@Override
+			public Adapter caseClassProfile(ClassProfile object) {
+				return createClassProfileAdapter();
 			}
 			@Override
 			public Adapter casePackageMetadata(PackageMetadata object) {
@@ -252,6 +260,20 @@ public class MetadataAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig <em>Base Feature Config</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.BaseFeatureConfig
+	 * @generated
+	 */
+	public Adapter createBaseFeatureConfigAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.Aspect <em>Aspect</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -308,16 +330,30 @@ public class MetadataAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.BaseFeatureConfig <em>Base Feature Config</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.PackageProfile <em>Package Profile</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.fennec.model.metadata.BaseFeatureConfig
+	 * @see org.eclipse.fennec.model.metadata.PackageProfile
 	 * @generated
 	 */
-	public Adapter createBaseFeatureConfigAdapter() {
+	public Adapter createPackageProfileAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.model.metadata.ClassProfile <em>Class Profile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.fennec.model.metadata.ClassProfile
+	 * @generated
+	 */
+	public Adapter createClassProfileAdapter() {
 		return null;
 	}
 

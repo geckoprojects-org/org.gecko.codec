@@ -24,7 +24,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Diagnostic message for annotation parsing issues. The container of this diagnostic identifies the source metadata element.
+ * Diagnostic message for issues detected during metadata construction, annotation parsing, or configuration validation. Contained by the metadata element or aspect where the issue was detected.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -49,7 +49,7 @@ public interface MetadataDiagnostic extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Severity level of the diagnostic.
+	 * Severity level of this diagnostic (WARNING or ERROR).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Severity</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.DiagnosticSeverity
@@ -76,7 +76,7 @@ public interface MetadataDiagnostic extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Human-readable diagnostic message.
+	 * Human-readable description of the issue.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Message</em>' attribute.
 	 * @see #setMessage(String)
@@ -101,7 +101,7 @@ public interface MetadataDiagnostic extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * The annotation key that caused the issue (if applicable).
+	 * The annotation key that caused the issue, if applicable. Null for diagnostics not related to a specific annotation key.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Key</em>' attribute.
 	 * @see #setKey(String)

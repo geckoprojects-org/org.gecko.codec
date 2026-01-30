@@ -24,7 +24,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Pre-computed metadata for an EAttribute.
+ * Pre-computed metadata for an EAttribute. Extends FeatureMetadata with attribute-specific properties such as eID status and cached default value.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -47,7 +47,7 @@ public interface AttributeMetadata extends FeatureMetadata {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * The EAttribute this metadata describes.
+	 * The EAttribute this metadata describes. Typed convenience reference (the base class eFeature also holds this value as EStructuralFeature).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>EAttribute</em>' reference.
 	 * @see #setEAttribute(EAttribute)
@@ -73,7 +73,7 @@ public interface AttributeMetadata extends FeatureMetadata {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Whether this attribute is marked as eID.
+	 * Whether this EAttribute is marked as eID in the Ecore model. Cached for fast ID feature resolution.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Is Id</em>' attribute.
 	 * @see #setIsId(boolean)
@@ -98,7 +98,7 @@ public interface AttributeMetadata extends FeatureMetadata {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Cached default value for comparison.
+	 * Cached default value of the EAttribute. Used for serializeDefaults comparison to avoid computing the default on every serialization call.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Default Value</em>' attribute.
 	 * @see #setDefaultValue(Object)

@@ -713,4 +713,41 @@ Full cross-resource resolution will:
 
 ---
 
+## 10. Configuration Validation Rules
+
+This section documents validation rules for Reference Configuration that are checked when building the effective configuration.
+
+### 10.1 Property Applicability Rules
+
+| Rule ID | Property | Invalid At | Severity | Description |
+|---------|----------|------------|----------|-------------|
+| R-V1 | Any `ref*` key | EClass | WARNING | Reference config is per-reference only, ignored on EClass |
+| R-V2 | Any `ref*` key | EAttribute | ERROR | Reference config not applicable to attributes |
+| R-V3 | `expand` | EClass | WARNING | Expand is per-reference only, ignored on EClass |
+| R-V4 | `expand` | EAttribute | ERROR | Expand not applicable to attributes |
+
+> **Note:** `ref*` includes `refFormat`, `refKey`, and `refTypeKey`.
+
+### 10.2 Ownership Boundaries
+
+Several keys that **appear on EReference** are NOT part of Reference Configuration. They belong to other configuration domains and their validation rules are defined there:
+
+| Key | Belongs To | Validation Defined In |
+|-----|------------|----------------------|
+| `inlineMapping.*` | Discriminator Mapping | [08-discriminator-mapping.md section 7](08-discriminator-mapping.md#7-invalid-configurations) |
+| `fallbackStrategy` | Discriminator Mapping | [08-discriminator-mapping.md section 7](08-discriminator-mapping.md#7-invalid-configurations) |
+| `fallbackEClass` | Discriminator Mapping | [08-discriminator-mapping.md section 7](08-discriminator-mapping.md#7-invalid-configurations) |
+| `typeStrategy`, `typeKey`, etc. | Type Configuration | [06-type.md section 7](06-type.md#7-configuration-validation-rules) |
+
+These keys are valid on EReference but are governed by their respective specs, not by Reference Configuration. Do NOT add validation rules for them here.
+
+### 10.3 Related Validation Rules
+
+- **Type Configuration:** See [06-type.md section 7](06-type.md#7-configuration-validation-rules)
+- **ID Configuration:** See [09-id.md section 11](09-id.md#11-configuration-validation-rules)
+- **Discriminator Mapping:** See [08-discriminator-mapping.md section 7](08-discriminator-mapping.md#7-invalid-configurations)
+- **Error Handling:** See [15-error-handling.md section 6.10](15-error-handling.md#610-annotation-parsing-errors-metadata-layer)
+
+---
+
 [Next: Feature Serialization →](11-feature.md)

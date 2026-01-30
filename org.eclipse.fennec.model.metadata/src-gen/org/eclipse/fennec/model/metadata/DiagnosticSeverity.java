@@ -28,7 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * and utility methods for working with them.
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
- * Severity level for metadata diagnostics.
+ * Severity level for metadata diagnostics. Used by MetadataDiagnostic to classify annotation parsing issues and configuration validation problems.
  * <!-- end-model-doc -->
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getDiagnosticSeverity()
  * @model
@@ -41,7 +41,7 @@ public enum DiagnosticSeverity implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Non-fatal issue, operation continues.
+	 * Non-fatal issue. The metadata element is usable but may not behave as intended. Examples: unrecognized annotation key (ignored), deprecated configuration.
 	 * <!-- end-model-doc -->
 	 * @see #WARNING_VALUE
 	 * @generated
@@ -54,7 +54,7 @@ public enum DiagnosticSeverity implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Fatal issue, may cause operation to fail.
+	 * Fatal issue. The metadata element has an invalid configuration that will cause incorrect behavior. Examples: invalid key combination, annotation key used at wrong level.
 	 * <!-- end-model-doc -->
 	 * @see #ERROR_VALUE
 	 * @generated
@@ -67,7 +67,7 @@ public enum DiagnosticSeverity implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Non-fatal issue, operation continues.
+	 * Non-fatal issue. The metadata element is usable but may not behave as intended. Examples: unrecognized annotation key (ignored), deprecated configuration.
 	 * <!-- end-model-doc -->
 	 * @see #WARNING
 	 * @model
@@ -81,7 +81,7 @@ public enum DiagnosticSeverity implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Fatal issue, may cause operation to fail.
+	 * Fatal issue. The metadata element has an invalid configuration that will cause incorrect behavior. Examples: invalid key combination, annotation key used at wrong level.
 	 * <!-- end-model-doc -->
 	 * @see #ERROR
 	 * @model

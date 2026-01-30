@@ -24,7 +24,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base configuration for reference serialization.
+ * Base configuration for non-containment reference serialization. Controls how cross-references between EObjects are represented in the output.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -49,7 +49,7 @@ public interface BaseReferenceConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Serialization format for references.
+	 * Output format for references: PLAIN writes a single reference value, STRUCTURED writes a nested object with type and reference keys.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Format</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.SerializationFormat
@@ -77,7 +77,7 @@ public interface BaseReferenceConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Key for type in STRUCTURED format.
+	 * JSON property name for the type field inside a STRUCTURED reference object. Default is '_type'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Type Key</em>' attribute.
 	 * @see #setTypeKey(String)
@@ -103,7 +103,7 @@ public interface BaseReferenceConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Key for reference value in STRUCTURED format.
+	 * JSON property name for the reference value inside a STRUCTURED reference object. Default is '_ref'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Ref Key</em>' attribute.
 	 * @see #setRefKey(String)

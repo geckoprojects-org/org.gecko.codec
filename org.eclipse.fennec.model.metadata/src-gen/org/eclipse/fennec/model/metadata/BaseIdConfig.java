@@ -24,7 +24,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Base configuration for ID serialization.
+ * Base configuration for ID serialization. Controls how object identity is written to the output, including the ID strategy, key naming, and format.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -55,7 +55,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Strategy for determining ID features.
+	 * Strategy for determining which features form the ID (ID_FIELD uses eID markers, COMBINED uses explicitly listed features, NONE disables ID serialization).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Strategy</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.IdStrategy
@@ -84,7 +84,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * How ID is represented in output.
+	 * Controls what keys appear in the output: ID_ONLY writes only the dedicated ID key, BOTH writes ID key and feature keys, FEATURE_ONLY writes only feature keys, NONE suppresses all ID output.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Key Mode</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.IdKeyMode
@@ -113,7 +113,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Serialization format for ID.
+	 * Output format for the ID: PLAIN writes a single value, STRUCTURED writes a nested object with value/separator keys.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Format</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.SerializationFormat
@@ -141,7 +141,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * JSON property name for ID.
+	 * JSON property name for the dedicated ID field. Default is '_id'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Id Key</em>' attribute.
 	 * @see #setIdKey(String)
@@ -167,7 +167,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Separator for combining multiple ID features.
+	 * Separator character for combining multiple ID feature values in COMBINED strategy. Default is '-'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Separator</em>' attribute.
 	 * @see #setSeparator(String)
@@ -193,7 +193,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Whether ID should appear before type in serialized output. Default true (ID first, useful for MongoDB indexing).
+	 * Whether the ID field appears before the type field in the serialized output. Default true (ID first). Useful for MongoDB where _id should be the first field for indexing.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>On Top</em>' attribute.
 	 * @see #setOnTop(boolean)
@@ -219,7 +219,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Whether to include separator in STRUCTURED ID output. When true, separator is serialized allowing deserialization without pre-configuration.
+	 * Whether to include the separator character in STRUCTURED ID output. When true, the separator is written alongside the ID value, enabling deserialization without knowing the separator in advance.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Serialize Separator</em>' attribute.
 	 * @see #setSerializeSeparator(boolean)
@@ -245,7 +245,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * JSON key for separator field in STRUCTURED ID format.
+	 * JSON property name for the separator field in STRUCTURED ID format. Default is 'separator'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Separator Key</em>' attribute.
 	 * @see #setSeparatorKey(String)
@@ -271,7 +271,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * JSON key for the ID value in STRUCTURED format. Default is 'id'.
+	 * JSON property name for the ID value inside a STRUCTURED ID object. Default is 'id'.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Value Key</em>' attribute.
 	 * @see #setValueKey(String)

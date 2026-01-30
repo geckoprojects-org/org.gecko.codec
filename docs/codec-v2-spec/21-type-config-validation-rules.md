@@ -117,8 +117,6 @@ The following must be configured **symmetrically** for serialization and deseria
 - Smart compression mismatch: WARNING, type may not resolve correctly
 
 > **Future feature:** Auto-detection of `typeStrategy` and `smartCompression` from content is not currently supported. The user must explicitly configure both sides to match.
-| ~~typeInclude~~ | ~~`typeInclude`~~ | — | — | — | **DEPRECATED** - use `TypeStrategy.NONE` |
-
 ---
 
 ## 1. typeStrategy
@@ -543,7 +541,6 @@ W: When discriminatorValue is configured:
 
 | Configuration | Level | Severity | Reason |
 |---------------|-------|----------|--------|
-| `typeInclude` (any level) | Any | WARNING | **DEPRECATED** - use `typeStrategy=NONE` instead |
 | `typeValueReaderName` on EReference | F | ERROR | Value reader is class-intrinsic |
 | `typeValueWriterName` on EReference | F | ERROR | Value writer is class-intrinsic |
 | `typeScope` via EAnnotation | Any | WARNING | Runtime-only property, ignored |
@@ -551,33 +548,6 @@ W: When discriminatorValue is configured:
 | Any `type*` key on EAttribute | A | ERROR | Type config not applicable to attributes |
 | `typeDiscriminatorPath` on EReference | F | ERROR | Discriminator path is per-class |
 | `typeDiscriminator` on EReference | F | ERROR | Discriminator value is per-class |
-
----
-
-## Deprecated: typeInclude
-
-> **DEPRECATED:** The `typeInclude` property is deprecated and will be removed in a future version.
-
-### Migration
-
-| Old (deprecated) | New (recommended) |
-|------------------|-------------------|
-| `typeInclude=false` | `typeStrategy=NONE` |
-| `typeInclude=true` | (default behavior, no configuration needed) |
-
-### Rationale
-
-- `typeInclude=false` has **identical behavior** to `TypeStrategy.NONE`
-- Having two ways to disable type serialization caused confusion
-- `TypeStrategy.NONE` is more explicit and aligns with the strategy pattern
-
-### Backward Compatibility
-
-- `typeInclude=false` will continue to work but logs a deprecation WARNING
-- Internally, `typeInclude=false` is translated to `typeStrategy=NONE`
-- If both are set, `typeStrategy` takes precedence
-
-See [06-type.md#7-deprecated-typeinclude](06-type.md#7-deprecated-typeinclude) for full migration guide.
 
 ---
 
@@ -617,12 +587,7 @@ These tests validate configuration objects without invoking the codec.
 - [ ] type* on EAttribute → ERROR
 - [ ] CLASS strategy with null instanceClassName → ERROR
 
-#### 1.3 Deprecation Tests
-- [ ] typeInclude=false → internally maps to TypeStrategy.NONE
-- [ ] typeInclude=false logs deprecation WARNING
-- [ ] typeStrategy takes precedence over typeInclude when both set
-
-#### 1.4 Config Warning Tests
+#### 1.3 Config Warning Tests
 - [ ] typeNameKey set when format=PLAIN → WARNING (ignored)
 - [ ] typeSchemaKey set when format=PLAIN and strategy≠SCHEMA_AND_TYPE → WARNING (ignored)
 

@@ -24,7 +24,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Pre-computed metadata for an EReference.
+ * Pre-computed metadata for an EReference. Extends FeatureMetadata with reference-specific properties such as containment status, target class resolution, and bidirectional opposite resolution.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -49,7 +49,7 @@ public interface ReferenceMetadata extends FeatureMetadata {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * The EReference this metadata describes.
+	 * The EReference this metadata describes. Typed convenience reference (the base class eFeature also holds this value as EStructuralFeature).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>EReference</em>' reference.
 	 * @see #setEReference(EReference)
@@ -75,7 +75,7 @@ public interface ReferenceMetadata extends FeatureMetadata {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Whether this is a containment reference.
+	 * Whether this is a containment reference. Containment references own the target object (inline serialization), non-containment references point to objects owned elsewhere (reference serialization).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Containment</em>' attribute.
 	 * @see #setContainment(boolean)
@@ -100,7 +100,7 @@ public interface ReferenceMetadata extends FeatureMetadata {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Pre-resolved metadata for the target EClass.
+	 * Pre-resolved metadata for the target EClass of this reference. Resolved during package registration after all ClassMetadata are created. May be null if the target class is in an unregistered package.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Target Class Metadata</em>' reference.
 	 * @see #setTargetClassMetadata(ClassMetadata)
@@ -125,7 +125,7 @@ public interface ReferenceMetadata extends FeatureMetadata {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Pre-resolved opposite reference metadata (for bidirectional refs).
+	 * Pre-resolved metadata for the opposite EReference in a bidirectional association. Null if this reference has no opposite. Resolved during package registration.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Opposite Metadata</em>' reference.
 	 * @see #setOppositeMetadata(ReferenceMetadata)
@@ -151,7 +151,7 @@ public interface ReferenceMetadata extends FeatureMetadata {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Whether this reference has an opposite.
+	 * Whether this reference has an opposite reference (is part of a bidirectional association). Quick check to avoid null-checking oppositeMetadata during serialization.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Has Bidirectional</em>' attribute.
 	 * @see #setHasBidirectional(boolean)

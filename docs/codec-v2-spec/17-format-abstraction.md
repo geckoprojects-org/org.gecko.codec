@@ -627,7 +627,7 @@ CodecConfiguration.builder()
     .typeStrategy(TypeStrategy.NAME)          // Simple names: Point, Feature, etc.
     .useNamesFromExtendedMetaData(true)       // Maps "coordinates" correctly
     .forceSerialize("data", "bbox")           // Volatile attributes
-    .useId(false)                             // Feature.id is a regular property
+    .idKeyMode(IdKeyMode.NONE)                // Feature.id is a regular property
     .serializeType(true)
     .build();
 ```

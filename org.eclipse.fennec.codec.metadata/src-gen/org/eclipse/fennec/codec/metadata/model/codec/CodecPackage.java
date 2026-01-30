@@ -697,13 +697,13 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int CLASS_CODEC_ASPECT__DIAGNOSTICS = MetadataPackage.CLASS_ASPECT__DIAGNOSTICS;
 
 	/**
-	 * The feature id for the '<em><b>EClass</b></em>' reference.
+	 * The feature id for the '<em><b>Class Metadata</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CLASS_CODEC_ASPECT__ECLASS = MetadataPackage.CLASS_ASPECT__ECLASS;
+	int CLASS_CODEC_ASPECT__CLASS_METADATA = MetadataPackage.CLASS_ASPECT__CLASS_METADATA;
 
 	/**
 	 * The feature id for the '<em><b>Type Config</b></em>' containment reference.
@@ -797,13 +797,13 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int FEATURE_CODEC_ASPECT__DIAGNOSTICS = MetadataPackage.FEATURE_ASPECT__DIAGNOSTICS;
 
 	/**
-	 * The feature id for the '<em><b>EFeature</b></em>' reference.
+	 * The feature id for the '<em><b>Feature Metadata</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FEATURE_CODEC_ASPECT__EFEATURE = MetadataPackage.FEATURE_ASPECT__EFEATURE;
+	int FEATURE_CODEC_ASPECT__FEATURE_METADATA = MetadataPackage.FEATURE_ASPECT__FEATURE_METADATA;
 
 	/**
 	 * The feature id for the '<em><b>Effective Key</b></em>' attribute.
@@ -924,13 +924,13 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int REFERENCE_CODEC_ASPECT__DIAGNOSTICS = FEATURE_CODEC_ASPECT__DIAGNOSTICS;
 
 	/**
-	 * The feature id for the '<em><b>EFeature</b></em>' reference.
+	 * The feature id for the '<em><b>Feature Metadata</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REFERENCE_CODEC_ASPECT__EFEATURE = FEATURE_CODEC_ASPECT__EFEATURE;
+	int REFERENCE_CODEC_ASPECT__FEATURE_METADATA = FEATURE_CODEC_ASPECT__FEATURE_METADATA;
 
 	/**
 	 * The feature id for the '<em><b>Effective Key</b></em>' attribute.
@@ -1132,6 +1132,125 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int INLINE_TYPE_MAPPING_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageProfileImpl <em>Package Profile</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageProfileImpl
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getCodecPackageProfile()
+	 * @generated
+	 */
+	int CODEC_PACKAGE_PROFILE = 9;
+
+	/**
+	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_PACKAGE_PROFILE__TYPE_ID = MetadataPackage.PACKAGE_PROFILE__TYPE_ID;
+
+	/**
+	 * The feature id for the '<em><b>Class Profiles</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_PACKAGE_PROFILE__CLASS_PROFILES = MetadataPackage.PACKAGE_PROFILE__CLASS_PROFILES;
+
+	/**
+	 * The number of structural features of the '<em>Package Profile</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_PACKAGE_PROFILE_FEATURE_COUNT = MetadataPackage.PACKAGE_PROFILE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Package Profile</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_PACKAGE_PROFILE_OPERATION_COUNT = MetadataPackage.PACKAGE_PROFILE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecClassProfileImpl <em>Class Profile</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecClassProfileImpl
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getCodecClassProfile()
+	 * @generated
+	 */
+	int CODEC_CLASS_PROFILE = 10;
+
+	/**
+	 * The feature id for the '<em><b>EClass</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CLASS_PROFILE__ECLASS = MetadataPackage.CLASS_PROFILE__ECLASS;
+
+	/**
+	 * The feature id for the '<em><b>Type Config</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CLASS_PROFILE__TYPE_CONFIG = MetadataPackage.CLASS_PROFILE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Id Config</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CLASS_PROFILE__ID_CONFIG = MetadataPackage.CLASS_PROFILE_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Super Type Config</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CLASS_PROFILE__SUPER_TYPE_CONFIG = MetadataPackage.CLASS_PROFILE_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Feature Configs</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CLASS_PROFILE__FEATURE_CONFIGS = MetadataPackage.CLASS_PROFILE_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Class Profile</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CLASS_PROFILE_FEATURE_COUNT = MetadataPackage.CLASS_PROFILE_FEATURE_COUNT + 4;
+
+	/**
+	 * The number of operations of the '<em>Class Profile</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CLASS_PROFILE_OPERATION_COUNT = MetadataPackage.CLASS_PROFILE_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl <em>Config</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1139,7 +1258,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getCodecConfig()
 	 * @generated
 	 */
-	int CODEC_CONFIG = 9;
+	int CODEC_CONFIG = 11;
 
 	/**
 	 * The feature id for the '<em><b>Format</b></em>' attribute.
@@ -1320,7 +1439,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getStrategyScope()
 	 * @generated
 	 */
-	int STRATEGY_SCOPE = 10;
+	int STRATEGY_SCOPE = 12;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeHintMode <em>Type Hint Mode</em>}' enum.
@@ -1330,7 +1449,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getTypeHintMode()
 	 * @generated
 	 */
-	int TYPE_HINT_MODE = 11;
+	int TYPE_HINT_MODE = 13;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.DeserializationMode <em>Deserialization Mode</em>}' enum.
@@ -1340,7 +1459,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getDeserializationMode()
 	 * @generated
 	 */
-	int DESERIALIZATION_MODE = 12;
+	int DESERIALIZATION_MODE = 14;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy <em>Fallback Strategy</em>}' enum.
@@ -1350,7 +1469,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getFallbackStrategy()
 	 * @generated
 	 */
-	int FALLBACK_STRATEGY = 13;
+	int FALLBACK_STRATEGY = 15;
 
 
 	/**
@@ -1915,6 +2034,70 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getInlineTypeMapping_TargetClass();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecPackageProfile <em>Package Profile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Package Profile</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackageProfile
+	 * @generated
+	 */
+	EClass getCodecPackageProfile();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile <em>Class Profile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Class Profile</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile
+	 * @generated
+	 */
+	EClass getCodecClassProfile();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile#getTypeConfig <em>Type Config</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Type Config</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile#getTypeConfig()
+	 * @see #getCodecClassProfile()
+	 * @generated
+	 */
+	EReference getCodecClassProfile_TypeConfig();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile#getIdConfig <em>Id Config</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Id Config</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile#getIdConfig()
+	 * @see #getCodecClassProfile()
+	 * @generated
+	 */
+	EReference getCodecClassProfile_IdConfig();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile#getSuperTypeConfig <em>Super Type Config</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Super Type Config</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile#getSuperTypeConfig()
+	 * @see #getCodecClassProfile()
+	 * @generated
+	 */
+	EReference getCodecClassProfile_SuperTypeConfig();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile#getFeatureConfigs <em>Feature Configs</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Feature Configs</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile#getFeatureConfigs()
+	 * @see #getCodecClassProfile()
+	 * @generated
+	 */
+	EReference getCodecClassProfile_FeatureConfigs();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig <em>Config</em>}'.
@@ -2609,6 +2792,58 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute INLINE_TYPE_MAPPING__TARGET_CLASS = eINSTANCE.getInlineTypeMapping_TargetClass();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageProfileImpl <em>Package Profile</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageProfileImpl
+		 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getCodecPackageProfile()
+		 * @generated
+		 */
+		EClass CODEC_PACKAGE_PROFILE = eINSTANCE.getCodecPackageProfile();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecClassProfileImpl <em>Class Profile</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecClassProfileImpl
+		 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getCodecClassProfile()
+		 * @generated
+		 */
+		EClass CODEC_CLASS_PROFILE = eINSTANCE.getCodecClassProfile();
+
+		/**
+		 * The meta object literal for the '<em><b>Type Config</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CODEC_CLASS_PROFILE__TYPE_CONFIG = eINSTANCE.getCodecClassProfile_TypeConfig();
+
+		/**
+		 * The meta object literal for the '<em><b>Id Config</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CODEC_CLASS_PROFILE__ID_CONFIG = eINSTANCE.getCodecClassProfile_IdConfig();
+
+		/**
+		 * The meta object literal for the '<em><b>Super Type Config</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CODEC_CLASS_PROFILE__SUPER_TYPE_CONFIG = eINSTANCE.getCodecClassProfile_SuperTypeConfig();
+
+		/**
+		 * The meta object literal for the '<em><b>Feature Configs</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference CODEC_CLASS_PROFILE__FEATURE_CONFIGS = eINSTANCE.getCodecClassProfile_FeatureConfigs();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl <em>Config</em>}' class.

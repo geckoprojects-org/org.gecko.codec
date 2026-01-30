@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.fennec.codec.metadata.provider.CodecAspectProvider;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.service.MetadataServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("TypeDiscriminator Integration")
 class TypeDiscriminatorIntegrationTest {
 
-    private MetadataService metadataService;
+    private MetadataWhiteboard metadataService;
     private CodecAspectProvider codecAspectProvider;
 
     @SuppressWarnings("restriction")

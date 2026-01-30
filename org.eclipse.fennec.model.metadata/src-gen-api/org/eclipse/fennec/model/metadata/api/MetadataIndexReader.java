@@ -27,7 +27,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Read-only query interface for metadata lookups. Provides fast indexed queries for ClassMetadata and FeatureMetadata by various criteria.
+ * Read-only query interface for metadata lookups. Provides fast indexed queries for ClassMetadata and FeatureMetadata by various criteria (name, URI, instance class name, annotation). Consumers inject MetadataService and call getIndexReader() to access this interface.
  * <!-- end-model-doc -->
  *
  *
@@ -85,7 +85,7 @@ public interface MetadataIndexReader {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Find ClassMetadata by its full EMF URI. Used by URI TypeStrategy deserialization.
+	 * Find ClassMetadata by its full EMF URI (e.g., 'http://example.org/model#//Person'). Used by URI TypeStrategy deserialization.
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated
@@ -96,7 +96,7 @@ public interface MetadataIndexReader {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Find FeatureMetadata by its full EMF URI.
+	 * Find FeatureMetadata by its full EMF URI (e.g., 'http://example.org/model#//Person/name').
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated
@@ -107,7 +107,7 @@ public interface MetadataIndexReader {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Find all ClassMetadata where the EClass has an annotation with the given source, key, and value. Pass null for value to match any value.
+	 * Find all ClassMetadata where the EClass has an EAnnotation with the given source, key, and value. Pass null for value to match any value for the given key.
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated
@@ -118,7 +118,7 @@ public interface MetadataIndexReader {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Find all FeatureMetadata where the EStructuralFeature has an annotation with the given source, key, and value. Pass null for value to match any value.
+	 * Find all FeatureMetadata where the EStructuralFeature has an EAnnotation with the given source, key, and value. Pass null for value to match any value for the given key.
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated

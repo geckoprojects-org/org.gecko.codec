@@ -28,7 +28,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * and utility methods for working with them.
  * <!-- end-user-doc -->
  * <!-- begin-model-doc -->
- * Strategy for serializing enum values.
+ * Strategy for serializing EEnum values. Controls whether the literal string, ordinal value, or programmatic name is used in the output.
  * <!-- end-model-doc -->
  * @see org.eclipse.fennec.model.metadata.MetadataPackage#getEnumSerializationStrategy()
  * @model
@@ -41,7 +41,7 @@ public enum EnumSerializationStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the enum literal name (e.g., 'ACTIVE'). This is the default.
+	 * Use the enum literal string (e.g., 'ACTIVE'). This is the default and matches EMF's native representation.
 	 * <!-- end-model-doc -->
 	 * @see #LITERAL_VALUE
 	 * @generated
@@ -54,7 +54,7 @@ public enum EnumSerializationStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the enum ordinal value (e.g., 1).
+	 * Use the enum ordinal value (e.g., 1). Compact but fragile: ordinals change when enum literals are reordered.
 	 * <!-- end-model-doc -->
 	 * @see #VALUE_VALUE
 	 * @generated
@@ -67,7 +67,7 @@ public enum EnumSerializationStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the enum name (e.g., 'Active').
+	 * Use the enum instance name (e.g., 'Active'). Differs from LITERAL when the literal string differs from the instance name.
 	 * <!-- end-model-doc -->
 	 * @see #NAME_VALUE
 	 * @generated
@@ -80,7 +80,7 @@ public enum EnumSerializationStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the enum literal name (e.g., 'ACTIVE'). This is the default.
+	 * Use the enum literal string (e.g., 'ACTIVE'). This is the default and matches EMF's native representation.
 	 * <!-- end-model-doc -->
 	 * @see #LITERAL
 	 * @model
@@ -94,7 +94,7 @@ public enum EnumSerializationStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the enum ordinal value (e.g., 1).
+	 * Use the enum ordinal value (e.g., 1). Compact but fragile: ordinals change when enum literals are reordered.
 	 * <!-- end-model-doc -->
 	 * @see #VALUE
 	 * @model
@@ -108,7 +108,7 @@ public enum EnumSerializationStrategy implements Enumerator {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Use the enum name (e.g., 'Active').
+	 * Use the enum instance name (e.g., 'Active'). Differs from LITERAL when the literal string differs from the instance name.
 	 * <!-- end-model-doc -->
 	 * @see #NAME
 	 * @model

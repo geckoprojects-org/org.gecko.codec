@@ -224,6 +224,17 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
+  <!-- Class with idKeyMode=NONE - no ID serialization at all -->
+  <eClassifiers xsi:type="ecore:EClass" name="PersonWithIdKeyModeNone">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="idStrategy" value="COMBINED"/>
+      <details key="idFeatures" value="firstName,lastName"/>
+      <details key="idKeyMode" value="NONE"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="firstName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
   <!-- Class with type configuration including format/schemaKey/nameKey -->
   <eClassifiers xsi:type="ecore:EClass" name="TypedEntityStructured">
     <eAnnotations source="http://eclipse.org/fennec/codec">
@@ -749,7 +760,7 @@
   </eClassifiers>
 
   <!-- @MISCONFIG @SPEC(14-custom-values.md): typeValueReaderName/WriterName on EReference -->
-  <!-- Expected: Keys are IGNORED - these are class-only for ID config -->
+  <!-- Expected: Keys are IGNORED with ERROR diagnostic (T-V1, T-V2) - class-intrinsic -->
   <eClassifiers xsi:type="ecore:EClass" name="RefWithTypeValueHandlersMisplaced">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
@@ -757,6 +768,107 @@
         <!-- These are for type value handling on class, not reference -->
         <details key="typeValueReaderName" value="CustomReader"/>
         <details key="typeValueWriterName" value="CustomWriter"/>
+        <!-- Valid key for reference -->
+        <details key="key" value="addr"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+
+  <!-- ========================================================================
+       LAYER 1 ANNOTATION VALIDATION TESTS
+       Per spec 06-type.md section 7 and 15-error-handling.md section 0
+       ======================================================================== -->
+
+  <!-- @MISCONFIG @SPEC(06-type.md#T-V3, T-V4): Runtime-only keys on EClass -->
+  <!-- Expected: Keys are IGNORED with WARNING - runtime-only properties -->
+  <eClassifiers xsi:type="ecore:EClass" name="ClassWithRuntimeOnlyKeys">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <!-- These are runtime-only properties, not valid in EAnnotations -->
+      <details key="typeScope" value="ROOT_ONLY"/>
+      <details key="typeFormatScope" value="ROOT_CONTAINMENT"/>
+      <!-- Valid key for class -->
+      <details key="typeStrategy" value="URI"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(06-type.md#T-V3, T-V4): Runtime-only keys on EReference -->
+  <!-- Expected: Keys are IGNORED with WARNING - runtime-only properties -->
+  <eClassifiers xsi:type="ecore:EClass" name="RefWithRuntimeOnlyKeys">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <!-- These are runtime-only properties, not valid in EAnnotations -->
+        <details key="typeScope" value="ROOT_ONLY"/>
+        <details key="typeFormatScope" value="ROOT_CONTAINMENT"/>
+        <!-- Valid key for reference -->
+        <details key="typeStrategy" value="NAME"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(06-type.md#T-V30): Deprecated typeInclude on EClass -->
+  <!-- Expected: WARNING diagnostic for deprecated key -->
+  <eClassifiers xsi:type="ecore:EClass" name="ClassWithDeprecatedTypeInclude">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <!-- DEPRECATED: should use typeStrategy=NONE instead -->
+      <details key="typeInclude" value="false"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(06-type.md#T-V31): Both typeInclude and typeStrategy on EClass -->
+  <!-- Expected: WARNING diagnostic, typeStrategy takes precedence -->
+  <eClassifiers xsi:type="ecore:EClass" name="ClassWithBothTypeIncludeAndStrategy">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <!-- DEPRECATED typeInclude + valid typeStrategy = typeStrategy wins -->
+      <details key="typeInclude" value="false"/>
+      <details key="typeStrategy" value="NAME"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(06-type.md#T-V7): typeDiscriminator on EReference (only) -->
+  <!-- Expected: ERROR diagnostic - typeDiscriminator is class-only -->
+  <!-- Note: Different from RefWithDiscriminatorMisplaced which also has valid typeStrategy -->
+  <eClassifiers xsi:type="ecore:EClass" name="RefWithTypeDiscriminatorOnly">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <!-- typeDiscriminator is class-only, ERROR on EReference -->
+        <details key="typeDiscriminator" value="my-address-type"/>
+        <!-- Valid key for reference -->
+        <details key="key" value="addr"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+
+  <!-- ========================================================================
+       ID VALIDATION TESTS (09-id.md section 11)
+       ======================================================================== -->
+
+  <!-- @MISCONFIG @SPEC(09-id.md#ID-V11, ID-V12): Runtime-only ID keys on EClass -->
+  <!-- Expected: Keys are IGNORED with WARNING - runtime-only properties -->
+  <eClassifiers xsi:type="ecore:EClass" name="ClassWithIdRuntimeOnlyKeys">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <!-- These are runtime-only properties, not valid in EAnnotations -->
+      <details key="idScope" value="ROOT_ONLY"/>
+      <details key="idFormatScope" value="ROOT_CONTAINMENT"/>
+      <!-- Valid key for class -->
+      <details key="idStrategy" value="ID_FIELD"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(09-id.md#ID-V11, ID-V12): Runtime-only ID keys on EReference -->
+  <!-- Expected: Keys are IGNORED with WARNING - runtime-only properties -->
+  <eClassifiers xsi:type="ecore:EClass" name="RefWithIdRuntimeOnlyKeys">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <!-- These are runtime-only properties, not valid in EAnnotations -->
+        <details key="idScope" value="ROOT_ONLY"/>
+        <details key="idFormatScope" value="ROOT_CONTAINMENT"/>
         <!-- Valid key for reference -->
         <details key="key" value="addr"/>
       </eAnnotations>

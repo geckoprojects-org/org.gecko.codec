@@ -31,6 +31,7 @@ import org.eclipse.fennec.model.metadata.BaseSuperTypeConfig;
 import org.eclipse.fennec.model.metadata.BaseTypeConfig;
 import org.eclipse.fennec.model.metadata.ClassAspect;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
+import org.eclipse.fennec.model.metadata.ClassProfile;
 import org.eclipse.fennec.model.metadata.DiagnosticContainer;
 import org.eclipse.fennec.model.metadata.DiagnosticSeverity;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
@@ -44,6 +45,7 @@ import org.eclipse.fennec.model.metadata.MetadataPackage;
 import org.eclipse.fennec.model.metadata.MetadataRegistry;
 import org.eclipse.fennec.model.metadata.PackageAspect;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
+import org.eclipse.fennec.model.metadata.PackageProfile;
 import org.eclipse.fennec.model.metadata.ReferenceMetadata;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.SuperTypeSelection;
@@ -103,6 +105,13 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass baseFeatureConfigEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass aspectEClass = null;
 
 	/**
@@ -131,7 +140,14 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass baseFeatureConfigEClass = null;
+	private EClass packageProfileEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass classProfileEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -630,96 +646,6 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
-	public EClass getAspect() {
-		return aspectEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EAttribute getAspect_TypeId() {
-		return (EAttribute)aspectEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EReference getAspect_Diagnostics() {
-		return (EReference)aspectEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EClass getPackageAspect() {
-		return packageAspectEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EReference getPackageAspect_EPackage() {
-		return (EReference)packageAspectEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EClass getClassAspect() {
-		return classAspectEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EReference getClassAspect_EClass() {
-		return (EReference)classAspectEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EClass getFeatureAspect() {
-		return featureAspectEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public EReference getFeatureAspect_EFeature() {
-		return (EReference)featureAspectEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public EClass getBaseFeatureConfig() {
 		return baseFeatureConfigEClass;
 	}
@@ -790,6 +716,146 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	 * @generated
 	 */
 	@Override
+	public EClass getAspect() {
+		return aspectEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getAspect_TypeId() {
+		return (EAttribute)aspectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getAspect_Diagnostics() {
+		return (EReference)aspectEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getPackageAspect() {
+		return packageAspectEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getPackageAspect_PackageMetadata() {
+		return (EReference)packageAspectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getClassAspect() {
+		return classAspectEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getClassAspect_ClassMetadata() {
+		return (EReference)classAspectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getFeatureAspect() {
+		return featureAspectEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getFeatureAspect_FeatureMetadata() {
+		return (EReference)featureAspectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getPackageProfile() {
+		return packageProfileEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getPackageProfile_TypeId() {
+		return (EAttribute)packageProfileEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getPackageProfile_ClassProfiles() {
+		return (EReference)packageProfileEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EClass getClassProfile() {
+		return classProfileEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getClassProfile_EClass() {
+		return (EReference)classProfileEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getPackageMetadata() {
 		return packageMetadataEClass;
 	}
@@ -832,6 +898,16 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 	@Override
 	public EReference getPackageMetadata_Aspects() {
 		return (EReference)packageMetadataEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getPackageMetadata_Profiles() {
+		return (EReference)packageMetadataEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1283,19 +1359,6 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__SEPARATOR);
 		createEAttribute(baseSuperTypeConfigEClass, BASE_SUPER_TYPE_CONFIG__SUPER_TYPE_KEY);
 
-		aspectEClass = createEClass(ASPECT);
-		createEAttribute(aspectEClass, ASPECT__TYPE_ID);
-		createEReference(aspectEClass, ASPECT__DIAGNOSTICS);
-
-		packageAspectEClass = createEClass(PACKAGE_ASPECT);
-		createEReference(packageAspectEClass, PACKAGE_ASPECT__EPACKAGE);
-
-		classAspectEClass = createEClass(CLASS_ASPECT);
-		createEReference(classAspectEClass, CLASS_ASPECT__ECLASS);
-
-		featureAspectEClass = createEClass(FEATURE_ASPECT);
-		createEReference(featureAspectEClass, FEATURE_ASPECT__EFEATURE);
-
 		baseFeatureConfigEClass = createEClass(BASE_FEATURE_CONFIG);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__KEY);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__SERIALIZE);
@@ -1304,11 +1367,32 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__SERIALIZE_DEFAULTS);
 		createEAttribute(baseFeatureConfigEClass, BASE_FEATURE_CONFIG__ENUM_SERIALIZATION);
 
+		aspectEClass = createEClass(ASPECT);
+		createEAttribute(aspectEClass, ASPECT__TYPE_ID);
+		createEReference(aspectEClass, ASPECT__DIAGNOSTICS);
+
+		packageAspectEClass = createEClass(PACKAGE_ASPECT);
+		createEReference(packageAspectEClass, PACKAGE_ASPECT__PACKAGE_METADATA);
+
+		classAspectEClass = createEClass(CLASS_ASPECT);
+		createEReference(classAspectEClass, CLASS_ASPECT__CLASS_METADATA);
+
+		featureAspectEClass = createEClass(FEATURE_ASPECT);
+		createEReference(featureAspectEClass, FEATURE_ASPECT__FEATURE_METADATA);
+
+		packageProfileEClass = createEClass(PACKAGE_PROFILE);
+		createEAttribute(packageProfileEClass, PACKAGE_PROFILE__TYPE_ID);
+		createEReference(packageProfileEClass, PACKAGE_PROFILE__CLASS_PROFILES);
+
+		classProfileEClass = createEClass(CLASS_PROFILE);
+		createEReference(classProfileEClass, CLASS_PROFILE__ECLASS);
+
 		packageMetadataEClass = createEClass(PACKAGE_METADATA);
 		createEReference(packageMetadataEClass, PACKAGE_METADATA__EPACKAGE);
 		createEAttribute(packageMetadataEClass, PACKAGE_METADATA__NS_URI);
 		createEReference(packageMetadataEClass, PACKAGE_METADATA__CLASSES);
 		createEReference(packageMetadataEClass, PACKAGE_METADATA__ASPECTS);
+		createEReference(packageMetadataEClass, PACKAGE_METADATA__PROFILES);
 
 		classMetadataEClass = createEClass(CLASS_METADATA);
 		createEReference(classMetadataEClass, CLASS_METADATA__PACKAGE);
@@ -1434,19 +1518,6 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEAttribute(getBaseSuperTypeConfig_Separator(), ecorePackage.getEString(), "separator", ",", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseSuperTypeConfig_SuperTypeKey(), ecorePackage.getEString(), "superTypeKey", "_supertype", 0, 1, BaseSuperTypeConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(aspectEClass, Aspect.class, "Aspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getAspect_TypeId(), ecorePackage.getEString(), "typeId", null, 0, 1, Aspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getAspect_Diagnostics(), this.getMetadataDiagnostic(), null, "diagnostics", null, 0, -1, Aspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(packageAspectEClass, PackageAspect.class, "PackageAspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getPackageAspect_EPackage(), ecorePackage.getEPackage(), null, "ePackage", null, 0, 1, PackageAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(classAspectEClass, ClassAspect.class, "ClassAspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getClassAspect_EClass(), ecorePackage.getEClass(), null, "eClass", null, 0, 1, ClassAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(featureAspectEClass, FeatureAspect.class, "FeatureAspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getFeatureAspect_EFeature(), ecorePackage.getEStructuralFeature(), null, "eFeature", null, 0, 1, FeatureAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
 		initEClass(baseFeatureConfigEClass, BaseFeatureConfig.class, "BaseFeatureConfig", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBaseFeatureConfig_Key(), ecorePackage.getEString(), "key", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseFeatureConfig_Serialize(), ecorePackage.getEBooleanObject(), "serialize", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1455,11 +1526,32 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEAttribute(getBaseFeatureConfig_SerializeDefaults(), ecorePackage.getEBooleanObject(), "serializeDefaults", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getBaseFeatureConfig_EnumSerialization(), this.getEnumSerializationStrategy(), "enumSerialization", null, 0, 1, BaseFeatureConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(aspectEClass, Aspect.class, "Aspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getAspect_TypeId(), ecorePackage.getEString(), "typeId", null, 0, 1, Aspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAspect_Diagnostics(), this.getMetadataDiagnostic(), null, "diagnostics", null, 0, -1, Aspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(packageAspectEClass, PackageAspect.class, "PackageAspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getPackageAspect_PackageMetadata(), this.getPackageMetadata(), this.getPackageMetadata_Aspects(), "packageMetadata", null, 0, 1, PackageAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(classAspectEClass, ClassAspect.class, "ClassAspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getClassAspect_ClassMetadata(), this.getClassMetadata(), this.getClassMetadata_Aspects(), "classMetadata", null, 0, 1, ClassAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(featureAspectEClass, FeatureAspect.class, "FeatureAspect", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getFeatureAspect_FeatureMetadata(), this.getFeatureMetadata(), this.getFeatureMetadata_Aspects(), "featureMetadata", null, 0, 1, FeatureAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(packageProfileEClass, PackageProfile.class, "PackageProfile", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPackageProfile_TypeId(), ecorePackage.getEString(), "typeId", null, 0, 1, PackageProfile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPackageProfile_ClassProfiles(), this.getClassProfile(), null, "classProfiles", null, 0, -1, PackageProfile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(classProfileEClass, ClassProfile.class, "ClassProfile", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getClassProfile_EClass(), ecorePackage.getEClass(), null, "eClass", null, 0, 1, ClassProfile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(packageMetadataEClass, PackageMetadata.class, "PackageMetadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPackageMetadata_EPackage(), ecorePackage.getEPackage(), null, "ePackage", null, 0, 1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPackageMetadata_NsURI(), ecorePackage.getEString(), "nsURI", null, 0, 1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPackageMetadata_Classes(), this.getClassMetadata(), this.getClassMetadata_Package(), "classes", null, 0, -1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPackageMetadata_Aspects(), this.getPackageAspect(), null, "aspects", null, 0, -1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPackageMetadata_Aspects(), this.getPackageAspect(), this.getPackageAspect_PackageMetadata(), "aspects", null, 0, -1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPackageMetadata_Profiles(), this.getPackageProfile(), null, "profiles", null, 0, -1, PackageMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(classMetadataEClass, ClassMetadata.class, "ClassMetadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getClassMetadata_Package(), this.getPackageMetadata(), this.getPackageMetadata_Classes(), "package", null, 0, 1, ClassMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1472,7 +1564,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEReference(getClassMetadata_AllSuperTypes(), this.getClassMetadata(), null, "allSuperTypes", null, 0, -1, ClassMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getClassMetadata_IdFeatures(), this.getFeatureMetadata(), null, "idFeatures", null, 0, -1, ClassMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getClassMetadata_HasId(), ecorePackage.getEBoolean(), "hasId", "false", 0, 1, ClassMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getClassMetadata_Aspects(), this.getClassAspect(), null, "aspects", null, 0, -1, ClassMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getClassMetadata_Aspects(), this.getClassAspect(), this.getClassAspect_ClassMetadata(), "aspects", null, 0, -1, ClassMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(featureMetadataEClass, FeatureMetadata.class, "FeatureMetadata", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getFeatureMetadata_ClassMetadata(), this.getClassMetadata(), this.getClassMetadata_Features(), "classMetadata", null, 0, 1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1480,7 +1572,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEAttribute(getFeatureMetadata_Name(), ecorePackage.getEString(), "name", null, 0, 1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureMetadata_ExtendedMetaDataName(), ecorePackage.getEString(), "extendedMetaDataName", null, 0, 1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getFeatureMetadata_FeatureID(), ecorePackage.getEInt(), "featureID", "-1", 0, 1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getFeatureMetadata_Aspects(), this.getFeatureAspect(), null, "aspects", null, 0, -1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getFeatureMetadata_Aspects(), this.getFeatureAspect(), this.getFeatureAspect_FeatureMetadata(), "aspects", null, 0, -1, FeatureMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(attributeMetadataEClass, AttributeMetadata.class, "AttributeMetadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getAttributeMetadata_EAttribute(), ecorePackage.getEAttribute(), null, "eAttribute", null, 0, 1, AttributeMetadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1523,6 +1615,7 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		addEEnumLiteral(idKeyModeEEnum, IdKeyMode.ID_ONLY);
 		addEEnumLiteral(idKeyModeEEnum, IdKeyMode.BOTH);
 		addEEnumLiteral(idKeyModeEEnum, IdKeyMode.FEATURE_ONLY);
+		addEEnumLiteral(idKeyModeEEnum, IdKeyMode.NONE);
 
 		initEEnum(superTypeSelectionEEnum, SuperTypeSelection.class, "SuperTypeSelection");
 		addEEnumLiteral(superTypeSelectionEEnum, SuperTypeSelection.ALL);
