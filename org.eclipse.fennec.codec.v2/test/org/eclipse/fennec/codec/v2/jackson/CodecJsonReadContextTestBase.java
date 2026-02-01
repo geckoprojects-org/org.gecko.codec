@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
  * Provides common setup for creating a root context with a mocked metadata service.
  * </p>
  */
+@Deprecated
 abstract class CodecJsonReadContextTestBase {
 
     protected MetadataService metadataService;

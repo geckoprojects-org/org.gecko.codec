@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +30,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
  */
 @DisplayName("CodecReadContext.resolveEClass(String)")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.context.CodecReadContextResolveEClassTest")
 class CodecReadContextResolveEClassTest extends CodecReadContextTestBase {
 
     @Test

@@ -47,6 +47,8 @@ import tools.jackson.core.JsonGenerator;
  * @see <a href="docs/codec-v2-serialization-spec.md#62-id-serialization">Spec 6.2: ID Serialization</a>
  */
 @DisplayName("IdSerializationEntry")
+@Deprecated
+@org.junit.jupiter.api.Disabled("Migrated to org.eclipse.fennec.codec.ser.IdSerializationEntryTest")
 class IdSerializationEntryTest {
 
     private EClass testEClass;

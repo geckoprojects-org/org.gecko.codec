@@ -29,7 +29,9 @@ import org.junit.jupiter.api.BeforeEach;
  * Provides common setup and teardown for loading test ecore model
  * and initializing the helper with a MetadataService.
  * </p>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.CodecResourceHelperTestBase}
  */
+@Deprecated
 abstract class CodecResourceHelperTestBase {
 
     protected static final String TEST_ECORE = "test-resource-helper.ecore";

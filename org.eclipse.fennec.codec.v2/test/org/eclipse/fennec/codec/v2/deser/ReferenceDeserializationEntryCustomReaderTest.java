@@ -26,6 +26,7 @@ import org.eclipse.fennec.codec.api.value.CodecValueReader;
 import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JsonParser;
@@ -36,6 +37,8 @@ import tools.jackson.core.JsonParser;
  * @see <a href="docs/codec-v2-spec/10-custom-values.md#5-reference-value-readerswriters">Spec: Reference Value Readers</a>
  */
 @DisplayName("ReferenceDeserializationEntry Custom Reader")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.ReferenceDeserializationEntryCustomReaderTest")
+@Deprecated
 class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntryTestBase {
 
     private static final String DEFAULT_REF_KEY = "_ref";

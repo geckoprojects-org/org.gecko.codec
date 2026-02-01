@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +28,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
  */
 @DisplayName("CodecReadContext.createChildObjectContext")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.context.CodecReadContextChildObjectTest")
 class CodecReadContextChildObjectTest extends CodecReadContextTestBase {
 
     @Test

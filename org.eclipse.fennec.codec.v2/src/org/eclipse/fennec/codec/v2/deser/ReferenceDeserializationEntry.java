@@ -66,7 +66,9 @@ import tools.jackson.databind.util.TokenBuffer;
  * @see <a href="docs/codec-v2-spec/07-reference.md">Spec: Reference Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.ReferenceDeserializationEntry}.
  */
+@Deprecated
 public class ReferenceDeserializationEntry implements DeserializationEntry {
 
     private static final Logger LOGGER = Logger.getLogger(ReferenceDeserializationEntry.class.getName());

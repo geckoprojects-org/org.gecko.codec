@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.v2.util;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,10 @@ import org.junit.jupiter.api.Test;
  * </p>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#156-type-resolution-priority">Spec 15.6: Type Resolution Priority</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.CodecResourceHelperIsTypeCompatibleTest}
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.util.CodecResourceHelperIsTypeCompatibleTest")
 @DisplayName("CodecResourceHelper.isTypeCompatible - Spec 15.6: Type Collision Detection")
 class CodecResourceHelperIsTypeCompatibleTest extends CodecResourceHelperTestBase {
 

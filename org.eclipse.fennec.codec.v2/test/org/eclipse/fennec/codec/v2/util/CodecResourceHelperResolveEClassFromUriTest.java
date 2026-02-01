@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.eclipse.emf.ecore.EClass;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,10 @@ import org.junit.jupiter.api.Test;
  * </p>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#153-type-resolution">Spec 15.3: Type Resolution</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.CodecResourceHelperResolveEClassFromUriTest}
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.util.CodecResourceHelperResolveEClassFromUriTest")
 @DisplayName("CodecResourceHelper.resolveEClassFromUri - Spec 15.3: Type Resolution")
 class CodecResourceHelperResolveEClassFromUriTest extends CodecResourceHelperTestBase {
 

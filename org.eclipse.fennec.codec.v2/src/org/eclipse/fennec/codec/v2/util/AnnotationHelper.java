@@ -27,7 +27,9 @@ import org.eclipse.emf.ecore.EStructuralFeature;
  *
  * @author Mark Hoffmann
  * @since 2025-01-08
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.AnnotationHelper}
  */
+@Deprecated
 public final class AnnotationHelper {
 
     /**

@@ -36,7 +36,9 @@ import tools.jackson.core.json.JsonWriteContext;
  * </p>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.context.CodecWriteContext}
  */
+@Deprecated
 public class CodecWriteContext extends TokenStreamContext implements EMFCodecWriteContext {
 
     /** Write status: OK as is, no separator needed */

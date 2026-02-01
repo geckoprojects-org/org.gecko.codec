@@ -23,6 +23,7 @@ import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -31,6 +32,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#9-jackson-module-integration">Spec 9: Jackson Module Integration</a>
  */
 @DisplayName("CodecModule.Builder")
+@Disabled("Migrated to org.eclipse.fennec.codec.module.CodecModuleBuilderTest")
+@Deprecated
 class CodecModuleBuilderTest {
 
     @Test

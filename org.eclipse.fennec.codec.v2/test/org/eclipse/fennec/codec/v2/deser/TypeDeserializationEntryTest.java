@@ -30,6 +30,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JsonParser;
@@ -47,6 +48,8 @@ import tools.jackson.core.JsonParser;
  * @see <a href="docs/codec-v2-spec/05-type.md">Spec: Type Serialization</a>
  */
 @DisplayName("TypeDeserializationEntry")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.TypeDeserializationEntryTest")
+@Deprecated
 class TypeDeserializationEntryTest extends DeserializationEntryTestBase {
 
     @BeforeEach

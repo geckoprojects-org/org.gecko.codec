@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +33,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
  */
 @DisplayName("CodecWriteContext EMF context operations")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.context.CodecWriteContextEmfOperationsTest")
 class CodecWriteContextEmfOperationsTest extends CodecWriteContextTestBase {
 
     @Test

@@ -23,12 +23,16 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link AnnotationHelper}.
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.AnnotationHelperTest}
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.util.AnnotationHelperTest")
 @DisplayName("AnnotationHelper Tests")
 class AnnotationHelperTest {
 

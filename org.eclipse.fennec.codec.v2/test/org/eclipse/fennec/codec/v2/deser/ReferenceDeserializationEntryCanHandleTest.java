@@ -32,6 +32,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JsonParser;
@@ -43,6 +44,8 @@ import tools.jackson.databind.DeserializationContext;
  * @see <a href="docs/codec-v2-spec/10-custom-values.md#24-the-canhandle-method">Spec: canHandle()</a>
  */
 @DisplayName("ReferenceDeserializationEntry canHandle() validation")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.ReferenceDeserializationEntryCanHandleTest")
+@Deprecated
 class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTestBase {
 
     private static final String DEFAULT_REF_KEY = "_ref";

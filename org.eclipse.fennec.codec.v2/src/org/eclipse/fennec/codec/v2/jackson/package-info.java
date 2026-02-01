@@ -1,4 +1,5 @@
 /**
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.jackson}.
  * Jackson JSON-specific implementations for codec v2.
  * <p>
  * This package contains JSON-specific classes that extend Jackson's JSON infrastructure:

@@ -59,7 +59,9 @@ import tools.jackson.databind.DeserializationContext;
  * @see <a href="docs/codec-v2-spec/06-id.md">Spec: ID Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.IdDeserializationEntry}.
  */
+@Deprecated
 public class IdDeserializationEntry implements DeserializationEntry {
 
     private static final Logger LOGGER = Logger.getLogger(IdDeserializationEntry.class.getName());

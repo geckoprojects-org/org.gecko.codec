@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.v2.context;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
  */
 @DisplayName("CodecWriteContext EMFContextHolder")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.context.CodecWriteContextHolderTest")
 class CodecWriteContextHolderTest extends CodecWriteContextTestBase {
 
     @Test

@@ -45,6 +45,10 @@ import tools.jackson.databind.SerializationContext;
  * @author Mark Hoffmann
  * @since 2025-12-16
  */
+/**
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser.IdSerializationEntry}.
+ */
+@Deprecated
 public class IdSerializationEntry implements SerializationEntry {
 
     private final EffectiveIdConfig config;

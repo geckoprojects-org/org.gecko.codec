@@ -41,6 +41,8 @@ import tools.jackson.databind.util.TokenBuffer;
  * @author Mark Hoffmann
  * @since 2025-12-28
  */
+/** @deprecated Migrated to {@link org.eclipse.fennec.codec.buffer.CodecTokenBuffer}. */
+@Deprecated
 public class CodecTokenBuffer extends TokenBuffer {
 
     /** The original parser's stream context, preserved for context propagation */

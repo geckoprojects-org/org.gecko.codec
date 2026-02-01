@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.v2.jackson;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +33,8 @@ import org.junit.jupiter.api.Test;
  * </p>
  */
 @DisplayName("CodecJsonReadContext Child Context Tests")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.jackson.CodecJsonReadContextChildContextTest")
 class CodecJsonReadContextChildContextTest extends CodecJsonReadContextTestBase {
 
     @Nested

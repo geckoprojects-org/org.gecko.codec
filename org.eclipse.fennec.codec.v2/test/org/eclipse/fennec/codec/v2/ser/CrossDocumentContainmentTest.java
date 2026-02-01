@@ -44,6 +44,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-spec/07-reference.md#6-cross-document-containment">Spec: Cross-Document Containment</a>
  */
 @DisplayName("Cross-Document Containment Serialization")
+@Deprecated
+@org.junit.jupiter.api.Disabled("Migrated to org.eclipse.fennec.codec.ser.CrossDocumentContainmentTest")
 class CrossDocumentContainmentTest extends SerializationEntryTestBase {
 
     private ResourceSet resourceSet;

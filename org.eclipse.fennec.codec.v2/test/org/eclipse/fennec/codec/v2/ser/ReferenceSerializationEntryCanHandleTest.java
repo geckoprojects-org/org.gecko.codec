@@ -45,6 +45,8 @@ import tools.jackson.databind.SerializationContext;
  * @see <a href="docs/codec-v2-spec/10-custom-values.md#24-the-canhandle-method">Spec: canHandle()</a>
  */
 @DisplayName("ReferenceSerializationEntry canHandle() validation")
+@Deprecated
+@org.junit.jupiter.api.Disabled("Migrated to org.eclipse.fennec.codec.ser.ReferenceSerializationEntryCanHandleTest")
 class ReferenceSerializationEntryCanHandleTest extends SerializationEntryTestBase {
 
     private static final String DEFAULT_REF_KEY = "_ref";

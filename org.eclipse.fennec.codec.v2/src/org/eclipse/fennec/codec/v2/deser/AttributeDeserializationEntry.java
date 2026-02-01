@@ -61,7 +61,9 @@ import tools.jackson.databind.DeserializationContext;
  * @see <a href="docs/codec-v2-serialization-spec.md#9-feature-serialization">Spec 9: Feature Serialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.AttributeDeserializationEntry}.
  */
+@Deprecated
 public class AttributeDeserializationEntry implements DeserializationEntry {
 
     private static final Logger LOGGER = Logger.getLogger(AttributeDeserializationEntry.class.getName());

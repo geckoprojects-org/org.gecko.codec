@@ -50,7 +50,9 @@ import tools.jackson.databind.DeserializationContext;
  * @see <a href="docs/codec-v2-serialization-spec.md#15-deserialization-requirements">Spec 15: Deserialization</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.TypeDeserializationEntry}.
  */
+@Deprecated
 public class TypeDeserializationEntry implements DeserializationEntry {
 
     private static final Logger LOGGER = Logger.getLogger(TypeDeserializationEntry.class.getName());

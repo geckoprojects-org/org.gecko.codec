@@ -580,13 +580,13 @@ These options are defined in `CodecResource`:
 
 | Option Key | Type | Direction | Description |
 |------------|------|-----------|-------------|
-| `CODEC_ROOT_OBJECT` | `EClass` or `String` (URI) | Load | Type hint for root object deserialization |
+| `CODEC_ROOT_TYPE` | `EClass` or `String` (URI) | Load | Type hint for root object deserialization |
 | `CODEC_ROOT_SCHEMA` | `String` (URI) | Load | Context schema for NAME strategy resolution |
 
 **Usage:**
 ```java
 Map<String, Object> options = new HashMap<>();
-options.put(CodecResource.CODEC_ROOT_OBJECT, PersonPackage.Literals.PERSON);
+options.put(CodecResource.CODEC_ROOT_TYPE, PersonPackage.Literals.PERSON);
 options.put(CodecResource.CODEC_ROOT_SCHEMA, "http://example.org/person/1.0");
 resource.load(inputStream, options);
 ```
@@ -666,7 +666,7 @@ import org.eclipse.fennec.codec.v2.resource.CodecResource;
 import org.eclipse.fennec.codec.v2.context.ContextHelper;
 
 // Resource options
-CodecResource.CODEC_ROOT_OBJECT
+CodecResource.CODEC_ROOT_TYPE
 CodecResource.CODEC_ROOT_SCHEMA
 
 // Context options

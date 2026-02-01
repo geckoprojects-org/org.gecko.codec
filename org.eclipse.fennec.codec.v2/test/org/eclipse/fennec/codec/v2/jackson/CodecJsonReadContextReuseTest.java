@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +30,8 @@ import org.junit.jupiter.api.Test;
  * </p>
  */
 @DisplayName("CodecJsonReadContext Reuse/Pooling Tests")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.jackson.CodecJsonReadContextReuseTest")
 class CodecJsonReadContextReuseTest extends CodecJsonReadContextTestBase {
 
     @Nested

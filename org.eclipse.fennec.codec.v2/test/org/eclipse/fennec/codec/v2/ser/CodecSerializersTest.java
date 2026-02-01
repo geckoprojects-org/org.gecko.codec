@@ -21,6 +21,7 @@ import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.module.CodecModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -29,6 +30,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#9-jackson-module-integration">Spec 9: Jackson Module Integration</a>
  */
 @DisplayName("CodecSerializers")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.CodecSerializersTest")
+@Deprecated
 class CodecSerializersTest {
 
     private EffectiveCodecConfig effectiveConfig;

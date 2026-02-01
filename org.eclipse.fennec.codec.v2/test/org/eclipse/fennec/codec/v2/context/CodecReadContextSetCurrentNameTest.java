@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +29,8 @@ import tools.jackson.core.exc.StreamReadException;
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
  */
 @DisplayName("CodecReadContext.setCurrentName")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.context.CodecReadContextSetCurrentNameTest")
 class CodecReadContextSetCurrentNameTest extends CodecReadContextTestBase {
 
     @Test

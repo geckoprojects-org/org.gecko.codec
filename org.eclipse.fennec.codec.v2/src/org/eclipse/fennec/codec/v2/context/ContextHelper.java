@@ -32,7 +32,9 @@ import tools.jackson.databind.SerializationContext;
  *
  * @author Mark Hoffmann
  * @since 2025-12-29
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.context.ContextHelper}
  */
+@Deprecated
 public final class ContextHelper {
 
     /** Context attribute key for expected type hint (must be EClass) */

@@ -20,12 +20,15 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link DeserializationState}.
  */
 @DisplayName("DeserializationState")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.DeserializationStateTest")
+@Deprecated
 class DeserializationStateTest extends DeserializationEntryTestBase {
 
     @Nested

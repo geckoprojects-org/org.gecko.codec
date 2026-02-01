@@ -49,7 +49,9 @@ import tools.jackson.databind.module.SimpleModule;
  * @see <a href="docs/codec-v2-serialization-spec.md#9-jackson-module-integration">Spec 9: Jackson Module Integration</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.module.CodecModule}.
  */
+@Deprecated
 public class CodecModule extends SimpleModule {
 
     private static final long serialVersionUID = 1L;

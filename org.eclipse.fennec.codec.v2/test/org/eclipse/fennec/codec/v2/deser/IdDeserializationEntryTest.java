@@ -23,6 +23,7 @@ import org.eclipse.fennec.codec.v2.config.effective.EffectiveIdConfig;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JsonParser;
@@ -41,6 +42,8 @@ import tools.jackson.core.JsonParser;
  * @see <a href="docs/codec-v2-spec/07-id.md">Spec: ID Serialization</a>
  */
 @DisplayName("IdDeserializationEntry")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.IdDeserializationEntryTest")
+@Deprecated
 class IdDeserializationEntryTest extends DeserializationEntryTestBase {
 
     // ========================================================================

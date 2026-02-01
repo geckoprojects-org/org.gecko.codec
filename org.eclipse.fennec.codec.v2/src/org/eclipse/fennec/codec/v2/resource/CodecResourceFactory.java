@@ -51,7 +51,9 @@ import tools.jackson.databind.json.JsonMapper;
  *
  * @author Mark Hoffmann
  * @since 2025-12-11
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.resource.CodecResourceFactory}.
  */
+@Deprecated
 public class CodecResourceFactory extends ResourceFactoryImpl {
 
     private MetadataService metadataService;

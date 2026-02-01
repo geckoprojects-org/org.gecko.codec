@@ -16,12 +16,16 @@ package org.eclipse.fennec.codec.v2.util;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link CodecResourceHelper#getMetadataService()}.
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.CodecResourceHelperMetadataServiceTest}
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.util.CodecResourceHelperMetadataServiceTest")
 @DisplayName("CodecResourceHelper.getMetadataService")
 class CodecResourceHelperMetadataServiceTest extends CodecResourceHelperTestBase {
 

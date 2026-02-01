@@ -37,7 +37,8 @@ import tools.jackson.databind.SerializationContext;
  * Uses real EMF objects instead of mocks for more realistic testing.
  * </p>
  */
-abstract class SerializationEntryTestBase {
+abstract @Deprecated
+class SerializationEntryTestBase {
 
     protected static final String TEST_ECORE = "test-serialization.ecore";
 

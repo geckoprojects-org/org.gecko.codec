@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +37,8 @@ import org.junit.jupiter.api.Test;
  * </p>
  */
 @DisplayName("CodecJsonReadContext Type Hint Isolation Tests")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.jackson.CodecJsonReadContextTypeHintTest")
 class CodecJsonReadContextTypeHintTest extends CodecJsonReadContextTestBase {
 
     private EClass parentTypeHint;

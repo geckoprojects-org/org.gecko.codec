@@ -32,6 +32,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#65-reference-serialization">Spec 6.5: Reference Serialization</a>
  */
 @DisplayName("ReferenceSerializationEntry")
+@Deprecated
+@org.junit.jupiter.api.Disabled("Migrated to org.eclipse.fennec.codec.ser.ReferenceSerializationEntryTest")
 class ReferenceSerializationEntryTest extends SerializationEntryTestBase {
 
     private EffectiveFeatureConfig createDefaultConfig(String key, EReference reference) {

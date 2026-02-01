@@ -41,6 +41,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
  * @author Mark Hoffmann
  * @since 2025-12-16
  */
+/**
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser.SerializationState}.
+ */
+@Deprecated
 public class SerializationState {
 
     private final EObject eObject;

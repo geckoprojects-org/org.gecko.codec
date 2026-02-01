@@ -42,7 +42,9 @@ import tools.jackson.databind.DeserializationContext;
  * @see <a href="docs/codec-v2-spec/06-supertype.md#8-deserialization">Spec: SuperType Deserialization</a>
  * @author Mark Hoffmann
  * @since 2025-01-09
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.SuperTypeDeserializationEntry}.
  */
+@Deprecated
 public class SuperTypeDeserializationEntry implements DeserializationEntry {
 
     private static final Logger LOGGER = Logger.getLogger(SuperTypeDeserializationEntry.class.getName());

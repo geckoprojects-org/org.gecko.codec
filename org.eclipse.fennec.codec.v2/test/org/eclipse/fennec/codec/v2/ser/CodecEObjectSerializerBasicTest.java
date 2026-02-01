@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.eclipse.emf.ecore.EObject;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,6 +27,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#6-eobject-serialization">Spec 6: EObject Serialization</a>
  */
 @DisplayName("CodecEObjectSerializer basic operations")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.CodecEObjectSerializerBasicTest")
+@Deprecated
 class CodecEObjectSerializerBasicTest extends CodecEObjectSerializerTestBase {
 
     @Test

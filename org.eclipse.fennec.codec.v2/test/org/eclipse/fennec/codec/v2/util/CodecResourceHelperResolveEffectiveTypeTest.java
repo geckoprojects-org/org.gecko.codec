@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.eclipse.emf.ecore.EClass;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +28,10 @@ import org.junit.jupiter.api.Test;
  * </p>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#156-type-resolution-priority">Spec 15.6: Type Resolution Priority</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.CodecResourceHelperResolveEffectiveTypeTest}
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.util.CodecResourceHelperResolveEffectiveTypeTest")
 @DisplayName("CodecResourceHelper.resolveEffectiveType - Spec 15.6: Type Resolution Priority")
 class CodecResourceHelperResolveEffectiveTypeTest extends CodecResourceHelperTestBase {
 

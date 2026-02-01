@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,8 @@ import tools.jackson.databind.SerializationContext;
  * Tests for {@link ContextHelper}.
  */
 @DisplayName("ContextHelper")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.context.ContextHelperTest")
 class ContextHelperTest {
 
     private DeserializationContext deserCtxt;

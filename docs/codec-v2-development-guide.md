@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-30 (Reference spec flows + validation constraints documented; strictness concepts clarified; CODEC_FEATURE_TYPE_HINTS rationale documented; ReferenceConfig spec tests NOT YET STARTED — next session)
+**Last Updated:** 2026-02-01 (8-step codec.v2 → codec.* package migration COMPLETE; all entries, orchestrators, module, resource migrated; 1461 tests, 0 failures, 458 skipped; old classes deprecated+disabled)
 
 ---
 
@@ -33,6 +33,45 @@ MAIN TASK: [description] - [status: ACTIVE/PAUSED/✅]
 ### 0.2 Current Task Hierarchy
 
 ```
+COMPLETED: 8-Step Package Migration (codec.v2.* → codec.*) - ✅ (2026-02-01)
+│
+│  All 8 migration steps complete. New spec-compliant classes live in
+│  org.eclipse.fennec.codec.* packages (within the same org.eclipse.fennec.codec.v2
+│  Gradle project). Old codec.v2.* classes are deprecated + tests disabled.
+│
+│  MIGRATION PLAN: ~/.claude/plans/functional-toasting-simon.md
+│
+│  STEPS COMPLETED:
+│  │  Step 1: Utilities + Diagnostics → codec.util, codec.diagnostic ✅
+│  │  Step 2: Context System → codec.context ✅
+│  │  Step 3: Configuration Bridge → codec.config.effective.EffectiveCodecConfig ✅
+│  │  Step 4: Jackson Integration → codec.jackson, codec.buffer ✅
+│  │  Step 5: Serialization Entries → codec.ser ✅
+│  │  Step 6: Deserialization Entries → codec.deser ✅
+│  │  Step 7: Orchestrators → codec.ser/codec.deser (CodecEObjectSerializer/Deserializer) ✅
+│  │  Step 8: Module + Resource → codec.module, codec.resource ✅
+│
+│  FINAL TEST COUNTS: 1461 tests, 0 failures, 458 skipped
+│
+│  KEY ARCHITECTURAL CHANGES:
+│  │  - EffectiveClassConfig ELIMINATED — configs resolved individually via
+│  │    EffectiveCodecConfig.resolveTypeConfig(), resolveIdConfig(), etc.
+│  │  - CodecConfiguration + ConfigurationMerger REPLACED by ConfigurationResolver
+│  │  - CodecModule now wraps ConfigurationResolver directly
+│  │  - CODEC_ROOT_OBJECT renamed to CODEC_ROOT_TYPE
+│  │  - Default refKey changed from "_ref" to "$ref" (ConfigProperty defaults)
+│  │  - DiagnosticCollector from codec.diagnostic (API) instead of codec.v2.util
+│
+│  REMAINING WORK (NOT YET DONE):
+│  │  - Deprecate old config package (codec.v2.config.CodecConfiguration,
+│  │    codec.v2.config.effective.* — still referenced by old deprecated code)
+│  │  - Migrate 23 resource integration tests to use codec.resource.CodecResource
+│  │  - Migrate deferred integration tests from Steps 5/6
+│  │  - ReferenceConfig spec tests (see NEXT below)
+│  │  - Delete old codec.v2.* packages entirely (after full validation)
+│
+---
+
 NEXT: ReferenceConfig Spec Tests - NOT STARTED
 │
 │  CONTEXT: All other config types (Type, SuperType, ID, Discriminator, Feature)
@@ -825,7 +864,7 @@ serializeEmpty = false
 | **Phase 1** | Core Serialization - End-to-end round-trip, basic type/ID/reference handling, Jackson integration | ✅ Complete |
 | **Phase 2** | Configuration - EAnnotation-based config, discriminator mapping, smart compression, array roots | ✅ Complete |
 | **Phase 3** | Advanced Features - Custom value readers/writers, additional TypeStrategies, polymorphic lists, circular references | ✅ Complete |
-| **Phase 4** | Production Readiness - Performance optimization, OSGi integration, cross-resource references | In Progress |
+| **Phase 4** | Production Readiness - Package migration complete, OSGi integration, cross-resource references | In Progress |
 
 ### 5.2 Detailed Implementation Checklist
 
@@ -923,6 +962,13 @@ STRUCTURED format:
 
 | Feature | Priority | Description |
 |---------|----------|-------------|
+| **Migration Follow-up** | | |
+| Deprecate old config package | High | `codec.v2.config.CodecConfiguration`, `codec.v2.config.effective.*` — still referenced by deprecated code |
+| Migrate resource integration tests | High | 23 tests in `codec.v2.resource.*Test` → use new `codec.resource.CodecResource` |
+| Migrate deferred integration tests | Medium | From Steps 5/6: ArrayAttribute, DeferredProperties, GeoJsonLike, ExpandReference, EnumSerialization, ExtendedMetaData tests |
+| Delete old codec.v2.* packages | Low | After full validation that new packages cover all scenarios |
+| ReferenceConfig spec tests | Medium | Last remaining config spec test gap (see §0.2) |
+| **Infrastructure** | | |
 | OSGi Integration | High | CodecResourceFactory service registration |
 | Cross-Resource References | Medium | ResourceSet-based resolution |
 | Feature Type Hints | Medium | `CODEC_FEATURE_TYPE_HINTS` load option |
@@ -973,41 +1019,64 @@ The following items were identified during the Type Serialization/Deserializatio
 - `org.eclipse.fennec.model.metadata/model/metadata.ecore` - Generic metadata infrastructure
 - `org.eclipse.fennec.codec.metadata/model/codec.ecore` - Codec-specific aspects and configs
 
-### Codec V2 Implementation
+### Codec V2 Implementation (New Packages — Active)
+
+> **Note:** As of 2026-02-01, all active implementation is in `org.eclipse.fennec.codec.*` packages.
+> The old `org.eclipse.fennec.codec.v2.*` packages are deprecated (see below).
 
 **Serialization:**
-- `org.eclipse.fennec.codec.v2.ser.CodecEObjectSerializer` - Main EObject serializer
-- `org.eclipse.fennec.codec.v2.ser.SerializationEntry` - Entry interface
-- `org.eclipse.fennec.codec.v2.ser.*SerializationEntry` - Specific entry implementations
+- `org.eclipse.fennec.codec.ser.CodecEObjectSerializer` - Main EObject serializer
+- `org.eclipse.fennec.codec.ser.CodecSerializers` - Jackson serializers wrapper
+- `org.eclipse.fennec.codec.ser.SerializationEntry` - Entry interface
+- `org.eclipse.fennec.codec.ser.*SerializationEntry` - Type, ID, SuperType, Attribute, Reference entries
 
 **Deserialization:**
-- `org.eclipse.fennec.codec.v2.deser.CodecEObjectDeserializer` - Main EObject deserializer
-- `org.eclipse.fennec.codec.v2.deser.DeserializationEntry` - Entry interface
-- `org.eclipse.fennec.codec.v2.deser.*DeserializationEntry` - Specific entry implementations
-- `org.eclipse.fennec.codec.v2.deser.DeserializationState` - Tracks deserialization state
+- `org.eclipse.fennec.codec.deser.CodecEObjectDeserializer` - Main EObject deserializer
+- `org.eclipse.fennec.codec.deser.CodecDeserializers` - Jackson deserializers wrapper
+- `org.eclipse.fennec.codec.deser.DeserializationEntry` - Entry interface
+- `org.eclipse.fennec.codec.deser.*DeserializationEntry` - Type, ID, SuperType, Attribute, Reference entries
+- `org.eclipse.fennec.codec.deser.DeserializationState` - Tracks deserialization state
 
 **Configuration:**
-- `org.eclipse.fennec.codec.v2.config.CodecConfiguration` - Module configuration builder
-- `org.eclipse.fennec.codec.v2.config.effective.*` - Pre-merged immutable configs
-- `org.eclipse.fennec.codec.v2.config.effective.ConfigurationMerger` - Config resolution
+- `org.eclipse.fennec.codec.config.ConfigurationResolver` - Cascading merge from all 6 config levels (in codec.api)
+- `org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig` - Runtime config wrapping ConfigurationResolver
 
 **Resource:**
-- `org.eclipse.fennec.codec.v2.resource.CodecResource` - EMF Resource implementation
+- `org.eclipse.fennec.codec.resource.CodecResource` - EMF Resource implementation
+- `org.eclipse.fennec.codec.resource.CodecResourceFactory` - Resource factory
 
 **Module:**
-- `org.eclipse.fennec.codec.v2.module.CodecModule` - Jackson module
+- `org.eclipse.fennec.codec.module.CodecModule` - Jackson module (wraps ConfigurationResolver)
 
 **Utilities:**
-- `org.eclipse.fennec.codec.v2.util.MetadataServiceFactory` - Factory for creating MetadataService with CodecAspectProvider
-- `org.eclipse.fennec.codec.v2.util.CodecDiagnostic` - EMF Resource.Diagnostic implementation for error/warning reporting
-- `org.eclipse.fennec.codec.v2.util.DiagnosticCollector` - Aggregates diagnostics during serialization/deserialization
-- `org.eclipse.fennec.codec.v2.context.ContextHelper` - Context attribute management and diagnostic helper methods
+- `org.eclipse.fennec.codec.util.MetadataServiceFactory` - Factory for MetadataService
+- `org.eclipse.fennec.codec.util.CodecResourceHelper` - Resource helper methods
+- `org.eclipse.fennec.codec.diagnostic.DiagnosticCollector` - Aggregates diagnostics (in codec.api)
+- `org.eclipse.fennec.codec.context.ContextHelper` - Context attribute management
+
+**Jackson Integration:**
+- `org.eclipse.fennec.codec.jackson.CodecJsonFactory` - Custom JSON factory
+- `org.eclipse.fennec.codec.jackson.CodecJsonParser` - Custom JSON parser
+- `org.eclipse.fennec.codec.jackson.CodecJsonReadContext` - Read context
+- `org.eclipse.fennec.codec.buffer.CodecTokenBuffer` - Token buffer
 
 **Tests:**
-- `org.eclipse.fennec.codec.v2.resource.CodecResourceRoundTripTest` - Round-trip integration tests
-- `org.eclipse.fennec.codec.v2.resource.CodecResourceAnnotationTest` - EAnnotation-based configuration tests
-- `org.eclipse.fennec.codec.v2.ser.*Test` - Serialization unit tests
-- `org.eclipse.fennec.codec.v2.deser.*Test` - Deserialization unit tests
+- `org.eclipse.fennec.codec.ser.*Test` - Serialization unit tests
+- `org.eclipse.fennec.codec.deser.*Test` - Deserialization unit tests
+- `org.eclipse.fennec.codec.module.*Test` - Module tests
+- `org.eclipse.fennec.codec.v2.resource.*Test` - Round-trip integration tests (still in old package, not yet migrated)
+
+### Codec V2 Implementation (Old Packages — Deprecated)
+
+> **Status:** All classes below are `@Deprecated`. Tests are `@Deprecated` + `@Disabled`.
+> Kept for migration reference until old packages are deleted entirely.
+
+- `org.eclipse.fennec.codec.v2.ser.*` - Old serialization entries and orchestrators
+- `org.eclipse.fennec.codec.v2.deser.*` - Old deserialization entries and orchestrators
+- `org.eclipse.fennec.codec.v2.module.CodecModule` - Old module (used CodecConfiguration)
+- `org.eclipse.fennec.codec.v2.resource.CodecResource` - Old resource
+- `org.eclipse.fennec.codec.v2.config.CodecConfiguration` - Old configuration builder (NOT YET DEPRECATED)
+- `org.eclipse.fennec.codec.v2.config.effective.*` - Old effective configs (NOT YET DEPRECATED)
 
 ### Metadata Infrastructure
 - `org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants` - Annotation keys and helper methods
@@ -1050,6 +1119,35 @@ The **[16-annotation-reference.md](codec-v2-spec/16-annotation-reference.md)** d
 4. **Reference Configuration** → EReference only (presentation concern for that specific reference)
 5. **Feature Configuration** → EReference + EAttribute (per-feature settings)
 6. **Scope Settings** → Global/CodecConfig only (NOT in EAnnotations)
+
+### Session 2026-02-01: 8-Step Package Migration Complete
+
+**Goal:** Execute the bottom-up migration plan from `codec.v2.*` → `codec.*` packages.
+
+**Migration Plan:** `~/.claude/plans/functional-toasting-simon.md`
+
+**Steps Completed (this session: Steps 6-8; Steps 1-5 in previous sessions):**
+
+| Step | Scope | New Packages | Source Files | Test Files |
+|------|-------|-------------|-------------|------------|
+| 6 | Deserialization Entries | `codec.deser` | 8 source | 9 tests (+1 abstract base) |
+| 7 | Orchestrators | `codec.ser` / `codec.deser` | 4 source | 3 tests (+1 abstract base) |
+| 8 | Module + Resource | `codec.module` / `codec.resource` | 3 source (+2 package-info) | 5 tests (+1 abstract base) |
+
+**Key Fixes During Migration:**
+1. `SuperTypeDeserializationEntry` test line 129: constructor param `true` → `false` for "validation disabled" test
+2. `TypeDeserializationEntry` test: new code uses `superTypeConfig == null` as validation gate (old used `.isValidateSuperTypeHierarchy()`) — pass `null` for disabled
+3. `IdConfig.isInclude()` removed: ID entry always added when `idConfig != null`; entry handles FEATURE_ONLY via `shouldSerialize()`
+
+**Deprecation Pattern Applied:**
+- Old source files: `@Deprecated` with javadoc `@deprecated Migrated to org.eclipse.fennec.codec.*`
+- Old test classes: `@Deprecated` + `@Disabled("Migrated to org.eclipse.fennec.codec.*")`
+- Old abstract bases: `@Deprecated` only (no `@Disabled`)
+- Resource integration tests: NOT deprecated (still active, not yet migrated)
+
+**Final Test Counts:** 1461 tests, 0 failures, 458 skipped. BUILD SUCCESSFUL.
+
+---
 
 ### Session 2026-01-28: ConfigurationResolver Created
 
@@ -1391,9 +1489,24 @@ diagnostics.addInfo(message, source);
 | `EffectiveTypeConfig` | `org.eclipse.fennec.codec.config.TypeConfig` |
 | `EffectiveFeatureConfig` | `org.eclipse.fennec.codec.config.FeatureConfig` |
 | `EffectiveSuperTypeConfig` | `org.eclipse.fennec.codec.config.SuperTypeConfig` |
-| `EffectiveClassConfig` | Use new config classes directly |
-| `EffectiveCodecConfig` | Use new config classes directly |
+| `EffectiveClassConfig` | Eliminated — resolve individually via `EffectiveCodecConfig` |
+| `EffectiveCodecConfig` (old) | `org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig` (new, wraps `ConfigurationResolver`) |
 | `ConfigurationMerger` | `org.eclipse.fennec.codec.config.ConfigurationResolver` |
+
+**Deprecated Classes (in `codec.v2.*` — from 8-step migration 2026-02-01):**
+
+| Old Package | Classes Deprecated | Replacement Package |
+|-------------|-------------------|---------------------|
+| `codec.v2.util` | CodecResourceHelper, AnnotationHelper, MetadataServiceFactory | `codec.util` |
+| `codec.v2.context` | EMFCodecContext, EMFCodecWriteContext, EMFCodecReadContext, EMFContextHolder, CodecWriteContext, CodecReadContext, ContextHelper | `codec.context` |
+| `codec.v2.jackson` | CodecJsonFactory, CodecJsonParser, CodecJsonReadContext, CodecTokenBufferReadContext | `codec.jackson` |
+| `codec.v2.buffer` | CodecTokenBuffer | `codec.buffer` |
+| `codec.v2.ser` | All serialization entries + orchestrators | `codec.ser` |
+| `codec.v2.deser` | All deserialization entries + orchestrators | `codec.deser` |
+| `codec.v2.module` | CodecModule | `codec.module` |
+| `codec.v2.resource` | CodecResource, CodecResourceFactory | `codec.resource` |
+| `codec.v2.config` | CodecConfiguration | **NOT YET DEPRECATED** |
+| `codec.v2.config.effective` | All Effective*Config, ConfigurationMerger | **NOT YET DEPRECATED** |
 
 **Test Coverage Summary (~530+ tests in codec.api):**
 
@@ -1820,6 +1933,36 @@ class OldFeatureTest {
 | Value Reader/Writer | `codec.api.value` | `codec.value` | ✅ Complete |
 | Diagnostic | `codec.api.diagnostic` | `codec.diagnostic` | ✅ Complete |
 | Config classes | `codec.api.config` | `codec.config` | ✅ Already in new package |
+| Utilities | `codec.v2.util` | `codec.util` | ✅ Complete (Step 1) |
+| Context System | `codec.v2.context` | `codec.context` | ✅ Complete (Step 2) |
+| Config Bridge | `codec.v2.config.effective` | `codec.config.effective` | ✅ Complete (Step 3) |
+| Jackson Integration | `codec.v2.jackson` / `codec.v2.buffer` | `codec.jackson` / `codec.buffer` | ✅ Complete (Step 4) |
+| Serialization Entries | `codec.v2.ser` | `codec.ser` | ✅ Complete (Step 5) |
+| Deserialization Entries | `codec.v2.deser` | `codec.deser` | ✅ Complete (Step 6) |
+| Ser/Deser Orchestrators | `codec.v2.ser` / `codec.v2.deser` | `codec.ser` / `codec.deser` | ✅ Complete (Step 7) |
+| Module | `codec.v2.module` | `codec.module` | ✅ Complete (Step 8) |
+| Resource | `codec.v2.resource` | `codec.resource` | ✅ Complete (Step 8) |
+
+### 11.7 Migration: Key API Changes (Old → New)
+
+Reference for anyone working with the migrated code:
+
+| Old API | New API | Notes |
+|---------|---------|-------|
+| `EffectiveClassConfig` | Eliminated | Use `resolveTypeConfig()`, `resolveIdConfig()`, etc. individually |
+| `EffectiveTypeConfig.isEnabled()` | `TypeConfig.isInclude()` | |
+| `EffectiveSuperTypeConfig.isEnabled()` | `SuperTypeConfig.isSerialize()` | |
+| `EffectiveSuperTypeConfig.getSelection()` | `SuperTypeConfig.getStrategy()` | |
+| `EffectiveFeatureConfig.isSerialize()` | `FeatureConfig.shouldSerialize()` | GAP-001 fix |
+| `EffectiveFeatureConfig.isSerializeDefaults()` | `FeatureConfig.isSerializeDefault()` | |
+| `EffectiveIdConfig.isEnabled()` | Removed | Entry handles FEATURE_ONLY via `shouldSerialize()` |
+| `EffectiveIdConfig.getEffectiveSeparatorKey()` | `IdConfig.getSeparatorKey()` | |
+| `config.getRefKey()` | `config.resolveReferenceConfig(ref).getRefKey()` | Per-reference instead of global |
+| `config.getGlobalTypeKey()` | `config.resolveGlobalTypeConfig().getTypeKey()` | |
+| `CodecConfiguration` + `ConfigurationMerger` | `ConfigurationResolver` | |
+| `CODEC_ROOT_OBJECT` | `CODEC_ROOT_TYPE` | Spec rename |
+| Default `refKey = "_ref"` | Default `refKey = "$ref"` | From ConfigProperty defaults |
+| `codec.v2.util.DiagnosticCollector` | `codec.diagnostic.DiagnosticCollector` | In API project |
 
 ---
 

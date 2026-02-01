@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.emf.ecore.EClass;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,10 @@ import org.junit.jupiter.api.Test;
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#154-codec_root_object-option">Spec 15.4: Abstract and Interface EClass Handling</a>
  * @see <a href="docs/codec-v2-serialization-spec.md#175-type-resolution-tests">Spec 17.5: T8-T11</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.CodecResourceHelperAbstractInterfaceTest}
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.util.CodecResourceHelperAbstractInterfaceTest")
 @DisplayName("CodecResourceHelper Abstract/Interface Handling - Spec 15.4, 17.5: T8-T11")
 class CodecResourceHelperAbstractInterfaceTest extends CodecResourceHelperTestBase {
 

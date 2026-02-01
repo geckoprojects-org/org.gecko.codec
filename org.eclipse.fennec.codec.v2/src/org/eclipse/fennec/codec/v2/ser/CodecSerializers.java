@@ -38,7 +38,9 @@ import tools.jackson.databind.ser.Serializers;
  * @see <a href="docs/codec-v2-serialization-spec.md#9-jackson-module-integration">Spec 9: Jackson Module Integration</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.CodecSerializers}.
  */
+@Deprecated
 public class CodecSerializers extends Serializers.Base {
 
     private final CodecEObjectSerializer eObjectSerializer;

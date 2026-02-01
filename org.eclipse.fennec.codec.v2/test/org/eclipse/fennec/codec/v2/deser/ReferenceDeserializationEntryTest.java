@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JsonParser;
@@ -28,6 +29,8 @@ import tools.jackson.core.JsonParser;
  * Tests for {@link ReferenceDeserializationEntry}.
  */
 @DisplayName("ReferenceDeserializationEntry")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.ReferenceDeserializationEntryTest")
+@Deprecated
 class ReferenceDeserializationEntryTest extends DeserializationEntryTestBase {
 
     private static final String DEFAULT_REF_KEY = "_ref";

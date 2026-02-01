@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.fennec.codec.v2.resource.CodecResource;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,10 @@ import org.junit.jupiter.api.Test;
  * </p>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#154-codec_root_object-option">Spec 15.4: CODEC_ROOT_OBJECT Option</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.CodecResourceHelperResolveRootEClassTest}
  */
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.util.CodecResourceHelperResolveRootEClassTest")
 @DisplayName("CodecResourceHelper.resolveRootEClass - Spec 15.4: CODEC_ROOT_OBJECT Option")
 class CodecResourceHelperResolveRootEClassTest extends CodecResourceHelperTestBase {
 

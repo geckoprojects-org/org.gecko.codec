@@ -52,6 +52,10 @@ import tools.jackson.databind.SerializationContext;
  * @author Mark Hoffmann
  * @since 2025-12-16
  */
+/**
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser.ReferenceSerializationEntry}.
+ */
+@Deprecated
 public class ReferenceSerializationEntry implements SerializationEntry {
 
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(ReferenceSerializationEntry.class.getName());

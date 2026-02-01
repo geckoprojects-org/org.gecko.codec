@@ -37,6 +37,8 @@ import tools.jackson.core.JsonGenerator;
  * @see <a href="docs/codec-v2-serialization-spec.md#63-supertype-serialization">Spec 6.3: SuperType Serialization</a>
  */
 @DisplayName("SuperTypeSerializationEntry")
+@Deprecated
+@org.junit.jupiter.api.Disabled("Migrated to org.eclipse.fennec.codec.ser.SuperTypeSerializationEntryTest")
 class SuperTypeSerializationEntryTest {
 
     private EClass testEClass;

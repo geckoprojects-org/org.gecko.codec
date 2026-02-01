@@ -48,7 +48,9 @@ import tools.jackson.core.ObjectReadContext;
  * @see TypeDiscriminatorService
  * @author Mark Hoffmann
  * @since 2025-12-28
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.FeaturePathTypeResolver}.
  */
+@Deprecated
 public class FeaturePathTypeResolver {
 
     private static final Logger LOGGER = Logger.getLogger(FeaturePathTypeResolver.class.getName());

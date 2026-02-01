@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
  */
+@Deprecated
 abstract class CodecWriteContextTestBase {
 
     protected MetadataService metadataService;

@@ -41,6 +41,10 @@ import tools.jackson.databind.SerializationContext;
  * @author Mark Hoffmann
  * @since 2025-12-16
  */
+/**
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser.TypeSerializationEntry}.
+ */
+@Deprecated
 public class TypeSerializationEntry implements SerializationEntry {
 
     private final EffectiveTypeConfig config;

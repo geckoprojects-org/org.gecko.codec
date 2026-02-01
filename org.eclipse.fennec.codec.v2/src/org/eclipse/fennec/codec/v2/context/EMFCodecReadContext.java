@@ -36,7 +36,9 @@ import tools.jackson.core.exc.StreamReadException;
  * </pre>
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.context.EMFCodecReadContext}
  */
+@Deprecated
 public interface EMFCodecReadContext extends EMFCodecContext {
 
     /**

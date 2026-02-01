@@ -28,6 +28,7 @@ import org.eclipse.fennec.codec.v2.deser.SuperTypeDeserializationEntry.SuperType
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JsonParser;
@@ -40,6 +41,8 @@ import tools.jackson.databind.DeserializationContext;
  * @see <a href="docs/codec-v2-spec/06-supertype.md#8-deserialization">Spec: SuperType Deserialization</a>
  */
 @DisplayName("SuperTypeDeserializationEntry")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.SuperTypeDeserializationEntryTest")
+@Deprecated
 class SuperTypeDeserializationEntryTest {
 
     private EPackage testPackage;

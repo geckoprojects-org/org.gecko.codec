@@ -1,4 +1,6 @@
 /**
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser}.
+ *
  * Copyright (c) 2012 - 2025 Data In Motion and others.
  * All rights reserved.
  *
@@ -13,6 +15,8 @@
  */
 
 /**
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser}.
+ *
  * Serializers for EMF codec v2.
  * <p>
  * This package contains Jackson serializers for EMF objects, using the

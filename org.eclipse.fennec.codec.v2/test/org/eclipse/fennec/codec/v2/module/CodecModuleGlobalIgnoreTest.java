@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -29,6 +30,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#167-global-ignore-features">Spec 16.7: Global Ignore Features</a>
  */
 @DisplayName("CodecModule global ignore features")
+@Disabled("Migrated to org.eclipse.fennec.codec.module.CodecModuleGlobalIgnoreTest")
+@Deprecated
 class CodecModuleGlobalIgnoreTest extends CodecModuleTestBase {
 
     @Test

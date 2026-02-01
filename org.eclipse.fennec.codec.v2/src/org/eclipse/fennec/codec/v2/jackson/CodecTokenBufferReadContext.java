@@ -44,6 +44,8 @@ import tools.jackson.databind.util.TokenBufferReadContext;
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
  */
+/** @deprecated Migrated to {@link org.eclipse.fennec.codec.jackson.CodecTokenBufferReadContext}. */
+@Deprecated
 public class CodecTokenBufferReadContext extends TokenBufferReadContext implements EMFCodecReadContext {
 
     private EMFContextHolder holder;

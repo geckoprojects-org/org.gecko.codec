@@ -35,7 +35,9 @@ import tools.jackson.databind.deser.Deserializers;
  * @see EffectiveCodecConfig
  * @author Mark Hoffmann
  * @since 2025-12-16
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.CodecDeserializers}.
  */
+@Deprecated
 public class CodecDeserializers extends Deserializers.Base {
 
     private final EffectiveCodecConfig config;

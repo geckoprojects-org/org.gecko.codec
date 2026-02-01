@@ -34,6 +34,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-spec/10-custom-values.md#5-reference-value-readerswriters">Spec: Reference Value Writers</a>
  */
 @DisplayName("ReferenceSerializationEntry Custom Writer")
+@Deprecated
+@org.junit.jupiter.api.Disabled("Migrated to org.eclipse.fennec.codec.ser.ReferenceSerializationEntryCustomWriterTest")
 class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTestBase {
 
     @Nested

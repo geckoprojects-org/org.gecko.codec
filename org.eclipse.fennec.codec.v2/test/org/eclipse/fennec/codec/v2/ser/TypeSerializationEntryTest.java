@@ -43,6 +43,8 @@ import tools.jackson.core.JsonGenerator;
  * @see <a href="docs/codec-v2-serialization-spec.md#61-type-serialization">Spec 6.1: Type Serialization</a>
  */
 @DisplayName("TypeSerializationEntry")
+@Deprecated
+@org.junit.jupiter.api.Disabled("Migrated to org.eclipse.fennec.codec.ser.TypeSerializationEntryTest")
 class TypeSerializationEntryTest {
 
     private EClass testEClass;

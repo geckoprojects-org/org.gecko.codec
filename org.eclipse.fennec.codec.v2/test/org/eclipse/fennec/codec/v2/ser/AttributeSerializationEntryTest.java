@@ -34,6 +34,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#64-attribute-serialization">Spec 6.4: Attribute Serialization</a>
  */
 @DisplayName("AttributeSerializationEntry")
+@Deprecated
+@org.junit.jupiter.api.Disabled("Migrated to org.eclipse.fennec.codec.ser.AttributeSerializationEntryTest")
 class AttributeSerializationEntryTest extends SerializationEntryTestBase {
 
     private EffectiveFeatureConfig createDefaultConfig(String key, EAttribute attribute) {

@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveFeatureConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JsonParser;
@@ -30,6 +31,8 @@ import tools.jackson.core.JsonParser;
  * Tests for {@link AttributeDeserializationEntry}.
  */
 @DisplayName("AttributeDeserializationEntry")
+@Disabled("Migrated to org.eclipse.fennec.codec.deser.AttributeDeserializationEntryTest")
+@Deprecated
 class AttributeDeserializationEntryTest extends DeserializationEntryTestBase {
 
     @Nested

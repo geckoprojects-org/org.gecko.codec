@@ -40,6 +40,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#6-eobject-serialization">Spec 6: EObject Serialization</a>
  */
 @DisplayName("SerializationState")
+@Deprecated
+@org.junit.jupiter.api.Disabled("Migrated to org.eclipse.fennec.codec.ser.SerializationStateTest")
 class SerializationStateTest {
 
     private EClass testEClass;

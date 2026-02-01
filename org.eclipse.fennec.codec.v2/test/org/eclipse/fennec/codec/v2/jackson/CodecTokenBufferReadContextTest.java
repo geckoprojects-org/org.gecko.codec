@@ -30,6 +30,7 @@ import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +43,8 @@ import org.junit.jupiter.api.Test;
  * </p>
  */
 @DisplayName("CodecTokenBufferReadContext Tests")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.jackson.CodecTokenBufferReadContextTest")
 class CodecTokenBufferReadContextTest {
 
     private MetadataService metadataService;

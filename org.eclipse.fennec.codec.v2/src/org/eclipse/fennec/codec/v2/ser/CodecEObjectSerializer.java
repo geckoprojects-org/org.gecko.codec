@@ -67,7 +67,9 @@ import tools.jackson.databind.ValueSerializer;
  * @see <a href="docs/codec-v2-serialization-spec.md#165-field-ordering">Spec 16.5: Field Ordering</a>
  * @author Mark Hoffmann
  * @since 2025-12-16
+  * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.CodecEObjectSerializer}.
  */
+@Deprecated
 public class CodecEObjectSerializer extends ValueSerializer<EObject> {
 
     private final EffectiveCodecConfig config;

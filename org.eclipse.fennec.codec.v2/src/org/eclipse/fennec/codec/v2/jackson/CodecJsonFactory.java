@@ -49,6 +49,8 @@ import tools.jackson.core.sym.ByteQuadsCanonicalizer;
  *
  * @see <a href="docs/codec-v2-serialization-spec.md#1811-emf-codec-context">Spec 18.11: EMF Codec Context</a>
  */
+/** @deprecated Migrated to {@link org.eclipse.fennec.codec.jackson.CodecJsonFactory}. */
+@Deprecated
 public class CodecJsonFactory extends JsonFactory {
 
     private static final long serialVersionUID = 1L;

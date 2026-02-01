@@ -33,7 +33,9 @@ import org.eclipse.fennec.model.metadata.api.MetadataService;
  *
  * @author Mark Hoffmann
  * @since 2025-12-11
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.CodecResourceHelper}
  */
+@Deprecated
 public class CodecResourceHelper {
 
     private static final Logger LOGGER = Logger.getLogger(CodecResourceHelper.class.getName());

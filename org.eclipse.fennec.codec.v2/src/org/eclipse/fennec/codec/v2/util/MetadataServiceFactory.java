@@ -32,7 +32,9 @@ import org.eclipse.fennec.model.metadata.service.MetadataServiceImpl;
  *
  * @author Mark Hoffmann
  * @since 2025-12-17
+ * @deprecated Migrated to {@link org.eclipse.fennec.codec.util.MetadataServiceFactory}
  */
+@Deprecated
 public final class MetadataServiceFactory {
 
     private MetadataServiceFactory() {

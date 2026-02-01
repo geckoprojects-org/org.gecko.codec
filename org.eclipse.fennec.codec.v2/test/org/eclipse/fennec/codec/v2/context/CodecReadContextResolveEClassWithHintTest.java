@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,6 +30,8 @@ import org.junit.jupiter.api.Test;
  * @see <a href="docs/codec-v2-serialization-spec.md#154-codec_root_object-option">Spec 15.4: Type Resolution</a>
  */
 @DisplayName("CodecReadContext.resolveEClass(String, EClass) - Spec 15.4 Type Resolution")
+@Deprecated
+@Disabled("Migrated to org.eclipse.fennec.codec.context.CodecReadContextResolveEClassWithHintTest")
 class CodecReadContextResolveEClassWithHintTest extends CodecReadContextTestBase {
 
     @Test

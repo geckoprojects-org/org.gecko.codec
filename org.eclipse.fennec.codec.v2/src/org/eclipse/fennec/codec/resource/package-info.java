@@ -1,0 +1,20 @@
+/**
+ * Copyright (c) 2012 - 2025 Data In Motion and others.
+ * All rights reserved.
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Data In Motion - initial API and implementation
+ */
+
+/**
+ * EMF Resource implementation for JSON codec.
+ *
+ * @see <a href="docs/codec-v2-spec/13-resource.md">Spec 13: Resource</a>
+ */
+package org.eclipse.fennec.codec.resource;
