@@ -958,10 +958,12 @@ When deserializing JSON, fields may appear that don't correspond to any EMF feat
 
 ### 11.1 Strictness Configuration
 
-| Annotation Key | Property Key | Global | EClass | ERef | EAttr | Default | Description |
-|----------------|--------------|:------:|:------:|:----:|:-----:|---------|-------------|
-| `strictOnUnknown` | `codec.strictOnUnknown` | ✅ | ✅ | ✅ | ✅ | `false` | ERROR on unknown JSON field |
-| `strictOnMissing` | `codec.strictOnMissing` | ✅ | ✅ | ✅ | ✅ | `false` | ERROR on missing required feature |
+| Annotation Key | Property Key | Global | EClass | Default | Description |
+|----------------|--------------|:------:|:------:|---------|-------------|
+| `strictOnUnknown` | `codec.strictOnUnknown` | ✅ | ✅ | `false` | ERROR on unknown JSON field |
+| `strictOnMissing` | `codec.strictOnMissing` | ✅ | ✅ | `false` | ERROR on missing required feature |
+
+**Note:** Strictness is not supported on EReference or EAttribute level. It applies to all features of a class uniformly.
 
 **Behavior:**
 
@@ -973,8 +975,6 @@ When deserializing JSON, fields may appear that don't correspond to any EMF feat
 **Scope behavior:**
 - **Global:** Applies to all features everywhere
 - **EClass:** Applies to all features of that class
-- **EReference:** Applies when deserializing objects through this reference
-- **EAttribute:** Applies to this specific attribute only
 
 ### 11.2 Default Behavior (LENIENT)
 
@@ -1020,6 +1020,27 @@ for (Diagnostic warning : resource.getWarnings()) {
 - `strictOnUnknown=true` at Global: Fail-fast for any unexpected JSON field (strict schema validation)
 - `strictOnMissing=true` on EAttribute: Ensure this specific required field is always present
 - `strictOnUnknown=false` on EReference: Allow extension fields in objects accessed via this reference (forward compatibility)
+
+### 11.6 Relationship to Other Strictness Concepts
+
+The codec has three independent strictness mechanisms at different levels:
+
+| Mechanism | Scope | What it Controls | Default |
+|-----------|-------|------------------|---------|
+| `strictOnUnknown` / `strictOnMissing` | **Feature-level** | Unknown JSON fields, missing EMF features | `false` (LENIENT) |
+| `CODEC_DESERIALIZATION_MODE` | **Type-level** | How flexibly to interpret `_type` values | `LENIENT` |
+| `CODEC_FAIL_FAST` | **Diagnostic-level** | When to throw vs collect errors | `false` (collect all) |
+
+These are **orthogonal** — they can be combined independently:
+
+- `strictOnUnknown=true` + `failFast=false`: Collect all unknown field errors, report them all at once
+- `strictOnUnknown=true` + `failFast=true`: Abort on first unknown field
+- `DeserializationMode.STRICT` + `strictOnUnknown=false`: Strict about type format, lenient about unknown fields
+- `DeserializationMode.LENIENT` + `strictOnMissing=true`: Flexible type resolution, but require all fields
+
+> **Common confusion:** `DeserializationMode.STRICT` does NOT imply `strictOnUnknown=true`. `DeserializationMode` controls **type resolution** strategy (how `_type` values are parsed). `strictOnUnknown`/`strictOnMissing` controls **feature handling** (unknown/missing JSON fields). `failFast` controls **error reporting** (throw immediately vs collect). Each can be configured independently.
+
+**Implementation status:** `strictOnUnknown` and `strictOnMissing` are specified and have `ConfigProperty` entries but are not yet wired in the runtime deserialization pipeline. See [99-open-questions.md](99-open-questions.md) for tracking.
 
 ---
 
@@ -1387,13 +1408,18 @@ For each JSON field (whether from Phase 2 replay or Phase 3 normal processing), 
 │ │   │          (delegate to entry — see Step 2/3 below)                │   │
 │ │   │                                                                   │   │
 │ │   └─ NOT FOUND → UNKNOWN FIELD                                       │   │
-│ │                   parser.skipChildren()                               │   │
-│ │                   (skip value including nested objects/arrays)        │   │
 │ │                                                                       │   │
-│ │   Note: In the current v2 implementation, unknown fields are         │   │
-│ │   silently skipped (LENIENT mode). The strictOnUnknown option        │   │
-│ │   (§11) is not yet wired — this is planned for the effective         │   │
-│ │   config layer.                                                       │   │
+│ │       Is strictOnUnknown=true? (effective config for this EClass)    │   │
+│ │       ├─ YES → ERROR diagnostic                                     │   │
+│ │       │        "Unknown feature '{name}' for EClass {class}"        │   │
+│ │       │        (with failFast=true → throw immediately)             │   │
+│ │       └─ NO  → WARNING diagnostic (same message)                    │   │
+│ │                                                                       │   │
+│ │       parser.skipChildren()                                          │   │
+│ │       (skip value including nested objects/arrays)                   │   │
+│ │                                                                       │   │
+│ │   Note: strictOnUnknown is resolved from effective config:           │   │
+│ │   feature-level → EClass-level → global. See §11 for details.       │   │
 │ └───────────────────────────────────────────────────────────────────────┘   │
 │                               │                                             │
 │                               ▼                                             │
@@ -1495,10 +1521,20 @@ For each JSON field (whether from Phase 2 replay or Phase 3 normal processing), 
 │ │       Resolved by CodecResource after load completes                 │   │
 │ │       (URI-based resolution via Resource.getEObject())               │   │
 │ │                                                                       │   │
-│ │   4b. MISSING FIELD BEHAVIOR (§11, strictOnMissing)                   │   │
-│ │       Features without matching JSON fields retain EMF defaults      │   │
-│ │       With strictOnMissing=true → error for required features        │   │
-│ │       Default behavior: silent (no warning for missing fields)       │   │
+│ │   4b. MISSING FIELD CHECK (§11, strictOnMissing)                      │   │
+│ │       For each entry that was NOT visited during JSON parsing:       │   │
+│ │                                                                       │   │
+│ │       Is strictOnMissing=true? (effective config for this feature)   │   │
+│ │       ├─ YES → Is feature required? (lower bound > 0 in Ecore)      │   │
+│ │       │        ├─ YES → ERROR diagnostic                            │   │
+│ │       │        │        "Required feature '{name}' missing for       │   │
+│ │       │        │         EClass {class}"                             │   │
+│ │       │        │        (with failFast=true → throw immediately)    │   │
+│ │       │        └─ NO  → no diagnostic (optional feature, OK)        │   │
+│ │       └─ NO  → no diagnostic (LENIENT: retain EMF default value)    │   │
+│ │                                                                       │   │
+│ │       Note: strictOnMissing is resolved from effective config:       │   │
+│ │       feature-level → EClass-level → global. See §11 for details.   │   │
 │ └───────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```

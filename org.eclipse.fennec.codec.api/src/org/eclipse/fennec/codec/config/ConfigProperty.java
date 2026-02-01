@@ -301,6 +301,12 @@ public enum ConfigProperty {
     METADATA_FIELDS_FIRST("metadataFieldsFirst", Boolean.class, true,
         levels(GLOBAL), directions(WRITE), directions(READ)),  // (R)W
 
+    METADATA_MERGE("metadataMerge", Boolean.class, false,
+        levels(GLOBAL, ECLASS), directions(READ, WRITE)),
+
+    METADATA_KEY("metadataKey", String.class, "_metadata",
+        levels(GLOBAL, ECLASS), directions(READ, WRITE)),
+
     USE_NAMES_FROM_EXTENDED_METADATA("useNamesFromExtendedMetadata", Boolean.class, false,
         levels(GLOBAL), directions(READ, WRITE)),
 

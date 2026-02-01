@@ -13,11 +13,16 @@
  */
 package org.eclipse.fennec.codec.openapi;
 
+import java.util.Objects;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceFactoryImpl;
 import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
+import org.eclipse.fennec.model.metadata.PackageMetadata;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
+import org.eclipse.fennec.model.openapi.OpenApiPackage;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -53,13 +58,17 @@ public class OpenApiResourceFactoryImpl extends ResourceFactoryImpl {
 	@Activate
 	public OpenApiResourceFactoryImpl(@Reference MetadataService metadataService) {
 		this.metadataService = metadataService;
+		PackageMetadata packageMetadata = this.metadataService.getPackageMetadata(OpenApiPackage.eNS_URI);
+		Objects.requireNonNull(packageMetadata, "The OpenApi Model is required to get this resource factory work");
 	}
 
 	/**
 	 * Non-OSGi constructor for standalone usage.
 	 */
 	public OpenApiResourceFactoryImpl() {
-		this.metadataService = MetadataServiceFactory.create();
+		MetadataWhiteboard whiteboard = MetadataServiceFactory.create();
+		whiteboard.registerPackage(OpenApiPackage.eINSTANCE);
+		this.metadataService = whiteboard;
 	}
 
 	@Override

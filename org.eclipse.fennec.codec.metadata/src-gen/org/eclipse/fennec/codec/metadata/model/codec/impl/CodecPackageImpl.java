@@ -551,6 +551,46 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getClassCodecAspect_StrictOnUnknown() {
+		return (EAttribute)classCodecAspectEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getClassCodecAspect_StrictOnMissing() {
+		return (EAttribute)classCodecAspectEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getClassCodecAspect_MetadataMerge() {
+		return (EAttribute)classCodecAspectEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getClassCodecAspect_MetadataKey() {
+		return (EAttribute)classCodecAspectEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EClass getFeatureCodecAspect() {
 		return featureCodecAspectEClass;
 	}
@@ -1031,6 +1071,46 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 	 * @generated
 	 */
 	@Override
+	public EAttribute getCodecConfig_StrictOnUnknown() {
+		return (EAttribute)codecConfigEClass.getEStructuralFeatures().get(17);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecConfig_StrictOnMissing() {
+		return (EAttribute)codecConfigEClass.getEStructuralFeatures().get(18);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecConfig_MetadataMerge() {
+		return (EAttribute)codecConfigEClass.getEStructuralFeatures().get(19);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getCodecConfig_MetadataKey() {
+		return (EAttribute)codecConfigEClass.getEStructuralFeatures().get(20);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getStrategyScope() {
 		return strategyScopeEEnum;
 	}
@@ -1131,6 +1211,10 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		createEReference(classCodecAspectEClass, CLASS_CODEC_ASPECT__SUPER_TYPE_CONFIG);
 		createEAttribute(classCodecAspectEClass, CLASS_CODEC_ASPECT__INHERIT_FROM_PARENT);
 		createEAttribute(classCodecAspectEClass, CLASS_CODEC_ASPECT__DISCRIMINATOR_VALUE);
+		createEAttribute(classCodecAspectEClass, CLASS_CODEC_ASPECT__STRICT_ON_UNKNOWN);
+		createEAttribute(classCodecAspectEClass, CLASS_CODEC_ASPECT__STRICT_ON_MISSING);
+		createEAttribute(classCodecAspectEClass, CLASS_CODEC_ASPECT__METADATA_MERGE);
+		createEAttribute(classCodecAspectEClass, CLASS_CODEC_ASPECT__METADATA_KEY);
 
 		featureCodecAspectEClass = createEClass(FEATURE_CODEC_ASPECT);
 		createEAttribute(featureCodecAspectEClass, FEATURE_CODEC_ASPECT__EFFECTIVE_KEY);
@@ -1185,6 +1269,10 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		createEAttribute(codecConfigEClass, CODEC_CONFIG__SERIALIZE_DEFAULTS);
 		createEAttribute(codecConfigEClass, CODEC_CONFIG__TYPE_HINT_MODE);
 		createEAttribute(codecConfigEClass, CODEC_CONFIG__DESERIALIZATION_MODE);
+		createEAttribute(codecConfigEClass, CODEC_CONFIG__STRICT_ON_UNKNOWN);
+		createEAttribute(codecConfigEClass, CODEC_CONFIG__STRICT_ON_MISSING);
+		createEAttribute(codecConfigEClass, CODEC_CONFIG__METADATA_MERGE);
+		createEAttribute(codecConfigEClass, CODEC_CONFIG__METADATA_KEY);
 
 		// Create enums
 		strategyScopeEEnum = createEEnum(STRATEGY_SCOPE);
@@ -1273,6 +1361,10 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		initEReference(getClassCodecAspect_SuperTypeConfig(), this.getSuperTypeSerializationConfig(), null, "superTypeConfig", null, 0, 1, ClassCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getClassCodecAspect_InheritFromParent(), ecorePackage.getEBoolean(), "inheritFromParent", "true", 0, 1, ClassCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getClassCodecAspect_DiscriminatorValue(), ecorePackage.getEString(), "discriminatorValue", null, 0, 1, ClassCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getClassCodecAspect_StrictOnUnknown(), ecorePackage.getEBoolean(), "strictOnUnknown", "false", 0, 1, ClassCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getClassCodecAspect_StrictOnMissing(), ecorePackage.getEBoolean(), "strictOnMissing", "false", 0, 1, ClassCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getClassCodecAspect_MetadataMerge(), ecorePackage.getEBoolean(), "metadataMerge", "false", 0, 1, ClassCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getClassCodecAspect_MetadataKey(), ecorePackage.getEString(), "metadataKey", "_metadata", 0, 1, ClassCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(featureCodecAspectEClass, FeatureCodecAspect.class, "FeatureCodecAspect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getFeatureCodecAspect_EffectiveKey(), ecorePackage.getEString(), "effectiveKey", null, 0, 1, FeatureCodecAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1327,6 +1419,10 @@ public class CodecPackageImpl extends EPackageImpl implements CodecPackage {
 		initEAttribute(getCodecConfig_SerializeDefaults(), ecorePackage.getEBoolean(), "serializeDefaults", "false", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCodecConfig_TypeHintMode(), this.getTypeHintMode(), "typeHintMode", "HINT", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCodecConfig_DeserializationMode(), this.getDeserializationMode(), "deserializationMode", "LENIENT", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCodecConfig_StrictOnUnknown(), ecorePackage.getEBoolean(), "strictOnUnknown", "false", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCodecConfig_StrictOnMissing(), ecorePackage.getEBoolean(), "strictOnMissing", "false", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCodecConfig_MetadataMerge(), ecorePackage.getEBoolean(), "metadataMerge", "false", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCodecConfig_MetadataKey(), ecorePackage.getEString(), "metadataKey", "_metadata", 0, 1, CodecConfig.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(strategyScopeEEnum, StrategyScope.class, "StrategyScope");

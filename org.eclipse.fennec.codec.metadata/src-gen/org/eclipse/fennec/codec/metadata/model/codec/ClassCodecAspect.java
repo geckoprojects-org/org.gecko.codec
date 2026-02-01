@@ -36,6 +36,10 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#getSuperTypeConfig <em>Super Type Config</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isInheritFromParent <em>Inherit From Parent</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#getDiscriminatorValue <em>Discriminator Value</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isStrictOnUnknown <em>Strict On Unknown</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isStrictOnMissing <em>Strict On Missing</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isMetadataMerge <em>Metadata Merge</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#getMetadataKey <em>Metadata Key</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getClassCodecAspect()
@@ -169,5 +173,109 @@ public interface ClassCodecAspect extends ClassAspect {
 	 * @generated
 	 */
 	void setDiscriminatorValue(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Strict On Unknown</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * ERROR on unknown JSON fields during deserialization. Default false (LENIENT: warning + skip).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Strict On Unknown</em>' attribute.
+	 * @see #setStrictOnUnknown(boolean)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getClassCodecAspect_StrictOnUnknown()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isStrictOnUnknown();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isStrictOnUnknown <em>Strict On Unknown</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Strict On Unknown</em>' attribute.
+	 * @see #isStrictOnUnknown()
+	 * @generated
+	 */
+	void setStrictOnUnknown(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Strict On Missing</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * ERROR on missing required features during deserialization. Default false (LENIENT: warning + use default).
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Strict On Missing</em>' attribute.
+	 * @see #setStrictOnMissing(boolean)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getClassCodecAspect_StrictOnMissing()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isStrictOnMissing();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isStrictOnMissing <em>Strict On Missing</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Strict On Missing</em>' attribute.
+	 * @see #isStrictOnMissing()
+	 * @generated
+	 */
+	void setStrictOnMissing(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Metadata Merge</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Merge type + id (+ supertype) STRUCTURED outputs into a single metadata object. Only activates when both typeFormat and idFormat are STRUCTURED. Default false.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Metadata Merge</em>' attribute.
+	 * @see #setMetadataMerge(boolean)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getClassCodecAspect_MetadataMerge()
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isMetadataMerge();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isMetadataMerge <em>Metadata Merge</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Metadata Merge</em>' attribute.
+	 * @see #isMetadataMerge()
+	 * @generated
+	 */
+	void setMetadataMerge(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Metadata Key</b></em>' attribute.
+	 * The default value is <code>"_metadata"</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * JSON key for the merged metadata object. Only meaningful when metadataMerge=true. Default '_metadata'.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Metadata Key</em>' attribute.
+	 * @see #setMetadataKey(String)
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getClassCodecAspect_MetadataKey()
+	 * @model default="_metadata"
+	 * @generated
+	 */
+	String getMetadataKey();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#getMetadataKey <em>Metadata Key</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Metadata Key</em>' attribute.
+	 * @see #getMetadataKey()
+	 * @generated
+	 */
+	void setMetadataKey(String value);
 
 } // ClassCodecAspect

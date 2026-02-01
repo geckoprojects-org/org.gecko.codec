@@ -45,6 +45,10 @@ import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstant
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SERIALIZE_DEFAULTS;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SERIALIZE_EMPTY;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SERIALIZE_NULL;
+import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_METADATA_KEY;
+import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_METADATA_MERGE;
+import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_STRICT_ON_MISSING;
+import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_STRICT_ON_UNKNOWN;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SUPERTYPE_AS_ARRAY;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SUPERTYPE_FORMAT;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_SUPERTYPE_KEY;
@@ -185,6 +189,7 @@ public class CodecAspectProvider implements AspectProvider {
         // ST-V2: Any superType* key on EAttribute → ERROR
         // ID-V13: Any id* key on EAttribute → ERROR
         // R-V2/R-V4: ref*/expand on EAttribute → ERROR
+        // Strictness keys on EAttribute → WARNING (class-only)
         EAnnotation codecAnnotation = attribute.getEAnnotation(CODEC_SOURCE);
         if (codecAnnotation != null) {
             Map<String, String> details = codecAnnotation.getDetails().map();
@@ -192,6 +197,8 @@ public class CodecAspectProvider implements AspectProvider {
             checkForSuperTypeKeysOnAttribute(aspect, details, attribute);
             checkForIdKeysOnAttribute(aspect, details, attribute);
             checkForReferenceOnlyKeysOnAttribute(aspect, details, attribute);
+            checkForStrictnessKeysOnFeature(aspect, details, attribute);
+            checkForMetadataMergeKeysOnFeature(aspect, details, attribute);
         }
 
         return aspect;
@@ -248,6 +255,12 @@ public class CodecAspectProvider implements AspectProvider {
 
             // Parse fallback EClass URI
             AnnotationParseHelper.ifStringPresent(details, KEY_FALLBACK_ECLASS, aspect::setFallbackEClass);
+
+            // Strictness keys on EReference → WARNING (class-only)
+            checkForStrictnessKeysOnFeature(aspect, details, reference);
+
+            // Metadata merge keys on EReference → ERROR (class-only)
+            checkForMetadataMergeKeysOnFeature(aspect, details, reference);
         }
 
         return aspect;
@@ -424,6 +437,14 @@ public class CodecAspectProvider implements AspectProvider {
 
         // Parse type mapping discriminator (for concrete classes in MAPPED strategy)
         AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_DISCRIMINATOR, aspect::setDiscriminatorValue);
+
+        // Parse strictness flags (class-level deserialization behavior)
+        AnnotationParseHelper.ifBooleanPresent(details, KEY_STRICT_ON_UNKNOWN, aspect::setStrictOnUnknown);
+        AnnotationParseHelper.ifBooleanPresent(details, KEY_STRICT_ON_MISSING, aspect::setStrictOnMissing);
+
+        // Parse metadata merge flags (class-level output assembly)
+        AnnotationParseHelper.ifBooleanPresent(details, KEY_METADATA_MERGE, aspect::setMetadataMerge);
+        AnnotationParseHelper.ifStringPresent(details, KEY_METADATA_KEY, aspect::setMetadataKey);
     }
 
     // ========================================================================
@@ -1054,6 +1075,54 @@ public class CodecAspectProvider implements AspectProvider {
                     "Annotation key '" + KEY_EXPAND + "' is not valid on EAttribute '" +
                     attribute.getName() + "', ignored (expand is not applicable to attributes)",
                     KEY_EXPAND);
+        }
+    }
+
+    /**
+     * Checks for strictness keys (strictOnUnknown, strictOnMissing) on feature-level annotations.
+     * <p>
+     * Strictness is a class-level property (Global + EClass only). Placing these keys on
+     * EAttribute or EReference is a misconfiguration — the keys are ignored with a WARNING.
+     * </p>
+     */
+    private void checkForStrictnessKeysOnFeature(FeatureCodecAspect aspect, Map<String, String> details, EStructuralFeature feature) {
+        if (details.containsKey(KEY_STRICT_ON_UNKNOWN)) {
+            addDiagnostic(aspect, DiagnosticSeverity.WARNING,
+                    "Annotation key '" + KEY_STRICT_ON_UNKNOWN + "' is not valid on " +
+                    (feature instanceof EReference ? "EReference" : "EAttribute") + " '" +
+                    feature.getName() + "', ignored (class-level property only, use on EClass instead)",
+                    KEY_STRICT_ON_UNKNOWN);
+        }
+        if (details.containsKey(KEY_STRICT_ON_MISSING)) {
+            addDiagnostic(aspect, DiagnosticSeverity.WARNING,
+                    "Annotation key '" + KEY_STRICT_ON_MISSING + "' is not valid on " +
+                    (feature instanceof EReference ? "EReference" : "EAttribute") + " '" +
+                    feature.getName() + "', ignored (class-level property only, use on EClass instead)",
+                    KEY_STRICT_ON_MISSING);
+        }
+    }
+
+    /**
+     * Checks for metadata merge keys (metadataMerge, metadataKey) on feature-level annotations.
+     * <p>
+     * Metadata merge is a class-level property (Global + EClass only). Placing these keys on
+     * EAttribute or EReference is a misconfiguration — the keys are ignored with an ERROR.
+     * </p>
+     */
+    private void checkForMetadataMergeKeysOnFeature(FeatureCodecAspect aspect, Map<String, String> details, EStructuralFeature feature) {
+        if (details.containsKey(KEY_METADATA_MERGE)) {
+            addDiagnostic(aspect, DiagnosticSeverity.ERROR,
+                    "Annotation key '" + KEY_METADATA_MERGE + "' is not valid on " +
+                    (feature instanceof EReference ? "EReference" : "EAttribute") + " '" +
+                    feature.getName() + "', ignored (class-level property only, use on EClass instead)",
+                    KEY_METADATA_MERGE);
+        }
+        if (details.containsKey(KEY_METADATA_KEY)) {
+            addDiagnostic(aspect, DiagnosticSeverity.ERROR,
+                    "Annotation key '" + KEY_METADATA_KEY + "' is not valid on " +
+                    (feature instanceof EReference ? "EReference" : "EAttribute") + " '" +
+                    feature.getName() + "', ignored (class-level property only, use on EClass instead)",
+                    KEY_METADATA_KEY);
         }
     }
 

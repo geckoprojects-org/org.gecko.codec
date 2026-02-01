@@ -43,6 +43,10 @@ import org.eclipse.fennec.model.metadata.impl.ClassAspectImpl;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ClassCodecAspectImpl#getSuperTypeConfig <em>Super Type Config</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ClassCodecAspectImpl#isInheritFromParent <em>Inherit From Parent</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ClassCodecAspectImpl#getDiscriminatorValue <em>Discriminator Value</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ClassCodecAspectImpl#isStrictOnUnknown <em>Strict On Unknown</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ClassCodecAspectImpl#isStrictOnMissing <em>Strict On Missing</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ClassCodecAspectImpl#isMetadataMerge <em>Metadata Merge</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ClassCodecAspectImpl#getMetadataKey <em>Metadata Key</em>}</li>
  * </ul>
  *
  * @generated
@@ -117,6 +121,86 @@ public class ClassCodecAspectImpl extends ClassAspectImpl implements ClassCodecA
 	 * @ordered
 	 */
 	protected String discriminatorValue = DISCRIMINATOR_VALUE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isStrictOnUnknown() <em>Strict On Unknown</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStrictOnUnknown()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean STRICT_ON_UNKNOWN_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isStrictOnUnknown() <em>Strict On Unknown</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStrictOnUnknown()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean strictOnUnknown = STRICT_ON_UNKNOWN_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isStrictOnMissing() <em>Strict On Missing</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStrictOnMissing()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean STRICT_ON_MISSING_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isStrictOnMissing() <em>Strict On Missing</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStrictOnMissing()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean strictOnMissing = STRICT_ON_MISSING_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isMetadataMerge() <em>Metadata Merge</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isMetadataMerge()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean METADATA_MERGE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isMetadataMerge() <em>Metadata Merge</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isMetadataMerge()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean metadataMerge = METADATA_MERGE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getMetadataKey() <em>Metadata Key</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMetadataKey()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String METADATA_KEY_EDEFAULT = "_metadata";
+
+	/**
+	 * The cached value of the '{@link #getMetadataKey() <em>Metadata Key</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMetadataKey()
+	 * @generated
+	 * @ordered
+	 */
+	protected String metadataKey = METADATA_KEY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -324,6 +408,98 @@ public class ClassCodecAspectImpl extends ClassAspectImpl implements ClassCodecA
 	 * @generated
 	 */
 	@Override
+	public boolean isStrictOnUnknown() {
+		return strictOnUnknown;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setStrictOnUnknown(boolean newStrictOnUnknown) {
+		boolean oldStrictOnUnknown = strictOnUnknown;
+		strictOnUnknown = newStrictOnUnknown;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_UNKNOWN, oldStrictOnUnknown, strictOnUnknown));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isStrictOnMissing() {
+		return strictOnMissing;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setStrictOnMissing(boolean newStrictOnMissing) {
+		boolean oldStrictOnMissing = strictOnMissing;
+		strictOnMissing = newStrictOnMissing;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_MISSING, oldStrictOnMissing, strictOnMissing));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isMetadataMerge() {
+		return metadataMerge;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setMetadataMerge(boolean newMetadataMerge) {
+		boolean oldMetadataMerge = metadataMerge;
+		metadataMerge = newMetadataMerge;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CLASS_CODEC_ASPECT__METADATA_MERGE, oldMetadataMerge, metadataMerge));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getMetadataKey() {
+		return metadataKey;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setMetadataKey(String newMetadataKey) {
+		String oldMetadataKey = metadataKey;
+		metadataKey = newMetadataKey;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CLASS_CODEC_ASPECT__METADATA_KEY, oldMetadataKey, metadataKey));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case CodecPackage.CLASS_CODEC_ASPECT__TYPE_CONFIG:
@@ -354,6 +530,14 @@ public class ClassCodecAspectImpl extends ClassAspectImpl implements ClassCodecA
 				return isInheritFromParent();
 			case CodecPackage.CLASS_CODEC_ASPECT__DISCRIMINATOR_VALUE:
 				return getDiscriminatorValue();
+			case CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_UNKNOWN:
+				return isStrictOnUnknown();
+			case CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_MISSING:
+				return isStrictOnMissing();
+			case CodecPackage.CLASS_CODEC_ASPECT__METADATA_MERGE:
+				return isMetadataMerge();
+			case CodecPackage.CLASS_CODEC_ASPECT__METADATA_KEY:
+				return getMetadataKey();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -380,6 +564,18 @@ public class ClassCodecAspectImpl extends ClassAspectImpl implements ClassCodecA
 				return;
 			case CodecPackage.CLASS_CODEC_ASPECT__DISCRIMINATOR_VALUE:
 				setDiscriminatorValue((String)newValue);
+				return;
+			case CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_UNKNOWN:
+				setStrictOnUnknown((Boolean)newValue);
+				return;
+			case CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_MISSING:
+				setStrictOnMissing((Boolean)newValue);
+				return;
+			case CodecPackage.CLASS_CODEC_ASPECT__METADATA_MERGE:
+				setMetadataMerge((Boolean)newValue);
+				return;
+			case CodecPackage.CLASS_CODEC_ASPECT__METADATA_KEY:
+				setMetadataKey((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -408,6 +604,18 @@ public class ClassCodecAspectImpl extends ClassAspectImpl implements ClassCodecA
 			case CodecPackage.CLASS_CODEC_ASPECT__DISCRIMINATOR_VALUE:
 				setDiscriminatorValue(DISCRIMINATOR_VALUE_EDEFAULT);
 				return;
+			case CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_UNKNOWN:
+				setStrictOnUnknown(STRICT_ON_UNKNOWN_EDEFAULT);
+				return;
+			case CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_MISSING:
+				setStrictOnMissing(STRICT_ON_MISSING_EDEFAULT);
+				return;
+			case CodecPackage.CLASS_CODEC_ASPECT__METADATA_MERGE:
+				setMetadataMerge(METADATA_MERGE_EDEFAULT);
+				return;
+			case CodecPackage.CLASS_CODEC_ASPECT__METADATA_KEY:
+				setMetadataKey(METADATA_KEY_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -430,6 +638,14 @@ public class ClassCodecAspectImpl extends ClassAspectImpl implements ClassCodecA
 				return inheritFromParent != INHERIT_FROM_PARENT_EDEFAULT;
 			case CodecPackage.CLASS_CODEC_ASPECT__DISCRIMINATOR_VALUE:
 				return DISCRIMINATOR_VALUE_EDEFAULT == null ? discriminatorValue != null : !DISCRIMINATOR_VALUE_EDEFAULT.equals(discriminatorValue);
+			case CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_UNKNOWN:
+				return strictOnUnknown != STRICT_ON_UNKNOWN_EDEFAULT;
+			case CodecPackage.CLASS_CODEC_ASPECT__STRICT_ON_MISSING:
+				return strictOnMissing != STRICT_ON_MISSING_EDEFAULT;
+			case CodecPackage.CLASS_CODEC_ASPECT__METADATA_MERGE:
+				return metadataMerge != METADATA_MERGE_EDEFAULT;
+			case CodecPackage.CLASS_CODEC_ASPECT__METADATA_KEY:
+				return METADATA_KEY_EDEFAULT == null ? metadataKey != null : !METADATA_KEY_EDEFAULT.equals(metadataKey);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -448,6 +664,14 @@ public class ClassCodecAspectImpl extends ClassAspectImpl implements ClassCodecA
 		result.append(inheritFromParent);
 		result.append(", discriminatorValue: ");
 		result.append(discriminatorValue);
+		result.append(", strictOnUnknown: ");
+		result.append(strictOnUnknown);
+		result.append(", strictOnMissing: ");
+		result.append(strictOnMissing);
+		result.append(", metadataMerge: ");
+		result.append(metadataMerge);
+		result.append(", metadataKey: ");
+		result.append(metadataKey);
 		result.append(')');
 		return result.toString();
 	}

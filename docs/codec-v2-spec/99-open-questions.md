@@ -88,11 +88,11 @@ These features are specified but not yet implemented:
 
 | Feature | Spec | Constants | Model | Provider | Codec | Tests |
 |---------|:----:|:---------:|:-----:|:--------:|:-----:|:-----:|
-| **Feature Visibility** (`ignore*`, `force*`) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **Metadata Merge** (`metadataMerge`, `metadataKey`) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **Fallback Handling** (`fallbackStrategy`, `fallbackEClass`) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **Feature Strictness** (`strictOnUnknown`, `strictOnMissing`) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **ID Value Key** (`idValueKey`) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Feature Visibility** (`ignore*`, `force*`) | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| **Metadata Merge** (`metadataMerge`, `metadataKey`) | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| **Fallback Handling** (`fallbackStrategy`, `fallbackEClass`) | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| **Feature Strictness** (`strictOnUnknown`, `strictOnMissing`) | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
+| **ID Value Key** (`idValueKey`) | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ |
 | **Diagnostic Options** (`failFast`, `suppressWarnings`, etc.) | ✅ | 🔶 | ❌ | ❌ | 🔶 | ❌ |
 
 #### Feature Visibility Refactor

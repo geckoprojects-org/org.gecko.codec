@@ -521,7 +521,175 @@ When deserializing with global ignore:
 
 ---
 
-## 5. Default Global Settings
+## 5. Metadata Merge — Combining Type, ID, and SuperType into a Single Object
+
+When both `typeFormat` and `idFormat` are set to `STRUCTURED`, each produces its own JSON object with inner keys (e.g., `_type: { "schema": "...", "type": "..." }` and `_id: { "id": "..." }`). **Metadata Merge** combines these separate objects into a single metadata object under one key, reducing the number of top-level metadata fields.
+
+> **Prerequisite:** `metadataMerge` only activates when **both** `typeFormat == STRUCTURED` **and** `idFormat == STRUCTURED`. If either is `PLAIN`, the setting is silently ignored (no error).
+
+### 5.1 Configuration
+
+| Annotation Key | Property Key | Type | Default | Description |
+|----------------|--------------|------|---------|-------------|
+| `metadataMerge` | `codec.metadataMerge` | `boolean` | `false` | Merge type + id (+ supertype) into single object |
+| `metadataKey` | `codec.metadataKey` | `String` | `_metadata` | Key for the merged metadata object |
+
+**Scope:** Global and EClass levels only — not valid on EReference or EAttribute.
+
+**Java Builder:**
+```java
+CodecConfiguration.builder()
+    .typeFormat(SerializationFormat.STRUCTURED)
+    .idFormat(SerializationFormat.STRUCTURED)
+    .metadataMerge(true)
+    .metadataKey("_metadata")  // default
+    .build();
+```
+
+**Property Map:**
+```java
+Map<String, Object> options = new HashMap<>();
+options.put("codec.typeFormat", "STRUCTURED");
+options.put("codec.idFormat", "STRUCTURED");
+options.put("codec.metadataMerge", true);
+options.put("codec.metadataKey", "_metadata");
+```
+
+**EAnnotation (on EPackage or EClass):**
+```xml
+<eAnnotations source="http://eclipse.org/fennec/codec">
+  <details key="typeFormat" value="STRUCTURED"/>
+  <details key="idFormat" value="STRUCTURED"/>
+  <details key="metadataMerge" value="true"/>
+  <details key="metadataKey" value="_metadata"/>
+</eAnnotations>
+```
+
+### 5.2 Merge Algorithm (Serialization)
+
+When `metadataMerge=true` and both formats are STRUCTURED:
+
+1. **Collect outputs** from the type serializer (schema, type name), optional supertype serializer (superTypes array), and ID serializer (id value)
+2. **Combine** all inner key-value pairs into a single JSON object under `metadataKey`
+3. **Write** the merged object as a single top-level field
+
+The inner keys used are:
+
+| Source | Inner Key Property | Default Inner Key |
+|--------|-------------------|-------------------|
+| Type name | `typeNameKey` | `type` |
+| Schema | `typeSchemaKey` | `schema` |
+| SuperTypes | `superTypeKey` | `superTypes` |
+| ID | `idValueKey` | `id` |
+
+> **Note:** When merged, the outer keys (`typeKey`, `idKey`) are **not written** as top-level fields — only the merged `metadataKey` appears. The inner keys from each serializer become direct properties of the merged object.
+
+### 5.3 Examples
+
+#### Without Merge (default)
+
+Two separate metadata objects at root level:
+
+```json
+{
+  "_type": {
+    "schema": "http://example.org/1.0",
+    "type": "Friend",
+    "superTypes": ["Person"]
+  },
+  "_id": {
+    "id": "maho"
+  },
+  "name": "Mark"
+}
+```
+
+#### With Merge
+
+Single merged metadata object:
+
+```json
+{
+  "_metadata": {
+    "schema": "http://example.org/1.0",
+    "type": "Friend",
+    "superTypes": ["Person"],
+    "id": "maho"
+  },
+  "name": "Mark"
+}
+```
+
+### 5.4 Field Order Inside Merged Object
+
+The `idOnTop` property controls whether ID fields come before or after type fields within the merged object:
+
+**`idOnTop=false` (default):** Type fields first, then ID
+```json
+{
+  "_metadata": {
+    "schema": "http://example.org/1.0",
+    "type": "Friend",
+    "superTypes": ["Person"],
+    "id": "maho"
+  }
+}
+```
+
+**`idOnTop=true`:** ID first, then type fields
+```json
+{
+  "_metadata": {
+    "id": "maho",
+    "schema": "http://example.org/1.0",
+    "type": "Friend",
+    "superTypes": ["Person"]
+  }
+}
+```
+
+Field order (with `idOnTop=false`):
+1. `schema` (if strategy includes schema, e.g., SCHEMA_AND_TYPE)
+2. `type` (type name)
+3. `superTypes` (if `superTypeSerialize=true`)
+4. `id` (ID value)
+
+### 5.5 Key Collision Handling
+
+If type and ID inner keys collide (e.g., both configured to use `"value"` as inner key), this is a configuration error detected at validation time:
+
+| Scenario | Severity | Behavior |
+|----------|----------|----------|
+| Inner key collision in merged object | ERROR | Reported via diagnostic; merge cannot proceed safely |
+
+### 5.6 Deserialization (Splitting Merged Object)
+
+During deserialization, when `metadataMerge=true`:
+
+1. **Read** the merged object from `metadataKey` (e.g., `_metadata`)
+2. **Split** inner keys back to their respective deserializers:
+   - `schema`, `type` → type deserializer
+   - `superTypes` → supertype deserializer
+   - `id` (and any additional ID feature keys) → ID deserializer
+3. Each deserializer processes its portion as if it had received its own STRUCTURED object
+
+> **Symmetry requirement:** Like `smartCompression`, `metadataMerge` must be configured **identically** for serialization and deserialization. Serializing with merge and deserializing without (or vice versa) will cause field resolution failures.
+
+### 5.7 Validation Rules
+
+| Misconfiguration | Severity | Behavior |
+|------------------|----------|----------|
+| `metadataMerge=true` with `typeFormat=PLAIN` | WARNING | `metadataMerge` ignored (PLAIN has no inner keys to merge) |
+| `metadataMerge=true` with `idFormat=PLAIN` | WARNING | `metadataMerge` ignored (PLAIN has no inner keys to merge) |
+| `metadataMerge` on EReference | ERROR | Metadata merge is class-intrinsic, not reference-specific |
+| `metadataKey` on EReference | ERROR | Metadata key is class-specific, not reference-specific |
+| Any `metadata*` key on EAttribute | ERROR | Metadata config not applicable to attributes |
+
+> **See also:** [Annotation Reference](16-annotation-reference.md) (Metadata Merge Configuration) for the complete scope matrix and inner key reference.
+
+---
+
+## 6. Default Global Settings
 
 | Setting | Property Key | Default Value |
 |---------|--------------|---------------|
@@ -533,6 +701,8 @@ When deserializing with global ignore:
 | ID Format | `codec.idFormat` | `PLAIN` |
 | ID Scope | `codec.idScope` | `ALL` |
 | Ignore Features | `codec.ignoreFeatures` | empty |
+| Metadata Merge | `codec.metadataMerge` | `false` |
+| Metadata Key | `codec.metadataKey` | `_metadata` |
 
 > **Note:** StrategyScope (`typeScope`, `idScope`, etc.) is **runtime-only** configuration - not available via EAnnotations. See [Configuration Resolution](02-config-resolution.md) (section 5) for details.
 

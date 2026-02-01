@@ -1047,4 +1047,132 @@ class CodecAspectProviderValidConfigTest {
             assertTrue(aspect.isInheritFromParent());
         }
     }
+
+    // ========================================================================
+    // Strictness Configuration (spec 11-feature.md §11)
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Strictness Configuration (spec §11)")
+    class StrictnessConfig {
+
+        /** @VALID Both strictOnUnknown and strictOnMissing on EClass. */
+        @Test
+        @DisplayName("both strictness flags set to true")
+        void validConfig_bothStrictnessFlags_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "StrictEntity");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            assertTrue(aspect.isStrictOnUnknown(),
+                "strictOnUnknown should be true");
+            assertTrue(aspect.isStrictOnMissing(),
+                "strictOnMissing should be true");
+        }
+
+        /** @VALID Only strictOnUnknown on EClass. */
+        @Test
+        @DisplayName("only strictOnUnknown set to true")
+        void validConfig_strictOnUnknownOnly_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "StrictUnknownOnly");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            assertTrue(aspect.isStrictOnUnknown(),
+                "strictOnUnknown should be true");
+            assertFalse(aspect.isStrictOnMissing(),
+                "strictOnMissing should remain false (not set)");
+        }
+
+        /** @VALID Only strictOnMissing on EClass. */
+        @Test
+        @DisplayName("only strictOnMissing set to true")
+        void validConfig_strictOnMissingOnly_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "StrictMissingOnly");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            assertFalse(aspect.isStrictOnUnknown(),
+                "strictOnUnknown should remain false (not set)");
+            assertTrue(aspect.isStrictOnMissing(),
+                "strictOnMissing should be true");
+        }
+
+        /** @VALID SimpleClass has no strictness flags - defaults apply. */
+        @Test
+        @DisplayName("default strictness flags are false")
+        void validConfig_noStrictnessFlags_defaultsFalse() {
+            EClass entityClass = helper.getEClass(testPackage, "SimpleClass");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            assertFalse(aspect.isStrictOnUnknown(),
+                "strictOnUnknown defaults to false");
+            assertFalse(aspect.isStrictOnMissing(),
+                "strictOnMissing defaults to false");
+        }
+    }
+
+    // ========================================================================
+    // Metadata Merge Config (spec 05-global-options.md §5)
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Metadata Merge Config")
+    class MetadataMergeConfig {
+
+        /** @VALID Both metadataMerge and metadataKey set on EClass. */
+        @Test
+        @DisplayName("metadataMerge=true with custom metadataKey")
+        void validConfig_metadataMergeWithCustomKey_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "MergedMetadataEntity");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            assertTrue(aspect.isMetadataMerge(),
+                "metadataMerge should be true");
+            assertEquals("_meta", aspect.getMetadataKey(),
+                "metadataKey should be '_meta'");
+        }
+
+        /** @VALID metadataMerge=true with default key on EClass. */
+        @Test
+        @DisplayName("metadataMerge=true with default metadataKey")
+        void validConfig_metadataMergeDefaultKey_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "MergedMetadataDefaultKey");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            assertTrue(aspect.isMetadataMerge(),
+                "metadataMerge should be true");
+            assertEquals("_metadata", aspect.getMetadataKey(),
+                "metadataKey should default to '_metadata'");
+        }
+
+        /** @VALID metadataMerge=false explicitly set. */
+        @Test
+        @DisplayName("metadataMerge=false explicitly set")
+        void validConfig_metadataMergeDisabled_parsedCorrectly() {
+            EClass entityClass = helper.getEClass(testPackage, "MergedMetadataDisabled");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            assertFalse(aspect.isMetadataMerge(),
+                "metadataMerge should be false");
+        }
+
+        /** @VALID SimpleClass has no metadata merge flags - defaults apply. */
+        @Test
+        @DisplayName("default metadata merge flags")
+        void validConfig_noMetadataMergeFlags_defaultsFalse() {
+            EClass entityClass = helper.getEClass(testPackage, "SimpleClass");
+
+            ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
+
+            assertFalse(aspect.isMetadataMerge(),
+                "metadataMerge defaults to false");
+            assertEquals("_metadata", aspect.getMetadataKey(),
+                "metadataKey defaults to '_metadata'");
+        }
+    }
 }

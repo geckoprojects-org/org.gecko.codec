@@ -874,4 +874,130 @@
     </eStructuralFeatures>
   </eClassifiers>
 
+  <!-- ========================================================================
+       STRICTNESS TESTS (11-feature.md §11)
+       ======================================================================== -->
+
+  <!-- @VALID @SPEC(11-feature.md §11): Strictness flags on EClass -->
+  <eClassifiers xsi:type="ecore:EClass" name="StrictEntity">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="strictOnUnknown" value="true"/>
+      <details key="strictOnMissing" value="true"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @VALID @SPEC(11-feature.md §11): Only strictOnUnknown on EClass -->
+  <eClassifiers xsi:type="ecore:EClass" name="StrictUnknownOnly">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="strictOnUnknown" value="true"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @VALID @SPEC(11-feature.md §11): Only strictOnMissing on EClass -->
+  <eClassifiers xsi:type="ecore:EClass" name="StrictMissingOnly">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="strictOnMissing" value="true"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(11-feature.md §11): strictOnUnknown on EAttribute -->
+  <!-- Expected: Key is IGNORED with WARNING - strictness is class-only -->
+  <eClassifiers xsi:type="ecore:EClass" name="AttrWithStrictOnUnknownMisplaced">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <!-- strictOnUnknown is class-only, should be ignored on attribute -->
+        <details key="strictOnUnknown" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(11-feature.md §11): strictOnMissing on EReference -->
+  <!-- Expected: Key is IGNORED with WARNING - strictness is class-only -->
+  <eClassifiers xsi:type="ecore:EClass" name="RefWithStrictOnMissingMisplaced">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <!-- strictOnMissing is class-only, should be ignored on reference -->
+        <details key="strictOnMissing" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(11-feature.md §11): Both strictness keys on EAttribute -->
+  <!-- Expected: Both keys IGNORED with WARNING - strictness is class-only -->
+  <eClassifiers xsi:type="ecore:EClass" name="AttrWithBothStrictnessMisplaced">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="data" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="strictOnUnknown" value="true"/>
+        <details key="strictOnMissing" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+
+  <!-- ========================================================================
+       METADATA MERGE TESTS (05-global-options.md §5)
+       ======================================================================== -->
+
+  <!-- @VALID @SPEC(05-global-options.md §5): Metadata merge with both flags on EClass -->
+  <eClassifiers xsi:type="ecore:EClass" name="MergedMetadataEntity">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="metadataMerge" value="true"/>
+      <details key="metadataKey" value="_meta"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @VALID @SPEC(05-global-options.md §5): Metadata merge only (default key) on EClass -->
+  <eClassifiers xsi:type="ecore:EClass" name="MergedMetadataDefaultKey">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="metadataMerge" value="true"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @VALID @SPEC(05-global-options.md §5): Metadata merge disabled explicitly on EClass -->
+  <eClassifiers xsi:type="ecore:EClass" name="MergedMetadataDisabled">
+    <eAnnotations source="http://eclipse.org/fennec/codec">
+      <details key="metadataMerge" value="false"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(05-global-options.md §5.7): metadataMerge on EAttribute -->
+  <!-- Expected: Key is IGNORED with ERROR - metadata merge is class-only -->
+  <eClassifiers xsi:type="ecore:EClass" name="AttrWithMetadataMergeMisplaced">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <!-- metadataMerge is class-only, should be ignored on attribute -->
+        <details key="metadataMerge" value="true"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(05-global-options.md §5.7): metadataKey on EReference -->
+  <!-- Expected: Key is IGNORED with ERROR - metadata key is class-only -->
+  <eClassifiers xsi:type="ecore:EClass" name="RefWithMetadataKeyMisplaced">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <!-- metadataKey is class-only, should be ignored on reference -->
+        <details key="metadataKey" value="_meta"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+
+  <!-- @MISCONFIG @SPEC(05-global-options.md §5.7): Both metadata merge keys on EAttribute -->
+  <!-- Expected: Both keys IGNORED with ERROR - metadata merge is class-only -->
+  <eClassifiers xsi:type="ecore:EClass" name="AttrWithBothMetadataMergeMisplaced">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="data" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://eclipse.org/fennec/codec">
+        <details key="metadataMerge" value="true"/>
+        <details key="metadataKey" value="_meta"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+
 </ecore:EPackage>

@@ -67,6 +67,10 @@ import org.eclipse.fennec.model.metadata.SerializationFormat;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#isSerializeDefaults <em>Serialize Defaults</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#getTypeHintMode <em>Type Hint Mode</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#getDeserializationMode <em>Deserialization Mode</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#isStrictOnUnknown <em>Strict On Unknown</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#isStrictOnMissing <em>Strict On Missing</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#isMetadataMerge <em>Metadata Merge</em>}</li>
+ *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecConfigImpl#getMetadataKey <em>Metadata Key</em>}</li>
  * </ul>
  *
  * @generated
@@ -341,6 +345,86 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 	 * @ordered
 	 */
 	protected DeserializationMode deserializationMode = DESERIALIZATION_MODE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isStrictOnUnknown() <em>Strict On Unknown</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStrictOnUnknown()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean STRICT_ON_UNKNOWN_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isStrictOnUnknown() <em>Strict On Unknown</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStrictOnUnknown()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean strictOnUnknown = STRICT_ON_UNKNOWN_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isStrictOnMissing() <em>Strict On Missing</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStrictOnMissing()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean STRICT_ON_MISSING_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isStrictOnMissing() <em>Strict On Missing</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isStrictOnMissing()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean strictOnMissing = STRICT_ON_MISSING_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isMetadataMerge() <em>Metadata Merge</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isMetadataMerge()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean METADATA_MERGE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isMetadataMerge() <em>Metadata Merge</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isMetadataMerge()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean metadataMerge = METADATA_MERGE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getMetadataKey() <em>Metadata Key</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMetadataKey()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String METADATA_KEY_EDEFAULT = "_metadata";
+
+	/**
+	 * The cached value of the '{@link #getMetadataKey() <em>Metadata Key</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMetadataKey()
+	 * @generated
+	 * @ordered
+	 */
+	protected String metadataKey = METADATA_KEY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -880,6 +964,98 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 	 * @generated
 	 */
 	@Override
+	public boolean isStrictOnUnknown() {
+		return strictOnUnknown;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setStrictOnUnknown(boolean newStrictOnUnknown) {
+		boolean oldStrictOnUnknown = strictOnUnknown;
+		strictOnUnknown = newStrictOnUnknown;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CODEC_CONFIG__STRICT_ON_UNKNOWN, oldStrictOnUnknown, strictOnUnknown));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isStrictOnMissing() {
+		return strictOnMissing;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setStrictOnMissing(boolean newStrictOnMissing) {
+		boolean oldStrictOnMissing = strictOnMissing;
+		strictOnMissing = newStrictOnMissing;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CODEC_CONFIG__STRICT_ON_MISSING, oldStrictOnMissing, strictOnMissing));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isMetadataMerge() {
+		return metadataMerge;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setMetadataMerge(boolean newMetadataMerge) {
+		boolean oldMetadataMerge = metadataMerge;
+		metadataMerge = newMetadataMerge;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CODEC_CONFIG__METADATA_MERGE, oldMetadataMerge, metadataMerge));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getMetadataKey() {
+		return metadataKey;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void setMetadataKey(String newMetadataKey) {
+		String oldMetadataKey = metadataKey;
+		metadataKey = newMetadataKey;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.CODEC_CONFIG__METADATA_KEY, oldMetadataKey, metadataKey));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case CodecPackage.CODEC_CONFIG__TYPE_CONFIG:
@@ -942,6 +1118,14 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 				return getTypeHintMode();
 			case CodecPackage.CODEC_CONFIG__DESERIALIZATION_MODE:
 				return getDeserializationMode();
+			case CodecPackage.CODEC_CONFIG__STRICT_ON_UNKNOWN:
+				return isStrictOnUnknown();
+			case CodecPackage.CODEC_CONFIG__STRICT_ON_MISSING:
+				return isStrictOnMissing();
+			case CodecPackage.CODEC_CONFIG__METADATA_MERGE:
+				return isMetadataMerge();
+			case CodecPackage.CODEC_CONFIG__METADATA_KEY:
+				return getMetadataKey();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -1007,6 +1191,18 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 			case CodecPackage.CODEC_CONFIG__DESERIALIZATION_MODE:
 				setDeserializationMode((DeserializationMode)newValue);
 				return;
+			case CodecPackage.CODEC_CONFIG__STRICT_ON_UNKNOWN:
+				setStrictOnUnknown((Boolean)newValue);
+				return;
+			case CodecPackage.CODEC_CONFIG__STRICT_ON_MISSING:
+				setStrictOnMissing((Boolean)newValue);
+				return;
+			case CodecPackage.CODEC_CONFIG__METADATA_MERGE:
+				setMetadataMerge((Boolean)newValue);
+				return;
+			case CodecPackage.CODEC_CONFIG__METADATA_KEY:
+				setMetadataKey((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -1070,6 +1266,18 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 			case CodecPackage.CODEC_CONFIG__DESERIALIZATION_MODE:
 				setDeserializationMode(DESERIALIZATION_MODE_EDEFAULT);
 				return;
+			case CodecPackage.CODEC_CONFIG__STRICT_ON_UNKNOWN:
+				setStrictOnUnknown(STRICT_ON_UNKNOWN_EDEFAULT);
+				return;
+			case CodecPackage.CODEC_CONFIG__STRICT_ON_MISSING:
+				setStrictOnMissing(STRICT_ON_MISSING_EDEFAULT);
+				return;
+			case CodecPackage.CODEC_CONFIG__METADATA_MERGE:
+				setMetadataMerge(METADATA_MERGE_EDEFAULT);
+				return;
+			case CodecPackage.CODEC_CONFIG__METADATA_KEY:
+				setMetadataKey(METADATA_KEY_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1116,6 +1324,14 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 				return typeHintMode != TYPE_HINT_MODE_EDEFAULT;
 			case CodecPackage.CODEC_CONFIG__DESERIALIZATION_MODE:
 				return deserializationMode != DESERIALIZATION_MODE_EDEFAULT;
+			case CodecPackage.CODEC_CONFIG__STRICT_ON_UNKNOWN:
+				return strictOnUnknown != STRICT_ON_UNKNOWN_EDEFAULT;
+			case CodecPackage.CODEC_CONFIG__STRICT_ON_MISSING:
+				return strictOnMissing != STRICT_ON_MISSING_EDEFAULT;
+			case CodecPackage.CODEC_CONFIG__METADATA_MERGE:
+				return metadataMerge != METADATA_MERGE_EDEFAULT;
+			case CodecPackage.CODEC_CONFIG__METADATA_KEY:
+				return METADATA_KEY_EDEFAULT == null ? metadataKey != null : !METADATA_KEY_EDEFAULT.equals(metadataKey);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1150,6 +1366,14 @@ public class CodecConfigImpl extends MinimalEObjectImpl.Container implements Cod
 		result.append(typeHintMode);
 		result.append(", deserializationMode: ");
 		result.append(deserializationMode);
+		result.append(", strictOnUnknown: ");
+		result.append(strictOnUnknown);
+		result.append(", strictOnMissing: ");
+		result.append(strictOnMissing);
+		result.append(", metadataMerge: ");
+		result.append(metadataMerge);
+		result.append(", metadataKey: ");
+		result.append(metadataKey);
 		result.append(')');
 		return result.toString();
 	}

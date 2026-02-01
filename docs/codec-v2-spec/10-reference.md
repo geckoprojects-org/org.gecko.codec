@@ -31,6 +31,16 @@ Or as URI:
 }
 ```
 
+> **Limitation:** PLAIN format carries only a single string value — there is no room for type information. On deserialization, the proxy EClass must be resolved without a `_type` field. The fallback chain is:
+> 1. `CODEC_FEATURE_TYPE_HINTS` — runtime load option providing a per-feature EClass hint (see [Per-Feature Type Hints](16-annotation-reference.md#per-feature-type-hints-codec_feature_type_hints))
+> 2. `EReference.getEReferenceType()` — the declared reference type
+>
+> This means PLAIN format works safely when:
+> - The declared reference type is **concrete** (not abstract), OR
+> - A `CODEC_FEATURE_TYPE_HINTS` entry is provided for the reference at load time
+>
+> If neither condition is met and the declared type is abstract, the deserializer creates a proxy of the abstract type, which will fail on resolution. Use STRUCTURED format for polymorphic references.
+
 ### 1.2 STRUCTURED Strategy (Default)
 
 Nested object with type and reference:
@@ -47,6 +57,8 @@ Nested object with type and reference:
 **Configurable keys:**
 - `refTypeKey`: type field (default: `_type`)
 - `refKey`: reference field (default: `_ref`)
+
+> **Why STRUCTURED is the default:** A non-containment reference needs to carry **two** pieces of information — the **type** of the referenced object (so the deserializer can create the correct proxy EClass) and the **reference URI** (so the proxy can be resolved). PLAIN format can only carry a single string value (the URI), losing the type information entirely (see [§1.1 limitation](#11-plain-strategy)). STRUCTURED format provides a JSON object with room for both `_type` and `_ref`, making it the safe default for polymorphic models. PLAIN is available as an opt-in **only** when the declared reference type is concrete and no subtypes are expected.
 
 ---
 
@@ -241,40 +253,176 @@ The serializer follows this decision tree for each reference value:
 
 ```
 serializeReference(target):
-  1. Is target null?
+  1. Is refValueWriterName configured?
+     → YES: Full delegation to custom ValueWriter (DONE)
+
+  2. Is target null?
      → YES: Write null (if serializeNull enabled) or skip
 
-  2. Is this a containment reference AND target in same resource?
+  3. Is this a containment reference AND target in same resource?
      → YES: Serialize target inline (nested object)
 
-  3. Is this a containment reference AND target in different resource?
+  4. Is this a containment reference AND target in different resource?
      → YES: This is CROSS-DOCUMENT CONTAINMENT → serialize as reference
 
-  4. Is expand enabled for this reference AND target is resolved (not proxy)?
+  5. Is expand enabled for this reference AND target is resolved (not proxy)?
      → YES: Serialize target inline (expanded reference)
 
-  5. DEFAULT: Serialize as proxy reference
+  6. DEFAULT: Serialize as proxy reference
 ```
 
-**URI Determination:**
+#### 5.1.2 Reference Serialization Flow
 
-| Scenario | URI Format | Example |
-|----------|------------|---------|
-| Same-document reference | Fragment only | `//@employees.0` |
-| Cross-document reference | Relative URI from source | `other.json#//@employees.0` |
-| Proxy (target is proxy) | Use existing proxy URI | (preserved from original) |
-| Object without resource | Fallback to EClass URI | `http://example.org/1.0#//Person` |
+This is the detailed flow expanding the decision tree above. It covers null handling, ValueWriter delegation, containment/expand dispatch, URI determination, and format output.
 
-**Proxy Detection:**
+> **Prerequisite:** This flow is invoked from the [Feature Serialization Flow](11-feature.md#12-feature-serialization-flow) for EReference features. The feature layer has already evaluated the **visibility gate** (ignore, ignoreWrite, forceWrite, transient/derived checks) and the **value gate** (null/empty/default checks). Only references that passed both gates reach this flow.
 
-When the target object `eIsProxy() == true`:
-1. The proxy is **NOT expanded** (expand only works on resolved objects)
-2. The proxy URI is obtained via `InternalEObject.eProxyURI()`
-3. The URI is serialized as-is or made relative to the source resource
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                  REFERENCE SERIALIZATION FLOW                               │
+└─────────────────────────────────────────────────────────────────────────────┘
 
-**Type Information:**
+INPUT: EReference, target EObject (resolved or proxy), effective ReferenceConfig
 
-Type is always included in proxy references to enable type-safe deserialization. When smart compression is enabled and the target type is from the same schema as the root object, only the simple name is used.
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. VALUE WRITER CHECK (full delegation — evaluated first)                   │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Is refValueWriterName configured?                                        │
+│    ├─ YES → Full delegation to named ValueWriter service                   │
+│    │        - Writer receives: EObject, EReference, target (may be null),  │
+│    │          generator, config                                             │
+│    │        - Writer handles ALL output (null handling, containment,       │
+│    │          expand, format, type, ref value)                              │
+│    │        - Framework skips steps 2-6 ─────────────────→ DONE ✓         │
+│    │                                                                       │
+│    └─ NO  → Continue with built-in serialization (step 2)                  │
+│                                                                             │
+│    Note: ValueWriter is checked FIRST, before null check and before        │
+│    containment/expand dispatch. Consistent with type flow (06-type.md      │
+│    §5.0) and feature flow (11-feature.md §12.0). A custom writer has      │
+│    full control over all reference output including null handling.          │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 2. NULL CHECK                                                               │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Is target null?                                                          │
+│    ├─ YES → Is serializeNull=true?                                          │
+│    │        ├─ YES → Write: "key": null ──────────────────→ DONE ✓         │
+│    │        └─ NO  → SKIP (omit from output) ────────────→ DONE ✗         │
+│    └─ NO  → continue                                                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 3. CONTAINMENT / EXPAND DISPATCH                                            │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    3a. CONTAINMENT CHECK                                                    │
+│        Is reference.isContainment() AND target in same resource?            │
+│        ├─ YES → Serialize target inline (full object, normal ser flow)      │
+│        │        ──────────────────────────────────────────→ DONE ✓         │
+│        └─ NO  → continue                                                   │
+│                                                                             │
+│    3b. CROSS-DOCUMENT CONTAINMENT                                           │
+│        Is reference.isContainment() AND target in different resource?       │
+│        ├─ YES → This is cross-document containment.                         │
+│        │        Serialize as reference (continue to step 4)                 │
+│        └─ NO  → This is a non-containment reference. continue              │
+│                                                                             │
+│    3c. EXPAND CHECK                                                         │
+│        Is shouldExpand()=true AND target.eIsProxy()=false?                  │
+│        (shouldExpand = expand || expandGlobal)                              │
+│        ├─ YES → Is expandIgnoreBidirectional=true                           │
+│        │        AND reference has eOpposite?                                │
+│        │        ├─ YES → SKIP expand, fall through to proxy ────→ step 4   │
+│        │        └─ NO  → Serialize target inline (expanded,                │
+│        │                 no _ref, no proxy) ─────────────────→ DONE ✓      │
+│        └─ NO  → continue (serialize as proxy reference)                    │
+│                                                                             │
+│    Note: Proxies are NEVER expanded. Expand requires resolved target.       │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 4. URI DETERMINATION                                                        │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Determine the reference URI value:                                       │
+│                                                                             │
+│    ┌──────────────────────────┬────────────────────────────────────────┐    │
+│    │ Scenario                 │ URI                                    │    │
+│    ├──────────────────────────┼────────────────────────────────────────┤    │
+│    │ Target is proxy          │ InternalEObject.eProxyURI()            │    │
+│    │ Same-document ref        │ Fragment-only (#//@feature.index)      │    │
+│    │ Cross-document ref       │ Relative URI from source to target     │    │
+│    │ Object without resource  │ Fallback: EClass URI                   │    │
+│    └──────────────────────────┴────────────────────────────────────────┘    │
+│                                                                             │
+│    Result: refValue (URI string)                                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 5. FORMAT DISPATCH                                                          │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Is refFormat == PLAIN?                                                   │
+│    ├─ YES ──────────────────────────────────────────────────────────────   │
+│    │   Write plain string value:                                           │
+│    │     gen.writeFieldName(featureName)                                   │
+│    │     gen.writeString(refValue)                                         │
+│    │                                                                       │
+│    │   Example: "employer": "companies.json#//@companies.0"                │
+│    │   ────────────────────────────────────────────────────→ DONE ✓       │
+│    │                                                                       │
+│    └─ NO (STRUCTURED) ─────────────────────────────────────────────────   │
+│        Write structured object:                                            │
+│          gen.writeFieldName(featureName)                                   │
+│          gen.writeStartObject()                                            │
+│                                                                            │
+│          6a. TYPE FIELD (using Type Config, see 06-type.md)                │
+│              Determine which type to write in the reference object:        │
+│                                                                            │
+│              Is serializeInstanceType=true? (default: true)                │
+│              ├─ YES → Use target's actual EClass (instance type)           │
+│              │        This is the concrete runtime type of the object.     │
+│              │        Needed when declared ref type is abstract/interface. │
+│              └─ NO  → Use EReference.getEReferenceType() (declared type)  │
+│                       Only safe when declared type is concrete.            │
+│                                                                            │
+│              Then apply smart compression (see 05-global-options.md):      │
+│              - If instance type == declared reference type → omit _type   │
+│                (deserializer can infer from EReference declaration)        │
+│              - Otherwise → write type using typeKey and strategy           │
+│                                                                            │
+│              Example: "_type": "http://example.org/1.0#//Company"          │
+│                                                                            │
+│          6b. REF FIELD                                                     │
+│              gen.writeFieldName(refKey)  // default: "$ref"                │
+│              gen.writeString(refValue)                                      │
+│              Example: "$ref": "companies.json#//@companies.0"              │
+│                                                                            │
+│          gen.writeEndObject()                                              │
+│          ──────────────────────────────────────────────────→ DONE ✓       │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+#### 5.1.3 Serialization Summary
+
+| Step | Phase | What | Decides |
+|------|-------|------|---------|
+| **ValueWriter** (step 1) | Build-time | Custom writer? | Full delegation vs built-in |
+| **Null check** (step 2) | Runtime | Is target null? | Whether to write null or skip |
+| **Dispatch** (step 3) | Runtime | Containment? Expand? | Inline vs reference serialization |
+| **URI** (step 4) | Runtime | Proxy? Same resource? | Reference URI value |
+| **Format** (step 5) | Config | PLAIN vs STRUCTURED | Output shape (string vs object) |
+| **Type** (step 6a) | Config | Type strategy + smart compression | Type field in STRUCTURED |
+
+> **Design note:** The ValueWriter check is evaluated first (step 1), before null check and containment/expand logic — consistent with all other flows. A custom writer receives the raw target (which may be null) and has full control over all output. The format dispatch happens AFTER URI determination because both formats use the same URI value — they differ only in output shape (bare string vs structured object).
 
 **Edge Cases:**
 
@@ -282,8 +430,9 @@ Type is always included in proxy references to enable type-safe deserialization.
 |----------|----------|
 | Reference to unresolved proxy | Serialize using proxy URI |
 | Reference to object with no resource | Use fallback EClass URI |
-| Bidirectional reference with expand | Skip if `expandIgnoreBidirectional=true` |
-| Multi-valued reference | Array of proxy/expanded objects |
+| Bidirectional reference with expand | Skip if `expandIgnoreBidirectional=true`, fall through to proxy |
+| Multi-valued reference | Array of proxy/expanded objects (each element through same flow) |
+| Proxy + expand enabled | Expand is skipped (proxy not resolved), serialize as proxy |
 
 ### 5.2 Expand: Inline Serialization
 
@@ -616,6 +765,191 @@ When `_ref` is absent, deserialize as a full orphan object (expanded non-contain
 
 **Note:** Orphan objects are transient - they exist in memory but are not part of any resource. This matches the expand use case where data is embedded for reading convenience but won't be saved back in this form.
 
+#### 9.2.4 Reference Deserialization Flow
+
+This flow covers how the codec deserializes a JSON value that represents a non-containment reference or cross-document containment. It is invoked from the per-field processing step in [Feature Deserialization Flow](11-feature.md#132-per-field-processing-json-driven) when the entry type is `ReferenceDeserializationEntry`.
+
+> **Prerequisite:** The feature layer has already evaluated the **visibility gate** (ignore, ignoreRead, forceRead, transient/volatile/changeable checks) during entry building (see [§13.1](11-feature.md#131-feature-entry-building-visibility-gate)). Only references that have a `DeserializationEntry` reach this flow — excluded features have no entry and their JSON fields are skipped as unknown.
+
+> **Implementation Status:** This flow covers **non-containment references** only. Cross-document containment deserialization is not yet fully supported — the codec creates proxy objects but does not automatically resolve them. See [§7.2](07-cross-document-containment) and [§9.3](#93-cross-resource-references) for details and workarounds.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                  REFERENCE DESERIALIZATION FLOW                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: JsonParser positioned at value token, EReference, effective ReferenceConfig
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. VALUE READER CHECK (full delegation)                                     │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Is refValueReaderName configured?                                        │
+│    ├─ YES → Full delegation to named ValueReader service                   │
+│    │        - Reader receives: EObject, EReference, parser, config         │
+│    │        - Reader handles everything: format detection, ref extraction, │
+│    │          type resolution, object creation                              │
+│    │        - Framework skips steps 2-6 ───────────────────→ DONE ✓       │
+│    │                                                                       │
+│    └─ NO  → Continue with built-in deserialization (step 2)                │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 2. FORMAT DETECTION (auto-detected from JSON structure)                     │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    What is the current JSON token?                                          │
+│                                                                             │
+│    ├─ VALUE_NULL ─────────────────────────────────────────────────────────  │
+│    │   Set reference to null on parent                                     │
+│    │   ───────────────────────────────────────────────────→ DONE ✓        │
+│    │                                                                       │
+│    ├─ VALUE_STRING → PLAIN format detected                                 │
+│    │   refValue = parser.getText()                                         │
+│    │   → Go to step 3a (PLAIN deserialization)                             │
+│    │                                                                       │
+│    ├─ START_OBJECT → STRUCTURED format detected                            │
+│    │   → Go to step 3b (STRUCTURED deserialization)                        │
+│    │                                                                       │
+│    ├─ START_ARRAY → Multi-valued reference                                 │
+│    │   For each element in array:                                          │
+│    │     → Apply steps 2-6 recursively per element                         │
+│    │     → Collect results into EList                                      │
+│    │   ───────────────────────────────────────────────────→ DONE ✓        │
+│    │                                                                       │
+│    └─ OTHER → ERROR: unexpected token for reference value                  │
+│                                                                             │
+│    Note: Unlike serialization (where format comes from config), deser-     │
+│    ialization auto-detects format from JSON structure. This means a        │
+│    STRUCTURED-configured reference can still read PLAIN data.              │
+└─────────────────────────────────────────────────────────────────────────────┘
+                          │                   │
+                    (PLAIN)                   (STRUCTURED)
+                          │                   │
+                          ▼                   ▼
+┌────────────────────────────────┐  ┌─────────────────────────────────────────┐
+│ 3a. PLAIN DESERIALIZATION      │  │ 3b. STRUCTURED DESERIALIZATION           │
+│ ──────────────────────────────│  │ ───────────────────────────────────────  │
+│                                │  │                                         │
+│ refValue = string value        │  │ Parse JSON object fields:               │
+│                                │  │                                         │
+│ Type resolution (no _type in   │  │ while (parser.nextToken()) {            │
+│ PLAIN — fallback chain):       │  │   field = parser.currentName()          │
+│ 1. CODEC_FEATURE_TYPE_HINTS   │  │                                         │
+│    (runtime per-feature hint)  │  │   Is field == refTypeKey (default _type)?│
+│ 2. EReference.getEReferenceType() │  │   ├─ YES → typeValue = parse type   │
+│    (declared reference type)   │  │   │        (see 06-type.md deser flow) │
+│                                │  │   │                                     │
+│ → Go to step 4                 │  │   Is field == refKey (default $ref)?    │
+│ (with refValue + EClass)       │  │   ├─ YES → refValue = parser.getText() │
+│                                │  │   │                                     │
+│                                │  │   Is field == proxyKey ($proxy)?        │
+│                                │  │   ├─ YES → proxyMarker = true          │
+│                                │  │   │                                     │
+│                                │  │   Otherwise → store as extra field      │
+│                                │  │              (for projection or orphan) │
+│                                │  │ }                                       │
+│                                │  │                                         │
+│                                │  │ Type resolution:                        │
+│                                │  │ - If typeValue present → resolve EClass│
+│                                │  │   (using Type Strategy, see 06-type.md)│
+│                                │  │ - If no typeValue → fallback chain:    │
+│                                │  │   1. CODEC_FEATURE_TYPE_HINTS          │
+│                                │  │   2. EReference.getEReferenceType()    │
+│                                │  │                                         │
+│                                │  │ → Go to step 4                         │
+│                                │  │ (with refValue, EClass, extra fields)  │
+└────────────────────────────────┘  └─────────────────────────────────────────┘
+                          │                   │
+                          └─────┬─────────────┘
+                                ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 4. REFERENCE KIND DECISION                                                  │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    ┌─────────────────────────────────────────────────────────────────┐      │
+│    │ Has refValue (i.e., _ref field present or PLAIN string)?        │      │
+│    │                                                                 │      │
+│    │ YES → This is a PROXY REFERENCE                                │      │
+│    │       Has extra fields?                                         │      │
+│    │       ├─ YES → Proxy with Projection (see §9.2.2)             │      │
+│    │       └─ NO  → Plain Proxy (see §9.2.1)                       │      │
+│    │       → Go to step 5a (create proxy)                           │      │
+│    │                                                                 │      │
+│    │ NO → This is an EXPANDED ORPHAN OBJECT                         │      │
+│    │      (No _ref means this is an expanded inline object)         │      │
+│    │      → Go to step 5b (create orphan)                           │      │
+│    └─────────────────────────────────────────────────────────────────┘      │
+│                                                                             │
+│    Note: The presence/absence of refKey is the SOLE discriminator          │
+│    between proxy and orphan. This is by design — see §5.2 for why          │
+│    expanded objects are serialized without _ref.                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+                     │                        │
+               (has ref)                 (no ref)
+                     │                        │
+                     ▼                        ▼
+┌────────────────────────────────┐  ┌─────────────────────────────────────────┐
+│ 5a. CREATE PROXY               │  │ 5b. CREATE ORPHAN (expanded object)      │
+│ ──────────────────────────────│  │ ───────────────────────────────────────  │
+│                                │  │                                         │
+│ 1. Create EObject instance:    │  │ 1. Deserialize as full EObject          │
+│    EcoreUtil.create(eClass)    │  │    (same flow as containment deser)     │
+│                                │  │                                         │
+│ 2. Set proxy URI:              │  │ 2. Object is NOT contained by parent   │
+│    ((InternalEObject) obj)     │  │    (it's an orphan — no resource)      │
+│    .eSetProxyURI(refValue)     │  │                                         │
+│                                │  │ 3. Set on parent as non-containment    │
+│ 3. If projection fields exist: │  │    reference                            │
+│    Populate extra fields on    │  │                                         │
+│    the proxy object            │  │ → Go to step 6                         │
+│                                │  │                                         │
+│ → Go to step 6                 │  │                                         │
+└────────────────────────────────┘  └─────────────────────────────────────────┘
+                     │                        │
+                     └─────┬──────────────────┘
+                           ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 6. SET ON PARENT                                                            │
+│    ─────────────────────────────────────────────────────────────────────────│
+│                                                                             │
+│    Is EReference many-valued (isMany())?                                    │
+│    ├─ YES → ((EList) parent.eGet(ref)).add(result)                         │
+│    └─ NO  → parent.eSet(ref, result)                                       │
+│                                                                             │
+│    ───────────────────────────────────────────────────────→ DONE ✓         │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Deserialization Summary:**
+
+| Step | Phase | What | Decides |
+|------|-------|------|---------|
+| **ValueReader** (step 1) | Build-time | Custom reader? | Full delegation vs built-in |
+| **Format detect** (step 2) | Runtime | JSON token type | PLAIN (string) vs STRUCTURED (object) |
+| **Parse** (step 3a/3b) | Runtime | Extract ref, type, extras | refValue + EClass + extra fields |
+| **Kind decision** (step 4) | Runtime | Has refValue? | Proxy vs Orphan |
+| **Create** (step 5a/5b) | Runtime | Proxy or full deser | Object + proxy URI or populated fields |
+| **Set** (step 6) | Runtime | Single or multi? | eSet vs EList.add |
+
+> **Design note — Serialization/Deserialization Asymmetry:**
+> - **Serialization** uses configured format (`refFormat`) to decide output shape
+> - **Deserialization** auto-detects format from JSON structure (string → PLAIN, object → STRUCTURED)
+> - This means deserialization is **more tolerant** — it can read either format regardless of configuration
+> - The `refFormat` config property is primarily a **serialization** concern
+
+**Edge Cases:**
+
+| Scenario | Behavior |
+|----------|----------|
+| JSON null value | Set reference to null on parent |
+| PLAIN string with no matching URI | Create proxy with unresolvable URI |
+| STRUCTURED with no `_type` | Fall back to `EReference.getEReferenceType()` |
+| STRUCTURED with no `_ref` and no fields | Create empty orphan object |
+| Multi-valued: mixed PLAIN + STRUCTURED | Each element auto-detected independently |
+| Unknown fields in STRUCTURED | Stored as projection data (proxy) or deserialized (orphan) |
+
 ### 9.3 Cross-Resource References
 
 > **Current Limitation:** Full automatic cross-resource reference resolution during deserialization is not yet implemented. The codec creates proxy objects that must be resolved manually via the ResourceSet.
@@ -709,7 +1043,8 @@ Full cross-resource resolution will:
 | Option | Type | Description |
 |--------|------|-------------|
 | `RESOLVE_PROXIES` | boolean | Resolve proxies during load |
-| `STRICT_MODE` | boolean | Fail on unknown fields |
+
+> **Note:** Strictness handling (unknown fields, missing required features) is configured via `strictOnUnknown` and `strictOnMissing` properties at Global/EClass level, not as reference-layer options. See [Feature Strictness](11-feature.md#11-strictness-configuration) for details.
 
 ---
 
@@ -741,7 +1076,40 @@ Several keys that **appear on EReference** are NOT part of Reference Configurati
 
 These keys are valid on EReference but are governed by their respective specs, not by Reference Configuration. Do NOT add validation rules for them here.
 
-### 10.3 Related Validation Rules
+### 10.3 Config-Level Validation Rules
+
+These rules are checked by `ReferenceConfig.validate()` when building the effective configuration. They detect configurations that are technically valid but logically inconsistent or unsupported.
+
+| Rule ID | Condition | Severity | Description |
+|---------|-----------|----------|-------------|
+| R-V5 | `refTypeKey` ≠ default + `refFormat` ≠ `STRUCTURED` | WARNING | `refTypeKey` is only used in STRUCTURED format; custom value is ignored when format is PLAIN |
+| R-V6 | `expandDepth` > 1 | WARNING | Nested expansion (depth > 1) is not yet supported; using depth=1 |
+| R-V7 | `expandIgnoreBidirectional` ≠ default + `shouldExpand()` = false | INFO | `expandIgnoreBidirectional` is ignored when neither `expand` nor `expandGlobal` is enabled |
+
+**Details:**
+
+- **R-V5 (refTypeKey + non-STRUCTURED):** The `refTypeKey` field names the type key inside a STRUCTURED reference object. In PLAIN format, there is no object — the reference is a bare string — so a custom `refTypeKey` would never be written or read. This is a WARNING because the config is valid but the custom key has no effect.
+
+- **R-V6 (expandDepth > 1):** Nested expansion (where expanded objects also expand their references) is a planned future feature. Currently only direct expansion (depth=1) is supported. Configuring a higher depth produces a WARNING and the codec silently clamps to depth=1.
+
+- **R-V7 (expandIgnoreBidirectional without expand):** The `expandIgnoreBidirectional` flag controls behavior during reference expansion. When expansion is not enabled (`expand=false` AND `expandGlobal=false`), this flag has no effect. This is an INFO (not WARNING) because it's a harmless misconfiguration that may be intentional (pre-configuring for future expand enablement).
+
+### 10.4 Serialization/Deserialization Symmetry
+
+These properties affect serialization/deserialization symmetry:
+
+| Property | Auto-Detectable? | Symmetry Required | Mismatch Behavior |
+|----------|------------------|-------------------|-------------------|
+| `refFormat` | ✅ YES (from JSON structure) | ❌ NO | N/A — auto-detected during deserialization |
+| `refKey` | ❌ NO | ✅ YES — must match | Ref field not found → orphan instead of proxy |
+| `refTypeKey` | ❌ NO | Should match | Type field not found → fallback to declared type |
+| `proxyKey` | ❌ NO | ✅ YES — must match | Proxy marker not detected |
+| `expand` / `expandGlobal` | N/A | ❌ NO — serialization only | Deserialization uses presence of `_ref` to detect |
+| `serializeInstanceType` | N/A | ❌ NO — serialization only | Deserialization auto-detects type presence |
+
+> **Key insight:** The `refFormat` does NOT require symmetry because deserialization auto-detects the format from JSON structure (string → PLAIN, object → STRUCTURED). However, `refKey` requires symmetry — if serialization writes `"$ref"` but deserialization looks for `"_ref"`, it won't find the reference and will treat the object as an expanded orphan.
+
+### 10.5 Related Validation Rules
 
 - **Type Configuration:** See [06-type.md section 7](06-type.md#7-configuration-validation-rules)
 - **ID Configuration:** See [09-id.md section 11](09-id.md#11-configuration-validation-rules)

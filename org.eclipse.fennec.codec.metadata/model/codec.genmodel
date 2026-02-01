@@ -66,6 +66,10 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec.ecore#//ClassCodecAspect/superTypeConfig"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ClassCodecAspect/inheritFromParent"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ClassCodecAspect/discriminatorValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ClassCodecAspect/strictOnUnknown"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ClassCodecAspect/strictOnMissing"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ClassCodecAspect/metadataMerge"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ClassCodecAspect/metadataKey"/>
     </genClasses>
     <genClasses ecoreClass="codec.ecore#//FeatureCodecAspect">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//FeatureCodecAspect/effectiveKey"/>
@@ -119,6 +123,10 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/serializeDefaults"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/typeHintMode"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/deserializationMode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/strictOnUnknown"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/strictOnMissing"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/metadataMerge"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//CodecConfig/metadataKey"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

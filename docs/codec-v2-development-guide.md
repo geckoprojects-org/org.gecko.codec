@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-01-30 (Feature visibility model: replaced serialize with 5 directional flags; Feature spec tests complete; all config spec tests done except Reference)
+**Last Updated:** 2026-01-30 (Reference spec flows + validation constraints documented; strictness concepts clarified; CODEC_FEATURE_TYPE_HINTS rationale documented; ReferenceConfig spec tests NOT YET STARTED — next session)
 
 ---
 
@@ -37,10 +37,14 @@ NEXT: ReferenceConfig Spec Tests - NOT STARTED
 │
 │  CONTEXT: All other config types (Type, SuperType, ID, Discriminator, Feature)
 │  have complete spec tests. Reference is the last remaining gap.
+│  Reference spec (10-reference.md) has been updated with full ser/deser flow
+│  diagrams and validation constraints — ready for test creation.
 │
 │  STEPS:
-│  │  1. Create ReferenceConfigSpecTest
-│  │  2. Create ReferenceConfigResolverSpecTest
+│  │  1. Create ReferenceConfigSpecTest (test defaults, validation R-V5/R-V6/R-V7,
+│  │     shouldExpand(), merge, format×expand combos, valueWriter/Reader)
+│  │  2. Create ReferenceConfigResolverSpecTest (source hierarchy, scope chain,
+│  │     caching, validation integration, reference-specific properties)
 │  │  3. Verify all tests pass
 │
 │  AFTER REFERENCE:
@@ -48,6 +52,55 @@ NEXT: ReferenceConfig Spec Tests - NOT STARTED
 │  │  - Ready for Phase 2: Serialization/Deserialization integration tests
 │  │  - Known bug: v2 deserialization gate uses isSerialize() instead of shouldDeserialize()
 │  │    (see completed Feature task below for details)
+│
+---
+
+COMPLETED: Reference Spec Flows + Spec Property Gap Analysis - ✅ (2026-01-30)
+│
+│  SPEC UPDATES (10-reference.md):
+│  │  - §5.1.1: Updated decision tree — ValueWriter check added as step 1 (before null)
+│  │  - §5.1.2: Reference Serialization Flow — 6-step ASCII diagram
+│  │    Step order: ValueWriter → Null check → Containment/Expand → URI → Format → Type+Ref
+│  │    ValueWriter is step 1 (full delegation, before null check — consistent with all flows)
+│  │  - §5.1.3: Serialization Summary table + edge cases
+│  │  - §9.2.4: Reference Deserialization Flow — 6-step ASCII diagram
+│  │    ValueReader → Format detection (auto from JSON) → Parse (PLAIN/STRUCTURED) →
+│  │    Kind decision (has _ref→proxy, no _ref→orphan) → Create → Set on parent
+│  │  - §10.3: Config-level validation rules (R-V5, R-V6, R-V7)
+│  │  - §10.4: Serialization/Deserialization symmetry table
+│  │  - §1.1: PLAIN format limitation documented (no type info, fallback chain)
+│  │  - §1.2: "Why STRUCTURED is default" rationale added
+│  │  - Both flows: Prerequisite callouts for feature-layer visibility gate
+│  │  - Deser flow: Cross-document containment "not yet supported" note
+│  │  - Step 6a (STRUCTURED type field): serializeInstanceType logic corrected
+│  │    (true→instance type, false→declared type; smart compression as separate concern)
+│  │  - Both PLAIN and STRUCTURED deser paths: CODEC_FEATURE_TYPE_HINTS fallback chain
+│
+│  SPEC UPDATES (16-annotation-reference.md):
+│  │  - CODEC_FEATURE_TYPE_HINTS: Rewrote with problem→solution rationale
+│  │    Explains WHY hints are needed (PLAIN format, missing _type, abstract types)
+│  │    Full priority chain: _type → discriminator → hints → declared type
+│  │    Clarified as Load-only (serializer has real object)
+│
+│  SPEC UPDATES (11-feature.md):
+│  │  - §11.6: New section "Relationship to Other Strictness Concepts"
+│  │    Three orthogonal mechanisms: strictOnUnknown/Missing (feature-level),
+│  │    DeserializationMode (type-level), failFast (diagnostic-level)
+│  │    Combination table + "common confusion" callout
+│  │  - Feature Deser Flow step 1 (UNKNOWN FIELD): Updated with concrete
+│  │    strictOnUnknown decision tree (true→ERROR, false→WARNING)
+│  │  - Feature Deser Flow step 4b (MISSING FIELD): Updated with concrete
+│  │    strictOnMissing decision tree (true + required→ERROR, false→silent)
+│  │  - Implementation status note added
+│
+│  SPEC PROPERTY GAP ANALYSIS:
+│  │  Cross-referenced ALL properties in 16-annotation-reference.md against
+│  │  flow diagrams in 06-type, 09-id, 10-reference, 11-feature.
+│  │  GAPS IDENTIFIED:
+│  │  - Scope properties (typeScope etc.) — config resolution concern, not flow gap
+│  │  - strictOnMissing — NOW FIXED in deser flow step 4b
+│  │  - Value reader/writer registration — infrastructure, not flow-related
+│  │  - failFast vs DeserializationMode — NOW CLARIFIED in §11.6
 │
 ---
 

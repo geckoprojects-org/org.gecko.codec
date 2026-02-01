@@ -787,13 +787,49 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int CLASS_CODEC_ASPECT__DISCRIMINATOR_VALUE = MetadataPackage.CLASS_ASPECT_FEATURE_COUNT + 4;
 
 	/**
+	 * The feature id for the '<em><b>Strict On Unknown</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_CODEC_ASPECT__STRICT_ON_UNKNOWN = MetadataPackage.CLASS_ASPECT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Strict On Missing</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_CODEC_ASPECT__STRICT_ON_MISSING = MetadataPackage.CLASS_ASPECT_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Metadata Merge</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_CODEC_ASPECT__METADATA_MERGE = MetadataPackage.CLASS_ASPECT_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Metadata Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS_CODEC_ASPECT__METADATA_KEY = MetadataPackage.CLASS_ASPECT_FEATURE_COUNT + 8;
+
+	/**
 	 * The number of structural features of the '<em>Class Codec Aspect</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CLASS_CODEC_ASPECT_FEATURE_COUNT = MetadataPackage.CLASS_ASPECT_FEATURE_COUNT + 5;
+	int CLASS_CODEC_ASPECT_FEATURE_COUNT = MetadataPackage.CLASS_ASPECT_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of operations of the '<em>Class Codec Aspect</em>' class.
@@ -1522,13 +1558,49 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int CODEC_CONFIG__DESERIALIZATION_MODE = 16;
 
 	/**
+	 * The feature id for the '<em><b>Strict On Unknown</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CONFIG__STRICT_ON_UNKNOWN = 17;
+
+	/**
+	 * The feature id for the '<em><b>Strict On Missing</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CONFIG__STRICT_ON_MISSING = 18;
+
+	/**
+	 * The feature id for the '<em><b>Metadata Merge</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CONFIG__METADATA_MERGE = 19;
+
+	/**
+	 * The feature id for the '<em><b>Metadata Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CODEC_CONFIG__METADATA_KEY = 20;
+
+	/**
 	 * The number of structural features of the '<em>Config</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CODEC_CONFIG_FEATURE_COUNT = 17;
+	int CODEC_CONFIG_FEATURE_COUNT = 21;
 
 	/**
 	 * The number of operations of the '<em>Config</em>' class.
@@ -1925,6 +1997,50 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getClassCodecAspect_DiscriminatorValue();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isStrictOnUnknown <em>Strict On Unknown</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Strict On Unknown</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isStrictOnUnknown()
+	 * @see #getClassCodecAspect()
+	 * @generated
+	 */
+	EAttribute getClassCodecAspect_StrictOnUnknown();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isStrictOnMissing <em>Strict On Missing</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Strict On Missing</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isStrictOnMissing()
+	 * @see #getClassCodecAspect()
+	 * @generated
+	 */
+	EAttribute getClassCodecAspect_StrictOnMissing();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isMetadataMerge <em>Metadata Merge</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Metadata Merge</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#isMetadataMerge()
+	 * @see #getClassCodecAspect()
+	 * @generated
+	 */
+	EAttribute getClassCodecAspect_MetadataMerge();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#getMetadataKey <em>Metadata Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Metadata Key</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect#getMetadataKey()
+	 * @see #getClassCodecAspect()
+	 * @generated
+	 */
+	EAttribute getClassCodecAspect_MetadataKey();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect <em>Feature Codec Aspect</em>}'.
@@ -2449,6 +2565,50 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getCodecConfig_DeserializationMode();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#isStrictOnUnknown <em>Strict On Unknown</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Strict On Unknown</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#isStrictOnUnknown()
+	 * @see #getCodecConfig()
+	 * @generated
+	 */
+	EAttribute getCodecConfig_StrictOnUnknown();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#isStrictOnMissing <em>Strict On Missing</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Strict On Missing</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#isStrictOnMissing()
+	 * @see #getCodecConfig()
+	 * @generated
+	 */
+	EAttribute getCodecConfig_StrictOnMissing();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#isMetadataMerge <em>Metadata Merge</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Metadata Merge</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#isMetadataMerge()
+	 * @see #getCodecConfig()
+	 * @generated
+	 */
+	EAttribute getCodecConfig_MetadataMerge();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#getMetadataKey <em>Metadata Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Metadata Key</em>'.
+	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecConfig#getMetadataKey()
+	 * @see #getCodecConfig()
+	 * @generated
+	 */
+	EAttribute getCodecConfig_MetadataKey();
+
+	/**
 	 * Returns the meta object for enum '{@link org.eclipse.fennec.codec.metadata.model.codec.StrategyScope <em>Strategy Scope</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2778,6 +2938,38 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute CLASS_CODEC_ASPECT__DISCRIMINATOR_VALUE = eINSTANCE.getClassCodecAspect_DiscriminatorValue();
+
+		/**
+		 * The meta object literal for the '<em><b>Strict On Unknown</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CLASS_CODEC_ASPECT__STRICT_ON_UNKNOWN = eINSTANCE.getClassCodecAspect_StrictOnUnknown();
+
+		/**
+		 * The meta object literal for the '<em><b>Strict On Missing</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CLASS_CODEC_ASPECT__STRICT_ON_MISSING = eINSTANCE.getClassCodecAspect_StrictOnMissing();
+
+		/**
+		 * The meta object literal for the '<em><b>Metadata Merge</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CLASS_CODEC_ASPECT__METADATA_MERGE = eINSTANCE.getClassCodecAspect_MetadataMerge();
+
+		/**
+		 * The meta object literal for the '<em><b>Metadata Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CLASS_CODEC_ASPECT__METADATA_KEY = eINSTANCE.getClassCodecAspect_MetadataKey();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.FeatureCodecAspectImpl <em>Feature Codec Aspect</em>}' class.
@@ -3174,6 +3366,38 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute CODEC_CONFIG__DESERIALIZATION_MODE = eINSTANCE.getCodecConfig_DeserializationMode();
+
+		/**
+		 * The meta object literal for the '<em><b>Strict On Unknown</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_CONFIG__STRICT_ON_UNKNOWN = eINSTANCE.getCodecConfig_StrictOnUnknown();
+
+		/**
+		 * The meta object literal for the '<em><b>Strict On Missing</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_CONFIG__STRICT_ON_MISSING = eINSTANCE.getCodecConfig_StrictOnMissing();
+
+		/**
+		 * The meta object literal for the '<em><b>Metadata Merge</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_CONFIG__METADATA_MERGE = eINSTANCE.getCodecConfig_MetadataMerge();
+
+		/**
+		 * The meta object literal for the '<em><b>Metadata Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CODEC_CONFIG__METADATA_KEY = eINSTANCE.getCodecConfig_MetadataKey();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.metadata.model.codec.StrategyScope <em>Strategy Scope</em>}' enum.

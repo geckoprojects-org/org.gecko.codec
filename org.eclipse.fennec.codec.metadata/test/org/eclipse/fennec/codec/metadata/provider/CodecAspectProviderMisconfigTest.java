@@ -813,4 +813,147 @@ class CodecAspectProviderMisconfigTest {
                 "Should have exactly 2 WARNING diagnostics for runtime-only ID keys");
         }
     }
+
+    // ========================================================================
+    // Strictness Keys on Wrong Levels (spec 11-feature.md §11)
+    // strictOnUnknown/strictOnMissing are class-only → WARNING on features
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Strictness Keys on Wrong Levels (spec §11)")
+    class StrictnessKeysWrongLevels {
+
+        /**
+         * @MISCONFIG strictOnUnknown on EAttribute → WARNING diagnostic.
+         */
+        @Test
+        @DisplayName("strictOnUnknown on EAttribute - WARNING diagnostic")
+        void misconfig_strictOnUnknownOnAttribute_warningDiagnostic() {
+            EClass entityClass = helper.getEClass(testPackage, "AttrWithStrictOnUnknownMisplaced");
+            EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
+
+            // Value should NOT be applied (class-only property)
+            // Diagnostic should be added
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "strictOnUnknown".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for strictOnUnknown on EAttribute");
+        }
+
+        /**
+         * @MISCONFIG strictOnMissing on EReference → WARNING diagnostic.
+         */
+        @Test
+        @DisplayName("strictOnMissing on EReference - WARNING diagnostic")
+        void misconfig_strictOnMissingOnReference_warningDiagnostic() {
+            EClass entityClass = helper.getEClass(testPackage, "RefWithStrictOnMissingMisplaced");
+            EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
+
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "strictOnMissing".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING diagnostic for strictOnMissing on EReference");
+        }
+
+        /**
+         * @MISCONFIG Both strictOnUnknown and strictOnMissing on EAttribute → 2 WARNING diagnostics.
+         */
+        @Test
+        @DisplayName("both strictness keys on EAttribute - 2 WARNING diagnostics")
+        void misconfig_bothStrictnessOnAttribute_twoWarnings() {
+            EClass entityClass = helper.getEClass(testPackage, "AttrWithBothStrictnessMisplaced");
+            EAttribute dataAttr = (EAttribute) helper.getFeature(entityClass, "data");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(dataAttr));
+
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "strictOnUnknown".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING for strictOnUnknown");
+
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "strictOnMissing".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.WARNING),
+                "Should have WARNING for strictOnMissing");
+
+            assertEquals(2, aspect.getDiagnostics().stream()
+                    .filter(d -> d.getKey().startsWith("strictOn"))
+                    .count(),
+                "Should have exactly 2 strictness-related diagnostics");
+        }
+    }
+
+    // ========================================================================
+    // Metadata Merge Keys at Wrong Levels (spec 05-global-options.md §5.7)
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Metadata Merge Keys at Wrong Levels")
+    class MetadataMergeKeysWrongLevels {
+
+        /**
+         * @MISCONFIG metadataMerge on EAttribute → ERROR diagnostic.
+         */
+        @Test
+        @DisplayName("metadataMerge on EAttribute - ERROR diagnostic")
+        void misconfig_metadataMergeOnAttribute_errorDiagnostic() {
+            EClass entityClass = helper.getEClass(testPackage, "AttrWithMetadataMergeMisplaced");
+            EAttribute nameAttr = (EAttribute) helper.getFeature(entityClass, "name");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(nameAttr));
+
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "metadataMerge".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR diagnostic for metadataMerge on EAttribute");
+        }
+
+        /**
+         * @MISCONFIG metadataKey on EReference → ERROR diagnostic.
+         */
+        @Test
+        @DisplayName("metadataKey on EReference - ERROR diagnostic")
+        void misconfig_metadataKeyOnReference_errorDiagnostic() {
+            EClass entityClass = helper.getEClass(testPackage, "RefWithMetadataKeyMisplaced");
+            EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
+
+            ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(addressRef));
+
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "metadataKey".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR diagnostic for metadataKey on EReference");
+        }
+
+        /**
+         * @MISCONFIG Both metadataMerge and metadataKey on EAttribute → 2 ERROR diagnostics.
+         */
+        @Test
+        @DisplayName("both metadata merge keys on EAttribute - 2 ERROR diagnostics")
+        void misconfig_bothMetadataMergeOnAttribute_twoErrors() {
+            EClass entityClass = helper.getEClass(testPackage, "AttrWithBothMetadataMergeMisplaced");
+            EAttribute dataAttr = (EAttribute) helper.getFeature(entityClass, "data");
+
+            FeatureCodecAspect aspect = (FeatureCodecAspect) provider.buildAttributeAspect(wrapAttribute(dataAttr));
+
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "metadataMerge".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR for metadataMerge");
+
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> "metadataKey".equals(d.getKey())
+                            && d.getSeverity() == DiagnosticSeverity.ERROR),
+                "Should have ERROR for metadataKey");
+
+            assertEquals(2, aspect.getDiagnostics().stream()
+                    .filter(d -> d.getKey().startsWith("metadata"))
+                    .count(),
+                "Should have exactly 2 metadata-merge-related diagnostics");
+        }
+    }
 }

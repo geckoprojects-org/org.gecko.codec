@@ -180,6 +180,38 @@ public final class CodecAnnotationConstants {
      */
     public static final String KEY_INHERIT = "inherit";
 
+    /**
+     * Detail key for strict handling of unknown JSON fields during deserialization.
+     * When true, unknown fields cause ERROR instead of WARNING.
+     * Value: "true" or "false". Default: "false" (LENIENT).
+     * Valid on: EClass (Global is runtime-only via CodecConfig).
+     */
+    public static final String KEY_STRICT_ON_UNKNOWN = "strictOnUnknown";
+
+    /**
+     * Detail key for strict handling of missing required features during deserialization.
+     * When true, missing required features cause ERROR instead of WARNING.
+     * Value: "true" or "false". Default: "false" (LENIENT).
+     * Valid on: EClass (Global is runtime-only via CodecConfig).
+     */
+    public static final String KEY_STRICT_ON_MISSING = "strictOnMissing";
+
+    /**
+     * Detail key for merging type + id (+ supertype) into a single metadata object.
+     * Only applies when both typeFormat=STRUCTURED and idFormat=STRUCTURED.
+     * Value: "true" or "false". Default: "false".
+     * Valid on: EClass (Global is runtime-only via CodecConfig).
+     */
+    public static final String KEY_METADATA_MERGE = "metadataMerge";
+
+    /**
+     * Detail key for the JSON key used for the merged metadata object.
+     * Only meaningful when metadataMerge=true.
+     * Value: string. Default: "_metadata".
+     * Valid on: EClass (Global is runtime-only via CodecConfig).
+     */
+    public static final String KEY_METADATA_KEY = "metadataKey";
+
     // ------------------------------------------------------------------------
     // ID configuration detail keys (prefix: id*)
     // ------------------------------------------------------------------------

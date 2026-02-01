@@ -1417,10 +1417,12 @@ Previous versions used `transient` and `serialize` properties. These are now **d
 
 Controls how deserializer handles unexpected mismatches.
 
-| Annotation Key | Property Key | Global | EClass | ERef | EAttr | Description |
-|----------------|--------------|:------:|:------:|:----:|:-----:|-------------|
-| `strictOnUnknown` | `codec.strictOnUnknown` | ✅ | ✅ | ✅ | ✅ | ERROR on unknown JSON field (**default:** `false`) |
-| `strictOnMissing` | `codec.strictOnMissing` | ✅ | ✅ | ✅ | ✅ | ERROR on missing required feature (**default:** `false`) |
+| Annotation Key | Property Key | Global | EClass | Default | Description |
+|----------------|--------------|:------:|:------:|---------|-------------|
+| `strictOnUnknown` | `codec.strictOnUnknown` | ✅ | ✅ | `false` | ERROR on unknown JSON field |
+| `strictOnMissing` | `codec.strictOnMissing` | ✅ | ✅ | `false` | ERROR on missing required feature |
+
+**Note:** Strictness is not supported on EReference or EAttribute level. It applies to all features of a class uniformly.
 
 **LENIENT (default):** Unknown fields → WARNING + skip. Missing required → WARNING + use default.
 
@@ -1429,17 +1431,12 @@ Controls how deserializer handles unexpected mismatches.
 **Scope behavior:**
 - **Global:** Applies to all features everywhere
 - **EClass:** Applies to all features of that class
-- **EReference:** Applies when deserializing objects through this reference
-- **EAttribute:** Applies to this specific attribute only
 
 **Use cases:**
 - `strictOnUnknown=true` at Global: Fail-fast for any unexpected JSON field (strict schema validation)
-- `strictOnMissing=true` on EAttribute: Ensure this specific required field is always present
-- `strictOnUnknown=false` on EReference: Allow extension fields in objects accessed via this reference (forward compatibility)
+- `strictOnMissing=true` on EClass: Ensure all required features of this class are present
 
 **Implementation:** `CodecAnnotationConstants.KEY_STRICT_ON_UNKNOWN`, `KEY_STRICT_ON_MISSING`
-
-**Implementation status:** Not yet in `CodecAnnotationConstants` - needs to be added.
 
 ---
 
@@ -1549,7 +1546,26 @@ options.put(CODEC_TYPE_HINT_MODE, TypeHintMode.OVERRIDE);
 
 ### Per-Feature Type Hints (CODEC_FEATURE_TYPE_HINTS)
 
-Provide type hints for specific features when their values lack type information:
+**The problem:** During deserialization, the codec needs to know the EClass of each object it creates. Normally, `_type` in the JSON provides this. But there are situations where type information is missing:
+
+- **PLAIN reference format** — carries only a URI string, no room for `_type`
+- **STRUCTURED reference without `_type`** — the JSON object was written without type info (e.g., `serializeInstanceType=false`, or external/third-party JSON)
+- **Containment features** — external JSON that omits `_type` for nested objects
+- **Abstract declared types** — the EReference/EAttribute declares an abstract type or interface, but the JSON doesn't say which concrete subtype to create
+
+In all these cases, the codec's final fallback is `EReference.getEReferenceType()` (the declared type). If that type is abstract, deserialization fails — you can't instantiate an abstract EClass.
+
+**The solution:** `CODEC_FEATURE_TYPE_HINTS` provides a per-feature EClass that the codec uses when JSON lacks type information. It sits in the type resolution fallback chain **above** the declared type but **below** any type found in the JSON:
+
+```
+Type resolution priority (highest to lowest):
+1. _type field in JSON (if present)
+2. Discriminator / inline mapping (if configured)
+3. CODEC_FEATURE_TYPE_HINTS (if set for this feature)    ← this option
+4. EReference.getEReferenceType() / declared type (final fallback)
+```
+
+**Usage:**
 
 ```java
 Map<EStructuralFeature, EClass> featureHints = Map.of(
@@ -1559,9 +1575,18 @@ Map<EStructuralFeature, EClass> featureHints = Map.of(
 options.put(CODEC_FEATURE_TYPE_HINTS, featureHints);
 ```
 
-**Relationship to Inline Mapping:**
+> **Note:** `CODEC_FEATURE_TYPE_HINTS` is a **Load-only** option. It has no effect on serialization — the serializer always has the real EObject and knows its actual EClass. Hints are only needed during deserialization when the object doesn't exist yet and the JSON doesn't tell us its type.
 
-Feature type hints and [Inline Mapping](#inline-mapping-on-ereference) solve similar problems from different angles:
+**When to use which:**
+
+| Scenario | Solution | Why |
+|----------|----------|-----|
+| PLAIN reference format with abstract declared type | Feature type hint | No `_type` in JSON, need concrete EClass for proxy |
+| External JSON without `_type` fields | Feature type hint | Fixed concrete type per feature |
+| Polymorphic collection with discriminator values | [Inline Mapping](#inline-mapping-on-ereference) | Multiple types resolved from value |
+| Concrete declared type, no polymorphism | Neither — declared type suffices | Fallback works automatically |
+
+**Relationship to Inline Mapping:**
 
 | Aspect | Feature Type Hints | Inline Mapping |
 |--------|-------------------|----------------|
@@ -1570,11 +1595,9 @@ Feature type hints and [Inline Mapping](#inline-mapping-on-ereference) solve sim
 | **Polymorphism** | Single type | Multiple types based on value |
 | **Use case** | External JSON without type info | Polymorphic collections with type markers |
 
-**When to use which:**
-- **Inline Mapping**: Polymorphic feature where JSON contains a discriminator (e.g., `"contactType": "friend"`)
-- **Feature Type Hints**: Feature always contains a specific concrete type, or as runtime fallback
-
 Feature type hints also integrate with inline mapping's fallback resolution - see [Fallback and Error Handling](#fallback-and-error-handling) in Discriminator Mapping.
+
+See [Reference Deserialization Flow](10-reference.md#924-reference-deserialization-flow) for how hints fit into the full deserialization flow.
 
 ### Deserialization Mode (CODEC_DESERIALIZATION_MODE)
 
@@ -1766,8 +1789,8 @@ This section tracks the implementation status of features documented in this ref
 
 | Property | Annotation Constant | EMF Model | AspectProvider | Codec v2 | Tests | Spec |
 |----------|:-------------------:|:---------:|:--------------:|:--------:|:-----:|:----:|
-| `metadataMerge` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| `metadataKey` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| `metadataMerge` | ✅ `KEY_METADATA_MERGE` | ✅ `ClassCodecAspect.metadataMerge` | ✅ | ❌ | ✅ | ✅ (+ ConfigProperty) |
+| `metadataKey` | ✅ `KEY_METADATA_KEY` | ✅ `ClassCodecAspect.metadataKey` | ✅ | ❌ | ✅ | ✅ (+ ConfigProperty) |
 
 ### Reference Configuration
 
@@ -1790,11 +1813,11 @@ This section tracks the implementation status of features documented in this ref
 | `key` | ✅ `KEY_KEY` | ✅ `BaseFeatureConfig.key` | ✅ | ✅ | ✅ | ✅ |
 | `transient` | ✅ `KEY_TRANSIENT` | — (maps to serialize) | ✅ | ✅ | ✅ | 🔶 deprecated |
 | `serialize` | ✅ `KEY_SERIALIZE` | ✅ `BaseFeatureConfig.serialize` | ✅ | ✅ | ✅ | 🔶 deprecated |
-| `ignore` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| `ignoreRead` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| `ignoreWrite` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| `forceRead` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| `forceWrite` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| `ignore` | ✅ `KEY_IGNORE` | ✅ `FeatureCodecAspect.ignore` | ✅ | ❌ | ✅ | ✅ |
+| `ignoreRead` | ✅ `KEY_IGNORE_READ` | ✅ `FeatureCodecAspect.ignoreRead` | ✅ | ❌ | ✅ | ✅ |
+| `ignoreWrite` | ✅ `KEY_IGNORE_WRITE` | ✅ `FeatureCodecAspect.ignoreWrite` | ✅ | ❌ | ✅ | ✅ |
+| `forceRead` | ✅ `KEY_FORCE_READ` | ✅ `FeatureCodecAspect.forceRead` | ✅ | ❌ | ✅ | ✅ |
+| `forceWrite` | ✅ `KEY_FORCE_WRITE` | ✅ `FeatureCodecAspect.forceWrite` | ✅ | ❌ | ✅ | ✅ |
 | `serializeNull` | ✅ `KEY_SERIALIZE_NULL` | ✅ `BaseFeatureConfig.serializeNull` | ✅ | ✅ | ✅ | ✅ |
 | `serializeEmpty` | ✅ `KEY_SERIALIZE_EMPTY` | ✅ `BaseFeatureConfig.serializeEmpty` | ✅ | ✅ | ✅ | ✅ |
 | `serializeDefaults` | ✅ `KEY_SERIALIZE_DEFAULTS` | ✅ `BaseFeatureConfig.serializeDefaults` | ✅ | ✅ | ✅ | ✅ |
@@ -1812,8 +1835,8 @@ This section tracks the implementation status of features documented in this ref
 
 | Property | Annotation Constant | EMF Model | AspectProvider | Codec v2 | Tests | Spec |
 |----------|:-------------------:|:---------:|:--------------:|:--------:|:-----:|:----:|
-| `strictOnUnknown` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| `strictOnMissing` | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| `strictOnUnknown` | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| `strictOnMissing` | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
 
 ### Discriminator Mapping
 
