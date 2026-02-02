@@ -30,10 +30,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="lastName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
-  <!-- @VALID @SPEC(09-id.md): NONE strategy - no ID serialization -->
+  <!-- @VALID @SPEC(09-id.md): NONE keyMode - no ID serialization (NONE moved from IdStrategy to IdKeyMode per spec) -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithNoId">
     <eAnnotations source="http://eclipse.org/fennec/codec">
-      <details key="idStrategy" value="NONE"/>
+      <details key="idKeyMode" value="NONE"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="data" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>

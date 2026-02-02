@@ -251,16 +251,16 @@ class CodecAspectProviderValidConfigTest {
             assertTrue(idConfig.getIdFeatures().contains("lastName"));
         }
 
-        /** @VALID @SPEC(09-id.md) Tests NONE strategy. */
+        /** @VALID @SPEC(09-id.md) Tests NONE keyMode (disables ID serialization). Per spec, NONE was moved from IdStrategy to IdKeyMode. */
         @Test
-        @DisplayName("NONE strategy parsed correctly")
-        void validConfig_idNoneStrategy_parsedCorrectly() {
+        @DisplayName("NONE keyMode parsed correctly")
+        void validConfig_idNoneKeyMode_parsedCorrectly() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithNoId");
 
             ClassCodecAspect aspect = (ClassCodecAspect) provider.buildClassAspect(wrapClass(entityClass));
 
             assertNotNull(aspect.getIdConfig());
-            assertEquals(IdStrategy.NONE, aspect.getIdConfig().getStrategy());
+            assertEquals(IdKeyMode.NONE, aspect.getIdConfig().getKeyMode());
         }
 
         /** @VALID @SPEC(09-id.md) Tests custom ID reader/writer names. */

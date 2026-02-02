@@ -1657,7 +1657,6 @@ public class MetadataPackageImpl extends EPackageImpl implements MetadataPackage
 		initEEnum(idStrategyEEnum, IdStrategy.class, "IdStrategy");
 		addEEnumLiteral(idStrategyEEnum, IdStrategy.ID_FIELD);
 		addEEnumLiteral(idStrategyEEnum, IdStrategy.COMBINED);
-		addEEnumLiteral(idStrategyEEnum, IdStrategy.NONE);
 
 		initEEnum(idKeyModeEEnum, IdKeyMode.class, "IdKeyMode");
 		addEEnumLiteral(idKeyModeEEnum, IdKeyMode.ID_ONLY);

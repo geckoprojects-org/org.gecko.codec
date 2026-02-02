@@ -112,7 +112,8 @@ class FeatureConfigResolverSpecTest {
 
             FeatureConfig config = resolver.resolveFeatureConfig(firstNameAttr, diagnostics);
 
-            assertNull(config.getKey());
+            // After resolution, null key is resolved to feature name (spec: null = "use feature name")
+            assertEquals("firstName", config.getKey());
             assertFalse(config.isIgnore());
             assertFalse(config.isIgnoreRead());
             assertFalse(config.isIgnoreWrite());

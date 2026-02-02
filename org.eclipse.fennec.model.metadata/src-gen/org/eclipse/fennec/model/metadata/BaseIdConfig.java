@@ -55,7 +55,7 @@ public interface BaseIdConfig extends EObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Strategy for determining which features form the ID (ID_FIELD uses eID markers, COMBINED uses explicitly listed features, NONE disables ID serialization).
+	 * Strategy for determining which features form the ID (ID_FIELD uses eID markers, COMBINED uses explicitly listed features). To disable ID serialization, use IdKeyMode.NONE instead.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Strategy</em>' attribute.
 	 * @see org.eclipse.fennec.model.metadata.IdStrategy

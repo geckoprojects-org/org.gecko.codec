@@ -91,11 +91,6 @@
         <details key="documentation" value="Use explicitly specified features combined with a separator. The features and separator are configured via idFeatures and idSeparator annotation keys."/>
       </eAnnotations>
     </eLiterals>
-    <eLiterals name="NONE" value="2" literal="NONE">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="No ID serialization. Objects are identified by position or other means."/>
-      </eAnnotations>
-    </eLiterals>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="IdKeyMode">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -250,7 +245,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="strategy" eType="#//IdStrategy"
         defaultValueLiteral="ID_FIELD">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Strategy for determining which features form the ID (ID_FIELD uses eID markers, COMBINED uses explicitly listed features, NONE disables ID serialization)."/>
+        <details key="documentation" value="Strategy for determining which features form the ID (ID_FIELD uses eID markers, COMBINED uses explicitly listed features). To disable ID serialization, use IdKeyMode.NONE instead."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="keyMode" eType="#//IdKeyMode"
@@ -581,7 +576,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="idFeatures" upperBound="-1"
         eType="#//FeatureMetadata">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Pre-resolved features that form the object ID, in order. For ID_FIELD strategy: features with eID=true. For COMBINED strategy: explicitly configured features. Empty when IdStrategy is NONE."/>
+        <details key="documentation" value="Pre-resolved features that form the object ID, in order. For ID_FIELD strategy: features with eID=true. For COMBINED strategy: explicitly configured features. Empty when IdKeyMode is NONE."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="hasId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"

@@ -27,7 +27,6 @@
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="metadata.ecore#//IdStrategy">
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdStrategy/ID_FIELD"/>
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdStrategy/COMBINED"/>
-      <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdStrategy/NONE"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="metadata.ecore#//IdKeyMode">
       <genEnumLiterals ecoreEnumLiteral="metadata.ecore#//IdKeyMode/ID_ONLY"/>

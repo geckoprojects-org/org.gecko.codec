@@ -37,8 +37,11 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.config.ConfigProperty;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
+import org.eclipse.fennec.codec.config.bridge.AspectToPropertiesConverter;
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
+import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.constants.CodecOptions;
 import org.eclipse.fennec.codec.context.ContextHelper;
 import org.eclipse.fennec.codec.deser.DeserializationState.UnresolvedReference;
@@ -123,7 +126,7 @@ public class CodecResource extends ResourceImpl {
             CodecValueRegistry valueRegistry, JsonMapper.Builder mapperBuilder) {
         super(uri);
         this.metadataService = requireNonNull(metadataService, "metadataService must not be null");
-        this.resolver = isNull(resolver) ? ConfigurationResolver.defaults() : resolver;
+        this.resolver = enrichWithAnnotations(resolver, metadataService);
         this.valueRegistry = valueRegistry;
         this.mapperBuilder = mapperBuilder;
         this.helper = new CodecResourceHelper(metadataService);
@@ -334,10 +337,40 @@ public class CodecResource extends ResourceImpl {
         return merged;
     }
 
+    /**
+     * Enriches a resolver with annotation properties extracted from MetadataService.
+     * <p>
+     * Preserves any existing resolver properties (module, resource, options, etc.)
+     * while adding annotation properties derived from MetadataService's parsed codec aspects.
+     */
+    private static ConfigurationResolver enrichWithAnnotations(ConfigurationResolver resolver,
+            MetadataService metadataService) {
+        ConfigurationResolver base = isNull(resolver) ? ConfigurationResolver.defaults() : resolver;
+        Map<String, Object> annotationProps = AspectToPropertiesConverter.buildAnnotationProperties(metadataService);
+        if (annotationProps.isEmpty()) {
+            return base;
+        }
+        return base.toBuilder()
+                .annotationProperties(annotationProps)
+                .build();
+    }
+
     private ObjectMapper createObjectMapper(Map<String, Object> options) {
+        // Create TypeDiscriminatorService for MAPPED strategy resolution
+        TypeDiscriminatorService typeService =
+                TypeDiscriminatorService.fromMetadataService(metadataService);
+
+        // Extract global properties from the resolver to pass to the module
+        @SuppressWarnings("unchecked")
+        List<String> ignoreFeatures = resolver.getGlobalProperty(ConfigProperty.IGNORE_FEATURES);
+        boolean smartCompression = resolver.getGlobalProperty(ConfigProperty.SMART_COMPRESSION);
+
         CodecModule.Builder moduleBuilder = CodecModule.builder()
                 .resolver(resolver)
-                .metadataService(metadataService);
+                .metadataService(metadataService)
+                .typeDiscriminatorService(typeService)
+                .globalIgnoreFeatures(ignoreFeatures)
+                .smartCompression(smartCompression);
 
         if (valueRegistry != null) {
             moduleBuilder.valueRegistry(valueRegistry);

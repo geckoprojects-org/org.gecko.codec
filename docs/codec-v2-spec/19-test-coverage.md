@@ -254,7 +254,8 @@ Each annotation key should have a test verifying it's parsed correctly.
 
 | Annotation Key | Test Method | Status |
 |----------------|-------------|--------|
-| `idStrategy` | `testBuildClassAspectWithIdFieldStrategy`, `testBuildClassAspectWithCombinedIdStrategy`, `testBuildClassAspectWithIdNoneStrategy` | ✅ |
+| `idStrategy` | `testBuildClassAspectWithIdFieldStrategy`, `testBuildClassAspectWithCombinedIdStrategy` | ✅ |
+| `idKeyMode` | `validConfig_idNoneKeyMode_parsedCorrectly` (NONE disables ID per spec) | ✅ |
 | `idFormat` | `testBuildClassAspectWithStructuredIdConfig` | ✅ |
 | `idKey` | `testBuildClassAspectWithIdFieldStrategy` | ✅ |
 | `idValueKey` | `testBuildClassAspectWithIdValueKey` | ✅ |

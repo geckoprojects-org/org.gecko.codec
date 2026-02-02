@@ -68,6 +68,10 @@ public class IdSerializationEntry implements SerializationEntry {
 
     @Override
     public boolean shouldSerialize(SerializationState state) {
+        // NONE keyMode means ID serialization is completely disabled (spec §2, §8.6)
+        if (config.getKeyMode() == IdKeyMode.NONE) {
+            return false;
+        }
         // For FEATURE_ONLY mode, we don't serialize the _id field
         if (config.getKeyMode() == IdKeyMode.FEATURE_ONLY) {
             return false;

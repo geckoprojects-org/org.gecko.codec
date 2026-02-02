@@ -233,7 +233,7 @@ public interface ClassMetadata extends DiagnosticContainer {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Pre-resolved features that form the object ID, in order. For ID_FIELD strategy: features with eID=true. For COMBINED strategy: explicitly configured features. Empty when IdStrategy is NONE.
+	 * Pre-resolved features that form the object ID, in order. For ID_FIELD strategy: features with eID=true. For COMBINED strategy: explicitly configured features. Empty when IdKeyMode is NONE.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Id Features</em>' reference list.
 	 * @see org.eclipse.fennec.model.metadata.MetadataPackage#getClassMetadata_IdFeatures()

@@ -75,6 +75,7 @@ class IdSerializationEntryTest {
     private IdConfig createDefaultConfig() {
         return IdConfig.builder()
                 .key("_id")
+                .strategy(org.eclipse.fennec.model.metadata.IdStrategy.ID_FIELD)
                 .onTop(true)
                 .build();
     }

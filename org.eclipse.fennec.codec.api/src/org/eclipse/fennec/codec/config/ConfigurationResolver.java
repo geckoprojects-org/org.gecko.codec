@@ -13,6 +13,7 @@
  */
 package org.eclipse.fennec.codec.config;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -115,8 +116,13 @@ public final class ConfigurationResolver {
 
         return typeConfigCache.computeIfAbsent(eClass, ec -> {
             // Start with defaults, merge in reverse priority order
-            return TypeConfig.defaults()
-                    .mergeWith(extractGlobalProperties(annotationProperties))
+            // Annotation layer: walk up the EClass hierarchy (parents first, then child overrides)
+            TypeConfig resolved = TypeConfig.defaults()
+                    .mergeWith(extractGlobalProperties(annotationProperties));
+            for (EClass superType : ec.getEAllSuperTypes()) {
+                resolved = resolved.mergeWith(extractClassProperties(annotationProperties, superType));
+            }
+            return resolved
                     .mergeWith(extractClassProperties(annotationProperties, ec))
                     .mergeWith(extractGlobalProperties(moduleProperties))
                     .mergeWith(extractClassProperties(moduleProperties, ec))
@@ -349,7 +355,7 @@ public final class ConfigurationResolver {
 
         return featureConfigCache.computeIfAbsent(feature, f -> {
             EClass eClass = f.getEContainingClass();
-            return FeatureConfig.defaults()
+            FeatureConfig resolved = FeatureConfig.defaults()
                     .mergeWith(extractGlobalProperties(annotationProperties))
                     .mergeWith(extractClassProperties(annotationProperties, eClass))
                     .mergeWith(extractFeatureProperties(annotationProperties, f))
@@ -366,6 +372,30 @@ public final class ConfigurationResolver {
                     .mergeWith(extractClassProperties(optionsProperties, eClass))
                     .mergeWith(extractFeatureProperties(optionsProperties, f))
                     .validate(diagnostics);
+
+            // Apply feature name as key when no explicit key was configured
+            // (ConfigProperty.KEY default is null = "use feature name")
+            if (resolved.getKey() == null) {
+                resolved = resolved.toBuilder().key(f.getName()).build();
+            }
+
+            // Apply global ignoreFeatures list
+            List<String> globalIgnore = getGlobalProperty(ConfigProperty.IGNORE_FEATURES);
+            if (globalIgnore != null && globalIgnore.contains(f.getName())) {
+                if (!resolved.isForceWrite()) {
+                    resolved = resolved.toBuilder().ignore(true).build();
+                }
+            }
+
+            // Skip transient/derived/volatile features unless explicitly forced
+            // This matches the old ConfigurationMerger.resolveFeatureSerialize() behavior
+            if (f.isDerived() || f.isTransient() || f.isVolatile()) {
+                if (!resolved.isForceWrite()) {
+                    resolved = resolved.toBuilder().ignore(true).build();
+                }
+            }
+
+            return resolved;
         });
     }
 
@@ -562,6 +592,40 @@ public final class ConfigurationResolver {
     }
 
     // ========================================================================
+    // Global Property Access
+    // ========================================================================
+
+    /**
+     * Retrieves a global property value by searching all configuration sources
+     * in priority order (OPTIONS → RESOURCE → FACTORY → MODULE → ANNOTATION).
+     * <p>
+     * Returns the first non-null value found, or the property's default value
+     * if no source has it set.
+     * </p>
+     *
+     * @param <T> the property value type
+     * @param property the config property to look up
+     * @return the resolved value, or the property's default
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getGlobalProperty(ConfigProperty property) {
+        // Search in priority order (highest first)
+        Map<String, Object>[] sources = new Map[] {
+            optionsProperties, resourceProperties, factoryProperties, moduleProperties, annotationProperties
+        };
+        String key = property.getKey();
+        for (Map<String, Object> source : sources) {
+            if (source != null && source.containsKey(key)) {
+                Object value = source.get(key);
+                if (value != null) {
+                    return (T) value;
+                }
+            }
+        }
+        return property.getDefaultValue();
+    }
+
+    // ========================================================================
     // Property Extraction Helpers
     // ========================================================================
 
@@ -643,6 +707,20 @@ public final class ConfigurationResolver {
     // ========================================================================
     // Builder
     // ========================================================================
+
+    /**
+     * Creates a new builder pre-populated with this resolver's configuration.
+     * <p>
+     * Useful for creating a modified resolver that inherits existing settings.
+     */
+    public Builder toBuilder() {
+        return new Builder()
+                .optionsProperties(this.optionsProperties)
+                .resourceProperties(this.resourceProperties)
+                .factoryProperties(this.factoryProperties)
+                .moduleProperties(this.moduleProperties)
+                .annotationProperties(this.annotationProperties);
+    }
 
     /**
      * Creates a new builder.

@@ -60,20 +60,7 @@ public enum IdStrategy implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	COMBINED(1, "COMBINED", "COMBINED"),
-
-	/**
-	 * The '<em><b>NONE</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * No ID serialization. Objects are identified by position or other means.
-	 * <!-- end-model-doc -->
-	 * @see #NONE_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	NONE(2, "NONE", "NONE");
+	COMBINED(1, "COMBINED", "COMBINED");
 
 	/**
 	 * The '<em><b>ID FIELD</b></em>' literal value.
@@ -104,20 +91,6 @@ public enum IdStrategy implements Enumerator {
 	public static final int COMBINED_VALUE = 1;
 
 	/**
-	 * The '<em><b>NONE</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * No ID serialization. Objects are identified by position or other means.
-	 * <!-- end-model-doc -->
-	 * @see #NONE
-	 * @model
-	 * @generated
-	 * @ordered
-	 */
-	public static final int NONE_VALUE = 2;
-
-	/**
 	 * An array of all the '<em><b>Id Strategy</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -127,7 +100,6 @@ public enum IdStrategy implements Enumerator {
 		new IdStrategy[] {
 			ID_FIELD,
 			COMBINED,
-			NONE,
 		};
 
 	/**
@@ -186,7 +158,6 @@ public enum IdStrategy implements Enumerator {
 		switch (value) {
 			case ID_FIELD_VALUE: return ID_FIELD;
 			case COMBINED_VALUE: return COMBINED;
-			case NONE_VALUE: return NONE;
 		}
 		return null;
 	}

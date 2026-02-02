@@ -161,7 +161,8 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
         // Create supertype entry if enabled
         SuperTypeSerializationEntry superTypeEntry = null;
         if (superTypeConfig != null && superTypeConfig.isSerialize()) {
-            superTypeEntry = new SuperTypeSerializationEntry(superTypeConfig, eClass);
+            superTypeEntry = new SuperTypeSerializationEntry(
+                    superTypeConfig, eClass, config.isSmartCompression());
         }
 
         // Add type entry (if include is enabled)

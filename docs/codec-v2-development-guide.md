@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-02-01 (8-step codec.v2 → codec.* package migration COMPLETE; all entries, orchestrators, module, resource migrated; 1461 tests, 0 failures, 458 skipped; old classes deprecated+disabled)
+**Last Updated:** 2026-02-02 (ReferenceConfig spec tests VERIFIED complete — 56 + 23 tests, all 6/6 config types have spec+resolver tests; all tests passing)
 
 ---
 
@@ -62,32 +62,81 @@ COMPLETED: 8-Step Package Migration (codec.v2.* → codec.*) - ✅ (2026-02-01)
 │  │  - Default refKey changed from "_ref" to "$ref" (ConfigProperty defaults)
 │  │  - DiagnosticCollector from codec.diagnostic (API) instead of codec.v2.util
 │
+│  REMAINING ACTIVE TESTS IN codec.v2.* (38 files, 457 @Test methods):
+│  │
+│  │  ── Config tests (6 files, 80 tests) ──
+│  │  - CodecConfigurationBuilderTest (23)
+│  │  - CodecConfigurationDefaultsTest (23)
+│  │  - CodecConfigurationIdSubOptionsDependencyTest (6)
+│  │  - CodecConfigurationSuperTypeSubOptionsDependencyTest (4)
+│  │  - CodecConfigurationTypeSuperTypeDependencyTest (4)
+│  │  - ConfigurationMergerTest (20)
+│  │  ACTION: Deprecate + disable (old config system replaced by ConfigurationResolver)
+│  │
+│  │  ── Resource integration tests (23 files, 193 tests) ──
+│  │  - CodecResourceRoundTripTest, CodecResourceAnnotationTest, CodecResourceAdvancedTest,
+│  │    CodecResourceIdTest, CodecResourceSmartCompressionTest, CodecResourceSuperTypeTest,
+│  │    CodecResourceCustomValueTest, CodecResourceArrayRootTest, CodecResourceCrossPackageTest,
+│  │    CodecResourceFeaturePathTypeTest, CodecResourceMappedTypeTest,
+│  │    ProxyCreationTest, GlobalIgnoreFeatureTest, FeatureTypeHintTest,
+│  │    FeatureTypeHintWarningTest, SmartCompressionSameSchemaTest,
+│  │    TypeStrategyContainmentTest, TypeStrategyExplorationTest,
+│  │    EMapSerializationTest, EMapDeserializationTest, EMapRoundtripTest,
+│  │    BikeRawTrafficLoadTest, BikeSitesArrayLoadTest
+│  │  ACTION: Migrate to use codec.resource.CodecResource (high priority)
+│  │
+│  │  ── Deferred ser/deser/type integration tests (9 files, 184 tests) ──
+│  │  - ArrayAttributeSerializationTest (25), ArrayAttributeDeserializationTest (25)
+│  │  - EnumSerializationTest (12), ExtendedMetaDataTest (7), ExpandReferenceTest (12)
+│  │  - DeferredPropertiesDeserializationTest (19), GeoJsonLikeDeserializationTest (31)
+│  │  - TypeResolutionHintTest (7), TypeResolutionUriTest (3)
+│  │  ACTION: Migrate to use new codec.* packages
+│  │
 │  REMAINING WORK (NOT YET DONE):
-│  │  - Deprecate old config package (codec.v2.config.CodecConfiguration,
-│  │    codec.v2.config.effective.* — still referenced by old deprecated code)
-│  │  - Migrate 23 resource integration tests to use codec.resource.CodecResource
-│  │  - Migrate deferred integration tests from Steps 5/6
-│  │  - ReferenceConfig spec tests (see NEXT below)
-│  │  - Delete old codec.v2.* packages entirely (after full validation)
+│  │  1. Deprecate old config package (6 files, 80 tests → disable)
+│  │  2. Migrate resource integration tests (23 files, 193 tests → new CodecResource)
+│  │  3. Migrate deferred integration tests (9 files, 184 tests → new packages)
+│  │  4. Delete old codec.v2.* packages entirely (after all 457 tests migrated)
 │
 ---
 
-NEXT: ReferenceConfig Spec Tests - NOT STARTED
+COMPLETED: ReferenceConfig Spec Tests - ✅ (2026-02-02)
 │
-│  CONTEXT: All other config types (Type, SuperType, ID, Discriminator, Feature)
-│  have complete spec tests. Reference is the last remaining gap.
-│  Reference spec (10-reference.md) has been updated with full ser/deser flow
-│  diagrams and validation constraints — ready for test creation.
+│  Both test files already existed (created in a previous session). Verified
+│  all tests pass on 2026-02-02.
 │
-│  STEPS:
-│  │  1. Create ReferenceConfigSpecTest (test defaults, validation R-V5/R-V6/R-V7,
-│  │     shouldExpand(), merge, format×expand combos, valueWriter/Reader)
-│  │  2. Create ReferenceConfigResolverSpecTest (source hierarchy, scope chain,
-│  │     caching, validation integration, reference-specific properties)
-│  │  3. Verify all tests pass
+│  FILES:
+│  │  - ReferenceConfigSpecTest.java — 56 tests across 8 sections
+│  │    1. Default Values (12) — all 11 properties + ConfigProperty alignment
+│  │    2. Format and Key Customization (6) — PLAIN/STRUCTURED, refKey, refTypeKey, proxyKey
+│  │    3. Expansion Control (5) — expand, expandGlobal, expandDepth, expandIgnoreBidirectional, serializeInstanceType
+│  │    4. Computed Properties shouldExpand() (5) — full truth table
+│  │    5. Validation Rules (11) — R-V5, R-V6, R-V7, multiple diagnostics
+│  │    6. Custom Value Reader/Writer (4)
+│  │    7. Merge Behavior (9) — override, preserve, cascading, enum/boolean/integer merge
+│  │    8. Format × Expand Combinations (4)
+│  │
+│  │  - ReferenceConfigResolverSpecTest.java — 23 tests across 6 sections
+│  │    1. Source Hierarchy (6) — R.1-R.6: Options→Resource→Factory→Module→Annotation→Built-in
+│  │    2. Scope Chain (4) — R.7-R.10: Global→Class→Feature, per-reference independence
+│  │    3. Combined Resolution (2) — R.11-R.12: mixed sources, dynamic overrides static
+│  │    4. Caching (3) — R.13-R.15: same feature cached, clearCaches, separate entries
+│  │    5. Validation Integration (2) — R.16-R.17: R-V5 during resolution, clean config
+│  │    6. Reference-Specific Properties (4) — R.18-R.21: expand, expandGlobal, valueWriter/Reader, serializeInstanceType
+│  │    7. Global Reference Config (2) — R.22-R.23: global resolve + caching
 │
-│  AFTER REFERENCE:
-│  │  - All config spec tests complete (6/6)
+│  SPEC TEST COVERAGE STATUS (updated 2026-02-02) — ALL COMPLETE:
+│  │  | Config Class       | Unit Tests | Spec Tests | Resolver Spec Tests |
+│  │  |--------------------|------------|------------|---------------------|
+│  │  | TypeConfig         | 41         | 54         | 24 + 20 (shared)    |
+│  │  | IdConfig           | 27         | 78         | 17                  |
+│  │  | SuperTypeConfig    | 31         | 48         | 21                  |
+│  │  | DiscriminatorConfig| 61         | 38         | 17                  |
+│  │  | FeatureConfig      | 52         | 64         | 30                  |
+│  │  | ReferenceConfig    | 43         | 56         | 23                  |
+│
+│  NEXT STEPS:
+│  │  - All config spec tests complete (6/6) ✅
 │  │  - Ready for Phase 2: Serialization/Deserialization integration tests
 │  │  - Known bug: v2 deserialization gate uses isSerialize() instead of shouldDeserialize()
 │  │    (see completed Feature task below for details)
@@ -225,7 +274,7 @@ COMPLETED: SuperType + Discriminator Resolver Spec Tests + Refactoring - ✅ (20
 │
 │  ALL 75 TESTS PASSING
 │
-│  SPEC TEST COVERAGE STATUS (updated 2026-01-30):
+│  SPEC TEST COVERAGE STATUS (updated 2026-02-02) — ALL COMPLETE:
 │  │  | Config Class       | Unit Tests | Spec Tests | Resolver Spec Tests |
 │  │  |--------------------|------------|------------|---------------------|
 │  │  | TypeConfig         | 41         | 54         | 24 + 20 (shared)    |
@@ -233,7 +282,7 @@ COMPLETED: SuperType + Discriminator Resolver Spec Tests + Refactoring - ✅ (20
 │  │  | SuperTypeConfig    | 31         | 48         | 21                  |
 │  │  | DiscriminatorConfig| 61         | 38         | 17                  |
 │  │  | FeatureConfig      | 52         | 64         | 30                  |
-│  │  | ReferenceConfig    | 43         | MISSING    | MISSING             |
+│  │  | ReferenceConfig    | 43         | 56         | 23                  |
 │
 ---
 
@@ -1120,6 +1169,54 @@ The **[16-annotation-reference.md](codec-v2-spec/16-annotation-reference.md)** d
 5. **Feature Configuration** → EReference + EAttribute (per-feature settings)
 6. **Scope Settings** → Global/CodecConfig only (NOT in EAnnotations)
 
+### Session 2026-02-02: Resource Integration Test Migration + Implementation Gap Fixes
+
+**Goal:** Migrate 8 complex resource integration tests from `codec.v2.resource` → `codec.resource`, fix all 23 test failures discovered during migration.
+
+**Tests Migrated (8 complex resource tests):**
+
+| Test Class | Scope |
+|-----------|-------|
+| `CodecResourceIdTest` | ID serialization (PLAIN, STRUCTURED, KeyMode, multi-feature) |
+| `CodecResourceSuperTypeTest` | SuperType serialization (ARRAY, STRING, smartCompression) |
+| `CodecResourceSmartCompressionTest` | Smart compression (same/cross namespace) |
+| `SmartCompressionSameSchemaTest` | Smart compression same-schema edge case |
+| `CodecResourceFeaturePathTypeTest` | FeaturePath discriminatorPath inheritance |
+| `CodecResourceCustomValueTest` | Custom value reader/writer integration |
+| `GlobalIgnoreFeatureTest` | Global ignoreFeatures list |
+| `ProxyCreationTest` | Proxy creation for unresolved references |
+
+**Implementation Gaps Fixed (6 gaps):**
+
+| Gap | Issue | Fix |
+|-----|-------|-----|
+| GAP-001 | `ignoreFeatures` not flowing from `ConfigurationResolver` to `CodecModule` | Added `getGlobalProperty()` API to `ConfigurationResolver`; extract + pass in `CodecResource.createObjectMapper()` |
+| GAP-002 | `smartCompression` not flowing | Fixed together with GAP-001 |
+| GAP-003 | SuperType NPE (`getSuperTypeKey()` returns null) | Use `getEffectiveSuperTypeKey(format)` in `SuperTypeSerializationEntry.getKey()` + `serialize()` |
+| GAP-004 | SuperType missing smartCompression flag | Pass `config.isSmartCompression()` to `SuperTypeSerializationEntry` constructor in `CodecEObjectSerializer` |
+| GAP-005 | FeaturePath type suppression (annotation inheritance) | Walk `getEAllSuperTypes()` in `ConfigurationResolver.resolveTypeConfig()` for annotation properties |
+| GAP-006 | ID disable checked wrong enum (`IdStrategy.NONE` vs spec `IdKeyMode.NONE`) | Changed `IdSerializationEntry.shouldSerialize()` to check `IdKeyMode.NONE` per spec §2, §8.6 |
+
+**Files Changed:**
+
+| File | Changes |
+|------|---------|
+| `ConfigurationResolver.java` | Added `getGlobalProperty()`, global ignoreFeatures in `resolveFeatureConfig()`, annotation inheritance in `resolveTypeConfig()` |
+| `CodecResource.java` | Extract global properties from resolver, pass to `CodecModule.Builder` |
+| `SuperTypeSerializationEntry.java` | Use `getEffectiveSuperTypeKey(format)` instead of `getSuperTypeKey()` |
+| `CodecEObjectSerializer.java` | Pass `config.isSmartCompression()` to `SuperTypeSerializationEntry` |
+| `IdSerializationEntry.java` | Check `IdKeyMode.NONE` instead of `IdStrategy.NONE`, removed unused `IdStrategy` import |
+| `CodecResourceIdTest.java` | Fixed `idDisabled()` to use `idKeyMode=NONE` (spec-correct) instead of defaults |
+
+**Spec Alignment Finding:**
+- Spec (09-id.md §2, §8.6): `IdKeyMode.NONE` disables ID serialization
+- Spec (09-id.md §5): `IdStrategy` only has `ID_FIELD` and `COMBINED` (no `NONE`)
+- Implementation had incorrectly used `IdStrategy.NONE` — fixed to `IdKeyMode.NONE`
+
+**Final Test Counts:** 1696 tests, 0 failures, 800 skipped (deprecated old v2 tests). BUILD SUCCESSFUL.
+
+---
+
 ### Session 2026-02-01: 8-Step Package Migration Complete
 
 **Goal:** Execute the bottom-up migration plan from `codec.v2.*` → `codec.*` packages.
@@ -1376,6 +1473,11 @@ Added to ID spec:
 | **TOTAL** | **31** | **22** | **8** | **1** |
 
 ### Remaining Work
+
+**Migration Cleanup:**
+- 800 old v2 tests remain `@Deprecated` + `@Disabled` — delete when migration finalized
+- `IdStrategy.NONE` exists in EMF enum but is not in spec (only `ID_FIELD`, `COMBINED`) — consider removing from ecore model
+- 1 test skipped: `FeatureTypeHintWarningTest` — EObject-typed feature without hint results in null (pre-existing)
 
 **Deferred Items (Future Work):**
 - **2.3** Field ordering direction (LOW priority)

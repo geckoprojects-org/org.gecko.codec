@@ -78,7 +78,7 @@ public class SuperTypeSerializationEntry implements SerializationEntry {
 
     @Override
     public String getKey() {
-        return config.getSuperTypeKey();
+        return config.getEffectiveSuperTypeKey(config.getFormat());
     }
 
     @Override
@@ -97,9 +97,11 @@ public class SuperTypeSerializationEntry implements SerializationEntry {
             return;
         }
 
+        String effectiveKey = config.getEffectiveSuperTypeKey(config.getFormat());
+
         if (config.isAsArray()) {
             // ARRAY presentation: ["Entity", "http://audit.org/1.0#//Auditable"]
-            gen.writeArrayPropertyStart(config.getSuperTypeKey());
+            gen.writeArrayPropertyStart(effectiveKey);
             for (String superType : superTypes) {
                 gen.writeString(superType);
             }
@@ -107,7 +109,7 @@ public class SuperTypeSerializationEntry implements SerializationEntry {
         } else {
             // STRING presentation: "Entity,http://audit.org/1.0#//Auditable"
             String joined = String.join(config.getSeparator(), superTypes);
-            gen.writeStringProperty(config.getSuperTypeKey(), joined);
+            gen.writeStringProperty(effectiveKey, joined);
         }
     }
 
