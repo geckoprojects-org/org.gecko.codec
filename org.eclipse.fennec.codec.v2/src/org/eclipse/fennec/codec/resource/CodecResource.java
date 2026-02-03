@@ -163,7 +163,10 @@ public class CodecResource extends ResourceImpl {
 
         Map<String, Object> effectiveOptions = (Map<String, Object>) mergeOptions(options);
 
-        mapper = createObjectMapper(effectiveOptions);
+        // Enrich resolver with save options (highest priority in config hierarchy)
+        ConfigurationResolver operationResolver = enrichWithOptions(resolver, effectiveOptions);
+
+        mapper = createObjectMapper(effectiveOptions, operationResolver);
 
         // Set feature value writers if provided
         Object valueWritersOption = effectiveOptions.get(CodecOptions.CODEC_FEATURE_VALUE_WRITERS);
@@ -205,12 +208,15 @@ public class CodecResource extends ResourceImpl {
 
         Map<String, Object> mergedOptions = (Map<String, Object>) mergeOptions(effectiveOptions);
 
-        mapper = createObjectMapper(mergedOptions);
+        // Enrich resolver with load options (highest priority in config hierarchy)
+        ConfigurationResolver operationResolver = enrichWithOptions(resolver, mergedOptions);
+
+        mapper = createObjectMapper(mergedOptions, operationResolver);
 
         // Create EffectiveCodecConfig for the codec factory
         DiagnosticCollector diagnosticCollector = new DiagnosticCollector();
         EffectiveCodecConfig effectiveConfig = EffectiveCodecConfig.builder()
-                .resolver(resolver)
+                .resolver(operationResolver)
                 .diagnostics(diagnosticCollector)
                 .metadataService(metadataService)
                 .valueRegistry(valueRegistry != null ? valueRegistry : new CodecValueRegistry())
@@ -355,18 +361,39 @@ public class CodecResource extends ResourceImpl {
                 .build();
     }
 
-    private ObjectMapper createObjectMapper(Map<String, Object> options) {
+    /**
+     * Enriches a resolver with load/save options as highest priority.
+     * <p>
+     * This implements the spec's configuration hierarchy where load/save options
+     * have the highest priority (Level 1), overriding all other configuration sources:
+     * OPTIONS → RESOURCE → FACTORY → MODULE → ANNOTATION → DEFAULT
+     *
+     * @param resolver the base resolver (with module/annotation/etc. properties)
+     * @param options the load/save options map
+     * @return a new resolver with options set as highest priority
+     */
+    private static ConfigurationResolver enrichWithOptions(ConfigurationResolver resolver,
+            Map<String, Object> options) {
+        if (isNull(options) || options.isEmpty()) {
+            return resolver;
+        }
+        return resolver.toBuilder()
+                .optionsProperties(options)
+                .build();
+    }
+
+    private ObjectMapper createObjectMapper(Map<String, Object> options, ConfigurationResolver operationResolver) {
         // Create TypeDiscriminatorService for MAPPED strategy resolution
         TypeDiscriminatorService typeService =
                 TypeDiscriminatorService.fromMetadataService(metadataService);
 
-        // Extract global properties from the resolver to pass to the module
+        // Extract global properties from the operation resolver (includes load/save options)
         @SuppressWarnings("unchecked")
-        List<String> ignoreFeatures = resolver.getGlobalProperty(ConfigProperty.IGNORE_FEATURES);
-        boolean smartCompression = resolver.getGlobalProperty(ConfigProperty.SMART_COMPRESSION);
+        List<String> ignoreFeatures = operationResolver.getGlobalProperty(ConfigProperty.IGNORE_FEATURES);
+        boolean smartCompression = operationResolver.getGlobalProperty(ConfigProperty.SMART_COMPRESSION);
 
         CodecModule.Builder moduleBuilder = CodecModule.builder()
-                .resolver(resolver)
+                .resolver(operationResolver)
                 .metadataService(metadataService)
                 .typeDiscriminatorService(typeService)
                 .globalIgnoreFeatures(ignoreFeatures)

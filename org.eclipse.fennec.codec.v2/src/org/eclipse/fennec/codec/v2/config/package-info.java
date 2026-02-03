@@ -11,6 +11,15 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
+/**
+ * Old codec.v2 configuration package.
+ * <p>
+ * <strong>DEPRECATED:</strong> This package is deprecated. Use {@link org.eclipse.fennec.codec.config}
+ * instead, which provides the new spec-compliant configuration system with ConfigurationResolver.
+ * </p>
+ *
+ * @deprecated Use {@link org.eclipse.fennec.codec.config} package instead
+ */
 @org.osgi.annotation.bundle.Export
 @org.osgi.annotation.versioning.Version("1.0.0")
 package org.eclipse.fennec.codec.v2.config;

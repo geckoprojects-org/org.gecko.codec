@@ -27,6 +27,11 @@ import org.eclipse.fennec.model.metadata.TypeStrategy;
 /**
  * Central configuration holder for codec.v2 serialization settings.
  * <p>
+ * <strong>DEPRECATED:</strong> Use {@link org.eclipse.fennec.codec.config.ConfigurationResolver}
+ * in the new codec implementation instead. This class is part of the old codec.v2 package
+ * that is being replaced.
+ * </p>
+ * <p>
  * This class holds all codec-wide defaults that can be overridden at various levels:
  * <ol>
  *   <li>Load/Save options (highest priority)</li>
@@ -37,9 +42,11 @@ import org.eclipse.fennec.model.metadata.TypeStrategy;
  * </ol>
  * </p>
  *
+ * @deprecated Use {@link org.eclipse.fennec.codec.config.ConfigurationResolver} instead
  * @author Mark Hoffmann
  * @since 2025-12-11
  */
+@Deprecated
 public class CodecConfiguration {
 
     // ========================================================================

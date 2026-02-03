@@ -96,6 +96,10 @@ public class TypeSerializationEntry implements SerializationEntry {
 
     @Override
     public boolean shouldSerialize(SerializationState state) {
+        // Don't serialize when strategy is NONE (spec: "no type information should be written")
+        if (config.getStrategy() == TypeStrategy.NONE) {
+            return false;
+        }
         // Don't serialize _type when discriminatorPath is configured
         // because the type info is already embedded in the content at the feature path
         if (hasDiscriminatorPath()) {

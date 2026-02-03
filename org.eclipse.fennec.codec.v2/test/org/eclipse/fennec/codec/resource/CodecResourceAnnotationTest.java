@@ -435,4 +435,149 @@ class CodecResourceAnnotationTest {
 
         return resource.getContents().isEmpty() ? null : resource.getContents().get(0);
     }
+
+    private String serializeWithOptions(EObject object, Map<String, Object> options) throws IOException {
+        CodecResource resource = createResource();
+        resource.getContents().add(object);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        resource.save(out, options);
+
+        return out.toString(StandardCharsets.UTF_8);
+    }
+
+    // ========================================================================
+    // Options Override Tests - verify load/save options take precedence
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Options Override Annotations")
+    class OptionsOverrideAnnotations {
+
+        @Test
+        @DisplayName("save options override annotation typeKey")
+        void saveOptionsOverrideAnnotationTypeKey() throws IOException {
+            // Product annotation has typeKey="type", typeStrategy=NAME
+            // We override typeKey to "_customType" via save options
+            EObject product = createProduct();
+            product.eSet(skuAttribute, "PROD-001");
+            product.eSet(productNameAttribute, "Test Product");
+
+            Map<String, Object> options = new HashMap<>();
+            options.put("typeKey", "_customType");
+
+            String json = serializeWithOptions(product, options);
+            System.out.println("Product with overridden typeKey:\n" + json);
+
+            // Should use the overridden key, not the annotation's "type"
+            assertTrue(json.contains("\"_customType\""),
+                "JSON should use overridden typeKey '_customType', but got: " + json);
+            assertFalse(json.contains("\"type\":\"Product\""),
+                "JSON should NOT use annotation typeKey 'type'");
+        }
+
+        @Test
+        @DisplayName("save options override annotation typeStrategy")
+        void saveOptionsOverrideAnnotationTypeStrategy() throws IOException {
+            // Product annotation has typeStrategy=NAME
+            // We override to NONE to suppress type info
+            EObject product = createProduct();
+            product.eSet(skuAttribute, "PROD-002");
+            product.eSet(productNameAttribute, "No Type Product");
+
+            Map<String, Object> options = new HashMap<>();
+            options.put("typeStrategy", "NONE");
+
+            String json = serializeWithOptions(product, options);
+            System.out.println("Product with typeStrategy=NONE:\n" + json);
+
+            // Should NOT contain type info
+            assertFalse(json.contains("\"type\""),
+                "JSON should NOT contain type key when typeStrategy=NONE");
+            assertFalse(json.contains("\"_type\""),
+                "JSON should NOT contain _type when typeStrategy=NONE");
+            assertFalse(json.contains("\"Product\"") && json.contains("type"),
+                "JSON should NOT contain type name as type indicator");
+        }
+
+        @Test
+        @DisplayName("save options override annotation idKey")
+        void saveOptionsOverrideAnnotationIdKey() throws IOException {
+            // Order annotation has idKey="orderId"
+            // We override to "_customId" via save options
+            EObject order = createOrder();
+            order.eSet(customerIdAttribute, "CUST-001");
+            order.eSet(orderDateAttribute, "2025-01-15");
+            order.eSet(totalAttribute, 99.99);
+
+            Map<String, Object> options = new HashMap<>();
+            options.put("idKey", "_customId");
+
+            String json = serializeWithOptions(order, options);
+            System.out.println("Order with overridden idKey:\n" + json);
+
+            // Should use the overridden key
+            assertTrue(json.contains("\"_customId\""),
+                "JSON should use overridden idKey '_customId', but got: " + json);
+        }
+
+        @Test
+        @DisplayName("save options can force serialization of ignored feature")
+        void saveOptionsForceIgnoredFeature() throws IOException {
+            // Product.internalCode has ignore=true in annotation
+            // We override with forceWrite=true to serialize it anyway
+            EObject product = createProduct();
+            product.eSet(skuAttribute, "PROD-003");
+            product.eSet(productNameAttribute, "Secret Product");
+            product.eSet(internalCodeAttribute, "TOP-SECRET-123");
+
+            // First verify without override - internalCode should be absent
+            String jsonWithoutOverride = serialize(product);
+            assertFalse(jsonWithoutOverride.contains("internalCode"),
+                "Without override, internalCode should be ignored");
+            assertFalse(jsonWithoutOverride.contains("TOP-SECRET"),
+                "Without override, secret value should not appear");
+
+            // Now with forceWrite at global level
+            Map<String, Object> options = new HashMap<>();
+            // Use nested map for feature-level config
+            Map<String, Object> productConfig = new HashMap<>();
+            Map<String, Object> internalCodeConfig = new HashMap<>();
+            internalCodeConfig.put("forceWrite", true);
+            productConfig.put("internalCode", internalCodeConfig);
+            options.put("Product", productConfig);
+
+            String jsonWithOverride = serializeWithOptions(product, options);
+            System.out.println("Product with forceWrite for internalCode:\n" + jsonWithOverride);
+
+            assertTrue(jsonWithOverride.contains("\"internalCode\""),
+                "With forceWrite, internalCode should be serialized");
+            assertTrue(jsonWithOverride.contains("TOP-SECRET-123"),
+                "With forceWrite, secret value should appear");
+        }
+
+        @Test
+        @DisplayName("global options apply to all classes")
+        void globalOptionsApplyToAllClasses() throws IOException {
+            // Set global typeStrategy=NONE - should affect all classes
+            EObject product = createProduct();
+            product.eSet(skuAttribute, "PROD-004");
+            product.eSet(productNameAttribute, "Global Test");
+
+            EObject order = createOrder();
+            order.eSet(customerIdAttribute, "CUST-002");
+            order.eSet(orderDateAttribute, "2025-02-01");
+
+            Map<String, Object> options = new HashMap<>();
+            options.put("typeStrategy", "NONE");
+
+            String productJson = serializeWithOptions(product, options);
+            System.out.println("Product with global typeStrategy=NONE:\n" + productJson);
+
+            // Product normally has typeStrategy=NAME from annotation
+            // Global option should override it
+            assertFalse(productJson.contains("\"type\":"),
+                "Global typeStrategy=NONE should override Product annotation");
+        }
+    }
 }
