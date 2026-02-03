@@ -25,8 +25,10 @@ import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.fennec.codec.api.value.AttributeValueReader;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
+import org.eclipse.fennec.codec.value.AttributeValueReader;
+import org.eclipse.fennec.codec.value.CodecReaderContext;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +37,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JsonParser;
-import tools.jackson.databind.DeserializationContext;
 
 /**
  * Tests for canHandle() validation in AttributeDeserializationEntry.
@@ -71,14 +72,19 @@ class AttributeDeserializationEntryCanHandleTest extends DeserializationEntryTes
             // Reader that accepts String attributes
             AttributeValueReader<String> stringReader = new AttributeValueReader<>() {
                 @Override
+                public String getName() {
+                    return "stringReader";
+                }
+
+                @Override
                 public boolean canHandle(EAttribute attribute) {
                     return attribute.getEAttributeType().getInstanceClass() == String.class;
                 }
 
                 @Override
-                public String read(JsonParser parser, EAttribute attr, DeserializationContext ctxt)
+                public String read(CodecReaderContext ctx, EAttribute attr)
                         throws IOException {
-                    return "custom:" + parser.getString();
+                    return "custom:" + ctx.getParser().getString();
                 }
             };
 
@@ -90,9 +96,13 @@ class AttributeDeserializationEntryCanHandleTest extends DeserializationEntryTes
                     .valueReaderName("stringReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should not log warning - reader is compatible
             AttributeDeserializationEntry entry = new AttributeDeserializationEntry(
-                    config, nameAttribute, registry);
+                    config, nameAttribute, entryContext);
 
             assertNotNull(entry);
             assertEquals(0, logHandler.getWarningCount(),
@@ -105,15 +115,20 @@ class AttributeDeserializationEntryCanHandleTest extends DeserializationEntryTes
             // Reader that only handles Integer attributes
             AttributeValueReader<Integer> intReader = new AttributeValueReader<>() {
                 @Override
+                public String getName() {
+                    return "intReader";
+                }
+
+                @Override
                 public boolean canHandle(EAttribute attribute) {
                     Class<?> type = attribute.getEAttributeType().getInstanceClass();
                     return type == Integer.class || type == int.class;
                 }
 
                 @Override
-                public Integer read(JsonParser parser, EAttribute attr, DeserializationContext ctxt)
+                public Integer read(CodecReaderContext ctx, EAttribute attr)
                         throws IOException {
-                    return parser.getIntValue() * 2;
+                    return ctx.getParser().getIntValue() * 2;
                 }
             };
 
@@ -125,9 +140,13 @@ class AttributeDeserializationEntryCanHandleTest extends DeserializationEntryTes
                     .valueReaderName("intReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should log warning - reader cannot handle String attribute
             AttributeDeserializationEntry entry = new AttributeDeserializationEntry(
-                    config, nameAttribute, registry);
+                    config, nameAttribute, entryContext);
 
             assertNotNull(entry);
             assertEquals(1, logHandler.getWarningCount(),
@@ -144,12 +163,17 @@ class AttributeDeserializationEntryCanHandleTest extends DeserializationEntryTes
             // Reader that rejects all attributes
             AttributeValueReader<Object> rejectingReader = new AttributeValueReader<>() {
                 @Override
+                public String getName() {
+                    return "rejectingReader";
+                }
+
+                @Override
                 public boolean canHandle(EAttribute attribute) {
                     return false;
                 }
 
                 @Override
-                public Object read(JsonParser parser, EAttribute attr, DeserializationContext ctxt) {
+                public Object read(CodecReaderContext ctx, EAttribute attr) {
                     throw new AssertionError("Should not be called");
                 }
             };
@@ -162,8 +186,12 @@ class AttributeDeserializationEntryCanHandleTest extends DeserializationEntryTes
                     .valueReaderName("rejectingReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             AttributeDeserializationEntry entry = new AttributeDeserializationEntry(
-                    config, nameAttribute, registry);
+                    config, nameAttribute, entryContext);
 
             // The entry should still work - it falls back to default behavior
             EObject person = createPerson();
@@ -185,10 +213,20 @@ class AttributeDeserializationEntryCanHandleTest extends DeserializationEntryTes
 
         @Test
         @DisplayName("accepts generic CodecValueReader and uses it for transformation")
-        void acceptsGenericReaderAndUsesIt() {
+        void acceptsGenericReaderAndUsesIt() throws IOException {
             // Generic reader (not AttributeValueReader) - transforms the value
-            org.eclipse.fennec.codec.api.value.CodecValueReader<String, EAttribute> prefixReader =
-                    (parser, attr, ctxt) -> "PREFIX_" + parser.getString();
+            org.eclipse.fennec.codec.value.CodecValueReader<String, EAttribute> prefixReader =
+                    new org.eclipse.fennec.codec.value.CodecValueReader<>() {
+                        @Override
+                        public String getName() {
+                            return "prefixReader";
+                        }
+
+                        @Override
+                        public String read(CodecReaderContext ctx, EAttribute attr) throws IOException {
+                            return "PREFIX_" + ctx.getParser().getString();
+                        }
+                    };
 
             CodecValueRegistry registry = new CodecValueRegistry();
             registry.registerReader("prefixReader", prefixReader);
@@ -198,9 +236,13 @@ class AttributeDeserializationEntryCanHandleTest extends DeserializationEntryTes
                     .valueReaderName("prefixReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should not log warning - generic readers have no canHandle() to check
             AttributeDeserializationEntry entry = new AttributeDeserializationEntry(
-                    config, nameAttribute, registry);
+                    config, nameAttribute, entryContext);
 
             assertNotNull(entry);
             assertEquals(0, logHandler.getWarningCount(),

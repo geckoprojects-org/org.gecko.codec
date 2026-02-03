@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.junit.jupiter.api.DisplayName;

@@ -29,6 +29,7 @@ import org.eclipse.fennec.codec.config.ReferenceConfig;
 import org.eclipse.fennec.codec.config.SuperTypeConfig;
 import org.eclipse.fennec.codec.config.TypeConfig;
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.context.ContextHelper;
 import org.eclipse.fennec.codec.context.EMFCodecWriteContext;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
@@ -73,6 +74,7 @@ import tools.jackson.databind.ValueSerializer;
 public class CodecEObjectSerializer extends ValueSerializer<EObject> {
 
     private final EffectiveCodecConfig config;
+    private final CodecEntryContext entryContext;
 
     /**
      * Creates a new CodecEObjectSerializer with the effective codec configuration.
@@ -81,6 +83,12 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
      */
     public CodecEObjectSerializer(EffectiveCodecConfig config) {
         this.config = config;
+        // Create entry context once for all entries
+        this.entryContext = CodecEntryContext.builder()
+                .effectiveConfig(config)
+                .diagnostics(config.getDiagnostics())
+                .valueRegistry(config.getValueRegistry())
+                .build();
     }
 
     @Override
@@ -199,8 +207,7 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
 
             SerializationEntry featureEntry;
             if (feature instanceof EAttribute attribute) {
-                featureEntry = new AttributeSerializationEntry(featureConfig, attribute,
-                        config.getValueRegistry());
+                featureEntry = new AttributeSerializationEntry(featureConfig, attribute, entryContext);
             } else if (feature instanceof EReference reference) {
                 // Resolve per-reference refKey from ReferenceConfig
                 ReferenceConfig refConfig = config.resolveReferenceConfig(reference);
@@ -208,7 +215,7 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
 
                 featureEntry = new ReferenceSerializationEntry(
                         featureConfig, reference, refKey, config.isSmartCompression(), config,
-                        config.getValueRegistry());
+                        entryContext);
             } else {
                 continue;
             }

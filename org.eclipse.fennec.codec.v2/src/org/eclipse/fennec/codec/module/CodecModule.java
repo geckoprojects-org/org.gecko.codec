@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.deser.CodecDeserializers;

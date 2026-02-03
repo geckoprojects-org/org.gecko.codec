@@ -20,10 +20,12 @@ import java.util.logging.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.fennec.codec.api.value.AttributeValueWriter;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.api.value.CodecValueWriter;
 import org.eclipse.fennec.codec.config.FeatureConfig;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
+import org.eclipse.fennec.codec.value.AttributeValueWriter;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecValueWriter;
+import org.eclipse.fennec.codec.value.CodecWriterContext;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 
 import tools.jackson.core.JsonGenerator;
@@ -47,6 +49,7 @@ public class AttributeSerializationEntry implements SerializationEntry {
     private final FeatureConfig config;
     private final EAttribute attribute;
     private final CodecValueWriter<Object, EAttribute> customWriter;
+    private final CodecEntryContext entryContext;
 
     /**
      * Creates a new AttributeSerializationEntry with the feature configuration.
@@ -63,16 +66,18 @@ public class AttributeSerializationEntry implements SerializationEntry {
      *
      * @param config the feature configuration
      * @param attribute the EAttribute to serialize
-     * @param valueRegistry the registry for custom value writers (may be null)
+     * @param entryContext the codec entry context for custom writers (may be null)
      */
     @SuppressWarnings("unchecked")
     public AttributeSerializationEntry(FeatureConfig config, EAttribute attribute,
-            CodecValueRegistry valueRegistry) {
+            CodecEntryContext entryContext) {
         this.config = config;
         this.attribute = attribute;
+        this.entryContext = entryContext;
 
         // Pre-resolve the custom writer at construction time
         String writerName = config.getValueWriterName();
+        CodecValueRegistry valueRegistry = entryContext != null ? entryContext.getValueRegistry() : null;
         if (writerName != null && !writerName.isEmpty() && valueRegistry != null) {
             CodecValueWriter<?, ?> writer = valueRegistry.getWriter(writerName).orElse(null);
 
@@ -158,9 +163,10 @@ public class AttributeSerializationEntry implements SerializationEntry {
             return;
         }
 
-        if (customWriter != null) {
+        if (customWriter != null && entryContext != null) {
             try {
-                customWriter.write(value, attribute, gen, ctxt);
+                CodecWriterContext writerCtx = entryContext.createWriterContext(gen, ctxt);
+                customWriter.write(value, attribute, writerCtx);
             } catch (IOException e) {
                 throw new UncheckedIOException("Custom value writer failed for attribute: " + attribute.getName(), e);
             }

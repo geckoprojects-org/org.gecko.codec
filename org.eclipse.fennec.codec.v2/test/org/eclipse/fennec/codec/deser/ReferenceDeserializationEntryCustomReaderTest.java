@@ -22,8 +22,10 @@ import java.io.UncheckedIOException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.config.FeatureConfig;
-import org.eclipse.fennec.codec.api.value.CodecValueReader;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
+import org.eclipse.fennec.codec.value.CodecReaderContext;
+import org.eclipse.fennec.codec.value.CodecValueReader;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,9 +50,17 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
         @DisplayName("uses custom reader when configured")
         void usesCustomReaderWhenConfigured() {
             // Custom reader transforms ObjectId to EMF URI
-            CodecValueReader<String, EReference> customReader = (parser, ref, ctxt) -> {
-                String objectId = parser.getString();
-                return "#/persons/" + objectId;  // Transform to EMF URI
+            CodecValueReader<String, EReference> customReader = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "customRefReader";
+                }
+
+                @Override
+                public String read(CodecReaderContext ctx, EReference ref) throws IOException {
+                    String objectId = ctx.getParser().getString();
+                    return "#/persons/" + objectId;  // Transform to EMF URI
+                }
             };
 
             CodecValueRegistry registry = new CodecValueRegistry();
@@ -61,8 +71,12 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
                     .valueReaderName("customRefReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
@@ -89,8 +103,12 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
                     .valueReaderName("nonExistentReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
@@ -112,7 +130,7 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
                     .valueReaderName("customRefReader")
                     .build();
 
-            // Pass null registry
+            // Pass null context
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
                     config, managerRef, DEFAULT_REF_KEY, null);
 
@@ -131,15 +149,29 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
         @DisplayName("does not use reader when reader name is empty")
         void doesNotUseReaderWhenReaderNameIsEmpty() {
             CodecValueRegistry registry = new CodecValueRegistry();
-            registry.registerReader("customRefReader", (parser, ref, ctxt) -> "transformed");
+            registry.registerReader("customRefReader", new CodecValueReader<String, EReference>() {
+                @Override
+                public String getName() {
+                    return "customRefReader";
+                }
+
+                @Override
+                public String read(CodecReaderContext ctx, EReference ref) {
+                    return "transformed";
+                }
+            });
 
             FeatureConfig config = FeatureConfig.builder()
                     .key("manager")
                     .valueReaderName("")  // Empty reader name
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
@@ -161,9 +193,17 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
         @Test
         @DisplayName("uses custom reader for array elements")
         void usesCustomReaderForArrayElements() {
-            CodecValueReader<String, EReference> customReader = (parser, ref, ctxt) -> {
-                String objectId = parser.getString();
-                return "#/colleagues/" + objectId;
+            CodecValueReader<String, EReference> customReader = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "customRefReader";
+                }
+
+                @Override
+                public String read(CodecReaderContext ctx, EReference ref) throws IOException {
+                    String objectId = ctx.getParser().getString();
+                    return "#/colleagues/" + objectId;
+                }
             };
 
             CodecValueRegistry registry = new CodecValueRegistry();
@@ -174,8 +214,12 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
                     .valueReaderName("customRefReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, colleaguesRef, DEFAULT_REF_KEY, registry);
+                    config, colleaguesRef, DEFAULT_REF_KEY, entryContext);
 
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
@@ -193,9 +237,17 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
         @Test
         @DisplayName("uses custom reader for PLAIN format array elements")
         void usesCustomReaderForPlainFormatArrayElements() {
-            CodecValueReader<String, EReference> customReader = (parser, ref, ctxt) -> {
-                String objectId = parser.getString();
-                return "#/colleagues/" + objectId;
+            CodecValueReader<String, EReference> customReader = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "customRefReader";
+                }
+
+                @Override
+                public String read(CodecReaderContext ctx, EReference ref) throws IOException {
+                    String objectId = ctx.getParser().getString();
+                    return "#/colleagues/" + objectId;
+                }
             };
 
             CodecValueRegistry registry = new CodecValueRegistry();
@@ -206,8 +258,12 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
                     .valueReaderName("customRefReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, colleaguesRef, DEFAULT_REF_KEY, registry);
+                    config, colleaguesRef, DEFAULT_REF_KEY, entryContext);
 
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
@@ -230,8 +286,16 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
         @Test
         @DisplayName("wraps IOException from custom reader")
         void wrapsIOExceptionFromCustomReader() {
-            CodecValueReader<String, EReference> failingReader = (parser, ref, ctxt) -> {
-                throw new IOException("Test IO error");
+            CodecValueReader<String, EReference> failingReader = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "failingReader";
+                }
+
+                @Override
+                public String read(CodecReaderContext ctx, EReference ref) throws IOException {
+                    throw new IOException("Test IO error");
+                }
             };
 
             CodecValueRegistry registry = new CodecValueRegistry();
@@ -242,8 +306,12 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
                     .valueReaderName("failingReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
@@ -265,10 +333,18 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
         @Test
         @DisplayName("reads MongoDB ObjectId format")
         void readsMongoDbObjectIdFormat() {
-            CodecValueReader<String, EReference> mongoIdReader = (parser, ref, ctxt) -> {
-                String objectId = parser.getString();
-                // Transform MongoDB ObjectId to EMF URI format
-                return "mongodb://mydb/persons/" + objectId;
+            CodecValueReader<String, EReference> mongoIdReader = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "mongoId";
+                }
+
+                @Override
+                public String read(CodecReaderContext ctx, EReference ref) throws IOException {
+                    String objectId = ctx.getParser().getString();
+                    // Transform MongoDB ObjectId to EMF URI format
+                    return "mongodb://mydb/persons/" + objectId;
+                }
             };
 
             CodecValueRegistry registry = new CodecValueRegistry();
@@ -279,8 +355,12 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
                     .valueReaderName("mongoId")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);
@@ -297,14 +377,22 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
         @Test
         @DisplayName("reads custom URI scheme")
         void readsCustomUriScheme() {
-            CodecValueReader<String, EReference> customUriReader = (parser, ref, ctxt) -> {
-                String customUri = parser.getString();
-                // Transform urn:myapp:Person/42 to EMF URI
-                if (customUri.startsWith("urn:myapp:")) {
-                    String path = customUri.substring("urn:myapp:".length());
-                    return "#//" + path.replace("/", "/@");
+            CodecValueReader<String, EReference> customUriReader = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "customUri";
                 }
-                return customUri;
+
+                @Override
+                public String read(CodecReaderContext ctx, EReference ref) throws IOException {
+                    String customUri = ctx.getParser().getString();
+                    // Transform urn:myapp:Person/42 to EMF URI
+                    if (customUri.startsWith("urn:myapp:")) {
+                        String path = customUri.substring("urn:myapp:".length());
+                        return "#//" + path.replace("/", "/@");
+                    }
+                    return customUri;
+                }
             };
 
             CodecValueRegistry registry = new CodecValueRegistry();
@@ -315,8 +403,12 @@ class ReferenceDeserializationEntryCustomReaderTest extends DeserializationEntry
                     .valueReaderName("customUri")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             EObject person = createPerson();
             DeserializationState state = createStateWithObject(person);

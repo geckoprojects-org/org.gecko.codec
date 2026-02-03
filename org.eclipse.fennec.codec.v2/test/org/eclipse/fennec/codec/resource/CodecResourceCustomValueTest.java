@@ -28,9 +28,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.util.MetadataServiceFactory;
-import org.eclipse.fennec.codec.api.value.CodecValueReader;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.api.value.CodecValueWriter;
+import org.eclipse.fennec.codec.value.CodecReaderContext;
+import org.eclipse.fennec.codec.value.CodecValueReader;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecValueWriter;
+import org.eclipse.fennec.codec.value.CodecWriterContext;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
@@ -121,8 +123,16 @@ class CodecResourceCustomValueTest {
         @Test
         @DisplayName("Should register and retrieve custom writer")
         void shouldRegisterAndRetrieveCustomWriter() {
-            CodecValueWriter<Integer, EAttribute> doublingWriter = (value, feature, gen, ctxt) -> {
-                gen.writeNumber(value * 2);
+            CodecValueWriter<Integer, EAttribute> doublingWriter = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "doublingWriter";
+                }
+
+                @Override
+                public void write(Integer value, EAttribute feature, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeNumber(value * 2);
+                }
             };
 
             valueRegistry.registerWriter("doublingWriter", doublingWriter);
@@ -134,8 +144,16 @@ class CodecResourceCustomValueTest {
         @Test
         @DisplayName("Custom writer should be available after registration")
         void customWriterAvailableAfterRegistration() {
-            CodecValueWriter<String, EAttribute> prefixWriter = (value, feature, gen, ctxt) -> {
-                gen.writeString("PREFIX_" + value);
+            CodecValueWriter<String, EAttribute> prefixWriter = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "prefixWriter";
+                }
+
+                @Override
+                public void write(String value, EAttribute feature, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeString("PREFIX_" + value);
+                }
             };
 
             valueRegistry.registerWriter("prefixWriter", prefixWriter);
@@ -152,8 +170,16 @@ class CodecResourceCustomValueTest {
         @Test
         @DisplayName("Should register and retrieve custom reader")
         void shouldRegisterAndRetrieveCustomReader() {
-            CodecValueReader<Integer, EAttribute> halvingReader = (parser, feature, ctxt) -> {
-                return parser.getIntValue() / 2;
+            CodecValueReader<Integer, EAttribute> halvingReader = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "halvingReader";
+                }
+
+                @Override
+                public Integer read(CodecReaderContext ctx, EAttribute feature) throws IOException {
+                    return ctx.getParser().getIntValue() / 2;
+                }
             };
 
             valueRegistry.registerReader("halvingReader", halvingReader);
@@ -189,8 +215,28 @@ class CodecResourceCustomValueTest {
         @Test
         @DisplayName("Registry should be properly passed through the configuration chain")
         void registryPassedThroughConfigChain() throws IOException {
-            CodecValueWriter<String, EAttribute> testWriter = (v, f, g, c) -> g.writeString("TEST");
-            CodecValueReader<String, EAttribute> testReader = (p, f, c) -> "RESULT";
+            CodecValueWriter<String, EAttribute> testWriter = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "testWriter";
+                }
+
+                @Override
+                public void write(String value, EAttribute feature, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeString("TEST");
+                }
+            };
+            CodecValueReader<String, EAttribute> testReader = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "testReader";
+                }
+
+                @Override
+                public String read(CodecReaderContext ctx, EAttribute feature) {
+                    return "RESULT";
+                }
+            };
             valueRegistry.registerWriter("testWriter", testWriter);
             valueRegistry.registerReader("testReader", testReader);
 
@@ -214,9 +260,39 @@ class CodecResourceCustomValueTest {
         @Test
         @DisplayName("Multiple writers can be registered")
         void multipleWritersRegistered() {
-            CodecValueWriter<String, EAttribute> writer1 = (v, f, g, c) -> g.writeString(v.toUpperCase());
-            CodecValueWriter<Integer, EAttribute> writer2 = (v, f, g, c) -> g.writeNumber(v * 10);
-            CodecValueWriter<Boolean, EAttribute> writer3 = (v, f, g, c) -> g.writeString(v ? "yes" : "no");
+            CodecValueWriter<String, EAttribute> writer1 = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "upperWriter";
+                }
+
+                @Override
+                public void write(String value, EAttribute feature, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeString(value.toUpperCase());
+                }
+            };
+            CodecValueWriter<Integer, EAttribute> writer2 = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "timesTeWriter";
+                }
+
+                @Override
+                public void write(Integer value, EAttribute feature, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeNumber(value * 10);
+                }
+            };
+            CodecValueWriter<Boolean, EAttribute> writer3 = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "yesNoWriter";
+                }
+
+                @Override
+                public void write(Boolean value, EAttribute feature, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeString(value ? "yes" : "no");
+                }
+            };
 
             valueRegistry.registerWriter("upperWriter", writer1);
             valueRegistry.registerWriter("timesTeWriter", writer2);
@@ -231,8 +307,28 @@ class CodecResourceCustomValueTest {
         @Test
         @DisplayName("Multiple readers can be registered")
         void multipleReadersRegistered() {
-            CodecValueReader<String, EAttribute> reader1 = (p, f, c) -> p.getString().toLowerCase();
-            CodecValueReader<Integer, EAttribute> reader2 = (p, f, c) -> p.getIntValue() / 10;
+            CodecValueReader<String, EAttribute> reader1 = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "lowerReader";
+                }
+
+                @Override
+                public String read(CodecReaderContext ctx, EAttribute feature) throws IOException {
+                    return ctx.getParser().getString().toLowerCase();
+                }
+            };
+            CodecValueReader<Integer, EAttribute> reader2 = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "divideReader";
+                }
+
+                @Override
+                public Integer read(CodecReaderContext ctx, EAttribute feature) throws IOException {
+                    return ctx.getParser().getIntValue() / 10;
+                }
+            };
 
             valueRegistry.registerReader("lowerReader", reader1);
             valueRegistry.registerReader("divideReader", reader2);

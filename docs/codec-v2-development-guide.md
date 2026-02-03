@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-02-03 (Package migration COMPLETE — all tests migrated to codec.* packages, old v2.* tests disabled; ConfigurationResolver convenience methods added)
+**Last Updated:** 2026-02-03 (CodecEntryContext pattern migration complete — unified context for ser/deser entries, test files updated, all 1042 tests passing)
 
 ---
 
@@ -33,6 +33,33 @@ MAIN TASK: [description] - [status: ACTIVE/PAUSED/✅]
 ### 0.2 Current Task Hierarchy
 
 ```
+COMPLETED: CodecEntryContext Pattern Migration - ✅ (2026-02-03)
+│
+│  Migrated all serialization/deserialization entry classes to use a unified
+│  CodecEntryContext pattern instead of passing CodecValueRegistry directly.
+│
+│  CHANGES:
+│  │  - Created CodecEntryContext: unified context holding valueRegistry,
+│  │    effectiveConfig, and diagnostics
+│  │  - Migrated AttributeSerializationEntry, ReferenceSerializationEntry,
+│  │    AttributeDeserializationEntry, ReferenceDeserializationEntry
+│  │  - Updated CodecEObjectSerializer and CodecEObjectDeserializer to create
+│  │    CodecEntryContext once per operation
+│  │  - Updated all test files to use new interfaces (getName() required on
+│  │    CodecValueReader/Writer, CodecEntryContext in entry constructors)
+│  │  - Made context implementations (CodecWriterContextImpl, CodecReaderContextImpl)
+│  │    more lenient for tests (allow null config/diagnostics)
+│
+│  BENEFITS:
+│  │  - Single context object passed to entries (cleaner API)
+│  │  - Entries can create writer/reader contexts on-demand
+│  │  - Consistent access to effectiveConfig and diagnostics
+│  │  - Better separation between stable config and request-scoped state
+│
+│  TEST RESULTS: 1042 tests, 0 failures, 141 skipped
+│
+---
+
 COMPLETED: 8-Step Package Migration (codec.v2.* → codec.*) - ✅ (2026-02-01)
 │
 │  All 8 migration steps complete. New spec-compliant classes live in
@@ -1870,14 +1897,39 @@ These tests were commented out due to the `TypeStrategy.MAPPED` removal. They te
   - [ ] Add merging rules for each property at each level
   - [ ] Review EEnum-level annotation support
 
-**Phase 4: Implementation Alignment**
+**Phase 4: Value Reader/Writer Migration (GAP-008)**
+
+The new `codec.value` interfaces exist and match the spec (with `getName()`, context objects).
+However, the entry classes still use the old deprecated `codec.api.value` interfaces.
+
+Current state:
+- [x] New interfaces created in `codec.value` package (spec-compliant)
+  - `CodecValueReader<T, F>` with `getName()` and `read(CodecReaderContext, F)`
+  - `CodecValueWriter<T, F>` with `getName()` and `write(T, F, CodecWriterContext)`
+  - `CodecReaderContext` / `CodecWriterContext` with config + diagnostics access
+  - `AttributeValueReader/Writer` and `ReferenceValueReader/Writer` with `canHandle()`
+  - `CodecValueRegistry` with auto-registration via `getName()`
+- [x] Old interfaces deprecated in `codec.api.value` package
+- [ ] Migrate entry classes to use new interfaces:
+  - [ ] `codec.ser.AttributeSerializationEntry` → use `codec.value.CodecValueWriter`
+  - [ ] `codec.ser.ReferenceSerializationEntry` → use `codec.value.CodecValueWriter`
+  - [ ] `codec.deser.AttributeDeserializationEntry` → use `codec.value.CodecValueReader`
+  - [ ] `codec.deser.ReferenceDeserializationEntry` → use `codec.value.CodecValueReader`
+- [ ] Create context implementations:
+  - [ ] `CodecReaderContextImpl` wrapping parser, ctxt, EffectiveCodecConfig, DiagnosticCollector
+  - [ ] `CodecWriterContextImpl` wrapping generator, ctxt, EffectiveCodecConfig, DiagnosticCollector
+- [ ] Update tests to use new interfaces
+- [ ] Update `ConfigurationResolver.Builder` to register readers/writers
+
+**Phase 5: Implementation Alignment**
 - [ ] Apply documented merging rules to `codec.metadata`
 - [ ] Ensure `MetadataService` returns correctly merged properties
 - [ ] Integrate with static/load-save property merging
 
-**Phase 5: Cleanup (Optional)**
+**Phase 6: Cleanup (Optional)**
 - [ ] Delete old codec.v2.* packages (src + test)
 - [ ] Remove @Deprecated annotations from new codec.* classes
+- [ ] Delete deprecated `codec.api.value` package after migration
 
 ### 10.4.1 ConfigurationResolver.Builder Convenience Methods
 

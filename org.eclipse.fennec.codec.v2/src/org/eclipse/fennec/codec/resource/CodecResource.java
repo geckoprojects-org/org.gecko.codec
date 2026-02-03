@@ -36,7 +36,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.impl.ResourceImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.config.ConfigProperty;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.config.bridge.AspectToPropertiesConverter;

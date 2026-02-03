@@ -28,11 +28,13 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.context.CodecWriteContext;
 import org.eclipse.fennec.codec.context.ContextHelper;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.api.value.CodecValueWriter;
-import org.eclipse.fennec.codec.api.value.ReferenceValueWriter;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecValueWriter;
+import org.eclipse.fennec.codec.value.CodecWriterContext;
+import org.eclipse.fennec.codec.value.ReferenceValueWriter;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.TokenStreamContext;
@@ -61,6 +63,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
     private final EffectiveCodecConfig codecConfig;
     private final ReferenceValueWriter<?> containmentWriter;
     private final CodecValueWriter<EObject, EReference> uriWriter;
+    private final CodecEntryContext entryContext;
 
     /**
      * Creates a new ReferenceSerializationEntry with the feature configuration.
@@ -94,32 +97,20 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      * @param refKey the JSON key to use for non-containment reference URIs
      * @param smartCompression whether smart compression is enabled
      * @param codecConfig the effective codec configuration (for expand settings)
-     */
-    public ReferenceSerializationEntry(FeatureConfig config, EReference reference,
-            String refKey, boolean smartCompression, EffectiveCodecConfig codecConfig) {
-        this(config, reference, refKey, smartCompression, codecConfig, null);
-    }
-
-    /**
-     * Creates a new ReferenceSerializationEntry with full configuration and custom writer support.
-     *
-     * @param config the feature configuration
-     * @param reference the EReference to serialize
-     * @param refKey the JSON key to use for non-containment reference URIs
-     * @param smartCompression whether smart compression is enabled
-     * @param codecConfig the effective codec configuration (for expand settings)
-     * @param valueRegistry the registry for custom value writers (may be null)
+     * @param entryContext the codec entry context for custom writers (may be null)
      */
     public ReferenceSerializationEntry(FeatureConfig config, EReference reference,
             String refKey, boolean smartCompression, EffectiveCodecConfig codecConfig,
-            CodecValueRegistry valueRegistry) {
+            CodecEntryContext entryContext) {
         this.config = config;
         this.reference = reference;
         this.refKey = refKey;
         this.smartCompression = smartCompression;
         this.codecConfig = codecConfig;
+        this.entryContext = entryContext;
 
         String writerName = config.getValueWriterName();
+        CodecValueRegistry valueRegistry = entryContext != null ? entryContext.getValueRegistry() : null;
         if (writerName != null && !writerName.isEmpty() && valueRegistry != null) {
             CodecValueWriter<?, ?> writer = valueRegistry.getWriter(writerName).orElse(null);
 
@@ -221,8 +212,12 @@ public class ReferenceSerializationEntry implements SerializationEntry {
 
     @SuppressWarnings("unchecked")
     private void writeWithContainmentWriter(EObject target, JsonGenerator gen, SerializationContext ctxt) {
+        if (entryContext == null) {
+            throw new IllegalStateException("CodecEntryContext required for custom containment writer");
+        }
         try {
-            ((ReferenceValueWriter<EObject>) containmentWriter).write(target, reference, gen, ctxt);
+            CodecWriterContext writerCtx = entryContext.createWriterContext(gen, ctxt);
+            ((ReferenceValueWriter<EObject>) containmentWriter).write(target, reference, writerCtx);
         } catch (IOException e) {
             throw new UncheckedIOException(
                     "Custom containment writer failed for reference: " + reference.getName(), e);
@@ -283,9 +278,10 @@ public class ReferenceSerializationEntry implements SerializationEntry {
 
     private void writeReferenceValue(EObject target, JsonGenerator gen, boolean crossDocument,
             SerializationContext ctxt) {
-        if (uriWriter != null) {
+        if (uriWriter != null && entryContext != null) {
             try {
-                uriWriter.write(target, reference, gen, ctxt);
+                CodecWriterContext writerCtx = entryContext.createWriterContext(gen, ctxt);
+                uriWriter.write(target, reference, writerCtx);
             } catch (IOException e) {
                 throw new UncheckedIOException(
                         "Custom URI writer failed for reference: " + reference.getName(), e);

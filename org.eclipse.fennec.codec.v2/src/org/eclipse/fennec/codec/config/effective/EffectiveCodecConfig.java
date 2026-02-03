@@ -22,9 +22,9 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.fennec.codec.api.value.CodecValueReader;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.api.value.CodecValueWriter;
+import org.eclipse.fennec.codec.value.CodecValueReader;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecValueWriter;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.config.DiscriminatorConfig;
 import org.eclipse.fennec.codec.config.FeatureConfig;
@@ -68,7 +68,8 @@ import org.eclipse.fennec.model.metadata.api.MetadataService;
  * @author Mark Hoffmann
  * @since 2026-02-01
  */
-public final class EffectiveCodecConfig {
+public final class EffectiveCodecConfig
+        implements org.eclipse.fennec.codec.value.EffectiveCodecConfig {
 
     private final ConfigurationResolver resolver;
     private final DiagnosticCollector diagnostics;
@@ -377,6 +378,60 @@ public final class EffectiveCodecConfig {
      */
     public boolean isSmartCompression() {
         return smartCompression;
+    }
+
+    // ========================================================================
+    // Interface Implementation (org.eclipse.fennec.codec.value.EffectiveCodecConfig)
+    // ========================================================================
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Delegates to {@link #resolveGlobalTypeConfig()}.
+     */
+    @Override
+    public TypeConfig getTypeConfig() {
+        return resolveGlobalTypeConfig();
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Delegates to {@link #resolveGlobalSuperTypeConfig()}.
+     */
+    @Override
+    public SuperTypeConfig getSuperTypeConfig() {
+        return resolveGlobalSuperTypeConfig();
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Delegates to {@link #resolveGlobalIdConfig()}.
+     */
+    @Override
+    public IdConfig getIdConfig() {
+        return resolveGlobalIdConfig();
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Delegates to {@link #resolveGlobalDiscriminatorConfig()}.
+     */
+    @Override
+    public DiscriminatorConfig getDiscriminatorConfig() {
+        return resolveGlobalDiscriminatorConfig();
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Delegates to {@link #isSmartCompression()}.
+     */
+    @Override
+    public boolean isSmartCompressionEnabled() {
+        return isSmartCompression();
     }
 
     /**

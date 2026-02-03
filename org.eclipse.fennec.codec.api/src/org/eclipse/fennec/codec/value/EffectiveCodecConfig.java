@@ -34,6 +34,12 @@ import org.eclipse.fennec.codec.config.TypeConfig;
  * <p>
  * Custom value readers and writers receive this configuration via their
  * context objects ({@link CodecReaderContext}, {@link CodecWriterContext}).
+ * <p>
+ * Note: Feature-specific and reference-specific configuration is not available
+ * through this interface because readers/writers already receive the feature
+ * as a parameter to their {@code read()}/{@code write()} methods. Global
+ * settings like type strategy, ID configuration, and smart compression are
+ * available.
  *
  * @see CodecReaderContext#getConfig()
  * @see CodecWriterContext#getConfig()
@@ -41,9 +47,13 @@ import org.eclipse.fennec.codec.config.TypeConfig;
 public interface EffectiveCodecConfig {
 
     /**
-     * Returns the effective type configuration.
+     * Returns the effective type configuration for global settings.
+     * <p>
+     * Note: This returns the global type configuration. For feature-specific
+     * type configuration, the reader/writer should use the feature parameter
+     * passed to {@code read()}/{@code write()}.
      *
-     * @return the type configuration, never null
+     * @return the global type configuration, never null
      */
     TypeConfig getTypeConfig();
 
@@ -60,28 +70,6 @@ public interface EffectiveCodecConfig {
      * @return the ID configuration, never null
      */
     IdConfig getIdConfig();
-
-    /**
-     * Returns the effective feature configuration for the current feature.
-     * <p>
-     * This returns the configuration specific to the feature being
-     * serialized/deserialized. May return a default configuration if
-     * no feature-specific configuration is set.
-     *
-     * @return the feature configuration, never null
-     */
-    FeatureConfig getFeatureConfig();
-
-    /**
-     * Returns the effective reference configuration for the current reference.
-     * <p>
-     * This returns the configuration specific to the reference being
-     * serialized/deserialized. May return a default configuration if
-     * no reference-specific configuration is set.
-     *
-     * @return the reference configuration, never null
-     */
-    ReferenceConfig getReferenceConfig();
 
     /**
      * Returns the effective discriminator configuration.

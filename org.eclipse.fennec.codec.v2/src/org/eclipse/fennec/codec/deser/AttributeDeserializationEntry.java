@@ -35,10 +35,12 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.fennec.codec.api.value.AttributeValueReader;
-import org.eclipse.fennec.codec.api.value.CodecValueReader;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.AttributeValueReader;
+import org.eclipse.fennec.codec.value.CodecReaderContext;
+import org.eclipse.fennec.codec.value.CodecValueReader;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.config.FeatureConfig;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.context.ContextHelper;
 
 import tools.jackson.core.JsonParser;
@@ -69,6 +71,7 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
     private final FeatureConfig config;
     private final EAttribute attribute;
     private final CodecValueReader<Object, EAttribute> customReader;
+    private final CodecEntryContext entryContext;
 
     /**
      * Creates a new AttributeDeserializationEntry.
@@ -90,16 +93,18 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
      *
      * @param config the effective feature configuration
      * @param attribute the EAttribute to deserialize
-     * @param valueRegistry the registry for custom value readers (may be null)
+     * @param entryContext the codec entry context for custom readers (may be null)
      */
     @SuppressWarnings("unchecked")
     public AttributeDeserializationEntry(FeatureConfig config, EAttribute attribute,
-            CodecValueRegistry valueRegistry) {
+            CodecEntryContext entryContext) {
         this.config = Objects.requireNonNull(config, "config must not be null");
         this.attribute = Objects.requireNonNull(attribute, "attribute must not be null");
+        this.entryContext = entryContext;
 
         // Pre-resolve the custom reader at construction time
         String readerName = config.getValueReaderName();
+        CodecValueRegistry valueRegistry = entryContext != null ? entryContext.getValueRegistry() : null;
         if (readerName != null && !readerName.isEmpty() && valueRegistry != null) {
             CodecValueReader<?, ?> reader = valueRegistry.getReader(readerName).orElse(null);
 
@@ -212,9 +217,10 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
         }
 
         // Use custom reader if configured
-        if (customReader != null) {
+        if (customReader != null && entryContext != null) {
             try {
-                return customReader.read(parser, attribute, ctxt);
+                CodecReaderContext readerCtx = entryContext.createReaderContext(parser, ctxt);
+                return customReader.read(readerCtx, attribute);
             } catch (IOException e) {
                 throw new UncheckedIOException("Custom value reader failed for attribute: " + attribute.getName(), e);
             }

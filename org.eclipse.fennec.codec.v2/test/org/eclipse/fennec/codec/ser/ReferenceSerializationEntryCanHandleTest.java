@@ -27,17 +27,16 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.api.value.ReferenceValueWriter;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecWriterContext;
+import org.eclipse.fennec.codec.value.ReferenceValueWriter;
 import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.SerializationContext;
 
 /**
  * Tests for canHandle() validation in ReferenceSerializationEntry.
@@ -74,14 +73,18 @@ class ReferenceSerializationEntryCanHandleTest extends SerializationEntryTestBas
             // Writer that accepts all references
             ReferenceValueWriter<EObject> compatibleWriter = new ReferenceValueWriter<>() {
                 @Override
+                public String getName() {
+                    return "testWriter";
+                }
+
+                @Override
                 public boolean canHandle(EReference reference) {
                     return true;
                 }
 
                 @Override
-                public void write(EObject value, EReference ref, JsonGenerator gen,
-                        SerializationContext ctxt) throws IOException {
-                    gen.writeString("custom-output");
+                public void write(EObject value, EReference ref, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeString("custom-output");
                 }
             };
 
@@ -93,9 +96,13 @@ class ReferenceSerializationEntryCanHandleTest extends SerializationEntryTestBas
                     .valueWriterName("testWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should not log warning - writer is compatible
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
-                    config, addressRef, DEFAULT_REF_KEY, false, null, registry);
+                    config, addressRef, DEFAULT_REF_KEY, false, null, entryContext);
 
             assertNotNull(entry);
             assertEquals(0, logHandler.getWarningCount(),
@@ -108,6 +115,11 @@ class ReferenceSerializationEntryCanHandleTest extends SerializationEntryTestBas
             // Writer that only handles EPackage references
             ReferenceValueWriter<EPackage> incompatibleWriter = new ReferenceValueWriter<>() {
                 @Override
+                public String getName() {
+                    return "epackageWriter";
+                }
+
+                @Override
                 public boolean canHandle(EReference reference) {
                     // Only accept EPackage references
                     return EcorePackage.Literals.EPACKAGE.isSuperTypeOf(
@@ -115,9 +127,8 @@ class ReferenceSerializationEntryCanHandleTest extends SerializationEntryTestBas
                 }
 
                 @Override
-                public void write(EPackage value, EReference ref, JsonGenerator gen,
-                        SerializationContext ctxt) throws IOException {
-                    gen.writeString("epackage-output");
+                public void write(EPackage value, EReference ref, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeString("epackage-output");
                 }
             };
 
@@ -129,9 +140,13 @@ class ReferenceSerializationEntryCanHandleTest extends SerializationEntryTestBas
                     .valueWriterName("epackageWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should log warning - writer cannot handle Person containment
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
-                    config, addressRef, DEFAULT_REF_KEY, false, null, registry);
+                    config, addressRef, DEFAULT_REF_KEY, false, null, entryContext);
 
             assertNotNull(entry);
             assertEquals(1, logHandler.getWarningCount(),
@@ -148,13 +163,17 @@ class ReferenceSerializationEntryCanHandleTest extends SerializationEntryTestBas
             // Writer that rejects all references
             ReferenceValueWriter<EObject> rejectingWriter = new ReferenceValueWriter<>() {
                 @Override
+                public String getName() {
+                    return "rejectingWriter";
+                }
+
+                @Override
                 public boolean canHandle(EReference reference) {
                     return false;
                 }
 
                 @Override
-                public void write(EObject value, EReference ref, JsonGenerator gen,
-                        SerializationContext ctxt) {
+                public void write(EObject value, EReference ref, CodecWriterContext ctx) {
                     throw new AssertionError("Should not be called");
                 }
             };
@@ -167,9 +186,13 @@ class ReferenceSerializationEntryCanHandleTest extends SerializationEntryTestBas
                     .valueWriterName("rejectingWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Creating the entry should log a warning because canHandle returns false
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
-                    config, addressRef, DEFAULT_REF_KEY, false, null, registry);
+                    config, addressRef, DEFAULT_REF_KEY, false, null, entryContext);
 
             assertNotNull(entry);
             // Warning should have been logged during construction

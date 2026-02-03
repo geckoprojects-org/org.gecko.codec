@@ -22,8 +22,10 @@ import java.io.UncheckedIOException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.config.FeatureConfig;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.api.value.CodecValueWriter;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecValueWriter;
+import org.eclipse.fennec.codec.value.CodecWriterContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,10 +45,18 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
         @Test
         @DisplayName("uses custom writer when configured")
         void usesCustomWriterWhenConfigured() throws IOException {
-            CodecValueWriter<EObject, EReference> customWriter = (target, ref, gen, ctxt) -> {
-                // Custom writer extracts ID from target
-                Object id = target.eGet(idAttribute);
-                gen.writeString(id != null ? id.toString() : "unknown");
+            CodecValueWriter<EObject, EReference> customWriter = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "customRefWriter";
+                }
+
+                @Override
+                public void write(EObject target, EReference ref, CodecWriterContext ctx) throws IOException {
+                    // Custom writer extracts ID from target
+                    Object id = target.eGet(idAttribute);
+                    ctx.getGenerator().writeString(id != null ? id.toString() : "unknown");
+                }
             };
 
             CodecValueRegistry registry = new CodecValueRegistry();
@@ -57,8 +67,12 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
                     .valueWriterName("customRefWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
-                    config, managerRef, "_ref", false, null, registry);
+                    config, managerRef, "_ref", false, null, entryContext);
 
             EObject person = createPerson("John");
             EObject manager = createPerson("Boss");
@@ -85,8 +99,12 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
                     .valueWriterName("nonExistentWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
-                    config, managerRef, "_ref", false, null, registry);
+                    config, managerRef, "_ref", false, null, entryContext);
 
             EObject person = createPerson("John");
             EObject manager = createPerson("Boss");
@@ -110,7 +128,7 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
                     .valueWriterName("customRefWriter")
                     .build();
 
-            // Pass null registry
+            // Pass null context
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
                     config, managerRef, "_ref", false, null, null);
 
@@ -128,15 +146,29 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
         @DisplayName("does not use writer when writer name is empty")
         void doesNotUseWriterWhenWriterNameIsEmpty() {
             CodecValueRegistry registry = new CodecValueRegistry();
-            registry.registerWriter("customRefWriter", (target, ref, gen, ctxt) -> {});
+            registry.registerWriter("customRefWriter", new CodecValueWriter<EObject, EReference>() {
+                @Override
+                public String getName() {
+                    return "customRefWriter";
+                }
+
+                @Override
+                public void write(EObject target, EReference ref, CodecWriterContext ctx) throws IOException {
+                    // no-op
+                }
+            });
 
             FeatureConfig config = FeatureConfig.builder()
                     .key("manager")
                     .valueWriterName("")  // Empty writer name
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
-                    config, managerRef, "_ref", false, null, registry);
+                    config, managerRef, "_ref", false, null, entryContext);
 
             EObject person = createPerson("John");
             EObject manager = createPerson("Boss");
@@ -156,8 +188,16 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
         @Test
         @DisplayName("wraps IOException from custom writer")
         void wrapsIOExceptionFromCustomWriter() throws IOException {
-            CodecValueWriter<EObject, EReference> failingWriter = (target, ref, gen, ctxt) -> {
-                throw new IOException("Test IO error");
+            CodecValueWriter<EObject, EReference> failingWriter = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "failingWriter";
+                }
+
+                @Override
+                public void write(EObject target, EReference ref, CodecWriterContext ctx) throws IOException {
+                    throw new IOException("Test IO error");
+                }
             };
 
             CodecValueRegistry registry = new CodecValueRegistry();
@@ -168,8 +208,12 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
                     .valueWriterName("failingWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
-                    config, managerRef, "_ref", false, null, registry);
+                    config, managerRef, "_ref", false, null, entryContext);
 
             EObject person = createPerson("John");
             EObject manager = createPerson("Boss");
@@ -190,12 +234,20 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
         @Test
         @DisplayName("writes MongoDB ObjectId format")
         void writesMongoDbObjectIdFormat() throws IOException {
-            CodecValueWriter<EObject, EReference> mongoIdWriter = (target, ref, gen, ctxt) -> {
-                Object id = target.eGet(target.eClass().getEStructuralFeature("id"));
-                if (id != null) {
-                    gen.writeString(id.toString());
-                } else {
-                    gen.writeString("unknown");
+            CodecValueWriter<EObject, EReference> mongoIdWriter = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "mongoId";
+                }
+
+                @Override
+                public void write(EObject target, EReference ref, CodecWriterContext ctx) throws IOException {
+                    Object id = target.eGet(target.eClass().getEStructuralFeature("id"));
+                    if (id != null) {
+                        ctx.getGenerator().writeString(id.toString());
+                    } else {
+                        ctx.getGenerator().writeString("unknown");
+                    }
                 }
             };
 
@@ -207,8 +259,12 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
                     .valueWriterName("mongoId")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
-                    config, managerRef, "_ref", false, null, registry);
+                    config, managerRef, "_ref", false, null, entryContext);
 
             EObject person = createPerson("John");
             EObject manager = createPerson("Boss");
@@ -223,10 +279,18 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
         @Test
         @DisplayName("writes custom URI scheme")
         void writesCustomUriScheme() throws IOException {
-            CodecValueWriter<EObject, EReference> customUriWriter = (target, ref, gen, ctxt) -> {
-                String typeName = target.eClass().getName();
-                Object id = target.eGet(target.eClass().getEStructuralFeature("id"));
-                gen.writeString("urn:myapp:" + typeName + "/" + (id != null ? id : "0"));
+            CodecValueWriter<EObject, EReference> customUriWriter = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "customUri";
+                }
+
+                @Override
+                public void write(EObject target, EReference ref, CodecWriterContext ctx) throws IOException {
+                    String typeName = target.eClass().getName();
+                    Object id = target.eGet(target.eClass().getEStructuralFeature("id"));
+                    ctx.getGenerator().writeString("urn:myapp:" + typeName + "/" + (id != null ? id : "0"));
+                }
             };
 
             CodecValueRegistry registry = new CodecValueRegistry();
@@ -237,8 +301,12 @@ class ReferenceSerializationEntryCustomWriterTest extends SerializationEntryTest
                     .valueWriterName("customUri")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceSerializationEntry entry = new ReferenceSerializationEntry(
-                    config, managerRef, "_ref", false, null, registry);
+                    config, managerRef, "_ref", false, null, entryContext);
 
             EObject person = createPerson("John");
             EObject manager = createPerson("Boss");

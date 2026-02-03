@@ -24,8 +24,10 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.fennec.codec.api.value.AttributeValueWriter;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
+import org.eclipse.fennec.codec.value.AttributeValueWriter;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.CodecWriterContext;
 import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,8 +35,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import tools.jackson.core.JsonGenerator;
-import tools.jackson.databind.SerializationContext;
+import java.io.IOException;
 
 /**
  * Tests for canHandle() validation in AttributeSerializationEntry.
@@ -70,14 +71,18 @@ class AttributeSerializationEntryCanHandleTest extends SerializationEntryTestBas
             // Writer that accepts String attributes
             AttributeValueWriter<String> stringWriter = new AttributeValueWriter<>() {
                 @Override
+                public String getName() {
+                    return "stringWriter";
+                }
+
+                @Override
                 public boolean canHandle(EAttribute attribute) {
                     return attribute.getEAttributeType().getInstanceClass() == String.class;
                 }
 
                 @Override
-                public void write(String value, EAttribute attr, JsonGenerator gen,
-                        SerializationContext ctxt) throws IOException {
-                    gen.writeString("custom:" + value);
+                public void write(String value, EAttribute attr, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeString("custom:" + value);
                 }
             };
 
@@ -89,9 +94,13 @@ class AttributeSerializationEntryCanHandleTest extends SerializationEntryTestBas
                     .valueWriterName("stringWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should not log warning - writer is compatible
             AttributeSerializationEntry entry = new AttributeSerializationEntry(
-                    config, nameAttribute, registry);
+                    config, nameAttribute, entryContext);
 
             assertNotNull(entry);
             assertEquals(0, logHandler.getWarningCount(),
@@ -104,15 +113,19 @@ class AttributeSerializationEntryCanHandleTest extends SerializationEntryTestBas
             // Writer that only handles Integer attributes
             AttributeValueWriter<Integer> intWriter = new AttributeValueWriter<>() {
                 @Override
+                public String getName() {
+                    return "intWriter";
+                }
+
+                @Override
                 public boolean canHandle(EAttribute attribute) {
                     Class<?> type = attribute.getEAttributeType().getInstanceClass();
                     return type == Integer.class || type == int.class;
                 }
 
                 @Override
-                public void write(Integer value, EAttribute attr, JsonGenerator gen,
-                        SerializationContext ctxt) throws IOException {
-                    gen.writeNumber(value * 2);
+                public void write(Integer value, EAttribute attr, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeNumber(value * 2);
                 }
             };
 
@@ -124,9 +137,13 @@ class AttributeSerializationEntryCanHandleTest extends SerializationEntryTestBas
                     .valueWriterName("intWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should log warning - writer cannot handle String attribute
             AttributeSerializationEntry entry = new AttributeSerializationEntry(
-                    config, nameAttribute, registry);
+                    config, nameAttribute, entryContext);
 
             assertNotNull(entry);
             assertEquals(1, logHandler.getWarningCount(),
@@ -143,13 +160,17 @@ class AttributeSerializationEntryCanHandleTest extends SerializationEntryTestBas
             // Writer that rejects all attributes
             AttributeValueWriter<Object> rejectingWriter = new AttributeValueWriter<>() {
                 @Override
+                public String getName() {
+                    return "rejectingWriter";
+                }
+
+                @Override
                 public boolean canHandle(EAttribute attribute) {
                     return false;
                 }
 
                 @Override
-                public void write(Object value, EAttribute attr, JsonGenerator gen,
-                        SerializationContext ctxt) {
+                public void write(Object value, EAttribute attr, CodecWriterContext ctx) {
                     throw new AssertionError("Should not be called");
                 }
             };
@@ -162,9 +183,13 @@ class AttributeSerializationEntryCanHandleTest extends SerializationEntryTestBas
                     .valueWriterName("rejectingWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Creating the entry should log a warning because canHandle returns false
             AttributeSerializationEntry entry = new AttributeSerializationEntry(
-                    config, ageAttribute, registry);
+                    config, ageAttribute, entryContext);
 
             assertNotNull(entry);
             assertEquals(1, logHandler.getWarningCount(),
@@ -180,8 +205,18 @@ class AttributeSerializationEntryCanHandleTest extends SerializationEntryTestBas
         @DisplayName("accepts generic CodecValueWriter without canHandle check")
         void acceptsGenericWriterWithoutCanHandleCheck() {
             // Generic writer (not AttributeValueWriter) - no canHandle() method
-            org.eclipse.fennec.codec.api.value.CodecValueWriter<Object, EAttribute> genericWriter =
-                    (value, attr, gen, ctxt) -> gen.writeString("generic:" + value);
+            org.eclipse.fennec.codec.value.CodecValueWriter<Object, EAttribute> genericWriter =
+                    new org.eclipse.fennec.codec.value.CodecValueWriter<>() {
+                        @Override
+                        public String getName() {
+                            return "genericWriter";
+                        }
+
+                        @Override
+                        public void write(Object value, EAttribute attr, CodecWriterContext ctx) throws IOException {
+                            ctx.getGenerator().writeString("generic:" + value);
+                        }
+                    };
 
             CodecValueRegistry registry = new CodecValueRegistry();
             registry.registerWriter("genericWriter", genericWriter);
@@ -191,9 +226,13 @@ class AttributeSerializationEntryCanHandleTest extends SerializationEntryTestBas
                     .valueWriterName("genericWriter")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should not log warning - generic writers have no canHandle() to check
             AttributeSerializationEntry entry = new AttributeSerializationEntry(
-                    config, nameAttribute, registry);
+                    config, nameAttribute, entryContext);
 
             assertNotNull(entry);
             assertEquals(0, logHandler.getWarningCount(),

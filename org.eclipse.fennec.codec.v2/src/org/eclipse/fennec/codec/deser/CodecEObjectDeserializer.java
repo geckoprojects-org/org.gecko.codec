@@ -33,6 +33,7 @@ import org.eclipse.fennec.codec.config.ReferenceConfig;
 import org.eclipse.fennec.codec.config.SuperTypeConfig;
 import org.eclipse.fennec.codec.config.TypeConfig;
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.context.ContextHelper;
 import org.eclipse.fennec.codec.context.EMFCodecReadContext;
 
@@ -83,6 +84,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
     private static final String DEFAULT_SCHEMA_KEY = "_schema";
 
     private final EffectiveCodecConfig config;
+    private final CodecEntryContext entryContext;
 
     /**
      * Creates a new CodecEObjectDeserializer.
@@ -91,6 +93,11 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
      */
     public CodecEObjectDeserializer(EffectiveCodecConfig config) {
         this.config = Objects.requireNonNull(config, "config must not be null");
+        this.entryContext = CodecEntryContext.builder()
+                .effectiveConfig(config)
+                .diagnostics(config.getDiagnostics())
+                .valueRegistry(config.getValueRegistry())
+                .build();
     }
 
     @Override
@@ -579,14 +586,14 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             DeserializationEntry entry;
             if (feature instanceof EAttribute) {
                 entry = new AttributeDeserializationEntry(featureConfig, (EAttribute) feature,
-                        config.getValueRegistry());
+                        entryContext);
             } else if (feature instanceof EReference) {
                 // Resolve per-reference refKey from ReferenceConfig
                 ReferenceConfig refConfig = config.resolveReferenceConfig(feature);
                 String refKey = refConfig != null ? refConfig.getRefKey() : DEFAULT_REF_KEY;
 
                 entry = new ReferenceDeserializationEntry(featureConfig, (EReference) feature,
-                        refKey, config.getValueRegistry());
+                        refKey, entryContext);
             } else {
                 continue;
             }

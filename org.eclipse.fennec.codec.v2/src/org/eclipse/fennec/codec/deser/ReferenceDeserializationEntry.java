@@ -27,13 +27,15 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.fennec.codec.config.FeatureConfig;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.context.ContextHelper;
 import org.eclipse.fennec.codec.context.EMFCodecReadContext;
 import org.eclipse.fennec.codec.deser.DeserializationState.UnresolvedReference;
 import org.eclipse.fennec.codec.jackson.CodecJsonReadContext;
-import org.eclipse.fennec.codec.api.value.CodecValueReader;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.api.value.ReferenceValueReader;
+import org.eclipse.fennec.codec.value.CodecReaderContext;
+import org.eclipse.fennec.codec.value.CodecValueReader;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.ReferenceValueReader;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -78,6 +80,7 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     private final ReferenceValueReader<?> containmentReader;
     /** Custom reader for non-containment reference URIs - returns String */
     private final CodecValueReader<String, EReference> uriReader;
+    private final CodecEntryContext entryContext;
 
     /**
      * Creates a new ReferenceDeserializationEntry.
@@ -96,19 +99,21 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      * @param config the effective feature configuration
      * @param reference the EReference to deserialize
      * @param refKey the key used for non-containment references (e.g., "$ref")
-     * @param valueRegistry the registry for custom value readers (may be null)
+     * @param entryContext the codec entry context for custom readers (may be null)
      */
     public ReferenceDeserializationEntry(FeatureConfig config, EReference reference,
-            String refKey, CodecValueRegistry valueRegistry) {
+            String refKey, CodecEntryContext entryContext) {
         this.config = Objects.requireNonNull(config, "config must not be null");
         this.reference = Objects.requireNonNull(reference, "reference must not be null");
         this.refKey = Objects.requireNonNull(refKey, "refKey must not be null");
+        this.entryContext = entryContext;
 
         // Pre-resolve the custom reader at construction time
         // We support two types of readers:
         // 1. ReferenceValueReader<T extends EObject> for containment references
         // 2. CodecValueReader<String, EReference> for non-containment URI transformation
         String readerName = config.getValueReaderName();
+        CodecValueRegistry valueRegistry = entryContext != null ? entryContext.getValueRegistry() : null;
         if (readerName != null && !readerName.isEmpty() && valueRegistry != null) {
             CodecValueReader<?, ?> reader = valueRegistry.getReader(readerName).orElse(null);
 
@@ -288,18 +293,19 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
             if (runtimeReaderName != null && !runtimeReaderName.isEmpty()) {
                 // Delegate to runtime-specified value reader
                 ReferenceValueReader<?> runtimeReader = resolveRuntimeValueReader(runtimeReaderName, ctxt);
-                if (runtimeReader != null) {
+                if (runtimeReader != null && entryContext != null) {
                     // Make type hint available to the reader via context
                     EClass typeHint = ContextHelper.getFeatureTypeHint(ctxt, reference);
                     if (typeHint != null) {
                         ContextHelper.setCurrentFeatureTypeHint(ctxt, typeHint);
                     }
                     try {
-                        return runtimeReader.read(parser, reference, ctxt);
+                        CodecReaderContext readerCtx = entryContext.createReaderContext(parser, ctxt);
+                        return runtimeReader.read(readerCtx, reference);
                     } finally {
                         ContextHelper.clearCurrentFeatureTypeHint(ctxt);
                     }
-                } else {
+                } else if (runtimeReader == null) {
                     String msg = "ValueReader '" + runtimeReaderName + "' not found for reference '" +
                             reference.getName() + "', falling back to default";
                     LOGGER.warning(msg);
@@ -312,13 +318,14 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
 
             // Priority 3: Check for custom containment reader from EAnnotation (valueReaderName)
             // (e.g., JSON Schema to EPackage for OpenAPI components/schemas)
-            if (containmentReader != null) {
+            if (containmentReader != null && entryContext != null) {
                 // Make type hint available to the reader via context
                 if (runtimeTypeHint != null) {
                     ContextHelper.setCurrentFeatureTypeHint(ctxt, runtimeTypeHint);
                 }
                 try {
-                    return containmentReader.read(parser, reference, ctxt);
+                    CodecReaderContext readerCtx = entryContext.createReaderContext(parser, ctxt);
+                    return containmentReader.read(readerCtx, reference);
                 } finally {
                     ContextHelper.clearCurrentFeatureTypeHint(ctxt);
                 }
@@ -828,9 +835,10 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      */
     private String readReferenceValue(JsonParser parser, DeserializationContext ctxt) {
         // Use URI reader for non-containment reference transformation if configured
-        if (uriReader != null) {
+        if (uriReader != null && entryContext != null) {
             try {
-                return uriReader.read(parser, reference, ctxt);
+                CodecReaderContext readerCtx = entryContext.createReaderContext(parser, ctxt);
+                return uriReader.read(readerCtx, reference);
             } catch (IOException e) {
                 throw new UncheckedIOException(
                         "Custom URI reader failed for reference: " + reference.getName(), e);

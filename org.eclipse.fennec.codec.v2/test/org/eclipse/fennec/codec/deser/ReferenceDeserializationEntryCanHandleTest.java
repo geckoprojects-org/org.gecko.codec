@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.deser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.IOException;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -25,8 +26,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.api.value.ReferenceValueReader;
+import org.eclipse.fennec.codec.context.CodecEntryContext;
+import org.eclipse.fennec.codec.value.CodecReaderContext;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.value.ReferenceValueReader;
 import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +38,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import tools.jackson.core.JsonParser;
-import tools.jackson.databind.DeserializationContext;
 
 /**
  * Tests for canHandle() validation in ReferenceDeserializationEntry.
@@ -72,12 +74,17 @@ class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTes
             // Reader that accepts Person references
             ReferenceValueReader<EObject> compatibleReader = new ReferenceValueReader<>() {
                 @Override
+                public String getName() {
+                    return "testReader";
+                }
+
+                @Override
                 public boolean canHandle(EReference reference) {
                     return true; // Accept all references
                 }
 
                 @Override
-                public EObject read(JsonParser parser, EReference ref, DeserializationContext ctxt) {
+                public EObject read(CodecReaderContext ctx, EReference ref) {
                     return null;
                 }
             };
@@ -90,9 +97,13 @@ class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTes
                     .valueReaderName("testReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should not log warning - reader is compatible
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             assertNotNull(entry);
             assertEquals(0, logHandler.getWarningCount(),
@@ -105,6 +116,11 @@ class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTes
             // Reader that only handles EPackage references
             ReferenceValueReader<EPackage> incompatibleReader = new ReferenceValueReader<>() {
                 @Override
+                public String getName() {
+                    return "epackageReader";
+                }
+
+                @Override
                 public boolean canHandle(EReference reference) {
                     // Only accept EPackage references, not Person
                     return EcorePackage.Literals.EPACKAGE.isSuperTypeOf(
@@ -112,7 +128,7 @@ class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTes
                 }
 
                 @Override
-                public EPackage read(JsonParser parser, EReference ref, DeserializationContext ctxt) {
+                public EPackage read(CodecReaderContext ctx, EReference ref) {
                     return null;
                 }
             };
@@ -125,9 +141,13 @@ class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTes
                     .valueReaderName("epackageReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should log warning - reader cannot handle Person reference
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             assertNotNull(entry);
             assertEquals(1, logHandler.getWarningCount(),
@@ -146,12 +166,17 @@ class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTes
             // Reader that rejects all references
             ReferenceValueReader<EObject> rejectingReader = new ReferenceValueReader<>() {
                 @Override
+                public String getName() {
+                    return "rejectingReader";
+                }
+
+                @Override
                 public boolean canHandle(EReference reference) {
                     return false; // Reject all
                 }
 
                 @Override
-                public EObject read(JsonParser parser, EReference ref, DeserializationContext ctxt) {
+                public EObject read(CodecReaderContext ctx, EReference ref) {
                     throw new AssertionError("Should not be called");
                 }
             };
@@ -164,8 +189,12 @@ class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTes
                     .valueReaderName("rejectingReader")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             // The entry should still work - it falls back to default behavior
             EObject person = createPerson();
@@ -188,10 +217,20 @@ class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTes
 
         @Test
         @DisplayName("accepts generic CodecValueReader for URI transformation")
-        void acceptsGenericReaderForUriTransformation() {
+        void acceptsGenericReaderForUriTransformation() throws IOException {
             // Generic reader (not ReferenceValueReader) for URI transformation
-            org.eclipse.fennec.codec.api.value.CodecValueReader<String, EReference> uriReader =
-                    (parser, ref, ctxt) -> "#/transformed/" + parser.getString();
+            org.eclipse.fennec.codec.value.CodecValueReader<String, EReference> uriReader =
+                    new org.eclipse.fennec.codec.value.CodecValueReader<>() {
+                        @Override
+                        public String getName() {
+                            return "uriTransformer";
+                        }
+
+                        @Override
+                        public String read(CodecReaderContext ctx, EReference ref) throws IOException {
+                            return "#/transformed/" + ctx.getParser().getString();
+                        }
+                    };
 
             CodecValueRegistry registry = new CodecValueRegistry();
             registry.registerReader("uriTransformer", uriReader);
@@ -201,9 +240,13 @@ class ReferenceDeserializationEntryCanHandleTest extends DeserializationEntryTes
                     .valueReaderName("uriTransformer")
                     .build();
 
+            CodecEntryContext entryContext = CodecEntryContext.builder()
+                    .valueRegistry(registry)
+                    .build();
+
             // Should not log warning - generic readers are accepted for URI transformation
             ReferenceDeserializationEntry entry = new ReferenceDeserializationEntry(
-                    config, managerRef, DEFAULT_REF_KEY, registry);
+                    config, managerRef, DEFAULT_REF_KEY, entryContext);
 
             // Should work for non-containment reference
             EObject person = createPerson();
