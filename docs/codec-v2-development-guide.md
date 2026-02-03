@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-02-02 (ReferenceConfig spec tests VERIFIED complete — 56 + 23 tests, all 6/6 config types have spec+resolver tests; all tests passing)
+**Last Updated:** 2026-02-03 (Package migration COMPLETE — all tests migrated to codec.* packages, old v2.* tests disabled; ConfigurationResolver convenience methods added)
 
 ---
 
@@ -62,41 +62,36 @@ COMPLETED: 8-Step Package Migration (codec.v2.* → codec.*) - ✅ (2026-02-01)
 │  │  - Default refKey changed from "_ref" to "$ref" (ConfigProperty defaults)
 │  │  - DiagnosticCollector from codec.diagnostic (API) instead of codec.v2.util
 │
-│  REMAINING ACTIVE TESTS IN codec.v2.* (38 files, 457 @Test methods):
+│  ALL TESTS MIGRATED TO NEW codec.* PACKAGES (2026-02-03):
 │  │
-│  │  ── Config tests (6 files, 80 tests) ──
-│  │  - CodecConfigurationBuilderTest (23)
-│  │  - CodecConfigurationDefaultsTest (23)
-│  │  - CodecConfigurationIdSubOptionsDependencyTest (6)
-│  │  - CodecConfigurationSuperTypeSubOptionsDependencyTest (4)
-│  │  - CodecConfigurationTypeSuperTypeDependencyTest (4)
-│  │  - ConfigurationMergerTest (20)
-│  │  ACTION: Deprecate + disable (old config system replaced by ConfigurationResolver)
+│  │  ── Config tests ── ✅ COMPLETE
+│  │  Old config classes (codec.v2.config.*) deprecated. Tests for old config system
+│  │  no longer needed - replaced by ConfigurationResolver + EffectiveCodecConfig.
 │  │
-│  │  ── Resource integration tests (23 files, 193 tests) ──
-│  │  - CodecResourceRoundTripTest, CodecResourceAnnotationTest, CodecResourceAdvancedTest,
-│  │    CodecResourceIdTest, CodecResourceSmartCompressionTest, CodecResourceSuperTypeTest,
-│  │    CodecResourceCustomValueTest, CodecResourceArrayRootTest, CodecResourceCrossPackageTest,
-│  │    CodecResourceFeaturePathTypeTest, CodecResourceMappedTypeTest,
-│  │    ProxyCreationTest, GlobalIgnoreFeatureTest, FeatureTypeHintTest,
-│  │    FeatureTypeHintWarningTest, SmartCompressionSameSchemaTest,
-│  │    TypeStrategyContainmentTest, TypeStrategyExplorationTest,
-│  │    EMapSerializationTest, EMapDeserializationTest, EMapRoundtripTest,
-│  │    BikeRawTrafficLoadTest, BikeSitesArrayLoadTest
-│  │  ACTION: Migrate to use codec.resource.CodecResource (high priority)
+│  │  ── Resource integration tests (23 files, 193 tests) ── ✅ COMPLETE
+│  │  All tests now in org.eclipse.fennec.codec.resource package, using:
+│  │  - codec.resource.CodecResource
+│  │  - codec.config.ConfigurationResolver
+│  │  - codec.util.MetadataServiceFactory
 │  │
-│  │  ── Deferred ser/deser/type integration tests (9 files, 184 tests) ──
-│  │  - ArrayAttributeSerializationTest (25), ArrayAttributeDeserializationTest (25)
-│  │  - EnumSerializationTest (12), ExtendedMetaDataTest (7), ExpandReferenceTest (12)
-│  │  - DeferredPropertiesDeserializationTest (19), GeoJsonLikeDeserializationTest (31)
-│  │  - TypeResolutionHintTest (7), TypeResolutionUriTest (3)
-│  │  ACTION: Migrate to use new codec.* packages
+│  │  ── Deferred ser/deser/type integration tests (9 files) ── ✅ COMPLETE
+│  │  All tests migrated to new packages with old v2.* versions disabled:
+│  │  - codec.ser.ArrayAttributeSerializationTest, EnumSerializationTest,
+│  │    ExtendedMetaDataTest, ExpandReferenceTest
+│  │  - codec.deser.ArrayAttributeDeserializationTest, DeferredPropertiesDeserializationTest,
+│  │    GeoJsonLikeDeserializationTest
+│  │  - codec.type.TypeResolutionHintTest, TypeResolutionUriTest
 │  │
-│  REMAINING WORK (NOT YET DONE):
-│  │  1. Deprecate old config package (6 files, 80 tests → disable)
-│  │  2. Migrate resource integration tests (23 files, 193 tests → new CodecResource)
-│  │  3. Migrate deferred integration tests (9 files, 184 tests → new packages)
-│  │  4. Delete old codec.v2.* packages entirely (after all 457 tests migrated)
+│  OLD v2.* TESTS DISABLED (9 files with @Disabled annotation):
+│  │  - v2/ser/: ArrayAttributeSerializationTest, EnumSerializationTest,
+│  │    ExtendedMetaDataTest, ExpandReferenceTest
+│  │  - v2/deser/: ArrayAttributeDeserializationTest, DeferredPropertiesDeserializationTest,
+│  │    GeoJsonLikeDeserializationTest
+│  │  - v2/type/: TypeResolutionHintTest, TypeResolutionUriTest
+│  │
+│  REMAINING WORK:
+│  │  1. Delete old codec.v2.* packages entirely (optional - can keep as reference)
+│  │  2. Consider removing @Deprecated annotations once v2.* packages deleted
 │
 ---
 
@@ -1848,31 +1843,113 @@ These tests were commented out due to the `TypeStrategy.MAPPED` removal. They te
 
 ### 10.4 Current TODO List
 
-**Phase 1: Documentation (Current)**
+**Phase 1: Package Migration** ✅ COMPLETE (2026-02-03)
+- [x] Migrate all tests from codec.v2.* to codec.* packages
+- [x] Add @Disabled annotations to old v2.* test files
+- [x] Verify all migrated tests pass
+
+**Phase 2: ConfigurationResolver Convenience Methods** (In Progress)
+- [x] Add core convenience methods (2026-02-03)
+  - [x] Format: `defaultFormat(SerializationFormat)`
+  - [x] ID: `idStrategy`, `useId`, `idOnTop`, `idFormat`, `idSeparator`, `idFeatures`, `idKeyMode`, `idSerializeSeparator`, `idSeparatorKey`
+  - [x] Reference: `refKey`, `proxyKey`
+  - [x] Expand: `expand(List<EReference>)`, `expand(Set<String>)`
+  - [x] SuperType: `serializeSuperTypes`
+  - [x] Values: `serializeNull`, `serializeEmpty`, `serializeDefault`
+  - [x] Misc: `smartCompression`, `globalIgnoreFeatures(String...)`, `globalIgnoreFeatures(EStructuralFeature...)`
+- [ ] Add remaining convenience methods (see §10.4.1 for status)
+  - [ ] `enumSerialization(String)` - enum handling (high priority)
+  - [ ] `fieldOrder(String)` - output ordering (high priority)
+  - [ ] `superTypeKey(String)`, `serializeAllSuperTypes(boolean)` - supertype details
+  - [ ] `forceSerialize(String...)` - force transient features
+
+**Phase 3: Documentation**
 - [ ] Complete annotation-scope-reference document
   - [ ] Verify all properties against `CodecAspectProvider` implementation
   - [ ] Document direction-specific properties (`codec.ser.*`, `codec.deser.*`)
   - [ ] Add merging rules for each property at each level
   - [ ] Review EEnum-level annotation support
 
-**Phase 2: Builder API Design**
-- [ ] Design `GlobalConfigBuilder` for codec-wide settings
-- [ ] Design `EClassConfigBuilder` for per-class settings
-- [ ] Design `ReferenceConfigBuilder` for per-reference settings
-- [ ] Design `TypeConfigBuilder`, `IdConfigBuilder` for sub-configs
-- [ ] Support instantiation from property map
-- [ ] Support fluent API chaining across builders
-
-**Phase 3: Test Transition**
-- [ ] Review each test class against spec
-- [ ] Re-enable and fix commented tests one by one
-- [ ] Add helper classes for better testability
-- [ ] Order: Configuration → Serialization → Deserialization
-
 **Phase 4: Implementation Alignment**
 - [ ] Apply documented merging rules to `codec.metadata`
 - [ ] Ensure `MetadataService` returns correctly merged properties
 - [ ] Integrate with static/load-save property merging
+
+**Phase 5: Cleanup (Optional)**
+- [ ] Delete old codec.v2.* packages (src + test)
+- [ ] Remove @Deprecated annotations from new codec.* classes
+
+### 10.4.1 ConfigurationResolver.Builder Convenience Methods
+
+This table tracks which convenience methods from the old `CodecConfiguration.Builder` have been
+migrated to the new `ConfigurationResolver.Builder`.
+
+**Status Legend:** ✅ = Done, ❌ = Missing, ⚠️ = Different approach needed
+
+| Category | Old CodecConfiguration Method | ConfigurationResolver Status | Notes |
+|----------|------------------------------|------------------------------|-------|
+| **Format** | `defaultFormat(SerializationFormat)` | ✅ Present | Added 2026-02-03 |
+| **Type** | `serializeType(boolean)` | ✅ `typeInclude(boolean)` | |
+| | `deserializeType(boolean)` | ⚠️ N/A | Handled at config level, not builder |
+| | `typeKey(String)` | ✅ Present | |
+| | `typeStrategy(TypeStrategy)` | ✅ Present | |
+| **ID** | `useId(boolean)` | ✅ Present | Added 2026-02-03 |
+| | `idStrategy(String)` | ✅ Present | Added 2026-02-03 (NEW) |
+| | `idOnTop(boolean)` | ✅ Present | Added 2026-02-03 |
+| | `serializeIdField(boolean)` | ⚠️ N/A | Handled by idKeyMode |
+| | `idFeatureAsPrimaryKey(boolean)` | ⚠️ N/A | Not in spec |
+| | `idKey(String)` | ✅ Present | |
+| | `idFormat(SerializationFormat)` | ✅ Present | Added 2026-02-03 |
+| | `idSeparator(String)` | ✅ Present | Added 2026-02-03 |
+| | `idFeatures(List<String>)` | ✅ `idFeatures(String...)` | Added 2026-02-03 |
+| | - | ✅ `idFeatures(EStructuralFeature...)` | NEW: Added 2026-02-03 |
+| | `idKeyMode(IdKeyMode)` | ✅ `idKeyMode(String)` | Added 2026-02-03 |
+| | `idSerializeSeparator(boolean)` | ✅ Present | Added 2026-02-03 |
+| | `idSeparatorKey(String)` | ✅ Present | Added 2026-02-03 |
+| **Reference** | `refKey(String)` | ✅ Present | Added 2026-02-03 |
+| | `proxyKey(String)` | ✅ Present | Added 2026-02-03 |
+| **Expand** | `expandGlobal(boolean)` | ✅ Present | |
+| | `expand(EReference...)` | ✅ Present | |
+| | `expand(String...)` | ✅ Present | |
+| | `expand(List<EReference>)` | ✅ Present | Added 2026-02-03 |
+| | `expandNames(Set<String>)` | ✅ `expand(Set<String>)` | Added 2026-02-03 |
+| | `expandDepth(int)` | ✅ Present | |
+| | `expandIgnoreBidirectional(boolean)` | ✅ Present | |
+| **SuperType** | `serializeSuperTypes(boolean)` | ✅ Present | Added 2026-02-03 |
+| | `serializeAllSuperTypes(boolean)` | ❌ Missing | |
+| | `serializeSuperTypesAsArray(boolean)` | ❌ Missing | |
+| | `superTypeKey(String)` | ❌ Missing | |
+| | `validateSuperTypeHierarchy(boolean)` | ⚠️ N/A | Not in spec |
+| **Values** | `serializeDefaultValue(boolean)` | ✅ `serializeDefault(boolean)` | Added 2026-02-03 |
+| | `serializeEmptyValue(boolean)` | ✅ `serializeEmpty(boolean)` | Added 2026-02-03 |
+| | `serializeNullValue(boolean)` | ✅ `serializeNull(boolean)` | Added 2026-02-03 |
+| | `forceSerialize(String...)` | ❌ Missing | |
+| | `forceSerializeQualified(String...)` | ❌ Missing | |
+| **Smart Compression** | `smartCompression(boolean)` | ✅ Present | Added 2026-02-03 |
+| **Misc** | `useNamesFromExtendedMetaData(boolean)` | ✅ Present | |
+| | `writeEnumLiterals(boolean)` | ❌ Missing | Use `enumSerialization()` |
+| | `sortPropertiesAlphabetically(boolean)` | ❌ Missing | Use `fieldOrder()` |
+| | `timestampKey(String)` | ⚠️ N/A | Not in spec |
+| | `globalIgnoreFeatureNames(List<String>)` | ✅ `globalIgnoreFeatures(String...)` | Added 2026-02-03 |
+| | `globalIgnore(String)` | ✅ Present | Added 2026-02-03 |
+| | `globalIgnoreFeatures(String...)` | ✅ Present | Added 2026-02-03 |
+| | - | ✅ `globalIgnoreFeatures(EStructuralFeature...)` | NEW: Added 2026-02-03 |
+
+**Priority for remaining methods (updated 2026-02-03):**
+
+High Priority (commonly used):
+- ✅ `idStrategy(String)` / `useId(boolean)` - Done 2026-02-03
+- `enumSerialization(String)` - enum handling ← NEXT
+- `fieldOrder(String)` - output ordering ← NEXT
+
+Medium Priority:
+- ✅ `idFormat(String)`, `idSeparator(String)` - Done 2026-02-03
+- `serializeAllSuperTypes(boolean)`, `superTypeKey(String)` - supertype details
+- `forceSerialize(String...)` - force transient features
+
+Low Priority (rare usage):
+- ✅ `expand(List<EReference>)`, `expandNames(Set<String>)` - Done 2026-02-03
+- `serializeSuperTypesAsArray(boolean)` - supertype format
 
 ### 10.5 Ecore Model Changes (Reference)
 

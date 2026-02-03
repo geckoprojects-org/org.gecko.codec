@@ -109,7 +109,7 @@ class TypeDeserializationEntryTest extends DeserializationEntryTestBase {
         }
 
         @Test
-        @DisplayName("NUMERIC strategy: deserializes classifier ID as string")
+        @DisplayName("NUMERIC strategy: deserializes classifier ID as string with hint")
         void numericStrategy_deserializesClassifierId() {
             TypeConfig config = TypeConfig.builder()
                     .include(true)
@@ -121,9 +121,12 @@ class TypeDeserializationEntryTest extends DeserializationEntryTestBase {
             DeserializationState state = createState(null);
 
             // PLAIN NUMERIC: "_type": "N" where N is the classifier ID
+            // Note: NUMERIC strategy requires a hint EClass to determine the package,
+            // since classifier IDs are only unique within a package.
             int classifierId = personClass.getClassifierID();
             try (JsonParser parser = createParser("\"" + classifierId + "\"")) {
-                entry.deserialize(state, parser, null);
+                // Use personClass as hint to provide package context
+                entry.deserializeWithHint(state, parser, null, personClass);
                 assertEquals(personClass, state.getResolvedEClass());
             }
         }

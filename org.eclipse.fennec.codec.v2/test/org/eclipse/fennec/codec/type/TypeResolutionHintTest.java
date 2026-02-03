@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.v2.type;
+package org.eclipse.fennec.codec.type;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,29 +26,25 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
-import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.codec.config.ConfigurationResolver;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for CODEC_ROOT_OBJECT hint-based type resolution.
+ * Tests for CODEC_ROOT_TYPE hint-based type resolution.
  * <p>
  * When _type field is missing:
- * - Root object: Uses CODEC_ROOT_OBJECT hint (EClass or URI String)
+ * - Root object: Uses CODEC_ROOT_TYPE hint (EClass or URI String)
  * - Nested object: Uses EReference.eType as fallback
  * </p>
- * @deprecated Migrated to {@link org.eclipse.fennec.codec.type.TypeResolutionHintTest}
  */
-@Disabled("Migrated to org.eclipse.fennec.codec.type.TypeResolutionHintTest")
 @DisplayName("Type Resolution: Hint Strategy")
 class TypeResolutionHintTest {
 
@@ -280,7 +276,7 @@ class TypeResolutionHintTest {
         return new CodecResource(
                 URI.createURI("test://hint-test.json"),
                 metadataService,
-                CodecConfiguration.defaults(),
+                ConfigurationResolver.defaults(),
                 null);
     }
 
@@ -297,7 +293,7 @@ class TypeResolutionHintTest {
     private EObject deserializeWithHint(String json, EClass hint) throws IOException {
         CodecResource resource = createResource();
         Map<String, Object> options = new HashMap<>();
-        options.put(CodecResource.CODEC_ROOT_OBJECT, hint);
+        options.put(CodecResource.CODEC_ROOT_TYPE, hint);
 
         ByteArrayInputStream in = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
         resource.load(in, options);
@@ -308,7 +304,7 @@ class TypeResolutionHintTest {
     private EObject deserializeWithHint(String json, String uriHint) throws IOException {
         CodecResource resource = createResource();
         Map<String, Object> options = new HashMap<>();
-        options.put(CodecResource.CODEC_ROOT_OBJECT, uriHint);
+        options.put(CodecResource.CODEC_ROOT_TYPE, uriHint);
 
         ByteArrayInputStream in = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
         resource.load(in, options);

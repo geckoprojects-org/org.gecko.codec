@@ -186,7 +186,10 @@ class ReferenceConfigSpecTest {
             assertEquals(ConfigProperty.REF_KEY.<String>getDefaultValue(), config.getRefKey());
             assertEquals(ConfigProperty.REF_TYPE_KEY.<String>getDefaultValue(), config.getRefTypeKey());
             assertEquals(ConfigProperty.PROXY_KEY.<String>getDefaultValue(), config.getProxyKey());
-            assertEquals(ConfigProperty.EXPAND.<Boolean>getDefaultValue(), config.isExpand());
+            // Note: ReferenceConfig.expand (boolean) is for THIS reference's expansion state.
+            // ConfigProperty.EXPAND is a List of references to expand (different semantics).
+            // The default for a reference's expand state is false (not expanded unless explicitly listed).
+            assertFalse(config.isExpand(), "Default expand state for a reference should be false");
             assertEquals(ConfigProperty.EXPAND_GLOBAL.<Boolean>getDefaultValue(), config.isExpandGlobal());
             assertEquals(ConfigProperty.EXPAND_DEPTH.<Integer>getDefaultValue(), config.getExpandDepth());
             assertEquals(ConfigProperty.EXPAND_IGNORE_BIDIRECTIONAL.<Boolean>getDefaultValue(), config.isExpandIgnoreBidirectional());

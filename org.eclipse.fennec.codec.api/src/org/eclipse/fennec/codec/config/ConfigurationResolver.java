@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.emf.ecore.EAnnotation;
@@ -792,6 +793,10 @@ public final class ConfigurationResolver {
 
         // Convenience tracking for expand references (collected until build)
         private List<Object> expandReferences;
+        // Convenience tracking for ignore features (collected until build)
+        private List<String> ignoreFeatures;
+        // Convenience tracking for ID features (collected until build)
+        private List<String> idFeaturesList;
 
         private Builder() {}
 
@@ -900,6 +905,50 @@ public final class ConfigurationResolver {
         }
 
         /**
+         * Adds a list of EReferences to expand inline.
+         * <p>
+         * Only the specified references will be expanded; others remain as proxies.
+         * Can be called multiple times to accumulate references.
+         *
+         * @param references the list of EReferences to expand
+         * @return this builder
+         * @see ConfigProperty#EXPAND
+         */
+        public Builder expand(List<EReference> references) {
+            if (references != null && !references.isEmpty()) {
+                ensureExpandReferences();
+                for (EReference ref : references) {
+                    if (ref != null) {
+                        expandReferences.add(ref);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Adds a set of reference names to expand inline.
+         * <p>
+         * The names are resolved against the EClass at runtime.
+         * Can be called multiple times to accumulate references.
+         *
+         * @param referenceNames the set of reference names to expand
+         * @return this builder
+         * @see ConfigProperty#EXPAND
+         */
+        public Builder expand(Set<String> referenceNames) {
+            if (referenceNames != null && !referenceNames.isEmpty()) {
+                ensureExpandReferences();
+                for (String name : referenceNames) {
+                    if (name != null && !name.isEmpty()) {
+                        expandReferences.add(name);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
          * Sets the maximum depth for nested expansion.
          * <p>
          * Currently only depth=1 is supported. Higher values produce a warning.
@@ -973,8 +1022,64 @@ public final class ConfigurationResolver {
         }
 
         // ====================================================================
+        // Convenience Methods for Format Configuration
+        // ====================================================================
+
+        /**
+         * Sets the default serialization format.
+         * <p>
+         * This affects how structured data (type, ID, references) is written:
+         * <ul>
+         *   <li>PLAIN - Simple key-value format (e.g., "_type": "Person")</li>
+         *   <li>STRUCTURED - Nested object format (e.g., "_type": {"schema": "...", "type": "Person"})</li>
+         * </ul>
+         *
+         * @param format the default format (PLAIN or STRUCTURED)
+         * @return this builder
+         * @see ConfigProperty#TYPE_FORMAT
+         */
+        public Builder defaultFormat(SerializationFormat format) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.TYPE_FORMAT.getKey(), format.name());
+            return this;
+        }
+
+        // ====================================================================
         // Convenience Methods for ID Configuration
         // ====================================================================
+
+        /**
+         * Sets the ID serialization strategy.
+         * <p>
+         * Strategies:
+         * <ul>
+         *   <li>ID_FIELD - Use the EClass's ID attribute (default)</li>
+         *   <li>NONE - Don't serialize ID</li>
+         *   <li>COMBINED - Combine multiple features into one ID</li>
+         * </ul>
+         *
+         * @param strategy the ID strategy
+         * @return this builder
+         * @see ConfigProperty#ID_STRATEGY
+         */
+        public Builder idStrategy(String strategy) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.ID_STRATEGY.getKey(), strategy);
+            return this;
+        }
+
+        /**
+         * Enables or disables ID serialization.
+         * <p>
+         * Convenience method that sets idStrategy to "ID_FIELD" (enabled) or "NONE" (disabled).
+         *
+         * @param useId true to enable ID serialization, false to disable
+         * @return this builder
+         * @see #idStrategy(String)
+         */
+        public Builder useId(boolean useId) {
+            return idStrategy(useId ? "ID_FIELD" : "NONE");
+        }
 
         /**
          * Sets the JSON key for ID information.
@@ -986,6 +1091,146 @@ public final class ConfigurationResolver {
         public Builder idKey(String key) {
             ensureResourceProperties();
             resourceProperties.put(ConfigProperty.ID_KEY.getKey(), key);
+            return this;
+        }
+
+        /**
+         * Sets whether ID should appear first in the serialized output.
+         * <p>
+         * When true, the ID field is written before other properties.
+         *
+         * @param onTop true to place ID first, false for normal ordering
+         * @return this builder
+         * @see ConfigProperty#ID_ON_TOP
+         */
+        public Builder idOnTop(boolean onTop) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.ID_ON_TOP.getKey(), onTop);
+            return this;
+        }
+
+        /**
+         * Sets the ID serialization format.
+         * <p>
+         * <ul>
+         *   <li>PLAIN - ID as simple value (e.g., "_id": "123")</li>
+         *   <li>STRUCTURED - ID as object with components (e.g., "_id": {"value": "123", ...})</li>
+         * </ul>
+         *
+         * @param format the ID format (PLAIN or STRUCTURED)
+         * @return this builder
+         * @see ConfigProperty#ID_FORMAT
+         */
+        public Builder idFormat(SerializationFormat format) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.ID_FORMAT.getKey(), format.name());
+            return this;
+        }
+
+        /**
+         * Sets the separator for combining multiple ID features in PLAIN format.
+         * <p>
+         * When using COMBINED strategy with multiple features, this separator
+         * joins the values (e.g., with "-": "part1-part2-part3").
+         *
+         * @param separator the separator string (default: "-")
+         * @return this builder
+         * @see ConfigProperty#ID_SEPARATOR
+         */
+        public Builder idSeparator(String separator) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.ID_SEPARATOR.getKey(), separator);
+            return this;
+        }
+
+        /**
+         * Sets the feature names to use for combined ID.
+         * <p>
+         * When using COMBINED strategy, these features are combined to form the ID.
+         *
+         * @param featureNames the feature names to combine
+         * @return this builder
+         * @see ConfigProperty#ID_FEATURES
+         */
+        public Builder idFeatures(String... featureNames) {
+            if (featureNames != null && featureNames.length > 0) {
+                ensureIdFeatures();
+                for (String name : featureNames) {
+                    if (name != null && !name.isEmpty()) {
+                        idFeaturesList.add(name);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Sets the features to use for combined ID.
+         * <p>
+         * When using COMBINED strategy, these features are combined to form the ID.
+         *
+         * @param features the features to combine
+         * @return this builder
+         * @see ConfigProperty#ID_FEATURES
+         */
+        public Builder idFeatures(EStructuralFeature... features) {
+            if (features != null && features.length > 0) {
+                ensureIdFeatures();
+                for (EStructuralFeature feature : features) {
+                    if (feature != null) {
+                        idFeaturesList.add(feature.getName());
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Sets the ID key mode.
+         * <p>
+         * Controls how ID is written:
+         * <ul>
+         *   <li>ID_ONLY - Only write the _id field</li>
+         *   <li>BOTH - Write both _id field and the original feature</li>
+         *   <li>FEATURE_ONLY - Only write the original feature, no _id</li>
+         * </ul>
+         *
+         * @param mode the ID key mode
+         * @return this builder
+         * @see ConfigProperty#ID_KEY_MODE
+         */
+        public Builder idKeyMode(String mode) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.ID_KEY_MODE.getKey(), mode);
+            return this;
+        }
+
+        /**
+         * Sets whether to serialize the separator in STRUCTURED ID format.
+         * <p>
+         * When true, the separator is included in the output, allowing deserialization
+         * without pre-configured separator knowledge.
+         *
+         * @param serialize true to include separator in output
+         * @return this builder
+         * @see ConfigProperty#ID_SEPARATOR_SERIALIZE
+         */
+        public Builder idSerializeSeparator(boolean serialize) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.ID_SEPARATOR_SERIALIZE.getKey(), serialize);
+            return this;
+        }
+
+        /**
+         * Sets the JSON key for the separator field in STRUCTURED ID format.
+         *
+         * @param key the separator key (default: "separator")
+         * @return this builder
+         * @see ConfigProperty#ID_SEPARATOR_KEY
+         */
+        public Builder idSeparatorKey(String key) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.ID_SEPARATOR_KEY.getKey(), key);
             return this;
         }
 
@@ -1007,6 +1252,199 @@ public final class ConfigurationResolver {
         }
 
         // ====================================================================
+        // Convenience Methods for Smart Compression
+        // ====================================================================
+
+        /**
+         * Enables or disables smart compression.
+         * <p>
+         * When enabled, type information (_type) is omitted when it can be inferred
+         * from the reference declaration or context:
+         * <ul>
+         *   <li>For contained objects: omit _type when instance type == declared type</li>
+         *   <li>For non-contained refs: omit _type when instance type == declared type</li>
+         *   <li>For supertypes: use plain names instead of URIs for same-schema types</li>
+         * </ul>
+         *
+         * @param smartCompression true to enable, false to disable (default)
+         * @return this builder
+         * @see ConfigProperty#SMART_COMPRESSION
+         */
+        public Builder smartCompression(boolean smartCompression) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.SMART_COMPRESSION.getKey(), smartCompression);
+            return this;
+        }
+
+        // ====================================================================
+        // Convenience Methods for Reference Configuration
+        // ====================================================================
+
+        /**
+         * Sets the JSON key for reference URIs.
+         * <p>
+         * Default is "$ref". Used in STRUCTURED format for non-containment references.
+         *
+         * @param key the reference key
+         * @return this builder
+         * @see ConfigProperty#REF_KEY
+         */
+        public Builder refKey(String key) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.REF_KEY.getKey(), key);
+            return this;
+        }
+
+        /**
+         * Sets the JSON key for proxy objects.
+         * <p>
+         * Default is "$proxy". Used to mark proxy objects during deserialization.
+         *
+         * @param key the proxy key
+         * @return this builder
+         * @see ConfigProperty#PROXY_KEY
+         */
+        public Builder proxyKey(String key) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.PROXY_KEY.getKey(), key);
+            return this;
+        }
+
+        // ====================================================================
+        // Convenience Methods for SuperType Configuration
+        // ====================================================================
+
+        /**
+         * Enables or disables supertype serialization.
+         * <p>
+         * When enabled, the inheritance hierarchy is written alongside type information.
+         *
+         * @param serialize true to serialize supertypes, false to omit (default)
+         * @return this builder
+         * @see ConfigProperty#SUPERTYPE_SERIALIZE
+         */
+        public Builder serializeSuperTypes(boolean serialize) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.SUPERTYPE_SERIALIZE.getKey(), serialize);
+            return this;
+        }
+
+        // ====================================================================
+        // Convenience Methods for Global Ignore Features
+        // ====================================================================
+
+        /**
+         * Adds feature names to the global ignore list.
+         * <p>
+         * Features in this list will be skipped during serialization/deserialization
+         * unless explicitly forced via forceRead/forceWrite.
+         *
+         * @param featureNames the feature names to ignore
+         * @return this builder
+         * @see ConfigProperty#IGNORE_FEATURES
+         */
+        public Builder globalIgnoreFeatures(String... featureNames) {
+            if (featureNames != null && featureNames.length > 0) {
+                ensureIgnoreFeatures();
+                for (String name : featureNames) {
+                    if (name != null && !name.isEmpty()) {
+                        ignoreFeatures.add(name);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Adds features to the global ignore list.
+         * <p>
+         * Features in this list will be skipped during serialization/deserialization
+         * unless explicitly forced via forceRead/forceWrite.
+         *
+         * @param features the features to ignore
+         * @return this builder
+         * @see ConfigProperty#IGNORE_FEATURES
+         */
+        public Builder globalIgnoreFeatures(EStructuralFeature... features) {
+            if (features != null && features.length > 0) {
+                ensureIgnoreFeatures();
+                for (EStructuralFeature feature : features) {
+                    if (feature != null) {
+                        ignoreFeatures.add(feature.getName());
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Adds a single feature name to the global ignore list.
+         *
+         * @param featureName the feature name to ignore
+         * @return this builder
+         * @see ConfigProperty#IGNORE_FEATURES
+         */
+        public Builder globalIgnore(String featureName) {
+            if (featureName != null && !featureName.isEmpty()) {
+                ensureIgnoreFeatures();
+                ignoreFeatures.add(featureName);
+            }
+            return this;
+        }
+
+        // ====================================================================
+        // Convenience Methods for Value Serialization
+        // ====================================================================
+
+        /**
+         * Controls whether null values are serialized.
+         * <p>
+         * When false (default), null values are omitted from the output.
+         * When true, null values are explicitly written as JSON null.
+         *
+         * @param serialize true to serialize nulls, false to omit (default)
+         * @return this builder
+         * @see ConfigProperty#SERIALIZE_NULL
+         */
+        public Builder serializeNull(boolean serialize) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.SERIALIZE_NULL.getKey(), serialize);
+            return this;
+        }
+
+        /**
+         * Controls whether empty collections are serialized.
+         * <p>
+         * When false (default), empty lists/arrays are omitted from the output.
+         * When true, empty collections are written as empty JSON arrays.
+         *
+         * @param serialize true to serialize empty collections, false to omit (default)
+         * @return this builder
+         * @see ConfigProperty#SERIALIZE_EMPTY
+         */
+        public Builder serializeEmpty(boolean serialize) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.SERIALIZE_EMPTY.getKey(), serialize);
+            return this;
+        }
+
+        /**
+         * Controls whether default values are serialized.
+         * <p>
+         * When false (default), values equal to their EMF default are omitted.
+         * When true, default values are explicitly written.
+         *
+         * @param serialize true to serialize defaults, false to omit (default)
+         * @return this builder
+         * @see ConfigProperty#SERIALIZE_DEFAULT
+         */
+        public Builder serializeDefault(boolean serialize) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.SERIALIZE_DEFAULT.getKey(), serialize);
+            return this;
+        }
+
+        // ====================================================================
         // Helper Methods
         // ====================================================================
 
@@ -1022,6 +1460,18 @@ public final class ConfigurationResolver {
             }
         }
 
+        private void ensureIgnoreFeatures() {
+            if (ignoreFeatures == null) {
+                ignoreFeatures = new ArrayList<>();
+            }
+        }
+
+        private void ensureIdFeatures() {
+            if (idFeaturesList == null) {
+                idFeaturesList = new ArrayList<>();
+            }
+        }
+
         /**
          * Builds the resolver.
          */
@@ -1030,6 +1480,16 @@ public final class ConfigurationResolver {
             if (expandReferences != null && !expandReferences.isEmpty()) {
                 ensureResourceProperties();
                 resourceProperties.put(ConfigProperty.EXPAND.getKey(), new ArrayList<>(expandReferences));
+            }
+            // Apply collected ignore features to resource properties
+            if (ignoreFeatures != null && !ignoreFeatures.isEmpty()) {
+                ensureResourceProperties();
+                resourceProperties.put(ConfigProperty.IGNORE_FEATURES.getKey(), new ArrayList<>(ignoreFeatures));
+            }
+            // Apply collected ID features to resource properties
+            if (idFeaturesList != null && !idFeaturesList.isEmpty()) {
+                ensureResourceProperties();
+                resourceProperties.put(ConfigProperty.ID_FEATURES.getKey(), new ArrayList<>(idFeaturesList));
             }
             return new ConfigurationResolver(this);
         }

@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.v2.deser;
+package org.eclipse.fennec.codec.deser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,22 +32,19 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
-import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.codec.config.ConfigurationResolver;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
  * Tests for GeoJSON-like structures with multi-dimensional arrays.
- * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.GeoJsonLikeDeserializationTest}
  * <p>
  * GeoJSON is a standard format for encoding geographic data structures.
  * It uses deeply nested coordinate arrays:
@@ -65,7 +62,6 @@ import org.junit.jupiter.api.Test;
  * especially when properties appear before _type (deferred processing).
  * </p>
  */
-@Disabled("Migrated to org.eclipse.fennec.codec.deser.GeoJsonLikeDeserializationTest")
 @DisplayName("GeoJSON-like Deserialization Tests")
 class GeoJsonLikeDeserializationTest {
 
@@ -216,15 +212,15 @@ class GeoJsonLikeDeserializationTest {
     }
 
     private EObject loadJson(String json, EClass rootClass) throws IOException {
-        CodecConfiguration config = CodecConfiguration.builder().build();
+        ConfigurationResolver resolver = ConfigurationResolver.defaults();
         CodecResource resource = new CodecResource(
                 URI.createURI("test://geo.json"),
                 metadataService,
-                config,
+                resolver,
                 null);
 
         Map<String, Object> options = new HashMap<>();
-        options.put(CodecResource.CODEC_ROOT_OBJECT, rootClass);
+        options.put(CodecResource.CODEC_ROOT_TYPE, rootClass);
 
         try (var is = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
             resource.load(is, options);
@@ -1261,17 +1257,17 @@ class GeoJsonLikeDeserializationTest {
          * Helper that uses CODEC_ROOT_SCHEMA option.
          */
         private EObject loadJsonWithSchema(String json, EClass rootClass, String schemaUri) throws IOException {
-            CodecConfiguration config = CodecConfiguration.builder()
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
                     .typeKey("type")  // Use "type" as type key (like GeoJSON)
                     .build();
             CodecResource resource = new CodecResource(
                     URI.createURI("test://geo.json"),
                     metadataService,
-                    config,
+                    resolver,
                     null);
 
             Map<String, Object> options = new HashMap<>();
-            options.put(CodecResource.CODEC_ROOT_OBJECT, rootClass);
+            options.put(CodecResource.CODEC_ROOT_TYPE, rootClass);
             options.put(CodecResource.CODEC_ROOT_SCHEMA, schemaUri);
 
             try (var is = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
@@ -1287,20 +1283,20 @@ class GeoJsonLikeDeserializationTest {
         }
 
         /**
-         * Helper that uses only CODEC_ROOT_OBJECT (implicit schema).
+         * Helper that uses only CODEC_ROOT_TYPE (implicit schema).
          */
         private EObject loadJsonWithRootHint(String json, EClass rootClass) throws IOException {
-            CodecConfiguration config = CodecConfiguration.builder()
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
                     .typeKey("type")  // Use "type" as type key (like GeoJSON)
                     .build();
             CodecResource resource = new CodecResource(
                     URI.createURI("test://geo.json"),
                     metadataService,
-                    config,
+                    resolver,
                     null);
 
             Map<String, Object> options = new HashMap<>();
-            options.put(CodecResource.CODEC_ROOT_OBJECT, rootClass);
+            options.put(CodecResource.CODEC_ROOT_TYPE, rootClass);
 
             try (var is = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
                 resource.load(is, options);
@@ -1337,7 +1333,7 @@ class GeoJsonLikeDeserializationTest {
         }
 
         @Test
-        @DisplayName("simple name with implicit schema from CODEC_ROOT_OBJECT")
+        @DisplayName("simple name with implicit schema from CODEC_ROOT_TYPE")
         void simpleNameWithImplicitSchema() throws IOException {
             // No explicit schema - should be derived from pointClass.getEPackage().getNsURI()
             String json = """
@@ -1446,7 +1442,7 @@ class GeoJsonLikeDeserializationTest {
         }
 
         @Test
-        @DisplayName("no type in root when CODEC_ROOT_OBJECT is set")
+        @DisplayName("no type in root when CODEC_ROOT_TYPE is set")
         void noTypeInRootWithHint() throws IOException {
             // When root type is known from hint, no "type" field is needed
             String json = """

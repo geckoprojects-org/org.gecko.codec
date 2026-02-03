@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.v2.deser;
+package org.eclipse.fennec.codec.deser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,22 +31,19 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
-import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.codec.config.ConfigurationResolver;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 /**
  * Systematic tests for deferred properties deserialization.
- * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.DeferredPropertiesDeserializationTest}
  * <p>
  * When properties appear before the _type field in JSON, they are stored as
  * raw Java objects (Map, List, primitives) and replayed after type resolution.
@@ -68,7 +65,6 @@ import org.junit.jupiter.api.Test;
  * @see CodecEObjectDeserializer#replayDeferredValue
  * @see CodecEObjectDeserializer#writeValueToBuffer
  */
-@Disabled("Migrated to org.eclipse.fennec.codec.deser.DeferredPropertiesDeserializationTest")
 @DisplayName("Deferred Properties Deserialization Tests")
 class DeferredPropertiesDeserializationTest {
 
@@ -195,15 +191,15 @@ class DeferredPropertiesDeserializationTest {
     }
 
     private EObject loadJson(String json) throws IOException {
-        CodecConfiguration config = CodecConfiguration.builder().build();
+        ConfigurationResolver resolver = ConfigurationResolver.defaults();
         CodecResource resource = new CodecResource(
                 URI.createURI("test://deferred.json"),
                 metadataService,
-                config,
+                resolver,
                 null);
 
         Map<String, Object> options = new HashMap<>();
-        options.put(CodecResource.CODEC_ROOT_OBJECT, containerClass);
+        options.put(CodecResource.CODEC_ROOT_TYPE, containerClass);
 
         try (var is = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
             resource.load(is, options);

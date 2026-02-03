@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.v2.type;
+package org.eclipse.fennec.codec.type;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,15 +25,13 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
-import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.codec.config.ConfigurationResolver;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -43,9 +41,7 @@ import org.junit.jupiter.api.Test;
  * Tests that _type field with full EClass URI resolves correctly
  * for root objects and nested objects.
  * </p>
- * @deprecated Migrated to {@link org.eclipse.fennec.codec.type.TypeResolutionUriTest}
  */
-@Disabled("Migrated to org.eclipse.fennec.codec.type.TypeResolutionUriTest")
 @DisplayName("Type Resolution: URI Strategy")
 class TypeResolutionUriTest {
 
@@ -148,7 +144,7 @@ class TypeResolutionUriTest {
         return new CodecResource(
                 URI.createURI("test://uri-test.json"),
                 metadataService,
-                CodecConfiguration.defaults(),
+                ConfigurationResolver.defaults(),
                 null);
     }
 
