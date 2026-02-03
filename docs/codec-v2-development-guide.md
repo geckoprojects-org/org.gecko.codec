@@ -1897,12 +1897,11 @@ These tests were commented out due to the `TypeStrategy.MAPPED` removal. They te
   - [ ] Add merging rules for each property at each level
   - [ ] Review EEnum-level annotation support
 
-**Phase 4: Value Reader/Writer Migration (GAP-008)**
+**Phase 4: Value Reader/Writer Migration (GAP-008)** ✅ COMPLETE (2026-02-03)
 
-The new `codec.value` interfaces exist and match the spec (with `getName()`, context objects).
-However, the entry classes still use the old deprecated `codec.api.value` interfaces.
+The new `codec.value` interfaces and `CodecEntryContext` pattern are now fully integrated.
 
-Current state:
+Completed:
 - [x] New interfaces created in `codec.value` package (spec-compliant)
   - `CodecValueReader<T, F>` with `getName()` and `read(CodecReaderContext, F)`
   - `CodecValueWriter<T, F>` with `getName()` and `write(T, F, CodecWriterContext)`
@@ -1910,16 +1909,17 @@ Current state:
   - `AttributeValueReader/Writer` and `ReferenceValueReader/Writer` with `canHandle()`
   - `CodecValueRegistry` with auto-registration via `getName()`
 - [x] Old interfaces deprecated in `codec.api.value` package
-- [ ] Migrate entry classes to use new interfaces:
-  - [ ] `codec.ser.AttributeSerializationEntry` → use `codec.value.CodecValueWriter`
-  - [ ] `codec.ser.ReferenceSerializationEntry` → use `codec.value.CodecValueWriter`
-  - [ ] `codec.deser.AttributeDeserializationEntry` → use `codec.value.CodecValueReader`
-  - [ ] `codec.deser.ReferenceDeserializationEntry` → use `codec.value.CodecValueReader`
-- [ ] Create context implementations:
-  - [ ] `CodecReaderContextImpl` wrapping parser, ctxt, EffectiveCodecConfig, DiagnosticCollector
-  - [ ] `CodecWriterContextImpl` wrapping generator, ctxt, EffectiveCodecConfig, DiagnosticCollector
-- [ ] Update tests to use new interfaces
-- [ ] Update `ConfigurationResolver.Builder` to register readers/writers
+- [x] Entry classes migrated to use new interfaces via `CodecEntryContext`:
+  - [x] `codec.ser.AttributeSerializationEntry` → uses `codec.value.CodecValueWriter`
+  - [x] `codec.ser.ReferenceSerializationEntry` → uses `codec.value.CodecValueWriter`
+  - [x] `codec.deser.AttributeDeserializationEntry` → uses `codec.value.CodecValueReader`
+  - [x] `codec.deser.ReferenceDeserializationEntry` → uses `codec.value.CodecValueReader`
+- [x] Context implementations created:
+  - [x] `CodecReaderContextImpl` wrapping parser, ctxt, EffectiveCodecConfig, DiagnosticCollector
+  - [x] `CodecWriterContextImpl` wrapping generator, ctxt, EffectiveCodecConfig, DiagnosticCollector
+- [x] `CodecEntryContext` pattern: unified context for entries, created once per operation
+- [x] All tests updated to use new interfaces (getName() on readers/writers, CodecEntryContext)
+- [ ] Update `ConfigurationResolver.Builder` to register readers/writers (optional enhancement)
 
 **Phase 5: Implementation Alignment**
 - [ ] Apply documented merging rules to `codec.metadata`

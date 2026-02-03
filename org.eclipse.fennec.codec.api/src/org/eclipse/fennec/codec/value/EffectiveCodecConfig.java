@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 - 2025 Data In Motion and others.
+ * Copyright (c) 2012 - 2026 Data In Motion and others.
  * All rights reserved.
  *
  * This program and the accompanying materials are made
@@ -14,9 +14,7 @@
 package org.eclipse.fennec.codec.value;
 
 import org.eclipse.fennec.codec.config.DiscriminatorConfig;
-import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.eclipse.fennec.codec.config.IdConfig;
-import org.eclipse.fennec.codec.config.ReferenceConfig;
 import org.eclipse.fennec.codec.config.SuperTypeConfig;
 import org.eclipse.fennec.codec.config.TypeConfig;
 
