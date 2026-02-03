@@ -59,8 +59,8 @@ import org.junit.jupiter.api.Test;
 @DisplayName("CodecResource Cross-Package MAPPED Tests")
 class CodecResourceCrossPackageTest {
 
-    private static final String BASE_ECORE = "/org/eclipse/fennec/codec/v2/resource/test-mapped-type.ecore";
-    private static final String EXT_ECORE = "/org/eclipse/fennec/codec/v2/resource/test-mapped-type-ext.ecore";
+    private static final String BASE_ECORE = "/org/eclipse/fennec/codec/resource/test-mapped-type.ecore";
+    private static final String EXT_ECORE = "/org/eclipse/fennec/codec/resource/test-mapped-type-ext.ecore";
 
     private EcoreHelper ecoreHelper;
     private EPackage basePackage;

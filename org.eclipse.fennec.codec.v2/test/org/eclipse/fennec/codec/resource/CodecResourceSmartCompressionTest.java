@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("CodecResource Smart Compression Tests")
 class CodecResourceSmartCompressionTest {
 
-    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/v2/resource/test-smart-compression.ecore";
+    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/resource/test-smart-compression.ecore";
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;

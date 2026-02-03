@@ -104,7 +104,7 @@ class BikeRawTrafficLoadTest {
     @BeforeEach
     void setUp() throws IOException {
         ecoreHelper = new EcoreHelper(BikeRawTrafficLoadTest.class);
-        bikeRawPackage = ecoreHelper.loadEcoreAbsolute("/org/eclipse/fennec/codec/v2/resource/" + BIKE_RAW_ECORE);
+        bikeRawPackage = ecoreHelper.loadEcoreAbsolute("/org/eclipse/fennec/codec/resource/" + BIKE_RAW_ECORE);
         EPackage.Registry.INSTANCE.put(bikeRawPackage.getNsURI(), bikeRawPackage);
 
         metadataService = MetadataServiceFactory.create();
@@ -197,7 +197,7 @@ class BikeRawTrafficLoadTest {
             Map<String, Object> options = new HashMap<>();
             options.put(CodecResource.CODEC_ROOT_TYPE, historicalRawTrafficClass);
 
-            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + RAW_TRAFFIC_JSON)) {
+            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + RAW_TRAFFIC_JSON)) {
                 assertNotNull(is, "rawTraffic.json should be found on classpath");
                 resource.load(is, options);
             }
@@ -221,7 +221,7 @@ class BikeRawTrafficLoadTest {
             Map<String, Object> options = new HashMap<>();
             options.put(CodecResource.CODEC_ROOT_TYPE, historicalRawTrafficClass);
 
-            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + RAW_TRAFFIC_JSON)) {
+            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + RAW_TRAFFIC_JSON)) {
                 resource.load(is, options);
             }
 
@@ -255,7 +255,7 @@ class BikeRawTrafficLoadTest {
             Map<String, Object> options = new HashMap<>();
             options.put(CodecResource.CODEC_ROOT_TYPE, historicalRawTrafficClass);
 
-            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + RAW_TRAFFIC_JSON)) {
+            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + RAW_TRAFFIC_JSON)) {
                 resource.load(is, options);
             }
 
@@ -283,7 +283,7 @@ class BikeRawTrafficLoadTest {
             Map<String, Object> options = new HashMap<>();
             options.put(CodecResource.CODEC_ROOT_TYPE, historicalRawTrafficClass);
 
-            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + RAW_TRAFFIC_JSON)) {
+            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + RAW_TRAFFIC_JSON)) {
                 resource.load(is, options);
             }
 
@@ -318,7 +318,7 @@ class BikeRawTrafficLoadTest {
             Map<String, Object> options = new HashMap<>();
             options.put(CodecResource.CODEC_ROOT_TYPE, historicalRawTrafficClass);
 
-            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + RAW_TRAFFIC_JSON)) {
+            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + RAW_TRAFFIC_JSON)) {
                 resource.load(is, options);
             }
 
@@ -342,7 +342,7 @@ class BikeRawTrafficLoadTest {
             Map<String, Object> options = new HashMap<>();
             options.put(CodecResource.CODEC_ROOT_TYPE, historicalRawTrafficClass);
 
-            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + RAW_TRAFFIC_JSON)) {
+            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + RAW_TRAFFIC_JSON)) {
                 resource.load(is, options);
             }
 
@@ -365,7 +365,7 @@ class BikeRawTrafficLoadTest {
             Map<String, Object> options = new HashMap<>();
             options.put(CodecResource.CODEC_ROOT_TYPE, historicalRawTrafficClass);
 
-            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + RAW_TRAFFIC_JSON)) {
+            try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + RAW_TRAFFIC_JSON)) {
                 resource.load(is, options);
             }
 

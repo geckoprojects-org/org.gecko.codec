@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("CodecResource FeaturePath-Based Type Tests")
 class CodecResourceFeaturePathTypeTest {
 
-    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/v2/resource/test-featurepath-type.ecore";
+    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/resource/test-featurepath-type.ecore";
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;

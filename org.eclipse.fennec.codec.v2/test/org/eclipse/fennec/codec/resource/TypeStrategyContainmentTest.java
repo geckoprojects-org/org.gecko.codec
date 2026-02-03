@@ -70,7 +70,7 @@ class TypeStrategyContainmentTest {
     @BeforeEach
     void setUp() throws IOException {
         ecoreHelper = new EcoreHelper(TypeStrategyContainmentTest.class);
-        testPackage = ecoreHelper.loadEcoreAbsolute("/org/eclipse/fennec/codec/v2/resource/" + TEST_ECORE);
+        testPackage = ecoreHelper.loadEcoreAbsolute("/org/eclipse/fennec/codec/resource/" + TEST_ECORE);
         EPackage.Registry.INSTANCE.put(testPackage.getNsURI(), testPackage);
 
         metadataService = MetadataServiceFactory.create();

@@ -70,7 +70,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("EMap Deserialization Tests")
 class EMapDeserializationTest {
 
-    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/v2/resource/test-emap.ecore";
+    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/resource/test-emap.ecore";
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;

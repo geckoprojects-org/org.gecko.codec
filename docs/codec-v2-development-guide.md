@@ -1169,6 +1169,28 @@ The **[16-annotation-reference.md](codec-v2-spec/16-annotation-reference.md)** d
 5. **Feature Configuration** → EReference + EAttribute (per-feature settings)
 6. **Scope Settings** → Global/CodecConfig only (NOT in EAnnotations)
 
+### Session 2026-02-02 (continued): Post-Revert Fixes + Deprecation Audit
+
+**Context:** User reverted metadata.ecore changes (`IdStrategy.NONE` removal) but kept test/src code changes that expected the new structure. This session restored consistency and audited all remaining deprecated API usages.
+
+**Fixes Applied:**
+
+| Fix | Issue | Resolution |
+|-----|-------|------------|
+| Restored JSON test data | `rawTraffic.json` and `sites.json` deleted from `v2/resource/` | `git checkout HEAD` to restore |
+| Fixed test ecore annotation | `test-codec-annotations.ecore` had `idStrategy="NONE"` but test expected `IdKeyMode.NONE` | Changed annotation to `idKeyMode="NONE"` per spec |
+| Transient `NoClassDefFoundError` | `SuperTypeDeserializationEntryTest` failed due to stale compiled `IdStrategy.NONE` reference | Resolved by clean rebuild |
+
+**Deprecation Audit:**
+- Identified **9 deprecated types** still used across **8 SRC files** and **8 TEST files** in new `codec.*` packages
+- All from `org.eclipse.fennec.codec.api.value` (old value interfaces) and `codec.v2.util`/`codec.v2.deser` (old utility classes)
+- Documented full migration plan in §11.8 of this guide
+- Key blocker: Value reader/writer migration requires `CodecReaderContext`/`CodecWriterContext` implementations at call sites
+
+**Test Counts:** All 273 codec.v2 test classes pass, 0 failures. codec.metadata, model.metadata, codec.api also green.
+
+---
+
 ### Session 2026-02-02: Resource Integration Test Migration + Implementation Gap Fixes
 
 **Goal:** Migrate 8 complex resource integration tests from `codec.v2.resource` → `codec.resource`, fix all 23 test failures discovered during migration.
@@ -2065,6 +2087,88 @@ Reference for anyone working with the migrated code:
 | `CODEC_ROOT_OBJECT` | `CODEC_ROOT_TYPE` | Spec rename |
 | Default `refKey = "_ref"` | Default `refKey = "$ref"` | From ConfigProperty defaults |
 | `codec.v2.util.DiagnosticCollector` | `codec.diagnostic.DiagnosticCollector` | In API project |
+
+### 11.8 Remaining Deprecated API Usages (Review 2026-02-02)
+
+The new `codec.*` package classes still use deprecated APIs from the old `codec.api.value` package.
+This section tracks every usage for step-by-step migration.
+
+#### 11.8.1 Deprecated Types Summary
+
+| # | Deprecated Type | Old Package | New Package | API Change | Difficulty |
+|---|----------------|-------------|-------------|-----------|-----------|
+| 1 | `CodecValueRegistry` | `codec.api.value` | `codec.value` | Added `getName()`-based auto-registration | Low |
+| 2 | `CodecValueReader` | `codec.api.value` | `codec.value` | `read(parser, feature, ctxt)` → `read(CodecReaderContext, feature)` + `getName()` | High |
+| 3 | `CodecValueWriter` | `codec.api.value` | `codec.value` | `write(value, feature, gen, ctxt)` → `write(value, feature, CodecWriterContext)` + `getName()` | High |
+| 4 | `AttributeValueReader` | `codec.api.value` | `codec.value` | Extends new `CodecValueReader`; same `canHandle()` | High |
+| 5 | `AttributeValueWriter` | `codec.api.value` | `codec.value` | Extends new `CodecValueWriter`; same `canHandle()` | High |
+| 6 | `ReferenceValueReader` | `codec.api.value` | `codec.value` | Extends new `CodecValueReader`; same `canHandle()` | High |
+| 7 | `ReferenceValueWriter` | `codec.api.value` | `codec.value` | Extends new `CodecValueWriter`; same `canHandle()` | High |
+| 8 | `DeserializationState` | `codec.v2.deser` | `codec.deser` | Identical API (import-only change) | Low |
+| 9 | `DiagnosticCollector` | `codec.v2.util` | `codec.diagnostic` | Identical API (import-only change) | Low |
+
+**Key difference (types 2-7):** New value reader/writer interfaces receive a context object
+(`CodecReaderContext` / `CodecWriterContext`) instead of raw Jackson `JsonParser`/`JsonGenerator` +
+`DeserializationContext`/`SerializationContext`. The context objects provide additional access to
+`EffectiveCodecConfig` and `DiagnosticCollector`.
+
+#### 11.8.2 SRC Files Using Deprecated APIs (NEW packages — must migrate)
+
+These are **new** `codec.*` package files that still import from deprecated old packages:
+
+| File | Deprecated Types Used | Migration Notes |
+|------|----------------------|-----------------|
+| `codec.resource.CodecResource` | `CodecValueRegistry` | Change import to `codec.value.CodecValueRegistry` |
+| `codec.module.CodecModule` | `CodecValueRegistry` | Change import to `codec.value.CodecValueRegistry` |
+| `codec.config.effective.EffectiveCodecConfig` | `CodecValueRegistry`, `CodecValueReader`, `CodecValueWriter` | Change imports; update lookup methods to return new interfaces |
+| `codec.ser.AttributeSerializationEntry` | `CodecValueRegistry`, `CodecValueWriter`, `AttributeValueWriter` | Change imports; update `write()` call sites to pass `CodecWriterContext` |
+| `codec.ser.ReferenceSerializationEntry` | `CodecValueRegistry`, `CodecValueWriter`, `ReferenceValueWriter` | Change imports; update `write()` call sites to pass `CodecWriterContext` |
+| `codec.deser.AttributeDeserializationEntry` | `CodecValueRegistry`, `CodecValueReader`, `AttributeValueReader` | Change imports; update `read()` call sites to pass `CodecReaderContext` |
+| `codec.deser.ReferenceDeserializationEntry` | `CodecValueRegistry`, `CodecValueReader`, `ReferenceValueReader` | Change imports; update `read()` call sites to pass `CodecReaderContext` |
+| `codec.deser.DeserializationState` | `DiagnosticCollector` (v2.util) | Change import to `codec.diagnostic.DiagnosticCollector` |
+
+#### 11.8.3 SRC Files Using Deprecated APIs (OLD v2.* packages — will be deleted)
+
+These files are in the old deprecated packages and will be deleted after migration. No action needed:
+
+| File | Deprecated Types Used |
+|------|----------------------|
+| `codec.v2.deser.ReferenceDeserializationEntry` | `DeserializationState` |
+| `codec.v2.resource.CodecResource` | `DeserializationState` |
+
+#### 11.8.4 TEST Files Using Deprecated APIs (NEW packages — must migrate)
+
+| Test File | Deprecated Types Used |
+|-----------|----------------------|
+| `codec.deser.AttributeDeserializationEntryCanHandleTest` | `AttributeValueReader`, `CodecValueReader`, `CodecValueRegistry` |
+| `codec.deser.ReferenceDeserializationEntryCanHandleTest` | `ReferenceValueReader`, `CodecValueReader`, `CodecValueRegistry` |
+| `codec.deser.ReferenceDeserializationEntryCustomReaderTest` | `CodecValueReader`, `CodecValueRegistry` |
+| `codec.ser.AttributeSerializationEntryCanHandleTest` | `AttributeValueWriter`, `CodecValueWriter`, `CodecValueRegistry` |
+| `codec.ser.ReferenceSerializationEntryCanHandleTest` | `ReferenceValueWriter`, `CodecValueWriter`, `CodecValueRegistry` |
+| `codec.ser.ReferenceSerializationEntryCustomWriterTest` | `CodecValueWriter`, `CodecValueRegistry` |
+| `codec.module.CodecModuleBuilderTest` | `CodecValueRegistry` |
+| `codec.resource.CodecResourceCustomValueTest` | `CodecValueRegistry` |
+
+#### 11.8.5 Migration Order (Recommended)
+
+Migration should be bottom-up, starting with the easiest changes:
+
+1. **Import-only migrations (Low effort)**
+   - [ ] `DeserializationState`: `codec.v2.deser` → `codec.deser` (2 old-package files)
+   - [ ] `DiagnosticCollector`: `codec.v2.util` → `codec.diagnostic` (in `DeserializationState`)
+   - [ ] `CodecValueRegistry`: `codec.api.value` → `codec.value` (all files above)
+
+2. **Value reader/writer migration (High effort — requires context objects)**
+   - [ ] Create `CodecReaderContext` / `CodecWriterContext` implementations (or update existing)
+   - [ ] Update `AttributeSerializationEntry` to use new `CodecValueWriter` with `CodecWriterContext`
+   - [ ] Update `AttributeDeserializationEntry` to use new `CodecValueReader` with `CodecReaderContext`
+   - [ ] Update `ReferenceSerializationEntry` to use new `CodecValueWriter` with `CodecWriterContext`
+   - [ ] Update `ReferenceDeserializationEntry` to use new `CodecValueReader` with `CodecReaderContext`
+   - [ ] Update `EffectiveCodecConfig` to return new value reader/writer interfaces
+
+3. **Test migrations (after SRC is done)**
+   - [ ] Update all 8 test files listed in §11.8.4 to use new value interfaces
+   - [ ] Verify custom value reader/writer tests create `CodecReaderContext` / `CodecWriterContext`
 
 ---
 

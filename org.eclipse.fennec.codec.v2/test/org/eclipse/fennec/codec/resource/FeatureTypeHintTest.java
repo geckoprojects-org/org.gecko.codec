@@ -87,7 +87,7 @@ class FeatureTypeHintTest {
     @BeforeEach
     void setUp() throws IOException {
         ecoreHelper = new EcoreHelper(FeatureTypeHintTest.class);
-        testPackage = ecoreHelper.loadEcoreAbsolute("/org/eclipse/fennec/codec/v2/resource/" + TEST_ECORE);
+        testPackage = ecoreHelper.loadEcoreAbsolute("/org/eclipse/fennec/codec/resource/" + TEST_ECORE);
 
         // Register package in global registry for type resolution
         EPackage.Registry.INSTANCE.put(testPackage.getNsURI(), testPackage);

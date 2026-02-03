@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("Global Feature Ignore List Tests")
 class GlobalIgnoreFeatureTest {
 
-    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/v2/resource/test-roundtrip.ecore";
+    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/resource/test-roundtrip.ecore";
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;

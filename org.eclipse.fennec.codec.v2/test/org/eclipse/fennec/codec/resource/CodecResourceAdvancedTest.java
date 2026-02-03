@@ -65,7 +65,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("CodecResource Advanced Tests")
 class CodecResourceAdvancedTest {
 
-    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/v2/resource/test-advanced.ecore";
+    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/resource/test-advanced.ecore";
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;

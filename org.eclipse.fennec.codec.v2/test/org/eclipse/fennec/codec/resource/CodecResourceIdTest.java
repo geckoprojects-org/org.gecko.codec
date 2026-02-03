@@ -50,7 +50,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("ID Serialization Tests")
 class CodecResourceIdTest {
 
-    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/v2/resource/test-id.ecore";
+    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/resource/test-id.ecore";
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;

@@ -60,7 +60,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("CodecResource EAnnotation Configuration Tests")
 class CodecResourceAnnotationTest {
 
-    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/v2/resource/test-annotated.ecore";
+    private static final String TEST_ECORE = "/org/eclipse/fennec/codec/resource/test-annotated.ecore";
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;

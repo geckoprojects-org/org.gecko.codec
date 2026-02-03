@@ -90,7 +90,7 @@ class BikeSitesArrayLoadTest {
     @BeforeEach
     void setUp() throws IOException {
         ecoreHelper = new EcoreHelper(BikeSitesArrayLoadTest.class);
-        bikePackage = ecoreHelper.loadEcoreAbsolute("/org/eclipse/fennec/codec/v2/resource/" + BIKE_ECORE);
+        bikePackage = ecoreHelper.loadEcoreAbsolute("/org/eclipse/fennec/codec/resource/" + BIKE_ECORE);
         EPackage.Registry.INSTANCE.put(bikePackage.getNsURI(), bikePackage);
 
         metadataService = MetadataServiceFactory.create();
@@ -141,7 +141,7 @@ class BikeSitesArrayLoadTest {
         Map<String, Object> options = new HashMap<>();
         options.put(CodecResource.CODEC_ROOT_TYPE, siteClass);
 
-        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + SITES_JSON)) {
+        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + SITES_JSON)) {
             assertNotNull(is, "sites.json should be found on classpath");
             resource.load(is, options);
         }
@@ -165,7 +165,7 @@ class BikeSitesArrayLoadTest {
         Map<String, Object> options = new HashMap<>();
         options.put(CodecResource.CODEC_ROOT_TYPE, siteClass);
 
-        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + SITES_JSON)) {
+        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + SITES_JSON)) {
             resource.load(is, options);
         }
 
@@ -197,7 +197,7 @@ class BikeSitesArrayLoadTest {
         Map<String, Object> options = new HashMap<>();
         options.put(CodecResource.CODEC_ROOT_TYPE, siteClass);
 
-        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + SITES_JSON)) {
+        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + SITES_JSON)) {
             resource.load(is, options);
         }
 
@@ -227,7 +227,7 @@ class BikeSitesArrayLoadTest {
         Map<String, Object> options = new HashMap<>();
         options.put(CodecResource.CODEC_ROOT_TYPE, siteClass);
 
-        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + SITES_JSON)) {
+        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + SITES_JSON)) {
             resource.load(is, options);
         }
 
@@ -255,7 +255,7 @@ class BikeSitesArrayLoadTest {
         Map<String, Object> options = new HashMap<>();
         options.put(CodecResource.CODEC_ROOT_TYPE, siteClass);
 
-        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + SITES_JSON)) {
+        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + SITES_JSON)) {
             resource.load(is, options);
         }
 
@@ -288,7 +288,7 @@ class BikeSitesArrayLoadTest {
         Map<String, Object> options = new HashMap<>();
         options.put(CodecResource.CODEC_ROOT_TYPE, siteClass);
 
-        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + SITES_JSON)) {
+        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + SITES_JSON)) {
             resource.load(is, options);
         }
 
@@ -318,7 +318,7 @@ class BikeSitesArrayLoadTest {
         Map<String, Object> options = new HashMap<>();
         options.put(CodecResource.CODEC_ROOT_TYPE, siteClass);
 
-        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/v2/resource/" + SITES_JSON)) {
+        try (InputStream is = getClass().getResourceAsStream("/org/eclipse/fennec/codec/resource/" + SITES_JSON)) {
             resource.load(is, options);
         }
 
