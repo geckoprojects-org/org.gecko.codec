@@ -189,7 +189,7 @@ public enum ConfigProperty {
     PROXY_KEY("proxyKey", String.class, "$proxy",
         levels(GLOBAL, FEATURE), directions(READ, WRITE)),
 
-    EXPAND("expand", Boolean.class, false,
+    EXPAND("expand", List.class, null,
         levels(GLOBAL, ECLASS, FEATURE), directions(READ, WRITE)),
 
     EXPAND_GLOBAL("expandGlobal", Boolean.class, false,

@@ -391,13 +391,28 @@ public class CodecResource extends ResourceImpl {
         @SuppressWarnings("unchecked")
         List<String> ignoreFeatures = operationResolver.getGlobalProperty(ConfigProperty.IGNORE_FEATURES);
         boolean smartCompression = operationResolver.getGlobalProperty(ConfigProperty.SMART_COMPRESSION);
+        boolean useNamesFromExtendedMetaData = operationResolver.getGlobalProperty(ConfigProperty.USE_NAMES_FROM_EXTENDED_METADATA);
+
+        // Extract expand properties from the operation resolver
+        boolean expandGlobal = operationResolver.getGlobalProperty(ConfigProperty.EXPAND_GLOBAL);
+        int expandDepth = operationResolver.getGlobalProperty(ConfigProperty.EXPAND_DEPTH);
+        boolean expandIgnoreBidirectional = operationResolver.getGlobalProperty(ConfigProperty.EXPAND_IGNORE_BIDIRECTIONAL);
+
+        // Extract expand references list (may contain EReference objects or String names)
+        // Note: EXPAND property returns null when not set (unlike EXPAND_GLOBAL which returns false)
+        List<Object> expandList = operationResolver.getGlobalProperty(ConfigProperty.EXPAND);
 
         CodecModule.Builder moduleBuilder = CodecModule.builder()
                 .resolver(operationResolver)
                 .metadataService(metadataService)
                 .typeDiscriminatorService(typeService)
                 .globalIgnoreFeatures(ignoreFeatures)
-                .smartCompression(smartCompression);
+                .smartCompression(smartCompression)
+                .useNamesFromExtendedMetaData(useNamesFromExtendedMetaData)
+                .expandGlobal(expandGlobal)
+                .expandDepth(expandDepth)
+                .expandIgnoreBidirectional(expandIgnoreBidirectional)
+                .expandList(expandList);
 
         if (valueRegistry != null) {
             moduleBuilder.valueRegistry(valueRegistry);

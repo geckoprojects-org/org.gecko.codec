@@ -269,7 +269,8 @@ public final class ReferenceConfig implements Mergeable<ReferenceConfig> {
         private String refKey = ConfigProperty.REF_KEY.getDefaultValue();
         private String refTypeKey = ConfigProperty.REF_TYPE_KEY.getDefaultValue();
         private String proxyKey = ConfigProperty.PROXY_KEY.getDefaultValue();
-        private boolean expand = ConfigProperty.EXPAND.getDefaultValue();
+        // Note: expand defaults to false - it's set per-reference based on expand list matching
+        private boolean expand = false;
         private boolean expandGlobal = ConfigProperty.EXPAND_GLOBAL.getDefaultValue();
         private int expandDepth = ConfigProperty.EXPAND_DEPTH.getDefaultValue();
         private boolean expandIgnoreBidirectional = ConfigProperty.EXPAND_IGNORE_BIDIRECTIONAL.getDefaultValue();

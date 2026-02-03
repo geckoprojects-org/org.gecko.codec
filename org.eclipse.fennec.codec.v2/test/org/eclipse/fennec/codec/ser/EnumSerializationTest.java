@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.v2.ser;
+package org.eclipse.fennec.codec.ser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,20 +32,18 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecFactory;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
-import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureMetadata;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -62,10 +60,8 @@ import org.junit.jupiter.api.Test;
  *
  * @see EnumSerializationStrategy
  * @see <a href="docs/codec-v2-spec/08-feature.md#4-enum-serialization">Spec: Enum Serialization</a>
- * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser.EnumSerializationTest}
  */
-@Disabled("Migrated to org.eclipse.fennec.codec.ser.EnumSerializationTest")
-@DisplayName("Enum Serialization Tests (OLD)")
+@DisplayName("Enum Serialization Tests")
 class EnumSerializationTest {
 
     private static final String TEST_ECORE = "test-enum-serialization.ecore";
@@ -347,7 +343,7 @@ class EnumSerializationTest {
         CodecResource resource = new CodecResource(
                 URI.createURI("test://enum-test.json"),
                 ms,
-                CodecConfiguration.defaults(),
+                ConfigurationResolver.defaults(),
                 null);
         resource.getContents().add(object);
 
@@ -371,11 +367,11 @@ class EnumSerializationTest {
         CodecResource resource = new CodecResource(
                 URI.createURI("test://enum-test.json"),
                 ms,
-                CodecConfiguration.defaults(),
+                ConfigurationResolver.defaults(),
                 null);
 
         Map<String, Object> options = new HashMap<>();
-        options.put(CodecResource.CODEC_ROOT_OBJECT, taskClass);
+        options.put(CodecResource.CODEC_ROOT_TYPE, taskClass);
 
         ByteArrayInputStream in = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
         resource.load(in, options);

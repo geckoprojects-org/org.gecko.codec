@@ -13,10 +13,12 @@
  */
 package org.eclipse.fennec.codec.module;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
@@ -65,6 +67,13 @@ public class CodecModule extends SimpleModule {
     private final boolean smartCompression;
     private final boolean useNamesFromExtendedMetaData;
 
+    // Expand settings
+    private final boolean expandGlobal;
+    private final Set<EReference> expandReferences;
+    private final Set<String> expandReferenceNames;
+    private final int expandDepth;
+    private final boolean expandIgnoreBidirectional;
+
     private CodecModule(Builder builder) {
         this.moduleName = builder.moduleName;
         this.resolver = builder.resolver;
@@ -76,6 +85,13 @@ public class CodecModule extends SimpleModule {
         this.sortPropertiesAlphabetically = builder.sortPropertiesAlphabetically;
         this.smartCompression = builder.smartCompression;
         this.useNamesFromExtendedMetaData = builder.useNamesFromExtendedMetaData;
+        this.expandGlobal = builder.expandGlobal;
+        this.expandReferences = builder.expandReferences != null
+                ? Set.copyOf(builder.expandReferences) : Set.of();
+        this.expandReferenceNames = builder.expandReferenceNames != null
+                ? Set.copyOf(builder.expandReferenceNames) : Set.of();
+        this.expandDepth = builder.expandDepth;
+        this.expandIgnoreBidirectional = builder.expandIgnoreBidirectional;
     }
 
     @Override
@@ -125,6 +141,11 @@ public class CodecModule extends SimpleModule {
                 .sortPropertiesAlphabetically(sortPropertiesAlphabetically)
                 .smartCompression(smartCompression)
                 .useNamesFromExtendedMetaData(useNamesFromExtendedMetaData)
+                .expandGlobal(expandGlobal)
+                .expandReferences(expandReferences)
+                .expandReferenceNames(expandReferenceNames)
+                .expandDepth(expandDepth)
+                .expandIgnoreBidirectional(expandIgnoreBidirectional)
                 .build();
     }
 
@@ -145,6 +166,11 @@ public class CodecModule extends SimpleModule {
                 .sortPropertiesAlphabetically(sortPropertiesAlphabetically)
                 .smartCompression(smartCompression)
                 .useNamesFromExtendedMetaData(useNamesFromExtendedMetaData)
+                .expandGlobal(expandGlobal)
+                .expandReferences(expandReferences)
+                .expandReferenceNames(expandReferenceNames)
+                .expandDepth(expandDepth)
+                .expandIgnoreBidirectional(expandIgnoreBidirectional)
                 .build();
     }
 
@@ -268,6 +294,11 @@ public class CodecModule extends SimpleModule {
         private boolean sortPropertiesAlphabetically = false;
         private boolean smartCompression = false;
         private boolean useNamesFromExtendedMetaData = false;
+        private boolean expandGlobal = false;
+        private Set<EReference> expandReferences;
+        private Set<String> expandReferenceNames;
+        private int expandDepth = 1;
+        private boolean expandIgnoreBidirectional = true;
 
         public Builder() {
         }
@@ -314,6 +345,50 @@ public class CodecModule extends SimpleModule {
 
         public Builder useNamesFromExtendedMetaData(boolean useNamesFromExtendedMetaData) {
             this.useNamesFromExtendedMetaData = useNamesFromExtendedMetaData;
+            return this;
+        }
+
+        public Builder expandGlobal(boolean expandGlobal) {
+            this.expandGlobal = expandGlobal;
+            return this;
+        }
+
+        public Builder expandDepth(int expandDepth) {
+            this.expandDepth = expandDepth;
+            return this;
+        }
+
+        public Builder expandIgnoreBidirectional(boolean expandIgnoreBidirectional) {
+            this.expandIgnoreBidirectional = expandIgnoreBidirectional;
+            return this;
+        }
+
+        /**
+         * Sets the expand list from a mixed list of EReference and String values.
+         * <p>
+         * This method processes a list that may contain EReference objects or
+         * String reference names and separates them into the appropriate sets.
+         *
+         * @param expandList mixed list of EReference and String
+         * @return this builder
+         */
+        public Builder expandList(List<Object> expandList) {
+            if (expandList == null || expandList.isEmpty()) {
+                return this;
+            }
+            for (Object item : expandList) {
+                if (item instanceof EReference ref) {
+                    if (expandReferences == null) {
+                        expandReferences = new HashSet<>();
+                    }
+                    expandReferences.add(ref);
+                } else if (item instanceof String name) {
+                    if (expandReferenceNames == null) {
+                        expandReferenceNames = new HashSet<>();
+                    }
+                    expandReferenceNames.add(name);
+                }
+            }
             return this;
         }
 

@@ -13,12 +13,16 @@
  */
 package org.eclipse.fennec.codec.config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
@@ -373,10 +377,11 @@ public final class ConfigurationResolver {
                     .mergeWith(extractFeatureProperties(optionsProperties, f))
                     .validate(diagnostics);
 
-            // Apply feature name as key when no explicit key was configured
-            // (ConfigProperty.KEY default is null = "use feature name")
+            // Apply key when no explicit key was configured
+            // (ConfigProperty.KEY default is null = "use feature name or ExtendedMetaData name")
             if (resolved.getKey() == null) {
-                resolved = resolved.toBuilder().key(f.getName()).build();
+                String key = resolveDefaultFeatureKey(f);
+                resolved = resolved.toBuilder().key(key).build();
             }
 
             // Apply global ignoreFeatures list
@@ -397,6 +402,48 @@ public final class ConfigurationResolver {
 
             return resolved;
         });
+    }
+
+    /**
+     * Resolves the default feature key when no explicit key is configured.
+     * <p>
+     * If useNamesFromExtendedMetaData is enabled, checks for ExtendedMetaData "name"
+     * annotation on the feature. Otherwise, uses the feature name.
+     * </p>
+     *
+     * @param feature the feature to resolve key for
+     * @return the resolved key (never null)
+     */
+    private String resolveDefaultFeatureKey(EStructuralFeature feature) {
+        // Check if ExtendedMetaData names should be used
+        Boolean useExtendedMetaData = getGlobalProperty(ConfigProperty.USE_NAMES_FROM_EXTENDED_METADATA);
+        if (Boolean.TRUE.equals(useExtendedMetaData)) {
+            String extendedMetaDataName = getExtendedMetaDataName(feature);
+            if (extendedMetaDataName != null && !extendedMetaDataName.isEmpty()) {
+                return extendedMetaDataName;
+            }
+        }
+        // Fall back to feature name
+        return feature.getName();
+    }
+
+    /**
+     * Gets the ExtendedMetaData name from a feature's annotation.
+     * <p>
+     * Looks for the annotation source "http:///org/eclipse/emf/ecore/util/ExtendedMetaData"
+     * and retrieves the "name" detail.
+     * </p>
+     *
+     * @param feature the feature to check
+     * @return the ExtendedMetaData name, or null if not present
+     */
+    private static String getExtendedMetaDataName(EStructuralFeature feature) {
+        EAnnotation annotation = feature.getEAnnotation(
+                "http:///org/eclipse/emf/ecore/util/ExtendedMetaData");
+        if (annotation != null) {
+            return annotation.getDetails().get("name");
+        }
+        return null;
     }
 
     /**
@@ -743,6 +790,9 @@ public final class ConfigurationResolver {
         private Map<String, Object> moduleProperties;
         private Map<String, Object> annotationProperties;
 
+        // Convenience tracking for expand references (collected until build)
+        private List<Object> expandReferences;
+
         private Builder() {}
 
         /**
@@ -785,10 +835,202 @@ public final class ConfigurationResolver {
             return this;
         }
 
+        // ====================================================================
+        // Convenience Methods for Reference Expansion
+        // ====================================================================
+
+        /**
+         * Enables global expansion of all non-containment references.
+         * <p>
+         * When enabled, all non-containment references are serialized inline
+         * instead of as proxy references.
+         *
+         * @param expandGlobal true to expand all references, false otherwise
+         * @return this builder
+         * @see ConfigProperty#EXPAND_GLOBAL
+         */
+        public Builder expandGlobal(boolean expandGlobal) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.EXPAND_GLOBAL.getKey(), expandGlobal);
+            return this;
+        }
+
+        /**
+         * Adds specific EReferences to expand inline.
+         * <p>
+         * Only the specified references will be expanded; others remain as proxies.
+         * Can be called multiple times to accumulate references.
+         *
+         * @param references the EReferences to expand
+         * @return this builder
+         * @see ConfigProperty#EXPAND
+         */
+        public Builder expand(EReference... references) {
+            if (references != null) {
+                ensureExpandReferences();
+                for (EReference ref : references) {
+                    if (ref != null) {
+                        expandReferences.add(ref);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Adds specific reference names to expand inline.
+         * <p>
+         * The names are resolved against the EClass at runtime.
+         * Can be called multiple times to accumulate references.
+         *
+         * @param referenceNames the reference names to expand
+         * @return this builder
+         * @see ConfigProperty#EXPAND
+         */
+        public Builder expand(String... referenceNames) {
+            if (referenceNames != null) {
+                ensureExpandReferences();
+                for (String name : referenceNames) {
+                    if (name != null && !name.isEmpty()) {
+                        expandReferences.add(name);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Sets the maximum depth for nested expansion.
+         * <p>
+         * Currently only depth=1 is supported. Higher values produce a warning.
+         *
+         * @param depth the maximum expansion depth
+         * @return this builder
+         * @see ConfigProperty#EXPAND_DEPTH
+         */
+        public Builder expandDepth(int depth) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.EXPAND_DEPTH.getKey(), depth);
+            return this;
+        }
+
+        /**
+         * Controls whether bidirectional (opposite) references are skipped during expansion.
+         * <p>
+         * Default is true (skip) to prevent cycles.
+         *
+         * @param ignore true to skip bidirectional references, false to include
+         * @return this builder
+         * @see ConfigProperty#EXPAND_IGNORE_BIDIRECTIONAL
+         */
+        public Builder expandIgnoreBidirectional(boolean ignore) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.EXPAND_IGNORE_BIDIRECTIONAL.getKey(), ignore);
+            return this;
+        }
+
+        // ====================================================================
+        // Convenience Methods for Type Configuration
+        // ====================================================================
+
+        /**
+         * Sets the type serialization strategy.
+         *
+         * @param strategy the type strategy (URI, NAME, NONE, etc.)
+         * @return this builder
+         * @see ConfigProperty#TYPE_STRATEGY
+         */
+        public Builder typeStrategy(TypeStrategy strategy) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.TYPE_STRATEGY.getKey(), strategy.name());
+            return this;
+        }
+
+        /**
+         * Sets the JSON key for type information.
+         *
+         * @param key the type key (default: "_type")
+         * @return this builder
+         * @see ConfigProperty#TYPE_KEY
+         */
+        public Builder typeKey(String key) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.TYPE_KEY.getKey(), key);
+            return this;
+        }
+
+        /**
+         * Sets whether to include type information.
+         *
+         * @param include true to include type, false to omit
+         * @return this builder
+         * @see ConfigProperty#TYPE_INCLUDE
+         */
+        public Builder typeInclude(boolean include) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.TYPE_INCLUDE.getKey(), include);
+            return this;
+        }
+
+        // ====================================================================
+        // Convenience Methods for ID Configuration
+        // ====================================================================
+
+        /**
+         * Sets the JSON key for ID information.
+         *
+         * @param key the ID key (default: "_id")
+         * @return this builder
+         * @see ConfigProperty#ID_KEY
+         */
+        public Builder idKey(String key) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.ID_KEY.getKey(), key);
+            return this;
+        }
+
+        // ====================================================================
+        // Convenience Methods for Feature Configuration
+        // ====================================================================
+
+        /**
+         * Enables use of ExtendedMetaData names for JSON keys.
+         *
+         * @param use true to use ExtendedMetaData names, false to use feature names
+         * @return this builder
+         * @see ConfigProperty#USE_NAMES_FROM_EXTENDED_METADATA
+         */
+        public Builder useNamesFromExtendedMetaData(boolean use) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.USE_NAMES_FROM_EXTENDED_METADATA.getKey(), use);
+            return this;
+        }
+
+        // ====================================================================
+        // Helper Methods
+        // ====================================================================
+
+        private void ensureResourceProperties() {
+            if (resourceProperties == null) {
+                resourceProperties = new HashMap<>();
+            }
+        }
+
+        private void ensureExpandReferences() {
+            if (expandReferences == null) {
+                expandReferences = new ArrayList<>();
+            }
+        }
+
         /**
          * Builds the resolver.
          */
         public ConfigurationResolver build() {
+            // Apply collected expand references to resource properties
+            if (expandReferences != null && !expandReferences.isEmpty()) {
+                ensureResourceProperties();
+                resourceProperties.put(ConfigProperty.EXPAND.getKey(), new ArrayList<>(expandReferences));
+            }
             return new ConfigurationResolver(this);
         }
     }

@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.v2.ser;
+package org.eclipse.fennec.codec.ser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,16 +30,14 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
-import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.codec.config.ConfigurationResolver;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -50,12 +48,9 @@ import org.junit.jupiter.api.Test;
  * (auto-detection of expanded objects without _ref).
  * </p>
  *
- * @see <a href="docs/codec-v2-spec/07-reference.md#42-expand-inline-serialization">Spec: Expand Inline Serialization</a>
- * @see <a href="docs/codec-v2-spec/07-reference.md#8-deserialization">Spec: Reference Deserialization</a>
- * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser.ExpandReferenceTest}
+ * @see <a href="docs/codec-v2-spec/10-reference.md#5-proxy-and-expand-handling">Spec: Proxy and Expand Handling</a>
  */
-@Disabled("Migrated to org.eclipse.fennec.codec.ser.ExpandReferenceTest")
-@DisplayName("Expand Reference Tests (OLD)")
+@DisplayName("Expand Reference Tests")
 class ExpandReferenceTest {
 
     private static final String TEST_ECORE = "test-roundtrip.ecore";
@@ -125,16 +120,16 @@ class ExpandReferenceTest {
         return company;
     }
 
-    private CodecResource createResource(CodecConfiguration config) {
+    private CodecResource createResource(ConfigurationResolver resolver) {
         return new CodecResource(
                 URI.createURI("test://expand-test.json"),
                 metadataService,
-                config,
+                resolver,
                 null);
     }
 
-    private String serialize(EObject object, CodecConfiguration config) throws IOException {
-        CodecResource resource = createResource(config);
+    private String serialize(EObject object, ConfigurationResolver resolver) throws IOException {
+        CodecResource resource = createResource(resolver);
         resource.getContents().add(object);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -146,10 +141,10 @@ class ExpandReferenceTest {
     }
 
     private EObject deserialize(String json, EClass rootEClass) throws IOException {
-        CodecResource resource = createResource(CodecConfiguration.defaults());
+        CodecResource resource = createResource(ConfigurationResolver.defaults());
 
         Map<String, Object> options = new HashMap<>();
-        options.put(CodecResource.CODEC_ROOT_OBJECT, rootEClass);
+        options.put(CodecResource.CODEC_ROOT_TYPE, rootEClass);
 
         ByteArrayInputStream in = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
         resource.load(in, options);
@@ -178,19 +173,18 @@ class ExpandReferenceTest {
             company.eSet(ceoRef, alice);
 
             // Serialize with default config (no expand)
-            String json = serialize(company, CodecConfiguration.defaults());
+            String json = serialize(company, ConfigurationResolver.defaults());
 
             // CEO should be serialized as $ref (proxy reference)
             assertTrue(json.contains("\"ceo\""), "JSON should contain ceo field");
-            assertTrue(json.contains("\"_ref\""), "CEO should be serialized with $ref key");
+            assertTrue(json.contains("\"$ref\""), "CEO should be serialized with $ref key");
 
             // The CEO object should NOT contain inline data like "name":"Alice" outside of employees
-            // We need to check that the ceo field has $ref and not the full object
-            // A proper check: ceo should have $ref and should NOT have "name" inside it
+            // We need to check that the ceo field has $ref and should NOT have "name" inside it
             int ceoIndex = json.indexOf("\"ceo\"");
             int ceoEndIndex = json.indexOf("}", ceoIndex);
             String ceoJson = json.substring(ceoIndex, ceoEndIndex + 1);
-            assertTrue(ceoJson.contains("_ref"), "CEO should contain $ref");
+            assertTrue(ceoJson.contains("$ref"), "CEO should contain $ref");
             assertFalse(ceoJson.contains("\"name\""), "CEO should NOT contain name (not expanded)");
         }
 
@@ -207,11 +201,11 @@ class ExpandReferenceTest {
             company.eSet(ceoRef, alice);
 
             // Serialize with expandGlobal=true
-            CodecConfiguration config = CodecConfiguration.builder()
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
                     .expandGlobal(true)
                     .build();
 
-            String json = serialize(company, config);
+            String json = serialize(company, resolver);
 
             // CEO should be expanded inline (no $ref)
             assertTrue(json.contains("\"ceo\""), "JSON should contain ceo field");
@@ -232,11 +226,11 @@ class ExpandReferenceTest {
             company.eSet(ceoRef, alice);
 
             // Serialize with specific reference expanded
-            CodecConfiguration config = CodecConfiguration.builder()
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
                     .expand(ceoRef)
                     .build();
 
-            String json = serialize(company, config);
+            String json = serialize(company, resolver);
 
             // CEO should be expanded inline
             assertTrue(json.contains("\"ceo\""), "JSON should contain ceo field");
@@ -255,11 +249,11 @@ class ExpandReferenceTest {
             company.eSet(ceoRef, alice);
 
             // Serialize with specific reference expanded by name
-            CodecConfiguration config = CodecConfiguration.builder()
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
                     .expand("ceo")
                     .build();
 
-            String json = serialize(company, config);
+            String json = serialize(company, resolver);
 
             // CEO should be expanded inline
             assertTrue(json.contains("\"ceo\""), "JSON should contain ceo field");
@@ -278,15 +272,15 @@ class ExpandReferenceTest {
             company.eSet(ceoRef, proxyPerson);
 
             // Serialize with expandGlobal=true
-            CodecConfiguration config = CodecConfiguration.builder()
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
                     .expandGlobal(true)
                     .build();
 
-            String json = serialize(company, config);
+            String json = serialize(company, resolver);
 
-            // Proxy CEO should still be serialized as _ref (not expanded)
+            // Proxy CEO should still be serialized as $ref (not expanded)
             assertTrue(json.contains("\"ceo\""), "JSON should contain ceo field");
-            assertTrue(json.contains("_ref"), "Proxy CEO should be serialized as _ref");
+            assertTrue(json.contains("$ref"), "Proxy CEO should be serialized as $ref");
         }
 
         @Test
@@ -307,11 +301,11 @@ class ExpandReferenceTest {
             friends.add(bob);
 
             // Serialize with friends expanded
-            CodecConfiguration config = CodecConfiguration.builder()
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
                     .expand("friends")
                     .build();
 
-            String json = serialize(company, config);
+            String json = serialize(company, resolver);
 
             // Friends should be expanded
             assertTrue(json.contains("\"friends\""), "JSON should contain friends field");
@@ -319,7 +313,7 @@ class ExpandReferenceTest {
     }
 
     // ========================================================================
-    // Deserialization Tests (disabled until implementation is complete)
+    // Deserialization Tests
     // ========================================================================
 
     @Nested
@@ -363,9 +357,9 @@ class ExpandReferenceTest {
         }
 
         @Test
-        @DisplayName("deserializes proxy reference with _ref")
+        @DisplayName("deserializes proxy reference with $ref")
         void deserializesProxyReference() throws IOException {
-            // JSON with proxy CEO (has _ref)
+            // JSON with proxy CEO (has $ref)
             String json = """
                 {
                   "_type": "http://test.example.org/roundtrip/1.0#//Company",
@@ -378,7 +372,7 @@ class ExpandReferenceTest {
                   ],
                   "ceo": {
                     "_type": "http://test.example.org/roundtrip/1.0#//Person",
-                    "_ref": "//@employees.0"
+                    "$ref": "//@employees.0"
                   }
                 }
                 """;
@@ -399,7 +393,7 @@ class ExpandReferenceTest {
         }
 
         @Test
-        @DisplayName("deserializes proxy with projection (_ref + additional fields)")
+        @DisplayName("deserializes proxy with projection ($ref + additional fields)")
         void deserializesProxyWithProjection() throws IOException {
             // JSON with proxy that has projection data
             String json = """
@@ -409,7 +403,7 @@ class ExpandReferenceTest {
                   "employees": [],
                   "ceo": {
                     "_type": "http://test.example.org/roundtrip/1.0#//Person",
-                    "_ref": "other.json#//@employees.0",
+                    "$ref": "other.json#//@employees.0",
                     "name": "Alice"
                   }
                 }
@@ -422,7 +416,7 @@ class ExpandReferenceTest {
             // CEO should be a proxy with populated name field
             EObject ceo = (EObject) loaded.eGet(ceoRef);
             assertNotNull(ceo, "CEO should be created");
-            assertTrue(ceo.eIsProxy(), "CEO should be a proxy (has _ref)");
+            assertTrue(ceo.eIsProxy(), "CEO should be a proxy (has $ref)");
             assertEquals("Alice", ceo.eGet(personNameAttribute),
                     "Proxy should have projected name populated");
         }
@@ -473,7 +467,7 @@ class ExpandReferenceTest {
     }
 
     // ========================================================================
-    // Round-Trip Tests (disabled until deserialization is complete)
+    // Round-Trip Tests
     // ========================================================================
 
     @Nested
@@ -493,11 +487,11 @@ class ExpandReferenceTest {
             company.eSet(ceoRef, alice);
 
             // Serialize with expand
-            CodecConfiguration config = CodecConfiguration.builder()
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
                     .expand(ceoRef)
                     .build();
 
-            String json = serialize(company, config);
+            String json = serialize(company, resolver);
 
             // Deserialize (auto-detects expanded)
             EObject loaded = deserialize(json, companyClass);
@@ -525,11 +519,11 @@ class ExpandReferenceTest {
             friends.add(charlie);
 
             // Serialize with friends expanded
-            CodecConfiguration config = CodecConfiguration.builder()
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
                     .expand("friends")
                     .build();
 
-            String json = serialize(alice, config);
+            String json = serialize(alice, resolver);
             System.out.println("Multi-valued expand JSON:\n" + json);
 
             // Verify serialized JSON has no $ref

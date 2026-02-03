@@ -11,7 +11,7 @@
  * Contributors:
  *     Data In Motion - initial API and implementation
  */
-package org.eclipse.fennec.codec.v2.ser;
+package org.eclipse.fennec.codec.ser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,14 +32,12 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
-import org.eclipse.fennec.codec.v2.util.MetadataServiceFactory;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
+import org.eclipse.fennec.codec.config.ConfigurationResolver;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.util.MetadataServiceFactory;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -57,10 +55,8 @@ import org.junit.jupiter.api.Test;
  *   <li>{@code String[]} - string array</li>
  * </ul>
  * </p>
- * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser.ArrayAttributeSerializationTest}
  */
-@Disabled("Migrated to org.eclipse.fennec.codec.ser.ArrayAttributeSerializationTest")
-@DisplayName("Array Attribute Serialization Tests (OLD)")
+@DisplayName("Array Attribute Serialization Tests")
 class ArrayAttributeSerializationTest {
 
     private static final String TEST_NS_URI = "http://test.fennec/arrays";
@@ -175,12 +171,10 @@ class ArrayAttributeSerializationTest {
     }
 
     private String saveJson(EObject object) throws IOException {
-        CodecConfiguration config = CodecConfiguration.builder()
-                .build();
         CodecResource resource = new CodecResource(
                 URI.createURI("test://arrays.json"),
                 metadataService,
-                config,
+                ConfigurationResolver.defaults(),
                 null);
 
         resource.getContents().add(object);
@@ -616,15 +610,14 @@ class ArrayAttributeSerializationTest {
             String json = saveJson(holder);
 
             // Deserialize
-            CodecConfiguration config = CodecConfiguration.builder().build();
             CodecResource resource = new CodecResource(
                     URI.createURI("test://arrays.json"),
                     metadataService,
-                    config,
+                    ConfigurationResolver.defaults(),
                     null);
 
             Map<String, Object> options = new HashMap<>();
-            options.put(CodecResource.CODEC_ROOT_OBJECT, arrayHolderClass);
+            options.put(CodecResource.CODEC_ROOT_TYPE, arrayHolderClass);
 
             try (var is = new java.io.ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
                 resource.load(is, options);
@@ -659,15 +652,14 @@ class ArrayAttributeSerializationTest {
             String json = saveJson(holder);
 
             // Deserialize
-            CodecConfiguration config = CodecConfiguration.builder().build();
             CodecResource resource = new CodecResource(
                     URI.createURI("test://arrays.json"),
                     metadataService,
-                    config,
+                    ConfigurationResolver.defaults(),
                     null);
 
             Map<String, Object> options = new HashMap<>();
-            options.put(CodecResource.CODEC_ROOT_OBJECT, arrayHolderClass);
+            options.put(CodecResource.CODEC_ROOT_TYPE, arrayHolderClass);
 
             try (var is = new java.io.ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
                 resource.load(is, options);
@@ -709,15 +701,14 @@ class ArrayAttributeSerializationTest {
             String json = saveJson(holder);
 
             // Deserialize
-            CodecConfiguration config = CodecConfiguration.builder().build();
             CodecResource resource = new CodecResource(
                     URI.createURI("test://arrays.json"),
                     metadataService,
-                    config,
+                    ConfigurationResolver.defaults(),
                     null);
 
             Map<String, Object> options = new HashMap<>();
-            options.put(CodecResource.CODEC_ROOT_OBJECT, arrayHolderClass);
+            options.put(CodecResource.CODEC_ROOT_TYPE, arrayHolderClass);
 
             try (var is = new java.io.ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8))) {
                 resource.load(is, options);
