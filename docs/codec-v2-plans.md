@@ -4,6 +4,8 @@ This document consolidates all active plans for completing the codec.v2 migratio
 Spec Compliance Refactoring Plan and the Deprecated API Migration Plan into a single phased roadmap.
 
 **Created:** 2026-02-02
+**Updated:** 2026-02-04
+
 **Related documents:**
 - [`docs/codec-v2-development-guide.md`](codec-v2-development-guide.md) — Session continuity, current state
 - [`docs/codec-v2-spec/`](codec-v2-spec/) — Specification (source of truth)
@@ -14,10 +16,12 @@ Spec Compliance Refactoring Plan and the Deprecated API Migration Plan into a si
 
 1. [Current State](#1-current-state)
 2. [Architecture Overview](#2-architecture-overview)
-3. [Plan A: Deprecated API Migration](#3-plan-a-deprecated-api-migration-codecvaluereaderwriter)
+3. [Plan A: Deprecated API Migration](#3-plan-a-deprecated-api-migration--complete) ✅
 4. [Plan B: Spec Compliance Gaps](#4-plan-b-spec-compliance-gaps)
-5. [Execution Roadmap](#5-execution-roadmap)
-6. [Critical Files Reference](#6-critical-files-reference)
+5. [Plan C: Documentation Examples](#5-plan-c-documentation-examples-deferred)
+6. [Plan D: Discriminator Refactoring](#6-plan-d-discriminator-refactoring-deferred)
+7. [Execution Roadmap](#7-execution-roadmap)
+8. [Critical Files Reference](#8-critical-files-reference)
 
 ---
 
@@ -30,16 +34,20 @@ The 8-step package migration from `codec.v2.*` to `codec.*` is **complete**:
 - Old `codec.v2.*` classes are deprecated + tests disabled
 - `ConfigurationResolver` replaced `CodecConfiguration` + `ConfigurationMerger`
 - All 6 config types have spec + resolver tests (Type, Id, SuperType, Feature, Reference, Discriminator)
-- 1461 tests total, 0 failures
+
+**Plan A (Deprecated API Migration) is COMPLETE** (2026-02-04):
+- Migrated `codec.api.value.*` to `codec.value.*` API
+- Migrated dependent projects: `codec.geojson`, `codec.jsonschema.v2`, `codec.openapi`
+- Fixed `forceWrite`/`forceRead` bugs (two-gate model, volatile features)
 
 ### What Remains
 
-Two categories of work:
-
-| Category | Description | Scope |
-|----------|-------------|-------|
-| **Plan A** | Migrate from deprecated `codec.api.value.*` to new `codec.value.*` API | 8 SRC + 8 TEST files |
-| **Plan B** | Fill spec compliance gaps (14 identified GAPs) | Metadata model + entries + tests |
+| Category | Description | Status |
+|----------|-------------|--------|
+| ~~**Plan A**~~ | ~~Migrate deprecated API~~ | ✅ COMPLETE |
+| **Plan B** | Fill spec compliance gaps (14 identified GAPs) | In Progress |
+| **Plan C** | Documentation examples (deferred from spec review) | Not Started |
+| **Plan D** | Discriminator refactoring (deferred from spec review) | Not Started |
 
 ---
 
@@ -99,146 +107,31 @@ Resolution: First non-null value wins, scanning scope left-to-right, source top-
 
 ---
 
-## 3. Plan A: Deprecated API Migration (CodecValueReader/Writer)
+## 3. Plan A: Deprecated API Migration ✅ COMPLETE
 
-### Goal
+**Completed:** 2026-02-04
 
-Replace all usages of deprecated `codec.api.value.*` types with `codec.value.*` types
-in the new `codec.*` package SRC and TEST files.
+Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*` types.
 
-### Key Differences: Old vs New API
+### What Was Done
+
+1. **Core codec.v2 migration** - Entry classes, module, resource now use new API
+2. **Dependent projects migrated:**
+   - `codec.geojson` - Uses `ConfigurationResolver` + `forceWrite`/`forceRead`
+   - `codec.jsonschema.v2` - `EPackageValueReader`/`Writer` use new context API
+   - `codec.openapi` - `OperationValueReader` uses new context API
+3. **Bug fixes:**
+   - `forceWrite` now correctly implements two-gate model (visibility vs value gate)
+   - `forceRead` now works for volatile features in `ConfigurationResolver`
+
+### API Changes Summary
 
 | Aspect | Old (`codec.api.value`) | New (`codec.value`) |
 |--------|------------------------|---------------------|
-| Reader method | `T read(JsonParser, F, DeserializationContext)` | `T read(CodecReaderContext, F)` |
-| Writer method | `void write(T, F, JsonGenerator, SerializationContext)` | `void write(T, F, CodecWriterContext)` |
-| Registration | `registry.registerReader("name", reader)` | `registry.register(reader)` (uses `getName()`) |
-| Registry class | `codec.api.value.CodecValueRegistry` | `codec.value.CodecValueRegistry` |
+| Reader method | `read(JsonParser, F, DeserializationContext)` | `read(CodecReaderContext, F)` |
+| Writer method | `write(T, F, JsonGenerator, SerializationContext)` | `write(T, F, CodecWriterContext)` |
+| Registration | `registerReader("name", reader)` | `register(reader)` (uses `getName()`) |
 | Config access | Not available | Via `ctx.getConfig()` |
-| Diagnostics | Not available | Via `ctx.getDiagnostics()` |
-
-### Step A1: Create Context Implementations (codec.api project)
-
-**New files in `codec.api/src/org/eclipse/fennec/codec/value/`:**
-
-#### `SimpleEffectiveCodecConfig.java`
-Lightweight value holder implementing the `EffectiveCodecConfig` interface:
-```java
-public class SimpleEffectiveCodecConfig implements EffectiveCodecConfig {
-    private final TypeConfig typeConfig;
-    private final SuperTypeConfig superTypeConfig;
-    private final IdConfig idConfig;
-    private final FeatureConfig featureConfig;
-    private final ReferenceConfig referenceConfig;
-    private final DiscriminatorConfig discriminatorConfig;
-    private final boolean smartCompressionEnabled;
-    // Constructor + getters
-}
-```
-
-#### `DefaultCodecReaderContext.java`
-```java
-public class DefaultCodecReaderContext implements CodecReaderContext {
-    private final JsonParser parser;
-    private final DeserializationContext jacksonContext;
-    private final EffectiveCodecConfig config;
-    private final DiagnosticCollector diagnostics;
-    // Constructor + getters
-}
-```
-
-#### `DefaultCodecWriterContext.java`
-```java
-public class DefaultCodecWriterContext implements CodecWriterContext {
-    private final JsonGenerator generator;
-    private final SerializationContext jacksonContext;
-    private final EffectiveCodecConfig config;
-    private final DiagnosticCollector diagnostics;
-    // Constructor + getters
-}
-```
-
-**Tests:** `DefaultCodecReaderContextTest.java`, `DefaultCodecWriterContextTest.java`
-
-**Risk:** Low — new files only, no existing code modified.
-
-### Step A2: Switch CodecValueRegistry Import (all files)
-
-Drop-in import swap from `codec.api.value.CodecValueRegistry` to `codec.value.CodecValueRegistry`.
-Same API surface (getWriter, getReader, registerWriter, registerReader) plus auto-registration.
-
-**SRC files (7):**
-- `codec.config.effective.EffectiveCodecConfig`
-- `codec.module.CodecModule`
-- `codec.resource.CodecResource`
-- `codec.ser.AttributeSerializationEntry`
-- `codec.ser.ReferenceSerializationEntry`
-- `codec.deser.AttributeDeserializationEntry`
-- `codec.deser.ReferenceDeserializationEntry`
-
-**TEST files (8):**
-- `codec.deser.AttributeDeserializationEntryCanHandleTest`
-- `codec.deser.ReferenceDeserializationEntryCanHandleTest`
-- `codec.deser.ReferenceDeserializationEntryCustomReaderTest`
-- `codec.ser.AttributeSerializationEntryCanHandleTest`
-- `codec.ser.ReferenceSerializationEntryCanHandleTest`
-- `codec.ser.ReferenceSerializationEntryCustomWriterTest`
-- `codec.module.CodecModuleBuilderTest`
-- `codec.resource.CodecResourceCustomValueTest`
-
-**Risk:** Low — same API, import-only change.
-
-### Step A3: Migrate EffectiveCodecConfig Typed Getters
-
-Update `EffectiveCodecConfig.getValueWriter()` and `getValueReader()` to return new interface types
-(`codec.value.CodecValueWriter/Reader` instead of `codec.api.value.*`).
-
-**Risk:** Low — same API surface.
-
-### Step A4: Migrate Entry Classes
-
-Pattern for each of the 4 entry classes:
-1. Change field types from old to new interfaces
-2. Change constructor to accept full `EffectiveCodecConfig` (class) instead of just `CodecValueRegistry`
-3. At call site, build `SimpleEffectiveCodecConfig` + `DefaultCodecWriterContext`/`DefaultCodecReaderContext`
-
-**Per-file details:**
-
-| Entry Class | Has EffectiveCodecConfig? | Diagnostics Source |
-|-------------|--------------------------|-------------------|
-| `AttributeSerializationEntry` | Needs adding | From `EffectiveCodecConfig.getDiagnostics()` |
-| `ReferenceSerializationEntry` | Already has it | From `EffectiveCodecConfig.getDiagnostics()` |
-| `AttributeDeserializationEntry` | Needs adding | From `DeserializationState.getDiagnosticCollector()` |
-| `ReferenceDeserializationEntry` | Needs adding | From `DeserializationState.getDiagnosticCollector()` |
-
-**Before:**
-```java
-customWriter.write(value, attribute, gen, ctxt);
-```
-
-**After:**
-```java
-CodecWriterContext writerCtx = new DefaultCodecWriterContext(gen, ctxt, effectiveConfig, diagnostics);
-customWriter.write(value, attribute, writerCtx);
-```
-
-**Risk:** Medium — constructor signature changes ripple to orchestrators and tests.
-
-### Step A5: Migrate Tests (8 files)
-
-Update test files to use new value interfaces:
-1. Change imports
-2. Add `getName()` method to inline reader/writer implementations
-3. Use `CodecReaderContext`/`CodecWriterContext` in method signatures
-4. Create test context objects using `DefaultCodecReaderContext`/`DefaultCodecWriterContext`
-
-**Risk:** Medium — method signature changes in inline implementations.
-
-### Step A6: Verify and Clean Up
-
-- Run: `./gradlew :org.eclipse.fennec.codec.v2:cleanTest :org.eclipse.fennec.codec.v2:test`
-- Verify deprecation warnings drop to old `v2.*` package files only
-- Update development guide §11.8
 
 ---
 
@@ -332,18 +225,79 @@ Update test files to use new value interfaces:
 
 ---
 
-## 5. Execution Roadmap
+## 5. Plan C: Documentation Examples (Deferred)
+
+These documentation tasks were identified during spec review but deferred as lower priority.
+
+| ID | Task | Spec Section | Priority |
+|----|------|--------------|----------|
+| DOC-001 | SuperType load/save options examples | `07-supertype.md` §6 | MEDIUM |
+| DOC-002 | Reference expand examples (annotation + options + side-by-side output) | `10-reference.md` §4.2 | HIGH |
+| DOC-003 | Custom value readers/writers registration examples | `14-custom-values.md` §3-4 | MEDIUM |
+| DOC-004 | NUMERIC type strategy round-trip example | `06-type.md` §1.6 | MEDIUM |
+
+---
+
+## 6. Plan D: Discriminator Refactoring (Deferred)
+
+These architectural changes were identified during spec review but deferred pending a comprehensive refactoring strategy.
+
+### D1: Remove MAPPED from TypeStrategy Enum
+
+**Status:** DEFERRED
+
+**Issue:** `MAPPED` is not a type representation strategy - it's a type translation layer. It should be removed from `TypeStrategy` enum and treated as a separate discriminator mapping configuration.
+
+**Files:**
+- `org.eclipse.fennec.model.metadata/model/metadata.ecore`
+- All usages in serialization/deserialization code
+- Tests using `TypeStrategy.MAPPED`
+
+### D2: Inline Mapping for References
+
+**Status:** DEFERRED
+
+**Feature:** Simple, static discriminator mapping at per-reference level without requiring `TypeDiscriminatorService`.
+
+**Example annotation:**
+```xml
+<eStructuralFeatures xsi:type="ecore:EReference" name="partners">
+  <eAnnotations source="http://eclipse.org/fennec/codec">
+    <details key="type.key" value="test"/>
+    <details key="inlineMapping.FooBar" value="http://example.org#//Friend"/>
+    <details key="inlineMapping.BarBaz" value="http://example.org#//Enemy"/>
+  </eAnnotations>
+</eStructuralFeatures>
+```
+
+### D3: Property-Based Discriminator Configuration
+
+**Status:** DEFERRED
+
+**Feature:** Allow discriminator mappings via load/save options for runtime flexibility.
+
+**Example:**
+```java
+Map<String, Object> options = Map.of(
+    "codec.type.map.lorawan-devices.Dragino_LSE01", "http://example.org#//DraginoLSE01Uplink",
+    "codec.type.map.lorawan-devices.Dragino_LHT65", "http://example.org#//DraginoLHT65Uplink"
+);
+```
+
+### D4: STRUCTURED Format Warning for Discriminator
+
+**Status:** DEFERRED
+
+**Issue:** If discriminator mapping is configured with `typeFormat=STRUCTURED`, should emit WARNING and treat as PLAIN (discriminator is a simple string value).
+
+---
+
+## 7. Execution Roadmap
 
 ### Recommended Order
 
 ```
-Plan A (Deprecated API Migration) ← DO FIRST
-  A1: Create context implementations (new files only)
-  A2: Switch CodecValueRegistry imports (15 files)
-  A3: Update EffectiveCodecConfig typed getters
-  A4: Migrate 4 entry classes
-  A5: Migrate 8 test files
-  A6: Verify + clean up
+Plan A (Deprecated API Migration) ✅ COMPLETE
 
 Plan B Phase 1 (Core Metadata Gaps):
   GAP-001: Feature Visibility (directional ignore/force)
@@ -354,7 +308,7 @@ Plan B Phase 1 (Core Metadata Gaps):
   GAP-014: inherit enum
 
 Plan B Phase 2 (Advanced Features):
-  GAP-008: Value Reader/Writer handlers (depends on Plan A completion)
+  GAP-008: Value Reader/Writer handlers
   GAP-009: Scope wiring for runtime options
   GAP-007: Expand deserialization
   GAP-006: Metadata merge behavior
@@ -362,10 +316,19 @@ Plan B Phase 2 (Advanced Features):
 
 Plan B Phase 3 (Polish):
   GAP-011, GAP-012, GAP-013
+
+Plan C (Documentation Examples) — can be done in parallel:
+  DOC-001 through DOC-004
+
+Plan D (Discriminator Refactoring) — after Plan B:
+  D1: Remove MAPPED from TypeStrategy
+  D2: Inline mapping for references
+  D3: Property-based discriminator config
+  D4: STRUCTURED format warning
 ```
 
-**Rationale:** Plan A first because:
-- GAP-008 (value handlers) depends on the new reader/writer API being wired
+**Notes:**
+- Plan A is complete, GAP-008 (value handlers) can now proceed
 - Plan A is lower risk and removes deprecated code usage
 - Cleaner codebase makes Plan B changes easier to reason about
 
@@ -420,7 +383,7 @@ Plan B Phase 3 (Polish):
 
 ---
 
-## 6. Critical Files Reference
+## 8. Critical Files Reference
 
 ### Plan A: Files to Modify
 
