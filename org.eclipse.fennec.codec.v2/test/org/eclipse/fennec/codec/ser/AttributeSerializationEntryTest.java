@@ -175,6 +175,86 @@ class AttributeSerializationEntryTest extends SerializationEntryTestBase {
 
             assertTrue(entry.shouldSerialize(createState(person)));
         }
+
+        @Test
+        @DisplayName("forceWrite with non-null value returns true")
+        void forceWriteWithNonNullValueReturnsTrue() {
+            FeatureConfig config = FeatureConfig.builder()
+                    .key("name")
+                    .forceWrite(true)
+                    .serializeNull(false)
+                    .build();
+
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+            EObject person = createPerson("John");
+
+            assertTrue(entry.shouldSerialize(createState(person)));
+        }
+
+        @Test
+        @DisplayName("forceWrite with null value respects serializeNull=false")
+        void forceWriteWithNullValueRespectsSerializeNullFalse() {
+            // forceWrite only overrides ignore for volatile/transient features
+            // It does NOT override serializeNull behavior
+            FeatureConfig config = FeatureConfig.builder()
+                    .key("name")
+                    .forceWrite(true)
+                    .serializeNull(false)
+                    .build();
+
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+            EObject person = createPerson(); // name is null
+
+            assertFalse(entry.shouldSerialize(createState(person)),
+                    "forceWrite should NOT override serializeNull=false");
+        }
+
+        @Test
+        @DisplayName("forceWrite with null value and serializeNull=true returns true")
+        void forceWriteWithNullValueAndSerializeNullTrueReturnsTrue() {
+            FeatureConfig config = FeatureConfig.builder()
+                    .key("name")
+                    .forceWrite(true)
+                    .serializeNull(true)
+                    .build();
+
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, nameAttribute);
+            EObject person = createPerson(); // name is null
+
+            assertTrue(entry.shouldSerialize(createState(person)));
+        }
+
+        @Test
+        @DisplayName("forceWrite with empty list respects serializeEmpty=false")
+        void forceWriteWithEmptyListRespectsSerializeEmptyFalse() {
+            FeatureConfig config = FeatureConfig.builder()
+                    .key("tags")
+                    .forceWrite(true)
+                    .serializeEmpty(false)
+                    .build();
+
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, tagsAttribute);
+            EObject person = createPerson(); // tags is empty
+
+            assertFalse(entry.shouldSerialize(createState(person)),
+                    "forceWrite should NOT override serializeEmpty=false");
+        }
+
+        @Test
+        @DisplayName("forceWrite with default value respects serializeDefault=false")
+        void forceWriteWithDefaultValueRespectsSerializeDefaultFalse() {
+            FeatureConfig config = FeatureConfig.builder()
+                    .key("age")
+                    .forceWrite(true)
+                    .serializeDefault(false)
+                    .build();
+
+            AttributeSerializationEntry entry = new AttributeSerializationEntry(config, ageAttribute);
+            EObject person = createPerson(); // age defaults to 0
+
+            assertFalse(entry.shouldSerialize(createState(person)),
+                    "forceWrite should NOT override serializeDefault=false");
+        }
     }
 
     @Nested

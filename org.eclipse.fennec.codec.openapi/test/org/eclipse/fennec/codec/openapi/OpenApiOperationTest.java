@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
+import org.eclipse.fennec.codec.resource.CodecResource;
 import org.eclipse.fennec.model.openapi.HttpMethod;
 import org.eclipse.fennec.model.openapi.OpenAPI;
 import org.eclipse.fennec.model.openapi.OpenApiPackage;
@@ -512,7 +512,7 @@ class OpenApiOperationTest {
 
 	private Map<String, Object> loadOptions() {
 		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResource.CODEC_ROOT_OBJECT, OpenApiPackage.Literals.OPEN_API);
+		options.put(CodecResource.CODEC_ROOT_TYPE, OpenApiPackage.Literals.OPEN_API);
 		return options;
 	}
 

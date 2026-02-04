@@ -15,6 +15,7 @@ package org.eclipse.fennec.codec.config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -86,12 +87,22 @@ public final class ConfigurationResolver {
     private volatile FeatureConfig globalFeatureConfig;
     private volatile ReferenceConfig globalReferenceConfig;
 
+    // Force write/read feature sets (from builder convenience methods)
+    private final Set<EStructuralFeature> forceWriteFeatures;
+    private final Set<EStructuralFeature> forceReadFeatures;
+
     private ConfigurationResolver(Builder builder) {
         this.optionsProperties = builder.optionsProperties;
         this.resourceProperties = builder.resourceProperties;
         this.factoryProperties = builder.factoryProperties;
         this.moduleProperties = builder.moduleProperties;
         this.annotationProperties = builder.annotationProperties;
+        this.forceWriteFeatures = builder.forceWriteFeatures != null
+                ? Set.copyOf(builder.forceWriteFeatures)
+                : Set.of();
+        this.forceReadFeatures = builder.forceReadFeatures != null
+                ? Set.copyOf(builder.forceReadFeatures)
+                : Set.of();
     }
 
     // ========================================================================
@@ -385,6 +396,16 @@ public final class ConfigurationResolver {
                 resolved = resolved.toBuilder().key(key).build();
             }
 
+            // Apply forceWrite/forceRead from builder convenience methods
+            // These override any other settings for the specified features
+            // When forceWrite is set, also clear the ignore flag so the feature is serialized
+            if (forceWriteFeatures.contains(f)) {
+                resolved = resolved.toBuilder().forceWrite(true).ignore(false).build();
+            }
+            if (forceReadFeatures.contains(f)) {
+                resolved = resolved.toBuilder().forceRead(true).build();
+            }
+
             // Apply global ignoreFeatures list
             List<String> globalIgnore = getGlobalProperty(ConfigProperty.IGNORE_FEATURES);
             if (globalIgnore != null && globalIgnore.contains(f.getName())) {
@@ -395,8 +416,9 @@ public final class ConfigurationResolver {
 
             // Skip transient/derived/volatile features unless explicitly forced
             // This matches the old ConfigurationMerger.resolveFeatureSerialize() behavior
+            // forceWrite enables serialization, forceRead enables deserialization
             if (f.isDerived() || f.isTransient() || f.isVolatile()) {
-                if (!resolved.isForceWrite()) {
+                if (!resolved.isForceWrite() && !resolved.isForceRead()) {
                     resolved = resolved.toBuilder().ignore(true).build();
                 }
             }
@@ -762,12 +784,22 @@ public final class ConfigurationResolver {
      * Useful for creating a modified resolver that inherits existing settings.
      */
     public Builder toBuilder() {
-        return new Builder()
+        Builder builder = new Builder()
                 .optionsProperties(this.optionsProperties)
                 .resourceProperties(this.resourceProperties)
                 .factoryProperties(this.factoryProperties)
                 .moduleProperties(this.moduleProperties)
                 .annotationProperties(this.annotationProperties);
+
+        // Preserve forceWrite/forceRead feature sets
+        for (EStructuralFeature f : this.forceWriteFeatures) {
+            builder.forceWrite(f);
+        }
+        for (EStructuralFeature f : this.forceReadFeatures) {
+            builder.forceRead(f);
+        }
+
+        return builder;
     }
 
     /**
@@ -797,6 +829,10 @@ public final class ConfigurationResolver {
         private List<String> ignoreFeatures;
         // Convenience tracking for ID features (collected until build)
         private List<String> idFeaturesList;
+        // Convenience tracking for forceWrite features (collected until build)
+        private Set<EStructuralFeature> forceWriteFeatures;
+        // Convenience tracking for forceRead features (collected until build)
+        private Set<EStructuralFeature> forceReadFeatures;
 
         private Builder() {}
 
@@ -1393,6 +1429,79 @@ public final class ConfigurationResolver {
         }
 
         // ====================================================================
+        // Convenience Methods for Force Write/Read
+        // ====================================================================
+
+        /**
+         * Force-writes the specified features regardless of their EMF flags.
+         * <p>
+         * Use this to serialize volatile/transient/derived features that would
+         * normally be skipped. Common use case: GeoJSON coordinates stored as
+         * volatile "data" attributes.
+         * </p>
+         * <p>
+         * Example:
+         * <pre>
+         * ConfigurationResolver.builder()
+         *     .forceWrite(
+         *         GeoJsonPackage.Literals.POINT__DATA,
+         *         GeoJsonPackage.Literals.GEO_JSON_OBJECT__BBOX
+         *     )
+         *     .build();
+         * </pre>
+         * </p>
+         *
+         * @param features the EStructuralFeatures to force-write
+         * @return this builder
+         * @see ConfigProperty#FORCE_WRITE
+         */
+        public Builder forceWrite(EStructuralFeature... features) {
+            if (features != null) {
+                for (EStructuralFeature feature : features) {
+                    if (feature != null) {
+                        ensureForceWriteFeatures();
+                        forceWriteFeatures.add(feature);
+                    }
+                }
+            }
+            return this;
+        }
+
+        /**
+         * Force-reads the specified features regardless of their EMF flags.
+         * <p>
+         * Use this to deserialize into volatile/transient features that would
+         * normally be skipped. The feature must be changeable for this to work.
+         * </p>
+         * <p>
+         * Example:
+         * <pre>
+         * ConfigurationResolver.builder()
+         *     .forceRead(
+         *         GeoJsonPackage.Literals.POINT__DATA,
+         *         GeoJsonPackage.Literals.GEO_JSON_OBJECT__BBOX
+         *     )
+         *     .build();
+         * </pre>
+         * </p>
+         *
+         * @param features the EStructuralFeatures to force-read
+         * @return this builder
+         * @see ConfigProperty#FORCE_READ
+         */
+        public Builder forceRead(EStructuralFeature... features) {
+            if (features != null) {
+                for (EStructuralFeature feature : features) {
+                    if (feature != null) {
+                        ensureForceReadFeatures();
+                        forceReadFeatures.add(feature);
+                    }
+                }
+            }
+            return this;
+        }
+
+        // ====================================================================
         // Convenience Methods for Value Serialization
         // ====================================================================
 
@@ -1472,6 +1581,18 @@ public final class ConfigurationResolver {
             }
         }
 
+        private void ensureForceWriteFeatures() {
+            if (forceWriteFeatures == null) {
+                forceWriteFeatures = new HashSet<>();
+            }
+        }
+
+        private void ensureForceReadFeatures() {
+            if (forceReadFeatures == null) {
+                forceReadFeatures = new HashSet<>();
+            }
+        }
+
         /**
          * Builds the resolver.
          */
@@ -1491,6 +1612,8 @@ public final class ConfigurationResolver {
                 ensureResourceProperties();
                 resourceProperties.put(ConfigProperty.ID_FEATURES.getKey(), new ArrayList<>(idFeaturesList));
             }
+            // forceWrite/forceRead features are stored directly in the resolver
+            // and applied during resolveFeatureConfig()
             return new ConfigurationResolver(this);
         }
     }

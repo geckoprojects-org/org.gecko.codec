@@ -516,14 +516,34 @@ Use per-feature `forceWrite` and `forceRead` annotations (see [Section 1.2](#12-
 </eStructuralFeatures>
 ```
 
-**Java Builder:**
+**Java Builder (per-feature):**
 ```java
-// Force serialize specific volatile feature
+// Force serialize specific volatile feature by name
 FeatureConfigBuilder.forFeature("data")
     .forceWrite(true)
     .forceRead(true)
     .build();
 ```
+
+**Java Builder (type-safe convenience method):**
+```java
+// Force serialize multiple volatile features using EStructuralFeature references
+// This is type-safe and recommended when you have access to the generated package
+ConfigurationResolver resolver = ConfigurationResolver.builder()
+    .forceWrite(
+        GeoJsonPackage.Literals.POINT__DATA,
+        GeoJsonPackage.Literals.LINE_STRING__DATA,
+        GeoJsonPackage.Literals.GEO_JSON_OBJECT__BBOX
+    )
+    .forceRead(
+        GeoJsonPackage.Literals.POINT__DATA,
+        GeoJsonPackage.Literals.LINE_STRING__DATA,
+        GeoJsonPackage.Literals.GEO_JSON_OBJECT__BBOX
+    )
+    .build();
+```
+
+The `forceWrite(EStructuralFeature...)` and `forceRead(EStructuralFeature...)` methods on `ConfigurationResolver.Builder` provide a type-safe way to force serialization of specific features. This is particularly useful for models like GeoJSON where multiple classes have volatile features that must be serialized.
 
 ### 6.2 Resolution Logic
 

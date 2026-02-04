@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
@@ -772,6 +773,278 @@ class ConfigurationResolverTest {
 
             assertTrue(diagnostics.hasErrors(),
                     "resolveTypeAndSuperTypeConfig should perform cross-config validation");
+        }
+    }
+
+    @Nested
+    @DisplayName("forceWrite and forceRead builder methods")
+    class ForceWriteRead {
+
+        private EAttribute volatileAttribute;
+        private EAttribute transientAttribute;
+        private EAttribute derivedAttribute;
+
+        @BeforeEach
+        void setUpVolatileFeatures() {
+            // Create a volatile attribute (normally skipped during serialization)
+            volatileAttribute = EcoreFactory.eINSTANCE.createEAttribute();
+            volatileAttribute.setName("volatileData");
+            volatileAttribute.setEType(EcorePackage.Literals.ESTRING);
+            volatileAttribute.setVolatile(true);
+            personClass.getEStructuralFeatures().add(volatileAttribute);
+
+            // Create a transient attribute
+            transientAttribute = EcoreFactory.eINSTANCE.createEAttribute();
+            transientAttribute.setName("transientData");
+            transientAttribute.setEType(EcorePackage.Literals.ESTRING);
+            transientAttribute.setTransient(true);
+            personClass.getEStructuralFeatures().add(transientAttribute);
+
+            // Create a derived attribute
+            derivedAttribute = EcoreFactory.eINSTANCE.createEAttribute();
+            derivedAttribute.setName("derivedData");
+            derivedAttribute.setEType(EcorePackage.Literals.ESTRING);
+            derivedAttribute.setDerived(true);
+            personClass.getEStructuralFeatures().add(derivedAttribute);
+        }
+
+        @Test
+        @DisplayName("volatile attributes are ignored by default")
+        void volatileAttributesIgnoredByDefault() {
+            ConfigurationResolver resolver = ConfigurationResolver.defaults();
+
+            FeatureConfig config = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+
+            assertTrue(config.isIgnore(),
+                    "Volatile attributes should be ignored by default");
+        }
+
+        @Test
+        @DisplayName("transient attributes are ignored by default")
+        void transientAttributesIgnoredByDefault() {
+            ConfigurationResolver resolver = ConfigurationResolver.defaults();
+
+            FeatureConfig config = resolver.resolveFeatureConfig(transientAttribute, diagnostics);
+
+            assertTrue(config.isIgnore(),
+                    "Transient attributes should be ignored by default");
+        }
+
+        @Test
+        @DisplayName("derived attributes are ignored by default")
+        void derivedAttributesIgnoredByDefault() {
+            ConfigurationResolver resolver = ConfigurationResolver.defaults();
+
+            FeatureConfig config = resolver.resolveFeatureConfig(derivedAttribute, diagnostics);
+
+            assertTrue(config.isIgnore(),
+                    "Derived attributes should be ignored by default");
+        }
+
+        @Test
+        @DisplayName("forceWrite enables serialization of volatile attribute")
+        void forceWriteEnablesVolatileSerialization() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceWrite(volatileAttribute)
+                    .build();
+
+            FeatureConfig config = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+
+            assertTrue(config.isForceWrite(),
+                    "forceWrite should be enabled for the specified feature");
+            assertFalse(config.isIgnore(),
+                    "Volatile attribute with forceWrite should not be ignored");
+        }
+
+        @Test
+        @DisplayName("forceWrite enables serialization of transient attribute")
+        void forceWriteEnablesTransientSerialization() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceWrite(transientAttribute)
+                    .build();
+
+            FeatureConfig config = resolver.resolveFeatureConfig(transientAttribute, diagnostics);
+
+            assertTrue(config.isForceWrite(),
+                    "forceWrite should be enabled for the specified feature");
+            assertFalse(config.isIgnore(),
+                    "Transient attribute with forceWrite should not be ignored");
+        }
+
+        @Test
+        @DisplayName("forceWrite enables serialization of derived attribute")
+        void forceWriteEnablesDerivedSerialization() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceWrite(derivedAttribute)
+                    .build();
+
+            FeatureConfig config = resolver.resolveFeatureConfig(derivedAttribute, diagnostics);
+
+            assertTrue(config.isForceWrite(),
+                    "forceWrite should be enabled for the specified feature");
+            assertFalse(config.isIgnore(),
+                    "Derived attribute with forceWrite should not be ignored");
+        }
+
+        @Test
+        @DisplayName("forceWrite with multiple features")
+        void forceWriteWithMultipleFeatures() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceWrite(volatileAttribute, transientAttribute, derivedAttribute)
+                    .build();
+
+            FeatureConfig volatileConfig = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+            FeatureConfig transientConfig = resolver.resolveFeatureConfig(transientAttribute, diagnostics);
+            FeatureConfig derivedConfig = resolver.resolveFeatureConfig(derivedAttribute, diagnostics);
+
+            assertTrue(volatileConfig.isForceWrite(), "volatile should have forceWrite");
+            assertTrue(transientConfig.isForceWrite(), "transient should have forceWrite");
+            assertTrue(derivedConfig.isForceWrite(), "derived should have forceWrite");
+        }
+
+        @Test
+        @DisplayName("forceWrite does not affect other features")
+        void forceWriteDoesNotAffectOtherFeatures() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceWrite(volatileAttribute)
+                    .build();
+
+            // Regular attribute should not have forceWrite
+            FeatureConfig regularConfig = resolver.resolveFeatureConfig(firstNameAttribute, diagnostics);
+
+            assertFalse(regularConfig.isForceWrite(),
+                    "Regular attribute should not have forceWrite enabled");
+        }
+
+        @Test
+        @DisplayName("forceRead enables deserialization into volatile attribute")
+        void forceReadEnablesVolatileDeserialization() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceRead(volatileAttribute)
+                    .build();
+
+            FeatureConfig config = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+
+            assertTrue(config.isForceRead(),
+                    "forceRead should be enabled for the specified feature");
+        }
+
+        @Test
+        @DisplayName("forceRead with multiple features")
+        void forceReadWithMultipleFeatures() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceRead(volatileAttribute, transientAttribute)
+                    .build();
+
+            FeatureConfig volatileConfig = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+            FeatureConfig transientConfig = resolver.resolveFeatureConfig(transientAttribute, diagnostics);
+
+            assertTrue(volatileConfig.isForceRead(), "volatile should have forceRead");
+            assertTrue(transientConfig.isForceRead(), "transient should have forceRead");
+        }
+
+        @Test
+        @DisplayName("forceWrite and forceRead can be combined")
+        void forceWriteAndForceReadCombined() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceWrite(volatileAttribute)
+                    .forceRead(volatileAttribute)
+                    .build();
+
+            FeatureConfig config = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+
+            assertTrue(config.isForceWrite(), "should have forceWrite");
+            assertTrue(config.isForceRead(), "should have forceRead");
+            assertFalse(config.isIgnore(), "should not be ignored");
+        }
+
+        @Test
+        @DisplayName("forceWrite accepts null array gracefully")
+        void forceWriteAcceptsNullArray() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceWrite((EStructuralFeature[]) null)
+                    .build();
+
+            assertNotNull(resolver);
+        }
+
+        @Test
+        @DisplayName("forceWrite ignores null elements in array")
+        void forceWriteIgnoresNullElements() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceWrite(volatileAttribute, null, transientAttribute)
+                    .build();
+
+            FeatureConfig volatileConfig = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+            FeatureConfig transientConfig = resolver.resolveFeatureConfig(transientAttribute, diagnostics);
+
+            assertTrue(volatileConfig.isForceWrite(), "volatile should have forceWrite");
+            assertTrue(transientConfig.isForceWrite(), "transient should have forceWrite");
+        }
+
+        @Test
+        @DisplayName("forceRead accepts null array gracefully")
+        void forceReadAcceptsNullArray() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceRead((EStructuralFeature[]) null)
+                    .build();
+
+            assertNotNull(resolver);
+        }
+
+        @Test
+        @DisplayName("forceRead ignores null elements in array")
+        void forceReadIgnoresNullElements() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceRead(volatileAttribute, null, transientAttribute)
+                    .build();
+
+            FeatureConfig volatileConfig = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+            FeatureConfig transientConfig = resolver.resolveFeatureConfig(transientAttribute, diagnostics);
+
+            assertTrue(volatileConfig.isForceRead(), "volatile should have forceRead");
+            assertTrue(transientConfig.isForceRead(), "transient should have forceRead");
+        }
+
+        @Test
+        @DisplayName("forceWrite overrides other configuration")
+        void forceWriteOverridesOtherConfiguration() {
+            // Set up feature-level config that doesn't have forceWrite
+            Map<String, Object> featureConfig = new HashMap<>();
+            featureConfig.put("ignore", true);
+
+            Map<String, Object> classConfig = new HashMap<>();
+            classConfig.put("volatileData", featureConfig);
+
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .optionsProperties(Map.of("Person", classConfig))
+                    .forceWrite(volatileAttribute)
+                    .build();
+
+            FeatureConfig config = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+
+            assertTrue(config.isForceWrite(),
+                    "forceWrite should be applied even when other config says ignore");
+            assertFalse(config.isIgnore(),
+                    "Feature should not be ignored when forceWrite is set");
+        }
+
+        @Test
+        @DisplayName("multiple forceWrite calls accumulate features")
+        void multipleForceWriteCallsAccumulateFeatures() {
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .forceWrite(volatileAttribute)
+                    .forceWrite(transientAttribute)
+                    .forceWrite(derivedAttribute)
+                    .build();
+
+            FeatureConfig volatileConfig = resolver.resolveFeatureConfig(volatileAttribute, diagnostics);
+            FeatureConfig transientConfig = resolver.resolveFeatureConfig(transientAttribute, diagnostics);
+            FeatureConfig derivedConfig = resolver.resolveFeatureConfig(derivedAttribute, diagnostics);
+
+            assertTrue(volatileConfig.isForceWrite(), "volatile should have forceWrite");
+            assertTrue(transientConfig.isForceWrite(), "transient should have forceWrite");
+            assertTrue(derivedConfig.isForceWrite(), "derived should have forceWrite");
         }
     }
 }

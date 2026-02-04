@@ -21,12 +21,11 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.fennec.codec.api.value.ReferenceValueWriter;
 import org.eclipse.fennec.codec.jsonschema.v2.converter.EPackageToJsonSchemaConverter;
+import org.eclipse.fennec.codec.value.CodecWriterContext;
+import org.eclipse.fennec.codec.value.ReferenceValueWriter;
 
-import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.json.JsonMapper;
 
 /**
@@ -103,6 +102,11 @@ public class EPackageValueWriter implements ReferenceValueWriter<EPackage> {
 		this.embedInFeature = embedInFeature;
 	}
 
+	@Override
+	public String getName() {
+		return "ePackageToJsonSchema";
+	}
+
 	/**
 	 * Checks if this writer can handle the given reference.
 	 * <p>
@@ -122,14 +126,13 @@ public class EPackageValueWriter implements ReferenceValueWriter<EPackage> {
 	 *
 	 * @param value the EPackage to convert and write
 	 * @param reference the EReference being serialized
-	 * @param gen the JSON generator
-	 * @param ctxt the serialization context
+	 * @param ctx the writer context providing generator and diagnostics
 	 * @throws IOException if an I/O error occurs
 	 */
 	@Override
-	public void write(EPackage value, EReference reference, JsonGenerator gen, SerializationContext ctxt) throws IOException {
+	public void write(EPackage value, EReference reference, CodecWriterContext ctx) throws IOException {
 		if (value == null) {
-			gen.writeNull();
+			ctx.getGenerator().writeNull();
 			return;
 		}
 
@@ -149,14 +152,14 @@ public class EPackageValueWriter implements ReferenceValueWriter<EPackage> {
 			Map<String, Object> schemaMap = (Map<String, Object>) schemaTree;
 			Object definitions = schemaMap.get(schemaFeature);
 			if (definitions != null) {
-				gen.writePOJO(definitions);
+				ctx.getGenerator().writePOJO(definitions);
 			} else {
-				gen.writeStartObject();
-				gen.writeEndObject();
+				ctx.getGenerator().writeStartObject();
+				ctx.getGenerator().writeEndObject();
 			}
 		} else {
 			// Write the full JSON Schema document
-			gen.writePOJO(schemaTree);
+			ctx.getGenerator().writePOJO(schemaTree);
 		}
 	}
 }

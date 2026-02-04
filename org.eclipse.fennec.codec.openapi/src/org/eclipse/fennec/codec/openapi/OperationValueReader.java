@@ -19,13 +19,13 @@ import java.util.Locale;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.fennec.codec.api.value.ReferenceValueReader;
-import org.eclipse.fennec.codec.v2.context.ContextHelper;
+import org.eclipse.fennec.codec.context.ContextHelper;
+import org.eclipse.fennec.codec.value.CodecReaderContext;
+import org.eclipse.fennec.codec.value.ReferenceValueReader;
 import org.eclipse.fennec.model.openapi.HttpMethod;
 import org.eclipse.fennec.model.openapi.OpenApiPackage;
 import org.eclipse.fennec.model.openapi.Operation;
 
-import tools.jackson.core.JsonParser;
 import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ValueDeserializer;
 
@@ -57,27 +57,33 @@ import tools.jackson.databind.ValueDeserializer;
 public class OperationValueReader implements ReferenceValueReader<Operation> {
 
 	@Override
+	public String getName() {
+		return "operation";
+	}
+
+	@Override
 	public boolean canHandle(EReference reference) {
 		return OpenApiPackage.Literals.OPERATION.isSuperTypeOf(reference.getEReferenceType());
 	}
 
 	@Override
-	public Operation read(JsonParser parser, EReference reference, DeserializationContext ctxt) throws IOException {
+	public Operation read(CodecReaderContext ctx, EReference reference) throws IOException {
+		DeserializationContext jacksonCtx = ctx.getJacksonContext();
+
 		// Set the expected type to Operation for the EMF deserializer
-		EClass previousExpectedType = ContextHelper.getExpectedType(ctxt);
-		ContextHelper.setExpectedType(ctxt, OpenApiPackage.Literals.OPERATION);
+		EClass previousExpectedType = ContextHelper.getExpectedType(jacksonCtx);
+		ContextHelper.setExpectedType(jacksonCtx, OpenApiPackage.Literals.OPERATION);
 
 		try {
 			// Deserialize the Operation using the EMF-aware deserializer
-			@SuppressWarnings("unchecked")
-			ValueDeserializer<Object> deser = ctxt.findRootValueDeserializer(
-					ctxt.constructType(EObject.class));
+			ValueDeserializer<Object> deser = jacksonCtx.findRootValueDeserializer(
+					jacksonCtx.constructType(EObject.class));
 
 			if (deser == null) {
 				throw new IOException("No deserializer found for EObject");
 			}
 
-			EObject eObject = (EObject) deser.deserialize(parser, ctxt);
+			EObject eObject = (EObject) deser.deserialize(ctx.getParser(), jacksonCtx);
 
 			if (eObject instanceof Operation operation) {
 				// Set the HTTP method based on the feature name (get, put, post, etc.)
@@ -92,9 +98,9 @@ public class OperationValueReader implements ReferenceValueReader<Operation> {
 		} finally {
 			// Restore the previous expected type
 			if (previousExpectedType != null) {
-				ContextHelper.setExpectedType(ctxt, previousExpectedType);
+				ContextHelper.setExpectedType(jacksonCtx, previousExpectedType);
 			} else {
-				ContextHelper.clearExpectedType(ctxt);
+				ContextHelper.clearExpectedType(jacksonCtx);
 			}
 		}
 	}

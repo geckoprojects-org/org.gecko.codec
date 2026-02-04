@@ -105,13 +105,19 @@ public class AttributeSerializationEntry implements SerializationEntry {
 
     @Override
     public boolean shouldSerialize(SerializationState state) {
-        // GAP-001: Use shouldSerialize() from FeatureConfig which handles
-        // ignore, ignoreWrite, forceWrite, derived, transient checks
+        // VISIBILITY GATE (step 1 in spec):
+        // Uses shouldSerialize() from FeatureConfig which handles:
+        // - ignore, ignoreWrite, ignoreFeatures
+        // - transient/volatile/derived + forceWrite
+        // Note: forceWrite only affects the visibility gate, NOT the value gate below
         if (!config.shouldSerialize()) {
             return false;
         }
 
-        // Check value conditions - use cached value
+        // VALUE GATE (step 4 in spec):
+        // These checks apply regardless of forceWrite.
+        // forceWrite allows volatile features to pass visibility gate,
+        // but value-based conditions (null, empty, default) still apply.
         Object value = state.getValue(attribute);
 
         // Null check

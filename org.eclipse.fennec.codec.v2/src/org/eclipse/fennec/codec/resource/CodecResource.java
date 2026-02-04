@@ -388,7 +388,6 @@ public class CodecResource extends ResourceImpl {
                 TypeDiscriminatorService.fromMetadataService(metadataService);
 
         // Extract global properties from the operation resolver (includes load/save options)
-        @SuppressWarnings("unchecked")
         List<String> ignoreFeatures = operationResolver.getGlobalProperty(ConfigProperty.IGNORE_FEATURES);
         boolean smartCompression = operationResolver.getGlobalProperty(ConfigProperty.SMART_COMPRESSION);
         boolean useNamesFromExtendedMetaData = operationResolver.getGlobalProperty(ConfigProperty.USE_NAMES_FROM_EXTENDED_METADATA);

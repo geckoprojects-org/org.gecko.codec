@@ -15,14 +15,18 @@ package org.eclipse.fennec.codec.geojson;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.fennec.codec.config.ConfigurationResolver;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.geojson.GeoJsonPackage;
@@ -49,26 +53,45 @@ import tools.jackson.databind.json.JsonMapper;
 public class GeoJsonResourceImpl extends CodecResource {
 
 	/**
-	 * Default GeoJSON codec configuration.
-	 * <p>
-	 * Settings aligned with GeoJSON specification:
-	 * <ul>
-	 *   <li>typeKey="type" - GeoJSON uses "type" for geometry/feature type</li>
-	 *   <li>typeStrategy=NAME - Simple names like "Point", "LineString", "Feature"</li>
-	 *   <li>useNamesFromExtendedMetaData=true - Maps "coordinates" correctly</li>
-	 *   <li>forceSerialize("data", "bbox") - Volatile attributes that must be serialized</li>
-	 *   <li>useId=false - GeoJSON Feature.id is a regular property, not EMF ID</li>
-	 * </ul>
-	 * </p>
+	 * Collects all volatile "data" and "bbox" features from GeoJsonPackage.
+	 * These need to be force-serialized for proper GeoJSON output.
 	 */
-	public static final CodecConfiguration GEOJSON_CONFIGURATION = CodecConfiguration.builder()
-			.typeKey("type")
-			.typeStrategy(TypeStrategy.NAME)
-			.useNamesFromExtendedMetaData(true)
-			.forceSerialize("data", "bbox")
-			.useId(false)
-			.serializeType(true)
-			.build();
+	private static List<EStructuralFeature> collectVolatileFeatures() {
+		List<EStructuralFeature> features = new ArrayList<>();
+		GeoJsonPackage pkg = GeoJsonPackage.eINSTANCE;
+
+		for (EClassifier classifier : pkg.getEClassifiers()) {
+			if (classifier instanceof EClass eClass) {
+				EStructuralFeature dataFeature = eClass.getEStructuralFeature("data");
+				if (dataFeature != null && dataFeature.isVolatile()) {
+					features.add(dataFeature);
+				}
+
+				EStructuralFeature bboxFeature = eClass.getEStructuralFeature("bbox");
+				if (bboxFeature != null && bboxFeature.isVolatile()) {
+					features.add(bboxFeature);
+				}
+			}
+		}
+		return features;
+	}
+
+	/**
+	 * Creates the default GeoJSON configuration resolver.
+	 */
+	private static ConfigurationResolver createGeoJsonResolver() {
+		List<EStructuralFeature> volatileFeatures = collectVolatileFeatures();
+
+		return ConfigurationResolver.builder()
+				.typeKey("type")
+				.typeStrategy(TypeStrategy.NAME)
+				.useNamesFromExtendedMetaData(true)
+				.useId(false)
+				.typeInclude(true)
+				.forceWrite(volatileFeatures.toArray(new EStructuralFeature[0]))
+				.forceRead(volatileFeatures.toArray(new EStructuralFeature[0]))
+				.build();
+	}
 
 	/**
 	 * Creates a GeoJSON resource with the given URI and metadata service.
@@ -101,7 +124,7 @@ public class GeoJsonResourceImpl extends CodecResource {
 	 */
 	public GeoJsonResourceImpl(URI uri, MetadataService metadataService,
 			CodecValueRegistry valueRegistry, JsonMapper.Builder mapperBuilder) {
-		super(uri, metadataService, GEOJSON_CONFIGURATION, valueRegistry, mapperBuilder);
+		super(uri, metadataService, createGeoJsonResolver(), valueRegistry, mapperBuilder);
 	}
 
 	/**
@@ -120,15 +143,6 @@ public class GeoJsonResourceImpl extends CodecResource {
 	}
 
 	/**
-	 * Saves content as GeoJSON.
-	 */
-	@Override
-	protected void doSave(OutputStream outputStream, Map<?, ?> options) throws IOException {
-		Map<Object, Object> effectiveOptions = createEffectiveOptions(options);
-		super.doSave(outputStream, effectiveOptions);
-	}
-
-	/**
 	 * Creates effective options by merging provided options with GeoJSON defaults.
 	 *
 	 * @param options user-provided options (may be null)
@@ -137,7 +151,6 @@ public class GeoJsonResourceImpl extends CodecResource {
 	private Map<Object, Object> createEffectiveOptions(Map<?, ?> options) {
 		Map<Object, Object> effectiveOptions = new HashMap<>();
 
-		// Add user options (they override defaults)
 		if (options != null) {
 			options.forEach(effectiveOptions::put);
 		}

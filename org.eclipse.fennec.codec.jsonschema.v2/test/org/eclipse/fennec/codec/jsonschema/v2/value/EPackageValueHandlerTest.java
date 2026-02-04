@@ -27,12 +27,19 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
+import org.eclipse.fennec.codec.value.CodecReaderContext;
+import org.eclipse.fennec.codec.value.CodecWriterContext;
+import org.eclipse.fennec.codec.value.EffectiveCodecConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.json.JsonMapper;
 
 /**
@@ -79,7 +86,7 @@ class EPackageValueHandlerTest {
             try (JsonParser parser = mapper.createParser(json)) {
                 parser.nextToken(); // Move to START_OBJECT
 
-                EPackage result = reader.read(parser, createDummyReference(), null);
+                EPackage result = reader.read(createReaderContext(parser), createDummyReference());
 
                 assertNotNull(result);
                 assertEquals("EmbeddedPackage", result.getName());
@@ -115,7 +122,7 @@ class EPackageValueHandlerTest {
             try (JsonParser parser = mapper.createParser(json)) {
                 parser.nextToken();
 
-                EPackage result = reader.read(parser, createDummyReference(), null);
+                EPackage result = reader.read(createReaderContext(parser), createDummyReference());
 
                 assertNotNull(result);
                 EClass address = (EClass) result.getEClassifier("Address");
@@ -145,7 +152,7 @@ class EPackageValueHandlerTest {
             try (JsonParser parser = mapper.createParser(json)) {
                 parser.nextToken();
 
-                EPackage result = reader.read(parser, createDummyReference(), null);
+                EPackage result = reader.read(createReaderContext(parser), createDummyReference());
 
                 assertNotNull(result);
                 assertNotNull(result.getEClassifier("Item"));
@@ -177,7 +184,7 @@ class EPackageValueHandlerTest {
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (var gen = mapper.createGenerator(baos)) {
-                writer.write(ePackage, createDummyReference(), gen, null);
+                writer.write(ePackage, createDummyReference(), createWriterContext(gen));
             }
 
             String json = baos.toString(StandardCharsets.UTF_8);
@@ -199,7 +206,7 @@ class EPackageValueHandlerTest {
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (var gen = mapper.createGenerator(baos)) {
-                writer.write(ePackage, createDummyReference(), gen, null);
+                writer.write(ePackage, createDummyReference(), createWriterContext(gen));
             }
 
             String json = baos.toString(StandardCharsets.UTF_8);
@@ -217,7 +224,7 @@ class EPackageValueHandlerTest {
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (var gen = mapper.createGenerator(baos)) {
-                writer.write(null, createDummyReference(), gen, null);
+                writer.write(null, createDummyReference(), createWriterContext(gen));
             }
 
             String json = baos.toString(StandardCharsets.UTF_8);
@@ -249,7 +256,7 @@ class EPackageValueHandlerTest {
             EPackageValueWriter writer = new EPackageValueWriter("definitions");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (var gen = mapper.createGenerator(baos)) {
-                writer.write(original, createDummyReference(), gen, null);
+                writer.write(original, createDummyReference(), createWriterContext(gen));
             }
 
             String json = baos.toString(StandardCharsets.UTF_8);
@@ -259,7 +266,7 @@ class EPackageValueHandlerTest {
             try (JsonParser parser = mapper.createParser(json)) {
                 parser.nextToken();
 
-                EPackage result = reader.read(parser, createDummyReference(), null);
+                EPackage result = reader.read(createReaderContext(parser), createDummyReference());
 
                 assertNotNull(result);
                 assertEquals(original.getName(), result.getName());
@@ -313,5 +320,59 @@ class EPackageValueHandlerTest {
         ePackage.getEClassifiers().add(testClass);
 
         return ePackage;
+    }
+
+    /**
+     * Creates a test reader context wrapping the given parser.
+     */
+    private CodecReaderContext createReaderContext(JsonParser parser) {
+        return new CodecReaderContext() {
+            @Override
+            public JsonParser getParser() {
+                return parser;
+            }
+
+            @Override
+            public DeserializationContext getJacksonContext() {
+                return null;
+            }
+
+            @Override
+            public EffectiveCodecConfig getConfig() {
+                return null;
+            }
+
+            @Override
+            public DiagnosticCollector getDiagnostics() {
+                return new DiagnosticCollector();
+            }
+        };
+    }
+
+    /**
+     * Creates a test writer context wrapping the given generator.
+     */
+    private CodecWriterContext createWriterContext(JsonGenerator generator) {
+        return new CodecWriterContext() {
+            @Override
+            public JsonGenerator getGenerator() {
+                return generator;
+            }
+
+            @Override
+            public SerializationContext getJacksonContext() {
+                return null;
+            }
+
+            @Override
+            public EffectiveCodecConfig getConfig() {
+                return null;
+            }
+
+            @Override
+            public DiagnosticCollector getDiagnostics() {
+                return new DiagnosticCollector();
+            }
+        };
     }
 }

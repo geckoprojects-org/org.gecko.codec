@@ -23,10 +23,10 @@ import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.fennec.codec.api.value.CodecValueRegistry;
+import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.jsonschema.v2.converter.JsonSchemaToEPackageConverter;
-import org.eclipse.fennec.codec.v2.config.CodecConfiguration;
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.eclipse.fennec.model.openapi.Components;
 import org.eclipse.fennec.model.openapi.OpenAPI;
@@ -70,12 +70,12 @@ public class OpenApiResourceImpl extends CodecResource {
 	 * @param metadataService the metadata service for codec configuration
 	 */
 	public OpenApiResourceImpl(URI uri, MetadataService metadataService) {
-		super(uri, metadataService, createConfiguration(), createValueRegistry(), null);
+		super(uri, metadataService, createResolver(), createValueRegistry(), null);
 	}
 
-	private static CodecConfiguration createConfiguration() {
-		return CodecConfiguration.builder()
-				.serializeType(false)  // OpenAPI doesn't use _type for root
+	private static ConfigurationResolver createResolver() {
+		return ConfigurationResolver.builder()
+				.typeInclude(false)  // OpenAPI doesn't use _type for root
 				.globalIgnore("schemasPackage")  // Derived from schemas, not serialized
 				.globalIgnore("method")  // Set by OperationValueReader, not serialized
 				.build();
@@ -86,7 +86,7 @@ public class OpenApiResourceImpl extends CodecResource {
 
 		// Register reader for Operation that sets HttpMethod from PathItem feature name.
 		// All HTTP method features (get, put, post, etc.) have valueReaderName="operation" annotation.
-		registry.registerReader("operation", new OperationValueReader());
+		registry.register(new OperationValueReader());
 
 		return registry;
 	}

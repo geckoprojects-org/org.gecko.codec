@@ -2,7 +2,7 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-02-03 (CodecEntryContext pattern migration complete — unified context for ser/deser entries, test files updated, all 1042 tests passing)
+**Last Updated:** 2026-02-04 (Dependent projects API migration complete — codec.geojson, codec.jsonschema.v2, codec.openapi migrated from deprecated v2.* API to new codec.* API)
 
 ---
 
@@ -33,6 +33,56 @@ MAIN TASK: [description] - [status: ACTIVE/PAUSED/✅]
 ### 0.2 Current Task Hierarchy
 
 ```
+COMPLETED: Dependent Projects API Migration + forceWrite/forceRead Fixes - ✅ (2026-02-04)
+│
+│  BUG FIXES:
+│  │  1. forceWrite two-gate model (AttributeSerializationEntry, ReferenceSerializationEntry)
+│  │     - forceWrite now ONLY affects visibility gate, NOT value gate
+│  │     - serializeNull/serializeEmpty/serializeDefault still apply with forceWrite=true
+│  │     - Matches spec section 12 "Feature Serialization Flow"
+│  │
+│  │  2. forceRead not working for volatile features (ConfigurationResolver:420)
+│  │     - Only checked isForceWrite(), now also checks isForceRead()
+│  │     - volatile/transient/derived features with forceRead=true now deserialize correctly
+│  │
+│  NEW TEST FILE: ForceReadWriteTest.java
+│  │  - Tests for forceWrite, forceRead, and toBuilder() preservation
+│  │  - Renamed from ForceWriteSerializationTest.java
+│  │  - Verifies two-gate model behavior
+│
+│  Migrated codec.geojson, codec.jsonschema.v2, and codec.openapi from deprecated
+│  API (org.eclipse.fennec.codec.api.value.*, codec.v2.*) to new non-deprecated API
+│  (org.eclipse.fennec.codec.value.*, codec.*).
+│
+│  PROJECTS MIGRATED:
+│  │
+│  │  codec.jsonschema.v2:
+│  │  - EPackageValueReader: codec.api.value → codec.value, added getName()
+│  │  - EPackageValueWriter: codec.api.value → codec.value, added getName()
+│  │  - Tests updated to use CodecReaderContext/CodecWriterContext wrappers
+│  │
+│  │  codec.openapi:
+│  │  - OpenApiResourceFactoryImpl: codec.v2.util.MetadataServiceFactory → codec.util
+│  │  - OpenApiResourceImpl: codec.v2.resource.CodecResource → codec.resource.CodecResource
+│  │                         codec.v2.config.CodecConfiguration → codec.config.ConfigurationResolver
+│  │                         codec.api.value.CodecValueRegistry → codec.value.CodecValueRegistry
+│  │  - OperationValueReader: codec.v2.context.ContextHelper → codec.context.ContextHelper
+│  │                          codec.api.value → codec.value, fixed getName() = "operation"
+│  │  - All test files: CODEC_ROOT_OBJECT → CODEC_ROOT_TYPE
+│  │
+│  API CHANGES SUMMARY:
+│  │  - ReferenceValueReader.read(JsonParser, EReference, DeserializationContext)
+│  │    → read(CodecReaderContext, EReference)
+│  │  - ReferenceValueWriter.write(value, reference, generator, context)
+│  │    → write(value, reference, CodecWriterContext)
+│  │  - CodecValueReader/Writer now require getName() method
+│  │  - CodecConfiguration → ConfigurationResolver (with .typeInclude() etc.)
+│  │  - CodecResource.CODEC_ROOT_OBJECT → CODEC_ROOT_TYPE
+│
+│  TEST RESULTS: All tests passing in jsonschema.v2 (19 tests) and openapi (54 tests)
+│
+---
+
 COMPLETED: CodecEntryContext Pattern Migration - ✅ (2026-02-03)
 │
 │  Migrated all serialization/deserialization entry classes to use a unified
@@ -249,12 +299,13 @@ COMPLETED: Feature Visibility Model + Spec Tests - ✅ (2026-01-30)
 │  │    7. Validation Integration (2)
 │  │    8. Global Feature Config (2)
 │  │
-│  KEY FINDING: v2 Deserialization Gate Bug (NOT YET FIXED)
-│  │  LOCATION: CodecEObjectDeserializer.java:649 (buildDeserializationEntries)
-│  │  BUG: Uses `featureConfig.isSerialize()` for deserialization gate
-│  │  SHOULD USE: `featureConfig.shouldDeserialize()`
-│  │  IMPACT: Features with ignoreRead=true still deserialized;
-│  │          features with forceRead=true + ignore=true incorrectly gated
+│  KEY FINDING: v2 Deserialization Gate Bug - ✅ FIXED (2026-02-04)
+│  │  LOCATION: ConfigurationResolver.java:420 (resolveFeatureConfig)
+│  │  BUG: Only checked isForceWrite() for volatile features, not isForceRead()
+│  │  FIX: Changed to `if (!resolved.isForceWrite() && !resolved.isForceRead())`
+│  │  IMPACT: forceRead now correctly enables deserialization of volatile features
+│  │  ALSO FIXED: forceWrite two-gate model - forceWrite affects visibility gate only,
+│  │              not value gate (serializeNull/Empty/Default still apply)
 │  │
 │  SPEC GAPS IDENTIFIED (NOT YET ADDRESSED):
 │  │  1. Spec §1.2 doesn't document the entry-build pattern (buildDeserializationEntries)
@@ -753,8 +804,9 @@ We are building **codec.v2**, a new EMF serialization codec based on the specifi
 | `org.eclipse.fennec.model.metadata` | Generic MetadataService infrastructure | ✅ Complete | [model-metadata-architecture.md](../org.eclipse.fennec.model.metadata/model-metadata-architecture.md) |
 | `org.eclipse.fennec.codec.metadata` | Codec-specific aspects and annotation parsing | ✅ Complete | [codec-metadata-architecture.md](../org.eclipse.fennec.codec.metadata/codec-metadata-architecture.md) |
 | `org.eclipse.fennec.codec.v2` | New codec implementation | ✅ Phase 3 Complete | See [00-overview.md](codec-v2-spec/00-overview.md) |
-| `org.eclipse.fennec.codec.jsonschema.v2` | JSON Schema ↔ EPackage converters | ✅ Complete | See [17-format-abstraction.md](codec-v2-spec/17-format-abstraction.md) |
-| `org.eclipse.fennec.codec.openapi` | OpenAPI 3.x resource with JSON Schema support | ✅ Complete | See [17-format-abstraction.md](codec-v2-spec/17-format-abstraction.md) |
+| `org.eclipse.fennec.codec.jsonschema.v2` | JSON Schema ↔ EPackage converters | ✅ Complete (new API) | See [17-format-abstraction.md](codec-v2-spec/17-format-abstraction.md) |
+| `org.eclipse.fennec.codec.openapi` | OpenAPI 3.x resource with JSON Schema support | ✅ Complete (new API) | See [17-format-abstraction.md](codec-v2-spec/17-format-abstraction.md) |
+| `org.eclipse.fennec.codec.geojson` | GeoJSON resource with volatile feature handling | ✅ Complete (new API) | Uses ConfigurationResolver + forceWrite/forceRead |
 | `org.eclipse.fennec.codec.v2.example` | Examples and integration tests | Not started | - |
 | `org.eclipse.fennec.codec.*` (other) | Old codec implementations (reference only) | Existing | - |
 

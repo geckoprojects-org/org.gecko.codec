@@ -18,12 +18,11 @@ import java.io.IOException;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
-import org.eclipse.fennec.codec.api.value.ReferenceValueReader;
 import org.eclipse.fennec.codec.jsonschema.v2.converter.JsonSchemaToEPackageConverter;
+import org.eclipse.fennec.codec.value.CodecReaderContext;
+import org.eclipse.fennec.codec.value.ReferenceValueReader;
 
-import tools.jackson.core.JsonParser;
 import tools.jackson.core.TreeNode;
-import tools.jackson.databind.DeserializationContext;
 import tools.jackson.databind.JsonNode;
 
 /**
@@ -76,6 +75,11 @@ public class EPackageValueReader implements ReferenceValueReader<EPackage> {
 		this.converter = new JsonSchemaToEPackageConverter();
 	}
 
+	@Override
+	public String getName() {
+		return "jsonSchemaToEPackage";
+	}
+
 	/**
 	 * Checks if this reader can handle the given reference.
 	 * <p>
@@ -97,16 +101,15 @@ public class EPackageValueReader implements ReferenceValueReader<EPackage> {
 	 * IS the schema definitions directly. The converter will auto-detect this case.
 	 * </p>
 	 *
-	 * @param parser the JSON parser positioned at the schema object
+	 * @param ctx the reader context providing parser and diagnostics
 	 * @param reference the EReference being deserialized
-	 * @param ctxt the deserialization context
 	 * @return the converted EPackage, or null if parsing fails
 	 * @throws IOException if an I/O error occurs
 	 */
 	@Override
-	public EPackage read(JsonParser parser, EReference reference, DeserializationContext ctxt) throws IOException {
+	public EPackage read(CodecReaderContext ctx, EReference reference) throws IOException {
 		// Read the JSON tree at current position
-		TreeNode treeNode = parser.readValueAsTree();
+		TreeNode treeNode = ctx.getParser().readValueAsTree();
 
 		if (treeNode == null || !treeNode.isObject()) {
 			return null;
