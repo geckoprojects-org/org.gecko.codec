@@ -31,6 +31,7 @@ import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.context.CodecWriteContext;
 import org.eclipse.fennec.codec.context.ContextHelper;
+import org.eclipse.fennec.codec.util.EMapHelper;
 import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.value.CodecValueWriter;
 import org.eclipse.fennec.codec.value.CodecWriterContext;
@@ -185,7 +186,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
         gen.writeName(config.getKey());
 
         if (reference.isMany() && value instanceof EList<?> list) {
-            if (isMapEntryReference()) {
+            if (EMapHelper.isMapEntryReference(reference)) {
                 serializeEMap(list, gen, ctxt);
             } else {
                 gen.writeStartArray();
@@ -342,25 +343,10 @@ public class ReferenceSerializationEntry implements SerializationEntry {
     // EMap Serialization Support
     // ========================================================================
 
-    private boolean isMapEntryReference() {
-        EClass entryClass = reference.getEReferenceType();
-        if (entryClass == null) {
-            return false;
-        }
-
-        String instanceClassName = entryClass.getInstanceClassName();
-        if ("java.util.Map$Entry".equals(instanceClassName)) {
-            return true;
-        }
-
-        return entryClass.getEStructuralFeature("key") != null
-                && entryClass.getEStructuralFeature("value") != null;
-    }
-
     private void serializeEMap(List<?> entries, JsonGenerator gen, SerializationContext ctxt) {
         EClass entryClass = reference.getEReferenceType();
-        var keyFeature = entryClass.getEStructuralFeature("key");
-        var valueFeature = entryClass.getEStructuralFeature("value");
+        var keyFeature = EMapHelper.getKeyFeature(entryClass);
+        var valueFeature = EMapHelper.getValueFeature(entryClass);
 
         gen.writeStartObject();
 

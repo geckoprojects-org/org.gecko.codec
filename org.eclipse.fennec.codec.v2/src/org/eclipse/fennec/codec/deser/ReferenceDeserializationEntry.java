@@ -29,6 +29,7 @@ import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.context.ContextHelper;
 import org.eclipse.fennec.codec.context.EMFCodecReadContext;
+import org.eclipse.fennec.codec.util.EMapHelper;
 import org.eclipse.fennec.codec.deser.DeserializationState.UnresolvedReference;
 import org.eclipse.fennec.codec.jackson.CodecJsonReadContext;
 import org.eclipse.fennec.codec.util.TypeResolutionHelper;
@@ -172,7 +173,7 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
 
         if (reference.isMany()) {
             // Check if this is an EMap (reference to Map.Entry types)
-            if (isMapEntryReference() && parser.currentToken() == JsonToken.START_OBJECT) {
+            if (EMapHelper.isMapEntryReference(reference) && parser.currentToken() == JsonToken.START_OBJECT) {
                 deserializeEMap(state, parser, ctxt, eObject);
             } else {
                 deserializeMultiValued(state, parser, ctxt, eObject);
@@ -932,34 +933,6 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     // ========================================================================
 
     /**
-     * Checks if this reference is an EMap reference (reference to Map.Entry types).
-     * <p>
-     * EMF's EMap is modeled as a multi-valued containment reference to a class
-     * that implements {@code java.util.Map$Entry}. This method detects such references
-     * by checking the instanceClassName of the reference type.
-     * </p>
-     *
-     * @return true if this reference is to a Map.Entry type
-     */
-    private boolean isMapEntryReference() {
-        EClass entryClass = reference.getEReferenceType();
-        if (entryClass == null) {
-            return false;
-        }
-
-        // Check instanceClassName for Map.Entry
-        String instanceClassName = entryClass.getInstanceClassName();
-        if ("java.util.Map$Entry".equals(instanceClassName)) {
-            return true;
-        }
-
-        // Also check if the class has both 'key' and 'value' features
-        // This is a fallback for cases where instanceClassName is not set
-        return entryClass.getEStructuralFeature("key") != null &&
-               entryClass.getEStructuralFeature("value") != null;
-    }
-
-    /**
      * Deserializes an EMap from a JSON object.
      * <p>
      * JSON format for EMaps:
@@ -983,8 +956,8 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
     private void deserializeEMap(DeserializationState state, JsonParser parser,
             DeserializationContext ctxt, EObject eObject) {
         EClass entryClass = reference.getEReferenceType();
-        org.eclipse.emf.ecore.EStructuralFeature keyFeature = entryClass.getEStructuralFeature("key");
-        org.eclipse.emf.ecore.EStructuralFeature valueFeature = entryClass.getEStructuralFeature("value");
+        org.eclipse.emf.ecore.EStructuralFeature keyFeature = EMapHelper.getKeyFeature(entryClass);
+        org.eclipse.emf.ecore.EStructuralFeature valueFeature = EMapHelper.getValueFeature(entryClass);
 
         if (keyFeature == null || valueFeature == null) {
             String msg = "EMap entry class '" + entryClass.getName() + "' missing key or value feature";
