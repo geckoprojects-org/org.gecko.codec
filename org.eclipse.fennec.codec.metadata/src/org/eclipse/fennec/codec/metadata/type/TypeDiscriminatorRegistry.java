@@ -18,9 +18,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
 
 /**
  * Registry for type discriminator mappings within a single mapId scope.
@@ -54,6 +56,17 @@ public class TypeDiscriminatorRegistry {
      * </p>
      */
     private volatile String discriminatorPath;
+
+    /**
+     * Controls behavior when a discriminator value cannot be resolved to an EClass.
+     * Default is SKIP (log warning, return null so caller continues to next resolution step).
+     */
+    private volatile FallbackStrategy fallbackStrategy = FallbackStrategy.SKIP;
+
+    /**
+     * Explicit fallback EClass URI. Required when fallbackStrategy is FALLBACK.
+     */
+    private volatile String fallbackEClass;
 
     /**
      * Creates a new TypeDiscriminatorRegistry for the given mapId.
@@ -114,6 +127,91 @@ public class TypeDiscriminatorRegistry {
      */
     public boolean isFeaturePath() {
         return discriminatorPath != null && discriminatorPath.contains(".");
+    }
+
+    /**
+     * Returns the fallback strategy for this registry.
+     *
+     * @return the fallback strategy (never null, defaults to SKIP)
+     */
+    public FallbackStrategy getFallbackStrategy() {
+        return fallbackStrategy;
+    }
+
+    /**
+     * Sets the fallback strategy for this registry.
+     *
+     * @param fallbackStrategy the strategy to use when discriminator value is not found
+     */
+    public void setFallbackStrategy(FallbackStrategy fallbackStrategy) {
+        this.fallbackStrategy = Objects.requireNonNull(fallbackStrategy, "fallbackStrategy must not be null");
+    }
+
+    /**
+     * Returns the fallback EClass URI.
+     *
+     * @return the fallback EClass URI, or null if not set
+     */
+    public String getFallbackEClass() {
+        return fallbackEClass;
+    }
+
+    /**
+     * Sets the fallback EClass URI.
+     *
+     * @param fallbackEClass the EClass URI to use when strategy is FALLBACK
+     */
+    public void setFallbackEClass(String fallbackEClass) {
+        this.fallbackEClass = fallbackEClass;
+    }
+
+    /**
+     * Resolves an EClass for a discriminator value, applying the configured fallback strategy.
+     * <p>
+     * Resolution order:
+     * <ol>
+     *   <li>Look up discriminator value in this registry's mappings</li>
+     *   <li>If not found, apply fallback strategy:
+     *     <ul>
+     *       <li>{@code SKIP} — return null (caller should continue to next resolution step)</li>
+     *       <li>{@code ERROR} — throw CodecException</li>
+     *       <li>{@code FALLBACK} — resolve fallbackEClass URI via the provided resolver</li>
+     *     </ul>
+     *   </li>
+     * </ol>
+     *
+     * @param discriminatorValue the value to resolve
+     * @param eClassResolver function that resolves an EClass URI string to an EClass instance
+     * @return the resolved EClass, or null when strategy is SKIP and value is not found
+     * @throws IllegalStateException on ERROR strategy, or FALLBACK with no fallbackEClass configured
+     */
+    public EClass resolve(String discriminatorValue, Function<String, EClass> eClassResolver) {
+        EClass result = getEClass(discriminatorValue);
+        if (result != null) {
+            return result;
+        }
+
+        switch (fallbackStrategy) {
+            case ERROR:
+                throw new IllegalStateException("[" + mapId + "] Discriminator value '"
+                        + discriminatorValue + "' not found in mapping and fallback strategy is ERROR");
+            case FALLBACK:
+                if (fallbackEClass == null) {
+                    throw new IllegalStateException("[" + mapId + "] Fallback strategy is FALLBACK but no fallbackEClass is configured");
+                }
+                EClass fallback = eClassResolver.apply(fallbackEClass);
+                if (fallback == null) {
+                    throw new IllegalStateException("[" + mapId + "] Could not resolve fallbackEClass URI: " + fallbackEClass);
+                }
+                LOGGER.fine("[" + mapId + "] Using fallback EClass " + fallback.getName()
+                        + " for unresolved discriminator '" + discriminatorValue + "'");
+                return fallback;
+            case SKIP:
+            default:
+                LOGGER.fine("[" + mapId + "] Discriminator value '" + discriminatorValue
+                        + "' not found, strategy is SKIP — continuing to next resolution step");
+                return null;
+        }
     }
 
     /**

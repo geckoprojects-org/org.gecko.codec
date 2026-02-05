@@ -15,8 +15,11 @@ package org.eclipse.fennec.codec.metadata.type;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.function.Function;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EcoreFactory;
+import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -271,5 +274,176 @@ class TypeDiscriminatorRegistryTest {
 
         assertTrue(str.contains("test-mapId"));
         assertTrue(str.contains("1"));
+    }
+
+    // ========================================================================
+    // resolve() with fallback strategies
+    // ========================================================================
+
+    @Nested
+    @DisplayName("resolve")
+    class Resolve {
+
+        private EClass fallbackClass;
+        private Function<String, EClass> resolver;
+
+        @BeforeEach
+        void setUpResolve() {
+            fallbackClass = EcoreFactory.eINSTANCE.createEClass();
+            fallbackClass.setName("FallbackEntity");
+
+            resolver = uri -> {
+                if ("http://test#//FallbackEntity".equals(uri)) {
+                    return fallbackClass;
+                }
+                return null;
+            };
+        }
+
+        @Test
+        @DisplayName("returns EClass for known discriminator regardless of strategy")
+        void returnsEClassForKnownDiscriminator() {
+            registry.register("person", personClass);
+            registry.setFallbackStrategy(FallbackStrategy.ERROR);
+
+            EClass result = registry.resolve("person", resolver);
+
+            assertEquals(personClass, result);
+        }
+
+        @Test
+        @DisplayName("SKIP strategy returns null for unknown discriminator")
+        void skipReturnsNullForUnknown() {
+            registry.setFallbackStrategy(FallbackStrategy.SKIP);
+
+            EClass result = registry.resolve("unknown", resolver);
+
+            assertNull(result);
+        }
+
+        @Test
+        @DisplayName("ERROR strategy throws for unknown discriminator")
+        void errorThrowsForUnknown() {
+            registry.setFallbackStrategy(FallbackStrategy.ERROR);
+
+            IllegalStateException ex = assertThrows(IllegalStateException.class,
+                    () -> registry.resolve("unknown", resolver));
+            assertTrue(ex.getMessage().contains("unknown"),
+                "Exception message should contain the discriminator value");
+            assertTrue(ex.getMessage().contains("ERROR"),
+                "Exception message should mention ERROR strategy");
+        }
+
+        @Test
+        @DisplayName("FALLBACK strategy resolves fallbackEClass")
+        void fallbackResolvesFallbackEClass() {
+            registry.setFallbackStrategy(FallbackStrategy.FALLBACK);
+            registry.setFallbackEClass("http://test#//FallbackEntity");
+
+            EClass result = registry.resolve("unknown", resolver);
+
+            assertEquals(fallbackClass, result);
+        }
+
+        @Test
+        @DisplayName("FALLBACK strategy throws when fallbackEClass is null")
+        void fallbackThrowsWhenNoFallbackEClass() {
+            registry.setFallbackStrategy(FallbackStrategy.FALLBACK);
+            // fallbackEClass not set (null)
+
+            IllegalStateException ex = assertThrows(IllegalStateException.class,
+                    () -> registry.resolve("unknown", resolver));
+            assertTrue(ex.getMessage().contains("FALLBACK"),
+                "Exception message should mention FALLBACK strategy");
+            assertTrue(ex.getMessage().contains("fallbackEClass"),
+                "Exception message should mention fallbackEClass");
+        }
+
+        @Test
+        @DisplayName("FALLBACK strategy throws when fallbackEClass URI cannot be resolved")
+        void fallbackThrowsWhenFallbackEClassUnresolvable() {
+            registry.setFallbackStrategy(FallbackStrategy.FALLBACK);
+            registry.setFallbackEClass("http://test#//NonExistent");
+
+            IllegalStateException ex = assertThrows(IllegalStateException.class,
+                    () -> registry.resolve("unknown", resolver));
+            assertTrue(ex.getMessage().contains("NonExistent"),
+                "Exception message should contain the unresolvable URI");
+        }
+
+        @Test
+        @DisplayName("default strategy is SKIP")
+        void defaultStrategyIsSkip() {
+            assertEquals(FallbackStrategy.SKIP, registry.getFallbackStrategy());
+
+            // Should return null (not throw) for unknown
+            assertNull(registry.resolve("unknown", resolver));
+        }
+    }
+
+    // ========================================================================
+    // isFeaturePath
+    // ========================================================================
+
+    @Nested
+    @DisplayName("isFeaturePath")
+    class IsFeaturePath {
+
+        @Test
+        @DisplayName("returns false when no path is set")
+        void returnsFalseWhenNoPath() {
+            assertFalse(registry.isFeaturePath());
+        }
+
+        @Test
+        @DisplayName("returns false for simple field name")
+        void returnsFalseForSimplePath() {
+            registry.setDiscriminatorPath("_type");
+            assertFalse(registry.isFeaturePath());
+        }
+
+        @Test
+        @DisplayName("returns true for nested dot-separated path")
+        void returnsTrueForNestedPath() {
+            registry.setDiscriminatorPath("info.profileName");
+            assertTrue(registry.isFeaturePath());
+        }
+
+        @Test
+        @DisplayName("returns true for deeply nested path")
+        void returnsTrueForDeeplyNestedPath() {
+            registry.setDiscriminatorPath("device.info.sensorType");
+            assertTrue(registry.isFeaturePath());
+        }
+    }
+
+    // ========================================================================
+    // fallback property getters/setters
+    // ========================================================================
+
+    @Nested
+    @DisplayName("fallback configuration")
+    class FallbackConfig {
+
+        @Test
+        @DisplayName("setFallbackStrategy rejects null")
+        void setFallbackStrategyRejectsNull() {
+            assertThrows(NullPointerException.class,
+                    () -> registry.setFallbackStrategy(null));
+        }
+
+        @Test
+        @DisplayName("setFallbackEClass accepts null")
+        void setFallbackEClassAcceptsNull() {
+            registry.setFallbackEClass("http://test#//Something");
+            registry.setFallbackEClass(null);
+            assertNull(registry.getFallbackEClass());
+        }
+
+        @Test
+        @DisplayName("fallbackEClass defaults to null")
+        void fallbackEClassDefaultsToNull() {
+            assertNull(registry.getFallbackEClass());
+        }
     }
 }

@@ -21,11 +21,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect;
+import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
 import org.eclipse.fennec.model.metadata.ClassMetadata;
 import org.eclipse.fennec.model.metadata.MetadataRegistry;
 import org.eclipse.fennec.model.metadata.PackageMetadata;
@@ -52,7 +59,7 @@ import org.eclipse.fennec.model.metadata.api.MetadataService;
  * <h3>Population from MetadataService</h3>
  * <p>
  * The service can be populated automatically from a {@link MetadataService} by
- * scanning all registered packages for codec annotations with {@code typeMapId}
+ * scanning all registered packages for {@code typeMapping/{mapId}} annotation sources
  * and discriminator values.
  * </p>
  *
@@ -106,13 +113,126 @@ public class TypeDiscriminatorService {
         MetadataRegistry registry = metadataService.getRegistry();
         if (registry != null) {
             for (PackageMetadata pkgMetadata : registry.getPackages()) {
+                // Phase 1: register discriminator values from ClassCodecAspect
                 for (ClassMetadata classMetadata : pkgMetadata.getClasses()) {
                     service.registerFromClassMetadata(classMetadata);
+                }
+
+                // Phase 2: scan raw annotations for fallback config and inline mappings
+                EPackage ePackage = pkgMetadata.getEPackage();
+                if (ePackage != null) {
+                    Function<String, EClass> eClassResolver = uri -> resolveEClassFromUri(uri, ePackage);
+                    service.registerAnnotationMappings(ePackage, eClassResolver);
                 }
             }
         }
 
         return service;
+    }
+
+    /**
+     * Scans all EClasses in a package for typeMapping fallback configuration and
+     * all EReferences for inlineMapping annotations.
+     * <p>
+     * This complements {@link #registerFromClassMetadata(ClassMetadata)} which only
+     * extracts discriminator values from {@link ClassCodecAspect}. This method handles:
+     * <ul>
+     *   <li>Fallback strategy and fallbackEClass from typeMapping annotations</li>
+     *   <li>Inline mappings from inlineMapping annotations on EReferences</li>
+     * </ul>
+     * </p>
+     *
+     * @param ePackage the package to scan
+     * @param eClassResolver function that resolves EClass URI strings to EClass instances
+     */
+    private void registerAnnotationMappings(EPackage ePackage, Function<String, EClass> eClassResolver) {
+        for (EClassifier classifier : ePackage.getEClassifiers()) {
+            if (!(classifier instanceof EClass eClass)) {
+                continue;
+            }
+
+            // Scan typeMapping/{mapId} annotations for fallback config
+            for (EAnnotation ann : eClass.getEAnnotations()) {
+                String source = ann.getSource();
+                String mapId = extractMapIdFromSource(source);
+                if (mapId != null) {
+                    registerFallbackConfig(mapId, ann.getDetails().map());
+                }
+            }
+
+            // Scan EReferences for inlineMapping annotations
+            for (EReference ref : eClass.getEReferences()) {
+                EAnnotation inlineAnn = ref.getEAnnotation(INLINE_MAPPING_SOURCE);
+                if (inlineAnn != null) {
+                    registerInlineMappings(ref, inlineAnn.getDetails().map(), eClassResolver);
+                }
+            }
+        }
+    }
+
+    /**
+     * Registers fallback configuration from a typeMapping annotation's details.
+     * <p>
+     * Only sets fallbackStrategy and fallbackEClass; does not register mapping entries
+     * (those are already handled by {@link #registerFromClassMetadata}).
+     * </p>
+     *
+     * @param mapId the mapId extracted from the annotation source
+     * @param details the annotation details
+     */
+    private void registerFallbackConfig(String mapId, Map<String, String> details) {
+        String fallbackStrategyStr = details.get(KEY_FALLBACK_STRATEGY);
+        if (fallbackStrategyStr != null && !fallbackStrategyStr.isEmpty()) {
+            TypeDiscriminatorRegistry registry = getOrCreateRegistry(mapId);
+            try {
+                registry.setFallbackStrategy(FallbackStrategy.valueOf(fallbackStrategyStr));
+            } catch (IllegalArgumentException e) {
+                LOGGER.warning("[" + mapId + "] Invalid fallbackStrategy: " + fallbackStrategyStr);
+            }
+        }
+
+        String fallbackEClassUri = details.get(KEY_FALLBACK_ECLASS);
+        if (fallbackEClassUri != null && !fallbackEClassUri.isEmpty()) {
+            TypeDiscriminatorRegistry registry = getOrCreateRegistry(mapId);
+            registry.setFallbackEClass(fallbackEClassUri);
+        }
+    }
+
+    /**
+     * Resolves an EClass URI string using a package as context.
+     * <p>
+     * Supports fragment-based URIs (e.g., "http://example.org/1.0#//ClassName")
+     * by looking up the classifier in the global package registry.
+     * </p>
+     */
+    private static EClass resolveEClassFromUri(String uriStr, EPackage contextPackage) {
+        if (uriStr == null || uriStr.isEmpty()) {
+            return null;
+        }
+        try {
+            URI uri = URI.createURI(uriStr);
+            String fragment = uri.fragment();
+            if (fragment != null && fragment.startsWith("//")) {
+                String className = fragment.substring(2);
+                // Try context package first
+                EClassifier classifier = contextPackage.getEClassifier(className);
+                if (classifier instanceof EClass eClass) {
+                    return eClass;
+                }
+                // Try global registry
+                String nsUri = uri.trimFragment().toString();
+                EPackage pkg = EPackage.Registry.INSTANCE.getEPackage(nsUri);
+                if (pkg != null) {
+                    classifier = pkg.getEClassifier(className);
+                    if (classifier instanceof EClass eClass) {
+                        return eClass;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warning("Failed to resolve EClass URI: " + uriStr + " — " + e.getMessage());
+        }
+        return null;
     }
 
     /**
@@ -145,8 +265,13 @@ public class TypeDiscriminatorService {
                 .ifPresent(aspect -> {
                     String discriminator = aspect.getDiscriminatorValue();
                     if (discriminator != null && !discriminator.isEmpty()) {
-                        // Determine mapId from EClass annotations
+                        // Determine mapId from typeMapping/{mapId} annotation source
                         String mapId = resolveMapId(aspect, eClass);
+                        if (mapId == null) {
+                            LOGGER.warning("Discriminator value '" + discriminator
+                                    + "' on " + eClass.getName() + " but no typeMapping annotation found");
+                            return;
+                        }
                         TypeDiscriminatorRegistry registry = getOrCreateRegistry(mapId);
                         registry.register(discriminator, eClass);
 
@@ -164,7 +289,8 @@ public class TypeDiscriminatorService {
      * Resolves the discriminator path for an EClass.
      * <p>
      * First checks the class's own typeConfig. If not found, walks up the
-     * supertype hierarchy looking for a discriminator path defined on an abstract base.
+     * supertype hierarchy scanning for {@code typeMapping/{mapId}} annotation sources
+     * that contain a {@code typeDiscriminatorPath} detail.
      * </p>
      *
      * @param eClass the EClass to check
@@ -181,16 +307,14 @@ public class TypeDiscriminatorService {
             }
         }
 
-        // Walk up the supertype hierarchy looking for discriminator path annotation
+        // Walk up the supertype hierarchy scanning for typeMapping/{mapId} sources
+        String expectedSource = TYPE_MAPPING_SOURCE_PREFIX + mapId;
         for (EClass superType : eClass.getEAllSuperTypes()) {
-            EAnnotation ann = superType.getEAnnotation(CODEC_SOURCE);
+            EAnnotation ann = superType.getEAnnotation(expectedSource);
             if (ann != null) {
-                String annotationMapId = ann.getDetails().get(KEY_TYPE_MAP_ID);
-                if (mapId.equals(annotationMapId)) {
-                    String path = ann.getDetails().get(KEY_TYPE_DISCRIMINATOR_PATH);
-                    if (path != null && !path.isEmpty()) {
-                        return path;
-                    }
+                String path = ann.getDetails().get(KEY_TYPE_DISCRIMINATOR_PATH);
+                if (path != null && !path.isEmpty()) {
+                    return path;
                 }
             }
         }
@@ -199,24 +323,210 @@ public class TypeDiscriminatorService {
     }
 
     /**
-     * Resolves the mapId for a ClassCodecAspect by looking at the EClass annotations.
+     * Resolves the mapId for a ClassCodecAspect by scanning for {@code typeMapping/{mapId}} annotation sources.
      * <p>
-     * Scans the EClass's codec annotation for the {@code typeMapId} detail key.
+     * Scans the EClass's annotations for sources starting with {@code TYPE_MAPPING_SOURCE_PREFIX}.
+     * The mapId is extracted from the source URI suffix.
      * </p>
      *
      * @param aspect the codec aspect
      * @param eClass the EClass to scan for annotations
-     * @return the mapId to use, or DEFAULT_MAP_ID if not found
+     * @return the mapId to use, or null if no typeMapping annotation found
      */
     private String resolveMapId(ClassCodecAspect aspect, EClass eClass) {
-        EAnnotation ann = eClass.getEAnnotation(CODEC_SOURCE);
-        if (ann != null) {
-            String mapId = ann.getDetails().get(KEY_TYPE_MAP_ID);
-            if (mapId != null && !mapId.isEmpty()) {
-                return mapId;
+        // First check the aspect's typeConfig (already parsed by CodecAspectProvider)
+        if (aspect.getTypeConfig() != null && aspect.getTypeConfig().getMapId() != null
+                && !aspect.getTypeConfig().getMapId().isEmpty()) {
+            return aspect.getTypeConfig().getMapId();
+        }
+        // Scan annotations directly for typeMapping/{mapId} source
+        for (EAnnotation ann : eClass.getEAnnotations()) {
+            String source = ann.getSource();
+            if (source != null && source.startsWith(TYPE_MAPPING_SOURCE_PREFIX)) {
+                String mapId = source.substring(TYPE_MAPPING_SOURCE_PREFIX.length());
+                if (!mapId.isEmpty()) {
+                    return mapId;
+                }
             }
         }
-        return DEFAULT_MAP_ID;
+        return null;
+    }
+
+    /**
+     * Registers static mappings from a {@code typeMapping/{mapId}} annotation on an EClass.
+     * <p>
+     * Static mappings are key/value details in the annotation where the key is a discriminator
+     * value and the value is an EClass URI. Known keys ({@code typeDiscriminatorPath},
+     * {@code typeDiscriminator}, {@code fallbackStrategy}, {@code fallbackEClass}) are excluded
+     * from mapping registration — they are configuration keys, not mapping entries.
+     * </p>
+     *
+     * @param mapId the mapId extracted from the annotation source
+     * @param details the annotation details (key/value pairs)
+     * @param eClassResolver function that resolves EClass URI strings to EClass instances
+     */
+    public void registerStaticMappings(String mapId, Map<String, String> details,
+            Function<String, EClass> eClassResolver) {
+        Objects.requireNonNull(mapId, "mapId must not be null");
+        Objects.requireNonNull(details, "details must not be null");
+        Objects.requireNonNull(eClassResolver, "eClassResolver must not be null");
+
+        TypeDiscriminatorRegistry registry = getOrCreateRegistry(mapId);
+
+        // Parse discriminator path
+        String path = details.get(KEY_TYPE_DISCRIMINATOR_PATH);
+        if (path != null && !path.isEmpty()) {
+            registry.setDiscriminatorPath(path);
+        }
+
+        // Parse fallback configuration
+        String fallbackStrategyStr = details.get(KEY_FALLBACK_STRATEGY);
+        if (fallbackStrategyStr != null && !fallbackStrategyStr.isEmpty()) {
+            try {
+                registry.setFallbackStrategy(FallbackStrategy.valueOf(fallbackStrategyStr));
+            } catch (IllegalArgumentException e) {
+                LOGGER.warning("[" + mapId + "] Invalid fallbackStrategy: " + fallbackStrategyStr);
+            }
+        }
+
+        String fallbackEClassUri = details.get(KEY_FALLBACK_ECLASS);
+        if (fallbackEClassUri != null && !fallbackEClassUri.isEmpty()) {
+            registry.setFallbackEClass(fallbackEClassUri);
+        }
+
+        // Register mapping entries (exclude known configuration keys)
+        for (Map.Entry<String, String> entry : details.entrySet()) {
+            String key = entry.getKey();
+            if (isTypeMappingConfigKey(key)) {
+                continue;
+            }
+            String eClassUri = entry.getValue();
+            if (eClassUri == null || eClassUri.isEmpty()) {
+                continue;
+            }
+            EClass eClass = eClassResolver.apply(eClassUri);
+            if (eClass != null) {
+                registry.register(key, eClass);
+            } else {
+                LOGGER.warning("[" + mapId + "] Could not resolve EClass URI: " + eClassUri
+                        + " for discriminator '" + key + "'");
+            }
+        }
+    }
+
+    /**
+     * Registers inline mappings from an {@code inlineMapping} annotation on an EReference.
+     * <p>
+     * The mapId for inline mappings is derived from the EReference URI
+     * ({@code EcoreUtil.getURI(reference).toString()}), making each inline mapping
+     * scoped to a specific reference.
+     * </p>
+     *
+     * @param reference the EReference with the inlineMapping annotation
+     * @param details the annotation details (key/value pairs)
+     * @param eClassResolver function that resolves EClass URI strings to EClass instances
+     * @return the mapId used for this inline mapping (the EReference URI)
+     */
+    public String registerInlineMappings(EReference reference, Map<String, String> details,
+            Function<String, EClass> eClassResolver) {
+        Objects.requireNonNull(reference, "reference must not be null");
+        Objects.requireNonNull(details, "details must not be null");
+        Objects.requireNonNull(eClassResolver, "eClassResolver must not be null");
+
+        String mapId = EcoreUtil.getURI(reference).toString();
+        TypeDiscriminatorRegistry registry = getOrCreateRegistry(mapId);
+
+        // Parse fallback configuration
+        String fallbackStrategyStr = details.get(KEY_FALLBACK_STRATEGY);
+        if (fallbackStrategyStr != null && !fallbackStrategyStr.isEmpty()) {
+            try {
+                registry.setFallbackStrategy(FallbackStrategy.valueOf(fallbackStrategyStr));
+            } catch (IllegalArgumentException e) {
+                LOGGER.warning("[" + mapId + "] Invalid fallbackStrategy: " + fallbackStrategyStr);
+            }
+        }
+
+        String fallbackEClassUri = details.get(KEY_FALLBACK_ECLASS);
+        if (fallbackEClassUri != null && !fallbackEClassUri.isEmpty()) {
+            registry.setFallbackEClass(fallbackEClassUri);
+        }
+
+        // Register mapping entries (exclude known configuration keys)
+        for (Map.Entry<String, String> entry : details.entrySet()) {
+            String key = entry.getKey();
+            if (isInlineMappingConfigKey(key)) {
+                continue;
+            }
+            String eClassUri = entry.getValue();
+            if (eClassUri == null || eClassUri.isEmpty()) {
+                continue;
+            }
+            EClass eClass = eClassResolver.apply(eClassUri);
+            if (eClass != null) {
+                registry.register(key, eClass);
+            } else {
+                LOGGER.warning("[" + mapId + "] Could not resolve EClass URI: " + eClassUri
+                        + " for inline discriminator '" + key + "'");
+            }
+        }
+
+        return mapId;
+    }
+
+    /**
+     * Resolves an EClass for a discriminator value in a specific mapId context,
+     * applying the registry's fallback strategy.
+     *
+     * @param mapId the namespace identifier
+     * @param discriminatorValue the discriminator value to resolve
+     * @param eClassResolver function that resolves EClass URI strings to EClass instances
+     * @return the resolved EClass, or null if not found and strategy is SKIP
+     * @throws IllegalStateException on ERROR strategy, or FALLBACK with no fallbackEClass
+     */
+    public EClass resolve(String mapId, String discriminatorValue, Function<String, EClass> eClassResolver) {
+        TypeDiscriminatorRegistry registry = getRegistry(mapId);
+        if (registry == null) {
+            return null;
+        }
+        return registry.resolve(discriminatorValue, eClassResolver);
+    }
+
+    /**
+     * Resolves an EClass for an inline mapping on an EReference.
+     * <p>
+     * Uses the EReference URI as mapId to look up the inline mapping registry.
+     * </p>
+     *
+     * @param reference the EReference with inline mapping
+     * @param discriminatorValue the discriminator value to resolve
+     * @param eClassResolver function that resolves EClass URI strings to EClass instances
+     * @return the resolved EClass, or null if no inline mapping exists or value not found
+     */
+    public EClass resolveForReference(EReference reference, String discriminatorValue,
+            Function<String, EClass> eClassResolver) {
+        if (reference == null) {
+            return null;
+        }
+        String mapId = EcoreUtil.getURI(reference).toString();
+        return resolve(mapId, discriminatorValue, eClassResolver);
+    }
+
+    /**
+     * Checks if a key is a configuration key for typeMapping annotations (not a mapping entry).
+     */
+    private boolean isTypeMappingConfigKey(String key) {
+        return KEY_TYPE_DISCRIMINATOR_PATH.equals(key)
+                || KEY_TYPE_DISCRIMINATOR.equals(key)
+                || KEY_FALLBACK_STRATEGY.equals(key)
+                || KEY_FALLBACK_ECLASS.equals(key);
+    }
+
+    /**
+     * Checks if a key is a configuration key for inlineMapping annotations (not a mapping entry).
+     */
+    private boolean isInlineMappingConfigKey(String key) {
+        return KEY_FALLBACK_STRATEGY.equals(key)
+                || KEY_FALLBACK_ECLASS.equals(key);
     }
 
     /**
@@ -289,6 +599,53 @@ public class TypeDiscriminatorService {
     }
 
     /**
+     * Resolves an EClass from a discriminator value, searching all registries with
+     * fallback-aware resolution.
+     * <p>
+     * Unlike {@link #getEClassFromAny(String)} which only does direct lookup,
+     * this method applies each registry's fallback strategy (SKIP, ERROR, FALLBACK)
+     * when the discriminator is not found in that registry.
+     * </p>
+     * <p>
+     * The resolution order is:
+     * <ol>
+     *   <li>Direct lookup across all registries (returns immediately on match)</li>
+     *   <li>If no direct match, apply fallback strategy of the first registry
+     *       that has a non-SKIP fallback configured</li>
+     * </ol>
+     * </p>
+     *
+     * @param discriminatorValue the discriminator value to resolve
+     * @param eClassResolver function that resolves EClass URI strings to EClass instances
+     * @return the resolved EClass, or null if not found and all strategies are SKIP
+     * @throws IllegalStateException if ERROR strategy is active, or FALLBACK with missing fallbackEClass
+     */
+    public EClass resolveFromAny(String discriminatorValue, Function<String, EClass> eClassResolver) {
+        if (discriminatorValue == null) {
+            return null;
+        }
+
+        // Phase 1: direct lookup across all registries
+        for (TypeDiscriminatorRegistry registry : registries.values()) {
+            EClass eClass = registry.getEClass(discriminatorValue);
+            if (eClass != null) {
+                return eClass;
+            }
+        }
+
+        // Phase 2: no direct match — apply fallback strategy
+        // Find the first registry with a non-SKIP fallback strategy
+        for (TypeDiscriminatorRegistry registry : registries.values()) {
+            if (registry.getFallbackStrategy() != FallbackStrategy.SKIP) {
+                return registry.resolve(discriminatorValue, eClassResolver);
+            }
+        }
+
+        // No registry with fallback configured — return null (default SKIP behavior)
+        return null;
+    }
+
+    /**
      * Gets the discriminator value for an EClass in a specific mapId context.
      *
      * @param mapId the namespace identifier
@@ -317,6 +674,25 @@ public class TypeDiscriminatorService {
             }
         }
         return null;
+    }
+
+    /**
+     * Gets the discriminator value for an EClass in a reference-scoped inline mapping.
+     * <p>
+     * Uses the EReference URI as mapId to look up the inline mapping registry.
+     * This is the serialization counterpart to {@link #resolveForReference}.
+     * </p>
+     *
+     * @param reference the EReference with inline mapping
+     * @param eClass the EClass to look up
+     * @return the discriminator value, or null if no inline mapping exists or EClass not found
+     */
+    public String getDiscriminatorValueForReference(EReference reference, EClass eClass) {
+        if (reference == null || eClass == null) {
+            return null;
+        }
+        String mapId = EcoreUtil.getURI(reference).toString();
+        return getDiscriminatorValue(mapId, eClass);
     }
 
     /**
@@ -362,6 +738,55 @@ public class TypeDiscriminatorService {
         for (TypeDiscriminatorRegistry registry : registries.values()) {
             if (registry.getDiscriminatorPath() != null) {
                 return registry;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the typeMapping mapId for an EClass by scanning its annotations.
+     * <p>
+     * Looks for annotations with source starting with {@code http://eclipse.org/fennec/codec/typeMapping/}
+     * and extracts the mapId suffix. This allows callers to determine which registry
+     * should be used for resolution without needing access to the internal aspect objects.
+     * </p>
+     *
+     * @param eClass the EClass to scan
+     * @return the mapId, or null if no typeMapping annotation found
+     */
+    public String getMapIdForEClass(EClass eClass) {
+        if (eClass == null) {
+            return null;
+        }
+        // Check the EClass itself first
+        String mapId = extractMapIdFromAnnotations(eClass);
+        if (mapId != null) {
+            return mapId;
+        }
+        // Walk up the supertype hierarchy
+        for (EClass superType : eClass.getEAllSuperTypes()) {
+            mapId = extractMapIdFromAnnotations(superType);
+            if (mapId != null) {
+                return mapId;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extracts the mapId from a {@code typeMapping/{mapId}} annotation on an EClass.
+     *
+     * @param eClass the EClass to check
+     * @return the mapId, or null if no typeMapping annotation found
+     */
+    private String extractMapIdFromAnnotations(EClass eClass) {
+        for (EAnnotation ann : eClass.getEAnnotations()) {
+            String source = ann.getSource();
+            if (source != null && source.startsWith(TYPE_MAPPING_SOURCE_PREFIX)) {
+                String mapId = source.substring(TYPE_MAPPING_SOURCE_PREFIX.length());
+                if (!mapId.isEmpty()) {
+                    return mapId;
+                }
             }
         }
         return null;

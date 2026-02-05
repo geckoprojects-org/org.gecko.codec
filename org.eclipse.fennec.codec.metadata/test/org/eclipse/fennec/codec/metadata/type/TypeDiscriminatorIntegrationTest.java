@@ -56,6 +56,7 @@ class TypeDiscriminatorIntegrationTest {
 
     /**
      * Creates an EPackage with a single EClass that has discriminator annotations.
+     * Uses dedicated typeMapping/{mapId} annotation source.
      */
     private EPackage createPackageWithDiscriminator(String nsURI, String className,
             String mapId, String discriminatorValue, String discriminatorPath) {
@@ -68,10 +69,9 @@ class TypeDiscriminatorIntegrationTest {
         EClass eClass = EcoreFactory.eINSTANCE.createEClass();
         eClass.setName(className);
 
-        // Add codec annotation with discriminator config
+        // Add typeMapping/{mapId} annotation with discriminator config
         EAnnotation ann = EcoreFactory.eINSTANCE.createEAnnotation();
-        ann.setSource(CODEC_SOURCE);
-        ann.getDetails().put(KEY_TYPE_MAP_ID, mapId);
+        ann.setSource(TYPE_MAPPING_SOURCE_PREFIX + mapId);
         ann.getDetails().put(KEY_TYPE_DISCRIMINATOR, discriminatorValue);
         if (discriminatorPath != null) {
             ann.getDetails().put(KEY_TYPE_DISCRIMINATOR_PATH, discriminatorPath);
@@ -84,6 +84,7 @@ class TypeDiscriminatorIntegrationTest {
 
     /**
      * Creates an abstract base class with discriminatorPath (defines the mapping context).
+     * Uses dedicated typeMapping/{mapId} annotation source.
      */
     private EClass createBaseClassWithPath(EPackage pkg, String className, String mapId, String path) {
         EClass eClass = EcoreFactory.eINSTANCE.createEClass();
@@ -91,8 +92,7 @@ class TypeDiscriminatorIntegrationTest {
         eClass.setAbstract(true);
 
         EAnnotation ann = EcoreFactory.eINSTANCE.createEAnnotation();
-        ann.setSource(CODEC_SOURCE);
-        ann.getDetails().put(KEY_TYPE_MAP_ID, mapId);
+        ann.setSource(TYPE_MAPPING_SOURCE_PREFIX + mapId);
         ann.getDetails().put(KEY_TYPE_DISCRIMINATOR_PATH, path);
         eClass.getEAnnotations().add(ann);
 
@@ -102,6 +102,7 @@ class TypeDiscriminatorIntegrationTest {
 
     /**
      * Creates a concrete class with discriminator value (extends base class).
+     * Uses dedicated typeMapping/{mapId} annotation source.
      */
     private EClass createConcreteClass(EPackage pkg, String className, String mapId,
             String discriminatorValue, EClass... superTypes) {
@@ -113,8 +114,7 @@ class TypeDiscriminatorIntegrationTest {
         }
 
         EAnnotation ann = EcoreFactory.eINSTANCE.createEAnnotation();
-        ann.setSource(CODEC_SOURCE);
-        ann.getDetails().put(KEY_TYPE_MAP_ID, mapId);
+        ann.setSource(TYPE_MAPPING_SOURCE_PREFIX + mapId);
         ann.getDetails().put(KEY_TYPE_DISCRIMINATOR, discriminatorValue);
         eClass.getEAnnotations().add(ann);
 
@@ -242,8 +242,7 @@ class TypeDiscriminatorIntegrationTest {
             concreteClass.getESuperTypes().add(baseClass);
 
             EAnnotation ann = EcoreFactory.eINSTANCE.createEAnnotation();
-            ann.setSource(CODEC_SOURCE);
-            ann.getDetails().put(KEY_TYPE_MAP_ID, "lorawan");
+            ann.setSource(TYPE_MAPPING_SOURCE_PREFIX + "lorawan");
             ann.getDetails().put(KEY_TYPE_DISCRIMINATOR, "Dragino_LSE01");
             // Note: NO discriminatorPath here - should inherit from base
             concreteClass.getEAnnotations().add(ann);
@@ -561,7 +560,7 @@ class TypeDiscriminatorIntegrationTest {
         }
 
         @Test
-        @DisplayName("handles class with typeMapId but no discriminator")
+        @DisplayName("handles class with typeMapping source but no discriminator value")
         void handlesMapIdWithoutDiscriminator() {
             EPackage pkg = EcoreFactory.eINSTANCE.createEPackage();
             pkg.setName("mapidonly");
@@ -571,9 +570,9 @@ class TypeDiscriminatorIntegrationTest {
             EClass eClass = EcoreFactory.eINSTANCE.createEClass();
             eClass.setName("MapIdOnly");
 
+            // typeMapping source present but no typeDiscriminator detail
             EAnnotation ann = EcoreFactory.eINSTANCE.createEAnnotation();
-            ann.setSource(CODEC_SOURCE);
-            ann.getDetails().put(KEY_TYPE_MAP_ID, "orphan-mapid");
+            ann.setSource(TYPE_MAPPING_SOURCE_PREFIX + "orphan-mapid");
             // No typeDiscriminator!
             eClass.getEAnnotations().add(ann);
             pkg.getEClassifiers().add(eClass);
@@ -586,30 +585,28 @@ class TypeDiscriminatorIntegrationTest {
         }
 
         @Test
-        @DisplayName("uses default mapId when typeMapId not specified")
-        void usesDefaultMapId() {
+        @DisplayName("discriminator without typeMapping source is not registered")
+        void discriminatorWithoutTypeMappingSourceNotRegistered() {
             EPackage pkg = EcoreFactory.eINSTANCE.createEPackage();
-            pkg.setName("defaultmap");
-            pkg.setNsURI("http://test.example/defaultmap");
-            pkg.setNsPrefix("dm");
+            pkg.setName("nomap");
+            pkg.setNsURI("http://test.example/nomap");
+            pkg.setNsPrefix("nm");
 
             EClass eClass = EcoreFactory.eINSTANCE.createEClass();
-            eClass.setName("DefaultMapClass");
+            eClass.setName("NoMapClass");
 
+            // Only codec annotation, no typeMapping/{mapId} source
+            // discriminator value without a typeMapping source should not register
             EAnnotation ann = EcoreFactory.eINSTANCE.createEAnnotation();
             ann.setSource(CODEC_SOURCE);
-            // No typeMapId, but has discriminator
-            ann.getDetails().put(KEY_TYPE_DISCRIMINATOR, "default-discriminator");
             eClass.getEAnnotations().add(ann);
             pkg.getEClassifiers().add(eClass);
 
             metadataService.registerPackage(pkg);
             TypeDiscriminatorService service = TypeDiscriminatorService.fromMetadataService(metadataService);
 
-            // Should use default mapId
-            assertEquals(1, service.getTotalMappings());
-            assertTrue(service.hasRegistry(TypeDiscriminatorService.DEFAULT_MAP_ID));
-            assertNotNull(service.getEClass(TypeDiscriminatorService.DEFAULT_MAP_ID, "default-discriminator"));
+            // No typeMapping source means no mapId, so no registration
+            assertEquals(0, service.getTotalMappings());
         }
 
         @Test

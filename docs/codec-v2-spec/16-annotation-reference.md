@@ -825,9 +825,11 @@ Define all mappings on the base class. Useful when you control all concrete clas
 Concrete classes can register themselves with a registry. Useful when concrete classes are in different packages or when you want extensible type hierarchies.
 
 **How it works:**
-1. **Base class** defines the registry with `typeDiscriminatorPath`
-2. **Concrete classes** register themselves using `typeDiscriminator` in the main codec annotation
+1. **Base class** defines the registry with `typeDiscriminatorPath` using the `typeMapping/{mapId}` annotation source
+2. **Concrete classes** register themselves using the **same annotation source** with `typeDiscriminator`
 3. At runtime, `TypeDiscriminatorService` maintains the registry and resolves types
+
+The mapId is always embedded in the annotation source URI — both base and concrete classes use the same source, ensuring consistency.
 
 **Base class configuration:**
 ```xml
@@ -842,9 +844,8 @@ Concrete classes can register themselves with a registry. Useful when concrete c
 ```xml
 <!-- TemperatureMessage extends UplinkMessage -->
 <eClassifiers name="TemperatureMessage">
-  <eAnnotations source="http://eclipse.org/fennec/codec">
-    <!-- Register with the registry, provide discriminator value -->
-    <details key="typeMapId" value="lorawan-devices"/>
+  <!-- Same annotation source as the base class — mapId "lorawan-devices" is in the URI -->
+  <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/lorawan-devices">
     <details key="typeDiscriminator" value="temperature-profile"/>
   </eAnnotations>
 </eClassifiers>
@@ -870,8 +871,7 @@ Static mappings and distributed registration **can be combined** in the same reg
 ```xml
 <!-- FooMessage extends UplinkMessage, defined in a different package -->
 <eClassifiers name="FooMessage">
-  <eAnnotations source="http://eclipse.org/fennec/codec">
-    <details key="typeMapId" value="lorawan-devices"/>
+  <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/lorawan-devices">
     <details key="typeDiscriminator" value="foo-bar"/>
   </eAnnotations>
 </eClassifiers>
@@ -960,7 +960,7 @@ See [Fallback and Error Handling](#fallback-and-error-handling) above for detail
 |------------------|----------|--------|
 | `typeDiscriminator` on EReference | ERROR | Discriminator values are per-class, not per-reference |
 | `typeDiscriminatorPath` on EReference | ERROR | Discriminator path is defined on base class |
-| `typeMapId` on EReference | ERROR | Type mapping registry is class-level |
+| `typeMapping/{mapId}` annotation on EReference | ERROR | Type mapping registry is class-level |
 | `inlineMapping` annotation on EClass | WARNING | Inline mappings are per-reference only |
 
 ---

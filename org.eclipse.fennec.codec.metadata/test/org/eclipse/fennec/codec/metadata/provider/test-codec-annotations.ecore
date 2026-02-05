@@ -59,6 +59,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="TypedEntityWithDiscriminator">
     <eAnnotations source="http://eclipse.org/fennec/codec">
       <details key="typeStrategy" value="NAME"/>
+    </eAnnotations>
+    <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/device-types">
       <details key="typeDiscriminatorPath" value="deviceInfo.profileName"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -118,10 +120,9 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
-  <!-- Class with discriminator value (using typeMapId) -->
+  <!-- Class with discriminator value (using typeMapping/lorawan-dynamic source) -->
   <eClassifiers xsi:type="ecore:EClass" name="DraginoDevice">
-    <eAnnotations source="http://eclipse.org/fennec/codec">
-      <details key="typeMapId" value="lorawan-dynamic"/>
+    <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/lorawan-dynamic">
       <details key="typeDiscriminator" value="Dragino_LSE01"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -302,15 +303,19 @@
 
   <!-- @VALID @SPEC(08-discriminator-mapping.md): Inline type mappings on EReference -->
   <!-- @MISCONFIG: typeDiscriminatorPath is class-only per spec section 7 -->
-  <!-- Expected: typeDiscriminatorPath is IGNORED with diagnostic, inlineMappings ARE parsed -->
+  <!-- Expected: typeDiscriminatorPath is IGNORED with diagnostic, inlineMappings ARE parsed from dedicated source -->
   <eClassifiers xsi:type="ecore:EClass" name="PersonWithContacts">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contacts" upperBound="-1" eType="#//Contact" containment="true">
+      <!-- @MISCONFIG: typeDiscriminatorPath is class-only, should generate diagnostic -->
       <eAnnotations source="http://eclipse.org/fennec/codec">
         <details key="typeDiscriminatorPath" value="contactType"/>
-        <details key="inlineMapping.friend" value="http://test.codec.example.org/1.0#//Friend"/>
-        <details key="inlineMapping.enemy" value="http://test.codec.example.org/1.0#//Enemy"/>
-        <details key="inlineMapping.colleague" value="http://test.codec.example.org/1.0#//Contact"/>
+      </eAnnotations>
+      <!-- Inline mappings on dedicated inlineMapping source -->
+      <eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
+        <details key="friend" value="http://test.codec.example.org/1.0#//Friend"/>
+        <details key="enemy" value="http://test.codec.example.org/1.0#//Enemy"/>
+        <details key="colleague" value="http://test.codec.example.org/1.0#//Contact"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -452,12 +457,12 @@
        TYPE MAP ID TESTS
        ======================================================================== -->
 
-  <!-- Class with typeMapId configuration -->
+  <!-- Class with typeMapping/my-custom-registry configuration -->
   <eClassifiers xsi:type="ecore:EClass" name="TypedEntityWithMapId">
     <eAnnotations source="http://eclipse.org/fennec/codec">
       <details key="typeStrategy" value="NAME"/>
-      <details key="typeMapId" value="my-custom-registry"/>
     </eAnnotations>
+    <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/my-custom-registry"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
@@ -481,30 +486,36 @@
        FALLBACK STRATEGY TESTS
        ======================================================================== -->
 
-  <!-- Class with fallback strategy on type config -->
+  <!-- Class with fallback strategy ERROR on typeMapping source -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithFallbackError">
     <eAnnotations source="http://eclipse.org/fennec/codec">
       <details key="typeStrategy" value="NAME"/>
+    </eAnnotations>
+    <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/fallback-error-test">
       <details key="typeDiscriminatorPath" value="deviceType"/>
       <details key="fallbackStrategy" value="ERROR"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
-  <!-- Class with SKIP fallback strategy -->
+  <!-- Class with SKIP fallback strategy on typeMapping source -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithFallbackSkip">
     <eAnnotations source="http://eclipse.org/fennec/codec">
       <details key="typeStrategy" value="NAME"/>
+    </eAnnotations>
+    <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/fallback-skip-test">
       <details key="typeDiscriminatorPath" value="deviceType"/>
       <details key="fallbackStrategy" value="SKIP"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
-  <!-- Class with FALLBACK strategy and explicit fallbackEClass -->
+  <!-- Class with FALLBACK strategy and explicit fallbackEClass on typeMapping source -->
   <eClassifiers xsi:type="ecore:EClass" name="EntityWithExplicitFallback">
     <eAnnotations source="http://eclipse.org/fennec/codec">
       <details key="typeStrategy" value="NAME"/>
+    </eAnnotations>
+    <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/fallback-explicit-test">
       <details key="typeDiscriminatorPath" value="deviceType"/>
       <details key="fallbackStrategy" value="FALLBACK"/>
       <details key="fallbackEClass" value="http://test.codec.example.org/1.0#//SimpleClass"/>
@@ -514,13 +525,17 @@
 
   <!-- @VALID @SPEC(08-discriminator-mapping.md): Fallback config on EReference -->
   <!-- @MISCONFIG: typeDiscriminatorPath is class-only per spec section 7 -->
-  <!-- Expected: typeDiscriminatorPath is IGNORED with diagnostic, fallback config IS parsed -->
+  <!-- Expected: typeDiscriminatorPath is IGNORED with diagnostic, fallback config IS parsed from inlineMapping source -->
   <eClassifiers xsi:type="ecore:EClass" name="PersonWithFallbackReference">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="contacts" upperBound="-1" eType="#//Contact" containment="true">
+      <!-- @MISCONFIG: typeDiscriminatorPath is class-only, should generate diagnostic -->
       <eAnnotations source="http://eclipse.org/fennec/codec">
         <details key="typeDiscriminatorPath" value="contactType"/>
-        <details key="inlineMapping.friend" value="http://test.codec.example.org/1.0#//Friend"/>
+      </eAnnotations>
+      <!-- Inline mappings + fallback on dedicated inlineMapping source -->
+      <eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
+        <details key="friend" value="http://test.codec.example.org/1.0#//Friend"/>
         <details key="fallbackStrategy" value="SKIP"/>
         <details key="fallbackEClass" value="http://test.codec.example.org/1.0#//Contact"/>
       </eAnnotations>
@@ -591,27 +606,31 @@
     </eStructuralFeatures>
   </eClassifiers>
 
-  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): inlineMapping.* on EClass -->
-  <!-- Expected: Keys are IGNORED - inlineMapping is reference-only -->
+  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): inlineMapping source on EClass -->
+  <!-- Expected: inlineMapping annotation is IGNORED with WARNING - inlineMapping is reference-only -->
   <eClassifiers xsi:type="ecore:EClass" name="ClassWithInlineMappingMisplaced">
     <eAnnotations source="http://eclipse.org/fennec/codec">
-      <!-- These should be ignored - inlineMapping is reference-only -->
-      <details key="inlineMapping.friend" value="http://test.codec.example.org/1.0#//Friend"/>
       <details key="typeStrategy" value="URI"/>
+    </eAnnotations>
+    <!-- inlineMapping source on EClass is a misconfig - should generate diagnostic -->
+    <eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
+      <details key="friend" value="http://test.codec.example.org/1.0#//Friend"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
-  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): typeDiscriminator on EReference -->
-  <!-- Expected: Key is IGNORED - typeDiscriminator is class-only -->
+  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): typeMapping source on EReference -->
+  <!-- Expected: typeMapping annotation is IGNORED with ERROR - typeMapping is class-only -->
   <eClassifiers xsi:type="ecore:EClass" name="RefWithDiscriminatorMisplaced">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <!-- This should be ignored - typeDiscriminator is class-only -->
-        <details key="typeDiscriminator" value="MyAddress"/>
         <!-- Valid key for reference -->
         <details key="typeStrategy" value="NAME"/>
+      </eAnnotations>
+      <!-- typeMapping source on EReference is a misconfig - should generate ERROR diagnostic -->
+      <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/misplaced-ref">
+        <details key="typeDiscriminator" value="MyAddress"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -682,43 +701,49 @@
     </eStructuralFeatures>
   </eClassifiers>
 
-  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): inlineMapping.* on EAttribute -->
-  <!-- Expected: Keys are IGNORED - inlineMapping is reference-only -->
+  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): inlineMapping source on EAttribute -->
+  <!-- Expected: inlineMapping annotation is IGNORED - inlineMapping is reference-only -->
   <eClassifiers xsi:type="ecore:EClass" name="AttrWithInlineMappingMisplaced">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <!-- These should be ignored - inlineMapping is reference-only -->
-        <details key="inlineMapping.friend" value="http://test.codec.example.org/1.0#//Friend"/>
         <!-- Valid key for attribute -->
         <details key="key" value="attr_name"/>
+      </eAnnotations>
+      <!-- inlineMapping source on EAttribute is a misconfig - should be ignored -->
+      <eAnnotations source="http://eclipse.org/fennec/codec/inlineMapping">
+        <details key="friend" value="http://test.codec.example.org/1.0#//Friend"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
 
-  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): fallback* on EAttribute -->
-  <!-- Expected: Keys are IGNORED - fallback is class/reference-only -->
+  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): typeMapping source on EAttribute -->
+  <!-- Expected: typeMapping annotation is IGNORED - typeMapping is class-only -->
   <eClassifiers xsi:type="ecore:EClass" name="AttrWithFallbackMisplaced">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <!-- These should be ignored - fallback is class/reference-only -->
-        <details key="fallbackStrategy" value="SKIP"/>
-        <details key="fallbackEClass" value="http://test.codec.example.org/1.0#//SimpleClass"/>
         <!-- Valid key for attribute -->
         <details key="key" value="attr_name"/>
+      </eAnnotations>
+      <!-- typeMapping source on EAttribute is a misconfig - should be ignored -->
+      <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/attr-misplaced">
+        <details key="fallbackStrategy" value="SKIP"/>
+        <details key="fallbackEClass" value="http://test.codec.example.org/1.0#//SimpleClass"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
 
-  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): typeMapId on EReference -->
-  <!-- Expected: typeMapId is IGNORED - it's class-only per spec context -->
+  <!-- @MISCONFIG @SPEC(08-discriminator-mapping.md): typeMapping source on EReference -->
+  <!-- Expected: typeMapping annotation is IGNORED with ERROR - typeMapping is class-only -->
   <eClassifiers xsi:type="ecore:EClass" name="RefWithTypeMapIdMisplaced">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <!-- typeMapId should be ignored - it's class-only per spec context -->
-        <details key="typeMapId" value="my-registry"/>
         <!-- Valid key for reference -->
         <details key="typeStrategy" value="NAME"/>
+      </eAnnotations>
+      <!-- typeMapping source on EReference is a misconfig - should generate ERROR diagnostic -->
+      <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/my-registry">
+        <details key="typeDiscriminator" value="address-type"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -827,17 +852,19 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 
-  <!-- @MISCONFIG @SPEC(06-type.md#T-V7): typeDiscriminator on EReference (only) -->
-  <!-- Expected: ERROR diagnostic - typeDiscriminator is class-only -->
+  <!-- @MISCONFIG @SPEC(06-type.md#T-V7): typeMapping source on EReference (only) -->
+  <!-- Expected: ERROR diagnostic - typeMapping is class-only -->
   <!-- Note: Different from RefWithDiscriminatorMisplaced which also has valid typeStrategy -->
   <eClassifiers xsi:type="ecore:EClass" name="RefWithTypeDiscriminatorOnly">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="address" eType="#//Address" containment="true">
       <eAnnotations source="http://eclipse.org/fennec/codec">
-        <!-- typeDiscriminator is class-only, ERROR on EReference -->
-        <details key="typeDiscriminator" value="my-address-type"/>
         <!-- Valid key for reference -->
         <details key="key" value="addr"/>
+      </eAnnotations>
+      <!-- typeMapping source on EReference is a misconfig - should generate ERROR diagnostic -->
+      <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/misplaced-ref-only">
+        <details key="typeDiscriminator" value="my-address-type"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

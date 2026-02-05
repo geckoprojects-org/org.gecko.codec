@@ -30,12 +30,10 @@ import org.eclipse.fennec.model.metadata.MetadataFactory;
 import org.eclipse.fennec.model.metadata.ReferenceMetadata;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig;
-import org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.SuperTypeSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
-import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
 import org.eclipse.fennec.model.metadata.ClassAspect;
 import org.eclipse.fennec.model.metadata.EnumSerializationStrategy;
 import org.eclipse.fennec.model.metadata.FeatureAspect;
@@ -553,9 +551,9 @@ class CodecAspectProviderValidConfigTest {
             assertEquals("Dragino_LSE01", aspect.getDiscriminatorValue());
         }
 
-        /** @VALID @SPEC(08-discriminator-mapping.md) Tests fallback ERROR strategy. */
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests fallback ERROR strategy typeMapping annotation. */
         @Test
-        @DisplayName("fallback ERROR strategy")
+        @DisplayName("typeMapping with fallback ERROR - discriminatorPath and mapId parsed")
         void validConfig_fallbackError_parsedCorrectly() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithFallbackError");
 
@@ -566,13 +564,13 @@ class CodecAspectProviderValidConfigTest {
 
             assertEquals(TypeStrategy.NAME, typeConfig.getStrategy());
             assertEquals("deviceType", typeConfig.getDiscriminatorPath());
-            assertEquals(FallbackStrategy.ERROR, typeConfig.getFallbackStrategy());
-            assertNull(typeConfig.getFallbackEClass());
+            assertEquals("fallback-error-test", typeConfig.getMapId());
+            // fallbackStrategy is now handled by TypeDiscriminatorService, not stored on TypeSerializationConfig
         }
 
-        /** @VALID @SPEC(08-discriminator-mapping.md) Tests fallback SKIP strategy. */
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests fallback SKIP strategy typeMapping annotation. */
         @Test
-        @DisplayName("fallback SKIP strategy")
+        @DisplayName("typeMapping with fallback SKIP - discriminatorPath and mapId parsed")
         void validConfig_fallbackSkip_parsedCorrectly() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithFallbackSkip");
 
@@ -583,13 +581,13 @@ class CodecAspectProviderValidConfigTest {
 
             assertEquals(TypeStrategy.NAME, typeConfig.getStrategy());
             assertEquals("deviceType", typeConfig.getDiscriminatorPath());
-            assertEquals(FallbackStrategy.SKIP, typeConfig.getFallbackStrategy());
-            assertNull(typeConfig.getFallbackEClass());
+            assertEquals("fallback-skip-test", typeConfig.getMapId());
+            // fallbackStrategy is now handled by TypeDiscriminatorService, not stored on TypeSerializationConfig
         }
 
-        /** @VALID @SPEC(08-discriminator-mapping.md) Tests explicit fallback EClass. */
+        /** @VALID @SPEC(08-discriminator-mapping.md) Tests explicit fallback EClass typeMapping annotation. */
         @Test
-        @DisplayName("explicit fallback EClass")
+        @DisplayName("typeMapping with explicit fallback - discriminatorPath and mapId parsed")
         void validConfig_explicitFallbackEClass_parsedCorrectly() {
             EClass entityClass = helper.getEClass(testPackage, "EntityWithExplicitFallback");
 
@@ -600,8 +598,8 @@ class CodecAspectProviderValidConfigTest {
 
             assertEquals(TypeStrategy.NAME, typeConfig.getStrategy());
             assertEquals("deviceType", typeConfig.getDiscriminatorPath());
-            assertEquals(FallbackStrategy.FALLBACK, typeConfig.getFallbackStrategy());
-            assertEquals("http://test.codec.example.org/1.0#//SimpleClass", typeConfig.getFallbackEClass());
+            assertEquals("fallback-explicit-test", typeConfig.getMapId());
+            // fallbackStrategy and fallbackEClass are now handled by TypeDiscriminatorService
         }
     }
 
@@ -883,59 +881,45 @@ class CodecAspectProviderValidConfigTest {
             assertTrue(aspect.isExpand());
         }
 
-        /** @VALID @SPEC(08-discriminator-mapping.md) Tests inline type mappings on reference. */
+        /**
+         * @VALID @SPEC(08-discriminator-mapping.md) Tests inlineMapping source on reference.
+         * Inline mappings are now handled by TypeDiscriminatorService, not stored on ReferenceCodecAspect.
+         * The CodecAspectProvider only parses the codec annotation; inlineMapping source is processed separately.
+         */
         @Test
-        @DisplayName("inline type mappings on reference")
-        void validConfig_inlineTypeMappings_parsedCorrectly() {
+        @DisplayName("inlineMapping source on reference - codec annotation parsed, diagnostics for misconfig")
+        void validConfig_inlineMappingSource_codecAnnotationParsed() {
             EClass personClass = helper.getEClass(testPackage, "PersonWithContacts");
             EReference contactsRef = (EReference) helper.getFeature(personClass, "contacts");
 
             ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(contactsRef));
 
-            // Should have 3 inline mappings
-            assertEquals(3, aspect.getInlineTypeMappings().size());
-
-            // Find specific mappings
-            InlineTypeMapping friendMapping = aspect.getInlineTypeMappings().stream()
-                    .filter(m -> "friend".equals(m.getDiscriminatorValue()))
-                    .findFirst()
-                    .orElse(null);
-            assertNotNull(friendMapping);
-            assertEquals("http://test.codec.example.org/1.0#//Friend", friendMapping.getTargetClass());
-
-            InlineTypeMapping enemyMapping = aspect.getInlineTypeMappings().stream()
-                    .filter(m -> "enemy".equals(m.getDiscriminatorValue()))
-                    .findFirst()
-                    .orElse(null);
-            assertNotNull(enemyMapping);
-            assertEquals("http://test.codec.example.org/1.0#//Enemy", enemyMapping.getTargetClass());
-
-            InlineTypeMapping colleagueMapping = aspect.getInlineTypeMappings().stream()
-                    .filter(m -> "colleague".equals(m.getDiscriminatorValue()))
-                    .findFirst()
-                    .orElse(null);
-            assertNotNull(colleagueMapping);
-            assertEquals("http://test.codec.example.org/1.0#//Contact", colleagueMapping.getTargetClass());
+            // typeDiscriminatorPath in codec annotation is class-only → should generate diagnostic
+            assertNull(aspect.getTypeConfig(),
+                "typeConfig should be null - typeDiscriminatorPath is class-only and should be ignored on EReference");
+            assertEquals(1, aspect.getDiagnostics().size(),
+                "Should have one diagnostic for ignored typeDiscriminatorPath");
+            // Inline mappings are no longer stored on the aspect - they are handled by TypeDiscriminatorService
         }
 
-        /** @VALID @SPEC(08-discriminator-mapping.md) Tests fallback on reference. */
+        /**
+         * @VALID @SPEC(08-discriminator-mapping.md) Tests inlineMapping + fallback source on reference.
+         * Inline mappings and fallback are now handled by TypeDiscriminatorService, not stored on ReferenceCodecAspect.
+         */
         @Test
-        @DisplayName("fallback config on reference")
-        void validConfig_referenceFallbackConfig_parsedCorrectly() {
+        @DisplayName("inlineMapping with fallback on reference - codec annotation parsed, diagnostics for misconfig")
+        void validConfig_referenceFallbackConfig_codecAnnotationParsed() {
             EClass personClass = helper.getEClass(testPackage, "PersonWithFallbackReference");
             EReference contactsRef = (EReference) helper.getFeature(personClass, "contacts");
 
             ReferenceCodecAspect aspect = (ReferenceCodecAspect) provider.buildReferenceAspect(wrapReference(contactsRef));
 
-            // Should have fallback configuration
-            assertEquals(FallbackStrategy.SKIP, aspect.getFallbackStrategy());
-            assertEquals("http://test.codec.example.org/1.0#//Contact", aspect.getFallbackEClass());
-
-            // Should have inline mapping for friend
-            assertEquals(1, aspect.getInlineTypeMappings().size());
-            InlineTypeMapping friendMapping = aspect.getInlineTypeMappings().get(0);
-            assertEquals("friend", friendMapping.getDiscriminatorValue());
-            assertEquals("http://test.codec.example.org/1.0#//Friend", friendMapping.getTargetClass());
+            // typeDiscriminatorPath in codec annotation is class-only → should generate diagnostic
+            assertNull(aspect.getTypeConfig(),
+                "typeConfig should be null - typeDiscriminatorPath is class-only and should be ignored");
+            assertEquals(1, aspect.getDiagnostics().size(),
+                "Should have one diagnostic for ignored typeDiscriminatorPath");
+            // Inline mappings and fallback are no longer stored on the aspect - handled by TypeDiscriminatorService
         }
     }
 

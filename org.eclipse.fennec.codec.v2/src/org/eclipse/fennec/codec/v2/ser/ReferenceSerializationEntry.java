@@ -250,14 +250,16 @@ public class ReferenceSerializationEntry implements SerializationEntry {
             // Cross-document containment: serialize as reference (like non-containment)
             writeReferenceObject(target, gen, true, ctxt);
         } else if (reference.isContainment()) {
-            // Check for custom containment writer first - allows special conversion logic
-            // (e.g., EPackage to JSON Schema for OpenAPI components/schemas)
-            if (containmentWriter != null) {
-                writeWithContainmentWriter(target, gen, ctxt);
-            } else {
-                // Standard containment: serialize inline
-                // Smart compression is handled by TypeSerializationEntry (same-schema simple names)
-                ctxt.writeValue(gen, target);
+            // Set the current reference for inline mapping reverse lookup
+            ContextHelper.setCurrentSerializationReference(ctxt, reference);
+            try {
+                if (containmentWriter != null) {
+                    writeWithContainmentWriter(target, gen, ctxt);
+                } else {
+                    ctxt.writeValue(gen, target);
+                }
+            } finally {
+                ContextHelper.clearCurrentSerializationReference(ctxt);
             }
         } else if (shouldExpandReference(target)) {
             // Non-containment with expand enabled: serialize inline (like containment)

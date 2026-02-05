@@ -77,7 +77,6 @@ public class CodecFactoryImpl extends EFactoryImpl implements CodecFactory {
 			case CodecPackage.CLASS_CODEC_ASPECT: return createClassCodecAspect();
 			case CodecPackage.FEATURE_CODEC_ASPECT: return createFeatureCodecAspect();
 			case CodecPackage.REFERENCE_CODEC_ASPECT: return createReferenceCodecAspect();
-			case CodecPackage.INLINE_TYPE_MAPPING: return createInlineTypeMapping();
 			case CodecPackage.CODEC_PACKAGE_PROFILE: return createCodecPackageProfile();
 			case CodecPackage.CODEC_CLASS_PROFILE: return createCodecClassProfile();
 			case CodecPackage.CODEC_CONFIG: return createCodecConfig();
@@ -214,17 +213,6 @@ public class CodecFactoryImpl extends EFactoryImpl implements CodecFactory {
 	public ReferenceCodecAspect createReferenceCodecAspect() {
 		ReferenceCodecAspectImpl referenceCodecAspect = new ReferenceCodecAspectImpl();
 		return referenceCodecAspect;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public InlineTypeMapping createInlineTypeMapping() {
-		InlineTypeMappingImpl inlineTypeMapping = new InlineTypeMappingImpl();
-		return inlineTypeMapping;
 	}
 
 	/**

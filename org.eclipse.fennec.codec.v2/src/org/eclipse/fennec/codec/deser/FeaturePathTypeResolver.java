@@ -16,7 +16,10 @@ package org.eclipse.fennec.codec.deser;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.buffer.CodecTokenBuffer;
 
@@ -55,6 +58,7 @@ public class FeaturePathTypeResolver {
 
     private final String discriminatorPath;
     private final TypeDiscriminatorService typeDiscriminatorService;
+    private final String mapId;
 
     /** The resolved EClass (set after scanning) */
     private EClass resolvedEClass;
@@ -72,8 +76,24 @@ public class FeaturePathTypeResolver {
      * @param typeDiscriminatorService the service for resolving discriminator values to EClasses
      */
     public FeaturePathTypeResolver(String discriminatorPath, TypeDiscriminatorService typeDiscriminatorService) {
+        this(discriminatorPath, typeDiscriminatorService, null);
+    }
+
+    /**
+     * Creates a new FeaturePathTypeResolver with a specific registry mapId.
+     * <p>
+     * When mapId is provided, resolution uses the targeted registry instead of
+     * searching all registries. This ensures the correct fallback strategy is applied.
+     * </p>
+     *
+     * @param discriminatorPath the feature path (e.g., "info.profileName" or "messageType")
+     * @param typeDiscriminatorService the service for resolving discriminator values to EClasses
+     * @param mapId the registry map ID (from DiscriminatorConfig), or null to search all registries
+     */
+    public FeaturePathTypeResolver(String discriminatorPath, TypeDiscriminatorService typeDiscriminatorService, String mapId) {
         this.discriminatorPath = Objects.requireNonNull(discriminatorPath, "discriminatorPath must not be null");
         this.typeDiscriminatorService = Objects.requireNonNull(typeDiscriminatorService, "typeDiscriminatorService must not be null");
+        this.mapId = mapId;
     }
 
     /**
@@ -135,7 +155,7 @@ public class FeaturePathTypeResolver {
 
                         if (token == JsonToken.VALUE_STRING) {
                             foundDiscriminatorValue = parser.getString();
-                            resolvedEClass = typeDiscriminatorService.getEClassFromAny(foundDiscriminatorValue);
+                            resolvedEClass = resolveDiscriminator(foundDiscriminatorValue);
 
                             if (resolvedEClass != null) {
                                 LOGGER.fine("Resolved type via featurePath '" + discriminatorPath +
@@ -169,6 +189,22 @@ public class FeaturePathTypeResolver {
             LOGGER.warning("Could not resolve EClass from featurePath '" + discriminatorPath +
                     "'. Discriminator value found: " + foundDiscriminatorValue);
         }
+    }
+
+    /**
+     * Resolves a discriminator value to an EClass using either a targeted registry
+     * (when mapId is available) or all registries.
+     *
+     * @param discriminatorValue the discriminator value to resolve
+     * @return the resolved EClass, or null if not found
+     */
+    private EClass resolveDiscriminator(String discriminatorValue) {
+        if (mapId != null) {
+            return typeDiscriminatorService.resolve(mapId, discriminatorValue,
+                    FeaturePathTypeResolver::resolveEClassFromUri);
+        }
+        return typeDiscriminatorService.resolveFromAny(discriminatorValue,
+                FeaturePathTypeResolver::resolveEClassFromUri);
     }
 
     /**
@@ -224,5 +260,38 @@ public class FeaturePathTypeResolver {
      */
     public static boolean hasDiscriminatorPath(String path) {
         return path != null && !path.isEmpty();
+    }
+
+    /**
+     * Resolves an EClass from a URI string using the global package registry.
+     * <p>
+     * Used as the {@code eClassResolver} function for fallback strategy resolution
+     * via {@link TypeDiscriminatorService#resolveFromAny}.
+     * </p>
+     *
+     * @param uriStr the EClass URI (e.g., "http://example.org/1.0#//ClassName")
+     * @return the resolved EClass, or null if not found
+     */
+    static EClass resolveEClassFromUri(String uriStr) {
+        if (uriStr == null || uriStr.isEmpty()) {
+            return null;
+        }
+        try {
+            URI uri = URI.createURI(uriStr);
+            String fragment = uri.fragment();
+            if (fragment != null && fragment.startsWith("//")) {
+                String nsUri = uri.trimFragment().toString();
+                EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(nsUri);
+                if (ePackage != null) {
+                    EClassifier classifier = ePackage.getEClassifier(fragment.substring(2));
+                    if (classifier instanceof EClass eClass) {
+                        return eClass;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warning("Failed to resolve EClass URI: " + uriStr + " — " + e.getMessage());
+        }
+        return null;
     }
 }

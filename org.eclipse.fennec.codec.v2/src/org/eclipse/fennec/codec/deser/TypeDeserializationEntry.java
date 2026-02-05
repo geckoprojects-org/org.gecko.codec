@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.config.SuperTypeConfig;
 import org.eclipse.fennec.codec.config.TypeConfig;
@@ -58,6 +59,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
     private final TypeConfig config;
     private final TypeDiscriminatorService typeDiscriminatorService;
     private final SuperTypeConfig superTypeConfig;
+    private final String discriminatorMapId;
 
     /**
      * Creates a new TypeDeserializationEntry.
@@ -65,7 +67,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      * @param config the effective type configuration
      */
     public TypeDeserializationEntry(TypeConfig config) {
-        this(config, null, null);
+        this(config, null, null, null);
     }
 
     /**
@@ -75,7 +77,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      * @param typeDiscriminatorService the service for MAPPED strategy type resolution (may be null)
      */
     public TypeDeserializationEntry(TypeConfig config, TypeDiscriminatorService typeDiscriminatorService) {
-        this(config, typeDiscriminatorService, null);
+        this(config, typeDiscriminatorService, null, null);
     }
 
     /**
@@ -87,9 +89,32 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      */
     public TypeDeserializationEntry(TypeConfig config, TypeDiscriminatorService typeDiscriminatorService,
             SuperTypeConfig superTypeConfig) {
+        this(config, typeDiscriminatorService, superTypeConfig, null);
+    }
+
+    /**
+     * Creates a new TypeDeserializationEntry with targeted discriminator registry.
+     * <p>
+     * When {@code discriminatorMapId} is provided, discriminator resolution uses
+     * {@link TypeDiscriminatorService#resolve(String, String, java.util.function.Function)}
+     * targeting the specific registry. This ensures the correct fallback strategy
+     * (ERROR, SKIP, FALLBACK) is applied per the registry configuration.
+     * </p>
+     * <p>
+     * See spec 08-discriminator-mapping.md §7.1 for the deserialization flow.
+     * </p>
+     *
+     * @param config the effective type configuration
+     * @param typeDiscriminatorService the service for discriminator type resolution (may be null)
+     * @param superTypeConfig the supertype configuration for validation (may be null)
+     * @param discriminatorMapId the targeted registry mapId (may be null for untargeted resolution)
+     */
+    public TypeDeserializationEntry(TypeConfig config, TypeDiscriminatorService typeDiscriminatorService,
+            SuperTypeConfig superTypeConfig, String discriminatorMapId) {
         this.config = Objects.requireNonNull(config, "config must not be null");
         this.typeDiscriminatorService = typeDiscriminatorService;
         this.superTypeConfig = superTypeConfig;
+        this.discriminatorMapId = discriminatorMapId;
     }
 
     @Override
@@ -379,6 +404,22 @@ public class TypeDeserializationEntry implements DeserializationEntry {
     /**
      * Resolves an EClass from a type value based on the configured strategy.
      * <p>
+     * Delegates to {@link #resolveEClass(String, EClass, DeserializationContext, EReference)}
+     * with no reference context.
+     * </p>
+     *
+     * @param typeValue the type value (format depends on strategy)
+     * @param hintEClass optional hint EClass for MAPPED context (may be null)
+     * @param ctxt the deserialization context (for smart compression context schema)
+     * @return the resolved EClass, or null if not found
+     */
+    public EClass resolveEClass(String typeValue, EClass hintEClass, DeserializationContext ctxt) {
+        return resolveEClass(typeValue, hintEClass, ctxt, null);
+    }
+
+    /**
+     * Resolves an EClass from a type value based on the configured strategy.
+     * <p>
      * Supports formats based on strategy:
      * <ul>
      *   <li>URI: {@code http://example.org/1.0#//Person} - Full URI</li>
@@ -393,13 +434,20 @@ public class TypeDeserializationEntry implements DeserializationEntry {
      * is established (if not already set). When encountering a simple name, it is
      * first resolved using the context schema before falling back to searching all packages.
      * </p>
+     * <p>
+     * When a {@code currentReference} is provided, inline mapping resolution is attempted
+     * first via {@link TypeDiscriminatorService#resolveForReference} before falling back to
+     * the global discriminator registries.
+     * </p>
      *
      * @param typeValue the type value (format depends on strategy)
      * @param hintEClass optional hint EClass for MAPPED context (may be null)
      * @param ctxt the deserialization context (for smart compression context schema)
+     * @param currentReference optional EReference for inline mapping context (may be null)
      * @return the resolved EClass, or null if not found
      */
-    public EClass resolveEClass(String typeValue, EClass hintEClass, DeserializationContext ctxt) {
+    public EClass resolveEClass(String typeValue, EClass hintEClass, DeserializationContext ctxt,
+            EReference currentReference) {
         if (typeValue == null || typeValue.isEmpty()) {
             return null;
         }
@@ -428,13 +476,40 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             }
         }
 
-        // Third: try discriminator lookup via TypeDiscriminatorService.
-        // Use the hint to provide context for MAPPED strategy.
-        if (typeDiscriminatorService != null) {
-            EClass resolved = typeDiscriminatorService.getEClassFromAny(typeValue);
+        // Third: try inline mapping for reference-scoped discriminator resolution.
+        // If we are deserializing a contained object under a specific EReference
+        // that has an inlineMapping annotation, try to resolve using that reference's
+        // dedicated registry first.
+        if (typeDiscriminatorService != null && currentReference != null) {
+            EClass resolved = typeDiscriminatorService.resolveForReference(
+                    currentReference, typeValue, this::resolveFromUri);
             if (resolved != null) {
-                LOGGER.fine("Resolved type via discriminator: " + typeValue + " -> " + resolved.getName());
+                LOGGER.fine("Resolved type via inline mapping for reference '" +
+                        currentReference.getName() + "': " + typeValue + " -> " + resolved.getName());
                 return resolved;
+            }
+        }
+
+        // Fourth: try discriminator lookup via TypeDiscriminatorService.
+        // When a discriminatorMapId is set, use targeted resolution via resolve(mapId, ...)
+        // which applies the correct fallback strategy (ERROR/SKIP/FALLBACK) for that registry.
+        // Otherwise fall back to resolveFromAny() which searches all registries.
+        // See spec 08-discriminator-mapping.md §7.1 and §7.3.
+        if (typeDiscriminatorService != null) {
+            EClass resolved;
+            if (discriminatorMapId != null) {
+                resolved = typeDiscriminatorService.resolve(discriminatorMapId, typeValue, this::resolveFromUri);
+                if (resolved != null) {
+                    LOGGER.fine("Resolved type via discriminator registry '" + discriminatorMapId +
+                            "': " + typeValue + " -> " + resolved.getName());
+                    return resolved;
+                }
+            } else {
+                resolved = typeDiscriminatorService.resolveFromAny(typeValue, this::resolveFromUri);
+                if (resolved != null) {
+                    LOGGER.fine("Resolved type via discriminator: " + typeValue + " -> " + resolved.getName());
+                    return resolved;
+                }
             }
         }
 

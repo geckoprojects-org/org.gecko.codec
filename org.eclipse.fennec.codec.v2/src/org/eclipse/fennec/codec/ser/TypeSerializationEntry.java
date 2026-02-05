@@ -18,11 +18,13 @@ import java.util.Objects;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.config.SuperTypeConfig;
 import org.eclipse.fennec.codec.config.TypeConfig;
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.context.ContextHelper;
+import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.model.metadata.SerializationFormat;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 
@@ -120,18 +122,34 @@ public class TypeSerializationEntry implements SerializationEntry {
     }
 
     /**
-     * Checks if a discriminator path is configured.
+     * Checks if a non-standard discriminator path is configured.
      * <p>
-     * When a discriminator path is set (e.g., "info.profileName"), the type
-     * information is already present in the content at that path. In this case,
-     * we should NOT write a separate "_type" field.
+     * When a discriminator path is set to a nested/non-standard path (e.g.,
+     * "info.profileName"), the type information is already embedded in the
+     * content at that path. In this case, we should NOT write a separate
+     * "_type" field.
+     * </p>
+     * <p>
+     * However, when the discriminator path equals the type key (e.g., both
+     * are "_type"), this is the standard discriminator mapping flow — the
+     * type entry should still serialize but will use the mapped discriminator
+     * value (e.g., "temp") instead of the strategy-based value.
+     * See spec 08-discriminator-mapping.md §8.1.1 vs §8.1.2.
      * </p>
      *
-     * @return true if discriminatorPath is configured and non-empty
+     * @return true if discriminatorPath is a nested path different from typeKey
      */
     private boolean hasDiscriminatorPath() {
         String path = config.getDiscriminatorPath();
-        return path != null && !path.isEmpty();
+        if (path == null || path.isEmpty()) {
+            return false;
+        }
+        // Standard path: discriminatorPath matches typeKey — don't suppress
+        String typeKey = config.getTypeKey();
+        if (path.equals(typeKey)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -162,9 +180,17 @@ public class TypeSerializationEntry implements SerializationEntry {
             }
             gen.writeStringProperty(config.getTypeKey(), eClass.getName());
         } else {
-            // All other strategies: single field with typeValue
-            String effectiveTypeValue = applySmartCompression(typeValue, ctxt);
-            gen.writeStringProperty(config.getTypeKey(), effectiveTypeValue);
+            // Check for inline mapping discriminator override first (reference-scoped),
+            // then type mapping registry (class-scoped), then fall back to strategy value.
+            // See spec 08-discriminator-mapping.md §8.3 for combined serialization order.
+            String effectiveValue = resolveInlineMappingDiscriminator(ctxt);
+            if (effectiveValue == null) {
+                effectiveValue = resolveTypeMappingDiscriminator();
+            }
+            if (effectiveValue == null) {
+                effectiveValue = applySmartCompression(typeValue, ctxt);
+            }
+            gen.writeStringProperty(config.getTypeKey(), effectiveValue);
         }
     }
 
@@ -214,7 +240,14 @@ public class TypeSerializationEntry implements SerializationEntry {
                 break;
 
             default:
-                String effectiveTypeValue = applySmartCompression(typeValue, ctxt);
+                // Check for discriminator override: inline mapping first, then type mapping registry
+                String discriminatorValue = resolveInlineMappingDiscriminator(ctxt);
+                if (discriminatorValue == null) {
+                    discriminatorValue = resolveTypeMappingDiscriminator();
+                }
+                String effectiveTypeValue = discriminatorValue != null
+                        ? discriminatorValue
+                        : applySmartCompression(typeValue, ctxt);
                 gen.writeStringProperty(config.getNameKey(), effectiveTypeValue);
                 break;
         }
@@ -284,6 +317,62 @@ public class TypeSerializationEntry implements SerializationEntry {
             default:
                 return EcoreUtil.getURI(eClass).toString();
         }
+    }
+
+    /**
+     * Resolves the discriminator value for inline mapping reverse lookup.
+     * <p>
+     * When serializing an EObject contained in an EReference with an inlineMapping
+     * annotation, this method looks up the correct discriminator value from the
+     * reference-scoped registry in {@link TypeDiscriminatorService}.
+     * </p>
+     *
+     * @param ctxt the serialization context
+     * @return the inline mapping discriminator value, or null if not in an inline mapping context
+     */
+    private String resolveInlineMappingDiscriminator(SerializationContext ctxt) {
+        if (codecConfig == null) {
+            return null;
+        }
+        EReference currentRef = ContextHelper.getCurrentSerializationReference(ctxt);
+        if (currentRef == null) {
+            return null;
+        }
+        TypeDiscriminatorService typeService = codecConfig.getTypeDiscriminatorService();
+        if (typeService == null) {
+            return null;
+        }
+        return typeService.getDiscriminatorValueForReference(currentRef, eClass);
+    }
+
+    /**
+     * Resolves the discriminator value for type mapping registry lookup.
+     * <p>
+     * When the EClass being serialized belongs to a type mapping registry
+     * (identified by a mapId from the typeMapping annotation), this method
+     * looks up the reverse mapping to get the discriminator value string
+     * (e.g., "temp" for TempSensor).
+     * </p>
+     * <p>
+     * See spec 08-discriminator-mapping.md §8.1 for the type mapping
+     * registry serialization flow.
+     * </p>
+     *
+     * @return the type mapping discriminator value, or null if not in a type mapping context
+     */
+    private String resolveTypeMappingDiscriminator() {
+        if (codecConfig == null) {
+            return null;
+        }
+        TypeDiscriminatorService typeService = codecConfig.getTypeDiscriminatorService();
+        if (typeService == null) {
+            return null;
+        }
+        String mapId = typeService.getMapIdForEClass(eClass);
+        if (mapId == null) {
+            return null;
+        }
+        return typeService.getDiscriminatorValue(mapId, eClass);
     }
 
     /**

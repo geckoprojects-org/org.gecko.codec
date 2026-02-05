@@ -179,31 +179,13 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE = MetadataPackage.BASE_TYPE_CONFIG_FEATURE_COUNT + 4;
 
 	/**
-	 * The feature id for the '<em><b>Fallback Strategy</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY = MetadataPackage.BASE_TYPE_CONFIG_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Fallback EClass</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS = MetadataPackage.BASE_TYPE_CONFIG_FEATURE_COUNT + 6;
-
-	/**
 	 * The number of structural features of the '<em>Type Serialization Config</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TYPE_SERIALIZATION_CONFIG_FEATURE_COUNT = MetadataPackage.BASE_TYPE_CONFIG_FEATURE_COUNT + 7;
+	int TYPE_SERIALIZATION_CONFIG_FEATURE_COUNT = MetadataPackage.BASE_TYPE_CONFIG_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of operations of the '<em>Type Serialization Config</em>' class.
@@ -1185,40 +1167,13 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int REFERENCE_CODEC_ASPECT__EXPAND = FEATURE_CODEC_ASPECT_FEATURE_COUNT + 3;
 
 	/**
-	 * The feature id for the '<em><b>Inline Type Mappings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_ASPECT__INLINE_TYPE_MAPPINGS = FEATURE_CODEC_ASPECT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Fallback Strategy</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_ASPECT__FALLBACK_STRATEGY = FEATURE_CODEC_ASPECT_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Fallback EClass</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REFERENCE_CODEC_ASPECT__FALLBACK_ECLASS = FEATURE_CODEC_ASPECT_FEATURE_COUNT + 6;
-
-	/**
 	 * The number of structural features of the '<em>Reference Codec Aspect</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REFERENCE_CODEC_ASPECT_FEATURE_COUNT = FEATURE_CODEC_ASPECT_FEATURE_COUNT + 7;
+	int REFERENCE_CODEC_ASPECT_FEATURE_COUNT = FEATURE_CODEC_ASPECT_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of operations of the '<em>Reference Codec Aspect</em>' class.
@@ -1230,52 +1185,6 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	int REFERENCE_CODEC_ASPECT_OPERATION_COUNT = FEATURE_CODEC_ASPECT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.InlineTypeMappingImpl <em>Inline Type Mapping</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.InlineTypeMappingImpl
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getInlineTypeMapping()
-	 * @generated
-	 */
-	int INLINE_TYPE_MAPPING = 8;
-
-	/**
-	 * The feature id for the '<em><b>Discriminator Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INLINE_TYPE_MAPPING__DISCRIMINATOR_VALUE = 0;
-
-	/**
-	 * The feature id for the '<em><b>Target Class</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INLINE_TYPE_MAPPING__TARGET_CLASS = 1;
-
-	/**
-	 * The number of structural features of the '<em>Inline Type Mapping</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INLINE_TYPE_MAPPING_FEATURE_COUNT = 2;
-
-	/**
-	 * The number of operations of the '<em>Inline Type Mapping</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int INLINE_TYPE_MAPPING_OPERATION_COUNT = 0;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageProfileImpl <em>Package Profile</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1283,7 +1192,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getCodecPackageProfile()
 	 * @generated
 	 */
-	int CODEC_PACKAGE_PROFILE = 9;
+	int CODEC_PACKAGE_PROFILE = 8;
 
 	/**
 	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
@@ -1329,7 +1238,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getCodecClassProfile()
 	 * @generated
 	 */
-	int CODEC_CLASS_PROFILE = 10;
+	int CODEC_CLASS_PROFILE = 9;
 
 	/**
 	 * The feature id for the '<em><b>EClass</b></em>' reference.
@@ -1402,7 +1311,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getCodecConfig()
 	 * @generated
 	 */
-	int CODEC_CONFIG = 11;
+	int CODEC_CONFIG = 10;
 
 	/**
 	 * The feature id for the '<em><b>Format</b></em>' attribute.
@@ -1619,7 +1528,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getStrategyScope()
 	 * @generated
 	 */
-	int STRATEGY_SCOPE = 12;
+	int STRATEGY_SCOPE = 11;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeHintMode <em>Type Hint Mode</em>}' enum.
@@ -1629,7 +1538,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getTypeHintMode()
 	 * @generated
 	 */
-	int TYPE_HINT_MODE = 13;
+	int TYPE_HINT_MODE = 12;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.DeserializationMode <em>Deserialization Mode</em>}' enum.
@@ -1639,7 +1548,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getDeserializationMode()
 	 * @generated
 	 */
-	int DESERIALIZATION_MODE = 14;
+	int DESERIALIZATION_MODE = 13;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy <em>Fallback Strategy</em>}' enum.
@@ -1649,7 +1558,7 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getFallbackStrategy()
 	 * @generated
 	 */
-	int FALLBACK_STRATEGY = 15;
+	int FALLBACK_STRATEGY = 14;
 
 
 	/**
@@ -1716,28 +1625,6 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	 * @generated
 	 */
 	EAttribute getTypeSerializationConfig_FormatScope();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackStrategy <em>Fallback Strategy</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Fallback Strategy</em>'.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackStrategy()
-	 * @see #getTypeSerializationConfig()
-	 * @generated
-	 */
-	EAttribute getTypeSerializationConfig_FallbackStrategy();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackEClass <em>Fallback EClass</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Fallback EClass</em>'.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackEClass()
-	 * @see #getTypeSerializationConfig()
-	 * @generated
-	 */
-	EAttribute getTypeSerializationConfig_FallbackEClass();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig <em>Id Serialization Config</em>}'.
@@ -2239,71 +2126,6 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 	EAttribute getReferenceCodecAspect_Expand();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getInlineTypeMappings <em>Inline Type Mappings</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Inline Type Mappings</em>'.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getInlineTypeMappings()
-	 * @see #getReferenceCodecAspect()
-	 * @generated
-	 */
-	EReference getReferenceCodecAspect_InlineTypeMappings();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getFallbackStrategy <em>Fallback Strategy</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Fallback Strategy</em>'.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getFallbackStrategy()
-	 * @see #getReferenceCodecAspect()
-	 * @generated
-	 */
-	EAttribute getReferenceCodecAspect_FallbackStrategy();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getFallbackEClass <em>Fallback EClass</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Fallback EClass</em>'.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getFallbackEClass()
-	 * @see #getReferenceCodecAspect()
-	 * @generated
-	 */
-	EAttribute getReferenceCodecAspect_FallbackEClass();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping <em>Inline Type Mapping</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Inline Type Mapping</em>'.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping
-	 * @generated
-	 */
-	EClass getInlineTypeMapping();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping#getDiscriminatorValue <em>Discriminator Value</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Discriminator Value</em>'.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping#getDiscriminatorValue()
-	 * @see #getInlineTypeMapping()
-	 * @generated
-	 */
-	EAttribute getInlineTypeMapping_DiscriminatorValue();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping#getTargetClass <em>Target Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Target Class</em>'.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping#getTargetClass()
-	 * @see #getInlineTypeMapping()
-	 * @generated
-	 */
-	EAttribute getInlineTypeMapping_TargetClass();
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.fennec.codec.metadata.model.codec.CodecPackageProfile <em>Package Profile</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2722,22 +2544,6 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 		EAttribute TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE = eINSTANCE.getTypeSerializationConfig_FormatScope();
 
 		/**
-		 * The meta object literal for the '<em><b>Fallback Strategy</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY = eINSTANCE.getTypeSerializationConfig_FallbackStrategy();
-
-		/**
-		 * The meta object literal for the '<em><b>Fallback EClass</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS = eINSTANCE.getTypeSerializationConfig_FallbackEClass();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.IdSerializationConfigImpl <em>Id Serialization Config</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3118,56 +2924,6 @@ public interface CodecPackage extends org.eclipse.emf.ecore.EPackage {
 		 * @generated
 		 */
 		EAttribute REFERENCE_CODEC_ASPECT__EXPAND = eINSTANCE.getReferenceCodecAspect_Expand();
-
-		/**
-		 * The meta object literal for the '<em><b>Inline Type Mappings</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference REFERENCE_CODEC_ASPECT__INLINE_TYPE_MAPPINGS = eINSTANCE.getReferenceCodecAspect_InlineTypeMappings();
-
-		/**
-		 * The meta object literal for the '<em><b>Fallback Strategy</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute REFERENCE_CODEC_ASPECT__FALLBACK_STRATEGY = eINSTANCE.getReferenceCodecAspect_FallbackStrategy();
-
-		/**
-		 * The meta object literal for the '<em><b>Fallback EClass</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute REFERENCE_CODEC_ASPECT__FALLBACK_ECLASS = eINSTANCE.getReferenceCodecAspect_FallbackEClass();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.InlineTypeMappingImpl <em>Inline Type Mapping</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.InlineTypeMappingImpl
-		 * @see org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageImpl#getInlineTypeMapping()
-		 * @generated
-		 */
-		EClass INLINE_TYPE_MAPPING = eINSTANCE.getInlineTypeMapping();
-
-		/**
-		 * The meta object literal for the '<em><b>Discriminator Value</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute INLINE_TYPE_MAPPING__DISCRIMINATOR_VALUE = eINSTANCE.getInlineTypeMapping_DiscriminatorValue();
-
-		/**
-		 * The meta object literal for the '<em><b>Target Class</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute INLINE_TYPE_MAPPING__TARGET_CLASS = eINSTANCE.getInlineTypeMapping_TargetClass();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.fennec.codec.metadata.model.codec.impl.CodecPackageProfileImpl <em>Package Profile</em>}' class.

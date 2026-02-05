@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
@@ -380,27 +381,39 @@ public class TypeDeserializationEntry implements DeserializationEntry {
     /**
      * Resolves an EClass from a type value based on the configured strategy.
      * <p>
-     * Supports formats based on strategy:
-     * <ul>
-     *   <li>URI: {@code http://example.org/1.0#//Person} - Full URI</li>
-     *   <li>NAME: {@code Person} - Simple class name</li>
-     *   <li>CLASS: {@code com.example.Person} - Java class name</li>
-     *   <li>NUMERIC: {@code 1} - Classifier ID</li>
-     *   <li>MAPPED: Uses discriminator value mapping</li>
-     * </ul>
-     * </p>
-     * <p>
-     * Supports smart compression: when encountering a full URI, the context schema
-     * is established (if not already set). When encountering a simple name, it is
-     * first resolved using the context schema before falling back to searching all packages.
+     * Delegates to {@link #resolveEClass(String, EClass, DeserializationContext, EReference)}
+     * with no reference context.
      * </p>
      *
      * @param typeValue the type value (format depends on strategy)
      * @param hintEClass optional hint EClass for MAPPED context (may be null)
      * @param ctxt the deserialization context (for smart compression context schema)
      * @return the resolved EClass, or null if not found
+     * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.TypeDeserializationEntry}.
      */
+    @Deprecated
     public EClass resolveEClass(String typeValue, EClass hintEClass, DeserializationContext ctxt) {
+        return resolveEClass(typeValue, hintEClass, ctxt, null);
+    }
+
+    /**
+     * Resolves an EClass from a type value based on the configured strategy.
+     * <p>
+     * When a {@code currentReference} is provided, inline mapping resolution is attempted
+     * first via {@link TypeDiscriminatorService#resolveForReference} before falling back to
+     * the global discriminator registries.
+     * </p>
+     *
+     * @param typeValue the type value (format depends on strategy)
+     * @param hintEClass optional hint EClass for MAPPED context (may be null)
+     * @param ctxt the deserialization context (for smart compression context schema)
+     * @param currentReference optional EReference for inline mapping context (may be null)
+     * @return the resolved EClass, or null if not found
+     * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.TypeDeserializationEntry}.
+     */
+    @Deprecated
+    public EClass resolveEClass(String typeValue, EClass hintEClass, DeserializationContext ctxt,
+            EReference currentReference) {
         if (typeValue == null || typeValue.isEmpty()) {
             return null;
         }
@@ -429,10 +442,21 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             }
         }
 
-        // Third: try discriminator lookup via TypeDiscriminatorService.
-        // Use the hint to provide context for MAPPED strategy.
+        // Third: try inline mapping for reference-scoped discriminator resolution.
+        if (typeDiscriminatorService != null && currentReference != null) {
+            EClass resolved = typeDiscriminatorService.resolveForReference(
+                    currentReference, typeValue, this::resolveFromUri);
+            if (resolved != null) {
+                LOGGER.fine("Resolved type via inline mapping for reference '" +
+                        currentReference.getName() + "': " + typeValue + " -> " + resolved.getName());
+                return resolved;
+            }
+        }
+
+        // Fourth: try discriminator lookup via TypeDiscriminatorService.
+        // Uses resolveFromAny which applies fallback strategies (SKIP/ERROR/FALLBACK).
         if (typeDiscriminatorService != null) {
-            EClass resolved = typeDiscriminatorService.getEClassFromAny(typeValue);
+            EClass resolved = typeDiscriminatorService.resolveFromAny(typeValue, this::resolveFromUri);
             if (resolved != null) {
                 LOGGER.fine("Resolved type via discriminator: " + typeValue + " -> " + resolved.getName());
                 return resolved;

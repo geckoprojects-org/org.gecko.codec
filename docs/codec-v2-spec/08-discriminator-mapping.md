@@ -60,20 +60,27 @@ Discriminator mappings use **dedicated annotation sources** (not the main `http:
 
 ## 3. Configuration Properties
 
-| Annotation Key | Property Key | EClass | ERef | Description |
-|----------------|--------------|:------:|:----:|-------------|
-| — | `codec.typeMapId` | ✅ | ❌ | Registry ID (embedded in annotation source URI) |
-| `typeDiscriminatorPath` | `codec.typeDiscriminatorPath` | ✅ | ❌ | JSON path to discriminator value (dot notation) |
-| `{value}` | — | ✅ | ✅ | Mapping entries as direct key/value details |
-| — | `codec.typeMappings` | ✅ | ❌ | Mappings as nested Map (for EClass property config) |
-| — | `codec.inlineMappings` | ❌ | ✅ | Mappings as nested Map (for EReference property config) |
-| `typeDiscriminator` | `codec.typeDiscriminator` | ✅ | ❌ | This class's discriminator value (distributed registration) |
-| `fallbackStrategy` | `codec.fallbackStrategy` | ✅ | ✅ | `ERROR`, `SKIP`, `FALLBACK` (**default:** `SKIP`) |
-| `fallbackEClass` | `codec.fallbackEClass` | ✅ | ✅ | Explicit fallback EClass URI |
+| Annotation Key | Source | EClass | ERef | Description |
+|----------------|--------|:------:|:----:|-------------|
+| `typeDiscriminatorPath` | `typeMapping/{mapId}` | ✅ | ❌ | JSON path to discriminator value (dot notation) |
+| `typeDiscriminator` | `typeMapping/{mapId}` | ✅ | ❌ | This class's discriminator value (distributed registration) |
+| `{value}={EClass URI}` | `typeMapping/{mapId}` or `inlineMapping` | ✅ | ✅ | Mapping entries as direct key/value details |
+| `fallbackStrategy` | `typeMapping/{mapId}` or `inlineMapping` | ✅ | ✅ | `ERROR`, `SKIP`, `FALLBACK` (**default:** `SKIP`) |
+| `fallbackEClass` | `typeMapping/{mapId}` or `inlineMapping` | ✅ | ✅ | Explicit fallback EClass URI |
 
-> **Note:** The `{value}` entries are mapping entries where key = discriminator value and value = EClass URI. These are direct annotation details, not prefixed with `codec.`.
+> **Note:** The mapId is **embedded in the annotation source URI** (`http://eclipse.org/fennec/codec/typeMapping/{mapId}`), not a separate detail key. Mapping entries are direct key/value details where key = discriminator value and value = EClass URI.
 
-**Implementation:** `CodecAnnotationConstants.KEY_TYPE_MAP_ID`, `KEY_TYPE_DISCRIMINATOR`, `KEY_TYPE_DISCRIMINATOR_PATH`, `KEY_INLINE_MAPPINGS`, `ANNOTATION_SOURCE_TYPE_MAPPING_PREFIX`, `ANNOTATION_SOURCE_INLINE_MAPPING`
+| Property Key | Description |
+|--------------|-------------|
+| `codec.typeMapId` | Registry ID (for programmatic/property configuration) |
+| `codec.typeDiscriminatorPath` | JSON path to discriminator value |
+| `codec.typeDiscriminator` | This class's discriminator value |
+| `codec.typeMappings` | Mappings as `Map<String, String>` (EClass property config) |
+| `codec.inlineMappings` | Mappings as `Map<String, String>` (EReference property config) |
+| `codec.fallbackStrategy` | `ERROR`, `SKIP`, `FALLBACK` |
+| `codec.fallbackEClass` | Explicit fallback EClass URI |
+
+**Implementation:** `CodecAnnotationConstants.TYPE_MAPPING_SOURCE_PREFIX`, `INLINE_MAPPING_SOURCE`, `KEY_TYPE_DISCRIMINATOR`, `KEY_TYPE_DISCRIMINATOR_PATH`, `KEY_FALLBACK_STRATEGY`, `KEY_FALLBACK_ECLASS`
 
 ---
 
@@ -125,9 +132,11 @@ Define all mappings on the base class. Useful when you control all concrete clas
 Concrete classes can register themselves with a registry. Useful when concrete classes are in different packages or when you want extensible type hierarchies.
 
 **How it works:**
-1. **Base class** defines the registry with `typeDiscriminatorPath`
-2. **Concrete classes** register themselves using `typeDiscriminator` in the main codec annotation
+1. **Base class** defines the registry with `typeDiscriminatorPath` using the `typeMapping/{mapId}` annotation source
+2. **Concrete classes** register themselves using the **same annotation source** with `typeDiscriminator`
 3. At runtime, `TypeDiscriminatorService` maintains the registry and resolves types
+
+The mapId is always embedded in the annotation source URI — both base and concrete classes use the same source, ensuring consistency.
 
 **Base class configuration:**
 ```xml
@@ -142,9 +151,8 @@ Concrete classes can register themselves with a registry. Useful when concrete c
 ```xml
 <!-- TemperatureMessage extends UplinkMessage -->
 <eClassifiers name="TemperatureMessage">
-  <eAnnotations source="http://eclipse.org/fennec/codec">
-    <!-- Register with the registry, provide discriminator value -->
-    <details key="typeMapId" value="lorawan-devices"/>
+  <!-- Same annotation source as the base class — mapId "lorawan-devices" is in the URI -->
+  <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/lorawan-devices">
     <details key="typeDiscriminator" value="temperature-profile"/>
   </eAnnotations>
 </eClassifiers>
@@ -170,8 +178,8 @@ Static mappings and distributed registration **can be combined** in the same reg
 ```xml
 <!-- FooMessage extends UplinkMessage, defined in a different package -->
 <eClassifiers name="FooMessage">
-  <eAnnotations source="http://eclipse.org/fennec/codec">
-    <details key="typeMapId" value="lorawan-devices"/>
+  <!-- Uses the same typeMapping source — mapId "lorawan-devices" matches the base class -->
+  <eAnnotations source="http://eclipse.org/fennec/codec/typeMapping/lorawan-devices">
     <details key="typeDiscriminator" value="foo-bar"/>
   </eAnnotations>
 </eClassifiers>
@@ -381,18 +389,554 @@ options.put(CODEC_FEATURE_TYPE_HINTS, hints);
 
 ---
 
-## 7. Invalid Configurations
+## 7. Deserialization Flow
 
-| Misconfiguration | Severity | Reason |
-|------------------|----------|--------|
-| `typeDiscriminator` on EReference | ERROR | Discriminator values are per-class, not per-reference |
-| `typeDiscriminatorPath` on EReference | ERROR | Discriminator path is defined on base class |
-| `typeMapId` on EReference | ERROR | Type mapping registry is class-level |
-| `inlineMapping` annotation on EClass | WARNING | Inline mappings are per-reference only |
+This section documents the detailed deserialization flow for both Type Mapping Registry and Inline Mapping. It complements the high-level type resolution flow in [06-type.md §6.3.0](06-type.md#630-type-resolution-flow) with implementation-level decision points.
+
+### 7.1 Type Mapping Registry — Deserialization
+
+When deserializing a contained object (e.g., a `Sensor` inside `SensorHub.sensors`), the deserializer checks whether the **expected EClass** (the reference type or hint) has a Type Mapping Registry configured.
+
+**Config resolution:** For the expected EClass (e.g., `Sensor`), resolve:
+- `mapId` — from `DiscriminatorConfig.getTypeMapId()` (derived from the `typeMapping/{mapId}` annotation source)
+- `discriminatorPath` — from `DiscriminatorConfig.getTypeDiscriminatorPath()` (e.g., `_type` or `info.profileName`)
+- `fallbackStrategy` — from `DiscriminatorConfig.getFallbackStrategy()` (default: `SKIP`)
+- `fallbackEClass` — from `DiscriminatorConfig.getFallbackEClass()` (only when `FALLBACK`)
+
+If `mapId` and `discriminatorPath` are both present, the deserializer enters **discriminator mapping mode**.
+
+#### 7.1.1 Standard Discriminator Path (matches typeKey)
+
+When `discriminatorPath` equals the configured type key (e.g., both are `_type`), the discriminator value is at the same JSON field that the standard type resolution reads. No special scanning is needed.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TYPE MAPPING REGISTRY — STANDARD PATH (discriminatorPath == typeKey)        │
+│                                                                             │
+│ Example: Sensor with typeMapping/strict-sensors, discriminatorPath="_type"  │
+│ JSON: { "_type": "temp", "sensorId": "s-001", "celsius": 22.5 }           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: JSON object, hintEClass (Sensor), DiscriminatorConfig (mapId, path, fallback)
+
+1. Read discriminator value from typeKey field
+   → "_type" = "temp"
+
+2. Lookup in TARGETED registry: resolve(mapId="strict-sensors", "temp")
+   │
+   ├─ Found → EClass URI → resolve to TempSensor ────────────→ RESOLVED ✓
+   │
+   └─ Not found → Apply fallbackStrategy from DiscriminatorConfig:
+       ├─ ERROR    → Fail immediately (throw exception)
+       ├─ SKIP     → WARNING, continue to Type Strategy (step 3 in 06-type.md)
+       └─ FALLBACK → Use fallbackEClass ─────────────────────→ RESOLVED ✓
+                     (fallbackEClass MUST be set, else ERROR)
+
+Note: Resolution uses resolve(mapId, ...) — NOT resolveFromAny().
+      This ensures the correct registry's fallback strategy is applied.
+```
+
+**Key implementation requirement:** The standard deserialization flow must receive the `DiscriminatorConfig` (mapId + fallbackStrategy) for the expected EClass. When a mapId is present, the discriminator value is looked up via `TypeDiscriminatorService.resolve(mapId, value, eClassResolver)` — the **targeted** method that respects the specific registry's fallback strategy.
+
+#### 7.1.2 Non-Standard Discriminator Path (nested path)
+
+When `discriminatorPath` differs from the type key (e.g., `info.profileName`), the discriminator value is at a **different location** than `_type`. This requires scanning ahead into nested JSON structures before type resolution can occur.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TYPE MAPPING REGISTRY — NESTED PATH (discriminatorPath != typeKey)          │
+│                                                                             │
+│ Example: UplinkMessage with typeMapping/lorawan, path="info.profileName"   │
+│ JSON: { "info": { "profileName": "temp-sensor", ... }, "value": 23.5 }    │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: JSON parser at START_OBJECT, hintEClass, DiscriminatorConfig
+
+1. Use FeaturePathTypeResolver to scan JSON content:
+   a. Split discriminatorPath by "." → path segments ["info", "profileName"]
+   b. Buffer ALL tokens while scanning (for replay after resolution)
+   c. Track nesting depth, match path segments at correct depth
+   d. Extract value at final segment → "temp-sensor"
+
+2. Lookup in TARGETED registry: resolve(mapId="lorawan", "temp-sensor")
+   │
+   ├─ Found → EClass URI → resolve to TemperatureSensor ─────→ RESOLVED ✓
+   │
+   └─ Not found → Apply fallbackStrategy (same as §7.1.1)
+
+3. Create buffered parser from scanned tokens
+   → Replay entire JSON object for property deserialization
+
+Note: FeaturePathTypeResolver consumes the original parser. All further
+      deserialization uses the buffered replay parser.
+```
+
+**When to use FeaturePathTypeResolver:** Only when `discriminatorPath` is a nested/non-standard path that differs from the type key. When `discriminatorPath == typeKey`, the standard flow handles it (§7.1.1) — no buffering needed.
+
+#### 7.1.3 Config Data Flow
+
+The following config data must be available when deserializing a contained object with Type Mapping Registry:
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│ CONFIG FLOW FOR TYPE MAPPING REGISTRY                                    │
+│                                                                          │
+│ EClass (Sensor)                                                          │
+│   └─ EAnnotation: typeMapping/strict-sensors                             │
+│        ├─ typeDiscriminatorPath = "_type"                                │
+│        ├─ fallbackStrategy = ERROR                                       │
+│        └─ mappings: temp → TempSensor URI, alert → AlertSensor URI       │
+│                                                                          │
+│                        ↓ parsed at startup                               │
+│                                                                          │
+│ TypeDiscriminatorService                                                 │
+│   └─ Registry "strict-sensors"                                           │
+│        ├─ discriminatorPath = "_type"                                    │
+│        ├─ fallbackStrategy = ERROR                                       │
+│        └─ entries: { "temp" → TempSensor URI, "alert" → AlertSensor URI }│
+│                                                                          │
+│ DiscriminatorConfig (for Sensor EClass)                                  │
+│   ├─ typeMapId = "strict-sensors"                                        │
+│   ├─ typeDiscriminatorPath = "_type"                                     │
+│   ├─ fallbackStrategy = ERROR                                            │
+│   └─ fallbackEClass = null                                               │
+│                                                                          │
+│                        ↓ available at deserialization                     │
+│                                                                          │
+│ Deserializer                                                             │
+│   1. Resolve DiscriminatorConfig for hintEClass (Sensor)                 │
+│   2. Extract mapId, discriminatorPath, fallbackStrategy                  │
+│   3. Read discriminator value from discriminatorPath field               │
+│   4. Call TypeDiscriminatorService.resolve(mapId, value, resolver)       │
+│   5. Handle fallback per fallbackStrategy                                │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+#### 7.1.4 Example: SensorHub Deserialization
+
+Complete walkthrough using the Sensor/TempSensor model:
+
+**Model:**
+```
+SensorHub
+  └─ sensors: Sensor[*] (containment)
+
+Sensor (abstract)
+  ├─ typeMapping/strict-sensors: discriminatorPath="_type", fallbackStrategy=ERROR
+  ├─ sensorId: String
+  ├── TempSensor: typeDiscriminator="temp", celsius: double
+  └── AlertSensor: typeDiscriminator="alert", message: String
+```
+
+**JSON:**
+```json
+{
+  "_type": "http://example.org#//SensorHub",
+  "sensors": [
+    { "_type": "temp", "sensorId": "s-001", "celsius": 22.5 },
+    { "_type": "alert", "sensorId": "s-002", "message": "Battery low" },
+    { "_type": "unknown", "sensorId": "s-003" }
+  ]
+}
+```
+
+**Deserialization steps:**
+
+1. **Root object:** `_type` = full URI → standard URI strategy → `SensorHub` ✓
+2. **sensors[0]:** hintEClass=Sensor → DiscriminatorConfig: mapId=strict-sensors, path=_type, fallback=ERROR
+   - Read `_type` = `"temp"` → `resolve("strict-sensors", "temp")` → `TempSensor` ✓
+3. **sensors[1]:** same config
+   - Read `_type` = `"alert"` → `resolve("strict-sensors", "alert")` → `AlertSensor` ✓
+4. **sensors[2]:** same config
+   - Read `_type` = `"unknown"` → `resolve("strict-sensors", "unknown")` → NOT FOUND
+   - fallbackStrategy = ERROR → **Fail immediately** ✗
+
+### 7.2 Inline Mapping — Deserialization
+
+Inline mapping resolution is triggered when the current **EReference** has an `inlineMapping` annotation. The mapId for inline mapping is derived from the reference identity (e.g., `PersonContainer#contacts`).
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ INLINE MAPPING — DESERIALIZATION FLOW                                       │
+│                                                                             │
+│ Example: PersonContainer.contacts with inlineMapping annotation             │
+│ JSON: { "contactType": "friend", "name": "Alice" }                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: JSON object, currentReference (contacts), typeKey from reference config
+
+1. Read discriminator value from typeKey field (configured on EReference)
+   → "contactType" = "friend"
+
+2. Lookup in reference-scoped registry:
+   resolveForReference(contacts, "friend")
+   │
+   ├─ Found → EClass URI → resolve to Friend ─────────────────→ RESOLVED ✓
+   │
+   └─ Not found → Apply fallbackStrategy from inlineMapping annotation:
+       ├─ ERROR    → Fail immediately
+       ├─ SKIP     → WARNING, continue to Type Strategy (step 3 in 06-type.md)
+       └─ FALLBACK → Use fallbackEClass ─────────────────────→ RESOLVED ✓
+
+Note: The typeKey for inline mapping comes from the EReference's codec
+      annotation (e.g., typeKey="contactType"), NOT from the EClass.
+      Inline mapping uses TypeDiscriminatorService.resolveForReference(),
+      which targets the reference-specific registry.
+```
+
+**Key difference from Type Mapping Registry:**
+- Type Mapping Registry: config comes from the **EClass** (Sensor), uses `resolve(mapId, ...)`
+- Inline Mapping: config comes from the **EReference** (contacts), uses `resolveForReference(ref, ...)`
+- Inline Mapping always reads from the **typeKey** field (never a nested path)
+
+### 7.3 Combined Resolution Order
+
+When both Type Mapping Registry and Inline Mapping could apply to the same object, the resolution follows the priority from §1.3:
+
+```
+Deserializing a contained object:
+  hintEClass = reference type (e.g., Sensor, Contact)
+  currentReference = the EReference being deserialized
+
+1. Does hintEClass have a DiscriminatorConfig with mapId?
+   ├─ YES → Type Mapping Registry mode (§7.1)
+   │        Read from discriminatorPath, resolve via mapId
+   │        On SKIP fallback → continue to step 2
+   │
+   └─ NO → Continue to step 2
+
+2. Does currentReference have an inlineMapping annotation?
+   ├─ YES → Inline Mapping mode (§7.2)
+   │        Read from typeKey, resolve via reference registry
+   │        On SKIP fallback → continue to step 3
+   │
+   └─ NO → Continue to step 3
+
+3. Type Strategy Resolution (standard _type field handling)
+   → See 06-type.md §6.3.0 step 3
+
+4. Fallback (reference type, hints, root type)
+   → See 06-type.md §6.3.0 step 4
+```
 
 ---
 
-## 8. Summary
+## 8. Serialization Flow
+
+This section documents the detailed serialization flow for both Type Mapping Registry and Inline Mapping. It complements the high-level type serialization flow in [06-type.md §5.0](06-type.md#50-type-serialization-flow) with implementation-level details.
+
+### 8.1 Type Mapping Registry — Serialization
+
+When serializing an object that has a Type Mapping Registry configured on its EClass (or base class), the serializer writes the **discriminator value** instead of the standard type URI/name.
+
+**Config resolution:** For the EObject's EClass (e.g., `TempSensor`), resolve:
+- `mapId` — from `DiscriminatorConfig.getTypeMapId()` (e.g., `strict-sensors`)
+- `discriminatorPath` — from `DiscriminatorConfig.getTypeDiscriminatorPath()` (e.g., `_type` or `info.profileName`)
+- `fallbackStrategy` — from `DiscriminatorConfig.getFallbackStrategy()` (default: `SKIP`)
+- `fallbackEClass` — from `DiscriminatorConfig.getFallbackEClass()` (only when `FALLBACK`)
+
+If `mapId` is present, the serializer enters **discriminator mapping mode**.
+
+#### 8.1.1 Standard Discriminator Path (matches typeKey)
+
+When `discriminatorPath` equals the configured type key (e.g., both are `_type`), the discriminator value is written at the same JSON field as the standard type output.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TYPE MAPPING REGISTRY — STANDARD PATH (discriminatorPath == typeKey)        │
+│                                                                             │
+│ Example: TempSensor with typeMapping/strict-sensors, discriminatorPath="_type"│
+│ Output: { "_type": "temp", "sensorId": "s-001", "celsius": 22.5 }         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: EObject (TempSensor), DiscriminatorConfig (mapId, path, fallback)
+
+1. Get discriminator value for this EClass from TARGETED registry:
+   getDiscriminatorValue(mapId="strict-sensors", TempSensor)
+   │
+   │ Sources (checked in order):
+   │   a. Reverse lookup in registry mappings (EClass URI → value)
+   │   b. typeDiscriminator annotation on this EClass → "temp"
+   │
+   ├─ Found → discriminatorValue = "temp"
+   │
+   └─ Not found (EClass not in registry) → Apply fallbackStrategy:
+       ├─ ERROR    → Fail immediately (throw exception)
+       ├─ SKIP     → WARNING, continue to Type Strategy (step 3 in 06-type.md)
+       └─ FALLBACK → Use fallbackEClass:
+                     Get fallbackEClass's discriminator value from registry
+                     (fallbackEClass MUST be set, else ERROR)
+
+2. Write discriminator value at typeKey field
+   → "_type": "temp"
+
+   Do NOT proceed to Type Strategy ──────────────────────────→ DONE ✓
+
+Note: Resolution uses getDiscriminatorValue(mapId, ...) — NOT
+      getDiscriminatorValueFromAny(). This ensures the correct registry
+      is used for the reverse lookup.
+```
+
+#### 8.1.2 Non-Standard Discriminator Path (nested path)
+
+When `discriminatorPath` differs from the type key (e.g., `info.profileName`), the discriminator value is written at a **nested location** within the JSON structure. The value is typically written as part of a feature that maps to the nested path.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ TYPE MAPPING REGISTRY — NESTED PATH (discriminatorPath != typeKey)          │
+│                                                                             │
+│ Example: TemperatureSensor with typeMapping/lorawan, path="info.profileName"│
+│ Output: { "info": { "profileName": "temp-sensor", ... }, "value": 23.5 }  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: EObject (TemperatureSensor), DiscriminatorConfig
+
+1. Get discriminator value (same as §8.1.1 step 1)
+   → discriminatorValue = "temp-sensor"
+
+2. The discriminator value lives at a nested feature path.
+   It is written during feature serialization when the corresponding
+   feature (e.g., "info.profileName") is serialized.
+
+   Do NOT write a standard _type field.
+
+   Do NOT proceed to Type Strategy ──────────────────────────→ DONE ✓
+
+Note: The discriminatorPath is a dot-separated JSON path.
+      For serialization, the value is placed at the correct nested
+      location as part of normal feature output. The serializer must
+      ensure the discriminator value is included even if the feature
+      value is otherwise empty/default.
+```
+
+#### 8.1.3 Config Data Flow
+
+The following config data must be available when serializing an object with Type Mapping Registry:
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│ CONFIG FLOW FOR TYPE MAPPING REGISTRY — SERIALIZATION                    │
+│                                                                          │
+│ EObject (TempSensor)                                                     │
+│   └─ EClass: TempSensor extends Sensor                                   │
+│        └─ EAnnotation: typeMapping/strict-sensors                         │
+│             └─ typeDiscriminator = "temp"                                 │
+│                                                                          │
+│ EClass (Sensor — base)                                                   │
+│   └─ EAnnotation: typeMapping/strict-sensors                             │
+│        ├─ typeDiscriminatorPath = "_type"                                │
+│        ├─ fallbackStrategy = ERROR                                       │
+│        └─ mappings: temp → TempSensor URI, alert → AlertSensor URI       │
+│                                                                          │
+│                        ↓ parsed at startup                               │
+│                                                                          │
+│ TypeDiscriminatorService                                                 │
+│   └─ Registry "strict-sensors"                                           │
+│        ├─ discriminatorPath = "_type"                                    │
+│        ├─ fallbackStrategy = ERROR                                       │
+│        ├─ forward: { "temp" → TempSensor URI, "alert" → AlertSensor URI}│
+│        └─ reverse: { TempSensor URI → "temp", AlertSensor URI → "alert"}│
+│                                                                          │
+│ DiscriminatorConfig (for TempSensor EClass — inherited from Sensor)      │
+│   ├─ typeMapId = "strict-sensors"                                        │
+│   ├─ typeDiscriminatorPath = "_type"                                     │
+│   ├─ fallbackStrategy = ERROR                                            │
+│   └─ fallbackEClass = null                                               │
+│                                                                          │
+│                        ↓ available at serialization                       │
+│                                                                          │
+│ Serializer                                                               │
+│   1. Resolve DiscriminatorConfig for EObject's EClass (TempSensor)       │
+│   2. Extract mapId, discriminatorPath                                    │
+│   3. Get discriminator value: getDiscriminatorValue(mapId, TempSensor)   │
+│   4. Write value at discriminatorPath (= typeKey "_type")                │
+│   5. Skip Type Strategy — discriminator mapping handled type output      │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+#### 8.1.4 Example: SensorHub Serialization
+
+Complete walkthrough using the Sensor/TempSensor model:
+
+**Model:**
+```
+SensorHub
+  └─ sensors: Sensor[*] (containment)
+
+Sensor (abstract)
+  ├─ typeMapping/strict-sensors: discriminatorPath="_type", fallbackStrategy=ERROR
+  ├─ sensorId: String
+  ├── TempSensor: typeDiscriminator="temp", celsius: double
+  └── AlertSensor: typeDiscriminator="alert", message: String
+```
+
+**EObjects:**
+```
+SensorHub
+  sensors[0] = TempSensor { sensorId="s-001", celsius=22.5 }
+  sensors[1] = AlertSensor { sensorId="s-002", message="Battery low" }
+```
+
+**Serialization steps:**
+
+1. **Root object (SensorHub):** No typeMapping on SensorHub → standard URI strategy
+   - Write `"_type": "http://example.org#//SensorHub"`
+2. **sensors[0] (TempSensor):** DiscriminatorConfig: mapId=strict-sensors, path=_type
+   - `getDiscriminatorValue("strict-sensors", TempSensor)` → `"temp"`
+   - Write `"_type": "temp"` (NOT the full URI)
+   - Skip Type Strategy
+3. **sensors[1] (AlertSensor):** same config
+   - `getDiscriminatorValue("strict-sensors", AlertSensor)` → `"alert"`
+   - Write `"_type": "alert"`
+
+**Output:**
+```json
+{
+  "_type": "http://example.org#//SensorHub",
+  "sensors": [
+    { "_type": "temp", "sensorId": "s-001", "celsius": 22.5 },
+    { "_type": "alert", "sensorId": "s-002", "message": "Battery low" }
+  ]
+}
+```
+
+### 8.2 Inline Mapping — Serialization
+
+When serializing an object accessed through an EReference that has an `inlineMapping` annotation, the serializer writes the **inline mapping discriminator value** at the configured type key.
+
+**Config resolution:** For the current EReference (e.g., `contacts`):
+- The reference-scoped registry is identified by the reference identity (e.g., `PersonContainer#contacts`)
+- `typeKey` comes from the EReference's codec annotation (e.g., `contactType`)
+- `fallbackStrategy` and `fallbackEClass` come from the inlineMapping annotation
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ INLINE MAPPING — SERIALIZATION FLOW                                         │
+│                                                                             │
+│ Example: Friend via PersonContainer.contacts with inlineMapping             │
+│ Output: { "contactType": "friend", "name": "Alice" }                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+INPUT: EObject (Friend), currentReference (contacts)
+
+1. Check if currentReference has inlineMapping annotation
+   │
+   ├─ NO → Continue to Type Strategy (step 3 in 06-type.md)
+   │
+   └─ YES → Get reference-scoped registry
+
+2. Get discriminator value for this EClass:
+   getDiscriminatorValueForReference(contacts, Friend)
+   → Reverse lookup in inline mappings (Friend URI → "friend")
+   │
+   ├─ Found → discriminatorValue = "friend"
+   │
+   └─ Not found (EClass not in inline mappings) → Apply fallbackStrategy:
+       ├─ ERROR    → Fail immediately (throw exception)
+       ├─ SKIP     → WARNING, continue to Type Strategy (step 3 in 06-type.md)
+       └─ FALLBACK → Use fallbackEClass:
+                     Get fallbackEClass's discriminator value from registry
+                     (fallbackEClass MUST be set, else ERROR)
+
+3. Write discriminator value at typeKey (from EReference config)
+   → "contactType": "friend"
+
+   Do NOT proceed to Type Strategy ──────────────────────────→ DONE ✓
+```
+
+**Key difference from Type Mapping Registry:**
+- Type Mapping Registry: config comes from the **EClass** (Sensor), uses `getDiscriminatorValue(mapId, ...)`
+- Inline Mapping: config comes from the **EReference** (contacts), uses `getDiscriminatorValueForReference(ref, ...)`
+- Inline Mapping always writes at the **typeKey** field (never a nested path)
+
+#### 8.2.1 Example: PersonContainer Serialization
+
+**Model:**
+```
+PersonContainer
+  └─ contacts: Contact[*] (containment)
+       ├─ codec annotation: typeKey="contactType"
+       └─ inlineMapping: friend → Friend URI, colleague → Colleague URI
+
+Contact (abstract)
+  ├─ name: String
+  ├── Friend: since: Date
+  └── Colleague: department: String
+```
+
+**EObjects:**
+```
+PersonContainer
+  contacts[0] = Friend { name="Alice", since=2020-01-01 }
+  contacts[1] = Colleague { name="Bob", department="Engineering" }
+```
+
+**Serialization steps:**
+
+1. **Root object (PersonContainer):** standard URI strategy
+2. **contacts[0] (Friend):** currentReference=contacts has inlineMapping
+   - `getDiscriminatorValueForReference(contacts, Friend)` → `"friend"`
+   - Write `"contactType": "friend"` (using typeKey from reference config)
+   - Skip Type Strategy
+3. **contacts[1] (Colleague):** same reference config
+   - `getDiscriminatorValueForReference(contacts, Colleague)` → `"colleague"`
+   - Write `"contactType": "colleague"`
+
+**Output:**
+```json
+{
+  "_type": "http://example.org#//PersonContainer",
+  "contacts": [
+    { "contactType": "friend", "name": "Alice", "since": "2020-01-01" },
+    { "contactType": "colleague", "name": "Bob", "department": "Engineering" }
+  ]
+}
+```
+
+### 8.3 Combined Serialization Order
+
+When both Type Mapping Registry and Inline Mapping could apply, the serialization follows the same priority as deserialization (§7.3):
+
+```
+Serializing a contained object:
+  eObject = the EObject being serialized
+  currentReference = the EReference through which it's accessed
+
+1. Does eObject's EClass (or base) have a DiscriminatorConfig with mapId?
+   ├─ YES → Type Mapping Registry mode (§8.1)
+   │        Get discriminator value from targeted registry
+   │        Write at discriminatorPath
+   │        On SKIP fallback → continue to step 2
+   │
+   └─ NO → Continue to step 2
+
+2. Does currentReference have an inlineMapping annotation?
+   ├─ YES → Inline Mapping mode (§8.2)
+   │        Get discriminator value from reference registry
+   │        Write at typeKey
+   │        On SKIP fallback → continue to step 3
+   │
+   └─ NO → Continue to step 3
+
+3. Type Strategy Resolution (standard _type field writing)
+   → See 06-type.md §5.0 step 3
+```
+
+---
+
+## 9. Invalid Configurations
+
+| Misconfiguration | Severity | Reason |
+|------------------|----------|--------|
+| `typeMapping/{mapId}` annotation on EReference | ERROR | Type mapping registry is class-level, not per-reference |
+| `typeDiscriminator` in main codec on EReference | ERROR | Discriminator values are per-class, not per-reference |
+| `typeDiscriminatorPath` in main codec on EReference | ERROR | Discriminator path is defined on base class |
+| `inlineMapping` annotation on EClass | WARNING | Inline mappings are per-reference only |
+| `inlineMapping` annotation on EAttribute | ERROR | Inline mappings are per-reference only |
+
+---
+
+## 10. Summary
 
 | Feature | Annotation Source | Applies To | Use Case |
 |---------|------------------|------------|----------|

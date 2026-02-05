@@ -414,6 +414,10 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 // Fall back to ContextHelper for non-EMF-aware parsers
                 return deserializeWithContextHelper(parser, ctxt, effectiveTypeHint);
             }
+        } catch (IllegalStateException e) {
+            // Propagate IllegalStateException (e.g., from discriminator ERROR strategy)
+            // so callers can handle it appropriately. See TypeDiscriminatorRegistry.resolve().
+            throw e;
         } catch (Exception e) {
             String msg = "Error deserializing contained object for " + reference.getName() + ": " + e.getMessage();
             LOGGER.severe(msg);

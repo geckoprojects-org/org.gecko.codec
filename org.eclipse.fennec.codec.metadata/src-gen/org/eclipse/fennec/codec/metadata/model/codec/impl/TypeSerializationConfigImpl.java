@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.fennec.codec.metadata.model.codec.CodecPackage;
-import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
 import org.eclipse.fennec.codec.metadata.model.codec.StrategyScope;
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
 
@@ -40,8 +39,6 @@ import org.eclipse.fennec.model.metadata.impl.BaseTypeConfigImpl;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getDiscriminatorValue <em>Discriminator Value</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getStrategyScope <em>Strategy Scope</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getFormatScope <em>Format Scope</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getFallbackStrategy <em>Fallback Strategy</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.TypeSerializationConfigImpl#getFallbackEClass <em>Fallback EClass</em>}</li>
  * </ul>
  *
  * @generated
@@ -146,46 +143,6 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 	 * @ordered
 	 */
 	protected StrategyScope formatScope = FORMAT_SCOPE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getFallbackStrategy() <em>Fallback Strategy</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getFallbackStrategy()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final FallbackStrategy FALLBACK_STRATEGY_EDEFAULT = FallbackStrategy.SKIP;
-
-	/**
-	 * The cached value of the '{@link #getFallbackStrategy() <em>Fallback Strategy</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getFallbackStrategy()
-	 * @generated
-	 * @ordered
-	 */
-	protected FallbackStrategy fallbackStrategy = FALLBACK_STRATEGY_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getFallbackEClass() <em>Fallback EClass</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getFallbackEClass()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String FALLBACK_ECLASS_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getFallbackEClass() <em>Fallback EClass</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getFallbackEClass()
-	 * @generated
-	 * @ordered
-	 */
-	protected String fallbackEClass = FALLBACK_ECLASS_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -327,52 +284,6 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 	 * @generated
 	 */
 	@Override
-	public FallbackStrategy getFallbackStrategy() {
-		return fallbackStrategy;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setFallbackStrategy(FallbackStrategy newFallbackStrategy) {
-		FallbackStrategy oldFallbackStrategy = fallbackStrategy;
-		fallbackStrategy = newFallbackStrategy == null ? FALLBACK_STRATEGY_EDEFAULT : newFallbackStrategy;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY, oldFallbackStrategy, fallbackStrategy));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String getFallbackEClass() {
-		return fallbackEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setFallbackEClass(String newFallbackEClass) {
-		String oldFallbackEClass = fallbackEClass;
-		fallbackEClass = newFallbackEClass;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS, oldFallbackEClass, fallbackEClass));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__MAP_ID:
@@ -385,10 +296,6 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 				return getStrategyScope();
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE:
 				return getFormatScope();
-			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY:
-				return getFallbackStrategy();
-			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS:
-				return getFallbackEClass();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -415,12 +322,6 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 				return;
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE:
 				setFormatScope((StrategyScope)newValue);
-				return;
-			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY:
-				setFallbackStrategy((FallbackStrategy)newValue);
-				return;
-			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS:
-				setFallbackEClass((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -449,12 +350,6 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE:
 				setFormatScope(FORMAT_SCOPE_EDEFAULT);
 				return;
-			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY:
-				setFallbackStrategy(FALLBACK_STRATEGY_EDEFAULT);
-				return;
-			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS:
-				setFallbackEClass(FALLBACK_ECLASS_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -477,10 +372,6 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 				return strategyScope != STRATEGY_SCOPE_EDEFAULT;
 			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FORMAT_SCOPE:
 				return formatScope != FORMAT_SCOPE_EDEFAULT;
-			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_STRATEGY:
-				return fallbackStrategy != FALLBACK_STRATEGY_EDEFAULT;
-			case CodecPackage.TYPE_SERIALIZATION_CONFIG__FALLBACK_ECLASS:
-				return FALLBACK_ECLASS_EDEFAULT == null ? fallbackEClass != null : !FALLBACK_ECLASS_EDEFAULT.equals(fallbackEClass);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -505,10 +396,6 @@ public class TypeSerializationConfigImpl extends BaseTypeConfigImpl implements T
 		result.append(strategyScope);
 		result.append(", formatScope: ");
 		result.append(formatScope);
-		result.append(", fallbackStrategy: ");
-		result.append(fallbackStrategy);
-		result.append(", fallbackEClass: ");
-		result.append(fallbackEClass);
 		result.append(')');
 		return result.toString();
 	}

@@ -35,8 +35,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/discriminatorValue"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/strategyScope"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/formatScope"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/fallbackStrategy"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//TypeSerializationConfig/fallbackEClass"/>
     </genClasses>
     <genClasses ecoreClass="codec.ecore#//IdSerializationConfig">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//IdSerializationConfig/idFeatures"/>
@@ -90,13 +88,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec.ecore#//ReferenceCodecAspect/typeConfig"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ReferenceCodecAspect/inheritTypeFromTarget"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ReferenceCodecAspect/expand"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codec.ecore#//ReferenceCodecAspect/inlineTypeMappings"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ReferenceCodecAspect/fallbackStrategy"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//ReferenceCodecAspect/fallbackEClass"/>
-    </genClasses>
-    <genClasses ecoreClass="codec.ecore#//InlineTypeMapping">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//InlineTypeMapping/discriminatorValue"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codec.ecore#//InlineTypeMapping/targetClass"/>
     </genClasses>
     <genClasses ecoreClass="codec.ecore#//CodecPackageProfile"/>
     <genClasses ecoreClass="codec.ecore#//CodecClassProfile">

@@ -123,10 +123,6 @@ public class CodecAdapterFactory extends AdapterFactoryImpl {
 				return createReferenceCodecAspectAdapter();
 			}
 			@Override
-			public Adapter caseInlineTypeMapping(InlineTypeMapping object) {
-				return createInlineTypeMappingAdapter();
-			}
-			@Override
 			public Adapter caseCodecPackageProfile(CodecPackageProfile object) {
 				return createCodecPackageProfileAdapter();
 			}
@@ -307,20 +303,6 @@ public class CodecAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createReferenceCodecAspectAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping <em>Inline Type Mapping</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping
-	 * @generated
-	 */
-	public Adapter createInlineTypeMappingAdapter() {
 		return null;
 	}
 

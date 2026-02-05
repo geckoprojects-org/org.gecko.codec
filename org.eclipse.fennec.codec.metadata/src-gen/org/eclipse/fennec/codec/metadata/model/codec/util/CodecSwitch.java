@@ -149,12 +149,6 @@ public class CodecSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CodecPackage.INLINE_TYPE_MAPPING: {
-				InlineTypeMapping inlineTypeMapping = (InlineTypeMapping)theEObject;
-				T result = caseInlineTypeMapping(inlineTypeMapping);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case CodecPackage.CODEC_PACKAGE_PROFILE: {
 				CodecPackageProfile codecPackageProfile = (CodecPackageProfile)theEObject;
 				T result = caseCodecPackageProfile(codecPackageProfile);
@@ -296,21 +290,6 @@ public class CodecSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseReferenceCodecAspect(ReferenceCodecAspect object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Inline Type Mapping</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Inline Type Mapping</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseInlineTypeMapping(InlineTypeMapping object) {
 		return null;
 	}
 

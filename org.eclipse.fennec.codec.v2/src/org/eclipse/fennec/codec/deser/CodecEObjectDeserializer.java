@@ -31,11 +31,13 @@ import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.eclipse.fennec.codec.config.IdConfig;
 import org.eclipse.fennec.codec.config.ReferenceConfig;
 import org.eclipse.fennec.codec.config.SuperTypeConfig;
+import org.eclipse.fennec.codec.config.DiscriminatorConfig;
 import org.eclipse.fennec.codec.config.TypeConfig;
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.context.ContextHelper;
 import org.eclipse.fennec.codec.context.EMFCodecReadContext;
+import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;
@@ -155,7 +157,13 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             hintEClass = ContextHelper.getExpectedType(ctxt);
         }
 
-        // Check if we need to use featurePath-based type resolution
+        // Check if we need to use featurePath-based type resolution.
+        // FeaturePathTypeResolver is only needed when the discriminator path is a
+        // nested/non-standard path (e.g., "info.profileName") that differs from the
+        // type key. When discriminatorPath matches the type key (e.g., both "_type"),
+        // the standard flow handles it — TypeDeserializationEntry.resolveEClass()
+        // performs targeted discriminator lookup via resolve(mapId, ...).
+        // See spec 08-discriminator-mapping.md §7.1.1 vs §7.1.2.
         String discriminatorPath = getDiscriminatorPath(hintEClass);
 
         // If no hint provided, try to find ANY discriminatorPath from registered types
@@ -166,7 +174,8 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         }
 
         if (FeaturePathTypeResolver.hasDiscriminatorPath(discriminatorPath)
-                && config.getTypeDiscriminatorService() != null) {
+                && config.getTypeDiscriminatorService() != null
+                && !isTypeKey(discriminatorPath)) {
             return deserializeWithFeaturePath(parser, ctxt, state, hintEClass, discriminatorPath);
         }
 
@@ -194,7 +203,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                 String rawTypeValue = readTypeValueAsString(parser);
 
                 // Now resolve the type using the raw value
-                resolvedEClass = resolveTypeFromValue(rawTypeValue, state, hintEClass, schemaValue, ctxt);
+                resolvedEClass = resolveTypeFromValue(rawTypeValue, state, hintEClass, schemaValue, ctxt, emfContext);
                 state.setResolvedEClass(resolvedEClass);
                 typeFieldProcessed = true;
 
@@ -284,9 +293,17 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
     /**
      * Resolves an EClass from a pre-read type value string.
+     *
+     * @param typeValue the raw type value from JSON
+     * @param state the deserialization state
+     * @param hintEClass optional hint EClass
+     * @param schemaValue optional schema value for SCHEMA_AND_TYPE format
+     * @param ctxt the Jackson deserialization context
+     * @param emfContext optional EMF context for inline mapping resolution (may be null)
      */
     private EClass resolveTypeFromValue(String typeValue, DeserializationState state,
-            EClass hintEClass, String schemaValue, DeserializationContext ctxt) {
+            EClass hintEClass, String schemaValue, DeserializationContext ctxt,
+            EMFCodecReadContext emfContext) {
         if (typeValue == null) {
             return hintEClass;
         }
@@ -302,9 +319,15 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         // Build supertype config for validation (null means no validation)
         SuperTypeConfig globalSuperTypeConfig = config.resolveGlobalSuperTypeConfig();
 
+        // Extract mapId from the hint EClass's DiscriminatorConfig for targeted
+        // registry resolution. When a mapId is present, the TypeDeserializationEntry
+        // uses resolve(mapId, ...) instead of resolveFromAny(), ensuring the correct
+        // fallback strategy is applied. See spec 08-discriminator-mapping.md §7.1.
+        String discriminatorMapId = getDiscriminatorMapId(hintEClass);
+
         TypeDeserializationEntry typeEntry = new TypeDeserializationEntry(
                 typeConfig, config.getTypeDiscriminatorService(),
-                globalSuperTypeConfig);
+                globalSuperTypeConfig, discriminatorMapId);
 
         // Compose type value with schema if needed (SCHEMA_AND_TYPE format)
         String effectiveTypeValue = typeValue;
@@ -312,8 +335,16 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             effectiveTypeValue = schemaValue + "#//" + typeValue;
         }
 
+        // Extract current reference from EMF context for inline mapping resolution.
+        // When deserializing a contained object under an EReference with an inlineMapping
+        // annotation, this allows the type resolver to check the reference-scoped registry first.
+        EReference currentReference = null;
+        if (emfContext != null && emfContext.getCurrentFeature() instanceof EReference ref) {
+            currentReference = ref;
+        }
+
         // Delegate to TypeDeserializationEntry for consistent resolution logic
-        EClass resolved = typeEntry.resolveEClass(effectiveTypeValue, hintEClass, ctxt);
+        EClass resolved = typeEntry.resolveEClass(effectiveTypeValue, hintEClass, ctxt, currentReference);
         if (resolved != null) {
             state.setResolvedEClass(resolved);
             return resolved;
@@ -473,6 +504,9 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                 bufferParser.nextToken();
                 entry.deserialize(state, bufferParser, ctxt);
             }
+        } catch (IllegalStateException e) {
+            // Propagate IllegalStateException (e.g., from discriminator ERROR strategy)
+            throw e;
         } catch (Exception e) {
             LOGGER.fine("Could not replay deferred value for " + entry.getKey() + ": " + e.getMessage());
         }
@@ -623,6 +657,34 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
     }
 
     /**
+     * Gets the typeMapId from the EClass's discriminator configuration.
+     * <p>
+     * Used to target a specific registry during featurePath-based type resolution,
+     * ensuring the correct fallback strategy is applied.
+     * </p>
+     */
+    private String getDiscriminatorMapId(EClass eClass) {
+        if (eClass == null) {
+            return null;
+        }
+        // Try DiscriminatorConfig first (from ConfigurationResolver)
+        DiscriminatorConfig discriminatorConfig = config.resolveDiscriminatorConfig(eClass);
+        if (discriminatorConfig != null) {
+            String mapId = discriminatorConfig.getTypeMapId();
+            if (mapId != null) {
+                return mapId;
+            }
+        }
+        // Fall back to direct annotation scanning via TypeDiscriminatorService
+        // (walks up supertypes looking for typeMapping/{mapId} annotations)
+        TypeDiscriminatorService tds = config.getTypeDiscriminatorService();
+        if (tds != null) {
+            return tds.getMapIdForEClass(eClass);
+        }
+        return null;
+    }
+
+    /**
      * Deserializes an EObject using featurePath-based type resolution.
      */
     private EObject deserializeWithFeaturePath(
@@ -634,8 +696,11 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
         LOGGER.fine("Using featurePath-based type resolution: " + discriminatorPath);
 
+        // Extract mapId from DiscriminatorConfig for targeted registry resolution
+        String mapId = getDiscriminatorMapId(hintEClass);
+
         FeaturePathTypeResolver resolver = new FeaturePathTypeResolver(
-                discriminatorPath, config.getTypeDiscriminatorService());
+                discriminatorPath, config.getTypeDiscriminatorService(), mapId);
         resolver.scan(parser, ctxt);
 
         EClass resolvedEClass = resolver.getResolvedEClass();

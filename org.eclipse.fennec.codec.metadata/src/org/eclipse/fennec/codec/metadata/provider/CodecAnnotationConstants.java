@@ -13,6 +13,8 @@
  */
 package org.eclipse.fennec.codec.metadata.provider;
 
+import java.util.Set;
+
 /**
  * Constants for codec-related EAnnotation sources and detail keys.
  * <p>
@@ -778,5 +780,53 @@ public final class CodecAnnotationConstants {
      */
     public static boolean isStaticDiscriminatorKey(String key) {
         return key != null && key.startsWith(KEY_TYPE_DISCRIMINATOR_PREFIX);
+    }
+
+    // ========================================================================
+    // Dedicated annotation source helpers
+    // ========================================================================
+
+    /**
+     * Known configuration keys for {@code typeMapping/{mapId}} annotations.
+     * Any key NOT in this set is treated as a discriminator-to-EClass mapping entry.
+     */
+    public static final Set<String> TYPE_MAPPING_KNOWN_KEYS = Set.of(
+            KEY_TYPE_DISCRIMINATOR_PATH,
+            KEY_TYPE_DISCRIMINATOR,
+            KEY_FALLBACK_STRATEGY,
+            KEY_FALLBACK_ECLASS
+    );
+
+    /**
+     * Known configuration keys for {@code inlineMapping} annotations.
+     * Any key NOT in this set is treated as a discriminator-to-EClass mapping entry.
+     */
+    public static final Set<String> INLINE_MAPPING_KNOWN_KEYS = Set.of(
+            KEY_FALLBACK_STRATEGY,
+            KEY_FALLBACK_ECLASS
+    );
+
+    /**
+     * Extracts the mapId from a {@code typeMapping/{mapId}} annotation source URI.
+     *
+     * @param source the annotation source (e.g., "http://eclipse.org/fennec/codec/typeMapping/iot-sensors")
+     * @return the mapId (e.g., "iot-sensors"), or null if the source is not a typeMapping source
+     */
+    public static String extractMapIdFromSource(String source) {
+        if (source == null || !source.startsWith(TYPE_MAPPING_SOURCE_PREFIX)) {
+            return null;
+        }
+        String mapId = source.substring(TYPE_MAPPING_SOURCE_PREFIX.length());
+        return mapId.isEmpty() ? null : mapId;
+    }
+
+    /**
+     * Checks if the given annotation source is a typeMapping source.
+     *
+     * @param source the annotation source to check
+     * @return true if the source starts with the typeMapping prefix
+     */
+    public static boolean isTypeMappingSource(String source) {
+        return source != null && source.startsWith(TYPE_MAPPING_SOURCE_PREFIX);
     }
 }

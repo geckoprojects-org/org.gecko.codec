@@ -36,8 +36,6 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getDiscriminatorValue <em>Discriminator Value</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getStrategyScope <em>Strategy Scope</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFormatScope <em>Format Scope</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackStrategy <em>Fallback Strategy</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackEClass <em>Fallback EClass</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig()
@@ -76,7 +74,7 @@ public interface TypeSerializationConfig extends BaseTypeConfig {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Feature path to extract discriminator value from JSON (e.g., 'deviceInfo.profileName'). Used with mapId for Named Registry or with inlineTypeMappings for Inline Mapping.
+	 * Feature path to extract discriminator value from JSON (e.g., 'deviceInfo.profileName'). Used with mapId for Named Registry lookup via TypeDiscriminatorService.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Discriminator Path</em>' attribute.
 	 * @see #setDiscriminatorPath(String)
@@ -178,59 +176,5 @@ public interface TypeSerializationConfig extends BaseTypeConfig {
 	 * @generated
 	 */
 	void setFormatScope(StrategyScope value);
-
-	/**
-	 * Returns the value of the '<em><b>Fallback Strategy</b></em>' attribute.
-	 * The default value is <code>"SKIP"</code>.
-	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * What to do when discriminator value is not found in mapping. Default is SKIP (log WARNING, continue to Type Strategy).
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Fallback Strategy</em>' attribute.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy
-	 * @see #setFallbackStrategy(FallbackStrategy)
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig_FallbackStrategy()
-	 * @model default="SKIP"
-	 * @generated
-	 */
-	FallbackStrategy getFallbackStrategy();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackStrategy <em>Fallback Strategy</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Fallback Strategy</em>' attribute.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy
-	 * @see #getFallbackStrategy()
-	 * @generated
-	 */
-	void setFallbackStrategy(FallbackStrategy value);
-
-	/**
-	 * Returns the value of the '<em><b>Fallback EClass</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Explicit fallback EClass URI when discriminator value not found. Required when fallbackStrategy is FALLBACK.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Fallback EClass</em>' attribute.
-	 * @see #setFallbackEClass(String)
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getTypeSerializationConfig_FallbackEClass()
-	 * @model
-	 * @generated
-	 */
-	String getFallbackEClass();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig#getFallbackEClass <em>Fallback EClass</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Fallback EClass</em>' attribute.
-	 * @see #getFallbackEClass()
-	 * @generated
-	 */
-	void setFallbackEClass(String value);
 
 } // TypeSerializationConfig

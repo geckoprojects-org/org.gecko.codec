@@ -14,24 +14,15 @@
  */
 package org.eclipse.fennec.codec.metadata.model.codec.impl;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
-
 import org.eclipse.fennec.codec.metadata.model.codec.CodecPackage;
-import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
-import org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
@@ -48,9 +39,6 @@ import org.eclipse.fennec.codec.metadata.model.codec.TypeSerializationConfig;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ReferenceCodecAspectImpl#getTypeConfig <em>Type Config</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ReferenceCodecAspectImpl#isInheritTypeFromTarget <em>Inherit Type From Target</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ReferenceCodecAspectImpl#isExpand <em>Expand</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ReferenceCodecAspectImpl#getInlineTypeMappings <em>Inline Type Mappings</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ReferenceCodecAspectImpl#getFallbackStrategy <em>Fallback Strategy</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.impl.ReferenceCodecAspectImpl#getFallbackEClass <em>Fallback EClass</em>}</li>
  * </ul>
  *
  * @generated
@@ -115,56 +103,6 @@ public class ReferenceCodecAspectImpl extends FeatureCodecAspectImpl implements 
 	 * @ordered
 	 */
 	protected boolean expand = EXPAND_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getInlineTypeMappings() <em>Inline Type Mappings</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getInlineTypeMappings()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<InlineTypeMapping> inlineTypeMappings;
-
-	/**
-	 * The default value of the '{@link #getFallbackStrategy() <em>Fallback Strategy</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getFallbackStrategy()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final FallbackStrategy FALLBACK_STRATEGY_EDEFAULT = FallbackStrategy.SKIP;
-
-	/**
-	 * The cached value of the '{@link #getFallbackStrategy() <em>Fallback Strategy</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getFallbackStrategy()
-	 * @generated
-	 * @ordered
-	 */
-	protected FallbackStrategy fallbackStrategy = FALLBACK_STRATEGY_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getFallbackEClass() <em>Fallback EClass</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getFallbackEClass()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String FALLBACK_ECLASS_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getFallbackEClass() <em>Fallback EClass</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getFallbackEClass()
-	 * @generated
-	 * @ordered
-	 */
-	protected String fallbackEClass = FALLBACK_ECLASS_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -327,73 +265,12 @@ public class ReferenceCodecAspectImpl extends FeatureCodecAspectImpl implements 
 	 * @generated
 	 */
 	@Override
-	public EList<InlineTypeMapping> getInlineTypeMappings() {
-		if (inlineTypeMappings == null) {
-			inlineTypeMappings = new EObjectContainmentEList<InlineTypeMapping>(InlineTypeMapping.class, this, CodecPackage.REFERENCE_CODEC_ASPECT__INLINE_TYPE_MAPPINGS);
-		}
-		return inlineTypeMappings;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public FallbackStrategy getFallbackStrategy() {
-		return fallbackStrategy;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setFallbackStrategy(FallbackStrategy newFallbackStrategy) {
-		FallbackStrategy oldFallbackStrategy = fallbackStrategy;
-		fallbackStrategy = newFallbackStrategy == null ? FALLBACK_STRATEGY_EDEFAULT : newFallbackStrategy;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_STRATEGY, oldFallbackStrategy, fallbackStrategy));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String getFallbackEClass() {
-		return fallbackEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public void setFallbackEClass(String newFallbackEClass) {
-		String oldFallbackEClass = fallbackEClass;
-		fallbackEClass = newFallbackEClass;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_ECLASS, oldFallbackEClass, fallbackEClass));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case CodecPackage.REFERENCE_CODEC_ASPECT__REFERENCE_CONFIG:
 				return basicSetReferenceConfig(null, msgs);
 			case CodecPackage.REFERENCE_CODEC_ASPECT__TYPE_CONFIG:
 				return basicSetTypeConfig(null, msgs);
-			case CodecPackage.REFERENCE_CODEC_ASPECT__INLINE_TYPE_MAPPINGS:
-				return ((InternalEList<?>)getInlineTypeMappings()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -414,12 +291,6 @@ public class ReferenceCodecAspectImpl extends FeatureCodecAspectImpl implements 
 				return isInheritTypeFromTarget();
 			case CodecPackage.REFERENCE_CODEC_ASPECT__EXPAND:
 				return isExpand();
-			case CodecPackage.REFERENCE_CODEC_ASPECT__INLINE_TYPE_MAPPINGS:
-				return getInlineTypeMappings();
-			case CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_STRATEGY:
-				return getFallbackStrategy();
-			case CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_ECLASS:
-				return getFallbackEClass();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -429,7 +300,6 @@ public class ReferenceCodecAspectImpl extends FeatureCodecAspectImpl implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -444,16 +314,6 @@ public class ReferenceCodecAspectImpl extends FeatureCodecAspectImpl implements 
 				return;
 			case CodecPackage.REFERENCE_CODEC_ASPECT__EXPAND:
 				setExpand((Boolean)newValue);
-				return;
-			case CodecPackage.REFERENCE_CODEC_ASPECT__INLINE_TYPE_MAPPINGS:
-				getInlineTypeMappings().clear();
-				getInlineTypeMappings().addAll((Collection<? extends InlineTypeMapping>)newValue);
-				return;
-			case CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_STRATEGY:
-				setFallbackStrategy((FallbackStrategy)newValue);
-				return;
-			case CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_ECLASS:
-				setFallbackEClass((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -479,15 +339,6 @@ public class ReferenceCodecAspectImpl extends FeatureCodecAspectImpl implements 
 			case CodecPackage.REFERENCE_CODEC_ASPECT__EXPAND:
 				setExpand(EXPAND_EDEFAULT);
 				return;
-			case CodecPackage.REFERENCE_CODEC_ASPECT__INLINE_TYPE_MAPPINGS:
-				getInlineTypeMappings().clear();
-				return;
-			case CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_STRATEGY:
-				setFallbackStrategy(FALLBACK_STRATEGY_EDEFAULT);
-				return;
-			case CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_ECLASS:
-				setFallbackEClass(FALLBACK_ECLASS_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -508,12 +359,6 @@ public class ReferenceCodecAspectImpl extends FeatureCodecAspectImpl implements 
 				return inheritTypeFromTarget != INHERIT_TYPE_FROM_TARGET_EDEFAULT;
 			case CodecPackage.REFERENCE_CODEC_ASPECT__EXPAND:
 				return expand != EXPAND_EDEFAULT;
-			case CodecPackage.REFERENCE_CODEC_ASPECT__INLINE_TYPE_MAPPINGS:
-				return inlineTypeMappings != null && !inlineTypeMappings.isEmpty();
-			case CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_STRATEGY:
-				return fallbackStrategy != FALLBACK_STRATEGY_EDEFAULT;
-			case CodecPackage.REFERENCE_CODEC_ASPECT__FALLBACK_ECLASS:
-				return FALLBACK_ECLASS_EDEFAULT == null ? fallbackEClass != null : !FALLBACK_ECLASS_EDEFAULT.equals(fallbackEClass);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -532,10 +377,6 @@ public class ReferenceCodecAspectImpl extends FeatureCodecAspectImpl implements 
 		result.append(inheritTypeFromTarget);
 		result.append(", expand: ");
 		result.append(expand);
-		result.append(", fallbackStrategy: ");
-		result.append(fallbackStrategy);
-		result.append(", fallbackEClass: ");
-		result.append(fallbackEClass);
 		result.append(')');
 		return result.toString();
 	}

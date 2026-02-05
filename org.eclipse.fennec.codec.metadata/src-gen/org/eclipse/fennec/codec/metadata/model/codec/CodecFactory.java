@@ -109,15 +109,6 @@ public interface CodecFactory extends EFactory {
 	ReferenceCodecAspect createReferenceCodecAspect();
 
 	/**
-	 * Returns a new object of class '<em>Inline Type Mapping</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Inline Type Mapping</em>'.
-	 * @generated
-	 */
-	InlineTypeMapping createInlineTypeMapping();
-
-	/**
 	 * Returns a new object of class '<em>Package Profile</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

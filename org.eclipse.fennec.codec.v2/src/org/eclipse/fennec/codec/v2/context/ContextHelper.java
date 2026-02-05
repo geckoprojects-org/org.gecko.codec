@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.v2.context;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.v2.util.DiagnosticCollector;
 
@@ -124,6 +125,13 @@ public final class ContextHelper {
      * </p>
      */
     public static final String FEATURE_TYPE_HINT = "CODEC_FEATURE_TYPE_HINT";
+
+    /**
+     * Context attribute key for the current containment EReference being serialized.
+     * @deprecated Migrated to {@link org.eclipse.fennec.codec.context.ContextHelper}.
+     */
+    @Deprecated
+    public static final String CURRENT_SERIALIZATION_REFERENCE = "CODEC_CURRENT_SERIALIZATION_REFERENCE";
 
     private ContextHelper() {
         // Static helper class
@@ -243,6 +251,29 @@ public final class ContextHelper {
      */
     public static void clearSuppressType(SerializationContext ctxt) {
         ctxt.setAttribute(SUPPRESS_TYPE, null);
+    }
+
+    // ========================================================================
+    // Current Serialization Reference (for inline mapping reverse lookup)
+    // ========================================================================
+
+    /** @deprecated Migrated to {@link org.eclipse.fennec.codec.context.ContextHelper}. */
+    @Deprecated
+    public static EReference getCurrentSerializationReference(SerializationContext ctxt) {
+        Object value = ctxt.getAttribute(CURRENT_SERIALIZATION_REFERENCE);
+        return value instanceof EReference ref ? ref : null;
+    }
+
+    /** @deprecated Migrated to {@link org.eclipse.fennec.codec.context.ContextHelper}. */
+    @Deprecated
+    public static void setCurrentSerializationReference(SerializationContext ctxt, EReference reference) {
+        ctxt.setAttribute(CURRENT_SERIALIZATION_REFERENCE, reference);
+    }
+
+    /** @deprecated Migrated to {@link org.eclipse.fennec.codec.context.ContextHelper}. */
+    @Deprecated
+    public static void clearCurrentSerializationReference(SerializationContext ctxt) {
+        ctxt.setAttribute(CURRENT_SERIALIZATION_REFERENCE, null);
     }
 
     // ========================================================================

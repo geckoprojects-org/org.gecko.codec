@@ -205,10 +205,17 @@ public class ReferenceSerializationEntry implements SerializationEntry {
         if (reference.isContainment() && isCrossDocument(gen, target)) {
             writeReferenceObject(target, gen, true, ctxt);
         } else if (reference.isContainment()) {
-            if (containmentWriter != null) {
-                writeWithContainmentWriter(target, gen, ctxt);
-            } else {
-                ctxt.writeValue(gen, target);
+            // Set the current reference for inline mapping reverse lookup.
+            // TypeSerializationEntry uses this to find the correct discriminator value.
+            ContextHelper.setCurrentSerializationReference(ctxt, reference);
+            try {
+                if (containmentWriter != null) {
+                    writeWithContainmentWriter(target, gen, ctxt);
+                } else {
+                    ctxt.writeValue(gen, target);
+                }
+            } finally {
+                ContextHelper.clearCurrentSerializationReference(ctxt);
             }
         } else if (shouldExpandReference(target)) {
             serializeExpandedReference(target, gen, ctxt);

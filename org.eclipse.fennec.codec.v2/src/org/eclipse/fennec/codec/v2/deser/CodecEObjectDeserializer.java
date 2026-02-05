@@ -199,7 +199,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                 String rawTypeValue = readTypeValueAsString(parser);
 
                 // Now resolve the type using the raw value
-                resolvedEClass = resolveTypeFromValue(rawTypeValue, state, hintEClass, schemaValue, ctxt);
+                resolvedEClass = resolveTypeFromValue(rawTypeValue, state, hintEClass, schemaValue, ctxt, emfContext);
                 state.setResolvedEClass(resolvedEClass);
                 typeFieldProcessed = true;
 
@@ -323,10 +323,12 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
      * @param hintEClass optional hint EClass for context
      * @param schemaValue optional schema value for SCHEMA_AND_TYPE format
      * @param ctxt the deserialization context
+     * @param emfContext optional EMF context for inline mapping resolution (may be null)
      * @return the resolved EClass, or null if resolution fails
      */
     private EClass resolveTypeFromValue(String typeValue, DeserializationState state,
-            EClass hintEClass, String schemaValue, DeserializationContext ctxt) {
+            EClass hintEClass, String schemaValue, DeserializationContext ctxt,
+            EMFCodecReadContext emfContext) {
         if (typeValue == null) {
             return hintEClass;
         }
@@ -353,8 +355,14 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             effectiveTypeValue = schemaValue + "#//" + typeValue;
         }
 
+        // Extract current reference from EMF context for inline mapping resolution
+        EReference currentReference = null;
+        if (emfContext != null && emfContext.getCurrentFeature() instanceof EReference ref) {
+            currentReference = ref;
+        }
+
         // Delegate to TypeDeserializationEntry for consistent resolution logic
-        EClass resolved = typeEntry.resolveEClass(effectiveTypeValue, hintEClass, ctxt);
+        EClass resolved = typeEntry.resolveEClass(effectiveTypeValue, hintEClass, ctxt, currentReference);
         if (resolved != null) {
             state.setResolvedEClass(resolved);
             return resolved;
@@ -696,6 +704,18 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
     }
 
     /**
+     * Gets the typeMapId for an EClass from the TypeDiscriminatorService.
+     * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.CodecEObjectDeserializer}.
+     */
+    @Deprecated
+    private String getDiscriminatorMapId(EClass eClass) {
+        if (eClass == null || config.getTypeDiscriminatorService() == null) {
+            return null;
+        }
+        return config.getTypeDiscriminatorService().getMapIdForEClass(eClass);
+    }
+
+    /**
      * Deserializes an EObject using featurePath-based type resolution.
      * <p>
      * This method is used when the type information is embedded in the content
@@ -719,9 +739,12 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
         LOGGER.fine("Using featurePath-based type resolution: " + discriminatorPath);
 
+        // Extract mapId for targeted registry resolution (v2 deprecated path)
+        String mapId = getDiscriminatorMapId(hintEClass);
+
         // Create resolver and scan the content
         FeaturePathTypeResolver resolver = new FeaturePathTypeResolver(
-                discriminatorPath, config.getTypeDiscriminatorService());
+                discriminatorPath, config.getTypeDiscriminatorService(), mapId);
         resolver.scan(parser, ctxt);
 
         // Get the resolved EClass

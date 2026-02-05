@@ -16,8 +16,6 @@ package org.eclipse.fennec.codec.metadata.provider;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.CODEC_SOURCE;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_ENUM_SERIALIZATION;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_EXPAND;
-import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_FALLBACK_ECLASS;
-import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_FALLBACK_STRATEGY;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_FORCE_READ;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_FORCE_WRITE;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_ID_FEATURES;
@@ -70,8 +68,6 @@ import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstant
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_TYPE_VALUE_WRITER_NAME;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_VALUE_READER_NAME;
 import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.KEY_VALUE_WRITER_NAME;
-import static org.eclipse.fennec.codec.metadata.provider.CodecAnnotationConstants.extractInlineMappingValue;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
@@ -86,11 +82,9 @@ import org.eclipse.fennec.codec.metadata.model.codec.ClassCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecClassProfile;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecFactory;
 import org.eclipse.fennec.codec.metadata.model.codec.CodecPackageProfile;
-import org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.FeatureSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.IdSerializationConfig;
-import org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect;
 import org.eclipse.fennec.codec.metadata.model.codec.ReferenceSerializationConfig;
 import org.eclipse.fennec.codec.metadata.model.codec.SuperTypeSerializationConfig;
@@ -160,6 +154,18 @@ public class CodecAspectProvider implements AspectProvider {
         EAnnotation codecAnnotation = eClass.getEAnnotation(CODEC_SOURCE);
         if (codecAnnotation != null) {
             parseClassAnnotation(aspect, codecAnnotation, eClass);
+        }
+
+        // Scan for typeMapping/{mapId} dedicated annotation sources
+        parseTypeMappingAnnotations(aspect, eClass);
+
+        // Misconfig: inlineMapping annotation on EClass → WARNING
+        EAnnotation inlineMappingOnClass = eClass.getEAnnotation(CodecAnnotationConstants.INLINE_MAPPING_SOURCE);
+        if (inlineMappingOnClass != null) {
+            addClassDiagnostic(aspect, DiagnosticSeverity.WARNING,
+                    "inlineMapping annotation on EClass '" + eClass.getName()
+                            + "' is invalid — inline mappings are per-reference only (use on EReference)",
+                    CodecAnnotationConstants.INLINE_MAPPING_SOURCE);
         }
 
         return aspect;
@@ -247,14 +253,9 @@ public class CodecAspectProvider implements AspectProvider {
             // Parse expand flag
             AnnotationParseHelper.ifBooleanPresent(details, KEY_EXPAND, aspect::setExpand);
 
-            // Parse inline type mappings (inlineMapping.{value}={EClass URI})
-            parseInlineTypeMappings(aspect, details);
-
-            // Parse fallback strategy for inline mappings
-            AnnotationParseHelper.ifEnumPresent(details, KEY_FALLBACK_STRATEGY, FallbackStrategy.class, aspect::setFallbackStrategy);
-
-            // Parse fallback EClass URI
-            AnnotationParseHelper.ifStringPresent(details, KEY_FALLBACK_ECLASS, aspect::setFallbackEClass);
+            // Note: inline type mappings are now on dedicated inlineMapping annotation source,
+            // parsed by the caller via TypeDiscriminatorService.registerInlineMappings().
+            // Fallback strategy and fallbackEClass are also on the inlineMapping source.
 
             // Strictness keys on EReference → WARNING (class-only)
             checkForStrictnessKeysOnFeature(aspect, details, reference);
@@ -262,6 +263,19 @@ public class CodecAspectProvider implements AspectProvider {
             // Metadata merge keys on EReference → ERROR (class-only)
             checkForMetadataMergeKeysOnFeature(aspect, details, reference);
         }
+
+        // Misconfig: typeMapping/{mapId} annotation on EReference → ERROR
+        for (EAnnotation ann : reference.getEAnnotations()) {
+            if (CodecAnnotationConstants.isTypeMappingSource(ann.getSource())) {
+                addDiagnostic(aspect, DiagnosticSeverity.ERROR,
+                        "typeMapping annotation on EReference '" + reference.getName()
+                                + "' is invalid — type mapping registry is class-level (use on EClass)",
+                        ann.getSource());
+            }
+        }
+
+        // Note: inlineMapping annotation on EReference is valid and expected.
+        // It is parsed externally by TypeDiscriminatorService.registerInlineMappings().
 
         return aspect;
     }
@@ -435,8 +449,8 @@ public class CodecAspectProvider implements AspectProvider {
         // Parse inherit flag
         AnnotationParseHelper.ifBooleanPresent(details, KEY_INHERIT, aspect::setInheritFromParent);
 
-        // Parse type mapping discriminator (for concrete classes in MAPPED strategy)
-        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_DISCRIMINATOR, aspect::setDiscriminatorValue);
+        // Note: typeDiscriminator is now parsed from typeMapping/{mapId} annotation source
+        // in parseTypeMappingAnnotations(), not from the main codec annotation.
 
         // Parse strictness flags (class-level deserialization behavior)
         AnnotationParseHelper.ifBooleanPresent(details, KEY_STRICT_ON_UNKNOWN, aspect::setStrictOnUnknown);
@@ -445,6 +459,50 @@ public class CodecAspectProvider implements AspectProvider {
         // Parse metadata merge flags (class-level output assembly)
         AnnotationParseHelper.ifBooleanPresent(details, KEY_METADATA_MERGE, aspect::setMetadataMerge);
         AnnotationParseHelper.ifStringPresent(details, KEY_METADATA_KEY, aspect::setMetadataKey);
+    }
+
+    /**
+     * Parses {@code typeMapping/{mapId}} dedicated annotation sources on an EClass.
+     * <p>
+     * Extracts mapId from the annotation source URI, sets it on the type config,
+     * and parses discriminatorPath, typeDiscriminator, and discriminatorValue.
+     * Static mappings and fallback config are NOT stored on the model — they are
+     * registered directly with {@link TypeDiscriminatorService} by the caller.
+     * </p>
+     */
+    private void parseTypeMappingAnnotations(ClassCodecAspect aspect, EClass eClass) {
+        for (EAnnotation ann : eClass.getEAnnotations()) {
+            String mapId = CodecAnnotationConstants.extractMapIdFromSource(ann.getSource());
+            if (mapId == null) {
+                continue;
+            }
+
+            Map<String, String> details = ann.getDetails().map();
+
+            // Ensure type config exists
+            TypeSerializationConfig typeConfig = aspect.getTypeConfig();
+            if (typeConfig == null) {
+                typeConfig = factory.createTypeSerializationConfig();
+                aspect.setTypeConfig(typeConfig);
+            }
+
+            // Set mapId from annotation source URI
+            typeConfig.setMapId(mapId);
+
+            // Parse discriminator path (base class defines where to find discriminator in JSON)
+            AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_DISCRIMINATOR_PATH, typeConfig::setDiscriminatorPath);
+
+            // Parse discriminator value (concrete class registers itself)
+            String discriminatorValue = details.get(KEY_TYPE_DISCRIMINATOR);
+            if (discriminatorValue != null && !discriminatorValue.isEmpty()) {
+                typeConfig.setDiscriminatorValue(discriminatorValue);
+                aspect.setDiscriminatorValue(discriminatorValue);
+            }
+
+            // Note: static mappings (other key/value pairs) and fallback config
+            // (fallbackStrategy, fallbackEClass) are NOT stored on the model.
+            // They are registered with TypeDiscriminatorService during metadata processing.
+        }
     }
 
     // ========================================================================
@@ -561,13 +619,11 @@ public class CodecAspectProvider implements AspectProvider {
         // Type key
         AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_KEY, config::setTypeKey);
 
-        // Discriminator path - orthogonal to strategy, provides additional resolution
-        // Class-only: defines where to find discriminator value in JSON
-        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_DISCRIMINATOR_PATH, config::setDiscriminatorPath);
+        // Note: discriminatorPath and mapId are now parsed from typeMapping/{mapId}
+        // annotation source in parseTypeMappingAnnotations(), not from main codec annotation.
 
-        // Map ID for discriminator registry lookup
-        // Class-only: identifies the discriminator registry
-        AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_MAP_ID, config::setMapId);
+        // Note: fallbackStrategy and fallbackEClass are now managed by
+        // TypeDiscriminatorRegistry/TypeDiscriminatorService, not stored on the model.
 
         // Format (PLAIN/STRUCTURED)
         AnnotationParseHelper.ifEnumPresent(details, KEY_TYPE_FORMAT, SerializationFormat.class, config::setFormat);
@@ -577,12 +633,6 @@ public class CodecAspectProvider implements AspectProvider {
 
         // Name key
         AnnotationParseHelper.ifStringPresent(details, KEY_TYPE_NAME_KEY, config::setNameKey);
-
-        // Fallback strategy for discriminator resolution
-        AnnotationParseHelper.ifEnumPresent(details, KEY_FALLBACK_STRATEGY, FallbackStrategy.class, config::setFallbackStrategy);
-
-        // Fallback EClass URI
-        AnnotationParseHelper.ifStringPresent(details, KEY_FALLBACK_ECLASS, config::setFallbackEClass);
 
         return config;
     }
@@ -672,25 +722,6 @@ public class CodecAspectProvider implements AspectProvider {
         return config;
     }
 
-    /**
-     * Parses inline type mappings from annotation details.
-     * <p>
-     * Looks for keys matching "inlineMapping.{discriminatorValue}" and creates
-     * InlineTypeMapping objects for each.
-     * </p>
-     */
-    private void parseInlineTypeMappings(ReferenceCodecAspect aspect, Map<String, String> details) {
-        for (Map.Entry<String, String> entry : details.entrySet()) {
-            String discriminatorValue = extractInlineMappingValue(entry.getKey());
-            if (discriminatorValue != null) {
-                InlineTypeMapping mapping = factory.createInlineTypeMapping();
-                mapping.setDiscriminatorValue(discriminatorValue);
-                mapping.setTargetClass(entry.getValue());
-                aspect.getInlineTypeMappings().add(mapping);
-            }
-        }
-    }
-
     // ========================================================================
     // Config Detection Helpers
     // ========================================================================
@@ -719,13 +750,11 @@ public class CodecAspectProvider implements AspectProvider {
     private boolean hasTypeConfig(Map<String, String> details) {
         return details.containsKey(KEY_TYPE_STRATEGY)
                 || details.containsKey(KEY_TYPE_KEY)
-                || details.containsKey(KEY_TYPE_MAP_ID)
-                || details.containsKey(KEY_TYPE_DISCRIMINATOR_PATH)
                 || details.containsKey(KEY_TYPE_FORMAT)
                 || details.containsKey(KEY_TYPE_SCHEMA_KEY)
-                || details.containsKey(KEY_TYPE_NAME_KEY)
-                || details.containsKey(KEY_FALLBACK_STRATEGY)
-                || details.containsKey(KEY_FALLBACK_ECLASS);
+                || details.containsKey(KEY_TYPE_NAME_KEY);
+        // Note: typeMapId, typeDiscriminatorPath, fallbackStrategy, fallbackEClass
+        // are now on typeMapping/{mapId} dedicated annotation source, not main codec
     }
 
     /**

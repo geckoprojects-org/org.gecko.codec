@@ -247,12 +247,12 @@ class CodecAspectProviderMisconfigTest {
 
         /**
          * @MISCONFIG @SPEC(08-discriminator-mapping.md, 06-type.md#T-V7)
-         * Tests that typeDiscriminator value on EReference is ignored with ERROR diagnostic.
-         * This key is class-only per spec.
+         * Tests that typeMapping/{mapId} source on EReference is ignored with ERROR diagnostic.
+         * typeMapping is class-only per spec.
          */
         @Test
-        @DisplayName("typeDiscriminator on EReference - ignored with ERROR diagnostic (T-V7)")
-        void misconfig_typeDiscriminatorOnReference_ignored() {
+        @DisplayName("typeMapping source on EReference - ignored with ERROR diagnostic (T-V7)")
+        void misconfig_typeMappingOnReference_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "RefWithDiscriminatorMisplaced");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
@@ -262,11 +262,11 @@ class CodecAspectProviderMisconfigTest {
             assertNotNull(aspect.getTypeConfig());
             assertEquals(TypeStrategy.NAME, aspect.getTypeConfig().getStrategy());
 
-            // T-V7: typeDiscriminator on EReference → ERROR diagnostic
+            // typeMapping source on EReference → ERROR diagnostic
             assertTrue(aspect.getDiagnostics().stream()
-                    .anyMatch(d -> "typeDiscriminator".equals(d.getKey())
-                            && d.getSeverity() == DiagnosticSeverity.ERROR),
-                "Should have ERROR diagnostic for typeDiscriminator on EReference");
+                    .anyMatch(d -> d.getSeverity() == DiagnosticSeverity.ERROR
+                            && d.getMessage().contains("typeMapping")),
+                "Should have ERROR diagnostic for typeMapping source on EReference");
         }
 
         /**
@@ -291,18 +291,18 @@ class CodecAspectProviderMisconfigTest {
                 "Should have one diagnostic for ignored typeDiscriminatorPath");
             assertEquals("typeDiscriminatorPath", aspect.getDiagnostics().get(0).getKey());
 
-            // Inline mappings should still be parsed (they ARE valid on EReference)
-            assertEquals(3, aspect.getInlineTypeMappings().size());
+            // Inline mappings are now handled by TypeDiscriminatorService via dedicated inlineMapping source,
+            // not stored on ReferenceCodecAspect
         }
 
         /**
          * @MISCONFIG @SPEC(08-discriminator-mapping.md)
-         * Tests that typeMapId on EReference is ignored.
-         * This key is class-only per spec context.
+         * Tests that typeMapping/{mapId} source on EReference is ignored with ERROR diagnostic.
+         * typeMapping is class-only per spec.
          */
         @Test
-        @DisplayName("typeMapId on EReference - ignored")
-        void misconfig_typeMapIdOnReference_ignored() {
+        @DisplayName("typeMapping source on EReference - ignored with ERROR diagnostic")
+        void misconfig_typeMappingSourceOnReference_ignored() {
             EClass entityClass = helper.getEClass(testPackage, "RefWithTypeMapIdMisplaced");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
@@ -312,8 +312,11 @@ class CodecAspectProviderMisconfigTest {
             assertNotNull(aspect.getTypeConfig());
             assertEquals(TypeStrategy.NAME, aspect.getTypeConfig().getStrategy());
 
-            // typeMapId should not be set on the reference type config
-            assertNull(aspect.getTypeConfig().getMapId());
+            // typeMapping source on EReference → ERROR diagnostic
+            assertTrue(aspect.getDiagnostics().stream()
+                    .anyMatch(d -> d.getSeverity() == DiagnosticSeverity.ERROR
+                            && d.getMessage().contains("typeMapping")),
+                "Should have ERROR diagnostic for typeMapping source on EReference");
         }
 
         /**
@@ -361,13 +364,8 @@ class CodecAspectProviderMisconfigTest {
                 "Should have one diagnostic for ignored typeDiscriminatorPath");
             assertEquals("typeDiscriminatorPath", aspect.getDiagnostics().get(0).getKey());
 
-            // 3. Valid keys should still be parsed
-            assertEquals(org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy.SKIP,
-                aspect.getFallbackStrategy());
-            assertEquals("http://test.codec.example.org/1.0#//Contact", aspect.getFallbackEClass());
-
-            // Should have inline mapping for friend
-            assertEquals(1, aspect.getInlineTypeMappings().size());
+            // 3. Inline mappings and fallback are now handled by TypeDiscriminatorService
+            //    via dedicated inlineMapping source, not stored on ReferenceCodecAspect
         }
     }
 
@@ -674,12 +672,12 @@ class CodecAspectProviderMisconfigTest {
 
         /**
          * @MISCONFIG @SPEC(06-type.md#T-V7)
-         * Tests that typeDiscriminator on EReference generates ERROR diagnostic.
-         * Dedicated test with only typeDiscriminator as the invalid key.
+         * Tests that typeMapping/{mapId} source on EReference generates ERROR diagnostic.
+         * Dedicated test with only typeMapping source as the invalid annotation.
          */
         @Test
-        @DisplayName("T-V7: typeDiscriminator on EReference (only) - ERROR diagnostic")
-        void validation_typeDiscriminatorOnReference_errorDiagnostic() {
+        @DisplayName("T-V7: typeMapping source on EReference (only) - ERROR diagnostic")
+        void validation_typeMappingOnReference_errorDiagnostic() {
             EClass entityClass = helper.getEClass(testPackage, "RefWithTypeDiscriminatorOnly");
             EReference addressRef = (EReference) helper.getFeature(entityClass, "address");
 
@@ -688,12 +686,13 @@ class CodecAspectProviderMisconfigTest {
             // Valid key was parsed
             assertEquals("addr", aspect.getEffectiveKey());
 
-            // T-V7: typeDiscriminator on EReference → ERROR
+            // typeMapping source on EReference → ERROR
             assertEquals(1, aspect.getDiagnostics().size(),
-                "Should have exactly 1 diagnostic for typeDiscriminator on EReference");
+                "Should have exactly 1 diagnostic for typeMapping source on EReference");
             MetadataDiagnostic diagnostic = aspect.getDiagnostics().get(0);
-            assertEquals("typeDiscriminator", diagnostic.getKey());
             assertEquals(DiagnosticSeverity.ERROR, diagnostic.getSeverity());
+            assertTrue(diagnostic.getMessage().contains("typeMapping"),
+                "Diagnostic message should reference typeMapping");
         }
 
         // ---- T-V30/T-V31: Deprecated typeInclude ----

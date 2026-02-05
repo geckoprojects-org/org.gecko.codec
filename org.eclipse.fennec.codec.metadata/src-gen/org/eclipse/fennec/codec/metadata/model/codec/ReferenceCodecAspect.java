@@ -14,8 +14,6 @@
  */
 package org.eclipse.fennec.codec.metadata.model.codec;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.osgi.annotation.versioning.ProviderType;
 
 /**
@@ -35,9 +33,6 @@ import org.osgi.annotation.versioning.ProviderType;
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getTypeConfig <em>Type Config</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#isInheritTypeFromTarget <em>Inherit Type From Target</em>}</li>
  *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#isExpand <em>Expand</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getInlineTypeMappings <em>Inline Type Mappings</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getFallbackStrategy <em>Fallback Strategy</em>}</li>
- *   <li>{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getFallbackEClass <em>Fallback EClass</em>}</li>
  * </ul>
  *
  * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getReferenceCodecAspect()
@@ -147,74 +142,5 @@ public interface ReferenceCodecAspect extends FeatureCodecAspect {
 	 * @generated
 	 */
 	void setExpand(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Inline Type Mappings</b></em>' containment reference list.
-	 * The list contents are of type {@link org.eclipse.fennec.codec.metadata.model.codec.InlineTypeMapping}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Inline type mappings for discriminator-based type resolution. Alternative to Named Registry when mappings are simple and static. Configured via EAnnotation details: inlineMapping.{discriminatorValue}={EClass URI}.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Inline Type Mappings</em>' containment reference list.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getReferenceCodecAspect_InlineTypeMappings()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<InlineTypeMapping> getInlineTypeMappings();
-
-	/**
-	 * Returns the value of the '<em><b>Fallback Strategy</b></em>' attribute.
-	 * The default value is <code>"SKIP"</code>.
-	 * The literals are from the enumeration {@link org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * What to do when discriminator value from inline mapping is not found. Default is SKIP (log WARNING, continue to Type Strategy).
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Fallback Strategy</em>' attribute.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy
-	 * @see #setFallbackStrategy(FallbackStrategy)
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getReferenceCodecAspect_FallbackStrategy()
-	 * @model default="SKIP"
-	 * @generated
-	 */
-	FallbackStrategy getFallbackStrategy();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getFallbackStrategy <em>Fallback Strategy</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Fallback Strategy</em>' attribute.
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.FallbackStrategy
-	 * @see #getFallbackStrategy()
-	 * @generated
-	 */
-	void setFallbackStrategy(FallbackStrategy value);
-
-	/**
-	 * Returns the value of the '<em><b>Fallback EClass</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Explicit fallback EClass URI when inline mapping discriminator value not found. Required when fallbackStrategy is FALLBACK.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Fallback EClass</em>' attribute.
-	 * @see #setFallbackEClass(String)
-	 * @see org.eclipse.fennec.codec.metadata.model.codec.CodecPackage#getReferenceCodecAspect_FallbackEClass()
-	 * @model
-	 * @generated
-	 */
-	String getFallbackEClass();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.fennec.codec.metadata.model.codec.ReferenceCodecAspect#getFallbackEClass <em>Fallback EClass</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Fallback EClass</em>' attribute.
-	 * @see #getFallbackEClass()
-	 * @generated
-	 */
-	void setFallbackEClass(String value);
 
 } // ReferenceCodecAspect

@@ -102,7 +102,7 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="discriminatorPath" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Feature path to extract discriminator value from JSON (e.g., 'deviceInfo.profileName'). Used with mapId for Named Registry or with inlineTypeMappings for Inline Mapping."/>
+        <details key="documentation" value="Feature path to extract discriminator value from JSON (e.g., 'deviceInfo.profileName'). Used with mapId for Named Registry lookup via TypeDiscriminatorService."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="discriminatorValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
@@ -120,17 +120,6 @@
         defaultValueLiteral="ALL">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Where the type format applies in the object graph. Independent from strategyScope."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackStrategy" eType="#//FallbackStrategy"
-        defaultValueLiteral="SKIP">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="What to do when discriminator value is not found in mapping. Default is SKIP (log WARNING, continue to Type Strategy)."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackEClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Explicit fallback EClass URI when discriminator value not found. Required when fallbackStrategy is FALLBACK."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -389,38 +378,6 @@
         defaultValueLiteral="false">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Whether to expand (inline) referenced objects."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="inlineTypeMappings" upperBound="-1"
-        eType="#//InlineTypeMapping" containment="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Inline type mappings for discriminator-based type resolution. Alternative to Named Registry when mappings are simple and static. Configured via EAnnotation details: inlineMapping.{discriminatorValue}={EClass URI}."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackStrategy" eType="#//FallbackStrategy"
-        defaultValueLiteral="SKIP">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="What to do when discriminator value from inline mapping is not found. Default is SKIP (log WARNING, continue to Type Strategy)."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fallbackEClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Explicit fallback EClass URI when inline mapping discriminator value not found. Required when fallbackStrategy is FALLBACK."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="InlineTypeMapping">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Maps a discriminator value to a target EClass for inline type resolution. Used as an alternative to Named Registry when mappings are simple and static."/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="discriminatorValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="The discriminator value from JSON (e.g., 'FooBar')."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="The target EClass URI (e.g., 'http://example.org#//Friend')."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

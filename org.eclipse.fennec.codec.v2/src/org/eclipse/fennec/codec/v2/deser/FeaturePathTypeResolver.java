@@ -16,7 +16,10 @@ package org.eclipse.fennec.codec.v2.deser;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.v2.buffer.CodecTokenBuffer;
 
@@ -57,6 +60,7 @@ public class FeaturePathTypeResolver {
 
     private final String discriminatorPath;
     private final TypeDiscriminatorService typeDiscriminatorService;
+    private final String mapId;
 
     /** The resolved EClass (set after scanning) */
     private EClass resolvedEClass;
@@ -72,10 +76,26 @@ public class FeaturePathTypeResolver {
      *
      * @param discriminatorPath the feature path (e.g., "info.profileName" or "messageType")
      * @param typeDiscriminatorService the service for resolving discriminator values to EClasses
+     * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.FeaturePathTypeResolver}.
      */
+    @Deprecated
     public FeaturePathTypeResolver(String discriminatorPath, TypeDiscriminatorService typeDiscriminatorService) {
+        this(discriminatorPath, typeDiscriminatorService, null);
+    }
+
+    /**
+     * Creates a new FeaturePathTypeResolver with a specific registry mapId.
+     *
+     * @param discriminatorPath the feature path
+     * @param typeDiscriminatorService the service for resolving discriminator values to EClasses
+     * @param mapId the registry map ID, or null to search all registries
+     * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.FeaturePathTypeResolver}.
+     */
+    @Deprecated
+    public FeaturePathTypeResolver(String discriminatorPath, TypeDiscriminatorService typeDiscriminatorService, String mapId) {
         this.discriminatorPath = Objects.requireNonNull(discriminatorPath, "discriminatorPath must not be null");
         this.typeDiscriminatorService = Objects.requireNonNull(typeDiscriminatorService, "typeDiscriminatorService must not be null");
+        this.mapId = mapId;
     }
 
     /**
@@ -137,7 +157,7 @@ public class FeaturePathTypeResolver {
 
                         if (token == JsonToken.VALUE_STRING) {
                             foundDiscriminatorValue = parser.getString();
-                            resolvedEClass = typeDiscriminatorService.getEClassFromAny(foundDiscriminatorValue);
+                            resolvedEClass = resolveDiscriminator(foundDiscriminatorValue);
 
                             if (resolvedEClass != null) {
                                 LOGGER.fine("Resolved type via featurePath '" + discriminatorPath +
@@ -171,6 +191,19 @@ public class FeaturePathTypeResolver {
             LOGGER.warning("Could not resolve EClass from featurePath '" + discriminatorPath +
                     "'. Discriminator value found: " + foundDiscriminatorValue);
         }
+    }
+
+    /**
+     * @deprecated Migrated to {@link org.eclipse.fennec.codec.deser.FeaturePathTypeResolver}.
+     */
+    @Deprecated
+    private EClass resolveDiscriminator(String discriminatorValue) {
+        if (mapId != null) {
+            return typeDiscriminatorService.resolve(mapId, discriminatorValue,
+                    FeaturePathTypeResolver::resolveEClassFromUri);
+        }
+        return typeDiscriminatorService.resolveFromAny(discriminatorValue,
+                FeaturePathTypeResolver::resolveEClassFromUri);
     }
 
     /**
@@ -226,5 +259,31 @@ public class FeaturePathTypeResolver {
      */
     public static boolean hasDiscriminatorPath(String path) {
         return path != null && !path.isEmpty();
+    }
+
+    /**
+     * Resolves an EClass from a URI string using the global package registry.
+     */
+    static EClass resolveEClassFromUri(String uriStr) {
+        if (uriStr == null || uriStr.isEmpty()) {
+            return null;
+        }
+        try {
+            URI uri = URI.createURI(uriStr);
+            String fragment = uri.fragment();
+            if (fragment != null && fragment.startsWith("//")) {
+                String nsUri = uri.trimFragment().toString();
+                EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(nsUri);
+                if (ePackage != null) {
+                    EClassifier classifier = ePackage.getEClassifier(fragment.substring(2));
+                    if (classifier instanceof EClass eClass) {
+                        return eClass;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warning("Failed to resolve EClass URI: " + uriStr + " — " + e.getMessage());
+        }
+        return null;
     }
 }

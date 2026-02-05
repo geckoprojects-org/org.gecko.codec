@@ -16,6 +16,7 @@ package org.eclipse.fennec.codec.context;
 import java.util.Map;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 
@@ -122,6 +123,17 @@ public final class ContextHelper {
      * </p>
      */
     public static final String FEATURE_TYPE_HINT = "CODEC_FEATURE_TYPE_HINT";
+
+    /**
+     * Context attribute key for the current containment EReference being serialized.
+     * <p>
+     * Set by {@link org.eclipse.fennec.codec.ser.ReferenceSerializationEntry} before
+     * serializing contained objects. Used by {@link org.eclipse.fennec.codec.ser.TypeSerializationEntry}
+     * to perform inline mapping reverse lookup: resolving the correct discriminator
+     * value for the contained object's EClass within the reference's scope.
+     * </p>
+     */
+    public static final String CURRENT_SERIALIZATION_REFERENCE = "CODEC_CURRENT_SERIALIZATION_REFERENCE";
 
     private ContextHelper() {
         // Static helper class
@@ -241,6 +253,40 @@ public final class ContextHelper {
      */
     public static void clearSuppressType(SerializationContext ctxt) {
         ctxt.setAttribute(SUPPRESS_TYPE, null);
+    }
+
+    // ========================================================================
+    // Current Serialization Reference (for inline mapping reverse lookup)
+    // ========================================================================
+
+    /**
+     * Gets the current containment EReference being serialized.
+     *
+     * @param ctxt the serialization context
+     * @return the current EReference, or null if not in a containment context
+     */
+    public static EReference getCurrentSerializationReference(SerializationContext ctxt) {
+        Object value = ctxt.getAttribute(CURRENT_SERIALIZATION_REFERENCE);
+        return value instanceof EReference ref ? ref : null;
+    }
+
+    /**
+     * Sets the current containment EReference being serialized.
+     *
+     * @param ctxt the serialization context
+     * @param reference the containment EReference (may be null to clear)
+     */
+    public static void setCurrentSerializationReference(SerializationContext ctxt, EReference reference) {
+        ctxt.setAttribute(CURRENT_SERIALIZATION_REFERENCE, reference);
+    }
+
+    /**
+     * Clears the current serialization reference.
+     *
+     * @param ctxt the serialization context
+     */
+    public static void clearCurrentSerializationReference(SerializationContext ctxt) {
+        ctxt.setAttribute(CURRENT_SERIALIZATION_REFERENCE, null);
     }
 
     // ========================================================================

@@ -18,7 +18,9 @@ import java.util.Objects;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveSuperTypeConfig;
 import org.eclipse.fennec.codec.v2.config.effective.EffectiveTypeConfig;
@@ -179,10 +181,12 @@ public class TypeSerializationEntry implements SerializationEntry {
             }
             gen.writeStringProperty(config.getTypeKey(), eClass.getName());
         } else {
-            // All other strategies: single field with typeValue
-            // Apply smart compression if enabled and same schema
-            String effectiveTypeValue = applySmartCompression(typeValue, ctxt);
-            gen.writeStringProperty(config.getTypeKey(), effectiveTypeValue);
+            // Check for inline mapping discriminator override
+            String effectiveValue = resolveInlineMappingDiscriminator(ctxt);
+            if (effectiveValue == null) {
+                effectiveValue = applySmartCompression(typeValue, ctxt);
+            }
+            gen.writeStringProperty(config.getTypeKey(), effectiveValue);
         }
     }
 
@@ -266,9 +270,11 @@ public class TypeSerializationEntry implements SerializationEntry {
 
             default:
                 // URI, NAME, CLASS, MAPPED: {"type": "<value>"}
-                // All use the unified "type" key with the pre-computed typeValue
-                // Apply smart compression if enabled and same schema
-                String effectiveTypeValue = applySmartCompression(typeValue, ctxt);
+                // Check for inline mapping discriminator override
+                String inlineDiscriminator = resolveInlineMappingDiscriminator(ctxt);
+                String effectiveTypeValue = inlineDiscriminator != null
+                        ? inlineDiscriminator
+                        : applySmartCompression(typeValue, ctxt);
                 gen.writeStringProperty(config.getNameKey(), effectiveTypeValue);
                 break;
         }
@@ -380,6 +386,26 @@ public class TypeSerializationEntry implements SerializationEntry {
      * @return the compressed type value (simple name) or original value
      * @see <a href="docs/codec-v2-spec/04-global-options.md#1-smart-compression">Spec: Smart Compression</a>
      */
+    /**
+     * Resolves the discriminator value for inline mapping reverse lookup.
+     * @deprecated Migrated to {@link org.eclipse.fennec.codec.ser.TypeSerializationEntry}.
+     */
+    @Deprecated
+    private String resolveInlineMappingDiscriminator(SerializationContext ctxt) {
+        if (codecConfig == null) {
+            return null;
+        }
+        EReference currentRef = ContextHelper.getCurrentSerializationReference(ctxt);
+        if (currentRef == null) {
+            return null;
+        }
+        TypeDiscriminatorService typeService = codecConfig.getTypeDiscriminatorService();
+        if (typeService == null) {
+            return null;
+        }
+        return typeService.getDiscriminatorValueForReference(currentRef, eClass);
+    }
+
     private String applySmartCompression(String typeValue, SerializationContext ctxt) {
         // Check if smart compression is enabled
         if (codecConfig == null || !codecConfig.isSmartCompression()) {
