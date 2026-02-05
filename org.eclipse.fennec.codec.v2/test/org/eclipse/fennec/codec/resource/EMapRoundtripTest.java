@@ -13,7 +13,9 @@
  */
 package org.eclipse.fennec.codec.resource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +32,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.util.MetadataServiceFactory;
-import org.eclipse.fennec.model.metadata.api.MetadataService;
 import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;

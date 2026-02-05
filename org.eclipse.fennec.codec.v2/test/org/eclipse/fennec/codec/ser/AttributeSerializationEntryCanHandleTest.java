@@ -24,18 +24,16 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.value.AttributeValueWriter;
 import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.value.CodecWriterContext;
-import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 /**
  * Tests for canHandle() validation in AttributeSerializationEntry.

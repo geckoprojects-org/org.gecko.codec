@@ -13,7 +13,10 @@
  */
 package org.eclipse.fennec.codec.resource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,7 +38,6 @@ import org.eclipse.fennec.model.metadata.api.MetadataWhiteboard;
 import org.eclipse.fennec.model.metadata.utils.EcoreHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -68,7 +70,6 @@ class CodecResourceInlineMappingTest {
     private TypeDiscriminatorService typeService;
 
     // InlineMapping classes
-    private EClass contactClass;
     private EClass friendClass;
     private EClass colleagueClass;
     private EClass personContainerClass;
@@ -101,7 +102,6 @@ class CodecResourceInlineMappingTest {
         typeService = TypeDiscriminatorService.fromMetadataService(metadataService);
 
         // Load EClasses
-        contactClass = ecoreHelper.getEClass(testPackage, "Contact");
         friendClass = ecoreHelper.getEClass(testPackage, "Friend");
         colleagueClass = ecoreHelper.getEClass(testPackage, "Colleague");
         personContainerClass = ecoreHelper.getEClass(testPackage, "PersonContainer");

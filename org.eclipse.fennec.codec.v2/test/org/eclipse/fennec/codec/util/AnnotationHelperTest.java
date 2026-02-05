@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("AnnotationHelper Tests")
 class AnnotationHelperTest {
 
-    private static final String TEST_ECORE = "../v2/ser/test-extended-metadata.ecore";
+    private static final String TEST_ECORE = "../ser/test-extended-metadata.ecore";
 
     private EcoreHelper ecoreHelper;
     private EPackage testPackage;

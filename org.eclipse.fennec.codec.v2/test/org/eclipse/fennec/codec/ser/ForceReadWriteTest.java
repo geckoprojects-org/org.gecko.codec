@@ -30,8 +30,6 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
@@ -211,8 +209,6 @@ class ForceReadWriteTest {
         @Test
         @DisplayName("multiple volatile attributes can be force-written")
         void multipleVolatileAttributesForceWritten() throws IOException {
-            EObject person = createPerson("p3", "Bob");
-
             // fullNameAttribute is the only volatile one in this model
             // But this tests that forceWrite accepts multiple features
             ConfigurationResolver resolver = ConfigurationResolver.builder()

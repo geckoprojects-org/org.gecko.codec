@@ -13,8 +13,6 @@
  */
 package org.eclipse.fennec.codec.context;
 
-import static java.util.Objects.requireNonNull;
-
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.diagnostic.DiagnosticCollector;
 import org.eclipse.fennec.codec.value.CodecReaderContext;
