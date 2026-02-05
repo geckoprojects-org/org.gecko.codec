@@ -139,14 +139,14 @@ Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*`
 
 ### Gap Summary
 
-| ID | Gap | Priority | Phase |
-|----|-----|----------|-------|
-| GAP-001 | Feature Visibility (directional ignore/force) | HIGH | B1 |
-| GAP-002 | Fallback Strategy enum support | HIGH | B1 |
-| GAP-003 | Feature Strictness (strictOnUnknown/Missing) | HIGH | B1 |
-| GAP-004 | Diagnostic Options integration | HIGH | B1 |
-| GAP-005 | ID Value Key support | HIGH | B1 |
-| GAP-014 | `inherit` annotation type mismatch (boolean vs enum) | HIGH | B1 |
+| ID | Gap | Priority | Phase | Status |
+|----|-----|----------|-------|--------|
+| GAP-001 | Feature Visibility (directional ignore/force) | HIGH | B1 | ✅ DONE |
+| GAP-002 | Fallback Strategy enum support | HIGH | B1 | PARTIAL |
+| GAP-003 | Feature Strictness (strictOnUnknown/Missing) | HIGH | B1 | PARTIAL |
+| GAP-004 | Diagnostic Options integration | HIGH | B1 | NOT STARTED |
+| GAP-005 | ID Value Key support | HIGH | B1 | ✅ DONE |
+| GAP-014 | `inherit` annotation type mismatch (boolean vs enum) | HIGH | B1 | PARTIAL |
 | GAP-006 | Metadata Merge behavior | MEDIUM | B2 |
 | GAP-007 | Expand deserialization | MEDIUM | B2 |
 | GAP-008 | Value Reader/Writer handlers | MEDIUM | B2 |
@@ -158,32 +158,44 @@ Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*`
 
 ### Phase B1: Core Metadata Gaps (HIGH Priority)
 
-#### GAP-001: Feature Visibility (Directional Ignore/Force)
+#### GAP-001: Feature Visibility (Directional Ignore/Force) ✅ DONE
 
-**Spec:** 07-feature-serialization.md §3.3
+**Spec:** 11-feature.md §1.2
 
-**Current:** `FeatureCodecAspect.ignore` is a simple boolean.
-**Required:** Directional visibility with values: `NONE`, `IGNORE`, `IGNORE_READ`, `IGNORE_WRITE`, `FORCE_READ`, `FORCE_WRITE`.
-
-**Changes:**
-1. Add `FeatureVisibility` enum to `codec.ecore`
-2. Replace `ignore: Boolean` with `visibility: FeatureVisibility`
-3. Update `CodecAspectProvider` to parse `ignore=true/read/write` and `force=read/write`
-4. Add valid config + misconfig tests
+**Status:** FULLY IMPLEMENTED. All five boolean fields (`ignore`, `ignoreRead`, `ignoreWrite`, `forceRead`, `forceWrite`) exist in:
+- `FeatureCodecAspect` (codec.ecore)
+- `CodecAspectProvider` (parses all 5 annotation keys)
+- `FeatureConfig` (API layer, with `shouldSerialize()`/`shouldDeserialize()` computed methods)
+- `ConfigurationResolver` (resolves all visibility flags + builder convenience methods)
+- Runtime serialization/deserialization entries (use `shouldSerialize()`/`shouldDeserialize()`)
+- Tests: `FeatureConfigSpecTest`, `ForceReadWriteTest`, `ConfigurationResolverTest`
 
 #### GAP-002: Fallback Strategy Enum Support
 
-**Spec:** 07-feature-serialization.md §5.4
+**Spec:** 10-reference.md, 08-discriminator-mapping.md
 
-**Current:** `FallbackStrategy` enum exists but not wired to `ReferenceCodecAspect`.
-**Required:** Parse `fallbackStrategy` from reference annotations, default `FALLBACK`.
+**Current state:**
+- `FallbackStrategy` enum exists in codec.ecore (SKIP, ERROR, FALLBACK)
+- `DiscriminatorConfig` in API layer has `fallbackStrategy` + `fallbackEClass`
+- Runtime: TypeDiscriminatorService already uses fallback strategy for type mapping registries
+- `ReferenceSerializationConfig` in codec.ecore does NOT have fallbackStrategy/fallbackEClass fields
+- `CodecAspectProvider` does NOT parse fallbackStrategy from reference annotations
+- `ReferenceConfig` in API layer does NOT have fallbackStrategy/fallbackEClass
+
+**Required:** Wire fallbackStrategy from reference annotations through to runtime. Note: for typeMapping registries, fallback is already handled by TypeDiscriminatorService — this GAP is about per-reference annotation-level fallback config.
 
 #### GAP-003: Feature Strictness
 
-**Spec:** 07-feature-serialization.md §6
+**Spec:** 11-feature.md §11
 
-**Current:** No strictness attributes.
-**Required:** `strictOnUnknown: Boolean` and `strictOnMissing: Boolean` on `ClassCodecAspect`.
+**Current state:**
+- `strictOnUnknown` and `strictOnMissing` fields exist in `ClassCodecAspect` (codec.ecore)
+- `AspectToPropertiesConverter` bridges them to properties
+- Annotation constant keys exist (`KEY_STRICT_ON_MISSING`, `KEY_STRICT_ON_UNKNOWN`)
+- No `ClassConfig` API class (unlike TypeConfig, IdConfig, etc.)
+- Not wired in runtime deserialization pipeline (unknown fields produce warnings but strictOnUnknown is not checked)
+
+**Required:** Create ClassConfig API class, wire strictness into runtime deserialization, add tests.
 
 #### GAP-004: Diagnostic Options Integration
 
@@ -191,19 +203,26 @@ Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*`
 
 **Required:** Allow callers to configure diagnostic severity levels via `DiagnosticOptions`.
 
-#### GAP-005: ID Value Key Support
+#### GAP-005: ID Value Key Support ✅ DONE
 
-**Spec:** 06-id-serialization.md §4
+**Spec:** 09-id.md §4
 
-**Current:** `idKey` exists, no `idValueKey`.
-**Required:** Add `idValueKey: String` to `IdCodecAspect`.
+**Status:** FULLY IMPLEMENTED. `valueKey` exists in:
+- `BaseIdConfig` (metadata.ecore) with default `"id"`
+- `IdConfig` (API layer) with builder, merge, validation
+- `AspectToPropertiesConverter` bridges ecore→properties
+- Used in STRUCTURED ID serialization/deserialization
 
 #### GAP-014: `inherit` Annotation Type Mismatch
 
 **Spec:** 12-polymorphism.md §2, 02-config-resolution.md §11.7
 
-**Current:** `ClassCodecAspect.inheritFromParent` is a **boolean**.
-**Required:** `AnnotationInheritance` enum with values: `DIRECT` (default), `ALL`, `NONE`.
+**Current state:**
+- `ClassCodecAspect.inheritFromParent` is a **boolean** (default true) in codec.ecore
+- Annotation key `KEY_INHERIT = "inherit"` exists
+- No `AnnotationInheritance` enum defined
+
+**Required:** `AnnotationInheritance` enum with values: `DIRECT` (default), `ALL`, `NONE`. Replace boolean with enum. This requires codec.ecore regeneration.
 
 ### Phase B2: Advanced Features (MEDIUM Priority)
 
