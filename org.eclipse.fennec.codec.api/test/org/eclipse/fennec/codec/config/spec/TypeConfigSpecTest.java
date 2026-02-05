@@ -76,16 +76,11 @@ class TypeConfigSpecTest {
 
         /**
          * Spec: "Strategy | codec.typeStrategy | URI"
-         *
-         * @claude ISSUE: ConfigProperty.TYPE_STRATEGY has default "NAME" but spec says "URI"!
-         *         This test documents the spec requirement. Implementation needs to be fixed.
          */
         @Test
-        @DisplayName("1.2 typeStrategy defaults to URI (SPEC SAYS URI)")
+        @DisplayName("1.2 typeStrategy defaults to URI")
         void typeStrategy_defaultsToUri() {
             TypeConfig config = TypeConfig.defaults();
-            // Spec says: URI is the default
-            // Current implementation may have NAME - this test verifies spec compliance
             assertEquals(TypeStrategy.URI, config.getStrategy(),
                 "Spec section 4 says: Strategy | codec.typeStrategy | URI");
         }

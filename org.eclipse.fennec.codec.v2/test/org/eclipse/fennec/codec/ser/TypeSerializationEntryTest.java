@@ -321,44 +321,6 @@ class TypeSerializationEntryTest {
             inOrder.verify(generator).writeEndObject();
         }
 
-        // @claude COMMENTED OUT: TypeStrategy.MAPPED was removed from enum per spec Section 11.8.
-        // Discriminator mapping is now a separate configuration layer, not a TypeStrategy value.
-        // This test is still valid conceptually - discriminator values should still be serialized,
-        // but the configuration approach changes. The discriminator value comes from:
-        // 1. Named registry (mapId + discriminatorValue on EClass)
-        // 2. Inline mapping (per-reference)
-        // Once the new discriminator configuration is integrated, this test should be updated to:
-        // - Use a different TypeStrategy (e.g., NAME or NONE)
-        // - Configure discriminator mapping via the new layer
-        // - Verify discriminator value is still output correctly
-        // See: docs/codec-v2-spec-working/type-strategy-scope-proposal.md Section 11.8
-        /*
-        @Test
-        @DisplayName("MAPPED strategy: serializes type as nested object with discriminator value")
-        void mappedStrategy_serializesTypeWithDiscriminator() {
-            TypeConfig config = TypeConfig.builder()
-                    .include(true)
-                    .format(SerializationFormat.STRUCTURED)
-                    .strategy(TypeStrategy.MAPPED)
-                    .typeKey("_type")
-                    .nameKey("type")
-                    .discriminatorValue("person-entity")
-                    .build();
-
-            TypeSerializationEntry entry = new TypeSerializationEntry(config, testEClass);
-            EObject eObject = mock(EObject.class);
-
-            entry.serialize(createState(eObject), generator, null);
-
-            // Verify: {"type": "person-entity"}
-            InOrder inOrder = inOrder(generator);
-            inOrder.verify(generator).writeName("_type");
-            inOrder.verify(generator).writeStartObject();
-            inOrder.verify(generator).writeStringProperty("type", "person-entity");
-            inOrder.verify(generator).writeEndObject();
-        }
-        */
-
         @Test
         @DisplayName("NUMERIC strategy: serializes type with schema and classifier ID")
         void numericStrategy_serializesTypeWithClassifierId() {

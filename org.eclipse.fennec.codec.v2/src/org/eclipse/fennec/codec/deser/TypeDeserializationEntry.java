@@ -526,10 +526,6 @@ public class TypeDeserializationEntry implements DeserializationEntry {
                 return resolveFromClassName(typeValue);
             case NUMERIC:
                 return resolveFromNumeric(typeValue, hintEClass);
-            // @claude MAPPED was removed from TypeStrategy enum per spec Section 11.8.
-            // Discriminator mapping is now a separate configuration layer, not a type strategy.
-            // The discriminator mapping logic should be invoked BEFORE this switch, with priority
-            // over type strategy resolution. See type-strategy-scope-proposal.md Section 11.8.
             case SCHEMA_AND_TYPE:
                 // TODO: Implement SCHEMA_AND_TYPE resolution
                 return resolveFromSimpleName(typeValue);
