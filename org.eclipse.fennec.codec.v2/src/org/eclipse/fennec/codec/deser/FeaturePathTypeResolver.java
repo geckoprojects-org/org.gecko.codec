@@ -20,8 +20,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.buffer.CodecTokenBuffer;
+import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 
 import tools.jackson.core.JsonParser;
 import tools.jackson.core.JsonToken;

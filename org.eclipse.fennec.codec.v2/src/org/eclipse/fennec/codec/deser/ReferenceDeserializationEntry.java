@@ -23,7 +23,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.fennec.codec.config.FeatureConfig;
@@ -32,6 +31,7 @@ import org.eclipse.fennec.codec.context.ContextHelper;
 import org.eclipse.fennec.codec.context.EMFCodecReadContext;
 import org.eclipse.fennec.codec.deser.DeserializationState.UnresolvedReference;
 import org.eclipse.fennec.codec.jackson.CodecJsonReadContext;
+import org.eclipse.fennec.codec.util.TypeResolutionHelper;
 import org.eclipse.fennec.codec.value.CodecReaderContext;
 import org.eclipse.fennec.codec.value.CodecValueReader;
 import org.eclipse.fennec.codec.value.CodecValueRegistry;
@@ -712,18 +712,8 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
      * @return the resolved EClass, or null if not found
      */
     private EClass resolveTypeFromValue(String typeValue, DeserializationContext ctxt) {
-        // Try to resolve as URI first
-        if (typeValue != null && typeValue.contains("#")) {
-            URI uri = URI.createURI(typeValue);
-            EPackage.Registry registry = EPackage.Registry.INSTANCE;
-            String nsUri = uri.trimFragment().toString();
-            EPackage ePackage = registry.getEPackage(nsUri);
-            if (ePackage != null) {
-                EClassifier classifier = ePackage.getEClassifier(uri.fragment().replace("//", ""));
-                if (classifier instanceof EClass) {
-                    return (EClass) classifier;
-                }
-            }
+        if (TypeResolutionHelper.isUri(typeValue)) {
+            return TypeResolutionHelper.resolveFromUri(typeValue);
         }
         return null;
     }

@@ -18,15 +18,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
 import org.eclipse.fennec.codec.config.SuperTypeConfig;
 import org.eclipse.fennec.codec.config.TypeConfig;
 import org.eclipse.fennec.codec.context.ContextHelper;
+import org.eclipse.fennec.codec.metadata.type.TypeDiscriminatorService;
+import org.eclipse.fennec.codec.util.TypeResolutionHelper;
 import org.eclipse.fennec.model.metadata.TypeStrategy;
 
 import tools.jackson.core.JsonParser;
@@ -391,10 +390,9 @@ public class TypeDeserializationEntry implements DeserializationEntry {
     private String buildNumericTypeValue(String schema, int classifier) {
         EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(schema);
         if (ePackage != null) {
-            for (EClassifier eClassifier : ePackage.getEClassifiers()) {
-                if (eClassifier instanceof EClass && eClassifier.getClassifierID() == classifier) {
-                    return schema + "#//" + eClassifier.getName();
-                }
+            EClass resolved = TypeResolutionHelper.findClassifierInPackage(ePackage, classifier);
+            if (resolved != null) {
+                return schema + "#//" + resolved.getName();
             }
         }
         LOGGER.warning("Could not find EClass for schema=" + schema + ", classifier=" + classifier);
@@ -454,7 +452,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
 
         // First: check if it's a full URI (always highest priority)
         if (typeValue.contains("#//")) {
-            EClass resolved = resolveFromUri(typeValue);
+            EClass resolved = TypeResolutionHelper.resolveFromUri(typeValue);
             if (resolved != null) {
                 // Establish context schema for smart compression (root object)
                 initializeContextSchemaIfNeeded(typeValue, ctxt);
@@ -468,7 +466,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
             if (contextSchema != null) {
                 // Try to resolve using context schema first
                 String composedUri = contextSchema + "#//" + typeValue;
-                EClass resolved = resolveFromUri(composedUri);
+                EClass resolved = TypeResolutionHelper.resolveFromUri(composedUri);
                 if (resolved != null) {
                     LOGGER.fine("Resolved type via smart compression: " + typeValue + " -> " + resolved.getName());
                     return resolved;
@@ -482,7 +480,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
         // dedicated registry first.
         if (typeDiscriminatorService != null && currentReference != null) {
             EClass resolved = typeDiscriminatorService.resolveForReference(
-                    currentReference, typeValue, this::resolveFromUri);
+                    currentReference, typeValue, TypeResolutionHelper::resolveFromUri);
             if (resolved != null) {
                 LOGGER.fine("Resolved type via inline mapping for reference '" +
                         currentReference.getName() + "': " + typeValue + " -> " + resolved.getName());
@@ -498,14 +496,14 @@ public class TypeDeserializationEntry implements DeserializationEntry {
         if (typeDiscriminatorService != null) {
             EClass resolved;
             if (discriminatorMapId != null) {
-                resolved = typeDiscriminatorService.resolve(discriminatorMapId, typeValue, this::resolveFromUri);
+                resolved = typeDiscriminatorService.resolve(discriminatorMapId, typeValue, TypeResolutionHelper::resolveFromUri);
                 if (resolved != null) {
                     LOGGER.fine("Resolved type via discriminator registry '" + discriminatorMapId +
                             "': " + typeValue + " -> " + resolved.getName());
                     return resolved;
                 }
             } else {
-                resolved = typeDiscriminatorService.resolveFromAny(typeValue, this::resolveFromUri);
+                resolved = typeDiscriminatorService.resolveFromAny(typeValue, TypeResolutionHelper::resolveFromUri);
                 if (resolved != null) {
                     LOGGER.fine("Resolved type via discriminator: " + typeValue + " -> " + resolved.getName());
                     return resolved;
@@ -521,18 +519,18 @@ public class TypeDeserializationEntry implements DeserializationEntry {
 
         switch (strategy) {
             case NAME:
-                return resolveFromSimpleName(typeValue);
+                return TypeResolutionHelper.resolveFromSimpleName(typeValue);
             case CLASS:
-                return resolveFromClassName(typeValue);
+                return TypeResolutionHelper.resolveFromClassName(typeValue);
             case NUMERIC:
-                return resolveFromNumeric(typeValue, hintEClass);
+                return TypeResolutionHelper.resolveFromNumeric(typeValue, hintEClass);
             case SCHEMA_AND_TYPE:
                 // TODO: Implement SCHEMA_AND_TYPE resolution
-                return resolveFromSimpleName(typeValue);
+                return TypeResolutionHelper.resolveFromSimpleName(typeValue);
             case URI:
             default:
                 // Fallback to simple name resolution
-                return resolveFromSimpleName(typeValue);
+                return TypeResolutionHelper.resolveFromSimpleName(typeValue);
         }
     }
 
@@ -564,151 +562,4 @@ public class TypeDeserializationEntry implements DeserializationEntry {
         }
     }
 
-    /**
-     * Resolves an EClass by its simple name.
-     * <p>
-     * Searches through all registered EPackages for a matching class name.
-     * </p>
-     *
-     * @param className the simple class name
-     * @return the resolved EClass, or null if not found
-     */
-    private EClass resolveFromSimpleName(String className) {
-        // Search through all registered packages
-        for (Object key : EPackage.Registry.INSTANCE.keySet()) {
-            EPackage pkg = EPackage.Registry.INSTANCE.getEPackage((String) key);
-            if (pkg != null) {
-                EClassifier classifier = pkg.getEClassifier(className);
-                if (classifier instanceof EClass) {
-                    return (EClass) classifier;
-                }
-            }
-        }
-        LOGGER.warning("Could not resolve EClass from simple name: " + className);
-        return null;
-    }
-
-    /**
-     * Resolves an EClass by its Java instance class name.
-     *
-     * @param className the fully qualified Java class name
-     * @return the resolved EClass, or null if not found
-     */
-    private EClass resolveFromClassName(String className) {
-        // Search through all registered packages for matching instance class
-        for (Object key : EPackage.Registry.INSTANCE.keySet()) {
-            EPackage pkg = EPackage.Registry.INSTANCE.getEPackage((String) key);
-            if (pkg != null) {
-                for (EClassifier classifier : pkg.getEClassifiers()) {
-                    if (classifier instanceof EClass eClass) {
-                        Class<?> instanceClass = eClass.getInstanceClass();
-                        if (instanceClass != null && className.equals(instanceClass.getName())) {
-                            return eClass;
-                        }
-                    }
-                }
-            }
-        }
-        // Fallback to simple name (use last segment of className)
-        String simpleName = className.contains(".") ?
-            className.substring(className.lastIndexOf('.') + 1) : className;
-        return resolveFromSimpleName(simpleName);
-    }
-
-    /**
-     * Resolves an EClass by its classifier ID.
-     * <p>
-     * For PLAIN NUMERIC format, the classifier ID alone is ambiguous since
-     * different packages can have the same classifier IDs. If a hint EClass
-     * is provided, its package is used for lookup first. Otherwise, all
-     * registered packages are searched.
-     * </p>
-     *
-     * @param numericValue the classifier ID as string
-     * @param hintEClass optional hint EClass for package context (may be null)
-     * @return the resolved EClass, or null if not found
-     */
-    private EClass resolveFromNumeric(String numericValue, EClass hintEClass) {
-        try {
-            int classifierId = Integer.parseInt(numericValue);
-
-            // If we have a hint, try its package first (most reliable)
-            if (hintEClass != null && hintEClass.getEPackage() != null) {
-                EPackage hintPackage = hintEClass.getEPackage();
-                EClass resolved = findClassifierInPackage(hintPackage, classifierId);
-                if (resolved != null) {
-                    return resolved;
-                }
-            }
-
-            // Fallback: search through all registered packages
-            for (Object key : EPackage.Registry.INSTANCE.keySet()) {
-                EPackage pkg = EPackage.Registry.INSTANCE.getEPackage((String) key);
-                if (pkg != null) {
-                    EClass resolved = findClassifierInPackage(pkg, classifierId);
-                    if (resolved != null) {
-                        return resolved;
-                    }
-                }
-            }
-        } catch (NumberFormatException e) {
-            LOGGER.warning("Invalid numeric classifier ID: " + numericValue);
-        }
-        return null;
-    }
-
-    /**
-     * Finds an EClass by classifier ID within a specific package.
-     *
-     * @param pkg the EPackage to search
-     * @param classifierId the classifier ID
-     * @return the EClass if found, null otherwise
-     */
-    private EClass findClassifierInPackage(EPackage pkg, int classifierId) {
-        for (EClassifier classifier : pkg.getEClassifiers()) {
-            if (classifier instanceof EClass && classifier.getClassifierID() == classifierId) {
-                return (EClass) classifier;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Resolves an EClass from a full URI.
-     *
-     * @param uri the URI in format "nsURI#//ClassName"
-     * @return the resolved EClass, or null if not found
-     */
-    private EClass resolveFromUri(String uri) {
-        try {
-            URI emfUri = URI.createURI(uri);
-            String nsUri = emfUri.trimFragment().toString();
-            String fragment = emfUri.fragment();
-
-            if (fragment == null || !fragment.startsWith("//")) {
-                LOGGER.warning("Invalid EClass URI fragment: " + uri);
-                return null;
-            }
-
-            String className = fragment.substring(2); // Remove "//"
-
-            // Look up package in global registry
-            EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(nsUri);
-            if (ePackage == null) {
-                LOGGER.warning("EPackage not found for URI: " + nsUri);
-                return null;
-            }
-
-            Object classifier = ePackage.getEClassifier(className);
-            if (classifier instanceof EClass) {
-                return (EClass) classifier;
-            } else {
-                LOGGER.warning("Classifier is not an EClass: " + className);
-                return null;
-            }
-        } catch (Exception e) {
-            LOGGER.warning("Error resolving EClass from URI: " + uri + " - " + e.getMessage());
-            return null;
-        }
-    }
 }
