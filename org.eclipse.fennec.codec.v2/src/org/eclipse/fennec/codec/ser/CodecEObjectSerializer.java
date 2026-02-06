@@ -209,12 +209,11 @@ public class CodecEObjectSerializer extends ValueSerializer<EObject> {
             if (feature instanceof EAttribute attribute) {
                 featureEntry = new AttributeSerializationEntry(featureConfig, attribute, entryContext);
             } else if (feature instanceof EReference reference) {
-                // Resolve per-reference refKey from ReferenceConfig
+                // Resolve per-reference config from ReferenceConfig
                 ReferenceConfig refConfig = config.resolveReferenceConfig(reference);
-                String refKey = refConfig != null ? refConfig.getRefKey() : "$ref";
 
                 featureEntry = new ReferenceSerializationEntry(
-                        featureConfig, reference, refKey, config.isSmartCompression(), config,
+                        featureConfig, reference, refConfig, config.isSmartCompression(), config,
                         entryContext);
             } else {
                 continue;

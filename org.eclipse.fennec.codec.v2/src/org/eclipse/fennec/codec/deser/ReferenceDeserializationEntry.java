@@ -185,6 +185,15 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
 
     /**
      * Deserializes a single-valued reference.
+     * <p>
+     * Supports both STRUCTURED and PLAIN formats:
+     * <ul>
+     *   <li>STRUCTURED: {@code {"_type": "...", "$ref": "uri"}} - object with $ref</li>
+     *   <li>PLAIN: {@code "uri"} - bare string (non-containment only)</li>
+     * </ul>
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/10-reference.md#11-plain-strategy">Spec: PLAIN Strategy</a>
      */
     private void deserializeSingleValued(DeserializationState state, JsonParser parser,
             DeserializationContext ctxt, EObject eObject) {
@@ -201,8 +210,14 @@ public class ReferenceDeserializationEntry implements DeserializationEntry {
                 // Non-containment: check for $ref to determine proxy vs orphan
                 deserializeNonContainmentObject(state, parser, ctxt, eObject, -1);
             }
+        } else if (token == JsonToken.VALUE_STRING && !reference.isContainment()) {
+            // PLAIN format: bare URI string for non-containment reference
+            // Type resolution uses: 1) CODEC_FEATURE_TYPE_HINTS, 2) EReference.getEReferenceType()
+            String refUri = readReferenceValue(parser, ctxt);
+            state.addUnresolvedReference(new UnresolvedReference(eObject, reference, refUri, -1));
         } else {
-            String msg = "Expected START_OBJECT for reference '" + reference.getName() + "', got: " + token;
+            String msg = "Expected START_OBJECT" + (reference.isContainment() ? "" : " or VALUE_STRING") +
+                    " for reference '" + reference.getName() + "', got: " + token;
             LOGGER.warning(msg);
             ContextHelper.addWarning(ctxt, msg, parser, "ReferenceDeserializationEntry");
         }

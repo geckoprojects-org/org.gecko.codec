@@ -31,15 +31,22 @@ Or as URI:
 }
 ```
 
-> **Limitation:** PLAIN format carries only a single string value — there is no room for type information. On deserialization, the proxy EClass must be resolved without a `_type` field. The fallback chain is:
-> 1. `CODEC_FEATURE_TYPE_HINTS` — runtime load option providing a per-feature EClass hint (see [Per-Feature Type Hints](16-annotation-reference.md#per-feature-type-hints-codec_feature_type_hints))
-> 2. `EReference.getEReferenceType()` — the declared reference type
->
-> This means PLAIN format works safely when:
-> - The declared reference type is **concrete** (not abstract), OR
-> - A `CODEC_FEATURE_TYPE_HINTS` entry is provided for the reference at load time
->
-> If neither condition is met and the declared type is abstract, the deserializer creates a proxy of the abstract type, which will fail on resolution. Use STRUCTURED format for polymorphic references.
+> **Scope:** PLAIN format applies to **non-containment references** only.
+
+#### Type Resolution for PLAIN Format
+
+Unlike STRUCTURED format (which carries type information in the `_type` field), PLAIN format contains **only the reference value** — no type information is transported. The deserializer must determine the proxy EClass from external sources:
+
+| Priority | Source | Description |
+|:--------:|--------|-------------|
+| 1 | `CODEC_FEATURE_TYPE_HINTS` | Runtime load option (see [Load/Save Options §3](13-load-save-options.md#3-feature-type-hints)) |
+| 2 | `EReference.getEReferenceType()` | Declared reference type from Ecore model |
+
+**Safe usage:** PLAIN format works when:
+- The declared reference type is **concrete** (not abstract), OR
+- A `CODEC_FEATURE_TYPE_HINTS` entry is provided at load time
+
+**Polymorphism limitation:** PLAIN format loses instance type information. If a reference can hold multiple subtypes (e.g., `Employee` and `Manager` both extend `Person`), the deserializer cannot distinguish them — it uses the declared type or hint, not the original instance type. Use STRUCTURED format when preserving concrete types matters.
 
 ### 1.2 STRUCTURED Strategy (Default)
 
@@ -834,32 +841,31 @@ INPUT: JsonParser positioned at value token, EReference, effective ReferenceConf
 │                                │  │                                         │
 │ refValue = string value        │  │ Parse JSON object fields:               │
 │                                │  │                                         │
-│ Type resolution (no _type in   │  │ while (parser.nextToken()) {            │
-│ PLAIN — fallback chain):       │  │   field = parser.currentName()          │
-│ 1. CODEC_FEATURE_TYPE_HINTS   │  │                                         │
-│    (runtime per-feature hint)  │  │   Is field == refTypeKey (default _type)?│
-│ 2. EReference.getEReferenceType() │  │   ├─ YES → typeValue = parse type   │
-│    (declared reference type)   │  │   │        (see 06-type.md deser flow) │
-│                                │  │   │                                     │
-│ → Go to step 4                 │  │   Is field == refKey (default $ref)?    │
-│ (with refValue + EClass)       │  │   ├─ YES → refValue = parser.getText() │
-│                                │  │   │                                     │
-│                                │  │   Is field == proxyKey ($proxy)?        │
-│                                │  │   ├─ YES → proxyMarker = true          │
-│                                │  │   │                                     │
-│                                │  │   Otherwise → store as extra field      │
-│                                │  │              (for projection or orphan) │
-│                                │  │ }                                       │
-│                                │  │                                         │
+│ Type resolution:               │  │ while (parser.nextToken()) {            │
+│ ─────────────────────────────  │  │   field = parser.currentName()          │
+│ PLAIN format carries NO type   │  │                                         │
+│ information — type must come   │  │   Is field == refTypeKey (default _type)?│
+│ from external sources:         │  │   ├─ YES → typeValue = parse type       │
+│                                │  │   │        (see 06-type.md deser flow)  │
+│ 1. CODEC_FEATURE_TYPE_HINTS   │  │   │                                      │
+│    (runtime per-feature hint,  │  │   Is field == refKey (default $ref)?    │
+│    see 13-load-save-options)   │  │   ├─ YES → refValue = parser.getText()  │
+│                                │  │   │                                      │
+│ 2. EReference.getEReferenceType() │  │   Is field == proxyKey ($proxy)?     │
+│    (declared reference type)   │  │   ├─ YES → proxyMarker = true           │
+│                                │  │   │                                      │
+│ If resolved EClass is abstract │  │   Otherwise → store as extra field      │
+│ → CODEC_DESERIALIZATION_MODE   │  │              (for projection or orphan) │
+│   controls error handling      │  │ }                                       │
+│   (see 13-load-save-options)   │  │                                         │
 │                                │  │ Type resolution:                        │
-│                                │  │ - If typeValue present → resolve EClass│
-│                                │  │   (using Type Strategy, see 06-type.md)│
-│                                │  │ - If no typeValue → fallback chain:    │
-│                                │  │   1. CODEC_FEATURE_TYPE_HINTS          │
-│                                │  │   2. EReference.getEReferenceType()    │
+│ → Go to step 4                 │  │ - If typeValue present → resolve EClass │
+│ (with refValue + EClass)       │  │   (using Type Strategy, see 06-type.md) │
+│                                │  │ - If no typeValue → same fallback as    │
+│                                │  │   PLAIN (hints → declared type)         │
 │                                │  │                                         │
-│                                │  │ → Go to step 4                         │
-│                                │  │ (with refValue, EClass, extra fields)  │
+│                                │  │ → Go to step 4                          │
+│                                │  │ (with refValue, EClass, extra fields)   │
 └────────────────────────────────┘  └─────────────────────────────────────────┘
                           │                   │
                           └─────┬─────────────┘

@@ -2,20 +2,20 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-02-05 (Discriminator mapping runtime wiring completed - all 19 tests passing)
+**Last Updated:** 2026-02-06 (Integration tests + PLAIN reference format implementation)
 
 **Session Summary:**
-- Completed discriminator mapping (type mapping registry) runtime wiring for BOTH deserialization and serialization
-- Fixed deserialization to use targeted `resolve(mapId, value, ...)` instead of `resolveFromAny()` for correct fallback strategy
-- Added `discriminatorMapId` field to TypeDeserializationEntry with mapId extraction from DiscriminatorConfig
-- Enhanced `getDiscriminatorMapId()` with TypeDiscriminatorService fallback (walks supertypes)
-- Fixed exception propagation for ERROR strategy in `replayDeferredValue()` and `deserializeContainedObject()`
-- Added `!isTypeKey(discriminatorPath)` guard to prevent FeaturePathTypeResolver from handling standard `_type` paths
-- Fixed serialization via `resolveTypeMappingDiscriminator()` that calls `TypeDiscriminatorService.getDiscriminatorValue(mapId, eClass)`
-- Fixed `hasDiscriminatorPath()` to only suppress `_type` for nested paths (not when discriminatorPath equals typeKey)
-- All 19 tests in CodecResourceInlineMappingTest.java now passing (inline mapping, ERROR fallback, FALLBACK fallback, root-level discriminator)
+- **Created FeatureVisibilityIntegrationTest.java** — 20 tests covering `ignoreRead`, `ignoreWrite`, `ignore` for attributes and containment references
+- **Enhanced ExpandReferenceTest.java** — 8 new edge case tests (expand + null, expand + ignoreWrite, empty arrays, mixed expand/proxy)
+- **Implemented PLAIN reference format** — Full serialization and deserialization support:
+  - Deserialization: Added `VALUE_STRING` handling in `ReferenceDeserializationEntry.deserializeSingleValued()` (multi-valued was already supported)
+  - Serialization: Added `refFormat` check in `ReferenceSerializationEntry.writeReferenceObject()` — outputs bare URI string when PLAIN
+  - Type resolution chain: `CODEC_FEATURE_TYPE_HINTS` → `EReference.getEReferenceType()`
+- **Created PlainReferenceFormatTest.java** — 16 tests covering PLAIN deserialization (single/multi-valued), type hints, mixed formats, PLAIN serialization, round-trip
+- **Updated spec** `10-reference.md` — Enhanced §1.1 PLAIN Strategy with type resolution table, polymorphism warning, implementation status
+- Final codec.v2 test count: ~1008 tests, 0 failures
 
-**Next Session:** Continue with integration test coverage or move to Plan B GAP-001 audit
+**Next Session:** Continue with Plan B GAP work (GAP-002 fallback strategy wiring, GAP-003 strictness, GAP-014 inherit enum)
 
 ---
 
@@ -46,56 +46,38 @@ MAIN TASK: [description] - [status: ACTIVE/PAUSED/✅]
 ### 0.2 Current Task Hierarchy
 
 ```
-COMPLETED: Discriminator Mapping (Type Mapping Registry) Runtime Wiring - ✅ (2026-02-05)
+COMPLETED: Integration Tests + PLAIN Reference Format - ✅ (2026-02-06)
 │
-│  All 19 tests in CodecResourceInlineMappingTest pass, covering:
-│  - Inline Mapping: serialization, deserialization, round-trip (PersonContainer.contacts)
-│  - Fallback ERROR Strategy: serialization, deserialization, round-trip, unknown discriminator throws
-│    (SensorHub.sensors with strict-sensors)
-│  - Fallback FALLBACK Strategy: serialization, deserialization (MessageBox.messages with tolerant-messages)
-│  - Root-Level Discriminator Mapping: serialization, deserialization, round-trip, error on unknown,
-│    alert message, fallback to GenericMessage (TempSensor/Sensor at root)
-│
-│  DESERIALIZATION FIXES (CodecEObjectDeserializer.java, TypeDeserializationEntry.java):
-│  │  - Added `discriminatorMapId` field to TypeDeserializationEntry with 4-arg constructor
-│  │  - `resolveTypeFromValue()` extracts mapId from hintEClass's DiscriminatorConfig via `getDiscriminatorMapId()`
-│  │  - Uses targeted `resolve(mapId, value, ...)` instead of `resolveFromAny()` for correct fallback strategy
-│  │  - Added `!isTypeKey(discriminatorPath)` guard to prevent FeaturePathTypeResolver from handling
-│  │    standard `_type` paths
-│  │  - Enhanced `getDiscriminatorMapId()` with TypeDiscriminatorService fallback (walks supertypes)
-│  │  - Fixed exception propagation: `IllegalStateException` from ERROR strategy now re-thrown in
-│  │    `replayDeferredValue()` and `deserializeContainedObject()`
-│
-│  SERIALIZATION FIXES (TypeSerializationEntry.java):
-│  │  - Added `resolveTypeMappingDiscriminator()` method that calls
-│  │    `TypeDiscriminatorService.getDiscriminatorValue(mapId, eClass)`
-│  │  - Integrated into both `serializePlain()` and `serializeStructured()` after inline mapping check
-│  │  - Fixed `hasDiscriminatorPath()` to only suppress `_type` for nested paths
-│  │    (not when discriminatorPath equals typeKey)
-│
-│  METADATA FIXES (TypeDiscriminatorService.java):
-│  │  - Enhanced `getMapIdForEClass()` to walk supertypes via `getEAllSuperTypes()`
-│  │  - Added `extractMapIdFromAnnotations()` helper
-│
-│  TESTS ADDED (TypeDiscriminatorServiceTest.java):
-│  │  - GetMapIdForEClass: returnsNullForNull, returnsNullForNoAnnotation, returnsMapIdFromDirectAnnotation,
-│  │    returnsMapIdFromSupertype, prefersDirectOverSupertype
-│
-│  FILES MODIFIED:
-│  │  - TypeDeserializationEntry.java (codec.deser)
-│  │  - CodecEObjectDeserializer.java (codec.deser)
-│  │  - FeaturePathTypeResolver.java (codec.deser.type)
-│  │  - TypeDiscriminatorService.java (codec.metadata.type)
-│  │  - TypeDiscriminatorServiceTest.java (codec.metadata/test)
-│  │  - TypeSerializationEntry.java (codec.ser)
-│  │  - CodecResourceInlineMappingTest.java (codec.v2/test) - removed @Disabled, all 19 tests pass
+│  INTEGRATION TESTS:
+│  │  - NEW: FeatureVisibilityIntegrationTest.java (20 tests)
+│  │    - ignoreRead/ignoreWrite/ignore on attributes and containment refs
+│  │    - Comparison tests, round-trip tests, edge cases
+│  │  - ENHANCED: ExpandReferenceTest.java (+8 edge case tests)
+│  │    - expand + null, expand + ignoreWrite, expandIgnoreBidirectional
+│  │    - empty multi-valued with serializeEmpty, mixed expand/proxy
+│  │
+│  PLAIN REFERENCE FORMAT IMPLEMENTATION:
+│  │  - Deserialization: ReferenceDeserializationEntry.deserializeSingleValued()
+│  │    - Added VALUE_STRING handling for single-valued non-containment
+│  │    - Multi-valued PLAIN was already supported
+│  │  - Serialization: ReferenceSerializationEntry.writeReferenceObject()
+│  │    - Added refFormat field from ReferenceConfig
+│  │    - PLAIN outputs bare URI string, STRUCTURED outputs object with _type/$ref
+│  │  - NEW: PlainReferenceFormatTest.java (16 tests)
+│  │    - PLAIN deser (single/multi), type hints, mixed formats, PLAIN ser, round-trip
+│  │  - SPEC UPDATE: 10-reference.md §1.1 PLAIN Strategy
+│  │    - Type resolution table, polymorphism warning, implementation status
+│  │
+│  CONFIGURATION: refFormat via optionsProperties
+│  │  ConfigurationResolver.builder().optionsProperties(Map.of("refFormat", "PLAIN")).build()
+│  │
+│  FINAL STATE: codec.v2 = ~1008 tests, 0 failures
 │
 │  NEXT STEPS:
-│  │  - Continue with integration test coverage (reference expansion, feature visibility, etc.)
-│  │  - OR move to Plan B GAP-001 audit (audit existing test models for coverage gaps)
-│  │  - Document any additional spec gaps discovered
+│  │  - Continue with Plan B GAP work (GAP-002/003/014 are migration tasks)
+│  │  - GAP-004 (Diagnostic Options) is a new feature, lower priority
 
-
+PREVIOUS: Code Cleanup, Deprecated Removal & Helper Extraction - ✅ (2026-02-05)
 > **Older completed tasks archived in [`codec-v2-session-history.md`](codec-v2-session-history.md)**
 
 ```
@@ -183,8 +165,8 @@ See `docs/codec-v2-spec/02-config-resolution.md` for details.
 - TypeDiscriminatorService (discriminator value → EClass mapping)
 - Diagnostic collection during parsing
 
-✅ **Codec Runtime (codec.v2 → codec migration complete)**
-- New `org.eclipse.fennec.codec.*` packages (non-deprecated)
+✅ **Codec Runtime (fully cleaned up)**
+- `org.eclipse.fennec.codec.*` packages (all deprecated `codec.v2.*` code deleted)
 - Serialization entries (Type, ID, Feature, Reference)
 - Deserialization entries (Type, ID, Feature, Reference)
 - CodecEObjectSerializer/Deserializer orchestrators
@@ -193,53 +175,55 @@ See `docs/codec-v2-spec/02-config-resolution.md` for details.
 - EffectiveCodecConfig (per-feature resolution)
 - ConfigurationResolver (replaces old CodecConfiguration)
 
+✅ **Utility Helpers (org.eclipse.fennec.codec.util)**
+- `AnnotationHelper` — ExtendedMetaData annotation lookups
+- `CodecResourceHelper` — Type resolution, compatibility checks
+- `MetadataServiceFactory` — MetadataWhiteboard creation
+- `TypeResolutionHelper` — EClass resolution by name, class name, numeric ID, URI (22 tests)
+- `EMapHelper` — EMap reference detection, key/value feature access (18 tests)
+
 ✅ **Integration Tests**
 - 23 resource test files (193 tests) — migrated to new codec.* packages
 - 9 ser/deser/type integration tests — migrated to new codec.* packages
 - GeoJson, JsonSchema, OpenAPI codecs — migrated to non-deprecated API
 - ForceReadWriteTest.java — verifies two-gate model + forceRead/forceWrite
 
-✅ **Discriminator Mapping (Type Mapping Registry) — COMPLETED** (2026-02-05)
+✅ **Discriminator Mapping (Type Mapping Registry)**
 - All 19 tests in CodecResourceInlineMappingTest passing
-- **Deserialization:** Targeted `resolve(mapId, value, ...)` with correct fallback strategy
-- **Serialization:** Reverse lookup via `TypeDiscriminatorService.getDiscriminatorValue(mapId, eClass)`
-- **ERROR Strategy:** Unknown discriminator throws IllegalStateException (propagated correctly)
-- **FALLBACK Strategy:** Unknown discriminator returns null, falls back to declared type
-- **Root-level discriminator:** Works for top-level objects (not just contained references)
-- **Supertype inheritance:** `getMapIdForEClass()` walks supertypes to find discriminator config
-- **Coverage:**
-  - Inline mapping (PersonContainer.contacts: "employee" → Employee, "customer" → Customer)
-  - ERROR fallback (SensorHub.sensors with strict-sensors map)
-  - FALLBACK fallback (MessageBox.messages with tolerant-messages map)
-  - Root-level mapping (TempSensor/Sensor at document root)
-  - Unknown discriminator error handling
-  - Alert/GenericMessage fallback scenarios
+- Deserialization, serialization, ERROR/FALLBACK strategies, root-level, supertype inheritance
+
+✅ **Deprecated Code Removed**
+- All `codec.v2.*` source/test files deleted (55 src + 9 test)
+- All `codec.api.value.*` and `codec.api.diagnostic.*` files deleted (11 src + 14 test)
+- Zero skipped tests remaining
 
 ### 3.2 Test Status
 
-**Current Counts (2026-02-05):**
-- **Total:** 1480+ tests (was 1461, now +19 from CodecResourceInlineMappingTest)
-- **Passing:** All (0 failures)
-- **Skipped:** 458 (old v2.* tests, deprecated code)
-- **Disabled:** 0 (was 8, now all enabled and passing)
+**Current Counts (2026-02-05, after cleanup + helper extraction):**
+- **codec.v2:** 992 tests, 0 failures, 0 skipped
+- **codec.api:** ~490 tests
+- **codec.metadata:** ~220 tests
+- **model.metadata:** ~200 tests
+- **codec.geojson, codec.jsonschema.v2, codec.openapi:** ~617 tests combined
+- **Total across all 7 projects:** ~2519 tests, 0 failures, 0 skipped
 
 **Test Organization:**
-- `org.eclipse.fennec.codec.api/test` — config API tests (490 spec tests)
+- `org.eclipse.fennec.codec.api/test` — config API tests (spec + resolver tests)
 - `org.eclipse.fennec.codec.metadata/test` — aspect provider tests + TypeDiscriminatorServiceTest
-- `org.eclipse.fennec.codec.v2/test/org/eclipse/fennec/codec/*` — NEW runtime tests (migrated)
-- `org.eclipse.fennec.codec.v2/test/org/eclipse/fennec/codec/v2/*` — OLD runtime tests (@Disabled)
+- `org.eclipse.fennec.codec.v2/test/org/eclipse/fennec/codec/*` — runtime tests (all active)
+- `org.eclipse.fennec.codec.v2/test/org/eclipse/fennec/codec/util/*` — helper unit tests
 
 ### 3.3 What's Next
 
-**IMMEDIATE (Session 2026-02-06):**
-1. Continue with integration test coverage (reference expansion, feature visibility, etc.)
-2. OR move to Plan B GAP-001 audit (audit existing test models for coverage gaps)
-3. Document any additional spec gaps discovered
+**IMMEDIATE (Next Session):**
+1. Plan B GAP work — GAP-002 (Fallback Strategy), GAP-003 (Strictness), GAP-014 (inherit enum) are migration tasks
+2. OR continue integration test coverage (reference expansion, feature visibility)
+3. GAP-004 (Diagnostic Options) is a new feature — lower priority
 
-**SHORT TERM (Plan B GAP-001 from codec-v2-plans.md):**
-1. Audit existing test models for Plan B compliance
-2. Document missing test coverage
-3. Create integration tests for complex scenarios
+**SHORT TERM:**
+1. Complete Plan B Phase 1 migration GAPs
+2. Create integration tests for complex scenarios
+3. Plan B Phase 2 (GAP-006 through GAP-010)
 
 **LONG TERM:**
 1. Performance testing
@@ -351,17 +335,26 @@ String discriminatorValue = typeDiscriminatorService.getDiscriminatorValue(mapId
 
 ### 5.4 Remaining Work
 
-**Phase 2: Ser/Deser Integration Tests**
-- [✅] Discriminator mapping tests (CodecResourceInlineMappingTest.java) — COMPLETED
+**Plan B Phase 1: Migration GAPs**
+- [✅] GAP-001: Feature Visibility — DONE
+- [✅] GAP-005: ID Value Key — DONE
+- [ ] GAP-002: Fallback Strategy wiring (per-reference annotation-level fallback)
+- [ ] GAP-003: Feature Strictness (ClassConfig, strictOnUnknown/Missing runtime wiring)
+- [ ] GAP-014: inherit enum (AnnotationInheritance: DIRECT/ALL/NONE, requires codec.ecore change)
+- [ ] GAP-004: Diagnostic Options (NEW FEATURE, not migration)
+
+**Integration Tests**
+- [✅] Discriminator mapping tests (CodecResourceInlineMappingTest.java)
+- [✅] Feature visibility integration tests (FeatureVisibilityIntegrationTest.java — ignoreRead/Write/ignore)
+- [✅] Reference expansion integration tests (ExpandReferenceTest.java — edge cases added)
+- [✅] PLAIN reference format tests (PlainReferenceFormatTest.java — ser/deser/round-trip)
 - [ ] Type resolution integration tests (beyond discriminator mapping)
 - [ ] ID serialization integration tests
-- [ ] Reference expansion integration tests
-- [ ] Feature visibility integration tests
 
-**Plan B: GAP-001 Audit** (see `docs/codec-v2-plans.md`)
-- [ ] Audit existing test models
-- [ ] Document missing coverage
-- [ ] Create new integration tests
+**Code Quality** (completed)
+- [✅] Deprecated code removal (codec.v2.*, codec.api.value.*, codec.api.diagnostic.*)
+- [✅] @claude comment cleanup
+- [✅] Helper extraction: TypeResolutionHelper, EMapHelper
 
 **Documentation:**
 - [ ] User guide (how to use codec v2)
@@ -498,10 +491,10 @@ for (Diagnostic diag : diagnostics.getDiagnostics()) {
 
 ### 10.4 Current TODO List
 
-**Next session (2026-02-06):**
-1. Continue with integration test coverage (reference expansion, feature visibility, etc.)
-2. OR move to Plan B GAP-001 audit (audit existing test models for coverage gaps)
-3. Document any additional spec gaps discovered
+**Next session:**
+1. Plan B GAP work: GAP-002 (Fallback Strategy), GAP-003 (Strictness), GAP-014 (inherit enum) — all migration tasks
+2. OR continue integration test coverage (reference expansion, feature visibility)
+3. GAP-004 (Diagnostic Options) is a new feature — lower priority
 
 ## 11. Reference Information
 

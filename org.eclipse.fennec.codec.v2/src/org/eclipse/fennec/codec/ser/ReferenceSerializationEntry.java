@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.fennec.codec.config.FeatureConfig;
+import org.eclipse.fennec.codec.config.ReferenceConfig;
 import org.eclipse.fennec.codec.config.effective.EffectiveCodecConfig;
 import org.eclipse.fennec.codec.context.CodecEntryContext;
 import org.eclipse.fennec.codec.context.CodecWriteContext;
@@ -36,6 +37,7 @@ import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.value.CodecValueWriter;
 import org.eclipse.fennec.codec.value.CodecWriterContext;
 import org.eclipse.fennec.codec.value.ReferenceValueWriter;
+import org.eclipse.fennec.model.metadata.SerializationFormat;
 
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.TokenStreamContext;
@@ -60,6 +62,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
     private final FeatureConfig config;
     private final EReference reference;
     private final String refKey;
+    private final SerializationFormat refFormat;
     private final boolean smartCompression;
     private final EffectiveCodecConfig codecConfig;
     private final ReferenceValueWriter<?> containmentWriter;
@@ -74,7 +77,7 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      * @param refKey the JSON key to use for non-containment reference URIs
      */
     public ReferenceSerializationEntry(FeatureConfig config, EReference reference, String refKey) {
-        this(config, reference, refKey, false, null, null);
+        this(config, reference, null, refKey, SerializationFormat.STRUCTURED, false, null, null);
     }
 
     /**
@@ -87,11 +90,11 @@ public class ReferenceSerializationEntry implements SerializationEntry {
      */
     public ReferenceSerializationEntry(FeatureConfig config, EReference reference,
             String refKey, boolean smartCompression) {
-        this(config, reference, refKey, smartCompression, null, null);
+        this(config, reference, null, refKey, SerializationFormat.STRUCTURED, smartCompression, null, null);
     }
 
     /**
-     * Creates a new ReferenceSerializationEntry with full configuration support.
+     * Creates a new ReferenceSerializationEntry with full configuration support (legacy signature).
      *
      * @param config the feature configuration
      * @param reference the EReference to serialize
@@ -103,9 +106,39 @@ public class ReferenceSerializationEntry implements SerializationEntry {
     public ReferenceSerializationEntry(FeatureConfig config, EReference reference,
             String refKey, boolean smartCompression, EffectiveCodecConfig codecConfig,
             CodecEntryContext entryContext) {
+        this(config, reference, null, refKey, SerializationFormat.STRUCTURED, smartCompression, codecConfig, entryContext);
+    }
+
+    /**
+     * Creates a new ReferenceSerializationEntry with full configuration support.
+     *
+     * @param config the feature configuration
+     * @param reference the EReference to serialize
+     * @param refConfig the reference-specific configuration (may be null for defaults)
+     * @param smartCompression whether smart compression is enabled
+     * @param codecConfig the effective codec configuration (for expand settings)
+     * @param entryContext the codec entry context for custom writers (may be null)
+     */
+    public ReferenceSerializationEntry(FeatureConfig config, EReference reference,
+            ReferenceConfig refConfig, boolean smartCompression, EffectiveCodecConfig codecConfig,
+            CodecEntryContext entryContext) {
+        this(config, reference, refConfig,
+                refConfig != null ? refConfig.getRefKey() : "$ref",
+                refConfig != null ? refConfig.getFormat() : SerializationFormat.STRUCTURED,
+                smartCompression, codecConfig, entryContext);
+    }
+
+    /**
+     * Internal constructor with all parameters.
+     */
+    private ReferenceSerializationEntry(FeatureConfig config, EReference reference,
+            ReferenceConfig refConfig, String refKey, SerializationFormat refFormat,
+            boolean smartCompression, EffectiveCodecConfig codecConfig,
+            CodecEntryContext entryContext) {
         this.config = config;
         this.reference = reference;
         this.refKey = refKey;
+        this.refFormat = refFormat;
         this.smartCompression = smartCompression;
         this.codecConfig = codecConfig;
         this.entryContext = entryContext;
@@ -277,18 +310,40 @@ public class ReferenceSerializationEntry implements SerializationEntry {
         return sourceResource == null || sourceResource != targetResource;
     }
 
+    /**
+     * Writes a reference value in either PLAIN or STRUCTURED format.
+     * <p>
+     * PLAIN format: bare URI string (no type information)
+     * <pre>
+     * "employer": "//@employees.0"
+     * </pre>
+     *
+     * STRUCTURED format: object with _type and $ref
+     * <pre>
+     * "employer": { "_type": "...", "$ref": "//@employees.0" }
+     * </pre>
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/10-reference.md#11-plain-strategy">Spec: PLAIN Strategy</a>
+     */
     private void writeReferenceObject(EObject target, JsonGenerator gen, boolean crossDocument,
             SerializationContext ctxt) {
-        gen.writeStartObject();
+        if (refFormat == SerializationFormat.PLAIN) {
+            // PLAIN format: just write the URI string directly
+            writeReferenceValue(target, gen, crossDocument, ctxt);
+        } else {
+            // STRUCTURED format: object with _type and $ref
+            gen.writeStartObject();
 
-        String typeUri = EcoreUtil.getURI(target.eClass()).toString();
-        String effectiveType = applySmartCompressionToRef(typeUri, ctxt);
-        gen.writeStringProperty("_type", effectiveType);
+            String typeUri = EcoreUtil.getURI(target.eClass()).toString();
+            String effectiveType = applySmartCompressionToRef(typeUri, ctxt);
+            gen.writeStringProperty("_type", effectiveType);
 
-        gen.writeName(refKey);
-        writeReferenceValue(target, gen, crossDocument, ctxt);
+            gen.writeName(refKey);
+            writeReferenceValue(target, gen, crossDocument, ctxt);
 
-        gen.writeEndObject();
+            gen.writeEndObject();
+        }
     }
 
     private void writeReferenceValue(EObject target, JsonGenerator gen, boolean crossDocument,

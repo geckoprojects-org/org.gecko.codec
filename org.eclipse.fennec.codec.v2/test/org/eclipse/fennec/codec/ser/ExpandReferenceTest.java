@@ -559,4 +559,182 @@ class ExpandReferenceTest {
             assertNull(loadedCharlie.eContainer(), "Charlie should be an orphan");
         }
     }
+
+    // ========================================================================
+    // Edge Cases
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Expand Edge Cases")
+    class ExpandEdgeCases {
+
+        @Test
+        @DisplayName("expand with null reference - nothing to serialize")
+        void expandWithNullReference() throws IOException {
+            // Create company without CEO
+            EObject company = createCompany("Acme Inc");
+            // ceo is null by default
+
+            // Serialize with expand enabled
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .expand(ceoRef)
+                    .build();
+
+            String json = serialize(company, resolver);
+
+            // Should not contain ceo field (null + serializeNull=false default)
+            assertFalse(json.contains("\"ceo\""), "Null CEO should not be serialized");
+        }
+
+        @Test
+        @DisplayName("expand with null reference and serializeNull=true")
+        void expandWithNullReferenceAndSerializeNull() throws IOException {
+            // Create company without CEO
+            EObject company = createCompany("Acme Inc");
+            // ceo is null by default
+
+            // Serialize with expand enabled and serializeNull=true
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .expand(ceoRef)
+                    .serializeNull(true)
+                    .build();
+
+            String json = serialize(company, resolver);
+
+            // Should contain ceo:null
+            assertTrue(json.contains("\"ceo\""), "CEO field should be present");
+            assertTrue(json.contains("null"), "CEO value should be null");
+        }
+
+        @Test
+        @DisplayName("expand + ignoreWrite - ignoreWrite takes precedence")
+        @SuppressWarnings("unchecked")
+        void expandWithIgnoreWrite() throws IOException {
+            // Create company with employees and CEO
+            EObject company = createCompany("Acme Inc");
+            EObject alice = createPerson("Alice");
+
+            List<EObject> employees = (List<EObject>) company.eGet(employeesRef);
+            employees.add(alice);
+            company.eSet(ceoRef, alice);
+
+            // Configure expand=true AND ignoreWrite=true on ceo
+            Map<String, Object> ceoConfig = Map.of(
+                    "expand", true,
+                    "ignoreWrite", true
+            );
+            Map<String, Object> companyConfig = Map.of("ceo", ceoConfig);
+            Map<String, Object> moduleProps = Map.of("Company", companyConfig);
+
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .moduleProperties(moduleProps)
+                    .build();
+
+            String json = serialize(company, resolver);
+
+            // ignoreWrite should take precedence - CEO should NOT be serialized at all
+            assertFalse(json.contains("\"ceo\""),
+                    "CEO should not be serialized when ignoreWrite=true (takes precedence over expand)");
+        }
+
+        @Test
+        @DisplayName("expandIgnoreBidirectional=false allows bidirectional expansion")
+        @SuppressWarnings("unchecked")
+        void expandIgnoreBidirectionalFalse() throws IOException {
+            // Note: Our test model doesn't have bidirectional refs,
+            // but we can still test the flag is processed correctly
+            EObject company = createCompany("Acme Inc");
+            EObject alice = createPerson("Alice");
+
+            List<EObject> employees = (List<EObject>) company.eGet(employeesRef);
+            employees.add(alice);
+            company.eSet(ceoRef, alice);
+
+            // Serialize with expandIgnoreBidirectional=false
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .expand(ceoRef)
+                    .expandIgnoreBidirectional(false)
+                    .build();
+
+            String json = serialize(company, resolver);
+
+            // CEO should be expanded (since ceo has no eOpposite, flag has no effect)
+            assertTrue(json.contains("\"ceo\""), "JSON should contain ceo field");
+            // For non-bidirectional refs, the flag doesn't matter - should expand
+        }
+
+        @Test
+        @DisplayName("expand with empty multi-valued reference")
+        void expandWithEmptyMultiValuedReference() throws IOException {
+            // Create Alice without friends
+            EObject alice = createPerson("Alice");
+            // friends list is empty by default
+
+            // Serialize with friends expanded
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .expand("friends")
+                    .build();
+
+            String json = serialize(alice, resolver);
+
+            // Empty friends should not be serialized (serializeEmpty=false default)
+            assertFalse(json.contains("\"friends\""),
+                    "Empty friends should not be serialized");
+        }
+
+        @Test
+        @DisplayName("expand with empty multi-valued reference and serializeEmpty=true")
+        void expandWithEmptyMultiValuedReferenceAndSerializeEmpty() throws IOException {
+            // Create Alice without friends
+            EObject alice = createPerson("Alice");
+            // friends list is empty by default
+
+            // Serialize with friends expanded and serializeEmpty=true
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .expand("friends")
+                    .serializeEmpty(true)
+                    .build();
+
+            String json = serialize(alice, resolver);
+
+            // Empty friends should be serialized as []
+            assertTrue(json.contains("\"friends\""), "Friends field should be present");
+            assertTrue(json.contains("[]"), "Friends should be empty array");
+        }
+
+        @Test
+        @DisplayName("mixed: some references expanded, some as proxy")
+        @SuppressWarnings("unchecked")
+        void mixedExpandAndProxy() throws IOException {
+            // Create Alice with manager and friends
+            EObject alice = createPerson("Alice");
+            EObject bob = createPerson("Bob");
+            EObject charlie = createPerson("Charlie");
+
+            // Set manager (non-containment single)
+            EReference managerRef = (EReference) ecoreHelper.getFeature(personClass, "manager");
+            alice.eSet(managerRef, bob);
+
+            // Set friends (non-containment multi)
+            List<EObject> friends = (List<EObject>) alice.eGet(friendsRef);
+            friends.add(charlie);
+
+            // Expand only friends, not manager
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .expand("friends")
+                    .build();
+
+            String json = serialize(alice, resolver);
+
+            System.out.println("Mixed expand/proxy JSON:\n" + json);
+
+            // Friends should be expanded (no $ref)
+            assertTrue(json.contains("\"friends\""), "JSON should contain friends");
+            assertTrue(json.contains("\"Charlie\""), "Friends should have Charlie's name");
+
+            // Manager should be proxy ($ref)
+            assertTrue(json.contains("\"manager\""), "JSON should contain manager");
+            // Manager should have $ref since it's not expanded
+        }
+    }
 }

@@ -4,7 +4,7 @@ This document consolidates all active plans for completing the codec.v2 migratio
 Spec Compliance Refactoring Plan and the Deprecated API Migration Plan into a single phased roadmap.
 
 **Created:** 2026-02-02
-**Updated:** 2026-02-04
+**Updated:** 2026-02-06
 
 **Related documents:**
 - [`docs/codec-v2-development-guide.md`](codec-v2-development-guide.md) — Session continuity, current state
@@ -31,7 +31,7 @@ Spec Compliance Refactoring Plan and the Deprecated API Migration Plan into a si
 
 The 8-step package migration from `codec.v2.*` to `codec.*` is **complete**:
 - New spec-compliant classes live in `org.eclipse.fennec.codec.*` packages
-- Old `codec.v2.*` classes are deprecated + tests disabled
+- **All deprecated code deleted** (old `codec.v2.*` src/test + old `codec.api.value.*`/`codec.api.diagnostic.*`)
 - `ConfigurationResolver` replaced `CodecConfiguration` + `ConfigurationMerger`
 - All 6 config types have spec + resolver tests (Type, Id, SuperType, Feature, Reference, Discriminator)
 
@@ -40,12 +40,26 @@ The 8-step package migration from `codec.v2.*` to `codec.*` is **complete**:
 - Migrated dependent projects: `codec.geojson`, `codec.jsonschema.v2`, `codec.openapi`
 - Fixed `forceWrite`/`forceRead` bugs (two-gate model, volatile features)
 
+**Code Cleanup COMPLETE** (2026-02-05):
+- Deleted 55 src + 9 test files from `codec.v2.*`, 11 src + 14 test files from deprecated API
+- Extracted helper classes: `TypeResolutionHelper` (22 tests), `EMapHelper` (18 tests)
+- Cleaned up all `@claude` comments
+- Total: 2519 tests, 0 failures, 0 skipped across 7 projects
+
+**Integration Tests + PLAIN Reference Format COMPLETE** (2026-02-06):
+- Created `FeatureVisibilityIntegrationTest.java` (20 tests for ignoreRead/ignoreWrite/ignore)
+- Enhanced `ExpandReferenceTest.java` (+8 edge case tests)
+- Implemented PLAIN reference format serialization and deserialization
+- Created `PlainReferenceFormatTest.java` (16 tests)
+- Updated spec `10-reference.md` §1.1 PLAIN Strategy
+- Total: ~2535 tests, 0 failures
+
 ### What Remains
 
 | Category | Description | Status |
 |----------|-------------|--------|
-| ~~**Plan A**~~ | ~~Migrate deprecated API~~ | ✅ COMPLETE |
-| **Plan B** | Fill spec compliance gaps (14 identified GAPs) | In Progress |
+| ~~**Plan A**~~ | ~~Migrate deprecated API + cleanup~~ | ✅ COMPLETE |
+| **Plan B** | Fill spec compliance gaps (14 GAPs: 2 done, 3 migration, 1 new feature, 8 pending) | In Progress |
 | **Plan C** | Documentation examples (deferred from spec review) | Not Started |
 | **Plan D** | Discriminator refactoring (deferred from spec review) | Not Started |
 
@@ -57,15 +71,23 @@ The 8-step package migration from `codec.v2.*` to `codec.*` is **complete**:
 
 ```
 codec.api project (org.eclipse.fennec.codec.api):
-├── codec.value.*          ← NEW API interfaces (CodecValueReader/Writer, CodecReaderContext, etc.)
-├── codec.api.value.*      ← OLD deprecated interfaces
+├── codec.value.*          ← API interfaces (CodecValueReader/Writer, CodecReaderContext, etc.)
 ├── codec.config.*         ← Config record types (TypeConfig, IdConfig, etc.)
 └── codec.diagnostic.*     ← DiagnosticCollector
 
 codec.v2 project (org.eclipse.fennec.codec.v2):
-├── codec.*                ← NEW implementation (ser, deser, config, module, resource)
-└── codec.v2.*             ← OLD deprecated implementation (to be deleted)
+├── codec.ser.*            ← Serialization entries (Type, ID, Feature, Reference)
+├── codec.deser.*          ← Deserialization entries (Type, ID, Feature, Reference)
+├── codec.config.*         ← Configuration (effective, resolver)
+├── codec.module.*         ← CodecModule (Jackson integration)
+├── codec.resource.*       ← CodecResource (EMF resource)
+├── codec.util.*           ← Helpers (AnnotationHelper, TypeResolutionHelper, EMapHelper, etc.)
+├── codec.jackson.*        ← Jackson integration (contexts, buffers)
+├── codec.context.*        ← Codec contexts (read/write, entry)
+└── codec.value.*          ← Value registry
 ```
+
+Note: All deprecated `codec.v2.*` and `codec.api.value.*` packages have been deleted (2026-02-05).
 
 ### The EffectiveCodecConfig Layers
 
@@ -139,14 +161,14 @@ Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*`
 
 ### Gap Summary
 
-| ID | Gap | Priority | Phase | Status |
-|----|-----|----------|-------|--------|
-| GAP-001 | Feature Visibility (directional ignore/force) | HIGH | B1 | ✅ DONE |
-| GAP-002 | Fallback Strategy enum support | HIGH | B1 | PARTIAL |
-| GAP-003 | Feature Strictness (strictOnUnknown/Missing) | HIGH | B1 | PARTIAL |
-| GAP-004 | Diagnostic Options integration | HIGH | B1 | NOT STARTED |
-| GAP-005 | ID Value Key support | HIGH | B1 | ✅ DONE |
-| GAP-014 | `inherit` annotation type mismatch (boolean vs enum) | HIGH | B1 | PARTIAL |
+| ID | Gap | Priority | Phase | Type | Status |
+|----|-----|----------|-------|------|--------|
+| GAP-001 | Feature Visibility (directional ignore/force) | HIGH | B1 | — | ✅ DONE |
+| GAP-002 | Fallback Strategy enum support | HIGH | B1 | MIGRATION | PARTIAL |
+| GAP-003 | Feature Strictness (strictOnUnknown/Missing) | HIGH | B1 | MIGRATION | PARTIAL |
+| GAP-004 | Diagnostic Options integration | HIGH | B1 | NEW FEATURE | NOT STARTED |
+| GAP-005 | ID Value Key support | HIGH | B1 | — | ✅ DONE |
+| GAP-014 | `inherit` annotation type mismatch (boolean vs enum) | HIGH | B1 | MIGRATION+MODEL | PARTIAL |
 | GAP-006 | Metadata Merge behavior | MEDIUM | B2 |
 | GAP-007 | Expand deserialization | MEDIUM | B2 |
 | GAP-008 | Value Reader/Writer handlers | MEDIUM | B2 |
@@ -347,9 +369,11 @@ Plan D (Discriminator Refactoring) — after Plan B:
 ```
 
 **Notes:**
-- Plan A is complete, GAP-008 (value handlers) can now proceed
-- Plan A is lower risk and removes deprecated code usage
-- Cleaner codebase makes Plan B changes easier to reason about
+- Plan A is complete: deprecated code fully deleted, codebase clean
+- GAP-002, GAP-003, GAP-014 are migration tasks (existed in old code)
+- GAP-004 is a new feature (never existed in old code) — lower priority
+- Helper classes extracted (TypeResolutionHelper, EMapHelper) improving testability
+- GAP-008 (value handlers) can proceed now that Plan A is done
 
 ### Property Matrix (for Plan B reference)
 
