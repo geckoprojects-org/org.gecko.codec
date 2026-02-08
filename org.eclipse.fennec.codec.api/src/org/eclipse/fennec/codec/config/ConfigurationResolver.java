@@ -76,6 +76,7 @@ public final class ConfigurationResolver {
     private final ConcurrentHashMap<EClass, SuperTypeConfig> superTypeConfigCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<EClass, IdConfig> idConfigCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<EClass, DiscriminatorConfig> discriminatorConfigCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<EClass, ClassConfig> classConfigCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<EStructuralFeature, FeatureConfig> featureConfigCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<EStructuralFeature, ReferenceConfig> referenceConfigCache = new ConcurrentHashMap<>();
 
@@ -84,6 +85,7 @@ public final class ConfigurationResolver {
     private volatile SuperTypeConfig globalSuperTypeConfig;
     private volatile IdConfig globalIdConfig;
     private volatile DiscriminatorConfig globalDiscriminatorConfig;
+    private volatile ClassConfig globalClassConfig;
     private volatile FeatureConfig globalFeatureConfig;
     private volatile ReferenceConfig globalReferenceConfig;
 
@@ -343,6 +345,68 @@ public final class ConfigurationResolver {
             }
         }
         return globalDiscriminatorConfig;
+    }
+
+    // ========================================================================
+    // Class Configuration Resolution (Strictness)
+    // ========================================================================
+
+    /**
+     * Resolves effective ClassConfig for an EClass.
+     * <p>
+     * ClassConfig controls strictness behavior during deserialization:
+     * <ul>
+     *   <li>{@code strictOnUnknown}: ERROR on unknown JSON field (default: false)</li>
+     *   <li>{@code strictOnMissing}: ERROR on missing required feature (default: false)</li>
+     * </ul>
+     *
+     * @param eClass the EClass to resolve config for
+     * @param diagnostics collector for validation diagnostics
+     * @return the effective ClassConfig (cached)
+     */
+    public ClassConfig resolveClassConfig(EClass eClass, DiagnosticCollector diagnostics) {
+        Objects.requireNonNull(eClass, "eClass must not be null");
+        Objects.requireNonNull(diagnostics, "diagnostics must not be null");
+
+        return classConfigCache.computeIfAbsent(eClass, ec -> {
+            return ClassConfig.defaults()
+                    .mergeWith(extractGlobalProperties(annotationProperties))
+                    .mergeWith(extractClassProperties(annotationProperties, ec))
+                    .mergeWith(extractGlobalProperties(moduleProperties))
+                    .mergeWith(extractClassProperties(moduleProperties, ec))
+                    .mergeWith(extractGlobalProperties(factoryProperties))
+                    .mergeWith(extractClassProperties(factoryProperties, ec))
+                    .mergeWith(extractGlobalProperties(resourceProperties))
+                    .mergeWith(extractClassProperties(resourceProperties, ec))
+                    .mergeWith(extractGlobalProperties(optionsProperties))
+                    .mergeWith(extractClassProperties(optionsProperties, ec))
+                    .validate(diagnostics);
+        });
+    }
+
+    /**
+     * Resolves global ClassConfig (no EClass context).
+     *
+     * @param diagnostics collector for validation diagnostics
+     * @return the effective global ClassConfig
+     */
+    public ClassConfig resolveGlobalClassConfig(DiagnosticCollector diagnostics) {
+        Objects.requireNonNull(diagnostics, "diagnostics must not be null");
+
+        if (globalClassConfig == null) {
+            synchronized (this) {
+                if (globalClassConfig == null) {
+                    globalClassConfig = ClassConfig.defaults()
+                            .mergeWith(extractGlobalProperties(annotationProperties))
+                            .mergeWith(extractGlobalProperties(moduleProperties))
+                            .mergeWith(extractGlobalProperties(factoryProperties))
+                            .mergeWith(extractGlobalProperties(resourceProperties))
+                            .mergeWith(extractGlobalProperties(optionsProperties))
+                            .validate(diagnostics);
+                }
+            }
+        }
+        return globalClassConfig;
     }
 
     // ========================================================================
@@ -651,12 +715,14 @@ public final class ConfigurationResolver {
         superTypeConfigCache.clear();
         idConfigCache.clear();
         discriminatorConfigCache.clear();
+        classConfigCache.clear();
         featureConfigCache.clear();
         referenceConfigCache.clear();
         globalTypeConfig = null;
         globalSuperTypeConfig = null;
         globalIdConfig = null;
         globalDiscriminatorConfig = null;
+        globalClassConfig = null;
         globalFeatureConfig = null;
         globalReferenceConfig = null;
     }
@@ -1550,6 +1616,43 @@ public final class ConfigurationResolver {
         public Builder serializeDefault(boolean serialize) {
             ensureResourceProperties();
             resourceProperties.put(ConfigProperty.SERIALIZE_DEFAULT.getKey(), serialize);
+            return this;
+        }
+
+        // ====================================================================
+        // Convenience Methods for Strictness Configuration
+        // ====================================================================
+
+        /**
+         * Controls whether unknown JSON fields cause an error during deserialization.
+         * <p>
+         * When false (default), unknown fields generate a warning and are skipped.
+         * When true, unknown fields cause deserialization to fail with an error.
+         *
+         * @param strict true to error on unknown fields, false to skip with warning (default)
+         * @return this builder
+         * @see ConfigProperty#STRICT_ON_UNKNOWN
+         */
+        public Builder strictOnUnknown(boolean strict) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.STRICT_ON_UNKNOWN.getKey(), strict);
+            return this;
+        }
+
+        /**
+         * Controls whether missing required features cause an error during deserialization.
+         * <p>
+         * When false (default), missing required features generate a warning and use
+         * the EMF default value. When true, missing required features cause
+         * deserialization to fail with an error.
+         *
+         * @param strict true to error on missing required fields, false to use defaults (default)
+         * @return this builder
+         * @see ConfigProperty#STRICT_ON_MISSING
+         */
+        public Builder strictOnMissing(boolean strict) {
+            ensureResourceProperties();
+            resourceProperties.put(ConfigProperty.STRICT_ON_MISSING.getKey(), strict);
             return this;
         }
 

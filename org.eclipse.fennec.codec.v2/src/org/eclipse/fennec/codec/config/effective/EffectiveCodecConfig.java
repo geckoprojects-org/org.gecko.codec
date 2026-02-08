@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.fennec.codec.value.CodecValueReader;
 import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.value.CodecValueWriter;
+import org.eclipse.fennec.codec.config.ClassConfig;
 import org.eclipse.fennec.codec.config.ConfigurationResolver;
 import org.eclipse.fennec.codec.config.DiscriminatorConfig;
 import org.eclipse.fennec.codec.config.FeatureConfig;
@@ -188,6 +189,31 @@ public final class EffectiveCodecConfig
      */
     public DiscriminatorConfig resolveGlobalDiscriminatorConfig() {
         return resolver.resolveGlobalDiscriminatorConfig(diagnostics);
+    }
+
+    /**
+     * Resolves effective ClassConfig for an EClass.
+     * <p>
+     * ClassConfig controls strictness behavior during deserialization:
+     * <ul>
+     *   <li>{@code strictOnUnknown}: ERROR on unknown JSON field (default: false)</li>
+     *   <li>{@code strictOnMissing}: ERROR on missing required feature (default: false)</li>
+     * </ul>
+     *
+     * @param eClass the EClass
+     * @return the effective ClassConfig (cached by resolver)
+     */
+    public ClassConfig resolveClassConfig(EClass eClass) {
+        return resolver.resolveClassConfig(eClass, diagnostics);
+    }
+
+    /**
+     * Resolves global ClassConfig (no EClass context).
+     *
+     * @return the effective global ClassConfig
+     */
+    public ClassConfig resolveGlobalClassConfig() {
+        return resolver.resolveGlobalClassConfig(diagnostics);
     }
 
     /**

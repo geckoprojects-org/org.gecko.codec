@@ -164,8 +164,8 @@ Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*`
 | ID | Gap | Priority | Phase | Type | Status |
 |----|-----|----------|-------|------|--------|
 | GAP-001 | Feature Visibility (directional ignore/force) | HIGH | B1 | — | ✅ DONE |
-| GAP-002 | Fallback Strategy enum support | HIGH | B1 | MIGRATION | PARTIAL |
-| GAP-003 | Feature Strictness (strictOnUnknown/Missing) | HIGH | B1 | MIGRATION | PARTIAL |
+| GAP-002 | Fallback Strategy enum support | HIGH | B1 | MIGRATION | ✅ DONE |
+| GAP-003 | Feature Strictness (strictOnUnknown/Missing) | HIGH | B1 | MIGRATION | ✅ DONE |
 | GAP-004 | Diagnostic Options integration | HIGH | B1 | NEW FEATURE | NOT STARTED |
 | GAP-005 | ID Value Key support | HIGH | B1 | — | ✅ DONE |
 | GAP-014 | `inherit` annotation type mismatch (boolean vs enum) | HIGH | B1 | MIGRATION+MODEL | PARTIAL |
@@ -192,32 +192,42 @@ Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*`
 - Runtime serialization/deserialization entries (use `shouldSerialize()`/`shouldDeserialize()`)
 - Tests: `FeatureConfigSpecTest`, `ForceReadWriteTest`, `ConfigurationResolverTest`
 
-#### GAP-002: Fallback Strategy Enum Support
+#### GAP-002: Fallback Strategy Enum Support ✅ DONE
 
-**Spec:** 10-reference.md, 08-discriminator-mapping.md
+**Spec:** 10-reference.md §10.2, 08-discriminator-mapping.md §6
 
-**Current state:**
-- `FallbackStrategy` enum exists in codec.ecore (SKIP, ERROR, FALLBACK)
-- `DiscriminatorConfig` in API layer has `fallbackStrategy` + `fallbackEClass`
-- Runtime: TypeDiscriminatorService already uses fallback strategy for type mapping registries
-- `ReferenceSerializationConfig` in codec.ecore does NOT have fallbackStrategy/fallbackEClass fields
-- `CodecAspectProvider` does NOT parse fallbackStrategy from reference annotations
-- `ReferenceConfig` in API layer does NOT have fallbackStrategy/fallbackEClass
+**Status:** FULLY IMPLEMENTED. Per spec §10.2, `fallbackStrategy` and `fallbackEClass` belong to **Discriminator Mapping**, not Reference Configuration. They apply to:
+- **Type Mapping Registry** (on EClass via `typeMapping/{mapId}` annotation source)
+- **Inline Mapping** (on EReference via `inlineMapping` annotation source)
 
-**Required:** Wire fallbackStrategy from reference annotations through to runtime. Note: for typeMapping registries, fallback is already handled by TypeDiscriminatorService — this GAP is about per-reference annotation-level fallback config.
+**Implementation:**
+- `TypeDiscriminatorService.registerInlineMappings()` — parses `fallbackStrategy` + `fallbackEClass` from `inlineMapping` annotations on EReference
+- `TypeDiscriminatorService.registerFallbackConfig()` — parses fallback config from `typeMapping/{mapId}` annotations on EClass
+- `TypeDiscriminatorRegistry.resolve()` — applies fallback strategy (ERROR throws, SKIP returns null, FALLBACK uses fallbackEClass)
+- `DiscriminatorConfig` (API layer) — has `fallbackStrategy` + `fallbackEClass` fields
 
-#### GAP-003: Feature Strictness
+**Tests:** `CodecResourceInlineMappingTest` (19 tests covering ERROR, FALLBACK, SKIP strategies for inline mapping and type mapping registries)
+
+#### GAP-003: Feature Strictness ✅ DONE
 
 **Spec:** 11-feature.md §11
 
-**Current state:**
-- `strictOnUnknown` and `strictOnMissing` fields exist in `ClassCodecAspect` (codec.ecore)
-- `AspectToPropertiesConverter` bridges them to properties
-- Annotation constant keys exist (`KEY_STRICT_ON_MISSING`, `KEY_STRICT_ON_UNKNOWN`)
-- No `ClassConfig` API class (unlike TypeConfig, IdConfig, etc.)
-- Not wired in runtime deserialization pipeline (unknown fields produce warnings but strictOnUnknown is not checked)
+**Status:** FULLY IMPLEMENTED. Strictness controls how the deserializer handles:
+- `strictOnUnknown=true`: ERROR on unknown JSON field (throws IllegalStateException)
+- `strictOnUnknown=false`: WARNING + skip unknown field (default)
+- `strictOnMissing=true`: ERROR on missing required EMF feature (lowerBound >= 1)
+- `strictOnMissing=false`: WARNING + use default value (default)
 
-**Required:** Create ClassConfig API class, wire strictness into runtime deserialization, add tests.
+**Implementation:**
+- `ClassConfig` (API layer) — immutable config with `strictOnUnknown`, `strictOnMissing`
+- `ConfigurationResolver.resolveClassConfig(EClass)` — resolves with full merge cascade
+- `ConfigurationResolver.Builder.strictOnUnknown/strictOnMissing()` — convenience methods
+- `EffectiveCodecConfig.resolveClassConfig(EClass)` — bridges to deserializer
+- `CodecEObjectDeserializer.deserializeProperty()` — checks strictOnUnknown for non-deferred fields
+- `CodecEObjectDeserializer.processDeferredProperties()` — checks strictOnUnknown for deferred fields
+- `CodecEObjectDeserializer.checkStrictOnMissing()` — checks strictOnMissing after deserialization
+
+**Tests:** `StrictnessIntegrationTest` (11 tests covering strictOnUnknown, strictOnMissing, and class-level overrides)
 
 #### GAP-004: Diagnostic Options Integration
 

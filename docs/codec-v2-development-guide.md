@@ -2,20 +2,23 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-02-06 (Integration tests + PLAIN reference format implementation)
+**Last Updated:** 2026-02-08 (GAP-002 verified, GAP-003 strictness implemented)
 
 **Session Summary:**
-- **Created FeatureVisibilityIntegrationTest.java** — 20 tests covering `ignoreRead`, `ignoreWrite`, `ignore` for attributes and containment references
-- **Enhanced ExpandReferenceTest.java** — 8 new edge case tests (expand + null, expand + ignoreWrite, empty arrays, mixed expand/proxy)
-- **Implemented PLAIN reference format** — Full serialization and deserialization support:
-  - Deserialization: Added `VALUE_STRING` handling in `ReferenceDeserializationEntry.deserializeSingleValued()` (multi-valued was already supported)
-  - Serialization: Added `refFormat` check in `ReferenceSerializationEntry.writeReferenceObject()` — outputs bare URI string when PLAIN
-  - Type resolution chain: `CODEC_FEATURE_TYPE_HINTS` → `EReference.getEReferenceType()`
-- **Created PlainReferenceFormatTest.java** — 16 tests covering PLAIN deserialization (single/multi-valued), type hints, mixed formats, PLAIN serialization, round-trip
-- **Updated spec** `10-reference.md` — Enhanced §1.1 PLAIN Strategy with type resolution table, polymorphism warning, implementation status
-- Final codec.v2 test count: ~1008 tests, 0 failures
+- **Verified GAP-002 (Fallback Strategy)** — Already fully implemented in `TypeDiscriminatorService`
+- **Implemented GAP-003 (Feature Strictness):**
+  - Created `ClassConfig` API class with `strictOnUnknown`, `strictOnMissing` fields
+  - Added `ConfigurationResolver.resolveClassConfig(EClass)` with full merge cascade
+  - Added convenience builder methods `strictOnUnknown()`, `strictOnMissing()`
+  - Wired into `CodecEObjectDeserializer`:
+    - `deserializeProperty()` — checks `strictOnUnknown` for non-deferred fields
+    - `processDeferredProperties()` — checks `strictOnUnknown` for deferred fields (key fix!)
+    - `checkStrictOnMissing()` — checks required features after deserialization
+- **Created StrictnessIntegrationTest.java** — 11 tests covering strictOnUnknown, strictOnMissing, class-level overrides
+- **Created test-strictness.ecore** — Model with required features (lowerBound=1) for testing
+- Final codec.v2 test count: ~1019 tests, 0 failures
 
-**Next Session:** Continue with Plan B GAP work (GAP-002 fallback strategy wiring, GAP-003 strictness, GAP-014 inherit enum)
+**Next Session:** Continue with GAP-014 (inherit enum - AnnotationInheritance), then GAP-004 (Diagnostic Options)
 
 ---
 
@@ -338,8 +341,8 @@ String discriminatorValue = typeDiscriminatorService.getDiscriminatorValue(mapId
 **Plan B Phase 1: Migration GAPs**
 - [✅] GAP-001: Feature Visibility — DONE
 - [✅] GAP-005: ID Value Key — DONE
-- [ ] GAP-002: Fallback Strategy wiring (per-reference annotation-level fallback)
-- [ ] GAP-003: Feature Strictness (ClassConfig, strictOnUnknown/Missing runtime wiring)
+- [✅] GAP-002: Fallback Strategy wiring — DONE (TypeDiscriminatorService handles inline + typeMapping fallback)
+- [✅] GAP-003: Feature Strictness — DONE (ClassConfig, strictOnUnknown/Missing in deserialization)
 - [ ] GAP-014: inherit enum (AnnotationInheritance: DIRECT/ALL/NONE, requires codec.ecore change)
 - [ ] GAP-004: Diagnostic Options (NEW FEATURE, not migration)
 
@@ -348,6 +351,7 @@ String discriminatorValue = typeDiscriminatorService.getDiscriminatorValue(mapId
 - [✅] Feature visibility integration tests (FeatureVisibilityIntegrationTest.java — ignoreRead/Write/ignore)
 - [✅] Reference expansion integration tests (ExpandReferenceTest.java — edge cases added)
 - [✅] PLAIN reference format tests (PlainReferenceFormatTest.java — ser/deser/round-trip)
+- [✅] Strictness integration tests (StrictnessIntegrationTest.java — strictOnUnknown/Missing)
 - [ ] Type resolution integration tests (beyond discriminator mapping)
 - [ ] ID serialization integration tests
 

@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.fennec.codec.config.ClassConfig;
 import org.eclipse.fennec.codec.config.DiscriminatorConfig;
 import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.eclipse.fennec.codec.config.IdConfig;
@@ -252,6 +253,11 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             ContextHelper.addError(ctxt, msg, parser, "CodecEObjectDeserializer");
         }
 
+        // Check strictOnMissing for required features
+        if (eObject != null) {
+            checkStrictOnMissing(eObject, state, ctxt, parser);
+        }
+
         return eObject;
     }
 
@@ -438,6 +444,10 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
     /**
      * Processes deferred properties after the type is resolved.
+     * <p>
+     * Checks {@code strictOnUnknown} configuration for deferred properties that
+     * don't match any known feature.
+     * </p>
      */
     private void processDeferredProperties(DeserializationState state,
             Map<String, Object> deferredProperties, DeserializationContext ctxt) {
@@ -455,6 +465,20 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             DeserializationEntry deserEntry = entries.get(propertyName);
             if (deserEntry != null && value != null) {
                 replayDeferredValue(state, deserEntry, value, ctxt);
+            } else if (deserEntry == null) {
+                // Unknown property in deferred list - check strictOnUnknown config
+                ClassConfig classConfig = config.resolveClassConfig(eClass);
+                if (classConfig != null && classConfig.isStrictOnUnknown()) {
+                    String msg = "Unknown feature '" + propertyName + "' for EClass " + eClass.getName();
+                    LOGGER.warning(msg);
+                    ContextHelper.addError(ctxt, msg, null, "CodecEObjectDeserializer");
+                    throw new IllegalStateException(msg);
+                } else {
+                    LOGGER.fine("Skipping unknown deferred property: " + propertyName);
+                    ContextHelper.addWarning(ctxt,
+                        "Unknown feature '" + propertyName + "' for EClass " + eClass.getName(),
+                        null, "CodecEObjectDeserializer");
+                }
             }
         }
     }
@@ -552,6 +576,10 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
     /**
      * Deserializes a single property.
+     * <p>
+     * Checks {@code strictOnUnknown} configuration: when true, unknown fields
+     * cause an error; when false (default), unknown fields are skipped with a warning.
+     * </p>
      */
     private void deserializeProperty(DeserializationState state, String propertyName,
             JsonParser parser, DeserializationContext ctxt) {
@@ -562,9 +590,80 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
         if (entry != null) {
             entry.deserialize(state, parser, ctxt);
         } else {
-            // Unknown property - skip it
-            LOGGER.fine("Unknown property: " + propertyName);
-            parser.skipChildren();
+            // Unknown property - check strictOnUnknown config
+            ClassConfig classConfig = config.resolveClassConfig(eClass);
+            if (classConfig != null && classConfig.isStrictOnUnknown()) {
+                // Strict mode: throw error on unknown field
+                String msg = "Unknown feature '" + propertyName + "' for EClass " + eClass.getName();
+                LOGGER.warning(msg);
+                ContextHelper.addError(ctxt, msg, parser, "CodecEObjectDeserializer");
+                throw new IllegalStateException(msg);
+            } else {
+                // Lenient mode (default): skip with warning
+                LOGGER.fine("Unknown property: " + propertyName);
+                ContextHelper.addWarning(ctxt,
+                    "Unknown feature '" + propertyName + "' for EClass " + eClass.getName(),
+                    parser, "CodecEObjectDeserializer");
+                parser.skipChildren();
+            }
+        }
+    }
+
+    /**
+     * Checks strictOnMissing for required features.
+     * <p>
+     * When {@code strictOnMissing=true}, this method checks all required features
+     * (lowerBound >= 1) and throws an error if any are not set.
+     * When {@code strictOnMissing=false} (default), missing required features
+     * generate a warning and use the EMF default value.
+     * </p>
+     *
+     * @param eObject the deserialized object to check
+     * @param state the deserialization state
+     * @param ctxt the Jackson deserialization context
+     * @param parser the JSON parser (for location info)
+     */
+    private void checkStrictOnMissing(EObject eObject, DeserializationState state,
+            DeserializationContext ctxt, JsonParser parser) {
+        EClass eClass = eObject.eClass();
+        ClassConfig classConfig = config.resolveClassConfig(eClass);
+
+        // Only check if strictOnMissing is enabled
+        if (classConfig == null || !classConfig.isStrictOnMissing()) {
+            return;
+        }
+
+        List<String> missingFeatures = new ArrayList<>();
+
+        for (EStructuralFeature feature : eClass.getEAllStructuralFeatures()) {
+            // Check if feature is required (lowerBound >= 1)
+            if (feature.getLowerBound() < 1) {
+                continue;
+            }
+
+            // Skip features that are not deserialized (transient, derived, ignored)
+            FeatureConfig featureConfig = config.resolveFeatureConfig(feature);
+            if (!featureConfig.shouldDeserialize()) {
+                continue;
+            }
+
+            // Skip non-changeable features
+            if (!feature.isChangeable()) {
+                continue;
+            }
+
+            // Check if the feature is set
+            if (!eObject.eIsSet(feature)) {
+                missingFeatures.add(feature.getName());
+            }
+        }
+
+        if (!missingFeatures.isEmpty()) {
+            String msg = "Missing required feature(s) for EClass " + eClass.getName() + ": "
+                    + String.join(", ", missingFeatures);
+            LOGGER.warning(msg);
+            ContextHelper.addError(ctxt, msg, parser, "CodecEObjectDeserializer");
+            throw new IllegalStateException(msg);
         }
     }
 
@@ -769,6 +868,9 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
                 deserializeProperty(state, propertyName, parser, ctxt);
             }
         }
+
+        // Check strictOnMissing for required features
+        checkStrictOnMissing(eObject, state, ctxt, parser);
 
         return eObject;
     }
