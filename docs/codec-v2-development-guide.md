@@ -2,9 +2,23 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-02-08 (Plan D VERIFIED COMPLETE)
+**Last Updated:** 2026-02-08 (Plan E Architecture + Old Code Archived)
 
 **Session Summary (2026-02-08 latest):**
+
+**Plan E Architecture (Multi-Format Support):**
+- Designed FormatDelegate<T> pattern for pluggable format support
+- Architecture: `JacksonCodecWriter` delegates to `FormatDelegate<T>` for format-specific encoding
+- Generic type `T` allows different output targets: `OutputStream` (JSON/CBOR), `BsonDocument` (MongoDB), `Document` (Lucene)
+- Test strategy: JSON (existing) + CBOR (Jackson binary) + BSON (custom in-memory)
+- See `codec-v2-plans.md` Plan E for full details
+
+**Old Code Archived:**
+- Moved old codec projects to `old/` folder (reference implementations for Plan E)
+- Updated `settings.gradle` to exclude `old/` and `docs/` from Gradle build
+- Old projects preserved as reference: `org.eclipse.fennec.codec`, `org.eclipse.fennec.codec.mongo`, etc.
+
+**Previous Session (2026-02-08):**
 
 **Plan D Verification (Discriminator Refactoring):**
 - ✅ **D1 (Remove MAPPED from TypeStrategy)** — DONE, spec `06-type.md` confirms removal

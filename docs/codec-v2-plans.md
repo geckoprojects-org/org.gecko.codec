@@ -917,12 +917,19 @@ org.eclipse.fennec.codec.v2/
 
 #### Existing Projects (Reference)
 
+The old codec projects have been moved to the `old/` folder and are excluded from the Gradle build.
+They serve as reference implementations for Plan E (Multi-Format Support).
+
 ```
-org.eclipse.fennec.codec/              # Old codec with abstraction layer
-org.eclipse.fennec.codec.mongo/        # MongoDB BSON (working example)
-org.eclipse.fennec.codec.csv/          # CSV/query-string parser
-org.eclipse.fennec.codec.ecowitt/      # Ecowitt weather protocol
+old/                                   # Archived - excluded from build
+├── org.eclipse.fennec.codec/         # Old codec with FormatDelegate pattern (reference)
+├── org.eclipse.fennec.codec.mongo/   # MongoDB BSON (reference for BsonFormatDelegate)
+├── org.eclipse.fennec.codec.csv/     # CSV/query-string parser
+├── org.eclipse.fennec.codec.ecowitt/ # Ecowitt weather protocol
+└── ...                                # Other archived projects
 ```
+
+**Note:** The `old/` and `docs/` folders are excluded from the Gradle build via `settings.gradle`.
 
 #### New Structure (After Refactoring)
 
