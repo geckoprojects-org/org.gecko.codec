@@ -20,8 +20,9 @@ Spec Compliance Refactoring Plan and the Deprecated API Migration Plan into a si
 4. [Plan B: Spec Compliance Gaps](#4-plan-b-spec-compliance-gaps)
 5. [Plan C: Documentation Examples](#5-plan-c-documentation-examples-deferred)
 6. [Plan D: Discriminator Refactoring](#6-plan-d-discriminator-refactoring-deferred)
-7. [Execution Roadmap](#7-execution-roadmap)
-8. [Critical Files Reference](#8-critical-files-reference)
+7. [Plan E: Multi-Format Support](#7-plan-e-multi-format-support)
+8. [Execution Roadmap](#8-execution-roadmap)
+9. [Critical Files Reference](#9-critical-files-reference)
 
 ---
 
@@ -62,6 +63,7 @@ The 8-step package migration from `codec.v2.*` to `codec.*` is **complete**:
 | **Plan B** | Fill spec compliance gaps (12/14 GAPs done, 2 postponed) | ✅ MOSTLY COMPLETE |
 | **Plan C** | Documentation examples (deferred from spec review) | Not Started |
 | ~~**Plan D**~~ | ~~Discriminator refactoring~~ | ✅ VERIFIED COMPLETE |
+| **Plan E** | Multi-format support (BSON, CSV, Ecowitt) | Not Started |
 
 ---
 
@@ -430,7 +432,547 @@ Spec `08-discriminator-mapping.md` section 1.4 now clarifies this interaction. I
 
 ---
 
-## 7. Execution Roadmap
+## 7. Plan E: Multi-Format Support
+
+**Status:** NOT STARTED (Future Feature)
+
+**Goal:** Extend codec.v2 to support formats beyond JSON (BSON, CSV, Ecowitt, etc.) while maintaining feature parity with the JSON implementation.
+
+### Background
+
+The current codec.v2 is tightly coupled to Jackson's JSON streaming API (`JsonParser`, `JsonGenerator`). However, the old codebase (`org.eclipse.fennec.codec`) had a working abstraction layer that supported both:
+
+1. **Jackson-compatible formats** — JSON, CSV, XML, YAML via Jackson's `TokenStreamFactory` derivatives
+2. **Custom non-Jackson formats** — MongoDB BSON, Ecowitt weather protocol
+
+The architecture intentionally has **two parallel branches** with duplication, as long as comprehensive tests prove feature parity.
+
+### Existing Old Codec Implementations (Reference)
+
+| Project | Format | Approach |
+|---------|--------|----------|
+| `o.e.f.codec` (old core) | JSON | Jackson `JsonParser`/`JsonGenerator` |
+| `o.e.f.codec.csv` | CSV/Query-string | Custom `CodecParserBaseImpl` |
+| `o.e.f.codec.mongo` | MongoDB BSON | Custom `CodecParserBaseImpl`/`CodecGeneratorBaseImpl` wrapping `BsonReader`/`BsonWriter` |
+| `o.e.f.codec.ecowitt` | Ecowitt protocol | Custom `CodecParserBaseImpl` |
+
+### Jackson Format Ecosystem (Future Integration)
+
+Jackson provides extensive format support through its dataformat modules, all using the **same streaming API**:
+
+| Category | Formats | Jackson Module | Notes |
+|----------|---------|----------------|-------|
+| **Text** | JSON | `jackson-core` | Default, built-in |
+| **Text** | CSV | `jackson-dataformat-csv` | Tabular data |
+| **Text** | YAML | `jackson-dataformat-yaml` | Config files |
+| **Text** | XML | `jackson-dataformat-xml` | Legacy integration |
+| **Text** | Properties | `jackson-dataformat-properties` | Java properties |
+| **Binary** | Avro | `jackson-dataformat-avro` | Schema-based, compact |
+| **Binary** | Protobuf | `jackson-dataformat-protobuf` | Google Protocol Buffers |
+| **Binary** | CBOR | `jackson-dataformat-cbor` | Concise Binary Object Representation |
+| **Binary** | Smile | `jackson-dataformat-smile` | Binary JSON, 100% compatible |
+| **Binary** | Ion | `jackson-dataformat-ion` | Amazon Ion (text + binary) |
+
+**Key Advantage:** All Jackson formats use `TokenStreamFactory.createParser()` / `createGenerator()`, meaning codec.v2 should work with **any Jackson format** without code changes, only dependency additions.
+
+**References:**
+- [Jackson Binary Formats Repository](https://github.com/FasterXML/jackson-dataformats-binary)
+- [Jackson Main Portal](https://github.com/FasterXML/jackson)
+
+### Architecture: Two-Branch Design
+
+```
+                       ┌─────────────────────────┐
+                       │   Codec Entry Layer     │
+                       │ (Type, ID, Feature,     │
+                       │  Reference, SuperType)  │
+                       └───────────┬─────────────┘
+                                   │
+                    ┌──────────────┴──────────────┐
+                    ▼                             ▼
+         ┌─────────────────────┐      ┌─────────────────────┐
+         │ Jackson-Based Branch│      │ Custom Format Branch │
+         │   (JsonParser/Gen)  │      │ (CodecParserBaseImpl)│
+         │                     │      │                      │
+         │ Works with ANY      │      │ For non-Jackson      │
+         │ Jackson format!     │      │ protocols            │
+         └─────────┬───────────┘      └──────────┬──────────┘
+                   │                              │
+        ┌──────────┴──────────┐        ┌─────────┴─────────┐
+        ▼          ▼          ▼        ▼         ▼         ▼
+   Text Formats Binary Formats      BSON    Ecowitt   Custom
+   ┌─────────┐  ┌──────────┐     (MongoDB)  (Weather) Protocols
+   │ JSON    │  │ Avro     │
+   │ CSV     │  │ Protobuf │
+   │ YAML    │  │ CBOR     │
+   │ XML     │  │ Smile    │
+   └─────────┘  └──────────┘
+```
+
+**Key Principles:**
+1. **Jackson branch serves BOTH text AND binary formats** — Same streaming API (`JsonParser`/`JsonGenerator`)
+2. **Custom branch for non-Jackson protocols** — MongoDB BSON, Ecowitt, proprietary formats
+3. Duplication between branches is acceptable as long as tests prove feature parity
+
+### Core Architecture: FormatDelegate Pattern with Pluggable I/O
+
+The codec.v2 architecture uses **Jackson 3 as the foundation** with a **FormatDelegate pattern** for pluggable format support. Critically, **input/output types are format-specific** — not everything is a stream.
+
+#### Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           EMF Entry Layer                                   │
+│              (TypeEntry, IdEntry, FeatureEntry, ReferenceEntry)             │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    CodecWriter<T> / CodecReader<S>                          │
+│                    T = output target type, S = input source type            │
+│                    EMF-aware operations                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+                                      ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    JacksonCodecWriter<T> / JacksonCodecReader<S>            │
+│                    extends GeneratorBase / ParserBase                       │
+│                                                                             │
+│   Handles: EMF context, state machine, CodecWriteContext, TokenBuffer       │
+│   Delegates to → FormatDelegate<T> / FormatReaderDelegate<S>                │
+└─────────────────────────────────────────────────────────────────────────────┘
+                                      │
+          ┌───────────────────────────┼───────────────────────────┐
+          ▼                           ▼                           ▼
+┌───────────────────────┐   ┌───────────────────────┐   ┌───────────────────────┐
+│ JsonFormatDelegate    │   │ BsonFormatDelegate    │   │ LuceneFormatDelegate  │
+│ <OutputStream>        │   │ <BsonDocument>        │   │ <Document>            │
+│                       │   │                       │   │                       │
+│ Target: OutputStream  │   │ Target: BsonDocument  │   │ Target: Lucene Doc    │
+│ Output: byte stream   │   │ Output: in-memory obj │   │ Output: for indexing  │
+└───────────────────────┘   └───────────────────────┘   └───────────────────────┘
+```
+
+#### Format I/O Types
+
+| Format | Write Target (T) | Read Source (S) | Notes |
+|--------|------------------|-----------------|-------|
+| **JSON** | `OutputStream` | `InputStream` | Streaming bytes |
+| **CBOR/Avro/Smile** | `OutputStream` | `InputStream` | Streaming bytes (Jackson) |
+| **MongoDB BSON** | `BsonDocument` | `BsonDocument` | In-memory object |
+| **Lucene** | `Document` | `Document` | Lucene Document object |
+| **Query String** | `StringBuilder` | `String` | URL parameters |
+
+#### FormatDelegate Types
+
+| Delegate | Target Type | Purpose |
+|----------|-------------|---------|
+| **JsonFormatDelegate** | `OutputStream` | Keep existing JSON impl as-is |
+| **JacksonFormatDelegate** | `OutputStream` | Wraps AvroGenerator, CBORGenerator, etc. |
+| **BsonFormatDelegate** | `BsonDocument` | MongoDB's native in-memory document |
+| **LuceneFormatDelegate** | `Document` | Lucene Document for indexing |
+
+#### Interfaces
+
+```java
+// Format-specific writer delegate (generic target type)
+public interface FormatDelegate<T> {
+
+    // Target management
+    void setTarget(T target);
+    T getTarget();
+
+    // Document lifecycle
+    void writeStartDocument();
+    void writeEndDocument();
+
+    // Array lifecycle
+    void writeStartArray(String name);
+    void writeEndArray();
+
+    // Field writing
+    void writeName(String name);
+    void writeString(String name, String value);
+    void writeInt(String name, int value);
+    void writeLong(String name, long value);
+    void writeDouble(String name, double value);
+    void writeBoolean(String name, boolean value);
+    void writeBinary(String name, byte[] value);
+    void writeNull(String name);
+
+    // Format-specific features
+    void writeObjectId(String name, Object value);
+    boolean supportsNativeObjectId();
+
+    // Finalization
+    void flush();
+    void close();
+}
+
+// Format-specific reader delegate (generic source type)
+public interface FormatReaderDelegate<S> {
+
+    // Source management
+    void setSource(S source);
+    S getSource();
+
+    // Navigation
+    boolean hasNext();
+    TokenType nextToken();
+    TokenType currentToken();
+
+    // Reading
+    String currentName();
+    String readString();
+    int readInt();
+    long readLong();
+    double readDouble();
+    boolean readBoolean();
+    byte[] readBinary();
+
+    // Format-specific
+    Object readObjectId();
+    boolean supportsNativeObjectId();
+}
+
+// Simple token type enum (format-agnostic)
+public enum TokenType {
+    START_OBJECT,
+    END_OBJECT,
+    START_ARRAY,
+    END_ARRAY,
+    FIELD_NAME,
+    VALUE_STRING,
+    VALUE_NUMBER,
+    VALUE_BOOLEAN,
+    VALUE_NULL,
+    VALUE_BINARY
+}
+```
+
+#### Example Implementations
+
+```java
+// JSON: streaming to OutputStream
+public class JsonFormatDelegate implements FormatDelegate<OutputStream> {
+    private OutputStream target;
+    private JsonGenerator generator;
+
+    @Override
+    public void setTarget(OutputStream target) {
+        this.target = target;
+        this.generator = jsonFactory.createGenerator(target);
+    }
+
+    @Override
+    public OutputStream getTarget() {
+        return target;
+    }
+}
+
+// BSON: in-memory BsonDocument
+public class BsonFormatDelegate implements FormatDelegate<BsonDocument> {
+    private BsonDocument target;
+    private BsonDocumentWriter writer;
+
+    @Override
+    public void setTarget(BsonDocument target) {
+        this.target = target;
+        this.writer = new BsonDocumentWriter(target);
+    }
+
+    @Override
+    public BsonDocument getTarget() {
+        return target;  // Return the populated document
+    }
+
+    @Override
+    public void writeObjectId(String name, Object value) {
+        if (value instanceof ObjectId) {
+            writer.writeObjectId(name, (ObjectId) value);  // Native!
+        } else {
+            writer.writeString(name, value.toString());
+        }
+    }
+}
+
+// Lucene: Document for indexing
+public class LuceneFormatDelegate implements FormatDelegate<Document> {
+    private Document target;
+
+    @Override
+    public void setTarget(Document target) {
+        this.target = target;
+    }
+
+    @Override
+    public Document getTarget() {
+        return target;  // Ready for IndexWriter.addDocument()
+    }
+
+    @Override
+    public void writeString(String name, String value) {
+        target.add(new TextField(name, value, Field.Store.YES));
+    }
+
+    @Override
+    public void writeObjectId(String name, Object value) {
+        target.add(new StringField(name, value.toString(), Field.Store.YES));
+    }
+}
+```
+
+#### Factory Pattern for Format Selection
+
+```java
+public interface CodecFormatFactory<S, T> {
+    FormatDelegate<T> createWriter(T target);
+    FormatReaderDelegate<S> createReader(S source);
+}
+
+// Usage examples
+CodecFormatFactory<InputStream, OutputStream> jsonFormat = new JsonFormatFactory();
+CodecFormatFactory<BsonDocument, BsonDocument> bsonFormat = new BsonFormatFactory();
+CodecFormatFactory<Document, Document> luceneFormat = new LuceneFormatFactory();
+
+// Serialize EObject to different targets
+EObject person = ...;
+
+// To JSON bytes
+OutputStream jsonOut = new ByteArrayOutputStream();
+codec.serialize(person, jsonFormat.createWriter(jsonOut));
+
+// To BsonDocument (in-memory)
+BsonDocument bsonDoc = new BsonDocument();
+codec.serialize(person, bsonFormat.createWriter(bsonDoc));
+// bsonDoc is now populated, ready for MongoDB insert
+
+// To Lucene Document
+Document luceneDoc = new Document();
+codec.serialize(person, luceneFormat.createWriter(luceneDoc));
+// luceneDoc is now populated, ready for IndexWriter.addDocument()
+```
+
+### Key Benefits
+
+1. **Single JacksonCodecWriter** — All EMF logic, context management, state tracking in ONE place
+2. **Keep existing JSON code** — Extract byte-writing parts into `JsonFormatDelegate<OutputStream>`
+3. **Jackson formats for free** — `JacksonFormatDelegate<OutputStream>` wraps any Jackson generator
+4. **Custom formats with custom targets** — `BsonFormatDelegate<BsonDocument>`, `LuceneFormatDelegate<Document>`
+5. **Type-safe I/O** — Generics ensure correct source/target types per format
+6. **Feature parity via tests** — Same EMF operations must work across ALL formats
+
+### Test Strategy
+
+The key to this architecture is **feature parity testing**:
+
+1. **Abstract Feature Tests** — Define tests in terms of abstract operations, not JSON syntax
+2. **Parameterized Tests** — Same test suite runs against all formats
+3. **Round-Trip Tests** — Serialize → Deserialize → Compare for each format
+
+```java
+@ParameterizedTest
+@MethodSource("allFormats")
+void shouldSerializeAndDeserializeEObject(FormatConfig format) {
+    // Create test EObject
+    Person person = TestFactory.eINSTANCE.createPerson();
+    person.setName("John");
+
+    // Serialize to format
+    byte[] serialized = codec.serialize(person, format);
+
+    // Deserialize back
+    Person deserialized = codec.deserialize(serialized, format, Person.class);
+
+    // Assert equality
+    assertThat(deserialized.getName()).isEqualTo("John");
+}
+```
+
+### Implementation Phases
+
+#### Phase E1: Refactor to FormatDelegate Pattern (Foundation)
+
+| Step | Description | Effort |
+|------|-------------|--------|
+| **E1.1** | Define `FormatDelegate<T>` interface with generic target type | LOW |
+| **E1.2** | Define `FormatReaderDelegate<S>` interface with generic source type | LOW |
+| **E1.3** | Define `TokenType` enum (format-agnostic token representation) | LOW |
+| **E1.4** | Define `CodecFormatFactory<S, T>` factory interface | LOW |
+| **E1.5** | Extract `JsonFormatDelegate<OutputStream>` from existing JSON impl | MEDIUM |
+| **E1.6** | Extract `JsonReaderDelegate<InputStream>` from existing JSON impl | MEDIUM |
+| **E1.7** | Refactor `JacksonCodecWriter` to use `FormatDelegate<T>` injection | MEDIUM |
+| **E1.8** | Refactor `JacksonCodecReader` to use `FormatReaderDelegate<S>` injection | MEDIUM |
+| **E1.9** | Tests: Verify existing JSON behavior unchanged | LOW |
+
+#### Phase E2: JacksonFormatDelegate (Jackson Formats)
+
+| Step | Description | Effort |
+|------|-------------|--------|
+| **E2.1** | Implement `JacksonFormatDelegate<OutputStream>` wrapping any `JsonGenerator` | LOW |
+| **E2.2** | Implement `JacksonReaderDelegate<InputStream>` wrapping any `JsonParser` | LOW |
+| **E2.3** | Test with CBOR (`jackson-dataformat-cbor`) | LOW |
+
+**Why CBOR?**
+- Binary format (proves binary works, not just text like JSON)
+- No schema required (unlike Avro/Protobuf)
+- Widely used standard (RFC 8949, IoT, COSE)
+- If CBOR works, other Jackson formats (Smile, Avro, etc.) will work too
+
+**Note:** Once `JacksonFormatDelegate` works with CBOR, ALL Jackson formats work automatically.
+
+#### Phase E3: BsonFormatDelegate (MongoDB BSON)
+
+| Step | Description | Effort |
+|------|-------------|--------|
+| **E3.1** | Implement `BsonFormatDelegate<BsonDocument>` wrapping `BsonDocumentWriter` | MEDIUM |
+| **E3.2** | Implement `BsonReaderDelegate<BsonDocument>` wrapping `BsonDocumentReader` | MEDIUM |
+| **E3.3** | Handle native ObjectId, Decimal128, Binary types | MEDIUM |
+| **E3.4** | Feature parity tests: JSON ↔ BSON round-trip | MEDIUM |
+
+**Testing without MongoDB:**
+
+BSON can be tested purely in-memory without any MongoDB connection:
+
+```java
+// Dependency: org.mongodb:bson:4.11.1 (NOT mongo-java-driver!)
+
+@Test
+void testBsonRoundTrip() {
+    // Write to in-memory BsonDocument (no MongoDB needed)
+    BsonDocument doc = new BsonDocument();
+    FormatDelegate<BsonDocument> writer = new BsonFormatDelegate();
+    writer.setTarget(doc);
+
+    // ... serialize EObject ...
+
+    // Read back from same BsonDocument
+    FormatReaderDelegate<BsonDocument> reader = new BsonReaderDelegate();
+    reader.setSource(doc);
+
+    // ... deserialize to EObject ...
+}
+```
+
+**Note:** Target is `BsonDocument` (in-memory object), not `OutputStream`. This proves custom non-stream targets work.
+
+#### Phase E4: Feature Parity Test Framework
+
+| Step | Description | Effort |
+|------|-------------|--------|
+| **E4.1** | Abstract test suite for EMF operations (format-independent) | MEDIUM |
+| **E4.2** | Parameterized tests across all FormatDelegates | LOW |
+| **E4.3** | Round-trip tests: EMF → Format → EMF | MEDIUM |
+
+**Focused Test Strategy:**
+
+| Layer | Format | Target/Source | Purpose |
+|-------|--------|---------------|---------|
+| **JsonFormatDelegate** | JSON | `OutputStream`/`InputStream` | Existing baseline, text format |
+| **JacksonFormatDelegate** | CBOR | `OutputStream`/`InputStream` | Proves Jackson binary formats work |
+| **BsonFormatDelegate** | BSON | `BsonDocument`/`BsonDocument` | Proves custom in-memory targets work |
+
+This covers:
+- ✅ Text format (JSON)
+- ✅ Binary format via Jackson (CBOR)
+- ✅ Custom non-stream format (BSON in-memory)
+- ✅ Native type handling (BSON ObjectId, Decimal128)
+
+**Test Matrix (3 formats):**
+
+| Feature | JSON | CBOR | BSON |
+|---------|------|------|------|
+| Target type | `OutputStream` | `OutputStream` | `BsonDocument` |
+| Source type | `InputStream` | `InputStream` | `BsonDocument` |
+| Type serialization | ✓ | ✓ | ✓ |
+| SuperType serialization | ✓ | ✓ | ✓ |
+| ObjectId | string | string | native ObjectId |
+| Decimal128 | string/double | string/double | native Decimal128 |
+| EObject lifecycle | ✓ | ✓ | ✓ |
+| EReference (expand) | ✓ | ✓ | ✓ |
+| EAttribute (all types) | ✓ | ✓ | ✓ |
+
+**Note:** Other Jackson formats (Avro, Smile, YAML, XML) will work once CBOR works — no separate testing needed.
+
+### Files to Create (codec.v2 project)
+
+```
+org.eclipse.fennec.codec.v2/
+├── src/org/eclipse/fennec/codec/
+│   ├── format/
+│   │   ├── CodecParserBase.java          # Abstract parser (port from old)
+│   │   ├── CodecGeneratorBase.java       # Abstract generator (port from old)
+│   │   ├── CodecParserFactory.java       # Parser factory interface
+│   │   └── CodecGeneratorFactory.java    # Generator factory interface
+│   └── format/impl/
+│       ├── JsonCodecParserFactory.java   # Jackson JSON (default)
+│       └── JsonCodecGeneratorFactory.java
+└── test/org/eclipse/fennec/codec/
+    └── format/
+        ├── FormatFeatureParityTest.java  # Parameterized across formats
+        └── FormatRoundTripTest.java      # Round-trip validation
+```
+
+### Project Structure
+
+#### Existing Projects (Reference)
+
+```
+org.eclipse.fennec.codec/              # Old codec with abstraction layer
+org.eclipse.fennec.codec.mongo/        # MongoDB BSON (working example)
+org.eclipse.fennec.codec.csv/          # CSV/query-string parser
+org.eclipse.fennec.codec.ecowitt/      # Ecowitt weather protocol
+```
+
+#### New Structure (After Refactoring)
+
+```
+org.eclipse.fennec.codec.v2/
+├── src/org/eclipse/fennec/codec/
+│   ├── format/                        # FormatDelegate pattern
+│   │   ├── CodecWriter.java           # EMF-aware writer interface
+│   │   ├── CodecReader.java           # EMF-aware reader interface
+│   │   ├── FormatDelegate.java        # Format-specific encoding interface
+│   │   ├── FormatReaderDelegate.java  # Format-specific decoding interface
+│   │   ├── JacksonCodecWriter.java    # Single impl, delegates to FormatDelegate
+│   │   ├── JacksonCodecReader.java    # Single impl, delegates to FormatReaderDelegate
+│   │   └── impl/
+│   │       ├── JsonFormatDelegate.java      # Default JSON (existing code)
+│   │       └── JacksonFormatDelegate.java   # Wraps any Jackson generator
+│   └── ... (existing packages)
+└── test/org/eclipse/fennec/codec/
+    └── format/
+        ├── FormatFeatureParityTest.java     # Parameterized across formats
+        └── FormatRoundTripTest.java         # EMF → Format → EMF
+
+org.eclipse.fennec.codec.bson/               # MongoDB BSON format
+├── src/.../bson/
+│   ├── BsonFormatDelegate.java              # Wraps BsonWriter
+│   └── BsonFormatReaderDelegate.java        # Wraps BsonReader
+└── test/...
+    └── BsonFeatureParityTest.java           # Proves parity with JSON
+```
+
+#### Jackson Format Modules (Optional, Minimal)
+
+```
+org.eclipse.fennec.codec.avro/         # Just: dependency + JacksonFormatDelegate config + tests
+org.eclipse.fennec.codec.cbor/         # Just: dependency + JacksonFormatDelegate config + tests
+```
+
+These are trivial once `JacksonFormatDelegate` exists.
+
+### Notes
+
+- This plan builds on top of existing codec.v2 functionality
+- Jackson-based JSON remains the default and primary format
+- Custom formats are opt-in via factory registration
+- All format implementations must pass the same feature parity tests
+- Refer to old codebase (`org.eclipse.fennec.codec.*`) for working examples
+
+---
+
+## 8. Execution Roadmap
 
 ### Recommended Order
 
@@ -463,6 +1005,14 @@ Plan D (Discriminator Refactoring) — ✅ VERIFIED COMPLETE (2026-02-08):
   D2: Inline mapping for references — DONE (fully implemented + tested)
   D3: Property-based discriminator config — DONE (documented in spec)
   D4: STRUCTURED format with discriminator — DONE (spec clarified, implementation correct)
+
+Plan E (Multi-Format Support) — NOT STARTED:
+  E1: Refactor to FormatDelegate<T> pattern with pluggable I/O types
+      - FormatDelegate<T> for writers, FormatReaderDelegate<S> for readers
+      - Extract JsonFormatDelegate<OutputStream> from existing code
+  E2: Implement JacksonFormatDelegate + test with CBOR (binary format)
+  E3: Implement BsonFormatDelegate<BsonDocument> (in-memory, no MongoDB needed)
+  E4: Feature parity tests: JSON ↔ CBOR ↔ BSON round-trips
 ```
 
 **Notes:**
@@ -523,7 +1073,7 @@ Plan D (Discriminator Refactoring) — ✅ VERIFIED COMPLETE (2026-02-08):
 
 ---
 
-## 8. Critical Files Reference
+## 9. Critical Files Reference
 
 ### Plan A: Files to Modify
 

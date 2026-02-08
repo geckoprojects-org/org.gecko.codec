@@ -19,3 +19,13 @@ pluginManagement {
 plugins {
   id 'biz.aQute.bnd.workspace'
 }
+
+// Exclude 'old' and 'docs' folders from Gradle build
+// These are archived projects and documentation, not active build targets
+gradle.beforeProject { project ->
+  if (project.name == 'old' || project.name == 'docs') {
+    project.tasks.configureEach { task ->
+      task.enabled = false
+    }
+  }
+}

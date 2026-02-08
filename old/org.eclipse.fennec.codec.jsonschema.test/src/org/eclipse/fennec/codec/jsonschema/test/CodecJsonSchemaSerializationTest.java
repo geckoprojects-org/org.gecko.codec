@@ -46,8 +46,8 @@ import org.eclipse.fennec.codec.info.CodecModelInfo;
 import org.eclipse.fennec.codec.options.CodecModuleOptions;
 import org.eclipse.fennec.codec.options.CodecOptionsBuilder;
 import org.eclipse.fennec.codec.options.CodecResourceOptions;
-import org.eclipse.fennec.openapi.model.OpenApi;
-import org.eclipse.fennec.openapi.model.OpenApiPackage;
+//import org.eclipse.fennec.openapi.model.OpenApi;
+//import org.eclipse.fennec.openapi.model.OpenApiPackage;
 import org.gecko.emf.osgi.annotation.require.RequireEMF;
 import org.gecko.emf.osgi.constants.EMFNamespaces;
 import org.junit.jupiter.api.AfterEach;
@@ -480,33 +480,33 @@ public class CodecJsonSchemaSerializationTest {
 		assertTrue(areJsonFilesTheSame(file1, file2));
 	}
 	
-	@Disabled("This does not fully work, because of the emf model we have. Some features are deserialized as String and then serialized back as String. This is no jsonschema (de)serializer fault. It depends on the model!")
-	@Test
-	public void openAPIComplete() throws IOException {
-		String file1 = System.getProperty("data")+"openapi-complete.json";
-		file2 = System.getProperty("data")+"ser_openapi-complete.json";
-		
-		Resource res = resourceSet.createResource(URI.createURI(file1), "application/json");
-		Map<String, Object> options = new HashMap<>();
-		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, OpenApiPackage.Literals.OPEN_API);
-		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
-		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
-		
-		res.load(options);		
-		assertFalse(res.getContents().isEmpty());
-		EObject obj = res.getContents().get(0);
-		assertNotNull(obj);
-		assertThat(obj).isInstanceOf(OpenApi.class);
-		OpenApi openApi = (OpenApi) res.getContents().get(0);
-
-		res = resourceSet.createResource(URI.createURI(file2));
-		res.getContents().add(openApi);
-		res.save(options);
-		
-		assertTrue(areJsonFilesTheSame(file1, file2));
-	}
+//	@Disabled("This does not fully work, because of the emf model we have. Some features are deserialized as String and then serialized back as String. This is no jsonschema (de)serializer fault. It depends on the model!")
+//	@Test
+//	public void openAPIComplete() throws IOException {
+//		String file1 = System.getProperty("data")+"openapi-complete.json";
+//		file2 = System.getProperty("data")+"ser_openapi-complete.json";
+//		
+//		Resource res = resourceSet.createResource(URI.createURI(file1), "application/json");
+//		Map<String, Object> options = new HashMap<>();
+//		options.put(CodecResourceOptions.CODEC_ROOT_OBJECT, OpenApiPackage.Literals.OPEN_API);
+//		options.put(CodecModuleOptions.CODEC_MODULE_USE_NAMES_FROM_EXTENDED_METADATA, true);
+//		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_TYPE, false);
+//		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_EMPTY_VALUE, true);
+//		options.put(CodecModuleOptions.CODEC_MODULE_SERIALIZE_NULL_VALUE, true);
+//		
+//		res.load(options);		
+//		assertFalse(res.getContents().isEmpty());
+//		EObject obj = res.getContents().get(0);
+//		assertNotNull(obj);
+//		assertThat(obj).isInstanceOf(OpenApi.class);
+//		OpenApi openApi = (OpenApi) res.getContents().get(0);
+//
+//		res = resourceSet.createResource(URI.createURI(file2));
+//		res.getContents().add(openApi);
+//		res.save(options);
+//		
+//		assertTrue(areJsonFilesTheSame(file1, file2));
+//	}
 
 //	@Test
 //	public void topLevelEEnum() throws IOException {
