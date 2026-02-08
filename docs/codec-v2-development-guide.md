@@ -18,7 +18,7 @@ This document provides context for continuing codec.v2 development across sessio
 - **Created test-strictness.ecore** — Model with required features (lowerBound=1) for testing
 - Final codec.v2 test count: ~1019 tests, 0 failures
 
-**Next Session:** Continue with GAP-014 (inherit enum - AnnotationInheritance), then GAP-004 (Diagnostic Options)
+**Next Session:** Plan B Phase 1 complete! All migration GAPs done, all integration tests passing. 1044 tests, 0 failures. Remaining for future releases: GAP-004 (Diagnostic Options), GAP-014 (inherit enum).
 
 ---
 
@@ -343,8 +343,8 @@ String discriminatorValue = typeDiscriminatorService.getDiscriminatorValue(mapId
 - [✅] GAP-005: ID Value Key — DONE
 - [✅] GAP-002: Fallback Strategy wiring — DONE (TypeDiscriminatorService handles inline + typeMapping fallback)
 - [✅] GAP-003: Feature Strictness — DONE (ClassConfig, strictOnUnknown/Missing in deserialization)
-- [ ] GAP-014: inherit enum (AnnotationInheritance: DIRECT/ALL/NONE, requires codec.ecore change)
-- [ ] GAP-004: Diagnostic Options (NEW FEATURE, not migration)
+- [⏸️] GAP-014: inherit enum — POSTPONED to B2 (requires codec.ecore model change)
+- [⏸️] GAP-004: Diagnostic Options — POSTPONED to B2 (NEW FEATURE)
 
 **Integration Tests**
 - [✅] Discriminator mapping tests (CodecResourceInlineMappingTest.java)
@@ -352,8 +352,8 @@ String discriminatorValue = typeDiscriminatorService.getDiscriminatorValue(mapId
 - [✅] Reference expansion integration tests (ExpandReferenceTest.java — edge cases added)
 - [✅] PLAIN reference format tests (PlainReferenceFormatTest.java — ser/deser/round-trip)
 - [✅] Strictness integration tests (StrictnessIntegrationTest.java — strictOnUnknown/Missing)
-- [ ] Type resolution integration tests (beyond discriminator mapping)
-- [ ] ID serialization integration tests
+- [✅] Type resolution tests (TypeStrategy*.java, TypeResolution*.java, TypeDeserializationEntryTest — URI/NAME/NUMERIC/CLASS/SCHEMA_AND_TYPE, contexts, hints)
+- [✅] ID serialization tests (CodecResourceIdTest.java — 26 tests covering PLAIN/STRUCTURED, IdKeyMode, separators, round-trip)
 
 **Code Quality** (completed)
 - [✅] Deprecated code removal (codec.v2.*, codec.api.value.*, codec.api.diagnostic.*)

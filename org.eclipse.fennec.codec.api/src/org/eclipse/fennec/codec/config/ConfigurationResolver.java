@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -788,16 +789,29 @@ public final class ConfigurationResolver {
     /**
      * Extracts EClass-scoped properties from a source map.
      * <p>
-     * Class properties use keys like "Person.typeStrategy" or
-     * nested map under EClass name key.
+     * Supports multiple lookup patterns (in priority order):
+     * <ol>
+     *   <li>{@code codec.eClassConfig} key with {@code Map<EClass, Map<String, Object>>}</li>
+     *   <li>Nested map under EClass name key (e.g., {@code "Person" -> Map})</li>
+     * </ol>
      */
     @SuppressWarnings("unchecked")
     private Map<String, Object> extractClassProperties(Map<String, Object> source, EClass eClass) {
         if (source == null || source.isEmpty() || eClass == null) {
             return null;
         }
+
+        // Pattern 1: Check for CODEC_ECLASS_CONFIG (Map<EClass, Map<String, Object>>)
+        Object eClassConfigMap = source.get(ConfigProperty.ECLASS_CONFIG.getKey());
+        if (eClassConfigMap instanceof Map<?, ?> eClassMap) {
+            Object classProps = eClassMap.get(eClass);
+            if (classProps instanceof Map) {
+                return (Map<String, Object>) classProps;
+            }
+        }
+
+        // Pattern 2: Look for nested map under class name string
         String className = eClass.getName();
-        // Look for nested map under class name
         Object classMap = source.get(className);
         if (classMap instanceof Map) {
             return (Map<String, Object>) classMap;
@@ -808,8 +822,13 @@ public final class ConfigurationResolver {
     /**
      * Extracts feature-scoped properties from a source map.
      * <p>
-     * Feature properties use keys like "Person.firstName.key" or
-     * nested map under "ClassName.featureName" key.
+     * Supports multiple lookup patterns (in priority order):
+     * <ol>
+     *   <li>{@code codec.eReferenceConfig} key with {@code Map<EReference, Map<String, Object>>}</li>
+     *   <li>{@code codec.eAttributeConfig} key with {@code Map<EAttribute, Map<String, Object>>}</li>
+     *   <li>Nested map under "ClassName.featureName" key</li>
+     *   <li>Nested map under class name, then feature name</li>
+     * </ol>
      */
     @SuppressWarnings("unchecked")
     private Map<String, Object> extractFeatureProperties(Map<String, Object> source, EStructuralFeature feature) {
@@ -821,20 +840,39 @@ public final class ConfigurationResolver {
             return null;
         }
 
-        // First try: look for nested map under class name, then feature name
-        Object classMap = source.get(eClass.getName());
-        if (classMap instanceof Map) {
-            Object featureMap = ((Map<String, Object>) classMap).get(feature.getName());
-            if (featureMap instanceof Map) {
-                return (Map<String, Object>) featureMap;
+        // Pattern 1: Check for CODEC_EREFERENCE_CONFIG or CODEC_EATTRIBUTE_CONFIG
+        if (feature instanceof EReference) {
+            Object eRefConfigMap = source.get(ConfigProperty.EREFERENCE_CONFIG.getKey());
+            if (eRefConfigMap instanceof Map<?, ?> refMap) {
+                Object featureProps = refMap.get(feature);
+                if (featureProps instanceof Map) {
+                    return (Map<String, Object>) featureProps;
+                }
+            }
+        } else if (feature instanceof EAttribute) {
+            Object eAttrConfigMap = source.get(ConfigProperty.EATTRIBUTE_CONFIG.getKey());
+            if (eAttrConfigMap instanceof Map<?, ?> attrMap) {
+                Object featureProps = attrMap.get(feature);
+                if (featureProps instanceof Map) {
+                    return (Map<String, Object>) featureProps;
+                }
             }
         }
 
-        // Second try: look for "ClassName.featureName" key
+        // Pattern 2: Look for "ClassName.featureName" key
         String featureKey = eClass.getName() + "." + feature.getName();
         Object featureMap = source.get(featureKey);
         if (featureMap instanceof Map) {
             return (Map<String, Object>) featureMap;
+        }
+
+        // Pattern 3: Look for nested map under class name, then feature name
+        Object classMap = source.get(eClass.getName());
+        if (classMap instanceof Map) {
+            Object fMap = ((Map<String, Object>) classMap).get(feature.getName());
+            if (fMap instanceof Map) {
+                return (Map<String, Object>) fMap;
+            }
         }
 
         return null;

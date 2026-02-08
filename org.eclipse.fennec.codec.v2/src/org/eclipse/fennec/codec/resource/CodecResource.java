@@ -168,21 +168,33 @@ public class CodecResource extends ResourceImpl {
 
         mapper = createObjectMapper(effectiveOptions, operationResolver);
 
-        // Set feature value writers if provided
+        // Check if we have custom value writer configurations
+        Object valueWriterInstancesOption = effectiveOptions.get(CodecOptions.CODEC_FEATURE_VALUE_WRITER_INSTANCES);
         Object valueWritersOption = effectiveOptions.get(CodecOptions.CODEC_FEATURE_VALUE_WRITERS);
-        if (valueWritersOption instanceof Map<?, ?> valueWritersMap) {
-            @SuppressWarnings("unchecked")
-            Map<EStructuralFeature, String> valueWriters = (Map<EStructuralFeature, String>) valueWritersMap;
-            if (getContents().size() == 1) {
-                var writer = mapper.writerFor(EObject.class)
-                        .withAttribute(ContextHelper.FEATURE_VALUE_WRITERS, valueWriters);
-                writer.writeValue(outputStream, rootObject);
-                LOGGER.fine(() -> String.format("Saved %s to %s", eClass.getName(), getURI()));
-                return;
-            }
-        }
+        boolean hasCustomWriterConfig = (valueWriterInstancesOption instanceof Map<?, ?>)
+                || (valueWritersOption instanceof Map<?, ?>);
 
-        if (getContents().size() == 1) {
+        if (hasCustomWriterConfig) {
+            // Prepare writer with value writer configurations
+            var writer = mapper.writerFor(EObject.class);
+
+            // Set feature value writer instances if provided (highest priority - direct binding)
+            if (valueWriterInstancesOption instanceof Map<?, ?> instancesMap) {
+                writer = writer.withAttribute(ContextHelper.FEATURE_VALUE_WRITER_INSTANCES, instancesMap);
+            }
+
+            // Set feature value writers by name if provided
+            if (valueWritersOption instanceof Map<?, ?> valueWritersMap) {
+                writer = writer.withAttribute(ContextHelper.FEATURE_VALUE_WRITERS, valueWritersMap);
+            }
+
+            if (getContents().size() == 1) {
+                writer.writeValue(outputStream, rootObject);
+            } else {
+                // For arrays, need to write each element
+                mapper.writeValue(outputStream, getContents().toArray(new EObject[0]));
+            }
+        } else if (getContents().size() == 1) {
             mapper.writeValue(outputStream, rootObject);
         } else {
             mapper.writeValue(outputStream, getContents().toArray(new EObject[0]));
@@ -248,12 +260,16 @@ public class CodecResource extends ResourceImpl {
             reader = reader.withAttribute(ContextHelper.FEATURE_TYPE_HINTS, typeHints);
         }
 
-        // Set feature value readers if provided
+        // Set feature value reader instances if provided (highest priority - direct binding)
+        Object valueReaderInstancesOption = mergedOptions.get(CodecOptions.CODEC_FEATURE_VALUE_READER_INSTANCES);
+        if (valueReaderInstancesOption instanceof Map<?, ?> instancesMap) {
+            reader = reader.withAttribute(ContextHelper.FEATURE_VALUE_READER_INSTANCES, instancesMap);
+        }
+
+        // Set feature value readers by name if provided
         Object valueReadersOption = mergedOptions.get(CodecOptions.CODEC_FEATURE_VALUE_READERS);
         if (valueReadersOption instanceof Map<?, ?> valueReadersMap) {
-            @SuppressWarnings("unchecked")
-            Map<EStructuralFeature, String> valueReaders = (Map<EStructuralFeature, String>) valueReadersMap;
-            reader = reader.withAttribute(ContextHelper.FEATURE_VALUE_READERS, valueReaders);
+            reader = reader.withAttribute(ContextHelper.FEATURE_VALUE_READERS, valueReadersMap);
         }
 
         try (JsonParser parser = codecFactory.createParser(ObjectReadContext.empty(), inputStream)) {

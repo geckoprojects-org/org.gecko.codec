@@ -216,11 +216,14 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
             return null;
         }
 
+        // Priority 1: Check for runtime instance binding via options (highest priority)
+        CodecValueReader<Object, EAttribute> effectiveReader = resolveEffectiveReader(ctxt);
+
         // Use custom reader if configured
-        if (customReader != null && entryContext != null) {
+        if (effectiveReader != null && entryContext != null) {
             try {
                 CodecReaderContext readerCtx = entryContext.createReaderContext(parser, ctxt);
-                return customReader.read(readerCtx, attribute);
+                return effectiveReader.read(readerCtx, attribute);
             } catch (IOException e) {
                 throw new UncheckedIOException("Custom value reader failed for attribute: " + attribute.getName(), e);
             }
@@ -696,6 +699,36 @@ public class AttributeDeserializationEntry implements DeserializationEntry {
      */
     public EAttribute getAttribute() {
         return attribute;
+    }
+
+    /**
+     * Resolves the effective reader for this attribute.
+     * <p>
+     * Priority order:
+     * <ol>
+     *   <li>Instance binding from options (FEATURE_VALUE_READER_INSTANCES)</li>
+     *   <li>Pre-resolved reader from registry (via valueReaderName config)</li>
+     * </ol>
+     * </p>
+     *
+     * @param ctxt the deserialization context (may be null)
+     * @return the effective reader, or null if none configured
+     */
+    @SuppressWarnings("unchecked")
+    private CodecValueReader<Object, EAttribute> resolveEffectiveReader(DeserializationContext ctxt) {
+        // Priority 1: Check for instance binding from options
+        if (ctxt != null) {
+            Object instancesAttr = ctxt.getAttribute(ContextHelper.FEATURE_VALUE_READER_INSTANCES);
+            if (instancesAttr instanceof Map<?, ?> instancesMap) {
+                Object reader = instancesMap.get(attribute);
+                if (reader instanceof CodecValueReader<?, ?>) {
+                    return (CodecValueReader<Object, EAttribute>) reader;
+                }
+            }
+        }
+
+        // Priority 2: Use pre-resolved reader from registry
+        return customReader;
     }
 
     /**

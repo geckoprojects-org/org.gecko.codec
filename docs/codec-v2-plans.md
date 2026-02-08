@@ -166,14 +166,14 @@ Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*`
 | GAP-001 | Feature Visibility (directional ignore/force) | HIGH | B1 | — | ✅ DONE |
 | GAP-002 | Fallback Strategy enum support | HIGH | B1 | MIGRATION | ✅ DONE |
 | GAP-003 | Feature Strictness (strictOnUnknown/Missing) | HIGH | B1 | MIGRATION | ✅ DONE |
-| GAP-004 | Diagnostic Options integration | HIGH | B1 | NEW FEATURE | NOT STARTED |
+| GAP-004 | Diagnostic Options integration | MEDIUM | B2 | NEW FEATURE | POSTPONED |
 | GAP-005 | ID Value Key support | HIGH | B1 | — | ✅ DONE |
-| GAP-014 | `inherit` annotation type mismatch (boolean vs enum) | HIGH | B1 | MIGRATION+MODEL | PARTIAL |
-| GAP-006 | Metadata Merge behavior | MEDIUM | B2 |
-| GAP-007 | Expand deserialization | MEDIUM | B2 |
-| GAP-008 | Value Reader/Writer handlers | MEDIUM | B2 |
-| GAP-009 | Scope wiring for runtime options | MEDIUM | B2 |
-| GAP-010 | Hierarchy resolution tests | MEDIUM | B2 |
+| GAP-014 | `inherit` annotation type mismatch (boolean vs enum) | MEDIUM | B2 | MIGRATION+MODEL | POSTPONED |
+| GAP-006 | Metadata Merge behavior | MEDIUM | B2 | | |
+| GAP-007 | Expand deserialization | MEDIUM | B2 | | |
+| GAP-008 | Value Reader/Writer handlers | MEDIUM | B2 | | ✅ DONE |
+| GAP-009 | Scope wiring for runtime options | MEDIUM | B2 | | ✅ DONE |
+| GAP-010 | Hierarchy resolution tests | MEDIUM | B2 | | |
 | GAP-011 | Additional misconfig test coverage | LOW | B3 |
 | GAP-012 | DeserializationMode usage | LOW | B3 |
 | GAP-013 | Enum-level annotation support | LOW | B3 |
@@ -265,6 +265,32 @@ Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*`
 | GAP-008 | Wire value reader/writer handler names to actual implementations |
 | GAP-009 | Connect scope resolution for load/save options at runtime |
 | GAP-010 | Comprehensive hierarchy resolution test coverage |
+
+#### GAP-008: Value Reader/Writer handlers ✅ DONE
+
+**Spec:** 14-custom-values.md
+
+**Status:** FULLY IMPLEMENTED. All components are in place:
+- **API interfaces**: `CodecValueReader<T,F>`, `CodecValueWriter<T,F>`, `AttributeValueReader<T>`, `AttributeValueWriter<T>`, `ReferenceValueReader<T>`, `ReferenceValueWriter<T>`
+- **Context interfaces**: `CodecReaderContext`, `CodecWriterContext` with parser/generator, config, diagnostics
+- **Registry**: `CodecValueRegistry` with auto-registration via `getName()`
+- **Entry classes**: All entries (`AttributeDeserializationEntry`, `AttributeSerializationEntry`, `ReferenceDeserializationEntry`, `ReferenceSerializationEntry`) invoke readers/writers with `canHandle()` validation
+- **Activation via annotation**: `valueReaderName`/`valueWriterName` on features
+- **Load/Save options by name**: `codec.featureValueReaders`, `codec.featureValueWriters`
+- **Load/Save options by instance**: `codec.featureValueReaderInstances`, `codec.featureValueWriterInstances` (wired 2026-02-08)
+- **Tests**: `CodecResourceCustomValueTest.java` (including instance binding tests), entry-level tests
+
+#### GAP-009: Scope wiring for runtime options ✅ DONE
+
+**Spec:** 16-annotation-reference.md §§2-3 (Scope Chain, Programmatic Configuration)
+
+**Status:** FULLY IMPLEMENTED. Scope-level configuration via load/save options is now fully supported:
+- **ConfigProperty**: Added `ECLASS_CONFIG`, `EREFERENCE_CONFIG`, `EATTRIBUTE_CONFIG` scope keys
+- **ConfigurationResolver**: `extractClassProperties()` and `extractFeatureProperties()` now support both:
+  - `Map<EClass, Map<String, Object>>` via `codec.eClassConfig` (type-safe EClass keys)
+  - `Map<String, Object>` with class name strings (backward compatible)
+- **ReferenceConfig**: Added `typeKey` and `idKey` per-reference overrides (per spec §3 example)
+- **Tests**: `ConfigurationResolverTest$ScopeConfigurationTests` (5 tests covering EClass/EReference/EAttribute scoping)
 
 ### Phase B3: Polish (LOW Priority)
 

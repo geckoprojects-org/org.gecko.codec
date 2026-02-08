@@ -116,6 +116,34 @@ public final class ContextHelper {
     public static final String FEATURE_VALUE_WRITERS = "CODEC_FEATURE_VALUE_WRITERS";
 
     /**
+     * Context attribute key for feature-specific value reader instances.
+     * <p>
+     * Value: {@code Map<EStructuralFeature, CodecValueReader>}
+     * </p>
+     * <p>
+     * Maps features directly to ValueReader instances (bypasses registry lookup).
+     * Takes priority over FEATURE_VALUE_READERS (by name).
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/14-custom-values.md">Spec: Custom Value Readers/Writers</a>
+     */
+    public static final String FEATURE_VALUE_READER_INSTANCES = "CODEC_FEATURE_VALUE_READER_INSTANCES";
+
+    /**
+     * Context attribute key for feature-specific value writer instances.
+     * <p>
+     * Value: {@code Map<EStructuralFeature, CodecValueWriter>}
+     * </p>
+     * <p>
+     * Maps features directly to ValueWriter instances (bypasses registry lookup).
+     * Takes priority over FEATURE_VALUE_WRITERS (by name).
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/14-custom-values.md">Spec: Custom Value Readers/Writers</a>
+     */
+    public static final String FEATURE_VALUE_WRITER_INSTANCES = "CODEC_FEATURE_VALUE_WRITER_INSTANCES";
+
+    /**
      * Context attribute key for the current feature's type hint.
      * <p>
      * Set temporarily during deserialization when a type hint is available

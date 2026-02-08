@@ -1047,4 +1047,125 @@ class ConfigurationResolverTest {
             assertTrue(derivedConfig.isForceWrite(), "derived should have forceWrite");
         }
     }
+
+    // ========================================================================
+    // Scope Configuration Tests (GAP-009)
+    // ========================================================================
+
+    @Nested
+    @DisplayName("Scope Configuration via Options")
+    class ScopeConfigurationTests {
+
+        @Test
+        @DisplayName("eClassConfig with EClass keys overrides global config")
+        void eClassConfigWithEClassKeysOverridesGlobal() {
+            // Global config says URI, but Person-specific says NAME
+            Map<EClass, Map<String, Object>> eClassConfig = new HashMap<>();
+            eClassConfig.put(personClass, Map.of(
+                    ConfigProperty.TYPE_STRATEGY.getKey(), "NAME"
+            ));
+
+            Map<String, Object> options = Map.of(
+                    ConfigProperty.TYPE_STRATEGY.getKey(), "URI",  // global
+                    ConfigProperty.ECLASS_CONFIG.getKey(), eClassConfig
+            );
+
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .optionsProperties(options)
+                    .build();
+
+            TypeConfig personConfig = resolver.resolveTypeConfig(personClass, diagnostics);
+            TypeConfig addressConfig = resolver.resolveTypeConfig(addressClass, diagnostics);
+
+            assertEquals(TypeStrategy.NAME, personConfig.getStrategy(), "Person should use NAME from eClassConfig");
+            assertEquals(TypeStrategy.URI, addressConfig.getStrategy(), "Address should use global URI");
+        }
+
+        @Test
+        @DisplayName("eReferenceConfig with EReference keys overrides class config")
+        void eReferenceConfigWithEReferenceKeysOverridesClass() {
+            // Global + class config say _type, but reference-specific says customType
+            Map<EReference, Map<String, Object>> eRefConfig = new HashMap<>();
+            eRefConfig.put(addressReference, Map.of(
+                    ConfigProperty.TYPE_KEY.getKey(), "customType"
+            ));
+
+            Map<String, Object> options = Map.of(
+                    ConfigProperty.TYPE_KEY.getKey(), "_type",  // global
+                    ConfigProperty.EREFERENCE_CONFIG.getKey(), eRefConfig
+            );
+
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .optionsProperties(options)
+                    .build();
+
+            ReferenceConfig refConfig = resolver.resolveReferenceConfig(addressReference, diagnostics);
+            assertEquals("customType", refConfig.getTypeKey(), "Reference should use customType from eReferenceConfig");
+        }
+
+        @Test
+        @DisplayName("eAttributeConfig with EAttribute keys overrides class config")
+        void eAttributeConfigWithEAttributeKeysOverridesClass() {
+            // Configure feature key for firstName attribute
+            Map<EAttribute, Map<String, Object>> eAttrConfig = new HashMap<>();
+            eAttrConfig.put(firstNameAttribute, Map.of(
+                    ConfigProperty.KEY.getKey(), "first_name"
+            ));
+
+            Map<String, Object> options = Map.of(
+                    ConfigProperty.EATTRIBUTE_CONFIG.getKey(), eAttrConfig
+            );
+
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .optionsProperties(options)
+                    .build();
+
+            FeatureConfig attrConfig = resolver.resolveFeatureConfig(firstNameAttribute, diagnostics);
+            assertEquals("first_name", attrConfig.getKey(), "Attribute should use key from eAttributeConfig");
+        }
+
+        @Test
+        @DisplayName("string-based class names still work (backward compatibility)")
+        void stringBasedClassNamesStillWork() {
+            // Use class name string instead of EClass instance
+            Map<String, Object> options = Map.of(
+                    ConfigProperty.TYPE_STRATEGY.getKey(), "URI",  // global
+                    "Person", Map.of(                               // class-level via name
+                            ConfigProperty.TYPE_STRATEGY.getKey(), "NAME"
+                    )
+            );
+
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .optionsProperties(options)
+                    .build();
+
+            TypeConfig personConfig = resolver.resolveTypeConfig(personClass, diagnostics);
+            assertEquals(TypeStrategy.NAME, personConfig.getStrategy(), "Person should use NAME from string-keyed config");
+        }
+
+        @Test
+        @DisplayName("eClassConfig takes priority over string-based class name")
+        void eClassConfigTakesPriorityOverStringBasedClassName() {
+            // Both eClassConfig and string-based name configure Person
+            Map<EClass, Map<String, Object>> eClassConfig = new HashMap<>();
+            eClassConfig.put(personClass, Map.of(
+                    ConfigProperty.TYPE_STRATEGY.getKey(), "SCHEMA_AND_TYPE"
+            ));
+
+            Map<String, Object> options = Map.of(
+                    "Person", Map.of(                               // string-based (lower priority)
+                            ConfigProperty.TYPE_STRATEGY.getKey(), "NAME"
+                    ),
+                    ConfigProperty.ECLASS_CONFIG.getKey(), eClassConfig  // EClass-based (higher priority)
+            );
+
+            ConfigurationResolver resolver = ConfigurationResolver.builder()
+                    .optionsProperties(options)
+                    .build();
+
+            TypeConfig personConfig = resolver.resolveTypeConfig(personClass, diagnostics);
+            assertEquals(TypeStrategy.SCHEMA_AND_TYPE, personConfig.getStrategy(),
+                    "EClass-based config should take priority");
+        }
+    }
 }

@@ -23,8 +23,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.fennec.codec.constants.CodecOptions;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -356,5 +358,95 @@ class CodecResourceCustomValueTest {
             assertNotNull(loaded);
             assertEquals("Charlie", loaded.eGet(nameAttribute));
         }
+    }
+
+    @Nested
+    @DisplayName("Instance Binding Tests (via options)")
+    class InstanceBindingTests {
+
+        @Test
+        @DisplayName("Writer instance binding via save options")
+        void writerInstanceBindingViaSaveOptions() throws IOException {
+            CodecValueWriter<String, EAttribute> uppercaseWriter = new CodecValueWriter<>() {
+                @Override
+                public String getName() {
+                    return "uppercase";
+                }
+
+                @Override
+                public void write(String value, EAttribute feature, CodecWriterContext ctx) throws IOException {
+                    ctx.getGenerator().writeString(value.toUpperCase());
+                }
+            };
+
+            EObject person = createPerson("alice", 30);
+            ConfigurationResolver resolver = ConfigurationResolver.defaults();
+
+            // Use instance binding via options
+            Map<String, Object> saveOptions = Map.of(
+                    CodecOptions.CODEC_FEATURE_VALUE_WRITER_INSTANCES, Map.of(nameAttribute, uppercaseWriter)
+            );
+
+            String json = serializeWithOptions(person, resolver, valueRegistry, saveOptions);
+            assertTrue(json.contains("\"ALICE\""), "Should contain uppercase ALICE, but got: " + json);
+        }
+
+        @Test
+        @DisplayName("Reader instance binding via load options")
+        void readerInstanceBindingViaLoadOptions() throws IOException {
+            CodecValueReader<String, EAttribute> lowercaseReader = new CodecValueReader<>() {
+                @Override
+                public String getName() {
+                    return "lowercase";
+                }
+
+                @Override
+                public String read(CodecReaderContext ctx, EAttribute feature) throws IOException {
+                    return ctx.getParser().getString().toLowerCase();
+                }
+            };
+
+            String json = "{\"name\": \"UPPERCASE_NAME\", \"age\": 25}";
+            ConfigurationResolver resolver = ConfigurationResolver.defaults();
+
+            // Use instance binding via options
+            Map<String, Object> loadOptions = Map.of(
+                    CodecResource.CODEC_ROOT_TYPE, personClass,
+                    CodecOptions.CODEC_FEATURE_VALUE_READER_INSTANCES, Map.of(nameAttribute, lowercaseReader)
+            );
+
+            EObject loaded = deserializeWithOptions(json, resolver, valueRegistry, loadOptions);
+            assertNotNull(loaded);
+            assertEquals("uppercase_name", loaded.eGet(nameAttribute));
+        }
+    }
+
+    // Helper methods for options-based serialization
+
+    private String serializeWithOptions(EObject eObject, ConfigurationResolver resolver,
+            CodecValueRegistry registry, Map<String, Object> options) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CodecResource resource = new CodecResource(
+                URI.createURI("test.json"),
+                metadataService,
+                resolver,
+                registry,
+                null);
+        resource.getContents().add(eObject);
+        resource.save(baos, options);
+        return baos.toString(StandardCharsets.UTF_8);
+    }
+
+    private EObject deserializeWithOptions(String json, ConfigurationResolver resolver,
+            CodecValueRegistry registry, Map<String, Object> options) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));
+        CodecResource resource = new CodecResource(
+                URI.createURI("test.json"),
+                metadataService,
+                resolver,
+                registry,
+                null);
+        resource.load(bais, options);
+        return resource.getContents().isEmpty() ? null : resource.getContents().get(0);
     }
 }

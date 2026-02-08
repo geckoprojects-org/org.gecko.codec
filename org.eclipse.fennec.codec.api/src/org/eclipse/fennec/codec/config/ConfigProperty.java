@@ -349,7 +349,41 @@ public enum ConfigProperty {
 
     @SuppressWarnings("unchecked")
     FEATURE_VALUE_WRITER_INSTANCES("featureValueWriterInstances", (Class<Map<?, ?>>) (Class<?>) Map.class, null,
-        levels(GLOBAL), directions(WRITE));
+        levels(GLOBAL), directions(WRITE)),
+
+    // ========================================================================
+    // Scope Configuration (for runtime options)
+    // ========================================================================
+
+    /**
+     * Per-EClass configuration map.
+     * <p>
+     * Value type: {@code Map<EClass, Map<String, Object>>}
+     * </p>
+     */
+    @SuppressWarnings("unchecked")
+    ECLASS_CONFIG("eClassConfig", (Class<Map<?, ?>>) (Class<?>) Map.class, null,
+        levels(GLOBAL), directions(READ, WRITE)),
+
+    /**
+     * Per-EReference configuration map.
+     * <p>
+     * Value type: {@code Map<EReference, Map<String, Object>>}
+     * </p>
+     */
+    @SuppressWarnings("unchecked")
+    EREFERENCE_CONFIG("eReferenceConfig", (Class<Map<?, ?>>) (Class<?>) Map.class, null,
+        levels(GLOBAL), directions(READ, WRITE)),
+
+    /**
+     * Per-EAttribute configuration map.
+     * <p>
+     * Value type: {@code Map<EAttribute, Map<String, Object>>}
+     * </p>
+     */
+    @SuppressWarnings("unchecked")
+    EATTRIBUTE_CONFIG("eAttributeConfig", (Class<Map<?, ?>>) (Class<?>) Map.class, null,
+        levels(GLOBAL), directions(READ, WRITE));
 
     // ========================================================================
     // Fields and Constructor

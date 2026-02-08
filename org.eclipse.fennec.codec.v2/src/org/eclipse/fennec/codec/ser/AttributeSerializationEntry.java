@@ -15,6 +15,7 @@ package org.eclipse.fennec.codec.ser;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.EList;
@@ -22,6 +23,7 @@ import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.fennec.codec.config.FeatureConfig;
 import org.eclipse.fennec.codec.context.CodecEntryContext;
+import org.eclipse.fennec.codec.context.ContextHelper;
 import org.eclipse.fennec.codec.value.AttributeValueWriter;
 import org.eclipse.fennec.codec.value.CodecValueRegistry;
 import org.eclipse.fennec.codec.value.CodecValueWriter;
@@ -169,10 +171,13 @@ public class AttributeSerializationEntry implements SerializationEntry {
             return;
         }
 
-        if (customWriter != null && entryContext != null) {
+        // Resolve effective writer (instance binding takes priority)
+        CodecValueWriter<Object, EAttribute> effectiveWriter = resolveEffectiveWriter(ctxt);
+
+        if (effectiveWriter != null && entryContext != null) {
             try {
                 CodecWriterContext writerCtx = entryContext.createWriterContext(gen, ctxt);
-                customWriter.write(value, attribute, writerCtx);
+                effectiveWriter.write(value, attribute, writerCtx);
             } catch (IOException e) {
                 throw new UncheckedIOException("Custom value writer failed for attribute: " + attribute.getName(), e);
             }
@@ -274,5 +279,35 @@ public class AttributeSerializationEntry implements SerializationEntry {
                 gen.writeString(e.name());
                 break;
         }
+    }
+
+    /**
+     * Resolves the effective writer for this attribute.
+     * <p>
+     * Priority order:
+     * <ol>
+     *   <li>Instance binding from options (FEATURE_VALUE_WRITER_INSTANCES)</li>
+     *   <li>Pre-resolved writer from registry (via valueWriterName config)</li>
+     * </ol>
+     * </p>
+     *
+     * @param ctxt the serialization context (may be null)
+     * @return the effective writer, or null if none configured
+     */
+    @SuppressWarnings("unchecked")
+    private CodecValueWriter<Object, EAttribute> resolveEffectiveWriter(SerializationContext ctxt) {
+        // Priority 1: Check for instance binding from options
+        if (ctxt != null) {
+            Object instancesAttr = ctxt.getAttribute(ContextHelper.FEATURE_VALUE_WRITER_INSTANCES);
+            if (instancesAttr instanceof Map<?, ?> instancesMap) {
+                Object writer = instancesMap.get(attribute);
+                if (writer instanceof CodecValueWriter<?, ?>) {
+                    return (CodecValueWriter<Object, EAttribute>) writer;
+                }
+            }
+        }
+
+        // Priority 2: Use pre-resolved writer from registry
+        return customWriter;
     }
 }

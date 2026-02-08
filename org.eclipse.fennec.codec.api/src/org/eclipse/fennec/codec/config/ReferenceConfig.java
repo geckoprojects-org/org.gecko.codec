@@ -45,6 +45,9 @@ public final class ReferenceConfig implements Mergeable<ReferenceConfig> {
     private final boolean serializeInstanceType;
     private final String valueReaderName;
     private final String valueWriterName;
+    // Per-reference type/id configuration (overrides class-level TypeConfig/IdConfig)
+    private final String typeKey;
+    private final String idKey;
 
     private ReferenceConfig(Builder builder) {
         this.format = builder.format;
@@ -58,6 +61,8 @@ public final class ReferenceConfig implements Mergeable<ReferenceConfig> {
         this.serializeInstanceType = builder.serializeInstanceType;
         this.valueReaderName = builder.valueReaderName;
         this.valueWriterName = builder.valueWriterName;
+        this.typeKey = builder.typeKey;
+        this.idKey = builder.idKey;
     }
 
     // ========================================================================
@@ -150,6 +155,28 @@ public final class ReferenceConfig implements Mergeable<ReferenceConfig> {
         return valueWriterName;
     }
 
+    /**
+     * Returns the per-reference type key override, or null if not set.
+     * <p>
+     * When set, this overrides the class-level typeKey from TypeConfig for
+     * objects serialized through this reference.
+     * </p>
+     */
+    public String getTypeKey() {
+        return typeKey;
+    }
+
+    /**
+     * Returns the per-reference ID key override, or null if not set.
+     * <p>
+     * When set, this overrides the class-level idKey from IdConfig for
+     * objects serialized through this reference.
+     * </p>
+     */
+    public String getIdKey() {
+        return idKey;
+    }
+
     // ========================================================================
     // Computed properties
     // ========================================================================
@@ -190,6 +217,8 @@ public final class ReferenceConfig implements Mergeable<ReferenceConfig> {
                 .serializeInstanceType(getBoolean(source, ConfigProperty.SERIALIZE_INSTANCE_TYPE, this.serializeInstanceType))
                 .valueReaderName(getString(source, ConfigProperty.VALUE_READER_NAME, this.valueReaderName))
                 .valueWriterName(getString(source, ConfigProperty.VALUE_WRITER_NAME, this.valueWriterName))
+                .typeKey(getString(source, ConfigProperty.TYPE_KEY, this.typeKey))
+                .idKey(getString(source, ConfigProperty.ID_KEY, this.idKey))
                 .build();
     }
 
@@ -254,7 +283,9 @@ public final class ReferenceConfig implements Mergeable<ReferenceConfig> {
                 .expandIgnoreBidirectional(this.expandIgnoreBidirectional)
                 .serializeInstanceType(this.serializeInstanceType)
                 .valueReaderName(this.valueReaderName)
-                .valueWriterName(this.valueWriterName);
+                .valueWriterName(this.valueWriterName)
+                .typeKey(this.typeKey)
+                .idKey(this.idKey);
     }
 
     /**
@@ -277,6 +308,9 @@ public final class ReferenceConfig implements Mergeable<ReferenceConfig> {
         private boolean serializeInstanceType = ConfigProperty.SERIALIZE_INSTANCE_TYPE.getDefaultValue();
         private String valueReaderName = ConfigProperty.VALUE_READER_NAME.getDefaultValue();
         private String valueWriterName = ConfigProperty.VALUE_WRITER_NAME.getDefaultValue();
+        // Per-reference overrides (null = use class-level config)
+        private String typeKey = null;
+        private String idKey = null;
 
         private Builder() {}
 
@@ -332,6 +366,34 @@ public final class ReferenceConfig implements Mergeable<ReferenceConfig> {
 
         public Builder valueWriterName(String valueWriterName) {
             this.valueWriterName = valueWriterName;
+            return this;
+        }
+
+        /**
+         * Sets the per-reference type key override.
+         * <p>
+         * When set, objects serialized through this reference will use this key
+         * instead of the class-level typeKey.
+         * </p>
+         *
+         * @param typeKey the type key, or null to use class-level config
+         */
+        public Builder typeKey(String typeKey) {
+            this.typeKey = typeKey;
+            return this;
+        }
+
+        /**
+         * Sets the per-reference ID key override.
+         * <p>
+         * When set, objects serialized through this reference will use this key
+         * instead of the class-level idKey.
+         * </p>
+         *
+         * @param idKey the ID key, or null to use class-level config
+         */
+        public Builder idKey(String idKey) {
+            this.idKey = idKey;
             return this;
         }
 
