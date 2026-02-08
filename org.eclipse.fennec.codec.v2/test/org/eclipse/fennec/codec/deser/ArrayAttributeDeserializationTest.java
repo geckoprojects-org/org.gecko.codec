@@ -29,6 +29,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EcoreFactory;
@@ -160,8 +161,8 @@ class ArrayAttributeDeserializationTest {
         metadataService.registerPackage(testPackage);
     }
 
-    private org.eclipse.emf.ecore.EDataType createArrayDataType(String name, Class<?> instanceClass) {
-        org.eclipse.emf.ecore.EDataType dataType = EcoreFactory.eINSTANCE.createEDataType();
+    private EDataType createArrayDataType(String name, Class<?> instanceClass) {
+        EDataType dataType = EcoreFactory.eINSTANCE.createEDataType();
         dataType.setName(name);
         dataType.setInstanceClass(instanceClass);
         testPackage.getEClassifiers().add(dataType);
@@ -169,7 +170,7 @@ class ArrayAttributeDeserializationTest {
     }
 
     // Keep old method name for backward compatibility
-    private org.eclipse.emf.ecore.EDataType createDoubleArrayDataType(String name, Class<?> instanceClass) {
+    private EDataType createDoubleArrayDataType(String name, Class<?> instanceClass) {
         return createArrayDataType(name, instanceClass);
     }
 

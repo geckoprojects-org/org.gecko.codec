@@ -61,7 +61,7 @@ The 8-step package migration from `codec.v2.*` to `codec.*` is **complete**:
 | ~~**Plan A**~~ | ~~Migrate deprecated API + cleanup~~ | ✅ COMPLETE |
 | **Plan B** | Fill spec compliance gaps (12/14 GAPs done, 2 postponed) | ✅ MOSTLY COMPLETE |
 | **Plan C** | Documentation examples (deferred from spec review) | Not Started |
-| **Plan D** | Discriminator refactoring (deferred from spec review) | Not Started |
+| ~~**Plan D**~~ | ~~Discriminator refactoring~~ | ✅ VERIFIED COMPLETE |
 
 ---
 
@@ -385,57 +385,48 @@ These documentation tasks were identified during spec review but deferred as low
 
 ---
 
-## 6. Plan D: Discriminator Refactoring (Deferred)
+## 6. Plan D: Discriminator Refactoring
 
-These architectural changes were identified during spec review but deferred pending a comprehensive refactoring strategy.
+**Status: VERIFIED COMPLETE** (2026-02-08)
+
+These items were verified against current spec and implementation:
 
 ### D1: Remove MAPPED from TypeStrategy Enum
 
-**Status:** DEFERRED
+**Status:** ✅ DONE
 
-**Issue:** `MAPPED` is not a type representation strategy - it's a type translation layer. It should be removed from `TypeStrategy` enum and treated as a separate discriminator mapping configuration.
-
-**Files:**
-- `org.eclipse.fennec.model.metadata/model/metadata.ecore`
-- All usages in serialization/deserialization code
-- Tests using `TypeStrategy.MAPPED`
+`MAPPED` has been removed from `TypeStrategy` enum. Discriminator mapping is now a separate layer that works alongside any strategy. See spec `06-type.md` line 23: "MAPPED was removed from TypeStrategy."
 
 ### D2: Inline Mapping for References
 
-**Status:** DEFERRED
+**Status:** ✅ DONE
 
-**Feature:** Simple, static discriminator mapping at per-reference level without requiring `TypeDiscriminatorService`.
-
-**Example annotation:**
-```xml
-<eStructuralFeatures xsi:type="ecore:EReference" name="partners">
-  <eAnnotations source="http://eclipse.org/fennec/codec">
-    <details key="type.key" value="test"/>
-    <details key="inlineMapping.FooBar" value="http://example.org#//Friend"/>
-    <details key="inlineMapping.BarBaz" value="http://example.org#//Enemy"/>
-  </eAnnotations>
-</eStructuralFeatures>
-```
+Inline mapping is fully implemented with dedicated annotation source:
+- Annotation source: `http://eclipse.org/fennec/codec/inlineMapping`
+- Fully documented in spec `08-discriminator-mapping.md` section 5
+- Tests in `CodecResourceInlineMappingTest.java`
 
 ### D3: Property-Based Discriminator Configuration
 
-**Status:** DEFERRED
+**Status:** ✅ DONE
 
-**Feature:** Allow discriminator mappings via load/save options for runtime flexibility.
+Programmatic configuration fully documented in spec:
+- `08-discriminator-mapping.md` sections 4.4 and 5.1 show builder API and property map examples
+- Property keys: `codec.typeMapId`, `codec.typeDiscriminatorPath`, `codec.typeMappings`, `codec.inlineMappings`
 
-**Example:**
-```java
-Map<String, Object> options = Map.of(
-    "codec.type.map.lorawan-devices.Dragino_LSE01", "http://example.org#//DraginoLSE01Uplink",
-    "codec.type.map.lorawan-devices.Dragino_LHT65", "http://example.org#//DraginoLHT65Uplink"
-);
+### D4: STRUCTURED Format with Discriminator Mapping
+
+**Status:** ✅ DONE (Spec Clarified)
+
+Original issue assumed STRUCTURED format should emit WARNING when discriminator mapping is configured. **Actual behavior:** Discriminator mapping has priority over STRUCTURED format — when both are configured, the discriminator value is written inside the STRUCTURED `_type` object:
+
+```json
+{ "_type": { "type": "temp" }, "sensorId": "s-001" }
 ```
 
-### D4: STRUCTURED Format Warning for Discriminator
-
-**Status:** DEFERRED
-
-**Issue:** If discriminator mapping is configured with `typeFormat=STRUCTURED`, should emit WARNING and treat as PLAIN (discriminator is a simple string value).
+Spec `08-discriminator-mapping.md` section 1.4 now clarifies this interaction. Implementation handles this correctly in:
+- `TypeSerializationEntry.java` lines 244-251 (serialization)
+- `TypeDeserializationEntry.java` lines 505-540 (deserialization)
 
 ---
 
@@ -467,11 +458,11 @@ Plan B Phase 3 (Polish):
 Plan C (Documentation Examples) — can be done in parallel:
   DOC-001 through DOC-004
 
-Plan D (Discriminator Refactoring) — after Plan B:
-  D1: Remove MAPPED from TypeStrategy
-  D2: Inline mapping for references
-  D3: Property-based discriminator config
-  D4: STRUCTURED format warning
+Plan D (Discriminator Refactoring) — ✅ VERIFIED COMPLETE (2026-02-08):
+  D1: Remove MAPPED from TypeStrategy — DONE (spec confirms removal)
+  D2: Inline mapping for references — DONE (fully implemented + tested)
+  D3: Property-based discriminator config — DONE (documented in spec)
+  D4: STRUCTURED format with discriminator — DONE (spec clarified, implementation correct)
 ```
 
 **Notes:**

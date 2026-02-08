@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
@@ -314,11 +315,11 @@ class OpenApiSchemaDefaultTest {
 			// With EJavaObject, the default is now a Map
 			Object defaultValue = settingsSchema.getDefault();
 			assertNotNull(defaultValue, "Default should not be null");
-			assertTrue(defaultValue instanceof java.util.Map,
+			assertTrue(defaultValue instanceof Map,
 					"Default should be a Map, but was: " + defaultValue.getClass().getName());
 
 			@SuppressWarnings("unchecked")
-			java.util.Map<String, Object> defaultMap = (java.util.Map<String, Object>) defaultValue;
+			Map<String, Object> defaultMap = (Map<String, Object>) defaultValue;
 			assertEquals(30, ((Number) defaultMap.get("timeout")).intValue());
 			assertEquals(3, ((Number) defaultMap.get("retries")).intValue());
 		}
@@ -365,11 +366,11 @@ class OpenApiSchemaDefaultTest {
 			// With EJavaObject, the default is now a List
 			Object defaultValue = tagsSchema.getDefault();
 			assertNotNull(defaultValue, "Default should not be null");
-			assertTrue(defaultValue instanceof java.util.List,
+			assertTrue(defaultValue instanceof List,
 					"Default should be a List, but was: " + defaultValue.getClass().getName());
 
 			@SuppressWarnings("unchecked")
-			java.util.List<String> defaultList = (java.util.List<String>) defaultValue;
+			List<String> defaultList = (List<String>) defaultValue;
 			assertEquals(2, defaultList.size());
 			assertEquals("tag1", defaultList.get(0));
 			assertEquals("tag2", defaultList.get(1));

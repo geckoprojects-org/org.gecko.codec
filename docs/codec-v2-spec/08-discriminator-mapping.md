@@ -45,6 +45,37 @@ During deserialization, type resolution follows this priority:
 
 See [Type Deserialization - Type Resolution Flow](06-type.md#630-type-resolution-flow) for the complete deserialization flow with all decision points.
 
+### 1.4 Interaction with TypeFormat (PLAIN vs STRUCTURED)
+
+Discriminator mapping operates **independently** of the configured `typeFormat`. When discriminator mapping is active, it takes priority over the format-specific type strategy serialization:
+
+| TypeFormat | Discriminator Mapping Configured | Behavior |
+|------------|----------------------------------|----------|
+| PLAIN | No | Standard: `"_type": "http://example.org#//Person"` |
+| PLAIN | Yes | Discriminator value: `"_type": "temp"` |
+| STRUCTURED | No | Standard: `"_type": {"schema": "...", "type": "Person"}` |
+| STRUCTURED | Yes | **Discriminator value in structured format**: `"_type": {"type": "temp"}` |
+
+**Key insight:** When `typeFormat=STRUCTURED` but discriminator mapping is configured:
+- The discriminator value is written **inside** the structured `_type` object
+- The standard STRUCTURED format schema/type decomposition is **not applied**
+- Discriminator mapping has priority; STRUCTURED format adapts to contain the discriminator value
+
+**Serialization example (discriminator + STRUCTURED):**
+```json
+{
+  "_type": {
+    "type": "temp"
+  },
+  "sensorId": "s-001",
+  "celsius": 22.5
+}
+```
+
+**Deserialization:** The deserializer parses the STRUCTURED `_type` object, extracts the `type` field value (`"temp"`), and resolves it through the discriminator registry — same as PLAIN format.
+
+> **Note:** For NUMERIC and SCHEMA_AND_TYPE strategies in STRUCTURED format, discriminator mapping still takes priority. If a discriminator value is found, it replaces the standard strategy output entirely.
+
 ---
 
 ## 2. Annotation Sources

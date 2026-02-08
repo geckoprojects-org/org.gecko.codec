@@ -18,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.EcoreFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -89,7 +91,7 @@ class CodecJsonReadContextReuseTest extends CodecJsonReadContextTestBase {
         @Test
         @DisplayName("current EObject is reset when context is reused")
         void currentEObjectIsResetOnReuse() {
-            org.eclipse.emf.ecore.EObject eObject = EcoreFactory.eINSTANCE.createEObject();
+            EObject eObject = EcoreFactory.eINSTANCE.createEObject();
 
             CodecJsonReadContext child1 = context.createChildObjectContext(1, 1);
             child1.setCurrentEObject(eObject);
@@ -103,7 +105,7 @@ class CodecJsonReadContextReuseTest extends CodecJsonReadContextTestBase {
         @Test
         @DisplayName("current feature is reset when context is reused")
         void currentFeatureIsResetOnReuse() {
-            org.eclipse.emf.ecore.EStructuralFeature feature = EcoreFactory.eINSTANCE.createEAttribute();
+            EStructuralFeature feature = EcoreFactory.eINSTANCE.createEAttribute();
             feature.setName("testFeature");
 
             CodecJsonReadContext child1 = context.createChildObjectContext(1, 1);
@@ -154,8 +156,8 @@ class CodecJsonReadContextReuseTest extends CodecJsonReadContextTestBase {
         @DisplayName("reset clears EMF state")
         void resetClearsEmfState() {
             EClass typeHint = EcoreFactory.eINSTANCE.createEClass();
-            org.eclipse.emf.ecore.EObject eObject = EcoreFactory.eINSTANCE.createEObject();
-            org.eclipse.emf.ecore.EStructuralFeature feature = EcoreFactory.eINSTANCE.createEAttribute();
+            EObject eObject = EcoreFactory.eINSTANCE.createEObject();
+            EStructuralFeature feature = EcoreFactory.eINSTANCE.createEAttribute();
 
             CodecJsonReadContext child = context.createChildObjectContext(1, 1);
             child.setCurrentTypeHint(typeHint);

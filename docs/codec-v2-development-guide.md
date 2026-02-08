@@ -2,9 +2,24 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-02-08 (Plan B Phase 3 - GAP-012 COMPLETE)
+**Last Updated:** 2026-02-08 (Plan D VERIFIED COMPLETE)
 
 **Session Summary (2026-02-08 latest):**
+
+**Plan D Verification (Discriminator Refactoring):**
+- ✅ **D1 (Remove MAPPED from TypeStrategy)** — DONE, spec `06-type.md` confirms removal
+- ✅ **D2 (Inline Mapping for References)** — DONE, fully implemented + `CodecResourceInlineMappingTest.java`
+- ✅ **D3 (Property-Based Discriminator Config)** — DONE, documented in spec sections 4.4 and 5.1
+- ✅ **D4 (STRUCTURED Format + Discriminator)** — DONE, spec `08-discriminator-mapping.md` §1.4 clarified
+  - Discriminator mapping has priority over STRUCTURED format
+  - When both are configured, discriminator value goes inside STRUCTURED `_type` object
+  - Implementation verified in `TypeSerializationEntry.java` and `TypeDeserializationEntry.java`
+
+**Spec Updates:**
+- Added section 1.4 "Interaction with TypeFormat (PLAIN vs STRUCTURED)" to `08-discriminator-mapping.md`
+- Updated `codec-v2-plans.md` with Plan D verification results
+
+**Previous Session (2026-02-08):**
 
 **Plan B Phase 3 Progress:**
 - ✅ **GAP-011 (Misconfiguration test coverage)** — Already covered with 22 test files
@@ -21,7 +36,7 @@ This document provides context for continuing codec.v2 development across sessio
 - **DeserializationMode** (STRICT/LENIENT/AUTO_DETECT) controls whether errors **break** deserialization or produce warnings
 - **SuperType validation** is a separate opt-in feature via `validateSuperTypeHierarchy` flag, independent of DeserializationMode
 
-**Previous Session (2026-02-08 continued):**
+**Earlier Session (2026-02-08):**
 
 **Plan B Phase 2 COMPLETE — All 5 GAPs Done:**
 - ✅ **GAP-008 (Value Reader/Writer handlers)** — Already implemented; added missing `featureValueReaderInstances`/`featureValueWriterInstances` load/save options wiring
@@ -43,7 +58,7 @@ This document provides context for continuing codec.v2 development across sessio
 - Implemented GAP-003 (Feature Strictness) — `ClassConfig`, strictOnUnknown/strictOnMissing
 - Postponed GAP-004 (Diagnostic Options), GAP-014 (inherit enum) to later release
 
-**Next Session:** Plan B Phase 3 mostly complete. GAP-013 postponed. Consider documentation, performance testing, or Plan C features.
+**Next Session:** Plan B mostly complete (12/14 GAPs done, 2 postponed). Plan D verified complete. Consider Plan C (documentation examples), performance testing, or release preparation.
 
 ---
 
