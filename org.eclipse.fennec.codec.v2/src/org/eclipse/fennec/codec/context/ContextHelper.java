@@ -163,6 +163,24 @@ public final class ContextHelper {
      */
     public static final String CURRENT_SERIALIZATION_REFERENCE = "CODEC_CURRENT_SERIALIZATION_REFERENCE";
 
+    /**
+     * Context attribute key for the deserialization mode.
+     * <p>
+     * Value: {@code DeserializationMode} enum (LENIENT, STRICT, AUTO_DETECT)
+     * </p>
+     * <p>
+     * Controls how strictly the deserializer follows the configured type strategy:
+     * <ul>
+     *   <li>LENIENT (default): Try configured strategy first, then fallback resolution</li>
+     *   <li>STRICT: Type field MUST match configured strategy exactly; missing/malformed → ERROR</li>
+     *   <li>AUTO_DETECT: Ignore configured strategy; probe JSON structure to determine format</li>
+     * </ul>
+     * </p>
+     *
+     * @see <a href="docs/codec-v2-spec/06-type.md#652-deserialization-mode">Spec: Deserialization Mode</a>
+     */
+    public static final String DESERIALIZATION_MODE = "CODEC_DESERIALIZATION_MODE";
+
     private ContextHelper() {
         // Static helper class
     }
@@ -791,6 +809,77 @@ public final class ContextHelper {
     public static void clearCurrentFeatureTypeHint(DeserializationContext ctxt) {
         if (ctxt != null) {
             ctxt.setAttribute(FEATURE_TYPE_HINT, null);
+        }
+    }
+
+    // ========================================================================
+    // Deserialization Mode Methods
+    // ========================================================================
+
+    /**
+     * Gets the deserialization mode from the deserialization context.
+     * <p>
+     * Returns the mode as a String to avoid direct dependency on the generated
+     * DeserializationMode enum in the context helper.
+     * </p>
+     *
+     * @param ctxt the deserialization context
+     * @return the mode string ("LENIENT", "STRICT", or "AUTO_DETECT"), defaults to "LENIENT"
+     */
+    public static String getDeserializationMode(DeserializationContext ctxt) {
+        if (ctxt == null) {
+            return "LENIENT";
+        }
+        Object value = ctxt.getAttribute(DESERIALIZATION_MODE);
+        if (value instanceof String mode) {
+            return mode;
+        }
+        // Handle DeserializationMode enum directly if set
+        if (value != null) {
+            return value.toString();
+        }
+        return "LENIENT";
+    }
+
+    /**
+     * Checks if the deserializer is in STRICT mode.
+     *
+     * @param ctxt the deserialization context
+     * @return true if STRICT mode is enabled
+     */
+    public static boolean isStrictMode(DeserializationContext ctxt) {
+        return "STRICT".equals(getDeserializationMode(ctxt));
+    }
+
+    /**
+     * Checks if the deserializer is in LENIENT mode (the default).
+     *
+     * @param ctxt the deserialization context
+     * @return true if LENIENT mode is enabled (or no mode is set)
+     */
+    public static boolean isLenientMode(DeserializationContext ctxt) {
+        return "LENIENT".equals(getDeserializationMode(ctxt));
+    }
+
+    /**
+     * Checks if the deserializer is in AUTO_DETECT mode.
+     *
+     * @param ctxt the deserialization context
+     * @return true if AUTO_DETECT mode is enabled
+     */
+    public static boolean isAutoDetectMode(DeserializationContext ctxt) {
+        return "AUTO_DETECT".equals(getDeserializationMode(ctxt));
+    }
+
+    /**
+     * Sets the deserialization mode in the deserialization context.
+     *
+     * @param ctxt the deserialization context
+     * @param mode the mode string ("LENIENT", "STRICT", or "AUTO_DETECT")
+     */
+    public static void setDeserializationMode(DeserializationContext ctxt, String mode) {
+        if (ctxt != null && mode != null) {
+            ctxt.setAttribute(DESERIALIZATION_MODE, mode);
         }
     }
 }

@@ -193,19 +193,17 @@ public class TypeDeserializationEntry implements DeserializationEntry {
                     if (resolvedClass != null) {
                         state.setResolvedEClass(resolvedClass);
                         // Validate supertype hierarchy if enabled
-                        validateSuperTypes(resolvedClass, result.superTypes);
+                        validateSuperTypes(resolvedClass, result.superTypes, ctxt);
                     } else {
                         String msg = "Could not resolve EClass from type value: " + typeValue;
-                        LOGGER.warning(msg);
-                        ContextHelper.addWarning(ctxt, msg, parser, "TypeDeserializationEntry");
+                        handleTypeResolutionFailure(ctxt, parser, msg);
                     }
                 }
                 return;
             }
         } else {
             String msg = "Unexpected token for _type: " + token;
-            LOGGER.warning(msg);
-            ContextHelper.addWarning(ctxt, msg, parser, "TypeDeserializationEntry");
+            handleTypeResolutionFailure(ctxt, parser, msg);
             return;
         }
 
@@ -215,22 +213,51 @@ public class TypeDeserializationEntry implements DeserializationEntry {
                 state.setResolvedEClass(resolvedClass);
             } else {
                 String msg = "Could not resolve EClass from type value: " + typeValue;
-                LOGGER.warning(msg);
-                ContextHelper.addWarning(ctxt, msg, parser, "TypeDeserializationEntry");
+                handleTypeResolutionFailure(ctxt, parser, msg);
             }
         }
     }
 
     /**
+     * Handles type resolution failures based on DeserializationMode.
+     * <p>
+     * In STRICT mode, adds an ERROR diagnostic.
+     * In LENIENT/AUTO_DETECT mode, adds a WARNING diagnostic.
+     * </p>
+     *
+     * @param ctxt the deserialization context
+     * @param parser the JSON parser for location info
+     * @param message the error/warning message
+     */
+    private void handleTypeResolutionFailure(DeserializationContext ctxt, JsonParser parser, String message) {
+        if (ContextHelper.isStrictMode(ctxt)) {
+            LOGGER.severe(message);
+            ContextHelper.addError(ctxt, message, parser, "TypeDeserializationEntry");
+        } else {
+            LOGGER.warning(message);
+            ContextHelper.addWarning(ctxt, message, parser, "TypeDeserializationEntry");
+        }
+    }
+
+    /**
      * Validates supertype hierarchy if validation is enabled.
+     * <p>
+     * Validation is triggered when {@code superTypeConfig} is provided.
+     * The DeserializationMode controls error handling:
+     * <ul>
+     *   <li>STRICT: Validation failure throws exception (breaks deserialization)</li>
+     *   <li>LENIENT: Validation failure logs warning (continues deserialization)</li>
+     * </ul>
+     * </p>
      *
      * @param resolvedEClass the resolved EClass
      * @param declaredSuperTypes the supertypes declared in JSON
+     * @param ctxt the deserialization context for mode checking
      */
-    private void validateSuperTypes(EClass resolvedEClass, List<String> declaredSuperTypes) {
-        // TODO: Replace with DeserializationMode.STRICT check when mode system is implemented
+    private void validateSuperTypes(EClass resolvedEClass, List<String> declaredSuperTypes,
+            DeserializationContext ctxt) {
         if (superTypeConfig == null) {
-            LOGGER.fine("SuperType validation disabled for STRUCTURED format");
+            LOGGER.fine("SuperType validation disabled (no superTypeConfig)");
             return;
         }
 
@@ -239,6 +266,7 @@ public class TypeDeserializationEntry implements DeserializationEntry {
         }
 
         // Delegate to SuperTypeDeserializationEntry's validation logic
+        // This will throw SuperTypeValidationException if validation fails
         SuperTypeDeserializationEntry.validateSuperTypeHierarchyStatic(
                 resolvedEClass, declaredSuperTypes, superTypeConfig);
     }

@@ -80,7 +80,8 @@ public class SuperTypeDeserializationEntry implements DeserializationEntry {
         // Parse declared supertypes from JSON
         List<String> declaredSuperTypes = parseSuperTypes(parser);
 
-        // If validation is disabled, just ignore the supertypes
+        // Validation is controlled by validateSuperTypeHierarchy flag (opt-in)
+        // DeserializationMode (STRICT/LENIENT) controls error handling, not whether to validate
         if (!validateSuperTypeHierarchy) {
             LOGGER.fine("SuperType validation disabled, ignoring declared supertypes: " + declaredSuperTypes);
             return;
@@ -93,7 +94,7 @@ public class SuperTypeDeserializationEntry implements DeserializationEntry {
             return;
         }
 
-        // Validate the hierarchy
+        // Validate the hierarchy - throws SuperTypeValidationException on mismatch
         validateSuperTypeHierarchy(resolvedEClass, declaredSuperTypes);
     }
 

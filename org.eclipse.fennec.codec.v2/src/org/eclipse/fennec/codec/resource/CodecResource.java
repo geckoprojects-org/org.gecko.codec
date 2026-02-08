@@ -272,6 +272,14 @@ public class CodecResource extends ResourceImpl {
             reader = reader.withAttribute(ContextHelper.FEATURE_VALUE_READERS, valueReadersMap);
         }
 
+        // Set deserialization mode if provided
+        Object deserializationModeOption = mergedOptions.get(CodecOptions.CODEC_DESERIALIZATION_MODE);
+        if (deserializationModeOption != null) {
+            // Accept both String and DeserializationMode enum
+            String modeString = deserializationModeOption.toString();
+            reader = reader.withAttribute(ContextHelper.DESERIALIZATION_MODE, modeString);
+        }
+
         try (JsonParser parser = codecFactory.createParser(ObjectReadContext.empty(), inputStream)) {
             if (parser.streamReadContext() instanceof CodecJsonReadContext ctx) {
                 ctx.setResource(this);

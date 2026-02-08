@@ -201,7 +201,7 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             // Check if this is the type property - ALWAYS process it when present
             if (isTypeKey(propertyName)) {
                 // Read the raw type value BEFORE consuming it for type resolution
-                String rawTypeValue = readTypeValueAsString(parser);
+                String rawTypeValue = readTypeValueAsString(parser, ctxt);
 
                 // Now resolve the type using the raw value
                 resolvedEClass = resolveTypeFromValue(rawTypeValue, state, hintEClass, schemaValue, ctxt, emfContext);
@@ -287,13 +287,30 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
 
     /**
      * Reads the type value as a string from the current parser position.
+     *
+     * @param parser the JSON parser
+     * @param ctxt the deserialization context (for adding diagnostics)
+     * @return the type value as a string, or null if not a string/structured format
      */
-    private String readTypeValueAsString(JsonParser parser) {
+    private String readTypeValueAsString(JsonParser parser, DeserializationContext ctxt) {
         JsonToken token = parser.currentToken();
         if (token == JsonToken.VALUE_STRING) {
             return parser.getString();
         }
-        // For STRUCTURED format, we can't easily extract - return null
+        if (token == JsonToken.START_OBJECT) {
+            // For STRUCTURED format, we can't easily extract - return null
+            // The TypeDeserializationEntry will handle structured format parsing
+            return null;
+        }
+        // Unexpected token (e.g., number, boolean, etc.) - report based on mode
+        String msg = "Unexpected token for _type field: " + token + ". Expected STRING or OBJECT.";
+        if (ContextHelper.isStrictMode(ctxt)) {
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, parser, "CodecEObjectDeserializer");
+        } else {
+            LOGGER.warning(msg);
+            ContextHelper.addWarning(ctxt, msg, parser, "CodecEObjectDeserializer");
+        }
         return null;
     }
 
@@ -356,8 +373,25 @@ public class CodecEObjectDeserializer extends ValueDeserializer<EObject> {
             return resolved;
         }
 
-        // Fall back to hint if resolution fails
-        return hintEClass;
+        // Type resolution failed - behavior depends on DeserializationMode
+        if (ContextHelper.isStrictMode(ctxt)) {
+            // STRICT mode: Error when type cannot be resolved
+            String msg = "Could not resolve EClass from type value: " + typeValue;
+            LOGGER.severe(msg);
+            ContextHelper.addError(ctxt, msg, null, "CodecEObjectDeserializer");
+            // Still return hint to allow partial parsing, but error is recorded
+            return hintEClass;
+        } else {
+            // LENIENT/AUTO_DETECT mode: Warning and fall back to hint
+            if (hintEClass != null) {
+                String msg = String.format(
+                        "Type resolved via fallback. Could not resolve '%s', using hint '%s'",
+                        typeValue, hintEClass.getName());
+                LOGGER.warning(msg);
+                ContextHelper.addWarning(ctxt, msg, null, "CodecEObjectDeserializer");
+            }
+            return hintEClass;
+        }
     }
 
     /**

@@ -2,23 +2,48 @@
 
 This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
-**Last Updated:** 2026-02-08 (GAP-002 verified, GAP-003 strictness implemented)
+**Last Updated:** 2026-02-08 (Plan B Phase 3 - GAP-012 COMPLETE)
 
-**Session Summary:**
-- **Verified GAP-002 (Fallback Strategy)** — Already fully implemented in `TypeDiscriminatorService`
-- **Implemented GAP-003 (Feature Strictness):**
-  - Created `ClassConfig` API class with `strictOnUnknown`, `strictOnMissing` fields
-  - Added `ConfigurationResolver.resolveClassConfig(EClass)` with full merge cascade
-  - Added convenience builder methods `strictOnUnknown()`, `strictOnMissing()`
-  - Wired into `CodecEObjectDeserializer`:
-    - `deserializeProperty()` — checks `strictOnUnknown` for non-deferred fields
-    - `processDeferredProperties()` — checks `strictOnUnknown` for deferred fields (key fix!)
-    - `checkStrictOnMissing()` — checks required features after deserialization
-- **Created StrictnessIntegrationTest.java** — 11 tests covering strictOnUnknown, strictOnMissing, class-level overrides
-- **Created test-strictness.ecore** — Model with required features (lowerBound=1) for testing
-- Final codec.v2 test count: ~1019 tests, 0 failures
+**Session Summary (2026-02-08 latest):**
 
-**Next Session:** Plan B Phase 1 complete! All migration GAPs done, all integration tests passing. 1044 tests, 0 failures. Remaining for future releases: GAP-004 (Diagnostic Options), GAP-014 (inherit enum).
+**Plan B Phase 3 Progress:**
+- ✅ **GAP-011 (Misconfiguration test coverage)** — Already covered with 22 test files
+- ✅ **GAP-012 (DeserializationMode usage)** — IMPLEMENTED
+  - `ContextHelper`: Added `DESERIALIZATION_MODE` constant + helper methods (`isStrictMode()`, `isLenientMode()`, `isAutoDetectMode()`)
+  - `CodecResource`: Wires `CODEC_DESERIALIZATION_MODE` load option to context
+  - `CodecEObjectDeserializer`: Type resolution issues ERROR in STRICT, WARNING in LENIENT; unexpected type tokens handled
+  - `TypeDeserializationEntry`: `handleTypeResolutionFailure()` uses mode for ERROR vs WARNING
+  - `SuperTypeDeserializationEntry`: Validation is opt-in feature (independent of mode); mode controls error handling
+  - `DeserializationModeTest.java`: 12 new tests covering LENIENT/STRICT/AUTO_DETECT behavior
+- ⏸️ **GAP-013 (Enum-level annotation support)** — POSTPONED per user request
+
+**Key Design Decision (GAP-012):**
+- **DeserializationMode** (STRICT/LENIENT/AUTO_DETECT) controls whether errors **break** deserialization or produce warnings
+- **SuperType validation** is a separate opt-in feature via `validateSuperTypeHierarchy` flag, independent of DeserializationMode
+
+**Previous Session (2026-02-08 continued):**
+
+**Plan B Phase 2 COMPLETE — All 5 GAPs Done:**
+- ✅ **GAP-008 (Value Reader/Writer handlers)** — Already implemented; added missing `featureValueReaderInstances`/`featureValueWriterInstances` load/save options wiring
+  - `ContextHelper`: Added `FEATURE_VALUE_READER_INSTANCES`, `FEATURE_VALUE_WRITER_INSTANCES` constants
+  - `CodecResource`: Wired instance options in load/save paths
+  - `AttributeDeserializationEntry`/`AttributeSerializationEntry`: Added `resolveEffectiveReader()`/`resolveEffectiveWriter()` for runtime instance binding
+  - `CodecResourceCustomValueTest`: Added `InstanceBindingTests` (2 tests)
+- ✅ **GAP-009 (Scope wiring for runtime options)** — Implemented EClass/EReference/EAttribute keyed config maps
+  - `ConfigProperty`: Added `ECLASS_CONFIG`, `EREFERENCE_CONFIG`, `EATTRIBUTE_CONFIG` scope keys
+  - `ConfigurationResolver`: `extractClassProperties()` and `extractFeatureProperties()` support both `Map<EClass,...>` and `Map<String,...>`
+  - `ReferenceConfig`: Added `typeKey` and `idKey` per-reference overrides
+  - `ConfigurationResolverTest`: Added `ScopeConfigurationTests` (5 tests)
+- ✅ **GAP-007 (Expand deserialization)** — Already implemented; verified with `ExpandReferenceTest.java` (18 tests)
+- ✅ **GAP-006 (Metadata merge behavior)** — Already implemented; verified with 15 spec test files
+- ✅ **GAP-010 (Hierarchy resolution tests)** — Already implemented; verified coverage across TypeResolutionHelper (27), SuperTypeConfig (33), spec tests
+
+**Previous Session (2026-02-08 earlier):**
+- Verified GAP-002 (Fallback Strategy) — Already in `TypeDiscriminatorService`
+- Implemented GAP-003 (Feature Strictness) — `ClassConfig`, strictOnUnknown/strictOnMissing
+- Postponed GAP-004 (Diagnostic Options), GAP-014 (inherit enum) to later release
+
+**Next Session:** Plan B Phase 3 mostly complete. GAP-013 postponed. Consider documentation, performance testing, or Plan C features.
 
 ---
 
