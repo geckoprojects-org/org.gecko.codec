@@ -8,8 +8,8 @@ Bundle-Description: EMF / Codec extension to handle OpenAPI
 	org.eclipse.fennec.openapi.model;version=snapshot,\
 	org.eclipse.fennec.model.metadata;version=snapshot,\
 	org.eclipse.fennec.codec.api;version=snapshot,\
-	org.eclipse.fennec.codec.v2;version=snapshot,\
-	org.eclipse.fennec.codec.jsonschema.v2;version=snapshot,\
+	org.eclipse.fennec.codec;version=snapshot,\
+	org.eclipse.fennec.codec.jsonschema;version=snapshot,\
 	org.eclipse.fennec.codec.metadata;version=snapshot,\
 	tools.jackson.core.jackson-core;version=latest,\
 	tools.jackson.core.jackson-databind;version=latest,\

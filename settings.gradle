@@ -13,7 +13,7 @@ pluginManagement {
     }
     mavenCentral()
     gradlePluginPortal()
-    rootProject.name="org.gecko.codec"
+    rootProject.name="fennec-codec"
   }
 }
 plugins {
