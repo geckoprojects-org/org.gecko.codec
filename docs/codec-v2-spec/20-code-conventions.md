@@ -102,7 +102,7 @@ public final class XxxHelper {
 
 | Class | Package | Responsibility | Status |
 |-------|---------|----------------|--------|
-| `ConfigMergeHelper` | `o.e.f.codec.v2.config` | Merge configuration from multiple sources | TODO |
+| `ConfigMergeHelper` | `o.e.f.codec.config` | Merge configuration from multiple sources | TODO |
 
 ### 3.4 AnnotationParseHelper API
 

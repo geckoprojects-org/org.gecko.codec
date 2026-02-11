@@ -2,7 +2,7 @@ pipeline  {
     agent any
 
     tools {
-        jdk 'OpenJDK21'
+        jdk 'OpenJDK17'
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
@@ -18,6 +18,22 @@ pipeline  {
                     echo "I am building on ${env.BRANCH_NAME}"
                     try {
                         sh "./gradlew clean build release -Drelease.dir=$JENKINS_HOME/repo.gecko/release/org.gecko.mac --info --stacktrace -Dmaven.repo.local=${WORKSPACE}/.m2"
+                    } finally {
+                        junit testResults: '**/generated/test-reports/**/TEST-*.xml', allowEmptyResults: true, skipPublishingChecks: true
+                    }
+                }
+            }
+        }
+        stage('Build and test') {
+            when {
+                not { branch 'main' }
+                not { branch 'snapshot' }
+            }
+            steps {
+                script {
+                    echo "I am building on ${env.BRANCH_NAME}"
+                    try {
+                        sh "./gradlew clean build --info --stacktrace -Dmaven.repo.local=${WORKSPACE}/.m2"
                     } finally {
                         junit testResults: '**/generated/test-reports/**/TEST-*.xml', allowEmptyResults: true, skipPublishingChecks: true
                     }

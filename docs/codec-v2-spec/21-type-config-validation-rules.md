@@ -49,8 +49,8 @@ This document captures validation rules for Type Configuration to enable **test 
 |--------|----------|---------|
 | Spec - Annotation Reference | `16-annotation-reference.md` | Valid levels, keys, defaults |
 | Spec - Type Serialization | `06-type.md` | Serialization/deserialization behavior |
-| Old v2 Serializer | `codec.v2/ser/TypeSerializationEntry.java` | Write (W) logic |
-| Old v2 Deserializer | `codec.v2/deser/TypeDeserializationEntry.java` | Read (R) logic |
+| Old v2 Serializer | `codec/ser/TypeSerializationEntry.java` | Write (W) logic |
+| Old v2 Deserializer | `codec/deser/TypeDeserializationEntry.java` | Read (R) logic |
 | New Config Classes | `codec.api/config/TypeConfig.java`, `ConfigProperty.java` | Defaults, validation |
 
 ---

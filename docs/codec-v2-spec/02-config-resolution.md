@@ -662,8 +662,8 @@ codec.Person.firstName.serialize=true
 All option keys are available as Java constants:
 
 ```java
-import org.eclipse.fennec.codec.v2.resource.CodecResource;
-import org.eclipse.fennec.codec.v2.context.ContextHelper;
+import org.eclipse.fennec.codec.resource.CodecResource;
+import org.eclipse.fennec.codec.context.ContextHelper;
 
 // Resource options
 CodecResource.CODEC_ROOT_TYPE

@@ -10,7 +10,7 @@
 
 ---
 
-This chapter defines how codec.v2 supports multiple serialization formats beyond JSON, including BSON (MongoDB), CSV, query strings, and custom protocols.
+This chapter defines how the codec supports multiple serialization formats beyond JSON, including BSON (MongoDB), CSV, query strings, and custom protocols.
 
 ## 1. Overview
 
@@ -610,7 +610,7 @@ The following projects provide pre-configured resources for specific formats:
 | Project | Format | Base Class | Description |
 |---------|--------|------------|-------------|
 | `org.eclipse.fennec.codec.geojson` | GeoJSON | `CodecResource` | Pre-configured for GeoJSON with `type` key, NAME strategy |
-| `org.eclipse.fennec.codec.jsonschema.v2` | JSON Schema | `ResourceImpl` | Meta-format: JSON Schema ↔ EPackage conversion |
+| `org.eclipse.fennec.codec.jsonschema` | JSON Schema | `ResourceImpl` | Meta-format: JSON Schema ↔ EPackage conversion |
 
 **Note:** Most format extensions extend `CodecResource` for standard EObject serialization. JSON Schema is special because it's a **meta-format** that converts the schema itself (EPackage), not instances.
 
@@ -654,7 +654,7 @@ GeoJsonResourceImpl resource = new GeoJsonResourceImpl(
 
 ### 12.2 JSON Schema Extension
 
-**Project:** `org.eclipse.fennec.codec.jsonschema.v2`
+**Project:** `org.eclipse.fennec.codec.jsonschema`
 
 Provides bidirectional conversion between JSON Schema and EMF EPackage. Unlike other format extensions, JSON Schema is a **meta-format** that converts between metamodels rather than serializing EObjects.
 

@@ -26,23 +26,23 @@ This document tells you:
 
 ## Test Commands
 
-### Codec V2 Projects (JUnit 5 - NOT OSGi!)
+### Codec Projects (JUnit 5 - NOT OSGi!)
 ```bash
-# Main codec v2
-./gradlew :org.eclipse.fennec.codec.v2:test
+# Main codec
+./gradlew :org.eclipse.fennec.codec:test
 
 # Metadata projects (AspectProvider tests)
 ./gradlew :org.eclipse.fennec.codec.metadata:test
 ./gradlew :org.eclipse.fennec.model.metadata:test
 
-# JSON Schema v2
-./gradlew :org.eclipse.fennec.codec.jsonschema.v2:test
+# JSON Schema
+./gradlew :org.eclipse.fennec.codec.jsonschema:test
 
 # OpenAPI
 ./gradlew :org.eclipse.fennec.codec.openapi:test
 
-# Run all v2 tests together
-./gradlew :org.eclipse.fennec.codec.v2:test :org.eclipse.fennec.codec.metadata:test :org.eclipse.fennec.model.metadata:test
+# Run all codec tests together
+./gradlew :org.eclipse.fennec.codec:test :org.eclipse.fennec.codec.metadata:test :org.eclipse.fennec.model.metadata:test
 ```
 
 ### Old Codec Projects (OSGi tests - ONLY for old codec)

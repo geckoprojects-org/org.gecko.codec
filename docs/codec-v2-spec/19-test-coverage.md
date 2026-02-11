@@ -11,13 +11,13 @@ The codec-v2 testing is organized into **three layers**, each testing a specific
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Codec Runtime Tests                       │
-│  (org.eclipse.fennec.codec.v2 - serialization/deserialization) │
+│  (org.eclipse.fennec.codec - serialization/deserialization) │
 │  Tests: End-to-end JSON ↔ EObject roundtrip                   │
 └─────────────────────────────────────────────────────────────┘
                               ↓ uses
 ┌─────────────────────────────────────────────────────────────┐
 │               Configuration Merger Tests                     │
-│  (org.eclipse.fennec.codec.v2 - ConfigurationMerger)         │
+│  (org.eclipse.fennec.codec - ConfigurationMerger)         │
 │  Tests: Merging configs from Global → EClass → EReference    │
 └─────────────────────────────────────────────────────────────┘
                               ↓ uses
@@ -33,8 +33,8 @@ The codec-v2 testing is organized into **three layers**, each testing a specific
 | Layer | Project | What It Tests | Test Focus |
 |-------|---------|---------------|------------|
 | **AspectProvider** | `codec.metadata` | EAnnotation parsing | Each annotation key parsed correctly into Aspect EMF objects |
-| **ConfigurationMerger** | `codec.v2` | Config hierarchy merging | EReference > EClass > Global > Default override chain |
-| **Codec Runtime** | `codec.v2` | Serialization/Deserialization | JSON output/input matches spec for all config combinations |
+| **ConfigurationMerger** | `codec` | Config hierarchy merging | EReference > EClass > Global > Default override chain |
+| **Codec Runtime** | `codec` | Serialization/Deserialization | JSON output/input matches spec for all config combinations |
 
 ### 1.2 Test Commands
 
@@ -46,10 +46,10 @@ The codec-v2 testing is organized into **three layers**, each testing a specific
 ./gradlew :org.eclipse.fennec.model.metadata:test
 
 # Codec v2 tests (merging + runtime)
-./gradlew :org.eclipse.fennec.codec.v2:test
+./gradlew :org.eclipse.fennec.codec:test
 
 # All v2 tests together
-./gradlew :org.eclipse.fennec.codec.v2:test :org.eclipse.fennec.codec.metadata:test :org.eclipse.fennec.model.metadata:test
+./gradlew :org.eclipse.fennec.codec:test :org.eclipse.fennec.codec.metadata:test :org.eclipse.fennec.model.metadata:test
 ```
 
 ---
@@ -148,7 +148,7 @@ void merge_overridesTakesPrecedence()
 
 ## 1.5 Package Migration & Test Structure
 
-The codec.v2 migration uses a consistent package structure. Tests follow the same pattern as source code.
+The codec migration uses a consistent package structure. Tests follow the same pattern as source code.
 
 ### 1.5.1 Package Structure
 
@@ -208,9 +208,9 @@ The AspectProvider tests verify that EAnnotations are correctly parsed into Aspe
 **AspectProvider tests do NOT verify:**
 - Configuration level merging (Global → EClass → ERef) → belongs in `ConfigurationMergerTest`
 - Source hierarchy merging (LoadOptions → Resource → Annotation) → belongs in `ConfigurationMergerTest`
-- Runtime serialization/deserialization behavior → belongs in `codec.v2` runtime tests
+- Runtime serialization/deserialization behavior → belongs in `codec` runtime tests
 
-The AspectProvider is a pure **parsing layer** - it converts EAnnotations to Aspect objects. The **merging logic** that combines aspects from different levels is handled by the ConfigurationMerger in `codec.v2`.
+The AspectProvider is a pure **parsing layer** - it converts EAnnotations to Aspect objects. The **merging logic** that combines aspects from different levels is handled by the ConfigurationMerger in `codec`.
 
 ### 2.1 Parsing Tests by Feature
 
@@ -330,22 +330,22 @@ The following misconfigurations from the spec are NOT yet tested:
 
 ## 3. Configuration Hierarchy Test Expectations
 
-**Test Class:** `ConfigurationMergerTest.java` (to be created in `codec.v2`)
+**Test Class:** `ConfigurationMergerTest.java` (to be created in `codec`)
 **Spec Reference:** [02-config-resolution.md](02-config-resolution.md)
 
 ### 3.0 Scope Clarification (IMPORTANT)
 
-**ConfigurationMerger tests belong in `codec.v2`, NOT in `codec.metadata`.**
+**ConfigurationMerger tests belong in `codec`, NOT in `codec.metadata`.**
 
 The ConfigurationMerger is responsible for:
 1. **Scope Chain Merging (Horizontal):** EReference > EClass > Global > Default
 2. **Source Hierarchy Merging (Vertical):** Load/Save Options > Resource > Factory > Module > EAnnotation > Default
 
-The AspectProvider in `codec.metadata` only parses individual EAnnotations into Aspect objects. The ConfigurationMerger in `codec.v2` then combines these aspects with runtime options to produce the effective configuration.
+The AspectProvider in `codec.metadata` only parses individual EAnnotations into Aspect objects. The ConfigurationMerger in `codec` then combines these aspects with runtime options to produce the effective configuration.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                          codec.v2                                    │
+│                          codec                                       │
 │  ┌─────────────────────────────────────────────────────────────┐    │
 │  │                  ConfigurationMerger                         │    │
 │  │  - Merges Global + EClass + ERef aspects                     │    │
@@ -478,9 +478,9 @@ For each feature chapter, verify EObjects are correctly created from JSON.
 | Ecore Model | Project | Purpose |
 |-------------|---------|---------|
 | `test-codec-annotations.ecore` | `codec.metadata` | AspectProvider parsing tests |
-| `test-roundtrip.ecore` | `codec.v2` | Basic roundtrip tests |
-| `test-advanced.ecore` | `codec.v2` | Polymorphism, bidirectional, circular refs |
-| `test-discriminator.ecore` | `codec.v2` | Discriminator mapping tests |
+| `test-roundtrip.ecore` | `codec` | Basic roundtrip tests |
+| `test-advanced.ecore` | `codec` | Polymorphism, bidirectional, circular refs |
+| `test-discriminator.ecore` | `codec` | Discriminator mapping tests |
 
 ---
 
@@ -490,17 +490,17 @@ For each feature chapter, verify EObjects are correctly created from JSON.
 
 | Gap | Component | Spec Section | Action |
 |-----|-----------|--------------|--------|
-| Configuration hierarchy tests | `codec.v2` | [02-config-resolution.md](02-config-resolution.md) | Create `ConfigurationMergerTest.java` |
-| Fallback strategy tests | `codec.v2` | [08-discriminator-mapping.md](08-discriminator-mapping.md) | Add ERROR/SKIP/FALLBACK deser tests |
+| Configuration hierarchy tests | `codec` | [02-config-resolution.md](02-config-resolution.md) | Create `ConfigurationMergerTest.java` |
+| Fallback strategy tests | `codec` | [08-discriminator-mapping.md](08-discriminator-mapping.md) | Add ERROR/SKIP/FALLBACK deser tests |
 | Missing invalid config tests | `codec.metadata` | [16-annotation-reference.md](16-annotation-reference.md) | Add tests per Section 2.2 |
 
 ### 6.2 Medium Priority
 
 | Gap | Component | Spec Section | Action |
 |-----|-----------|--------------|--------|
-| `expand=true` deserialization | `codec.v2` | [10-reference.md](10-reference.md) | Implement + test detached object creation |
-| Feature strictness tests | `codec.v2` | [16-annotation-reference.md](16-annotation-reference.md) | Add `strictOnUnknown/Missing` tests |
-| `ignore*/force*` tests | `codec.metadata` + `codec.v2` | [11-feature.md](11-feature.md) | Replace deprecated `transient/serialize` |
+| `expand=true` deserialization | `codec` | [10-reference.md](10-reference.md) | Implement + test detached object creation |
+| Feature strictness tests | `codec` | [16-annotation-reference.md](16-annotation-reference.md) | Add `strictOnUnknown/Missing` tests |
+| `ignore*/force*` tests | `codec.metadata` + `codec` | [11-feature.md](11-feature.md) | Replace deprecated `transient/serialize` |
 
 ### 6.3 Low Priority
 
@@ -756,7 +756,7 @@ Track major changes to test expectations here:
 |------|--------|--------|
 | 2026-01-24 | Initial restructure | Separated test layers, added matrices |
 | 2026-01-24 | Added fallback tests | New attributes idValueKey, fallbackStrategy, fallbackEClass |
-| 2026-01-24 | Added scope clarifications | Clarified that level merging tests belong in ConfigurationMerger (codec.v2), not AspectProvider (codec.metadata) |
+| 2026-01-24 | Added scope clarifications | Clarified that level merging tests belong in ConfigurationMerger (codec), not AspectProvider (codec.metadata) |
 | 2026-02-08 | Added Section 10: Cross-Project Test Summary | Comprehensive test inventory across all codec projects |
 
 ---
@@ -770,9 +770,9 @@ This section provides a comprehensive overview of tests across all codec-related
 | Project | Test Files | @Test Methods | @Nested Classes | Quality Rating |
 |---------|------------|---------------|-----------------|----------------|
 | **org.eclipse.fennec.codec.api** | 38 | 1,039 | 168 | Excellent |
-| **org.eclipse.fennec.codec.v2** | 108 | 1,058 | 276 | Excellent |
+| **org.eclipse.fennec.codec** | 108 | 1,058 | 276 | Excellent |
 | **org.eclipse.fennec.codec.metadata** | 7 | 255 | 58 | Excellent |
-| **org.eclipse.fennec.codec.jsonschema.v2** | 6 | 101 | 30 | Good |
+| **org.eclipse.fennec.codec.jsonschema** | 6 | 101 | 30 | Good |
 | **org.eclipse.fennec.model.metadata** | 3 | 77 | 14 | Excellent |
 | **org.eclipse.fennec.codec.openapi** | 11 | 75 | 30 | Good |
 | **org.eclipse.fennec.codec.geojson** | 2 | 34 | 14 | Good |
@@ -792,7 +792,7 @@ Core configuration classes and value reader/writer registry.
 | **Value Registry** | CodecValueRegistry*Test (11 files) | Reader/writer registration, lookup, lifecycle |
 | **Diagnostics** | DiagnosticCollectorTest, CodecDiagnosticTest | Error/warning collection, EMF integration |
 
-#### 10.2.2 codec.v2 (Core Serialization/Deserialization)
+#### 10.2.2 codec (Core Serialization/Deserialization)
 
 Main codec implementation with comprehensive entry-level and integration tests.
 
@@ -830,7 +830,7 @@ Core metadata model and services.
 | **Index** | MapBasedMetadataIndexTest | Metadata indexing, lookup |
 | **Service** | MetadataServiceImplTest | Package registration, aspect providers |
 
-#### 10.2.5 codec.jsonschema.v2 (JSON Schema ↔ EPackage)
+#### 10.2.5 codec.jsonschema (JSON Schema ↔ EPackage)
 
 Bidirectional JSON Schema conversion.
 
@@ -867,10 +867,10 @@ GeoJSON geometry types.
 | Project | FQCN Issues | Import Issues | Java 17 Usage | Memory Safety | Thread Safety | Overall |
 |---------|-------------|---------------|---------------|---------------|---------------|---------|
 | codec.api | None | None | Excellent | Excellent | Excellent | ✅ Excellent |
-| codec.v2 | 2 (fixed) | None | Excellent | Excellent | Excellent | ✅ Excellent |
+| codec | 2 (fixed) | None | Excellent | Excellent | Excellent | ✅ Excellent |
 | codec.metadata | None | None | Excellent | Excellent | Excellent | ✅ Excellent |
 | model.metadata | None | None | Excellent | Excellent | Excellent | ✅ Excellent |
-| codec.jsonschema.v2 | None | None | Good | Good | N/A | ✅ Good |
+| codec.jsonschema | None | None | Good | Good | N/A | ✅ Good |
 | codec.openapi | 2 (fixed) | 1 (fixed) | Excellent | Good | N/A | ✅ Good |
 | codec.geojson | None | None | Excellent | Good | N/A | ✅ Good |
 
@@ -885,27 +885,27 @@ GeoJSON geometry types.
 ```bash
 # Run all tests for a specific project
 ./gradlew :org.eclipse.fennec.codec.api:test
-./gradlew :org.eclipse.fennec.codec.v2:test
+./gradlew :org.eclipse.fennec.codec:test
 ./gradlew :org.eclipse.fennec.codec.metadata:test
 ./gradlew :org.eclipse.fennec.model.metadata:test
-./gradlew :org.eclipse.fennec.codec.jsonschema.v2:test
+./gradlew :org.eclipse.fennec.codec.jsonschema:test
 ./gradlew :org.eclipse.fennec.codec.openapi:test
 ./gradlew :org.eclipse.fennec.codec.geojson:test
 
 # Run all codec tests together (excluding OSGi tests)
 ./gradlew :org.eclipse.fennec.codec.api:test \
-          :org.eclipse.fennec.codec.v2:test \
+          :org.eclipse.fennec.codec:test \
           :org.eclipse.fennec.codec.metadata:test \
           :org.eclipse.fennec.model.metadata:test \
-          :org.eclipse.fennec.codec.jsonschema.v2:test \
+          :org.eclipse.fennec.codec.jsonschema:test \
           :org.eclipse.fennec.codec.openapi:test \
           :org.eclipse.fennec.codec.geojson:test
 
 # Run specific test class
-./gradlew :org.eclipse.fennec.codec.v2:test --tests "TypeSerializationEntryTest"
+./gradlew :org.eclipse.fennec.codec:test --tests "TypeSerializationEntryTest"
 
 # Run tests matching pattern
-./gradlew :org.eclipse.fennec.codec.v2:test --tests "*Roundtrip*"
+./gradlew :org.eclipse.fennec.codec:test --tests "*Roundtrip*"
 ```
 
 ### 10.5 Test Conventions Applied

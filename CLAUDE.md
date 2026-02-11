@@ -9,10 +9,10 @@
 ./gradlew :project-name:testOSGi             # OSGi tests (old codec only)
 ```
 
-### Codec V2 Testing
-- `./gradlew :org.eclipse.fennec.codec.v2:test` - codec.v2 tests
+### Codec Testing
+- `./gradlew :org.eclipse.fennec.codec:test` - codec tests
 - `./gradlew :org.eclipse.fennec.codec.metadata:test` - metadata tests
-- **Do NOT use `testOSGi` for v2 projects**
+- **Do NOT use `testOSGi` for new codec projects**
 
 ## Key Rules
 

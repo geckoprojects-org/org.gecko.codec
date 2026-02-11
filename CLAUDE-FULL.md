@@ -104,22 +104,23 @@ Map<String, Object> options = CodecOptionsBuilder
 
 ---
 
-## Codec V2 Development (Active)
+## Codec Development (Active)
 
-We are building a new codec implementation (codec.v2). For full context, see:
+The new codec implementation. For full context, see:
 
 - **`docs/codec-v2-development-guide.md`** - Current state, next steps, and session continuity
-- **`docs/codec-v2-serialization-spec.md`** - Complete specification (source of truth)
+- **`docs/codec-v2-spec/`** - Complete specification (source of truth)
 - **`org.eclipse.fennec.model.metadata/model-metadata-architecture.md`** - MetadataService, Aspect pattern
 - **`org.eclipse.fennec.codec.metadata/codec-metadata-architecture.md`** - Codec aspects, EAnnotation mapping
 
-### New Projects (codec.v2 related)
+### Core Projects
 
 | Project | Purpose |
 |---------|---------|
-| `org.eclipse.fennec.model.metadata` | Generic MetadataService infrastructure |
+| `org.eclipse.fennec.codec` | Codec runtime (serialization/deserialization) |
+| `org.eclipse.fennec.codec.api` | Configuration API |
 | `org.eclipse.fennec.codec.metadata` | Codec-specific aspects and annotation parsing |
-| `org.eclipse.fennec.codec.v2` | New codec implementation (not started) |
+| `org.eclipse.fennec.model.metadata` | Generic MetadataService infrastructure |
 
 ### Key Concepts
 
@@ -146,10 +147,10 @@ Building annotation parsing in `org.eclipse.fennec.codec.metadata` that:
 
 ## Development Workflow (MUST FOLLOW)
 
-### Codec V2 Testing (CRITICAL)
-- **Use `./gradlew :org.eclipse.fennec.codec.v2:test` for codec.v2 tests** - plain JUnit 5
-- **Do NOT use `testOSGi` for codec.v2** - OSGi tests are for the old codec only
-- Similar for other v2 projects: `:org.eclipse.fennec.codec.metadata:test`, `:org.eclipse.fennec.model.metadata:test`
+### Codec Testing (CRITICAL)
+- **Use `./gradlew :org.eclipse.fennec.codec:test` for codec tests** - plain JUnit 5
+- **Do NOT use `testOSGi` for new codec projects** - OSGi tests are for the old codec only
+- Other projects: `:org.eclipse.fennec.codec.metadata:test`, `:org.eclipse.fennec.model.metadata:test`
 
 ### Workflow Rules
 
@@ -211,11 +212,7 @@ Building annotation parsing in `org.eclipse.fennec.codec.metadata` that:
    - Update `docs/codec-v2-development-guide.md` at session end
    - Document: what was done, what's next, any blockers
 
-8. **Codec V2 Refactoring Plan (CRITICAL)**
-   - **ALWAYS read `~/.claude/plans/compiled-dreaming-acorn.md` first** when working on codec.v2
-   - This plan contains the Architecture Strategy and Package Migration rules
-   - Key rules from that plan:
-     - **Old packages**: `org.eclipse.fennec.codec.v2.*` (deprecate, eventually delete)
-     - **New packages**: `org.eclipse.fennec.codec.*` (spec-compliant, the future)
-     - **Don't modify existing v2 classes** - create new classes in `codec.*` package instead
-     - New spec-compliant code lives alongside old code until migration complete
+8. **Package Migration (COMPLETED)**
+   - Old `codec.v2.*` packages have been migrated to `codec.*` and deleted
+   - Old codec projects moved to `old/` folder (reference only)
+   - All active code lives in `org.eclipse.fennec.codec.*` packages

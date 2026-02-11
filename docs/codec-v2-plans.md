@@ -1,6 +1,6 @@
 # Codec V2 Remaining Plans
 
-This document consolidates all active plans for completing the codec.v2 migration. It merges the
+This document consolidates all active plans for completing the codec migration. It merges the
 Spec Compliance Refactoring Plan and the Deprecated API Migration Plan into a single phased roadmap.
 
 **Created:** 2026-02-02
@@ -38,7 +38,7 @@ The 8-step package migration from `codec.v2.*` to `codec.*` is **complete**:
 
 **Plan A (Deprecated API Migration) is COMPLETE** (2026-02-04):
 - Migrated `codec.api.value.*` to `codec.value.*` API
-- Migrated dependent projects: `codec.geojson`, `codec.jsonschema.v2`, `codec.openapi`
+- Migrated dependent projects: `codec.geojson`, `codec.jsonschema`, `codec.openapi`
 - Fixed `forceWrite`/`forceRead` bugs (two-gate model, volatile features)
 
 **Code Cleanup COMPLETE** (2026-02-05):
@@ -77,7 +77,7 @@ codec.api project (org.eclipse.fennec.codec.api):
 ├── codec.config.*         ← Config record types (TypeConfig, IdConfig, etc.)
 └── codec.diagnostic.*     ← DiagnosticCollector
 
-codec.v2 project (org.eclipse.fennec.codec.v2):
+codec project (org.eclipse.fennec.codec):
 ├── codec.ser.*            ← Serialization entries (Type, ID, Feature, Reference)
 ├── codec.deser.*          ← Deserialization entries (Type, ID, Feature, Reference)
 ├── codec.config.*         ← Configuration (effective, resolver)
@@ -98,8 +98,7 @@ Three types coexist — this is intentional, not a clash:
 | Type | Location | Purpose |
 |------|----------|---------|
 | **Interface** | `codec.api → codec.value.EffectiveCodecConfig` | Narrow view for custom readers/writers (7 parameter-free getters) |
-| **NEW Class** | `codec.v2 → codec.config.effective.EffectiveCodecConfig` | Full operation-scoped resolver (~50 methods, builder pattern) |
-| **OLD Class** | `codec.v2 → codec.v2.config.effective.EffectiveCodecConfig` | Deprecated — will be deleted with old package |
+| **NEW Class** | `codec.config.effective.EffectiveCodecConfig` | Full operation-scoped resolver (~50 methods, builder pattern) |
 
 The interface and class serve **different architectural layers**:
 - The **interface** is a snapshot capturing already-resolved configs for the current context
@@ -139,10 +138,10 @@ Replaced all usages of deprecated `codec.api.value.*` types with `codec.value.*`
 
 ### What Was Done
 
-1. **Core codec.v2 migration** - Entry classes, module, resource now use new API
+1. **Core codec migration** - Entry classes, module, resource now use new API
 2. **Dependent projects migrated:**
    - `codec.geojson` - Uses `ConfigurationResolver` + `forceWrite`/`forceRead`
-   - `codec.jsonschema.v2` - `EPackageValueReader`/`Writer` use new context API
+   - `codec.jsonschema` - `EPackageValueReader`/`Writer` use new context API
    - `codec.openapi` - `OperationValueReader` uses new context API
 3. **Bug fixes:**
    - `forceWrite` now correctly implements two-gate model (visibility vs value gate)
@@ -436,11 +435,11 @@ Spec `08-discriminator-mapping.md` section 1.4 now clarifies this interaction. I
 
 **Status:** NOT STARTED (Future Feature)
 
-**Goal:** Extend codec.v2 to support formats beyond JSON (BSON, CSV, Ecowitt, etc.) while maintaining feature parity with the JSON implementation.
+**Goal:** Extend codec to support formats beyond JSON (BSON, CSV, Ecowitt, etc.) while maintaining feature parity with the JSON implementation.
 
 ### Background
 
-The current codec.v2 is tightly coupled to Jackson's JSON streaming API (`JsonParser`, `JsonGenerator`). However, the old codebase (`org.eclipse.fennec.codec`) had a working abstraction layer that supported both:
+The current codec is tightly coupled to Jackson's JSON streaming API (`JsonParser`, `JsonGenerator`). However, the old codebase (`org.eclipse.fennec.codec`) had a working abstraction layer that supported both:
 
 1. **Jackson-compatible formats** — JSON, CSV, XML, YAML via Jackson's `TokenStreamFactory` derivatives
 2. **Custom non-Jackson formats** — MongoDB BSON, Ecowitt weather protocol
@@ -473,7 +472,7 @@ Jackson provides extensive format support through its dataformat modules, all us
 | **Binary** | Smile | `jackson-dataformat-smile` | Binary JSON, 100% compatible |
 | **Binary** | Ion | `jackson-dataformat-ion` | Amazon Ion (text + binary) |
 
-**Key Advantage:** All Jackson formats use `TokenStreamFactory.createParser()` / `createGenerator()`, meaning codec.v2 should work with **any Jackson format** without code changes, only dependency additions.
+**Key Advantage:** All Jackson formats use `TokenStreamFactory.createParser()` / `createGenerator()`, meaning codec should work with **any Jackson format** without code changes, only dependency additions.
 
 **References:**
 - [Jackson Binary Formats Repository](https://github.com/FasterXML/jackson-dataformats-binary)
@@ -516,7 +515,7 @@ Jackson provides extensive format support through its dataformat modules, all us
 
 ### Core Architecture: FormatDelegate Pattern with Pluggable I/O
 
-The codec.v2 architecture uses **Jackson 3 as the foundation** with a **FormatDelegate pattern** for pluggable format support. Critically, **input/output types are format-specific** — not everything is a stream.
+The codec architecture uses **Jackson 3 as the foundation** with a **FormatDelegate pattern** for pluggable format support. Critically, **input/output types are format-specific** — not everything is a stream.
 
 #### Architecture Diagram
 
@@ -894,10 +893,10 @@ This covers:
 
 **Note:** Other Jackson formats (Avro, Smile, YAML, XML) will work once CBOR works — no separate testing needed.
 
-### Files to Create (codec.v2 project)
+### Files to Create (codec project)
 
 ```
-org.eclipse.fennec.codec.v2/
+org.eclipse.fennec.codec/
 ├── src/org/eclipse/fennec/codec/
 │   ├── format/
 │   │   ├── CodecParserBase.java          # Abstract parser (port from old)
@@ -934,7 +933,7 @@ old/                                   # Archived - excluded from build
 #### New Structure (After Refactoring)
 
 ```
-org.eclipse.fennec.codec.v2/
+org.eclipse.fennec.codec/
 ├── src/org/eclipse/fennec/codec/
 │   ├── format/                        # FormatDelegate pattern
 │   │   ├── CodecWriter.java           # EMF-aware writer interface
@@ -971,7 +970,7 @@ These are trivial once `JacksonFormatDelegate` exists.
 
 ### Notes
 
-- This plan builds on top of existing codec.v2 functionality
+- This plan builds on top of existing codec functionality
 - Jackson-based JSON remains the default and primary format
 - Custom formats are opt-in via factory registration
 - All format implementations must pass the same feature parity tests
@@ -1091,7 +1090,7 @@ Plan E (Multi-Format Support) — NOT STARTED:
 - `test/org/eclipse/fennec/codec/value/DefaultCodecReaderContextTest.java`
 - `test/org/eclipse/fennec/codec/value/DefaultCodecWriterContextTest.java`
 
-**SRC files to modify (codec.v2 project, `codec.*` package):**
+**SRC files to modify (codec project, `codec.*` package):**
 - `config/effective/EffectiveCodecConfig.java`
 - `module/CodecModule.java`
 - `resource/CodecResource.java`
@@ -1101,7 +1100,7 @@ Plan E (Multi-Format Support) — NOT STARTED:
 - `deser/ReferenceDeserializationEntry.java`
 - `ser/CodecEObjectSerializer.java` (orchestrator — entry creation)
 
-**TEST files to modify (codec.v2 project, `codec.*` package):**
+**TEST files to modify (codec project, `codec.*` package):**
 - `deser/AttributeDeserializationEntryCanHandleTest.java`
 - `deser/ReferenceDeserializationEntryCanHandleTest.java`
 - `deser/ReferenceDeserializationEntryCustomReaderTest.java`
@@ -1128,7 +1127,7 @@ Plan E (Multi-Format Support) — NOT STARTED:
 
 ```bash
 # Codec V2 tests (JUnit 5, NOT OSGi)
-./gradlew :org.eclipse.fennec.codec.v2:cleanTest :org.eclipse.fennec.codec.v2:test
+./gradlew :org.eclipse.fennec.codec:cleanTest :org.eclipse.fennec.codec:test
 
 # Metadata tests
 ./gradlew :org.eclipse.fennec.codec.metadata:test

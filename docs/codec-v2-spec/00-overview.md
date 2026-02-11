@@ -156,4 +156,3 @@ Unresolved design questions and future considerations. Check here before proposi
 ## Related Documentation
 
 - **[Development Guide](../codec-v2-development-guide.md)** - Implementation status, architecture details, session continuity
-- **[Spec Review Findings](../codec-v2-spec-review-findings.md)** - Gap analysis and improvement recommendations

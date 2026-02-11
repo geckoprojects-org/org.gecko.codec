@@ -16,7 +16,7 @@ org.eclipse.fennec.codec.metadata
          └──→ org.eclipse.fennec.model.metadata (metadata.ecore - base infrastructure)
 ```
 
-**No dependency on codec.v2** - this is purely metadata, not serialization logic.
+**No dependency on codec** - this is purely metadata, not serialization logic.
 
 ---
 

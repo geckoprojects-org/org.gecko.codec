@@ -1888,13 +1888,13 @@ This section tracks the implementation status of features documented in this ref
   - Add to `CodecAnnotationConstants`
   - Add to `BaseFeatureConfig` EMF model
   - Update `CodecAspectProvider` parsing
-  - Update codec.v2 serializer/deserializer
+  - Update codec serializer/deserializer
   - Add tests
 
 - [ ] **Metadata Merge**: Implement `metadataMerge` and `metadataKey` for combining type+id in STRUCTURED format
   - Add to `CodecAnnotationConstants`
   - Add to EMF model (ClassCodecAspect or new MetadataMergeConfig)
-  - Implement in codec.v2 serializer
+  - Implement in codec serializer
 
 - [ ] **Fallback Handling**: Implement `fallbackStrategy` and `fallbackEClass` for discriminator mappings
   - Add to `CodecAnnotationConstants`

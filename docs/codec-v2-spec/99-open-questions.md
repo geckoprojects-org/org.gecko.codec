@@ -110,7 +110,7 @@ New annotations: `ignore`, `ignoreRead`, `ignoreWrite`, `forceRead`, `forceWrite
 1. Add constants to `CodecAnnotationConstants`
 2. Add to `BaseFeatureConfig` EMF model
 3. Update `CodecAspectProvider` parsing
-4. Update codec.v2 serializer/deserializer
+4. Update codec serializer/deserializer
 5. Add tests
 6. Update spec `11-feature.md`
 

@@ -1,6 +1,6 @@
 # Codec V2 Development Guide
 
-This document provides context for continuing codec.v2 development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
+This document provides context for continuing codec development across sessions. It captures the goals, current state, and links to detailed architecture documentation.
 
 **Last Updated:** 2026-02-08 (Plan E Architecture + Old Code Archived)
 
@@ -128,14 +128,14 @@ COMPLETED: Integration Tests + PLAIN Reference Format - ✅ (2026-02-06)
 │  CONFIGURATION: refFormat via optionsProperties
 │  │  ConfigurationResolver.builder().optionsProperties(Map.of("refFormat", "PLAIN")).build()
 │  │
-│  FINAL STATE: codec.v2 = ~1008 tests, 0 failures
+│  FINAL STATE: codec = ~1008 tests, 0 failures
 │
 │  NEXT STEPS:
 │  │  - Continue with Plan B GAP work (GAP-002/003/014 are migration tasks)
 │  │  - GAP-004 (Diagnostic Options) is a new feature, lower priority
 
 PREVIOUS: Code Cleanup, Deprecated Removal & Helper Extraction - ✅ (2026-02-05)
-> **Older completed tasks archived in [`codec-v2-session-history.md`](codec-v2-session-history.md)**
+> **Older completed tasks available in git history**
 
 ```
 
@@ -154,7 +154,7 @@ PREVIOUS: Code Cleanup, Deprecated Removal & Helper Extraction - ✅ (2026-02-05
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ org.eclipse.fennec.codec.v2 (Codec Runtime)                │
+│ org.eclipse.fennec.codec (Codec Runtime)                   │
 │                                                             │
 │ ┌─────────────────────┐   ┌───────────────────────────┐   │
 │ │ CodecEObjectSerializer├──→ SerializationEntry (Type, │   │
@@ -188,10 +188,10 @@ PREVIOUS: Code Cleanup, Deprecated Removal & Helper Extraction - ✅ (2026-02-05
 | **CodecAspectProvider** | `codec.metadata.provider` | Parses EAnnotations → Config objects |
 | **TypeDiscriminatorService** | `codec.metadata.type` | Manages discriminator→EClass mappings |
 | **EffectiveCodecConfig** | `codec.api.config.effective` | Per-feature config resolution |
-| **CodecEObjectSerializer** | `codec.v2.ser` | Orchestrates serialization entries |
-| **CodecEObjectDeserializer** | `codec.v2.deser` | Orchestrates deserialization entries |
-| **SerializationEntry** | `codec.v2.ser` | Type/ID/Feature/Reference serializers |
-| **DeserializationEntry** | `codec.v2.deser` | Type/ID/Feature/Reference deserializers |
+| **CodecEObjectSerializer** | `codec.ser` | Orchestrates serialization entries |
+| **CodecEObjectDeserializer** | `codec.deser` | Orchestrates deserialization entries |
+| **SerializationEntry** | `codec.ser` | Type/ID/Feature/Reference serializers |
+| **DeserializationEntry** | `codec.deser` | Type/ID/Feature/Reference deserializers |
 
 ### 2.3 Configuration Hierarchy (5 Sources)
 
@@ -223,7 +223,7 @@ See `docs/codec-v2-spec/02-config-resolution.md` for details.
 - Diagnostic collection during parsing
 
 ✅ **Codec Runtime (fully cleaned up)**
-- `org.eclipse.fennec.codec.*` packages (all deprecated `codec.v2.*` code deleted)
+- `org.eclipse.fennec.codec.*` packages (all deprecated `old codec.v2.*` code deleted)
 - Serialization entries (Type, ID, Feature, Reference)
 - Deserialization entries (Type, ID, Feature, Reference)
 - CodecEObjectSerializer/Deserializer orchestrators
@@ -250,25 +250,25 @@ See `docs/codec-v2-spec/02-config-resolution.md` for details.
 - Deserialization, serialization, ERROR/FALLBACK strategies, root-level, supertype inheritance
 
 ✅ **Deprecated Code Removed**
-- All `codec.v2.*` source/test files deleted (55 src + 9 test)
+- All `old codec.v2.*` source/test files deleted (55 src + 9 test)
 - All `codec.api.value.*` and `codec.api.diagnostic.*` files deleted (11 src + 14 test)
 - Zero skipped tests remaining
 
 ### 3.2 Test Status
 
 **Current Counts (2026-02-05, after cleanup + helper extraction):**
-- **codec.v2:** 992 tests, 0 failures, 0 skipped
+- **codec:** 992 tests, 0 failures, 0 skipped
 - **codec.api:** ~490 tests
 - **codec.metadata:** ~220 tests
 - **model.metadata:** ~200 tests
-- **codec.geojson, codec.jsonschema.v2, codec.openapi:** ~617 tests combined
+- **codec.geojson, codec.jsonschema, codec.openapi:** ~617 tests combined
 - **Total across all 7 projects:** ~2519 tests, 0 failures, 0 skipped
 
 **Test Organization:**
 - `org.eclipse.fennec.codec.api/test` — config API tests (spec + resolver tests)
 - `org.eclipse.fennec.codec.metadata/test` — aspect provider tests + TypeDiscriminatorServiceTest
-- `org.eclipse.fennec.codec.v2/test/org/eclipse/fennec/codec/*` — runtime tests (all active)
-- `org.eclipse.fennec.codec.v2/test/org/eclipse/fennec/codec/util/*` — helper unit tests
+- `org.eclipse.fennec.codec/test/org/eclipse/fennec/codec/*` — runtime tests (all active)
+- `org.eclipse.fennec.codec/test/org/eclipse/fennec/codec/util/*` — helper unit tests
 
 ### 3.3 What's Next
 
@@ -318,7 +318,6 @@ See `docs/codec-v2-spec/02-config-resolution.md` for details.
 **Development:**
 - `docs/codec-v2-development-guide.md` (this file)
 - `docs/codec-v2-plans.md` (roadmap, GAP analysis)
-- `docs/codec-v2-session-history.md` (archived completed task entries)
 - `docs/codec-v2-migration-notes.md` (V1 → V2 migration guide)
 - `docs/codec-v2-reference.md` (EMF concepts, terminology, API reference)
 
@@ -339,12 +338,12 @@ See `docs/codec-v2-spec/02-config-resolution.md` for details.
 - Resolver tests for configuration resolution
 - Validation tests for diagnostic rules
 
-**Integration Tests** (codec.v2):
+**Integration Tests** (codec):
 - Resource tests (CodecResource end-to-end)
 - Ser/Deser tests (specific features)
 - Roundtrip tests (symmetry verification)
 
-**Custom Codec Tests** (codec.geojson, codec.jsonschema.v2, codec.openapi):
+**Custom Codec Tests** (codec.geojson, codec.jsonschema, codec.openapi):
 - Domain-specific serialization tests
 - Custom value reader/writer tests
 
@@ -410,7 +409,7 @@ String discriminatorValue = typeDiscriminatorService.getDiscriminatorValue(mapId
 - [✅] ID serialization tests (CodecResourceIdTest.java — 26 tests covering PLAIN/STRUCTURED, IdKeyMode, separators, round-trip)
 
 **Code Quality** (completed)
-- [✅] Deprecated code removal (codec.v2.*, codec.api.value.*, codec.api.diagnostic.*)
+- [✅] Deprecated code removal (old codec.v2.*, codec.api.value.*, codec.api.diagnostic.*)
 - [✅] @claude comment cleanup
 - [✅] Helper extraction: TypeResolutionHelper, EMapHelper
 
@@ -508,12 +507,12 @@ for (Diagnostic diag : diagnostics.getDiagnostics()) {
 ./gradlew build
 
 # Test specific project
-./gradlew :org.eclipse.fennec.codec.v2:test
+./gradlew :org.eclipse.fennec.codec:test
 ./gradlew :org.eclipse.fennec.codec.metadata:test
 ./gradlew :org.eclipse.fennec.codec.api:test
 
 # Test specific test class
-./gradlew :org.eclipse.fennec.codec.v2:test --tests CodecResourceInlineMappingTest
+./gradlew :org.eclipse.fennec.codec:test --tests CodecResourceInlineMappingTest
 
 # Clean build
 ./gradlew clean build

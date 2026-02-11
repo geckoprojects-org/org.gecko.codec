@@ -453,7 +453,7 @@ When you see patterns that could use helpers, suggest these package locations:
 | EMF utilities | `o.e.f.model.metadata.utils` | `EcoreHelper` (exists) |
 | String utilities | `o.e.f.codec.api.util` | `StringHelper` |
 | Collection utilities | `o.e.f.codec.api.util` | `CollectionHelper` |
-| Config merging | `o.e.f.codec.v2.config` | `ConfigMergeHelper` |
+| Config merging | `o.e.f.codec.config` | `ConfigMergeHelper` |
 
 ## Conventions Feedback (IMPORTANT)
 

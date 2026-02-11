@@ -14,7 +14,7 @@ Identify tests (especially round-trip tests) that serve as good user examples, a
 ## Key Locations
 
 ### Test Files (source of examples)
-- `org.eclipse.fennec.codec.v2/test/` - Main codec tests
+- `org.eclipse.fennec.codec/test/` - Main codec tests
 - `*RoundTripTest.java` - Round-trip tests (best for examples)
 - `*AnnotationTest.java` - Annotation configuration examples
 - `*ConfigTest.java` - Programmatic configuration examples
