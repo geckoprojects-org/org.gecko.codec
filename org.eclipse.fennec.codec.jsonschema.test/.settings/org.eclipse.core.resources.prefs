@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//.settings/org.eclipse.core.resources.prefs=UTF-8
+encoding//src/org/eclipse/fennec/codec/jsonschema/test/CodecJsonSchemaJsonConflictTest.java=UTF-8
 encoding//src/org/eclipse/fennec/codec/jsonschema/test/CodecJsonSchemaSerializationTest.java=UTF-8
 encoding/<project>=UTF-8
 encoding/bnd.bnd=UTF-8
