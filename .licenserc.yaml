@@ -24,6 +24,7 @@ header:
     - '**/module-info.java'
     - '**/*.bnd'
     - '**/*.bndrun'
+    - '**/*.jsonschema'
     - '**/*.xml'
     - '**/*.csv'
     - '**/*.json'
