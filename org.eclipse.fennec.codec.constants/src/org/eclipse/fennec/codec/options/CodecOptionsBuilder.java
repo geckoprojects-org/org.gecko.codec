@@ -561,7 +561,7 @@ public class CodecOptionsBuilder {
 		return options;
 	}
 
-	private void finalizeCurrentClassBuilder() {
+	protected void finalizeCurrentClassBuilder() {
 		if (currentClassBuilder != null) {
 			currentClassBuilder.finalizeClass();
 			currentClassBuilder = null;
@@ -572,12 +572,12 @@ public class CodecOptionsBuilder {
 	 * Builder for per-class options.
 	 */
 	public static class ClassOptionsBuilder {
-		private final CodecOptionsBuilder parent;
+		protected final CodecOptionsBuilder parent;
 		private final EClass eClass;
-		private final Map<String, Object> classOptions = new HashMap<>();
+		protected final Map<String, Object> classOptions = new HashMap<>();
 		private final Map<EReference, Map<String, Object>> referenceOptions = new HashMap<>();
 
-		private ClassOptionsBuilder(CodecOptionsBuilder parent, EClass eClass) {
+		protected ClassOptionsBuilder(CodecOptionsBuilder parent, EClass eClass) {
 			this.parent = parent;
 			this.eClass = eClass;
 		}
@@ -839,7 +839,7 @@ public class CodecOptionsBuilder {
 			return parent.build();
 		}
 
-		private void finalizeClass() {
+		protected void finalizeClass() {
 			if (!referenceOptions.isEmpty()) {
 				classOptions.put(CodecResourceOptions.CODEC_OPTIONS, referenceOptions);
 			}

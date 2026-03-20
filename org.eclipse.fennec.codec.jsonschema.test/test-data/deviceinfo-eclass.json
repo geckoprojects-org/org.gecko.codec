@@ -1,0 +1,45 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "/opt/git/org.gecko.codec/org.eclipse.fennec.codec.jsonschema.test/test-data/deviceinfo-eclass.jsonschema#/",
+	"title": "DeviceInfo",
+	"type": "object",
+	"properties": {
+		"tenantId": {
+			"type": "string"
+		},
+		"tenantName": {
+			"type": "string"
+		},
+		"applicationId": {
+			"type": "string"
+		},
+		"applicationName": {
+			"type": "string"
+		},
+		"deviceProfileId": {
+			"type": "string"
+		},
+		"deviceProfileName": {
+			"type": "string"
+		},
+		"deviceName": {
+			"type": "string"
+		},
+		"devEui": {
+			"type": "string"
+		},
+		"tags": {
+			"$ref": "#/definitions/Tags"
+		}
+	},
+	"definitions": {
+		"Tags": {
+			"type": "object",
+			"properties": {
+				"dev_type": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}

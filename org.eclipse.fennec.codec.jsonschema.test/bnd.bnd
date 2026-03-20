@@ -16,7 +16,9 @@ Test-Cases: ${classes;HIERARCHY_INDIRECTLY_ANNOTATED;org.junit.platform.commons.
 	org.eclipse.fennec.openapi.model;version=snapshot,\
 	org.eclipse.fennec.codec.info,\
 	org.eclipse.fennec.codec.jsonschema,\
-	org.eclipse.fennec.codec.json
+	org.eclipse.fennec.codec.json,\
+	org.eclipse.fennec.lorawan.uplink.model;version=snapshot,\
+	org.eclipse.fennec.ai.nsc.trend.analysis.model;version=snapshot
 	
 Private-Package: org.eclipse.fennec.codec.jsonschema.test
 

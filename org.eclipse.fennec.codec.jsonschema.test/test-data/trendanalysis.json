@@ -1,0 +1,141 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"title": "TrendAnalysis",
+	"type": "object",
+	"properties": {
+		"documentMetadata": {
+			"$ref": "#/definitions/DocumentMetadata"
+		},
+		"executiveSummary": {
+			"$ref": "#/definitions/ExecutiveSummary"
+		},
+		"trends": {
+			"type": "array",
+			"items": {
+				"$ref": "#/definitions/Trend"
+			}
+		}
+	},
+	"definitions": {
+		"DocumentMetadata": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"name": {
+					"type": "string"
+				},
+				"source": {
+					"type": "string"
+				},
+				"legislativePeriod": {
+					"type": "string"
+				},
+				"date": {
+					"type": "string"
+				},
+				"totalPages": {
+					"type": "integer"
+				},
+				"issuingAuthority": {
+					"type": "string"
+				},
+				"analysisDate": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"ExecutiveSummary": {
+			"type": "object",
+			"properties": {
+				"context": {
+					"type": "string"
+				},
+				"scope": {
+					"type": "string"
+				},
+				"timeHorizon": {
+					"type": "string"
+				},
+				"keyFocus": {
+					"type": "string"
+				}
+			}
+		},
+		"Trend": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"title": {
+					"type": "string"
+				},
+				"description": {
+					"type": "string"
+				},
+				"timeHorizon": {
+					"type": "string"
+				},
+				"primaryStempelCategory": {
+					"enum": [
+						"SOCIAL",
+						"TECHNOLOGICAL",
+						"ECONOMIC_GEO_ECONOMIC",
+						"EXTERNAL_SECURITY",
+						"INTERNAL_SECURITY",
+						"POLITICAL_GEO_POLITICAL",
+						"ECOLOGICAL_PLANETARY"
+					],
+					"type": "string"
+				},
+				"secondaryStempelCategory": {
+					"enum": [
+						"SOCIAL",
+						"TECHNOLOGICAL",
+						"ECONOMIC_GEO_ECONOMIC",
+						"EXTERNAL_SECURITY",
+						"INTERNAL_SECURITY",
+						"POLITICAL_GEO_POLITICAL",
+						"ECOLOGICAL_PLANETARY"
+					],
+					"type": "string"
+				},
+				"pageReference": {
+					"type": "integer"
+				},
+				"evidence": {
+					"type": "string"
+				},
+				"implications": {
+					"type": "string"
+				},
+				"relatedItemIds": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"id"
+			]
+		},
+		"StempelCategoryType": {
+			"enum": [
+				"SOCIAL",
+				"TECHNOLOGICAL",
+				"ECONOMIC_GEO_ECONOMIC",
+				"EXTERNAL_SECURITY",
+				"INTERNAL_SECURITY",
+				"POLITICAL_GEO_POLITICAL",
+				"ECOLOGICAL_PLANETARY"
+			],
+			"type": "string"
+		}
+	}
+}

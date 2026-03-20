@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2012 - 2025 Data In Motion and others.&#xA;All rights reserved.&#xA;&#xA;This program and the accompanying materials are made&#xA;available under the terms of the Eclipse Public License 2.0&#xA;which is available at https://www.eclipse.org/legal/epl-2.0/&#xA;&#xA;SPDX-License-Identifier: EPL-2.0&#xA;&#xA;Contributors:&#xA;     Data In Motion - initial API and implementation"
+    modelDirectory="/org.eclipse.fennec.ai.nsc.trend.analysis.model/src" modelPluginID="org.eclipse.fennec.ai.nsc.trend.analysis.model"
+    modelName="trend-analysis" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="17.0" suppressGenModelAnnotations="false"
+    copyrightFields="false" operationReflection="true" importOrganizing="true" oSGiCompatible="true">
+  <foreignModel>trend-analysis.ecore</foreignModel>
+  <genPackages prefix="TrendAnalysis" basePackage="org.eclipse.fennec.ai.nsc.trend.analysis.model"
+      resource="XMI" disposableProviderFactory="true" ecorePackage="trend-analysis.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="trend-analysis.ecore#//StempelCategoryType">
+      <genEnumLiterals ecoreEnumLiteral="trend-analysis.ecore#//StempelCategoryType/SOCIAL"/>
+      <genEnumLiterals ecoreEnumLiteral="trend-analysis.ecore#//StempelCategoryType/TECHNOLOGICAL"/>
+      <genEnumLiterals ecoreEnumLiteral="trend-analysis.ecore#//StempelCategoryType/ECONOMIC_GEO_ECONOMIC"/>
+      <genEnumLiterals ecoreEnumLiteral="trend-analysis.ecore#//StempelCategoryType/EXTERNAL_SECURITY"/>
+      <genEnumLiterals ecoreEnumLiteral="trend-analysis.ecore#//StempelCategoryType/INTERNAL_SECURITY"/>
+      <genEnumLiterals ecoreEnumLiteral="trend-analysis.ecore#//StempelCategoryType/POLITICAL_GEO_POLITICAL"/>
+      <genEnumLiterals ecoreEnumLiteral="trend-analysis.ecore#//StempelCategoryType/ECOLOGICAL_PLANETARY"/>
+    </genEnums>
+    <genClasses ecoreClass="trend-analysis.ecore#//TrendAnalysis">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference trend-analysis.ecore#//TrendAnalysis/documentMetadata"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference trend-analysis.ecore#//TrendAnalysis/executiveSummary"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference trend-analysis.ecore#//TrendAnalysis/trends"/>
+    </genClasses>
+    <genClasses ecoreClass="trend-analysis.ecore#//DocumentMetadata">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//DocumentMetadata/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//DocumentMetadata/title"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//DocumentMetadata/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//DocumentMetadata/source"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//DocumentMetadata/legislativePeriod"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//DocumentMetadata/date"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//DocumentMetadata/totalPages"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//DocumentMetadata/issuingAuthority"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//DocumentMetadata/analysisDate"/>
+    </genClasses>
+    <genClasses ecoreClass="trend-analysis.ecore#//ExecutiveSummary">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//ExecutiveSummary/context"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//ExecutiveSummary/scope"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//ExecutiveSummary/timeHorizon"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//ExecutiveSummary/keyFocus"/>
+    </genClasses>
+    <genClasses ecoreClass="trend-analysis.ecore#//Trend">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/title"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/timeHorizon"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/primaryStempelCategory"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/secondaryStempelCategory"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/pageReference"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/evidence"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/implications"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trend-analysis.ecore#//Trend/relatedItemIds"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
